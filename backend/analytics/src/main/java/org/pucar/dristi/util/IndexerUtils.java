@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -9,6 +8,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
 import org.pucar.dristi.web.models.CaseOverallStatus;
+import org.pucar.dristi.web.models.CaseStageSubStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,37 +31,38 @@ public class IndexerUtils {
 
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+
+	private final Configuration config;
+
+	private final CaseUtil caseUtil;
+
+	private final HearingUtil hearingUtil;
+
+	private final EvidenceUtil evidenceUtil;
+
+	private final TaskUtil taskUtil;
+
+	private final ApplicationUtil applicationUtil;
+
+	private final OrderUtil orderUtil;
+
+	private final Producer producer;
 
 	@Autowired
-	private Configuration config;
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer) {
+        this.restTemplate = restTemplate;
+        this.config = config;
+        this.caseUtil = caseUtil;
+        this.hearingUtil = hearingUtil;
+        this.evidenceUtil = evidenceUtil;
+        this.taskUtil = taskUtil;
+        this.applicationUtil = applicationUtil;
+        this.orderUtil = orderUtil;
+        this.producer = producer;
+    }
 
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	private CaseUtil caseUtil;
-
-	@Autowired
-	private HearingUtil hearingUtil;
-
-	@Autowired
-	private EvidenceUtil evidenceUtil;
-
-	@Autowired
-	private TaskUtil taskUtil;
-
-	@Autowired
-	private ApplicationUtil applicationUtil;
-
-	@Autowired
-	private OrderUtil orderUtil;
-
-	@Autowired
-	private Producer producer;
-
-	public static JSONObject createRequestInfo() {
+    public static JSONObject createRequestInfo() {
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("id", 73);
 		userInfo.put("tenantId","pg");
@@ -96,12 +97,11 @@ public class IndexerUtils {
 				if (threadRun) {
 					Object response = null;
 					try {
-						StringBuilder url = new StringBuilder();
-						url.append(config.getEsHostUrl()).append("/_search");
+                        String url = config.getEsHostUrl() + "/_search";
 						final HttpHeaders headers = new HttpHeaders();
 						headers.add("Authorization", getESEncodedCredentials());
 						final HttpEntity entity = new HttpEntity(headers);
-						response = restTemplate.exchange(url.toString(), HttpMethod.GET, entity, Map.class);
+						response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 					} catch (Exception e) {
 						log.error("ES is DOWN..");
 					}
@@ -204,7 +204,7 @@ public class IndexerUtils {
 
 		List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
 		String cnrNumber;
-		String filingNumber = null;
+		String filingNumber;
 
 		if (cnrNumbers == null || cnrNumbers.isEmpty()) {
 			List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
@@ -302,7 +302,7 @@ public class IndexerUtils {
 
 	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
         return switch (action.toLowerCase()) {
-            case "submit_case" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
+			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
             case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
             case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
             default -> null;
@@ -349,19 +349,12 @@ public class IndexerUtils {
 			}
 			else{
 				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
-				CaseObject caseObject = new CaseObject(caseOverallStatus);
+				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(caseOverallStatus);
 
-				producer.push(config.getCaseOverallStatusTopic(), caseObject);
+				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
 			}
 		} catch (Exception e) {
 			log.error("Error in publishToCaseOverallStatus method", e);
-		}
-	}
-
-	private static class CaseObject {
-		CaseOverallStatus caseOverallStatus;
-		CaseObject(CaseOverallStatus caseOverallStatus) {
-			this.caseOverallStatus = caseOverallStatus;
 		}
 	}
 
