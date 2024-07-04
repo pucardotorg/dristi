@@ -339,6 +339,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     return (
                       <CustomReviewCard
                         isScrutiny={isScrutiny}
+                        isJudge={isJudge}
                         config={updatedConfig}
                         titleIndex={index + 1}
                         data={item?.data}

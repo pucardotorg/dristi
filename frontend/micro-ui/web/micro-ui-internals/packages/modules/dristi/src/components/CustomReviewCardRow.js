@@ -35,6 +35,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 
 const CustomReviewCardRow = ({
   isScrutiny,
+  isJudge,
   data,
   handleOpenPopup,
   titleIndex,
@@ -218,7 +219,7 @@ const CustomReviewCardRow = ({
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
-                label={t(isScrutiny ? data?.[value]?.scrutinyHeader || data?.[value]?.header : data?.[value]?.header)}
+                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader : data?.[value]?.header)}
                 additionalElements={[
                   <React.Fragment>
                     {Array.isArray(data?.[value]?.data) && (
@@ -635,6 +636,7 @@ const CustomReviewCardRow = ({
     handleOpenPopup,
     isPrevScrutiny,
     isScrutiny,
+    isJudge,
     label,
     name,
     prevDataError,
