@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IssuedByTest {
 
@@ -59,8 +61,8 @@ public class IssuedByTest {
         issuedBy.setJudgeId(judgeId);
         issuedBy.setCourtId(courtId);
 
-        assertThat(issuedBy.getBenchId()).isEqualTo(benchId);
-        assertThat(issuedBy.getJudgeId()).isEqualTo(judgeId);
-        assertThat(issuedBy.getCourtId()).isEqualTo(courtId);
+        assertEquals(issuedBy.getBenchId(), benchId);
+        assertEquals(issuedBy.getJudgeId(), judgeId);
+        assertEquals(issuedBy.getCourtId(), courtId);
     }
 }
