@@ -12,7 +12,7 @@ CREATE TABLE dristi_task (
                               taskType varchar(64) NULL,
                               taskDetails jsonb NULL,
                               status varchar(64) NULL,
-                              assignedTo varchar(64) NULL,
+                              assignedTo jsonb NULL,
                               isActive bool NULL,
                               additionalDetails jsonb NULL,
                               createdBy varchar(64) NULL,
