@@ -190,7 +190,6 @@ function ViewCaseFile({ t }) {
                     ...input,
                     data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
                     prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
-                    vaiubhav: "Vaibhav",
                   };
                 }),
               },
@@ -281,7 +280,7 @@ function ViewCaseFile({ t }) {
     setHighlightChecklist(true);
     setTimeout(() => {
       setHighlightChecklist(false);
-    }, 2000)
+    }, 2000);
   };
 
   if (!caseId) {

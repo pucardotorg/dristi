@@ -1029,7 +1029,7 @@ function EFilingCases({ path }) {
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
                     modifiedFormComponent.withoutLabel = true;
-                    modifiedFormComponent.disableDocumentHeader = true;
+                    modifiedFormComponent.disableScrutinyHeader = true;
                     return [
                       {
                         type: "component",

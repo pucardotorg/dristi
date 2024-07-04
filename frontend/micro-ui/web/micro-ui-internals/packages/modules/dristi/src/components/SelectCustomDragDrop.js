@@ -111,7 +111,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
         {showDocument && (
           <div className="drag-drop-visible-main">
             <div className="drag-drop-heading-main">
-              {!config?.disableDocumentHeader && (
+              {!config?.disableScrutinyHeader && (
                 <div className="drag-drop-heading">
                   <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
                     {t(input?.documentHeader)}
