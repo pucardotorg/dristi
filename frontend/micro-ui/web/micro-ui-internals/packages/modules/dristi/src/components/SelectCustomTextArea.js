@@ -1,5 +1,6 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
+import { isEmptyObject } from "../Utils";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
@@ -15,19 +16,23 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   );
 
   function setValue(value, input) {
+    let updatedValue = {
+      ...formData[config.key],
+    };
+
     if (Array.isArray(input)) {
-      onSelect(
-        config.key,
-        {
-          ...formData[config.key],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        },
-        { shouldValidate: true }
-      );
-    } else onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+      updatedValue = {
+        ...updatedValue,
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      };
+    } else {
+      updatedValue[input] = value;
+    }
+
+    onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {

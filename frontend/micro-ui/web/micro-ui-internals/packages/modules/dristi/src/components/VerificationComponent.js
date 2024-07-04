@@ -145,42 +145,45 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
             {!currentValue?.["ID_Proof"] ? (
               <React.Fragment>
                 {!isUserVerified && (
-                  <div className="button-field">
-                    <Button
-                      variation={"secondary"}
-                      className={"secondary-button-selector"}
-                      label={t("VERIFY_AADHAR")}
-                      labelClassName={"secondary-label-selector"}
-                      onButtonClick={() => {
-                        setState((prev) => ({
-                          ...prev,
-                          isAadharVerified: true,
-                        }));
-                        onSelect(
-                          config.key,
-                          {
-                            ...formData[config.key],
-                            [config.key]: generateAadhaar(),
-                            verificationType: "AADHAR",
-                            isFirstRender: true,
-                          },
-                          { shouldValidate: true }
-                        );
-                      }}
-                    />
-                    <Button
-                      className={"tertiary-button-selector"}
-                      label={t("VERIFY_ID_PROOF")}
-                      labelClassName={"tertiary-label-selector"}
-                      onButtonClick={() => {
-                        setState((prev) => ({
-                          ...prev,
-                          showModal: true,
-                          verificationType: "uploadIdProof",
-                        }));
-                      }}
-                    />
-                  </div>
+                  <React.Fragment>
+                    <div className="button-field">
+                      <Button
+                        variation={"secondary"}
+                        className={"secondary-button-selector"}
+                        label={t("VERIFY_AADHAR")}
+                        labelClassName={"secondary-label-selector"}
+                        onButtonClick={() => {
+                          setState((prev) => ({
+                            ...prev,
+                            isAadharVerified: true,
+                          }));
+                          onSelect(
+                            config.key,
+                            {
+                              ...formData[config.key],
+                              [config.key]: generateAadhaar(),
+                              verificationType: "AADHAR",
+                              isFirstRender: true,
+                            },
+                            { shouldValidate: true }
+                          );
+                        }}
+                      />
+                      <Button
+                        className={"tertiary-button-selector"}
+                        label={t("VERIFY_ID_PROOF")}
+                        labelClassName={"tertiary-label-selector"}
+                        onButtonClick={() => {
+                          setState((prev) => ({
+                            ...prev,
+                            showModal: true,
+                            verificationType: "uploadIdProof",
+                          }));
+                        }}
+                      />
+                    </div>
+                    {errors?.[config.key] && <span className="alert-error">{t(errors?.[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</span>}
+                  </React.Fragment>
                 )}
 
                 <InfoCard
