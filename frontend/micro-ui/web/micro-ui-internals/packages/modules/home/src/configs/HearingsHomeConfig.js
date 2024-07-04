@@ -799,3 +799,13 @@ export const TabFSOSearchConfig = {
     },
   ],
 };
+
+const rolesToConfigMapping = [
+  {
+    roles: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    config: TabLitigantSearchConfig,
+  },
+  {
+    role: [],
+  },
+];
