@@ -1323,13 +1323,51 @@ export const configsCaseSettlement = [
 export const configsIssueSummons = [
   {
     body: [
+      // {
+      //   inline: true,
+      //   label: "REF_APPLICATION_ID1",
+      //   isMandatory: false,
+      //   key: "refApplicationId",
+      //   type: "text",
+      //   populators: { name: "refApplicationId" },
+      // },
       {
-        inline: true,
-        label: "REF_APPLICATION_ID",
-        isMandatory: false,
-        key: "refApplicationId",
-        type: "text",
-        populators: { name: "refApplicationId" },
+        type: "date",
+        label: "Date for Hearing",
+        labelChildren: "OutlinedInfoIcon",
+        isMandatory: true,
+        populators: {
+          name: "date",
+          validation: {
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        key: "party",
+        type: "dropdown",
+        label: "Party to Summon",
+        disable: false,
+        populators: {
+          name: "Party",
+          optionsKey: "label",
+          error: "required ",
+          options: [{
+            value: "party1",
+            label: "party1",
+          },{
+            value:"party2",
+            label: "party2",
+          },{
+            value:"party3",
+            label: "party3",
+          }],
+        },
       },
       {
         inline: true,

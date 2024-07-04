@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
-function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft }) {
+function OrderReviewModal({ setShowReviewModal, t, order, setShowSignatureModal, handleSaveDraft }) {
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -21,7 +21,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
       actionCancelOnSubmit={handleSaveDraft}
       actionSaveLabel={t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
-        setShowsignatureModal(true);
+        setShowSignatureModal(true);
         setShowReviewModal(false);
       }}
       className={"review-order-modal"}
@@ -37,5 +37,6 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     </Modal>
   );
 }
+
 
 export default OrderReviewModal;

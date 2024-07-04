@@ -38,7 +38,7 @@ const GenerateOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [showsignatureModal, setShowsignatureModal] = useState(null);
+  // const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
@@ -73,8 +73,11 @@ const GenerateOrders = () => {
   );
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
-    { tenantId },
+  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = Digit.Hooks.orders.useSearchOrdersService(
+    { tenantId ,criteria:{
+        tenantId: tenantId,
+        //  filingNumber: filingNumber
+    }},
     { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,
     Boolean(filingNumber)
@@ -91,10 +94,13 @@ const GenerateOrders = () => {
       ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
       : applicationTypeConfig;
   }, [orderType]);
+  console.log("mfd", modifiedFormConfig);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
+    console.log("kkk", formData, formdata);
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
+      console.log(formdata, "fd");
     }
   };
 
@@ -172,6 +178,7 @@ const GenerateOrders = () => {
   };
 
   const handleSaveDraft = () => {
+    alert(("save draaft"))
     handleUpdateOrder({
       action: CaseWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
@@ -188,19 +195,24 @@ const GenerateOrders = () => {
   };
 
   const handleDeleteOrder = () => {
+    setDeleteOrderIndex(null);
     handleUpdateOrder({
       action: CaseWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
       orderType: orderList[deleteOrderIndex].orderType,
+    }).then(()=>{
+      alert("uu")
+      console.log("okokokokokok");
     });
     selectedOrder((prev) => {
       prev == deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
-    setDeleteOrderIndex(null);
   };
 
-  const handleReviewOrder = () => {
-    handleSaveDraft();
+  const handleReviewOrder = (data) => {
+    console.log(data,"form data ");
+    // handleSaveDraft();
+    alert("ok")
     setShowReviewModal(true);
   };
 
@@ -217,6 +229,7 @@ const GenerateOrders = () => {
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
+  console.log(orderList, "ol");
 
   return (
     <div style={{ display: "flex", gap: "5%", marginBottom: "200px" }}>
@@ -253,19 +266,19 @@ const GenerateOrders = () => {
       </div>
       <div style={{ minWidth: "70%" }}>
         {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
-        {orderList?.length > 0 && (
-          <FormComposerV2
-            key={selectedOrder}
-            label={t("REVIEW_ORDER")}
-            config={modifiedFormConfig}
-            defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
-            onFormValueChange={onFormValueChange}
-            onSubmit={handleReviewOrder}
-            onSecondayActionClick={handleSaveDraft}
-            secondaryLabel={t("SAVE_AS_DRAFT")}
-            showSecondaryLabel={true}
-          />
-        )}
+        {/* {orderList?.length > 0 && ( */}
+        <FormComposerV2
+          key={selectedOrder}
+          label={t("REVIEW_ORDER")}
+          config={modifiedFormConfig}
+          defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
+          onFormValueChange={onFormValueChange}
+          onSubmit={handleReviewOrder}
+          onSecondayActionClick={handleSaveDraft}
+          secondaryLabel={t("SAVE_AS_DRAFT")}
+          showSecondaryLabel={true}
+        />
+        {/* )} */}
       </div>
       {deleteOrderIndex !== null && (
         <OrderDeleteModal t={t} deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
@@ -275,11 +288,11 @@ const GenerateOrders = () => {
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
-          setShowsignatureModal={setShowsignatureModal}
+          setShowSignatureModal={setShowSignatureModal}
           handleSaveDraft={handleSaveDraft}
         />
       )}
-      {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
+      {showSignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
       {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
