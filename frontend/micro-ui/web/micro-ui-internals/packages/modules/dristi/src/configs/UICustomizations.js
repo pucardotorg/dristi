@@ -364,12 +364,14 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...("sortBy" in additionalDetails && {
-            ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
             [additionalDetails.sortBy]: undefined,
           }),
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
           },
         },
       ];
