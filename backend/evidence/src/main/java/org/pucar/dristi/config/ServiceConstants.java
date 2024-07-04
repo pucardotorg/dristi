@@ -60,6 +60,15 @@ public class ServiceConstants {
 	public static final String DEPOSITION = "DEPOSITION";
 	public static final String ACCUSED = "ACCUSED";
 	public static final String COURT = "COURT";
-
+	public static final String CASE_EXCEPTION = "CASE_EXCEPTION";
+	public static final String ORDER_EXCEPTION = "ORDER_EXCEPTION";
+	public static final String APPLICATION_EXCEPTION = "APPLICATION_EXCEPTION";
+	public static final String HEARING_EXCEPTION = "HEARING_EXCEPTION";
+	public static final String EVIDENCE_UPDATE_EXCEPTION= "EVIDENCE_UPDATE_EXCEPTION";
+	public static final String EVIDENCE_SEARCH_EXCEPTION= "EVIDENCE_SEARCH_EXCEPTION";
+	public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+	public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
+	public static final String ERROR_WHILE_FETCHING_FROM_ORDER = "ERROR_WHILE_FETCHING_FROM_ORDER_SERVICE";
+	public static final String ERROR_WHILE_FETCHING_FROM_HEARING = "ERROR_WHILE_FETCHING_FROM_HEARING";
 
 }

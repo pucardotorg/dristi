@@ -51,7 +51,7 @@
                         preparedStmtList,
                         evidenceSearchCriteria.getId(),
                         evidenceSearchCriteria.getCaseId(),
-                        evidenceSearchCriteria.getApplicationId(),
+                        evidenceSearchCriteria.getApplicationNumber(),
                         evidenceSearchCriteria.getHearing(),
                         evidenceSearchCriteria.getOrder(),
                         evidenceSearchCriteria.getSourceId(),

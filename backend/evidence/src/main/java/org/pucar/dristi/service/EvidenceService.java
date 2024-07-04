@@ -51,7 +51,7 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            if(body.getArtifact().getArtifactType().equals(DEPOSITION)) {
+            if(body.getArtifact().getArtifactType() != null && body.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(body);
                 producer.push(config.getEvidenceCreateTopic(), body);
             }
@@ -87,13 +87,13 @@ public class EvidenceService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.toString());
+            throw new CustomException(EVIDENCE_SEARCH_EXCEPTION,e.toString());
         }
     }
 
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
         try {
-            Artifact existingApplication = validateExistingApplication(evidenceRequest);
+            Artifact existingApplication = validateExistingEvidence(evidenceRequest);
 
             // Update workflow
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
@@ -101,7 +101,7 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            if(evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
+            if(evidenceRequest.getArtifact().getArtifactType() != null &&evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(evidenceRequest);
                 enrichBasedOnStatus(evidenceRequest);
                 producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
@@ -119,16 +119,16 @@ public class EvidenceService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating evidence", e);
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.toString());
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error occurred while updating evidence: " + e.toString());
         }
     }
 
-    Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
+    Artifact validateExistingEvidence(EvidenceRequest evidenceRequest) {
         try {
-            return validator.validateApplicationExistence(evidenceRequest);
+            return validator.validateEvidenceExistence(evidenceRequest);
         } catch (Exception e) {
             log.error("Error validating existing application", e);
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.toString());
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error validating existing application: " + e.toString());
         }
     }
 

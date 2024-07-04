@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 public class EvidenceSearchCriteria {
     private String id;
     private String caseId;
-    private String applicationId;
+    private String applicationNumber;
     private String hearing;
     private String order;
     private String sourceId;
@@ -41,12 +41,12 @@ public class EvidenceSearchCriteria {
         this.caseId = caseId;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getApplicationNumber() {
+        return applicationNumber;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public String getHearing() {
