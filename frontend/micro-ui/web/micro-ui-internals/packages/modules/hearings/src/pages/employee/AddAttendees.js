@@ -1,8 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import { hearingService } from "../../../../hearings/src/hooks/services/index";
-const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingData }) => {
+import AddParty from "./AddParty";
+const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingData,setAddPartyModal,handleModal }) => {
   const [formError, setFormError] = useState("");
+
+  const onClickAddWitness = ()=>{
+    handleModal();
+    setAddPartyModal(true);
+  }
 
   const onFormSubmit = async (data) => {
     const onlineAttendees = data.onlineAttendees || [];
@@ -11,6 +17,7 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
     const onlineIds = onlineAttendees.map((a) => a.value);
     const offlineIds = offlineAttendees.map((a) => a.value);
     const duplicateIds = onlineIds.filter((id) => offlineIds.includes(id));
+
 
     if (duplicateIds.length > 0) {
       setFormError("Attendees cannot be selected for both online and offline.");
@@ -36,6 +43,7 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
     handleAttendees();
     setFormError("");
   };
+  
   const formConfig = [
     {
       isMandatory: true,
@@ -92,6 +100,7 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
         onSubmit={onFormSubmit}
         label="Submit"
       />
+      <Button label={"Add Party"} onButtonClick={onClickAddWitness}></Button>
     </div>
   );
 };
