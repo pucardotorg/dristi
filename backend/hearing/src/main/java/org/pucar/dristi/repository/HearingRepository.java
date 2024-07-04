@@ -43,14 +43,14 @@ public class HearingRepository {
     }
 
 
-    public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
 
         try {
             List<Hearing> hearingList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String hearingQuery;
-            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenentId, fromDate, toDate, limit, offset, sortBy);
+            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
             log.info("Final hearing list query: {}", hearingQuery);
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
