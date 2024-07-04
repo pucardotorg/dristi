@@ -79,7 +79,7 @@ public class Application   {
 
         @JsonProperty("issuedBy")
 
-                private Object issuedBy = null;
+                private IssuedBy issuedBy = null;
 
         @JsonProperty("status")
           @NotNull
