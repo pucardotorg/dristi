@@ -1,20 +1,22 @@
 package org.pucar.dristi.repository.rowMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.IssuedBy;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+@Slf4j
 
 public class ApplicationRowMapperTest {
     private ResultSet resultSet;
@@ -110,4 +112,43 @@ public class ApplicationRowMapperTest {
 
             assertThrows(CustomException.class, () -> applicationRowMapper.stringToList(str));
         }
+
+    @Test
+    public void testGetObjectFromJsonWithValidJson() {
+        String json = "{\"benchId\":\"123\",\"judgeId\":[\"550e8400-e29b-41d4-a716-446655440000\"],\"courtId\":\"456\"}";
+
+        IssuedBy expected = IssuedBy.builder()
+                .benchId("123")
+                .judgeId(Collections.singletonList(UUID.fromString("550e8400-e29b-41d4-a716-446655440000")))
+                .courtId("456")
+                .build();
+
+        IssuedBy result = applicationRowMapper.getObjectFromJson(json, new TypeReference<IssuedBy>() {});
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testGetObjectFromJsonWithNullJson() {
+        IssuedBy expected = new IssuedBy(); // Expecting an empty IssuedBy object
+
+        IssuedBy result = applicationRowMapper.getObjectFromJson(null, new TypeReference<IssuedBy>() {});
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testGetObjectFromJsonWithEmptyJson() {
+        IssuedBy expected = new IssuedBy(); // Expecting an empty IssuedBy object
+
+        IssuedBy result = applicationRowMapper.getObjectFromJson("", new TypeReference<IssuedBy>() {});
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testGetObjectFromJsonWithInvalidJson() {
+        String json = "{\"benchId\":\"123\",\"judgeId\":[\"invalid-uuid\"],\"courtId\":\"456\"}"; // Invalid UUID
+
+        assertThrows(CustomException.class, () -> {
+            applicationRowMapper.getObjectFromJson(json, new TypeReference<IssuedBy>() {});
+        });
+    }
 }
