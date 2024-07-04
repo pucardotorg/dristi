@@ -838,24 +838,25 @@ const JoinCaseHome = ({ t }) => {
   ];
 
   useEffect(() => {
-    setCaseInfo([
-      {
-        key: "CASE_CATEGORY",
-        value: caseDetails?.caseCategory,
-      },
-      {
-        key: "CASE_TYPE",
-        value: caseDetails.caseType,
-      },
-      {
-        key: "SUBMITTED_ON",
-        value: caseDetails?.filingDate,
-      },
-      {
-        key: "CASE_STAGE",
-        value: caseDetails?.stage,
-      },
-    ]);
+    if (caseDetails?.caseCategory)
+      setCaseInfo([
+        {
+          key: "CASE_CATEGORY",
+          value: caseDetails?.caseCategory,
+        },
+        {
+          key: "CASE_TYPE",
+          value: caseDetails.caseType,
+        },
+        {
+          key: "SUBMITTED_ON",
+          value: caseDetails?.filingDate,
+        },
+        {
+          key: "CASE_STAGE",
+          value: caseDetails?.stage,
+        },
+      ]);
   }, [caseDetails]);
 
   const handleNavigate = (path) => {
@@ -1124,7 +1125,13 @@ const JoinCaseHome = ({ t }) => {
             } else if (step === 4 && userType === "Litigant") setStep(step - 2);
             else setStep(step - 1);
           }}
-          actionSaveLabel={roleOfNewAdvocate === "I’m a supporting advocate" && step === 2 ? t("GOT_IT_TEXT") : t("PROCEED_TEXT")}
+          actionSaveLabel={
+            roleOfNewAdvocate === "I’m a supporting advocate" && step === 2
+              ? t("GOT_IT_TEXT")
+              : userType === "Litigant" && step === 0 && caseInfo.length === 0
+              ? "Search"
+              : t("PROCEED_TEXT")
+          }
           actionSaveOnSubmit={onProceed}
           formId="modal-action"
           headerBarMain={<Heading label={t("JOIN_A_CASE")} />}
