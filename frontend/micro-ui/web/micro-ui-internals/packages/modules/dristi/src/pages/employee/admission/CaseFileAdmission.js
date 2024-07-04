@@ -40,7 +40,7 @@ function CaseFileAdmission({ t, path }) {
   );
   const { data: hearingResponse } = useGetHearings(
     {
-      hearing: { tenantId },
+      criteria: { tenantId },
     },
     { applicationNumber: "", cnrNumber: "" },
     "dristi",
