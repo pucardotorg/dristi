@@ -326,11 +326,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     const dataErrors = sectionValue?.form?.[index];
                     const prevDataErrors = input?.prevErrors?.form?.[index] || {};
                     const titleHeading = input.name === "chequeDetails" ? true : false;
-                    const updatedConfig = input?.config?.filter((config) => {
-                      if (!config?.dependentOn || !config?.dependentValue) {
+                    const updatedConfig = input?.config?.filter((inputConfig) => {
+                      if (!inputConfig?.dependentOn || !inputConfig?.dependentValue) {
                         return true;
                       } else {
-                        if (extractValue(item.data, config?.dependentOn) === config?.dependentValue) {
+                        if (extractValue(item.data, inputConfig?.dependentOn) === inputConfig?.dependentValue) {
                           return true;
                         }
                         return false;
