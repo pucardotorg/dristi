@@ -1,7 +1,6 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -15,43 +14,33 @@ import java.time.LocalDate;
 public class HearingCriteria {
 
     @JsonProperty("hearingId")
-    @Valid
     private String hearingId = null;
 
     @JsonProperty("cnrNumber")
-    @Valid
     private String cnrNumber = null;
 
     @JsonProperty("filingNumber")
-    @Valid
     private String filingNumber = null;
 
     @JsonProperty("tenantId")
-    @Valid
     private String tenantId = null;
 
     @JsonProperty("applicationNumber")
-    @Valid
     private String applicationNumber = null;
 
     @JsonProperty("fromDate")
-    @Valid
     private LocalDate fromDate = null;
 
     @JsonProperty("toDate")
-    @Valid
     private LocalDate toDate = null;
 
     @JsonProperty("limit")
-    @Valid
     private Integer limit = null;
 
     @JsonProperty("offset")
-    @Valid
     private Integer offset = null;
 
     @JsonProperty("sortBy")
-    @Valid
     private String sortBy = null;
 
 }
