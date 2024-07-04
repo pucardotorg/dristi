@@ -117,7 +117,6 @@ const ViewPaymentDetails = ({ location, match }) => {
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
           totalAmountPaid: 2000,
-          ...(additionDetails && { transactionNumber: additionDetails }),
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
         },

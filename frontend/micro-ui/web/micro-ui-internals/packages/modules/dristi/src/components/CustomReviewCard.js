@@ -6,6 +6,7 @@ function CustomReviewCard({
   config,
   data,
   isScrutiny,
+  isJudge,
   t,
   dataIndex,
   handleOpenPopup,
@@ -34,6 +35,7 @@ function CustomReviewCard({
             data={data}
             handleOpenPopup={handleOpenPopup}
             isScrutiny={isScrutiny}
+            isJudge={isJudge}
             titleIndex={titleIndex}
             dataIndex={dataIndex}
             name={input.name}
