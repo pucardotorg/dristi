@@ -146,9 +146,9 @@ public class ApplicationRowMapperTest {
     @Test
     public void testGetObjectFromJsonWithInvalidJson() {
         String json = "{\"benchId\":\"123\",\"judgeId\":[\"invalid-uuid\"],\"courtId\":\"456\"}"; // Invalid UUID
-
+        TypeReference<IssuedBy> tRef = new TypeReference<IssuedBy>() {};
         assertThrows(CustomException.class, () -> {
-            applicationRowMapper.getObjectFromJson(json, new TypeReference<IssuedBy>() {});
+            applicationRowMapper.getObjectFromJson(json, tRef);
         });
     }
 }
