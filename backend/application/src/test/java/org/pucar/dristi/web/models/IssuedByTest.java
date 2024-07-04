@@ -28,9 +28,9 @@ public class IssuedByTest {
 
         IssuedBy issuedBy = new IssuedBy(benchId, judgeId, courtId);
 
-        assertThat(issuedBy.getBenchId()).isEqualTo(benchId);
-        assertThat(issuedBy.getJudgeId()).isEqualTo(judgeId);
-        assertThat(issuedBy.getCourtId()).isEqualTo(courtId);
+        assertEquals(issuedBy.getBenchId(), benchId);
+        assertEquals(issuedBy.getJudgeId(), judgeId);
+        assertEquals(issuedBy.getCourtId(), courtId);
     }
 
     @Test
@@ -45,9 +45,9 @@ public class IssuedByTest {
                 .courtId(courtId)
                 .build();
 
-        assertThat(issuedBy.getBenchId()).isEqualTo(benchId);
-        assertThat(issuedBy.getJudgeId()).isEqualTo(judgeId);
-        assertThat(issuedBy.getCourtId()).isEqualTo(courtId);
+        assertEquals(issuedBy.getBenchId(), benchId);
+        assertEquals(issuedBy.getJudgeId(), judgeId);
+        assertEquals(issuedBy.getCourtId(), courtId);
     }
 
     @Test
