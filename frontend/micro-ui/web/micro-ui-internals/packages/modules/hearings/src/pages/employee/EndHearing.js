@@ -2,6 +2,7 @@ import { CardText, Modal, CloseSvg } from "@egovernments/digit-ui-react-componen
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { hearingService } from "../../hooks/services";
 import SummaryModal from "../../components/SummaryModal";
 
 const fieldStyle = { marginRight: 0 };
@@ -46,16 +47,9 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
-  const { data: hearingResponse, refetch } = Digit.Hooks.hearings.useUpdateHearingsService(
-    { hearing: { tenantId, hearing } },
-    { applicationNumber: "", cnrNumber: "" },
-    "dristi",
-    true
-  );
-
   const updateHearing = async () => {
     try {
-      await refetch();
+      await hearingService.updateHearing({ hearing: { tenantId, hearing } }, { applicationNumber: "", cnrNumber: "" });
     } catch (error) {
       console.error("Error updating hearing:", error);
     }

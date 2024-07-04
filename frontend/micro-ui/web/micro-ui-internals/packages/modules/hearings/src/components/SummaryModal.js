@@ -77,7 +77,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [transcript, setTranscript] = useState("");
 
-  const { data: latestText, refetch } = Digit.Hooks.hearings.useGetHearings(
+  const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
     { hearing: { tenantId } },
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
@@ -85,19 +85,10 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
   );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await refetch();
-        if (latestText) {
-          const hearingData = latestText?.HearingList[0];
-          setTranscript(hearingData?.transcript[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching hearing data:", error);
-      }
-    };
-
-    fetchData();
+    if (latestText) {
+      const hearingData = latestText?.HearingList[0];
+      setTranscript(hearingData?.transcript[0]);
+    }
   }, []);
 
   return (
