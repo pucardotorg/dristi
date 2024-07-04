@@ -23,8 +23,6 @@ const InsideHearingMainPage = () => {
   const textAreaRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [attendees, setAttendees] = useState([]);
-
-  const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
 
@@ -57,12 +55,6 @@ const InsideHearingMainPage = () => {
     !checkUserApproval("CASE_VIEWER")
   );
 
-  const { data: updatehearingResponse, refetch: updaterefetch } = Digit.Hooks.hearings.useUpdateHearingsService(
-    updatedHearingDetails,
-    "",
-    "dristi",
-    true
-  );
 
   useEffect(() => {
     if (latestText) {
@@ -82,7 +74,6 @@ const InsideHearingMainPage = () => {
         setSelectedWitness(processedAdditionalDetails.witnesss[0] || {});
         setWitnessDepositionText(processedAdditionalDetails.witnesss[0]?.deposition || "");
         setAttendees(hearingData.attendees || []);
-        setUpdatedHearingDetails(hearingData || []);
       }
     }
   }, [latestText]);
@@ -292,9 +283,7 @@ const InsideHearingMainPage = () => {
               handleModal={handleModal}
               attendees={attendees}
               setAttendees={setAttendees}
-              refetch={updaterefetch}
               hearing={hearing}
-              setUpdatedHearingDetails={setUpdatedHearingDetails}
             />
           )}
         </div>

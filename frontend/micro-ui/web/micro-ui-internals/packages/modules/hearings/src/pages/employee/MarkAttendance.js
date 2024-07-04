@@ -3,7 +3,7 @@ import { Button, CloseSvg, Modal } from "@egovernments/digit-ui-react-components
 import DisplayAttendees from "./DisplayAttendees";
 import AddAttendees from "./AddAttendees";
 
-const MarkAttendance = ({ handleModal, attendees = [], setAttendees, refetch, hearing = {}, setUpdatedHearingDetails }) => {
+const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearing = {} }) => {
   const partiesToAttend = attendees.length;
   const onlineAttendees = attendees.filter(attendee => attendee.type === 'ONLINE');
   const offlineAttendees = attendees.filter(attendee => attendee.type === 'OFFLINE');
@@ -50,10 +50,8 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, refetch, he
           <AddAttendees
             attendees={attendees}
             setAttendees={setAttendees}
-            refetch={refetch}
             handleAttendees={handleAttendees}
             hearingData={hearing}
-            setUpdatedHearingDetails={setUpdatedHearingDetails}
           />
         ) : (
           <DisplayAttendees
