@@ -1030,13 +1030,13 @@ function EFilingCases({ path }) {
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
                     modifiedFormComponent.withoutLabel = true;
+                    modifiedFormComponent.disableScrutinyHeader = true;
                     return [
                       {
                         type: "component",
                         component: "ScrutinyInfo",
                         key: `${key}Scrutiny`,
                         label: modifiedFormComponent.label,
-                        withoutLabel: true,
                         populators: {
                           scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
                         },

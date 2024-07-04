@@ -241,11 +241,13 @@ const CustomReviewCardRow = ({
         );
 
       case "amount":
+        let amountValue = extractValue(data, value);
+        amountValue = amountValue ? `₹${amountValue}` : t("CS_NOT_AVAILABLE");
         return (
           <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
               <div className="label">{t(label)}</div>
-              <div className="value"> {`₹${extractValue(data, value)}`} </div>
+              <div className="value"> {amountValue} </div>
               {showFlagIcon && (
                 <div
                   className="flag"
@@ -501,7 +503,7 @@ const CustomReviewCardRow = ({
                     ) : (
                       <FlagIcon isError={true} />
                     )}
-                    {`${t(error.fileName) || ""} : ${error.FSOError}`}
+                    {`${error.fileName ? t(error.fileName) + " : " : ""}${error.FSOError}`}
                   </div>
                 );
               })}
