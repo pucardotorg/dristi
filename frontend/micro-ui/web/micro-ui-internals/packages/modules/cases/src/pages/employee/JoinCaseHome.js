@@ -10,9 +10,9 @@ import {
   TextInput,
 } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { InfoCard } from "@egovernments/digit-ui-components";
+import { ApiDropdown, InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
@@ -69,6 +69,35 @@ const JoinHomeLocalisation = {
   CASE_NO_ADMITTED_STATUS: "The above case doesn't have admitted status",
 };
 
+const barRegistrationSerachConfig = {
+  dependentKey: { isAdvocateRepresenting: ["showForm"] },
+  head: "CS_ADVOCATE_BASIC_DETAILS",
+  body: [
+    {
+      type: "apidropdown",
+      key: "advocateBarRegistrationNumber",
+      label: "CS_BAR_REGISTRATION",
+      populators: {
+        allowMultiSelect: false,
+        name: "advocateBarRegNumberWithName",
+        isMandatory: true,
+        validation: {},
+        masterName: "commonUiConfig",
+        moduleName: "getAdvocateNameUsingBarRegistrationNumber",
+        customfn: "getNames",
+        optionsKey: "barRegistrationNumber",
+        optionsCustomStyle: {
+          marginTop: "40px",
+          justifyContent: "space-between",
+          flexDirection: "row-reverse",
+          maxHeight: "200px",
+          overflowY: "scroll",
+        },
+      },
+    },
+  ],
+};
+
 const JoinCaseHome = ({ t }) => {
   const history = useHistory();
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
@@ -80,6 +109,7 @@ const JoinCaseHome = ({ t }) => {
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(0);
   const [caseNumber, setCaseNumber] = useState("");
+  const caseNumberRef = useRef(caseNumber);
   const [caseDetails, setCaseDetails] = useState({});
   const [userType, setUserType] = useState("");
   const [barRegNumber, setBarRegNumber] = useState("");
@@ -94,7 +124,7 @@ const JoinCaseHome = ({ t }) => {
 
   const [party, setParty] = useState("");
   const [validationCode, setValidationCode] = useState("");
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [errors, setErrors] = useState({});
   const [caseInfo, setCaseInfo] = useState([]);
   const [formData, setFormData] = useState({});
@@ -133,14 +163,14 @@ const JoinCaseHome = ({ t }) => {
 
   useEffect(() => {
     if (step === 0) {
-      if (caseNumber !== "" && caseNumber.length > 1) {
-        setIsDisabled(false);
-        setErrors({
-          ...errors,
-          caseNumber: undefined,
-        })
-      }
-      else setIsDisabled(true);
+      // if (caseNumber !== "" && caseNumber.length > 1) {
+      //   setIsDisabled(false);
+      //   setErrors({
+      //     ...errors,
+      //     caseNumber: undefined,
+      //   })
+      // }
+      // else setIsDisabled(true);
     } else if (step === 1) {
       if (
         (userType && userType === "Litigant" && selectedParty && representingYourself) ||
@@ -190,18 +220,26 @@ const JoinCaseHome = ({ t }) => {
       setIsDisabled(false);
       setErrors({
         ...errors,
-        caseNumber: {
-          message: "No case found",
-        }
+        caseNumber: undefined,
       })
-    } else setIsDisabled(true);
+    } else {
+      setIsDisabled(true);
+      if (caseNumber)
+        setErrors({
+          ...errors,
+          caseNumber: {
+            message: "INVALID_CASE_INFO_TEXT",
+          }
+        })
+    }
   }
 
-
   useEffect(() => {
-    if (caseNumber)
-      serarchCase(caseNumber);
-  }, [caseNumber])
+    const getData = setTimeout(() => {
+      serarchCase(caseNumber)
+    }, 500);
+    return () => clearTimeout(getData);
+  }, [caseNumber]);
 
   const fetchBasicUserInfo = async () => {
     const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
@@ -231,7 +269,6 @@ const JoinCaseHome = ({ t }) => {
     if (advocateResponse?.advocates[0]?.responseList?.length > 0) {
       setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
       setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
-      setIsDisabled(false);
       setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
       setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
       setBarDetails([
@@ -280,6 +317,7 @@ const JoinCaseHome = ({ t }) => {
                     if (str.length > 50) {
                       str = str.substring(0, 50);
                     }
+                    setIsDisabled(true);
                     setCaseNumber(str);
                   } else {
                     setCaseNumber("");
@@ -503,6 +541,22 @@ const JoinCaseHome = ({ t }) => {
                       {errors?.barRegNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
                       { }
                     </div>
+                    <ApiDropdown
+                      // props={props}
+                      populators={barRegistrationSerachConfig.body[0].populators}
+                      // formData={formData}
+                      // inputRef={props.ref}
+                      // errors={errors}
+                      t={t}
+                      label={barRegistrationSerachConfig.body[0].label}
+                      type={barRegistrationSerachConfig.body[0].type}
+                      // onBlur={props.onBlur}
+                      value={undefined}
+                      onChange={(e) => console.log('e', e)}
+                      config={barRegistrationSerachConfig.body[0].populators}
+                    // disable={barRegistrationSerachConfig.body[0]}
+                    // errorStyle={errors?.[populators.name]}
+                    />
                   </LabelFieldPair>
                   <CustomCaseInfoDiv t={t} data={barDetails} />
                   {userType === "Advocate" && (
@@ -696,6 +750,7 @@ const JoinCaseHome = ({ t }) => {
         value: caseDetails?.stage,
       },
     ]);
+    // setCaseNumber(caseDetails?.filingNumber)
   }, [caseDetails]);
 
   const handleNavigate = (path) => {
@@ -745,11 +800,11 @@ const JoinCaseHome = ({ t }) => {
           },
           {}
         );
-        if (response?.criteria[0]?.responseList?.length > 0) {
+        if (response?.criteria[0]?.responseList?.length === 1) {
           const caseData = response?.criteria[0]?.responseList[0];
           if (caseData?.status === 'CASE_ADMITTED') {
-
             setCaseDetails(response?.criteria[0]?.responseList[0]);
+            setCaseNumber(response?.criteria[0]?.responseList[0]?.filingNumber)
             setErrors({
               ...errors,
               caseNumber: undefined,
