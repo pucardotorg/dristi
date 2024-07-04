@@ -12,14 +12,14 @@ const TasksComponent = ({ taskType, setTaskType }) => {
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: taskType,
+          entityType: taskType?.code || "case",
         },
         limit: 10,
         offset: 0,
       },
     },
     params: { tenantId },
-    key: taskType,
+    key: taskType?.code,
     config: { cacheTime: 0, staleTime: Infinity, enable: Boolean(taskType.code && tenantId) },
   });
   if (isLoading) {
