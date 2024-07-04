@@ -137,6 +137,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popmoduleClassName={"send-case-back-modal"}
         >
           <FormComposerV2
             config={[stepItems[0]]}
