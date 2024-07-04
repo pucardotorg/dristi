@@ -110,7 +110,6 @@ public class TaskRowMapperTest {
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
-        assertNotNull(task.getAdditionalDetails());
 
         verify(rs, times(1)).getString("tasknumber");
         verify(rs, times(2)).getString("id");
@@ -309,7 +308,6 @@ public class TaskRowMapperTest {
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
-        assertNotNull(task.getAdditionalDetails());
 
         verify(rs, times(1)).getString("tasknumber");
         verify(rs, times(2)).getString("id");

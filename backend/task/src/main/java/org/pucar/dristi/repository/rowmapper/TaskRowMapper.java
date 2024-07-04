@@ -36,7 +36,6 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
         Map<String, Task> taskMap = new LinkedHashMap<>();
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("id");
                 Task task = taskMap.get(uuid);
