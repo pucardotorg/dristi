@@ -149,7 +149,7 @@ const MonthlyCalendar = () => {
 
       {showModal && (
         <DataProvider>
-          <PreHearingModal onCancel={closeModal} hearings={currentEvent.extendedProps.hearings} />
+          <PreHearingModal onCancel={closeModal} />
         </DataProvider>
       )}
     </div>

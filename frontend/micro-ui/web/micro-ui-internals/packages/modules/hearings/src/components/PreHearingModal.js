@@ -38,7 +38,7 @@ function PreHearingModal({ onCancel, hearings }) {
     borderRadius: "0.3rem",
   };
 
-  const onSubmit = () => {
+  const onRescheduleAllClick = () => {
     const contextPath = window?.contextPath || "";
     window.location.href = `/${contextPath}/employee/hearings/reschedule-hearing`;
   };
@@ -48,7 +48,6 @@ function PreHearingModal({ onCancel, hearings }) {
       headerBarEnd={<CloseBtn onClick={onCancel} />}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("Reschedule All Hearings")}
-      actionSaveOnSubmit={onSubmit}
       formId="modal-action"
       headerBarMain={<Heading label={t("Admission Hearings (34)")} />}
       className="pre-hearings"
@@ -62,7 +61,7 @@ function PreHearingModal({ onCancel, hearings }) {
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0" }}>
         <div> 24 May, 2024, 10:00 - 12:00 pm</div>
-        <Button style={{ width: "300px" }} onButtonClick={onSubmit} label="Reschedule All Hearings" variation={"secondary"} />
+        <Button onButtonClick={onRescheduleAllClick} label="Reschedule All Hearings" variation={"secondary"} />
       </div>
     </Modal>
   );
