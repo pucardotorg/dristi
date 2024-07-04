@@ -57,6 +57,7 @@ public class ApplicationRowMapperTest {
         Assertions.assertEquals(2, applications.size());
         Assertions.assertEquals("APP-001", applications.get(0).getApplicationNumber());
         Assertions.assertEquals("CN-002", applications.get(1).getCnrNumber());
+        Assertions.assertEquals("bench1", applications.get(0).getIssuedBy().getBenchId());
     }
     @Test
     public void testExtractDataWithSQLException() throws SQLException {
