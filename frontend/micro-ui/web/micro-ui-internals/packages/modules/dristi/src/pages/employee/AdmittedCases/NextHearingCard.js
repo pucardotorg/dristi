@@ -10,13 +10,14 @@ const NextHearingCard = ({ width }) => {
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
-    {},
     {
-      filingNumber: filingNumber,
-      cnrNumber: cnr,
-      applicationNumber: "",
-      tenantId: tenantId,
+      criteria: {
+        filingNumber: filingNumber,
+        cnrNumber: cnr,
+        tenantId: tenantId,
+      },
     },
+    {},
     cnr + filingNumber,
     true
   );
@@ -52,7 +53,7 @@ const NextHearingCard = ({ width }) => {
   };
 
   return (
-    hearingRes?.HearingList?.length !== 0 && (
+    hearingRes?.HearingList?.filter((hearing) => hearing.startTime > Date.now()).length !== 0 && (
       <Card
         style={{
           width: width,

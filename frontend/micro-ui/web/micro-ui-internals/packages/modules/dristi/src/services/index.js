@@ -127,6 +127,15 @@ export const DRISTIService = {
       params,
     });
   },
+  updateSubmissions: (data, params) => {
+    return Request({
+      url: Urls.dristi.submissionsUpdate,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
   createDemand: (data, params) =>
     Request({
       url: Urls.dristi.demandCreate,

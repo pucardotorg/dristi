@@ -49,6 +49,7 @@ const SubmissionReview = () => {
           additionalDetails: doc.additionalDetails,
         },
         comments: [],
+        applicationList: application,
       };
     });
     setDocumentSubmission(docObj);
@@ -150,6 +151,7 @@ const SubmissionReview = () => {
           comment={comment}
           setComment={setComment}
           userRoles={userRoles}
+          modalType={"Submissions"}
         />
       )}
     </React.Fragment>

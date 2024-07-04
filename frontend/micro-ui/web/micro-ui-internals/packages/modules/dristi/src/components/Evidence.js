@@ -1,7 +1,7 @@
 import React from "react";
 import { FactCheckIcon } from "../icons/svgIndex";
 
-export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
+export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
   const getDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
@@ -11,29 +11,29 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     return formattedDate;
   };
 
-  const docObj = rowData.documents.map((doc) => {
-    return {
-      status: rowData.workflow.action,
+  const docObj = [
+    {
+      status: rowData.workflow?.action,
       details: {
-        applicationType: rowData.applicationType,
-        applicationSentOn: getDate(parseInt(rowData.auditDetails.createdTime)),
-        sender: rowData.createdBy,
+        applicationType: rowData.artifactType,
+        applicationSentOn: getDate(parseInt(rowData.auditdetails.createdTime)),
+        sender: rowData.auditdetails.createdBy,
         additionalDetails: rowData.additionalDetails,
         applicationId: rowData.id,
         auditDetails: rowData.auditDetails,
       },
       applicationContent: {
         tenantId: rowData.tenantId,
-        fileStoreId: doc.fileStore,
-        id: doc.id,
-        documentType: doc.documentType,
-        documentUid: doc.documentUid,
-        additionalDetails: doc.additionalDetails,
+        fileStoreId: rowData.file?.fileStore,
+        id: rowData.file?.id,
+        documentType: rowData.file?.documentType,
+        documentUid: rowData.file?.documentUid,
+        additionalDetails: rowData.file?.additionalDetails,
       },
       comments: [],
-      applicationList: rowData,
-    };
-  });
+      artifactList: rowData,
+    },
+  ];
 
   return (
     <React.Fragment>

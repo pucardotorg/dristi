@@ -19,13 +19,14 @@ const CaseOverview = () => {
   const [currentOrder, setCurrentOrder] = useState({});
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
-    {},
     {
-      filingNumber: filingNumber,
-      cnrNumber: cnr,
-      applicationNumber: "",
-      tenantId: tenantId,
+      criteria: {
+        filingNumber: filingNumber,
+        cnrNumber: cnr,
+        tenantId: tenantId,
+      },
     },
+    {},
     cnr + filingNumber,
     true
   );
@@ -52,7 +53,7 @@ const CaseOverview = () => {
 
   console.log(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
 
-  return hearingRes?.HearingList?.length === 0 || ordersRes?.list?.length === 0 ? (
+  return hearingRes?.HearingList?.length === 0 && ordersRes?.list?.length === 0 ? (
     <div
       style={{
         display: "flex",
@@ -111,74 +112,83 @@ const CaseOverview = () => {
     </div>
   ) : (
     <React.Fragment>
-      <Card
-        style={{
-          width: "70%",
-          marginTop: "10px",
-        }}
-      >
-        <div
+      {hearingRes?.HearingList?.filter((hearing) => hearing.endTime < Date.now()).length !== 0 && (
+        <Card
           style={{
-            fontWeight: 700,
-            fontSize: "16px",
-            lineHeight: "18.75px",
-            color: "#231F20",
+            width: "70%",
+            marginTop: "10px",
           }}
         >
-          {`Previous Hearing - ${previousHearing?.hearingType.charAt(0).toUpperCase()}${previousHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
-        </div>
-        <hr style={{ border: "1px solid #FFF6E880" }} />
-        <div
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "16px",
+              lineHeight: "18.75px",
+              color: "#231F20",
+            }}
+          >
+            {`Previous Hearing - ${previousHearing?.hearingType.charAt(0).toUpperCase()}${previousHearing?.hearingType
+              .slice(1)
+              .toLowerCase()} Hearing`}
+          </div>
+          <hr style={{ border: "1px solid #FFF6E880" }} />
+          <div
+            style={{
+              padding: "10px",
+              color: "#505A5F",
+              fontWeight: 400,
+              fontSize: "16px",
+              lineHeight: "24px",
+            }}
+          >
+            {previousHearing?.transcript.map((transcript) => (
+              <div>{transcript}</div>
+            ))}
+          </div>
+        </Card>
+      )}
+      {ordersRes?.list?.length !== 0 && (
+        <Card
           style={{
-            padding: "10px",
-            color: "#505A5F",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "24px",
+            width: "70%",
+            marginTop: "10px",
           }}
         >
-          {previousHearing?.transcript.map((transcript) => (
-            <div>{transcript}</div>
-          ))}
-        </div>
-      </Card>
-      <Card
-        style={{
-          width: "70%",
-          marginTop: "10px",
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 700,
-            fontSize: "16px",
-            lineHeight: "18.75px",
-            color: "#231F20",
-          }}
-        >
-          Recent Orders
-        </div>
-        <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-          {ordersRes?.list?.slice(0, 5).map((order) => (
-            <div
-              style={{
-                padding: "12px 16px",
-                border: "1px solid #BBBBBD",
-                color: "#BBBBBD",
-                borderRadius: "4px",
-                width: "300px",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setShowReviewModal(true);
-                setCurrentOrder(order);
-              }}
-            >
-              {order?.orderType}
-            </div>
-          ))}
-        </div>
-      </Card>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "16px",
+              lineHeight: "18.75px",
+              color: "#231F20",
+            }}
+          >
+            Recent Orders
+          </div>
+          <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
+            {ordersRes?.list
+              ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
+              .slice(0, 5)
+              .map((order) => (
+                <div
+                  style={{
+                    padding: "12px 16px",
+                    border: "1px solid #BBBBBD",
+                    color: "#BBBBBD",
+                    borderRadius: "4px",
+                    width: "300px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setShowReviewModal(true);
+                    setCurrentOrder(order);
+                  }}
+                >
+                  {order?.orderType}
+                </div>
+              ))}
+          </div>
+        </Card>
+      )}
       {showReviewModal && (
         <OrderReviewModal
           t={t}

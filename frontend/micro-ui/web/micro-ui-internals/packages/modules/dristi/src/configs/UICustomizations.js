@@ -1,6 +1,7 @@
 import { ArrowDirection } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Evidence } from "../components/Evidence";
 import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
 
@@ -553,19 +554,18 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria, additionalDetails, "PREPROCESS");
+    // preProcess: (requestCriteria, additionalDetails) => {
+    //   console.log(requestCriteria, additionalDetails, "PREPROCESS");
 
-      return {
-        ...requestCriteria,
-        // config: {
-        //   ...requestCriteria,
-        //   select: (data) => {
-        //     return { ...data };
-        //   },
-        // },
-      };
-    },
+    //   return {
+    //     ...requestCriteria,
+    //     config: {
+    //       select: (data) => {
+    //         return { ...data };
+    //       },
+    //     },
+    //   };
+    // },
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
@@ -577,6 +577,18 @@ export const UICustomizations = {
             userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
             row.workflow.action !== "PENDINGREVIEW" ? (
             <OwnerColumn rowData={row} colData={column} t={t} />
+          ) : (
+            ""
+          );
+        case "File":
+          console.log("document", row);
+          console.log("document Column", column);
+          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
+            row.workflow.action !== "PENDINGREVIEW" ? (
+            <Evidence rowData={row} colData={column} t={t} />
           ) : (
             ""
           );
@@ -598,6 +610,8 @@ export const UICustomizations = {
           return <OrderName rowData={row} colData={column} value={value} />;
         case "Submission Name":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Document Type":
+          return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         default:
           break;
       }

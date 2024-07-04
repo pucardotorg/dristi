@@ -99,6 +99,51 @@ const AdmittedCases = () => {
               },
             },
           }
+        : tabConfig.label === "Hearings"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
+                },
+              },
+            },
+          }
+        : tabConfig.label === "Documents"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  caseId: caseId,
+                  tenantId: tenantId,
+                },
+              },
+            },
+            sections: {
+              ...tabConfig.sections,
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    return column.label === "File" || column.label === "Document Type"
+                      ? {
+                          ...column,
+                          clickFunc: docSetFunc,
+                        }
+                      : column;
+                  }),
+                },
+              },
+            },
+          }
         : tabConfig.label === "Submissions"
         ? {
             ...tabConfig,
@@ -219,6 +264,7 @@ const AdmittedCases = () => {
       <div className="inbox-search-wrapper">
         {/* Pass defaultValues as props to InboxSearchComposer */}
         <InboxSearchComposer
+          key={config.label}
           configs={config}
           defaultValues={defaultValues}
           showTab={false}
@@ -244,6 +290,7 @@ const AdmittedCases = () => {
           comment={comment}
           setComment={setComment}
           userRoles={userRoles}
+          modalType={tabData.filter((tab) => tab.active)[0].label}
         />
       )}
       {showReviewModal && (

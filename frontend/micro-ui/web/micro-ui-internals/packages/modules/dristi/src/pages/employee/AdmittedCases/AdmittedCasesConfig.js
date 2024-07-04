@@ -383,6 +383,14 @@ export const TabSearchconfig = {
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
+            customDefaultPagination: {
+              searchForm: {},
+              filterForm: {},
+              tableForm: {
+                limit: 10,
+                offset: 0,
+              },
+            },
             columns: [
               {
                 label: "Submission Name",
@@ -425,16 +433,19 @@ export const TabSearchconfig = {
       },
     },
     {
-      label: "History",
+      label: "Documents",
       type: "search",
       apiDetails: {
-        serviceName: "/individual/v1/_search",
+        serviceName: "/evidence/artifacts/v1/_search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
         requestBody: {
           apiOperation: "SEARCH",
           Individual: {
+            tenantId: Digit.ULBService.getCurrentTenantId(),
+          },
+          criteria: {
             tenantId: Digit.ULBService.getCurrentTenantId(),
           },
         },
@@ -455,58 +466,120 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "Applicant name ",
+                label: "Type",
                 isMandatory: false,
-                key: "individualName",
-                type: "text",
+                key: "type",
+                type: "dropdown",
                 populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
+                  name: "type",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "CaseType",
+                    moduleName: "Case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
                 },
               },
               {
-                label: "Phone number",
+                label: "Stage",
                 isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
               },
               {
-                label: "Individual Id ",
+                label: "Status",
                 isMandatory: false,
-                type: "text",
-                disable: false,
+                key: "status",
+                type: "dropdown",
                 populators: {
-                  name: "individualId",
+                  name: "status",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Status",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Owner",
+                isMandatory: false,
+                key: "owner",
+                type: "dropdown",
+                populators: {
+                  name: "owner",
+                },
+              },
+              {
+                label: "Order ID",
+                isMandatory: false,
+                key: "orderId",
+                type: "text",
+                populators: {
+                  name: "orderId",
                 },
               },
             ],
           },
 
-          show: false,
+          show: true,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
+            customDefaultPagination: {
+              searchForm: {},
+              filterForm: {},
+              tableForm: {
+                limit: 10,
+                offset: 0,
+              },
+            },
             columns: [
               {
-                label: "IndividualID",
-                jsonPath: "individualId",
+                label: "Document Type",
+                jsonPath: "artifactType",
+                additionalCustomization: true,
               },
               {
-                label: "Name",
-                jsonPath: "name.givenName",
+                label: "Document Id",
+                jsonPath: "id",
               },
               {
-                label: "Address",
-                jsonPath: "address.locality.code",
+                label: "Source",
+                jsonPath: "sourceType",
+              },
+              {
+                label: "Status",
+                jsonPath: "status",
+              },
+              {
+                label: "Evidence Number",
+                jsonPath: "evidenceNumber",
+              },
+              {
+                label: "Date Added",
+                jsonPath: "auditdetails.createdTime",
+                additionalCustomization: true,
+              },
+              {
+                label: "File",
+                jsonPath: "file",
+                additionalCustomization: true,
               },
             ],
 
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "artifacts",
           },
           show: true,
         },
@@ -535,45 +608,8 @@ export const TabSearchconfig = {
       },
       sections: {
         search: {
-          uiConfig: {
-            formClassName: "custom-both-clear-search",
-            primaryLabel: "ES_COMMON_SEARCH",
-            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-            minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
-            fields: [
-              {
-                label: "Applicant name ",
-                isMandatory: false,
-                key: "individualName",
-                type: "text",
-                populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
-                },
-              },
-              {
-                label: "Phone number",
-                isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
-              },
-              {
-                label: "Individual Id ",
-                isMandatory: false,
-                type: "text",
-                disable: false,
-                populators: {
-                  name: "individualId",
-                },
-              },
-            ],
-          },
-
-          show: true,
+          uiConfig: {},
+          show: false,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
