@@ -50,6 +50,7 @@ function AdmissionActionModal({
   tenantId,
   // hearingDetails,
   handleScheduleNextHearing,
+  filingNumber,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);

@@ -7,7 +7,7 @@ import useGetHearings from "../hooks/dristi/useGetHearings";
 function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
+    { criteria: { tenantId }, tenantId },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
