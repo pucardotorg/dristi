@@ -771,6 +771,20 @@ function EFilingCases({ path }) {
                   return field === body?.key;
                 });
               }
+
+              //isMandatory
+              if (
+                body?.isDocDependentOn &&
+                body?.isDocDependentKey &&
+                data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey] &&
+                body?.component === "SelectCustomDragDrop"
+              ) {
+                body.isMandatory = true;
+              } else if (body?.isDocDependentOn && body?.isDocDependentKey && body?.component === "SelectCustomDragDrop") {
+                body.isMandatory = false;
+              }
+
+              //withoutLabelFieldPair
               if (body?.isDocDependentOn && body?.isDocDependentKey && !data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey]) {
                 body.withoutLabelFieldPair = true;
               } else {
@@ -1515,8 +1529,14 @@ function EFilingCases({ path }) {
         cases: {
           ...caseDetails,
           caseTitle:
-            caseDetails?.caseTitle ||
-            `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+            (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+              `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+                caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+                caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+              }`) ||
+            caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
