@@ -72,60 +72,13 @@ paths:
       summary: Get hearing requests
       description: |
         Gets the list of hearing requests for a particular ULB based on search criteria.
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-        - name: filingNumber
-          in: query
-          description: Search by filingNumber
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: Search by tenantId of case request
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose hearing(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: applicationNumber
-          in: query
-          description: the applicationNumber of the case whose hearing(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: fromDate
-          in: query
-          description: search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved
-          schema:
-            type: string
-            format: date
-        - name: toDate
-          in: query
-          description: search hearings within date range
-          schema:
-            type: string
-            format: date
-        - name: limit
-          in: query
-          description: No of record return
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset
-          schema:
-            type: integer
-        - name: sortBy
-          in: query
-          description: sorted by ascending by default if this parameter is not provided
-          schema:
-            type: string
+      requestBody:
+        description: Details for the search hearing(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingSearchRequest'
+        required: true
       responses:
         "200":
           description: ResponseInfo with hearing(s) search successfully
@@ -195,6 +148,41 @@ paths:
 
 components:
   schemas:
+    HearingSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/HearingCriteria'
+
+      HearingCriteria:
+        type: object
+        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+        properties:
+          filingNumber:
+            type: string
+          cnrNumber:
+            type: string
+          applicationNumber:
+            type: string
+          hearingId:
+            type: string
+          tenantId:
+            type: string
+          fromDate:
+            type: string
+            format: date
+          toDate:
+            type: string
+            format: date
+          limit:
+            type: integer
+          offset:
+            type: integer
+          sortBy:
+            type: string
+
     HearingRequest:
       type: object
       properties:
