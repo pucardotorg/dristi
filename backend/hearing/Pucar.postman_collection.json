@@ -1122,97 +1122,6 @@
 					"response": []
 				},
 				{
-					"name": "Search hearing",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"506235c5-cfe1-450f-aac4-2af93a37fc9d\",\n        \"userInfo\": {\n            \"id\": 1779,\n            \"userName\": \"hearinguser\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_CREATOR\",\n                    \"name\": \"HEARING_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_SCHEDULER\",\n                    \"name\": \"HEARING_SCHEDULER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_DATE_REQUESTOR\",\n                    \"name\": \"HEARING_DATE_REQUESTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_START\",\n                    \"name\": \"HEARING_START\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_CLOSER\",\n                    \"name\": \"HEARING_CLOSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_APPROVER\",\n                    \"name\": \"HEARING_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"createdDate\": \"12-06-2024 13:29:45\",\n            \"lastModifiedDate\": \"12-06-2024 13:29:45\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"10-09-2024 13:29:45\"\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n   \n}"
-						},
-						"url": {
-							"raw": "https://dristi-dev.pucar.org/hearing/v1/search?applicationNumber=&cnrNumber&hearingId=HEARING-ID-2024-06-12-000029&tenantId=pg&fromDate=2024-05-01&toDate=2024-06-30&limit=10&offset=0",
-							"protocol": "https",
-							"host": [
-								"dristi-dev",
-								"pucar",
-								"org"
-							],
-							"path": [
-								"hearing",
-								"v1",
-								"search"
-							],
-							"query": [
-								{
-									"key": "applicationNumber",
-									"value": ""
-								},
-								{
-									"key": "cnrNumber",
-									"value": null
-								},
-								{
-									"key": "hearingId",
-									"value": "HEARING-ID-2024-06-12-000029"
-								},
-								{
-									"key": "tenantId",
-									"value": "pg"
-								},
-								{
-									"key": "filingNumber",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "fromDate",
-									"value": "2024-05-01"
-								},
-								{
-									"key": "toDate",
-									"value": "2024-06-30"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								},
-								{
-									"key": "offset",
-									"value": "0"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update hearing No Workflow",
 					"event": [
 						{
@@ -1259,6 +1168,104 @@
 								"hearing",
 								"v1",
 								"update_transcript_additional_attendees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search hearing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"61a5861c-b56a-4e04-8a84-8466969146a6\",\n        \"userInfo\": {\n            \"id\": 1779,\n            \"userName\": \"hearinguser\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_CREATOR\",\n                    \"name\": \"HEARING_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_SCHEDULER\",\n                    \"name\": \"HEARING_SCHEDULER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_DATE_REQUESTOR\",\n                    \"name\": \"HEARING_DATE_REQUESTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_START\",\n                    \"name\": \"HEARING_START\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_CLOSER\",\n                    \"name\": \"HEARING_CLOSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HEARING_APPROVER\",\n                    \"name\": \"HEARING_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"createdDate\": \"12-06-2024 13:29:45\",\n            \"lastModifiedDate\": \"12-06-2024 13:29:45\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"10-09-2024 13:29:45\"\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"criteria\":{\n        // \"applicationNumber\": null,\n        // \"cnrNumber\": null,\n        // \"hearingId\": \"HEARING-ID-2024-06-14-000032\"\n        // ,\n        // \"filingNumber\":null,\n        // \"tenantId\": \"pg\",\n        // \"fromDate\": \"2024-05-01\",\n        // \"toDate\": \"2024-06-30\"\n        // \"limit\": 10,\n        // \"offset\": 0\n    }\n   \n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/hearing/v1/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearing",
+								"v1",
+								"search"
+							],
+							"query": [
+								{
+									"key": "applicationNumber",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "cnrNumber",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "hearingId",
+									"value": "HEARING-ID-2024-06-12-000029",
+									"disabled": true
+								},
+								{
+									"key": "tenantId",
+									"value": "pg",
+									"disabled": true
+								},
+								{
+									"key": "filingNumber",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2024-06-01",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2024-06-30",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								}
 							]
 						}
 					},
