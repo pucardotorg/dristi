@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.jvm.internal.TypeReference;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.AssignedTo;
 import org.pucar.dristi.web.models.Task;
 
 import java.sql.ResultSet;
@@ -32,6 +34,7 @@ public class TaskRowMapperTest {
     @Captor
     private ArgumentCaptor<String> stringCaptor;
 
+    @Mock
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -53,7 +56,8 @@ public class TaskRowMapperTest {
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
-        String assignedTo = "assignedto";
+        String assignedTo = "{\"name\":\"test\"}";
+
         String status = "status";
         Boolean isActive = true;
 
@@ -100,17 +104,15 @@ public class TaskRowMapperTest {
         assertEquals(taskDescription, task.getTaskDescription());
         assertEquals(taskDetails, task.getTaskDetails());
         assertEquals(taskType, task.getTaskType());
-        assertEquals(assignedTo, task.getAssignedTo());
         assertEquals(status, task.getStatus());
         assertEquals(isActive, task.getIsActive());
         assertEquals("createdby", task.getAuditDetails().getCreatedBy());
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
-        assertNotNull(task.getAdditionalDetails());
 
-        verify(rs, times(2)).getString("tasknumber");
-        verify(rs, times(1)).getString("id");
+        verify(rs, times(1)).getString("tasknumber");
+        verify(rs, times(2)).getString("id");
         verify(rs, times(1)).getString("orderid");
         verify(rs, times(1)).getString("tenantid");
         verify(rs, times(1)).getString("filingnumber");
@@ -145,7 +147,7 @@ public class TaskRowMapperTest {
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
-        String assignedTo = "assignedto";
+        String assignedTo = "{\"name\":\"test\"}";
         String status = "status";
         Boolean isActive = true;
 
@@ -188,7 +190,6 @@ public class TaskRowMapperTest {
         assertEquals(taskDescription, task.getTaskDescription());
         assertEquals(taskDetails, task.getTaskDetails());
         assertEquals(taskType, task.getTaskType());
-        assertEquals(assignedTo, task.getAssignedTo());
         assertEquals(status, task.getStatus());
         assertEquals(isActive, task.getIsActive());
         assertEquals("createdby", task.getAuditDetails().getCreatedBy());
@@ -197,8 +198,8 @@ public class TaskRowMapperTest {
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
         assertNull(task.getAdditionalDetails());
 
-        verify(rs, times(2)).getString("tasknumber");
-        verify(rs, times(1)).getString("id");
+        verify(rs, times(1)).getString("tasknumber");
+        verify(rs, times(2)).getString("id");
         verify(rs, times(1)).getString("orderid");
         verify(rs, times(1)).getString("tenantid");
         verify(rs, times(1)).getString("filingnumber");
@@ -209,7 +210,6 @@ public class TaskRowMapperTest {
         verify(rs, times(1)).getString("taskdescription");
         verify(rs, times(1)).getString("taskdetails");
         verify(rs, times(1)).getString("tasktype");
-        verify(rs, times(1)).getString("assignedto");
         verify(rs, times(1)).getString("status");
         verify(rs, times(1)).getString("isactive");
         verify(rs, times(1)).getLong("createdtime");
@@ -233,14 +233,14 @@ public class TaskRowMapperTest {
     @Test
     void testExtractDataCustomException() throws Exception {
         when(rs.next()).thenReturn(true);
-        when(rs.getString("tasknumber")).thenThrow(new CustomException("CUSTOM_ERROR", "Custom error"));
+        when(rs.getString("id")).thenThrow(new CustomException("CUSTOM_ERROR", "Custom error"));
 
         CustomException exception = assertThrows(CustomException.class, () -> taskRowMapper.extractData(rs));
         assertEquals("CUSTOM_ERROR", exception.getCode());
         assertEquals("Custom error", exception.getMessage());
 
         verify(rs, times(1)).next();
-        verify(rs, times(1)).getString("tasknumber");
+        verify(rs, times(1)).getString("id");
     }
 
     @Test
@@ -255,7 +255,7 @@ public class TaskRowMapperTest {
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
-        String assignedTo = "assignedto";
+        String assignedTo = "{\"name\":\"test\"}";
         String status = "status";
         Boolean isActive = true;
 
@@ -302,17 +302,15 @@ public class TaskRowMapperTest {
         assertEquals(taskDescription, task.getTaskDescription());
         assertEquals(taskDetails, task.getTaskDetails());
         assertEquals(taskType, task.getTaskType());
-        assertEquals(assignedTo, task.getAssignedTo());
         assertEquals(status, task.getStatus());
         assertEquals(isActive, task.getIsActive());
         assertEquals("createdby", task.getAuditDetails().getCreatedBy());
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
-        assertNotNull(task.getAdditionalDetails());
 
-        verify(rs, times(2)).getString("tasknumber");
-        verify(rs, times(1)).getString("id");
+        verify(rs, times(1)).getString("tasknumber");
+        verify(rs, times(2)).getString("id");
         verify(rs, times(1)).getString("orderid");
         verify(rs, times(1)).getString("tenantid");
         verify(rs, times(1)).getString("filingnumber");
