@@ -174,6 +174,35 @@ const JoinCaseHome = ({ t }) => {
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText]);
 
+  const serarchCase = async (caseNumber) => {
+    const response = await DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            filingNumber: caseNumber,
+          },
+        ],
+        tenantId,
+      },
+      {}
+    );
+    if (response?.criteria[0]?.responseList?.length === 1) {
+      setIsDisabled(false);
+      setErrors({
+        ...errors,
+        caseNumber: {
+          message: "No case found",
+        }
+      })
+    } else setIsDisabled(true);
+  }
+
+
+  useEffect(() => {
+    if (caseNumber)
+      serarchCase(caseNumber);
+  }, [caseNumber])
+
   const fetchBasicUserInfo = async () => {
     const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
       {
@@ -752,7 +781,17 @@ const JoinCaseHome = ({ t }) => {
           } else {
             setStep(step + 1);
           }
-        } else {
+        } else if (userType === t(JoinHomeLocalisation.LITIGANT_OPT)) {
+          const isFound = caseDetails?.litigants?.find(item => item.individualId === individualId) !== undefined;
+          if (isFound) {
+            setStep(5);
+            setMessageHeader("You are already part of this case")
+            setSuccess(true);
+          } else {
+            setStep(step + 1);
+          }
+        }
+        else {
           setStep(step + 1);
         }
         setIsDisabled(true);
@@ -927,6 +966,13 @@ const JoinCaseHome = ({ t }) => {
           },
           {}
         );
+        if (response) {
+          setStep(step + 1);
+          setSuccess(true);
+        }
+        else {
+
+        }
       }
     } else if (step === 5) {
       setStep(6);
