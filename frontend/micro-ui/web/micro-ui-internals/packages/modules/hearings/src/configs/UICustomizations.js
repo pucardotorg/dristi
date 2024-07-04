@@ -348,14 +348,19 @@ export const UICustomizations = {
         case "Actions":
           return (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Button
-                variation={"secondary"}
-                label={""}
-                onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing")}
-                style={{ marginRight: "1rem" }}
-              >
-                <strong>Start</strong>
-              </Button>
+              {true ? (
+                <Button
+                  variation={"secondary"}
+                  label={""}
+                  onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing")}
+                  style={{ marginRight: "1rem" }}
+                >
+                  <strong>Start</strong>
+                </Button>
+              ) : (
+                <div style={{ marginRight: "1rem" }}>{"-"}</div>
+              )}
+
               <OverlayDropdown style={{ position: "absolute" }} />
             </div>
           );
