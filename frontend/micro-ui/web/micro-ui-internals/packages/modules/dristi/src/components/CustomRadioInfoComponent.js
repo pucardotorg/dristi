@@ -34,9 +34,11 @@ const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, 
       <div className="select-user-type-component">
         <React.Fragment>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller" style={{ display: "flex", ...config?.labelStyles }}>
-              {t(config.label)}
-            </CardLabel>
+            {!config?.disableDocumentHeader && (
+              <CardLabel className="card-label-smaller" style={{ display: "flex", ...config?.labelStyles }}>
+                {t(config.label)}
+              </CardLabel>
+            )}
 
             <div className="field">
               <CustomDropdown
