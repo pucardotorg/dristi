@@ -74,26 +74,24 @@ public class HearingApiControllerTest {
 
     @Test
     public void testHearingV1SearchPost_Success() {
-        HearingCriteria criteria = HearingCriteria.builder()
-                .hearingId("hearingId")
-                .applicationNumber("applicationNumber")
-                .cnrNumber("cnrNumber")
-                .filingNumber("filingNumber")
-                .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
-                .build();
+        HearingCriteria criteria = new HearingCriteria();
+        criteria.setHearingId("hearingId");
+        criteria.setApplicationNumber("applicationNumber");
+        criteria.setCnrNumber("cnrNumber");
+        criteria.setFilingNumber("filingNumber");
+        criteria.setTenantId("tenantId");
+        criteria.setFromDate(LocalDate.now());
+        criteria.setToDate(LocalDate.now());
+        criteria.setLimit(10);
+        criteria.setOffset(0);
+        criteria.setSortBy("ASC");
 
         User user = new User();
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(user);
-        HearingSearchRequest request = HearingSearchRequest.builder()
-                .requestInfo(requestInfo)
-                .criteria(criteria)
-                .build();
+        HearingSearchRequest request = new HearingSearchRequest();
+        request.setRequestInfo(requestInfo);
+        request.setCriteria(criteria);
         List<Hearing> hearingList = List.of(new Hearing());
 
         when(hearingService.searchHearing(any())).thenReturn(hearingList);
