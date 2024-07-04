@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 
 @Component
 public class CaseUtil {
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final String CHARACTERS = "0123456789";
     private static final SecureRandom random = new SecureRandom();
 
     public String getCNRNumber(String fillingNumber, String state, String district, String establishmentCode) {

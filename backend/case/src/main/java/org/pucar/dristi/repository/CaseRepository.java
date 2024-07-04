@@ -74,6 +74,7 @@ public class CaseRepository {
                 String casesQuery = "";
                 casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, requestInfo);
                 log.info("Final case query :: {}", casesQuery);
+                casesQuery = queryBuilder.addOrderByQuery(casesQuery, caseCriteria.getPagination());
                 if(caseCriteria.getPagination() !=  null) {
                     Integer totalRecords = getTotalCount(casesQuery, preparedStmtList);
                     caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
