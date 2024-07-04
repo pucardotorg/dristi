@@ -1,124 +1,188 @@
 package org.pucar.dristi.validators;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.EvidenceRepository;
-import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.EvidenceRequest;
-import org.pucar.dristi.web.models.EvidenceSearchCriteria;
-import org.pucar.dristi.web.models.RequestInfoWrapper;
+import org.pucar.dristi.util.*;
+import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class EvidenceValidatorTest {
-
-    @InjectMocks
-    private EvidenceValidator evidenceValidator;
+class EvidenceValidatorTest {
 
     @Mock
     private EvidenceRepository repository;
 
     @Mock
-    private MdmsUtil mdmsUtil;
+    private CaseUtil caseUtil;
 
-    private EvidenceRequest evidenceRequest;
+    @Mock
+    private ApplicationUtil applicationUtil;
+
+    @Mock
+    private OrderUtil orderUtil;
+
+    @Mock
+    private HearingUtil hearingUtil;
+
+    @InjectMocks
+    private EvidenceValidator evidenceValidator;
 
     @BeforeEach
     void setUp() {
-        // Initialize the evidenceRequest object before each test
-        evidenceRequest = new EvidenceRequest();
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void validateEvidenceRegistration_ShouldThrowException_WhenTenantIdOrCaseIdIsEmpty() {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact = new Artifact();
+        artifact.setTenantId("");
+        artifact.setCaseId("");
+        evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(new RequestInfo());
-        Artifact artifact = new Artifact();
-        evidenceRequest.setArtifact(artifact);
-    }
 
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
 
-    @Test
-    void validateEvidenceRegistration_MissingTenantId() {
-        // Set up invalid request with missing tenantId
-        evidenceRequest.getArtifact().setCaseId("case1");
-
-        // Execute the method and assert CustomException
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
+        assertEquals(ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE, exception.getCode());
         assertEquals("tenantId and caseId are mandatory for creating advocate", exception.getMessage());
     }
 
     @Test
-    void validateEvidenceRegistration_MissingCaseId() {
-        // Set up invalid request with missing caseId
-        evidenceRequest.getArtifact().setTenantId("tenant1");
+    void validateEvidenceRegistration_ShouldThrowException_WhenUserInfoIsNull() {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact = new Artifact();
+        artifact.setTenantId("tenant");
+        artifact.setCaseId("caseId");
+        evidenceRequest.setArtifact(artifact);
+        evidenceRequest.setRequestInfo(new RequestInfo());
 
-        // Execute the method and assert CustomException
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
-        assertEquals("tenantId and caseId are mandatory for creating advocate", exception.getMessage());
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
+
+        assertEquals(ServiceConstants.ENRICHMENT_EXCEPTION, exception.getCode());
+        assertEquals("User info not found!!!", exception.getMessage());
     }
 
     @Test
-    void testValidateApplicationExistence_Success() {
-        RequestInfo requestInfo = new RequestInfo();
-        evidenceRequest.setRequestInfo(requestInfo);
+    void validateEvidenceRegistration_ShouldThrowException_WhenCaseDoesNotExist() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(false);
 
-        Artifact artifact = new Artifact();
-        artifact.setCaseId("testCaseId");
-        artifact.setApplication("testApplication");
-        artifact.setHearing("testHearing");
-        artifact.setOrder("testOrder");
-        artifact.setSourceID("testSourceId");
-        artifact.setSourceName("testSourceName");
-        evidenceRequest.setArtifact(artifact);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
 
-        List<Artifact> existingApplications = Collections.singletonList(new Artifact());
-
-        // Mock repository response
-        when(repository.getArtifacts(any(EvidenceSearchCriteria.class))).thenReturn(existingApplications);
-
-        // Execute the method under test
-        Artifact result = evidenceValidator.validateApplicationExistence(evidenceRequest);
-
-        // Verify and assert
-        assertNotNull(result);
-        verify(repository, times(1)).getArtifacts(any(EvidenceSearchCriteria.class));
+        assertEquals(ServiceConstants.CASE_EXCEPTION, exception.getCode());
+        assertEquals("case does not exist", exception.getMessage());
     }
 
     @Test
-    void testValidateApplicationExistence_NoExistingApplication() {
-        RequestInfo requestInfo = new RequestInfo();
-        evidenceRequest.setRequestInfo(requestInfo);
+    void validateEvidenceRegistration_ShouldThrowException_WhenApplicationDoesNotExist() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
+        evidenceRequest.getArtifact().setApplication("applicationId");
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
+        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(false);
 
-        Artifact artifact = new Artifact();
-        artifact.setCaseId("testCaseId");
-        artifact.setApplication("testApplication");
-        artifact.setHearing("testHearing");
-        artifact.setOrder("testOrder");
-        artifact.setSourceID("testSourceId");
-        artifact.setSourceName("testSourceName");
-        evidenceRequest.setArtifact(artifact);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
 
-        // Mock repository response
+        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
+        assertEquals("application does not exist", exception.getMessage());
+    }
+
+    @Test
+    void validateEvidenceRegistration_ShouldThrowException_WhenOrderDoesNotExist() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
+        evidenceRequest.getArtifact().setOrder("orderId");
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
+        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
+
+        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
+        assertEquals("application does not exist", exception.getMessage());
+    }
+
+    @Test
+    void validateEvidenceRegistration_ShouldThrowException_WhenHearingDoesNotExist() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
+        evidenceRequest.getArtifact().setHearing("hearingId");
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
+        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
+
+        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
+        assertEquals("application does not exist", exception.getMessage());
+    }
+
+    @Test
+    void validateEvidenceRegistration_ShouldPass_WhenAllValidationsPass() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
+        evidenceRequest.getArtifact().setApplication("applicationId");
+        evidenceRequest.getArtifact().setOrder("8c11c5ca-03bd-11e7-93ae-92361f002671");
+        evidenceRequest.getArtifact().setHearing("hearingId");
+
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
+        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(true);
+        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(true);
+        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(true);
+
+        assertDoesNotThrow(() -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
+    }
+
+    @Test
+    void validateEvidenceExistence_ShouldThrowException_WhenNoExistingApplicationsFound() {
+        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
         when(repository.getArtifacts(any(EvidenceSearchCriteria.class))).thenReturn(new ArrayList<>());
 
-        // Execute the method under test and assert exception
-        CustomException exception = assertThrows(CustomException.class, () ->
-                evidenceValidator.validateApplicationExistence(evidenceRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceExistence(evidenceRequest);
+        });
 
-        assertEquals("VALIDATION EXCEPTION", exception.getCode());
-        assertEquals("Evidence does not exist", exception.getMessage());
-        verify(repository, times(1)).getArtifacts(any(EvidenceSearchCriteria.class));
+        assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
+        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: case does not exist", exception.getMessage());
+    }
+    private EvidenceRequest createValidEvidenceRequest() {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact = new Artifact();
+        artifact.setTenantId("tenant");
+        artifact.setCaseId("caseId");
+        artifact.setApplication("applicationId");
+        artifact.setOrder("orderId");
+        artifact.setHearing("hearingId");
+        artifact.setSourceID("sourceId");
+        artifact.setSourceName("sourceName");
+        evidenceRequest.setArtifact(artifact);
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        requestInfo.setUserInfo(userInfo);
+        evidenceRequest.setRequestInfo(requestInfo);
+
+        return evidenceRequest;
     }
 }
-

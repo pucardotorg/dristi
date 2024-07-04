@@ -102,4 +102,32 @@ public class Configuration {
 
 	@Value("${egov.workflow.businessservice.name}")
 	private String businessServiceName;
+
+	// Case Config
+	@Value("${egov.case.host}")
+	private String caseHost;
+
+	@Value("${egov.case.path}")
+	private String caseExistsPath;
+
+	// Application Config
+	@Value("${egov.application.host}")
+	private String applicationHost;
+
+	@Value("${egov.application.path}")
+	private String applicationExistsPath;
+
+	// Order Config
+	@Value("${egov.order.host}")
+	private String orderHost;
+
+	@Value("${egov.order.path}")
+	private String orderExistsPath;
+
+	// Hearing Config
+	@Value("${egov.hearing.host}")
+	private String hearingHost;
+
+	@Value("${egov.hearing.path}")
+	private String hearingExistsPath;
 }

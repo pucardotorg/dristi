@@ -124,7 +124,7 @@ class EvidenceServiceTest {
 
     @Test
     void testUpdateEvidence() {
-        when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(artifact);
+        when(validator.validateEvidenceExistence(evidenceRequest)).thenReturn(artifact);
         when(config.getUpdateEvidenceKafkaTopic()).thenReturn("update-evidence-topic");
 
         Artifact result = evidenceService.updateEvidence(evidenceRequest);
@@ -137,9 +137,9 @@ class EvidenceServiceTest {
 
     @Test
     void testValidateExistingApplication() {
-        when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(artifact);
+        when(validator.validateEvidenceExistence(evidenceRequest)).thenReturn(artifact);
 
-        Artifact result = evidenceService.validateExistingApplication(evidenceRequest);
+        Artifact result = evidenceService.validateExistingEvidence(evidenceRequest);
 
         assertEquals(artifact, result);
     }
