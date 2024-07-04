@@ -57,6 +57,10 @@ export const paymentInboxConfig = {
             populators: {
               name: "substage",
               options: ["Filing", "Cognizance", "Inquiry", "Appearance", "Framing of charges", "Evidence", "Arguments", "Judgment", "Post-Judgement"],
+              styles: {
+                maxWidth: "300px",
+                minWidth: "200px",
+              },
               optionsCustomStyle: {
                 overflowX: "hidden",
               },
