@@ -1,14 +1,18 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-  const sampleData = {
-    hearingDate: "2024-05-09",
-    hearingSlot: "10-12",
+  const [hearingData, setHearingData] = useState({
+    hearingDate: "",
+    hearingSlot: "",
+  });
+
+  const updateHearingData = (data) => {
+    setHearingData(data);
   };
 
-  return <DataContext.Provider value={sampleData}>{children}</DataContext.Provider>;
+  return <DataContext.Provider value={{ hearingData, updateHearingData }}>{children}</DataContext.Provider>;
 };
 
 export { DataProvider, DataContext };

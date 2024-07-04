@@ -7,7 +7,7 @@ import { preHearingConfig } from "../configs/PreHearingConfig";
 
 function PreHearingModal({ onCancel, hearings }) {
   const { t } = useTranslation();
-  const data = useContext(DataContext);
+  const { hearingData } = useContext(DataContext);
   const [config, setConfig] = useState(preHearingConfig);
 
   const Heading = (props) => {
@@ -26,11 +26,11 @@ function PreHearingModal({ onCancel, hearings }) {
     const configCopy = structuredClone(preHearingConfig);
     configCopy.apiDetails.requestParam = {
       ...configCopy.apiDetails.requestParam,
-      fromDate: data.hearingDate,
-      hearingSlot: data.hearingSlot,
+      fromDate: hearingData.hearingDate,
+      hearingSlot: hearingData.hearingSlot,
     };
     setConfig(configCopy);
-  }, [preHearingConfig, data?.hearingDate, data?.hearingSlot]);
+  }, [preHearingConfig, hearingData?.hearingDate, hearingData?.hearingSlot]);
 
   const popUpStyle = {
     width: "70%",
