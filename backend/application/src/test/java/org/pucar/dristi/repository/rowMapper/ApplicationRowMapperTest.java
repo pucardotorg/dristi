@@ -24,6 +24,7 @@ public class ApplicationRowMapperTest {
     }
     @Test
     public void testExtractData() throws SQLException {
+        String issuedByJson = "{\"benchId\":\"bench1\"}";
         // Mocking the ResultSet
         ResultSet resultSet = Mockito.mock(ResultSet.class);
         when(resultSet.next()).thenReturn(true, true, false);
@@ -42,6 +43,7 @@ public class ApplicationRowMapperTest {
         when(resultSet.getString("applicationcreatedby")).thenReturn("123e4567-e89b-12d3-a456-556642440002", "123e4567-e89b-12d3-a456-556642440003");
         when(resultSet.getString("tenantid")).thenReturn("tenant1", "tenant2");
         when(resultSet.getBoolean("isactive")).thenReturn(true, false);
+        when(resultSet.getString("issuedby")).thenReturn(issuedByJson);
         when(resultSet.getString("status")).thenReturn("Pending", "Approved");
         when(resultSet.getString("comment")).thenReturn("Test comment 1", "Test comment 2");
 
