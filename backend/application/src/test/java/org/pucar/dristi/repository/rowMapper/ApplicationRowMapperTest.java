@@ -8,8 +8,11 @@ import org.mockito.Mockito;
 import org.pucar.dristi.web.models.Application;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +27,7 @@ public class ApplicationRowMapperTest {
     }
     @Test
     public void testExtractData() throws SQLException {
-        String issuedByJson = "{\"benchId\":\"bench1\"}";
+        String issuedByJson = "{\"benchId\": \"benchId\", \"courtId\": \"courtId\", \"judgeId\": [\"e7f39394-5b04-4f25-a901-8f369e73c758\", \"85b10177-cce5-4db1-bbe5-875a03f8a24c\"]}";
         // Mocking the ResultSet
         ResultSet resultSet = Mockito.mock(ResultSet.class);
         when(resultSet.next()).thenReturn(true, true, false);
@@ -54,10 +57,12 @@ public class ApplicationRowMapperTest {
         List<Application> applications = rowMapper.extractData(resultSet);
 
         // Assertions
-        Assertions.assertEquals(2, applications.size());
-        Assertions.assertEquals("APP-001", applications.get(0).getApplicationNumber());
-        Assertions.assertEquals("CN-002", applications.get(1).getCnrNumber());
-        Assertions.assertEquals("bench1", applications.get(0).getIssuedBy().getBenchId());
+        assertEquals(2, applications.size());
+        assertEquals("APP-001", applications.get(0).getApplicationNumber());
+        assertEquals("CN-002", applications.get(1).getCnrNumber());
+        assertEquals("benchId", applications.get(0).getIssuedBy().getBenchId());
+        assertEquals("courtId", applications.get(0).getIssuedBy().getCourtId());
+        assertEquals("e7f39394-5b04-4f25-a901-8f369e73c758", applications.get(0).getIssuedBy().getJudgeId().get(0).toString());
     }
     @Test
     public void testExtractDataWithSQLException() throws SQLException {
@@ -78,4 +83,31 @@ public class ApplicationRowMapperTest {
             applicationRowMapper.extractData(resultSet);
         });
     }
+
+        @Test
+        public void testStringToList_NormalCase() {
+            String str = "[1, 2, 3]";
+            List<Integer> expected = Arrays.asList(1, 2, 3);
+
+            List<Integer> actual = applicationRowMapper.stringToList(str);
+
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        public void testStringToList_NullString() {
+            String str = null;
+            List<Integer> expected = new ArrayList<>();
+
+            List<Integer> actual = applicationRowMapper.stringToList(str);
+
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        public void testStringToList_InvalidJson() {
+            String str = "[1, 2, 'three']";
+
+            assertThrows(CustomException.class, () -> applicationRowMapper.stringToList(str));
+        }
 }
