@@ -21,16 +21,26 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
   return (
     <div
       className="select-signature-main"
-      style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", height: "100%", marginTop: 8, maxWidth: 300 }}
+      style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", height: "100%", marginTop: 13, maxWidth: 250 }}
     >
       <React.Fragment>
         <button
-          style={{ height: 42, width: "100%", display: "flex", alignItems: "center", fontSize: 16, justifyContent: "center" }}
+          className="custom-sort-button"
+          style={{
+            height: 40,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            fontSize: 16,
+            justifyContent: "center",
+            backgroundColor: "#fff",
+            border: "1px solid black",
+          }}
           onClick={() => onSelect(config.key, { sortBy: config.sortBy, order: formData?.[config.key]?.order === "desc" ? "asc" : "desc" })}
         >
-          <span>{config.name} </span>
+          <span className="custom-sort-name">{config.name} </span>
           {config?.showAdditionalText ? (
-            <span>
+            <span className="custom-sort-text">
               &nbsp;
               {formData?.[config.key]?.order === "desc" ? config?.descText : config?.ascText}
             </span>
@@ -39,6 +49,7 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
           )}
           {config?.showIcon && Icon && (
             <div
+              className="custom-sort-icon"
               style={{
                 marginLeft: 16,
                 transform: formData?.[config.key]?.order === "desc" ? "rotate(0deg)" : "rotate(180deg)",

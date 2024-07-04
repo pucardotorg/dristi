@@ -100,11 +100,29 @@
     }
     .select-checkbox-dependent-child {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       justify-content: flex-start;
-      gap: 35px;
+      gap: 10px;
+      border-bottom: solid 1px #bbbbbd;
+      margin-bottom: 10px;
+
       .label {
         margin-left: 40px !important;
+      }
+      .compl-resp-combined-div {
+        display: flex;
+        flex-direction: column;
+        border-top: solid 1px #bbbbbd;
+        margin-top: 15px;
+      }
+      .checkbox-wrap {
+        .custom-checkbox-emp {
+          svg {
+            path:nth-child(2) {
+              fill: #007e7e;
+            }
+          }
+        }
       }
     }
     .select-participants-submit-bar {
@@ -171,6 +189,65 @@
     box-shadow: none !important;
     svg {
       margin-left: 10px !important;
+    }
+  }
+}
+
+.send-case-back-modal {
+  width: 536px;
+  border-radius: 5px;
+  .popup-module-main {
+    .employeeCard {
+      max-height: 300px;
+      .label-field-pair {
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 500px;
+        h2 {
+          min-width: 100%;
+        }
+        .field {
+          min-width: 100%;
+        }
+      }
+      .submit-bar {
+        position: relative;
+        left: 207px;
+        display: flex;
+        align-items: center;
+        width: 85px;
+        min-width: 85px !important;
+        height: 40px;
+        padding: 6px 24px 6px 24px;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+      .primary-label-btn {
+        position: relative;
+        left: 100px;
+        bottom: 50px;
+        display: flex;
+        align-items: center;
+        width: 98px;
+        min-width: 98px !important;
+        height: 40px;
+        padding: 5px 24px 5px 24px;
+        box-shadow: none !important;
+        border: solid 1px #007e7e;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
     }
   }
 }

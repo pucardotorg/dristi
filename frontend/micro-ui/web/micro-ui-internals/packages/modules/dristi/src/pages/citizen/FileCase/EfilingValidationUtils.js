@@ -39,8 +39,10 @@ export const showDemandNoticeModal = ({
               const month = String(date.getMonth() + 1).padStart(2, "0");
               const day = String(date.getDate()).padStart(2, "0");
               formattedDate = `${year}-${month}-${day}`;
+              setValue("dateOfAccrual", formattedDate, { shouldValidate: true });
+            } else {
+              setValue("dateOfAccrual", formattedDate);
             }
-            setValue("dateOfAccrual", formattedDate);
           }
           break;
 
@@ -633,7 +635,7 @@ export const respondentValidation = ({
 export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "demandNoticeDetails") {
     for (const key of ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"]) {
-      if (!(key in formData) || formData[key].document?.length === 0) {
+      if (!(key in formData) || formData[key]?.document?.length === 0) {
         setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
         return true;
@@ -792,12 +794,13 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
   }
 };
 
-export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
     if (
       formData?.delayCondonationType?.code === "NO" &&
       (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
     ) {
+      setFormErrors("condonationFileUpload", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
@@ -983,7 +986,7 @@ export const updateCaseDetails = async ({
                             documentType: documentData.fileType || documentData?.documentType,
                             fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
                             documentName: documentData.filename || documentData?.documentName,
-                            fileName: "ID Proof"
+                            fileName: "ID Proof",
                           },
                         ],
                       },
@@ -1009,7 +1012,7 @@ export const updateCaseDetails = async ({
                           documentType: documentData.fileType || documentData?.documentType,
                           fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
                           documentName: documentData.filename || documentData?.documentName,
-                          fileName: "ID Proof"
+                          fileName: "ID Proof",
                         },
                       ],
                       individualId: Individual?.Individual?.individualId,
@@ -1099,7 +1102,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data, index) => {
-          let documentData = [];
+          let documentData = {
+            companyDetailsUpload: null,
+          };
           const idProof = {
             complainantId: { complainantId: { complainantId: {} } },
           };
@@ -1128,7 +1133,8 @@ export const updateCaseDetails = async ({
             individualDetails.document = [uploadedData];
           }
           if (data?.data?.companyDetailsUpload?.document) {
-            documentData = await Promise.all(
+            documentData.companyDetailsUpload = {};
+            documentData.companyDetailsUpload.document = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1146,10 +1152,7 @@ export const updateCaseDetails = async ({
             ...data,
             data: {
               ...data.data,
-              companyDetailsUpload: {
-                ...data?.data?.companyDetailsUpload,
-                document: documentData,
-              },
+              ...documentData,
               complainantVerification: {
                 ...data?.data?.complainantVerification,
                 ...complainantVerification[index],
@@ -1186,15 +1189,16 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const documentData = {
-            inquiryAffidavitFileUpload: [],
-            companyDetailsUpload: [],
+            inquiryAffidavitFileUpload: null,
+            companyDetailsUpload: null,
           };
           if (
             data?.data?.inquiryAffidavitFileUpload?.document &&
             Array.isArray(data?.data?.inquiryAffidavitFileUpload?.document) &&
             data?.data?.inquiryAffidavitFileUpload?.document.length > 0
           ) {
-            documentData.inquiryAffidavitFileUpload = await Promise.all(
+            documentData.inquiryAffidavitFileUpload = {};
+            documentData.inquiryAffidavitFileUpload.document = await Promise.all(
               data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1213,7 +1217,8 @@ export const updateCaseDetails = async ({
             Array.isArray(data?.data?.companyDetailsUpload?.document) &&
             data?.data?.companyDetailsUpload?.document.length > 0
           ) {
-            documentData.companyDetailsUpload = await Promise.all(
+            documentData.companyDetailsUpload = {};
+            documentData.companyDetailsUpload.document = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1231,14 +1236,7 @@ export const updateCaseDetails = async ({
             ...data,
             data: {
               ...data.data,
-              inquiryAffidavitFileUpload: {
-                ...data?.data?.inquiryAffidavitFileUpload,
-                document: documentData.inquiryAffidavitFileUpload,
-              },
-              companyDetailsUpload: {
-                ...data?.data?.companyDetailsUpload,
-                document: documentData.companyDetailsUpload,
-              },
+              ...documentData,
             },
           };
         })
@@ -1262,17 +1260,22 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "chequeDetails") {
-    const infoBoxData = { header: "CS_YOU_HAVE_CONFIRMED", scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
+    const infoBoxData = {
+      header: "CS_YOU_HAVE_CONFIRMED",
+      scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED",
+      data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"],
+    };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const documentData = {
-            bouncedChequeFileUpload: {},
-            depositChequeFileUpload: {},
-            returnMemoFileUpload: {},
+            bouncedChequeFileUpload: null,
+            depositChequeFileUpload: null,
+            returnMemoFileUpload: null,
           };
           if (data?.data?.bouncedChequeFileUpload?.document) {
+            documentData.bouncedChequeFileUpload = {};
             documentData.bouncedChequeFileUpload.document = await Promise.all(
               data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1288,6 +1291,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.depositChequeFileUpload?.document) {
+            documentData.depositChequeFileUpload = {};
             documentData.depositChequeFileUpload.document = await Promise.all(
               data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1303,6 +1307,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.returnMemoFileUpload?.document) {
+            documentData.returnMemoFileUpload = {};
             documentData.returnMemoFileUpload.document = await Promise.all(
               data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1349,8 +1354,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const debtDocumentData = { debtLiabilityFileUpload: {} };
+          const debtDocumentData = { debtLiabilityFileUpload: null };
           if (data?.data?.debtLiabilityFileUpload?.document) {
+            debtDocumentData.debtLiabilityFileUpload = {};
             debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
               data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1407,10 +1413,10 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const demandNoticeDocumentData = {
-            legalDemandNoticeFileUpload: {},
-            proofOfDispatchFileUpload: {},
-            proofOfAcknowledgmentFileUpload: {},
-            proofOfReplyFileUpload: {},
+            legalDemandNoticeFileUpload: null,
+            proofOfDispatchFileUpload: null,
+            proofOfAcknowledgmentFileUpload: null,
+            proofOfReplyFileUpload: null,
           };
 
           const fileUploadKeys = Object.keys(demandNoticeDocumentData).filter((key) => data?.data?.[key]?.document);
@@ -1418,6 +1424,7 @@ export const updateCaseDetails = async ({
           await Promise.all(
             fileUploadKeys.map(async (key) => {
               if (data?.data?.[key]?.document) {
+                demandNoticeDocumentData[key] = demandNoticeDocumentData[key] || {};
                 demandNoticeDocumentData[key].document = await Promise.all(
                   data?.data?.[key]?.document?.map(async (document) => {
                     if (document) {
@@ -1457,8 +1464,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const condonationDocumentData = { condonationFileUpload: {} };
+          const condonationDocumentData = { condonationFileUpload: null };
           if (data?.data?.condonationFileUpload?.document) {
+            condonationDocumentData.condonationFileUpload = {};
             condonationDocumentData.condonationFileUpload.document = await Promise.all(
               data?.data?.condonationFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1496,7 +1504,7 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {}, swornStatement: {} };
+          const documentData = { SelectUploadDocWithName: null, prayerForRelief: null, memorandumOfComplaint: null, swornStatement: null };
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
@@ -1550,6 +1558,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.swornStatement?.document) {
+            documentData.swornStatement = documentData.swornStatement || {};
             documentData.swornStatement.document = await Promise.all(
               data?.data?.swornStatement?.document?.map(async (document) => {
                 if (document) {
@@ -1565,6 +1574,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
+            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
             documentData.memorandumOfComplaint.document = await Promise.all(
               data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
                 if (document) {
@@ -1579,9 +1589,11 @@ export const updateCaseDetails = async ({
               })
             );
           } else if (data?.data?.memorandumOfComplaint?.text) {
+            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
             documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
           }
           if (data?.data?.prayerForRelief?.document && data?.data?.prayerForRelief?.document.length > 0) {
+            documentData.prayerForRelief = documentData.prayerForRelief || {};
             documentData.prayerForRelief.document = await Promise.all(
               data?.data?.prayerForRelief?.document?.map(async (document) => {
                 if (document) {
@@ -1596,7 +1608,8 @@ export const updateCaseDetails = async ({
               })
             );
           } else if (data?.data?.prayerForRelief?.text) {
-            documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
+            documentData.prayerForRelief = documentData.prayerForRelief || {};
+            documentData.prayerForRelief.text = data.data.prayerForRelief.text;
           }
 
           if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
@@ -1628,8 +1641,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
+          const vakalatnamaDocumentData = { vakalatnamaFileUpload: null };
           if (data?.data?.vakalatnamaFileUpload?.document) {
+            vakalatnamaDocumentData.vakalatnamaFileUpload = {};
             vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
               data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1714,14 +1728,14 @@ export const updateCaseDetails = async ({
     };
   }
   const caseTitle =
-    caseDetails?.caseTitle ||
     (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
       caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
       `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
         caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
       } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
         caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
-      }`);
+      }`) ||
+    caseDetails?.caseTitle;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
@@ -1734,6 +1748,7 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+  console.log("caseTitle", caseTitle);
   return DRISTIService.caseUpdateService(
     {
       cases: {

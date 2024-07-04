@@ -68,3 +68,24 @@
     background-color: #fff;
   }
 }
+
+.home-screen-wrapper.payment-inbox {
+  .search-field-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .label-field-pair {
+      flex: 0 0 auto;
+      .options-card {
+        overflow-x: hidden !important;
+        top: 40px;
+      }
+      .options-card p {
+        margin: 0 !important;
+      }
+    }
+    .registration-requests-table-search {
+      margin-left: auto;
+    }
+  }
+}

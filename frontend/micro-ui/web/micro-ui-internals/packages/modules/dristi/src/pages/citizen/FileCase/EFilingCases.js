@@ -771,6 +771,20 @@ function EFilingCases({ path }) {
                   return field === body?.key;
                 });
               }
+
+              //isMandatory
+              if (
+                body?.isDocDependentOn &&
+                body?.isDocDependentKey &&
+                data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey] &&
+                body?.component === "SelectCustomDragDrop"
+              ) {
+                body.isMandatory = true;
+              } else if (body?.isDocDependentOn && body?.isDocDependentKey && body?.component === "SelectCustomDragDrop") {
+                body.isMandatory = false;
+              }
+
+              //withoutLabelFieldPair
               if (body?.isDocDependentOn && body?.isDocDependentKey && !data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey]) {
                 body.withoutLabelFieldPair = true;
               } else {
@@ -1009,7 +1023,8 @@ function EFilingCases({ path }) {
                   );
                 }
 
-                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || judgeObj ? false : true;
+
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
                   if (formComponent.component == "SelectUploadFiles") {
                     if (formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name in scrutiny?.[selected]?.form?.[index]) {
@@ -1029,13 +1044,13 @@ function EFilingCases({ path }) {
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
                     modifiedFormComponent.withoutLabel = true;
+                    modifiedFormComponent.disableScrutinyHeader = true;
                     return [
                       {
                         type: "component",
                         component: "ScrutinyInfo",
                         key: `${key}Scrutiny`,
                         label: modifiedFormComponent.label,
-                        withoutLabel: true,
                         populators: {
                           scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
                         },
@@ -1329,7 +1344,17 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+        .some((data) =>
+          delayApplicationValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+          })
+        )
     ) {
       return;
     }
@@ -1504,8 +1529,14 @@ function EFilingCases({ path }) {
         cases: {
           ...caseDetails,
           caseTitle:
-            caseDetails?.caseTitle ||
-            `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+            (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+              `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+                caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+                caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+              }`) ||
+            caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
@@ -1583,7 +1614,9 @@ function EFilingCases({ path }) {
   }
 
   if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
-    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    if (!judgeObj) {
+      history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    }
   }
 
   return (
