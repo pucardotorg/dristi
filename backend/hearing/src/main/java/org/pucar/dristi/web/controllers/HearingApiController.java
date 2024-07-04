@@ -63,7 +63,7 @@ public class HearingApiController {
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody HearingSearchRequest request)
     {
         List<Hearing> hearingList = hearingService.searchHearing(request);
-        HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).build();
+        HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(hearingList.size()).build();
         return new ResponseEntity<>(hearingListResponse, HttpStatus.OK);
     }
 

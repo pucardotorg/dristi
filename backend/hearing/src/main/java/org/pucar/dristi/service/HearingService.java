@@ -2,8 +2,6 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.HearingRegistrationEnrichment;
@@ -14,7 +12,6 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,20 +73,33 @@ public class HearingService {
     public List<Hearing> searchHearing(HearingSearchRequest request) {
 
         try {
-            RequestInfo requestInfo = new RequestInfo();
-            requestInfo.setUserInfo(new User());
             HearingCriteria criteria = request.getCriteria();
-            if (criteria.getLimit() == null || criteria.getLimit() < 1) criteria.setLimit(10);
-            if (criteria.getOffset() == null || criteria.getOffset() < 0) criteria.setOffset(0);
-            if (!Objects.equals(criteria.getSortBy(), "DESC")) criteria.setSortBy("ASC");
-            return hearingRepository.getHearings(criteria.getCnrNumber(), criteria.getApplicationNumber(), criteria.getHearingId(), criteria.getFilingNumber(), criteria.getTenantId(), criteria.getFromDate(), criteria.getToDate(), criteria.getLimit(), criteria.getOffset(), criteria.getSortBy());
+            validateCriteria(criteria);
+            return hearingRepository.getHearings(
+                    criteria.getCnrNumber(),
+                    criteria.getApplicationNumber(),
+                    criteria.getHearingId(),
+                    criteria.getFilingNumber(),
+                    criteria.getTenantId(),
+                    criteria.getFromDate(),
+                    criteria.getToDate(),
+                    criteria.getLimit(),
+                    criteria.getOffset(),
+                    criteria.getSortBy()
+            );
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching search results");
             throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
         }
+    }
+
+    private void validateCriteria(HearingCriteria criteria) {
+        if (criteria.getLimit() == null || criteria.getLimit() < 1) criteria.setLimit(10);
+        if (criteria.getOffset() == null || criteria.getOffset() < 0) criteria.setOffset(0);
+        if (!Objects.equals(criteria.getSortBy(), "DESC")) criteria.setSortBy("ASC");
     }
 
     public Hearing updateHearing(HearingRequest hearingRequest) {

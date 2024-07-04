@@ -87,24 +87,26 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_Success() {
-        HearingCriteria criteria = new HearingCriteria();
-        criteria.setHearingId("hearingId");
-        criteria.setApplicationNumber("applicationNumber");
-        criteria.setCnrNumber("cnrNumber");
-        criteria.setFilingNumber("filingNumber");
-        criteria.setTenantId("tenantId");
-        criteria.setFromDate(LocalDate.now());
-        criteria.setToDate(LocalDate.now());
-        criteria.setLimit(10);
-        criteria.setOffset(0);
-        criteria.setSortBy("ASC");
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .limit(10)
+                .offset(0)
+                .sortBy("ASC")
+                .build();
 
         User user = new User();
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(user);
-        HearingSearchRequest request = new HearingSearchRequest();
-        request.setRequestInfo(requestInfo);
-        request.setCriteria(criteria);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
 
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
@@ -119,24 +121,26 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_CustomException() {
-        HearingCriteria criteria = new HearingCriteria();
-        criteria.setHearingId("hearingId");
-        criteria.setApplicationNumber("applicationNumber");
-        criteria.setCnrNumber("cnrNumber");
-        criteria.setFilingNumber("filingNumber");
-        criteria.setTenantId("tenantId");
-        criteria.setFromDate(LocalDate.now());
-        criteria.setToDate(LocalDate.now());
-        criteria.setLimit(10);
-        criteria.setOffset(0);
-        criteria.setSortBy("ASC");
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .limit(10)
+                .offset(0)
+                .sortBy("ASC")
+                .build();
 
         User user = new User();
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(user);
-        HearingSearchRequest request = new HearingSearchRequest();
-        request.setRequestInfo(requestInfo);
-        request.setCriteria(criteria);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
