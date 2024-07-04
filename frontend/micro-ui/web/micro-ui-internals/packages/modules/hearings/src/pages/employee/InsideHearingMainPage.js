@@ -192,7 +192,34 @@ const InsideHearingMainPage = () => {
           {activeTab === "Witness Deposition" && (
             <div>
               {selectedWitness.isSigned ? (
-                <div style={{ marginTop: "10px", color: "#007E7E", fontWeight: "bold", width: "180px", height: "24px" }}>Signature Added</div>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    color: "#007E7E",
+                    fontWeight: "bold",
+                    width: "180px",
+                    height: "24px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    <circle cx="12" cy="12" r="12" fill="#007E7E" />
+                    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Signature Added
+                </div>
               ) : (
                 <button
                   style={{
