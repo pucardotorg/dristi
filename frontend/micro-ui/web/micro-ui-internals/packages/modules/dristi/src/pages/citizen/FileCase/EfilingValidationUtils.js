@@ -792,12 +792,13 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
   }
 };
 
-export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
     if (
       formData?.delayCondonationType?.code === "NO" &&
       (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
     ) {
+      setFormErrors("condonationFileUpload", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
@@ -983,7 +984,7 @@ export const updateCaseDetails = async ({
                             documentType: documentData.fileType || documentData?.documentType,
                             fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
                             documentName: documentData.filename || documentData?.documentName,
-                            fileName: "ID Proof"
+                            fileName: "ID Proof",
                           },
                         ],
                       },
@@ -1009,7 +1010,7 @@ export const updateCaseDetails = async ({
                           documentType: documentData.fileType || documentData?.documentType,
                           fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
                           documentName: documentData.filename || documentData?.documentName,
-                          fileName: "ID Proof"
+                          fileName: "ID Proof",
                         },
                       ],
                       individualId: Individual?.Individual?.individualId,
@@ -1262,7 +1263,11 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "chequeDetails") {
-    const infoBoxData = { header: "CS_YOU_HAVE_CONFIRMED", scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
+    const infoBoxData = {
+      header: "CS_YOU_HAVE_CONFIRMED",
+      scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED",
+      data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"],
+    };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)

@@ -1329,7 +1329,17 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+        .some((data) =>
+          delayApplicationValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+          })
+        )
     ) {
       return;
     }
