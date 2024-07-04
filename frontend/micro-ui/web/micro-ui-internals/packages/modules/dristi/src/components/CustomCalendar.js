@@ -81,17 +81,19 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   return (
     <div>
-      <Calendar
-        date={selectedCustomDate}
-        onChange={handleSelect}
-        // minDate={minDate}
-        maxDate={maxDate}
-        dayContentRenderer={renderCustomDay}
-        navigatorRenderer={navigatorRenderer}
-        onShownDateChange={(date) => {
-          setCurrentMonth(date);
-        }}
-      />
+      <div>
+        <Calendar
+          date={selectedCustomDate}
+          onChange={handleSelect}
+          // minDate={minDate}
+          maxDate={maxDate}
+          dayContentRenderer={renderCustomDay}
+          navigatorRenderer={navigatorRenderer}
+          onShownDateChange={(date) => {
+            setCurrentMonth(date);
+          }}
+        />
+      </div>
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>

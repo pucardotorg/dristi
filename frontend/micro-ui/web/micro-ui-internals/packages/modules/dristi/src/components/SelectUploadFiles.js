@@ -127,7 +127,12 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
       setShowTextArea(true);
       setIsFileAdded(false);
     }
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    const dataCopy = structuredClone(formData[config.key]);
+    if ("document" in dataCopy) {
+      delete dataCopy.document;
+    }
+    dataCopy.text = "";
+    onSelect(config.key, dataCopy, { shouldValidate: true });
   };
 
   const dragDropJSX = (
@@ -141,7 +146,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
 
   const openModal = () => {
     setShowModal(true);
-    onSelect(config.key, { ...formData[config.key], document: [] }, { shouldValidate: true });
+    onSelect(config.key, { ...formData[config.key], document: [] });
   };
 
   const handleCloseModal = () => {
@@ -166,7 +171,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
     if (numberOfFiles > 0) {
       setIsAddButtonDisabled(false);
     }
-    onSelect(config.key, { ...formData[config.key], [input.name]: numberOfFiles > 0 ? fileArray : [] }, { shouldValidate: true });
+    onSelect(config.key, { ...formData[config.key], [input.name]: numberOfFiles > 0 ? fileArray : [] });
   }
 
   const handleTextChange = (data, input) => {

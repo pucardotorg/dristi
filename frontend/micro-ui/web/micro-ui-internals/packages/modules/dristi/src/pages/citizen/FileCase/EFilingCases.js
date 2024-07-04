@@ -1712,7 +1712,7 @@ function EFilingCases({ path }) {
                   inputs: [
                     {
                       infoHeader: "Note",
-                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${"CS_REVIEW_CAREFULLY"}`,
+                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${t("CS_REVIEW_CAREFULLY")}`,
                       type: "InfoComponent",
                     },
                   ],
@@ -1896,7 +1896,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
           )}
-          {showReviewCorrectionModal && (
+          {showReviewCorrectionModal && isDraftInProgress && (
             <Modal
               headerBarMain={<Heading label={t("REVIEW_CASE_HEADER")} />}
               headerBarEnd={

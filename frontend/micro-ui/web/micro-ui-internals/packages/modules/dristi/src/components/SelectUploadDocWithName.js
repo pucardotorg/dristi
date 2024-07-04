@@ -136,7 +136,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                           onChange={(e) => {
                             handleOnTextChange(e.target.value, input, index);
                           }}
-                          disable={input?.isDisabled}
+                          disable={input?.isDisabled || config?.disable}
                           defaultValue={undefined}
                           {...input?.validation}
                         />

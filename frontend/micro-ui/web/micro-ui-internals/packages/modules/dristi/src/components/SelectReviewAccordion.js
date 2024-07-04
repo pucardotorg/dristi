@@ -15,6 +15,7 @@ import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
 import useSearchCaseService from "../hooks/dristi/useSearchCaseService";
 import { CaseWorkflowState } from "../Utils/caseWorkflow";
+import ReactTooltip from "react-tooltip";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -161,7 +162,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     );
   };
 
-  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = [], dataError = {}) => {
+  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = [], dataError = {}, disableScrutiny = false) => {
     setValue(
       "scrutinyMessage",
       {
@@ -172,6 +173,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         data,
         inputlist,
         dataError,
+        disableScrutiny,
       },
       "imagePopupInfo"
     );
@@ -217,9 +219,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
 
   const handleAddError = () => {
     const trimmedError = scrutinyError.trim();
-    if (!trimmedError) {
-      return;
-    }
+
     const { name, configKey, index, fieldName, inputlist, fileName } = popupInfo;
     let fieldObj = { [fieldName]: { FSOError: trimmedError } };
     inputlist.forEach((key) => {
@@ -248,7 +248,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
-        <span>{t(config?.label)}</span>
+        <span>
+          {config?.number}. {t(config?.label)}
+        </span>
         <span className="reverse-arrow">
           <CustomArrowDownIcon />
         </span>
@@ -256,19 +258,18 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {inputs.map((input, index) => {
+            showFlagIcon = isScrutiny && !input?.disableScrutiny ? true : false;
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
             let bgclassname = sectionError && isScrutiny ? "error" : "";
             bgclassname = sectionError && isCaseReAssigned ? "preverror" : bgclassname;
             const sectionErrorClassname = sectionError === prevSectionError ? "prevsection" : "section";
-            if (isPrevScrutiny) {
+            if (isPrevScrutiny && !input?.disableScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
             }
-            if (input?.disableScrutiny) {
-              showFlagIcon = false;
-            }
+
             return (
               <div className={`content-item ${bgclassname}`}>
                 <div className="item-header">
@@ -294,7 +295,19 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       }}
                       key={index}
                     >
-                      {sectionError ? <EditPencilIcon /> : <FlagIcon />}
+                      {sectionError ? (
+                        <React.Fragment>
+                          <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                            {" "}
+                            <EditPencilIcon />
+                          </span>
+                          <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                            {t("CS_CLICK_TO_EDIT")}
+                          </ReactTooltip>
+                        </React.Fragment>
+                      ) : (
+                        <FlagIcon />
+                      )}
                     </div>
                   )}
                 </div>
@@ -384,6 +397,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               />
               <Button
                 label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
+                isDisabled={!scrutinyError?.trim()}
                 onButtonClick={() => {
                   if (defaultError === scrutinyError) {
                     handleClosePopup();

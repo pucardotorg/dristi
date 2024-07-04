@@ -5,9 +5,9 @@ import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
 function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef, showFlag, isPrevScrutiny }) {
-  let showFlagNew = showFlag;
+  let showFlagNew = !imageInfo?.disableScrutiny && showFlag;
 
-  if (isPrevScrutiny) {
+  if (isPrevScrutiny && !imageInfo?.disableScrutiny) {
     showFlagNew = imageInfo?.inputlist?.some((key) => {
       return Boolean(imageInfo?.dataError?.[key]?.FSOError);
     });

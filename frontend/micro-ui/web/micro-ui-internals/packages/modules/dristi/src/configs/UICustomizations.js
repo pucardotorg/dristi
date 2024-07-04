@@ -363,24 +363,18 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId,
+          ...("sortBy" in additionalDetails && {
+            [additionalDetails.sortBy]: undefined,
+          }),
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
           },
         },
       ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId,
-          pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
-          },
-        });
-      }
       return {
         ...requestCriteria,
         body: {
@@ -503,29 +497,18 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       const tenantId = window?.Digit.ULBService.getStateId();
       // We need to change tenantId "processSearchCriteria" here
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
+      const criteria = requestCriteria?.body?.criteria?.map((item) => {
+        return {
+          ...item,
           ...requestCriteria?.state?.searchForm,
           tenantId,
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
           },
-        },
-      ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId,
-          pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
-          },
-        });
-      }
+        };
+      });
+
       return {
         ...requestCriteria,
         body: {

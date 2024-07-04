@@ -6,6 +6,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
+        number: 1,
         withoutLabel: true,
         textAreaMaxLength: "255",
         populators: {
@@ -30,7 +31,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "image",
                   label: "CS_ID_PROOF",
-                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                  value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
                 },
                 {
                   type: "address",
@@ -114,6 +115,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "caseSpecificDetails",
         label: "CS_CASE_SPECIFIC_DETAILS",
+        number: 2,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -200,6 +202,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_CHEQUE_RECIEVED_FOR",
                   value: "liabilityType.name",
+                },
+                {
+                  type: "amount",
+                  label: "CS_PARIAL_AMOUNT",
+                  value: "totalAmount",
                 },
                 {
                   type: "text",
@@ -290,6 +297,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "additionalDetails",
         label: "CS_ADDITIONAL_DETAILS",
+        number: 3,
         withoutLabel: true,
         populators: {
           inputs: [

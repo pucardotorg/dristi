@@ -811,7 +811,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
     let hasError = false;
     if (
       !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
-      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
       (!("document" in formData?.memorandumOfComplaint) &&
         "text" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.text.length > 0) ||
@@ -819,11 +818,13 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         "document" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.document.length > 0)
     ) {
+      debugger;
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       setFormErrors("memorandumOfComplaint", { type: "required" });
       hasError = true;
     }
     if (
+      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
       (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
       (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
     ) {
@@ -831,6 +832,7 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
       setFormErrors("prayerForRelief", { type: "required" });
       hasError = true;
     }
+
     if ("SelectUploadDocWithName" in formData && Array.isArray(formData?.SelectUploadDocWithName)) {
       let index = 0;
       for (const key of formData?.SelectUploadDocWithName) {
@@ -843,8 +845,9 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         }
         index = index++;
       }
-      return hasError;
     }
+
+    return hasError;
   } else {
     return false;
   }
@@ -975,7 +978,14 @@ export const updateCaseDetails = async ({
                   !!setFormDataValue &&
                     setFormDataValue("complainantVerification", {
                       individualDetails: {
-                        document: [documentData],
+                        document: [
+                          {
+                            documentType: documentData.fileType || documentData?.documentType,
+                            fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                            documentName: documentData.filename || documentData?.documentName,
+                            fileName: "ID Proof"
+                          },
+                        ],
                       },
                     });
                   const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
@@ -994,7 +1004,14 @@ export const updateCaseDetails = async ({
 
                   complainantVerification[index] = {
                     individualDetails: {
-                      document: [documentData],
+                      document: [
+                        {
+                          documentType: documentData.fileType || documentData?.documentType,
+                          fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                          documentName: documentData.filename || documentData?.documentName,
+                          fileName: "ID Proof"
+                        },
+                      ],
                       individualId: Individual?.Individual?.individualId,
                       "addressDetails-select": {
                         pincode: pincode,
@@ -1245,7 +1262,7 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "chequeDetails") {
-    const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
+    const infoBoxData = { header: "CS_YOU_HAVE_CONFIRMED", scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)

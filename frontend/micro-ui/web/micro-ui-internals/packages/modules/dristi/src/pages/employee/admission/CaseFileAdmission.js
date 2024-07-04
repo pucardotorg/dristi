@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Header, Loader, Toast, BackButton } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import AdmissionActionModal from "./AdmissionActionModal";
@@ -14,6 +14,7 @@ import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState(null);
@@ -74,7 +75,7 @@ function CaseFileAdmission({ t, path }) {
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
+  }, [caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
     const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
@@ -99,7 +100,7 @@ function CaseFileAdmission({ t, path }) {
   const caseInfo = [
     {
       key: "CASE_NUMBER",
-      value: caseDetails?.caseNumber,
+      value: caseDetails?.filingNumber,
     },
     {
       key: "CASE_CATEGORY",
@@ -191,6 +192,11 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 2 });
     });
   };
+
+  const handleScheduleNextHearing = () => {
+    history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`);
+  };
+
   const updateConfigWithCaseDetails = (config, caseDetails) => {
     const complainantNames = complainantFormData?.map((form) => {
       const firstName = form?.data?.firstName || "";
@@ -236,25 +242,6 @@ function CaseFileAdmission({ t, path }) {
   if (isLoading) {
     return <Loader />;
   }
-  if (showModal) {
-    return (
-      <AdmissionActionModal
-        t={t}
-        setShowModal={setShowModal}
-        setSubmitModalInfo={setSubmitModalInfo}
-        submitModalInfo={submitModalInfo}
-        modalInfo={modalInfo}
-        setModalInfo={setModalInfo}
-        handleSendCaseBack={handleSendCaseBack}
-        handleAdmitCase={handleAdmitCase}
-        path={path}
-        handleScheduleCase={handleScheduleCase}
-        updatedConfig={updatedConfig}
-        // hearingDetails={hearingDetails}
-        tenantId={tenantId}
-      ></AdmissionActionModal>
-    );
-  }
 
   return (
     <div className={"case-and-admission"}>
@@ -272,6 +259,7 @@ function CaseFileAdmission({ t, path }) {
             </div>
           </div>
           <div className="file-case-form-section">
+            <BackButton style={{ marginBottom: 0 }}></BackButton>
             <div className="employee-card-wrapper">
               <div className="header-content">
                 <div className="header-details">
@@ -299,14 +287,33 @@ function CaseFileAdmission({ t, path }) {
                 secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
                 showSecondaryLabel={true}
                 // actionClassName="admission-action-buttons"
-                actionClassName="e-filing-action-bar"
+                actionClassName="case-file-admission-action-bar"
                 showSkip={true}
                 onSkip={onSendBack}
                 noBreakLine
                 submitIcon={<RightArrow />}
+                skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}
               />
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
+              )}
+              {showModal && (
+                <AdmissionActionModal
+                  t={t}
+                  setShowModal={setShowModal}
+                  setSubmitModalInfo={setSubmitModalInfo}
+                  submitModalInfo={submitModalInfo}
+                  modalInfo={modalInfo}
+                  setModalInfo={setModalInfo}
+                  handleSendCaseBack={handleSendCaseBack}
+                  handleAdmitCase={handleAdmitCase}
+                  path={path}
+                  handleScheduleCase={handleScheduleCase}
+                  updatedConfig={updatedConfig}
+                  // hearingDetails={hearingDetails}
+                  tenantId={tenantId}
+                  handleScheduleNextHearing={handleScheduleNextHearing}
+                ></AdmissionActionModal>
               )}
             </div>
           </div>
