@@ -10,13 +10,13 @@ import {
   RadioButtons,
   TextInput,
 } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
+import { first } from "lodash";
 
 const CloseBtn = (props) => {
   return (
@@ -36,7 +36,7 @@ const Heading = (props) => {
 const JoinHomeLocalisation = {
   ENTER_CASE_NUMBER: "ENTER_CASE_NUMBER",
   INVALID_CASE_FILING_NUMBER: "INVALID_CASE_FILING_NUMBER",
-  INVALID_CASE_INFO_TEXT: "INVALID_CASE_INFO_TEXT",
+
   CONFIRM_JOIN_CASE: "CONFIRM_JOIN_CASE",
   PLEASE_NOTE: "PLEASE_NOTE",
   SIX_DIGIT_CODE_INFO: "SIX_DIGIT_CODE_INFO",
@@ -54,8 +54,7 @@ const JoinHomeLocalisation = {
   REPRESENT_SELF: "REPRESENT_SELF",
   YES: "YES",
   NO_HAVE_ADVOCATE: "NO_HAVE_ADVOCATE",
-  ADD_ADVOCATE_LATER: "ADD_ADVOCATE_LATER",
-  ADD_ADVOCATE_ANYTIME: "ADD_ADVOCATE_LATER",
+
   SUBMISSION_NECESSARY: "SUBMISSION_NECESSARY",
   FILL_FORM_VAKALATNAMA: "FILL_FORM_VAKALATNAMA",
   PARTY_PARTIES: "PARTY_PARTIES",
@@ -68,6 +67,21 @@ const JoinHomeLocalisation = {
   JOINING_THIS_CASE_AS: "JOINING_THIS_CASE_AS",
   SKIP_LATER: "SKIP_LATER",
   CASE_NO_ADMITTED_STATUS: "The above case doesn't have admitted status",
+  INVALID_ACCESS_CODE_MESSAGE: "Access code is invalid/incorrect",
+  AFFIDAVIT_MINIMUM_CHAR_MESSAGE: "Enter atleast 20 characters",
+  FILLING_NUMBER_FORMATE_TEXT: `Filing Number Format:`,
+  FILLING_NUMBER_FORMATE_TEXT_VALUE: "F-<StatuteSection>-<YYYY>-<7 digit sequence number>",
+  INVALID_CASE_INFO_TEXT: "If you think the entered number is correct, please contact",
+  NYAYA_MITRA_TEXT: "Nyaya Mitra",
+  FOR_SUPPORT_TEXT: "for support",
+  COMPLAINANTS_TEXT: "Complainants",
+  RESPONDENTS_TEXT: "Respondents",
+  WHICH_PARTY_AFFILIATED: "Which party are you affiliated with in this case?",
+  ADD_ADVOCATE_LATER: "You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a",
+  PARTY_IN_PERSON_TEXT: "Party in Person",
+  PRIMARY_ADD_SUPPORTING_ADVOCATE: "Only primary advocates can add supporting advocates",
+  CONTACT_PRIMARTY_ADVOCATE: "Please contact the primary advocate on this case to get yourself added",
+  REPRESENT_SELF_PARTY: "This submission is necessary if you choose to represent yourself",
 };
 
 const barRegistrationSerachConfig = [
@@ -173,7 +187,6 @@ const barRegistrationSerachConfig = [
 ];
 
 const JoinCaseHome = ({ t }) => {
-  const history = useHistory();
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
@@ -184,7 +197,6 @@ const JoinCaseHome = ({ t }) => {
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(0);
   const [caseNumber, setCaseNumber] = useState("");
-  const caseNumberRef = useRef(caseNumber);
   const [caseDetails, setCaseDetails] = useState({});
   const [userType, setUserType] = useState("");
   const [barRegNumber, setBarRegNumber] = useState("");
@@ -211,6 +223,7 @@ const JoinCaseHome = ({ t }) => {
   const [advocateId, setAdvocateId] = useState("");
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
   const [individualId, setIndividualId] = useState("");
+  const [name, setName] = useState({});
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -238,44 +251,14 @@ const JoinCaseHome = ({ t }) => {
   };
 
   const onFormValueChange = (formData) => {
-    // const temp = formData?.advocateBarRegNumberWithName?.[0]?.data;
-
     if (!isEqual(formData, advocateDetailForm)) {
       setAdvocateDetailForm(formData);
     }
-
-    // setAdvocateDetail({
-    //   barRegistrationNumber: temp?.barRegistrationNumber,
-    // });
-
-    // if (temp?.documents?.length > 0) {
-    //   setFormData({
-    //     [documentUploaderConfig.key]: {
-    //       [documentUploaderConfig.key]: [
-    //         {
-    //           documentName: temp.documents[0].additionalDetails.fileName,
-    //           documentType: temp.documents[0].documentType,
-    //           fileName: temp.documents[0].additionalDetails.fileName,
-    //           fileStore: temp.documents[0].fileStore,
-    //         },
-    //       ],
-    //     },
-    //   });
-    // }
     setIsDisabled(false);
   };
 
   useEffect(() => {
-    if (step === 0) {
-      // if (caseNumber !== "" && caseNumber.length > 1) {
-      //   setIsDisabled(false);
-      //   setErrors({
-      //     ...errors,
-      //     caseNumber: undefined,
-      //   })
-      // }
-      // else setIsDisabled(true);
-    } else if (step === 1) {
+    if (step === 1) {
       if (
         (userType && userType === "Litigant" && selectedParty && representingYourself) ||
         (userType && userType === "Advocate" && selectedParty && barRegNumber === "") ||
@@ -308,7 +291,7 @@ const JoinCaseHome = ({ t }) => {
           setErrors({
             ...errors,
             affidavitText: {
-              message: "Enter atleast 20 characters.",
+              message: JoinHomeLocalisation.AFFIDAVIT_MINIMUM_CHAR_MESSAGE,
             },
           });
         }
@@ -344,7 +327,7 @@ const JoinCaseHome = ({ t }) => {
         setErrors({
           ...errors,
           caseNumber: {
-            message: "INVALID_CASE_INFO_TEXT",
+            message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
           },
         });
     }
@@ -368,7 +351,9 @@ const JoinCaseHome = ({ t }) => {
       "",
       userInfo?.uuid && isUserLoggedIn
     );
+    console.log("individualData", individualData);
     setIndividualId(individualData?.Individual?.[0]?.individualId);
+    setName(individualData?.Individual?.[0]?.name);
 
     const advocateResponse = await DRISTIService.searchIndividualAdvocate(
       {
@@ -442,7 +427,9 @@ const JoinCaseHome = ({ t }) => {
                 // disable={editScreen}
               />
             </div>
-            <p style={{ fontSize: "12px" }}>{`Filing Number Format: "F-<StatuteSection>-<YYYY>-<7 digit sequence number>"`}</p>
+            <p style={{ fontSize: "12px" }}>
+              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT_VALUE)}
+            </p>
           </LabelFieldPair>
           {errors?.caseNumber && (
             <InfoCard
@@ -450,11 +437,11 @@ const JoinCaseHome = ({ t }) => {
               label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
               additionalElements={[
                 <p>
-                  If you think the entered number is correct, please contact <span style={{ fontWeight: "bold" }}>Nyaya Mitra</span> for support
+                  {t(JoinHomeLocalisation.INVALID_CASE_INFO_TEXT)}{" "}
+                  <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.NYAYA_MITRA_TEXT)}</span> {t(JoinHomeLocalisation.FOR_SUPPORT_TEXT)}
                 </p>,
               ]}
               inline
-              // text={t(JoinHomeLocalisation[errors.caseNumber.message])}
               textStyle={{}}
               className={`custom-info-card error`}
             />
@@ -469,7 +456,7 @@ const JoinCaseHome = ({ t }) => {
                 children={
                   <div className="complainants-respondents">
                     <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t("Complainants")}</h2>
+                      <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
                       <div className="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.complainantDetails?.formdata
@@ -481,7 +468,7 @@ const JoinCaseHome = ({ t }) => {
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t("Respondents")}</h2>
+                      <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
                       <div className="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.respondentDetails?.formdata
@@ -531,7 +518,7 @@ const JoinCaseHome = ({ t }) => {
               <LabelFieldPair className="case-label-field-pair">
                 <CardLabel className="case-input-label">
                   {userType === t(JoinHomeLocalisation.LITIGANT_OPT)
-                    ? "Which party are you affiliated with in this case?"
+                    ? t(JoinHomeLocalisation.WHICH_PARTY_AFFILIATED)
                     : `${t(JoinHomeLocalisation.PLEASE_CHOOSE_PARTY)}`}
                 </CardLabel>
                 <RadioButtons
@@ -601,12 +588,11 @@ const JoinCaseHome = ({ t }) => {
               label={t(JoinHomeLocalisation.PLEASE_NOTE)}
               additionalElements={[
                 <p>
-                  You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a{" "}
-                  <span style={{ fontWeight: "bold" }}>Party in Person</span>
+                  {t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}{" "}
+                  <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.PARTY_IN_PERSON_TEXT)}</span>
                 </p>,
               ]}
               inline
-              // text={t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}
               textStyle={{}}
               className={`custom-info-card`}
             />
@@ -625,12 +611,12 @@ const JoinCaseHome = ({ t }) => {
                 label={t("Info")}
                 additionalElements={{}}
                 inline
-                text={t("Only primary advocates can add supporting advocates")}
+                text={t(JoinHomeLocalisation.PRIMARY_ADD_SUPPORTING_ADVOCATE)}
                 textStyle={{}}
                 className={`custom-info-card`}
               />
               <div className="primary-advocate-details">
-                <h3 className="contact-text">Please contact the primary advocate on this case to get yourself added</h3>
+                <h3 className="contact-text">{t(JoinHomeLocalisation.CONTACT_PRIMARTY_ADVOCATE)}</h3>
                 <CustomCaseInfoDiv t={t} data={primaryAdvocateDetail} />
               </div>
             </React.Fragment>
@@ -643,15 +629,15 @@ const JoinCaseHome = ({ t }) => {
                   userType === "Litigant" && representingYourself !== "Yes"
                     ? [
                         <p>
-                          You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a{" "}
-                          <span style={{ fontWeight: "bold" }}>Party in Person</span>
+                          {t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}{" "}
+                          <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.PARTY_IN_PERSON_TEXT)}</span>
                         </p>,
                       ]
                     : userType === "Litigant" && representingYourself === "Yes"
                     ? [
                         <p>
-                          This submission is necessary if you choose to represent yourself{" "}
-                          <span style={{ fontWeight: "bold" }}>(Party in Person)</span>
+                          {t(JoinHomeLocalisation.REPRESENT_SELF_PARTY)}{" "}
+                          <span style={{ fontWeight: "bold" }}>{`(${JoinHomeLocalisation.PARTY_IN_PERSON_TEXT})`}</span>
                         </p>,
                       ]
                     : {}
@@ -685,7 +671,7 @@ const JoinCaseHome = ({ t }) => {
                         }}
                         disable={userType === "Litigant" ? false : true}
                       />
-                      {errors?.barRegNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
+                      {errors?.barRegNumber && <CardLabelError> {t(errors?.barRegNumber?.message)} </CardLabelError>}
                       {}
                     </div>
                   </LabelFieldPair>
@@ -750,7 +736,7 @@ const JoinCaseHome = ({ t }) => {
                         placeholder={t(JoinHomeLocalisation.TYPE_AFFIDAVIT_CONTENT)}
                       ></textarea>
 
-                      {errors?.affidavitText && <CardLabelError> {errors?.affidavitText?.message} </CardLabelError>}
+                      {errors?.affidavitText && <CardLabelError> {t(errors?.affidavitText?.message)} </CardLabelError>}
                       {}
                     </div>
                   </LabelFieldPair>
@@ -820,7 +806,7 @@ const JoinCaseHome = ({ t }) => {
                 }}
                 // disable={editScreen}
               />
-              {errors?.validationCode && <CardLabelError> {errors?.validationCode?.message} </CardLabelError>}
+              {errors?.validationCode && <CardLabelError> {t(errors?.validationCode?.message)} </CardLabelError>}
               {}
             </div>
           </LabelFieldPair>
@@ -846,7 +832,7 @@ const JoinCaseHome = ({ t }) => {
                 children={
                   <div className="complainants-respondents">
                     <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t("Complainants")}</h2>
+                      <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
                       <div className="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.complainantDetails?.formdata
@@ -858,7 +844,7 @@ const JoinCaseHome = ({ t }) => {
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t("Respondents")}</h2>
+                      <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
                       <div className="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.respondentDetails?.formdata
@@ -927,7 +913,7 @@ const JoinCaseHome = ({ t }) => {
     let res;
     try {
       res = await CASEService.joinCaseService(data, {});
-      return [res, err];
+      return [res, undefined];
     } catch (err) {
       return [res, err];
     }
@@ -960,7 +946,7 @@ const JoinCaseHome = ({ t }) => {
             setErrors({
               ...errors,
               caseNumber: {
-                message: "CASE_NO_ADMITTED_STATUS",
+                message: JoinHomeLocalisation.CASE_NO_ADMITTED_STATUS,
               },
             });
             setIsDisabled(true);
@@ -969,7 +955,7 @@ const JoinCaseHome = ({ t }) => {
           setErrors({
             ...errors,
             caseNumber: {
-              message: "INVALID_CASE_INFO_TEXT",
+              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
             },
           });
         }
@@ -1098,7 +1084,7 @@ const JoinCaseHome = ({ t }) => {
           setErrors({
             ...errors,
             validationCode: {
-              message: "Access code is invalid/incorrect.",
+              message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
             },
           });
         }
@@ -1120,6 +1106,11 @@ const JoinCaseHome = ({ t }) => {
               tenantId: tenantId,
               accessCode: validationCode,
               litigant: {
+                additionalDetails: {
+                  first: name?.givenName,
+                  middleName: name?.otherNames,
+                  lastName: name?.familyName,
+                },
                 tenantId: tenantId,
                 individualId: individualId,
                 affidavitText,
@@ -1136,7 +1127,7 @@ const JoinCaseHome = ({ t }) => {
             setErrors({
               ...errors,
               validationCode: {
-                message: "Access code is invalid/incorrect.",
+                message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
               },
             });
           }
