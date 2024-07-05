@@ -155,6 +155,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
       }
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
+      onSelect(config.key, { ...formData?.[config.key], [input]: value }, { shouldValidate: true });
     }
   }
 
