@@ -32,21 +32,14 @@ import java.util.List;
 @Controller
 @RequestMapping("")
 public class AdvocateApiController {
-
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
+	private final AdvocateService advocateService;
+	private final ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
-	private AdvocateService advocateService;
-
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-
-	@Autowired
-	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	public AdvocateApiController(AdvocateService advocateService,
+								 ResponseInfoFactory responseInfoFactory) {
+		this.advocateService = advocateService;
+		this.responseInfoFactory = responseInfoFactory;
 	}
 
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)

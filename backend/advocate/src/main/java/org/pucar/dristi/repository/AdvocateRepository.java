@@ -18,24 +18,25 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_SEARCH_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Slf4j
 @Repository
 public class AdvocateRepository {
 
-    @Autowired
-    private AdvocateQueryBuilder queryBuilder;
+    private final AdvocateQueryBuilder queryBuilder;
+    private final JdbcTemplate jdbcTemplate;
+    private final AdvocateRowMapper rowMapper;
+    private final AdvocateDocumentRowMapper advocateDocumentRowMapper;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AdvocateRowMapper rowMapper;
-    @Autowired
-    private AdvocateDocumentRowMapper advocateDocumentRowMapper;
-
+    public AdvocateRepository(AdvocateQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, AdvocateRowMapper rowMapper, AdvocateDocumentRowMapper advocateDocumentRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.advocateDocumentRowMapper = advocateDocumentRowMapper;
+    }
 
     /** Used to get applications based on search criteria using query
      * @param searchCriteria
@@ -52,7 +53,7 @@ public class AdvocateRepository {
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String advocateQuery = "";
                 advocateQuery = queryBuilder.getAdvocateSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
-                log.info("Final advocate list query :: {}", advocateQuery);
+                log.info(ADVOCATE_LIST_QUERY, advocateQuery);
                 List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
                 log.info("Application size :: {}", list);
                 if (list != null) {
@@ -70,7 +71,7 @@ public class AdvocateRepository {
 
                 String advocateDocumentQuery = "";
                 advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final document query :: {}", advocateDocumentQuery);
+                log.info(DOCUMENT_LIST_QUERY, advocateDocumentQuery);
                 Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
                 if (advocateDocumentMap != null) {
                     advocateSearchCriteria.getResponseList().forEach(advocate -> {
@@ -85,8 +86,8 @@ public class AdvocateRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate application list :: {}", e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,FETCH_ADVOCATE_EXCEPTION+e.getMessage());
         }
     }
 
@@ -98,7 +99,7 @@ public class AdvocateRepository {
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String advocateQuery = "";
             advocateQuery = queryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
-            log.info("Final advocate list query :: {}", advocateQuery);
+            log.info(ADVOCATE_LIST_QUERY, advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateList.addAll(list);
@@ -114,7 +115,7 @@ public class AdvocateRepository {
 
             String advocateDocumentQuery = "";
             advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final document query :: {}", advocateDocumentQuery);
+            log.info(DOCUMENT_LIST_QUERY, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
@@ -128,8 +129,8 @@ public class AdvocateRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate application list :: {}", e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,FETCH_ADVOCATE_EXCEPTION+e.getMessage());
         }
     }
 
@@ -141,7 +142,7 @@ public class AdvocateRepository {
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String advocateQuery = "";
             advocateQuery = queryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
-            log.info("Final advocate list query :: {}", advocateQuery);
+            log.info(ADVOCATE_LIST_QUERY, advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateList.addAll(list);
@@ -157,7 +158,7 @@ public class AdvocateRepository {
 
             String advocateDocumentQuery = "";
             advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final document query :: {}", advocateDocumentQuery);
+            log.info(DOCUMENT_LIST_QUERY, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
@@ -171,8 +172,8 @@ public class AdvocateRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate application list :: {}",e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_EXCEPTION,e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,FETCH_ADVOCATE_EXCEPTION+e.getMessage());
         }
     }
 

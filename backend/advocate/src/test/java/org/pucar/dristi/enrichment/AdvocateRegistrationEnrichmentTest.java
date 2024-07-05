@@ -171,7 +171,6 @@ class AdvocateRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateRequest.setRequestInfo(requestInfo);
-        List<String> idList = List.of("P-2021-01-01-001");
         when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
 
         assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));

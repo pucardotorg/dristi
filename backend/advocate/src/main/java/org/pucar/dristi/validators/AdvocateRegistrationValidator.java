@@ -23,11 +23,14 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 @Slf4j
 public class AdvocateRegistrationValidator {
-    @Autowired
-    private IndividualService individualService;
-    @Autowired
-    private AdvocateRepository repository;
+    private final IndividualService individualService;
+    private final AdvocateRepository repository;
 
+    @Autowired
+    public AdvocateRegistrationValidator(IndividualService individualService, AdvocateRepository repository) {
+        this.individualService = individualService;
+        this.repository = repository;
+    }
 
     /**
      * @param advocateRequest  advocate application request

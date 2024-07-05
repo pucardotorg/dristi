@@ -81,6 +81,7 @@ public class AdvocateClerkRegistrationValidatorTest {
     void validateApplicationExistence_ApplicationExists() {
         // Arrange
         AdvocateClerk advocateClerk = new AdvocateClerk();
+        advocateClerk.setTenantId("pg");
         advocateClerk.setApplicationNumber("testAppNumber");
         List<AdvocateClerk> existingApplications = new ArrayList<>();
         existingApplications.add(advocateClerk);
@@ -98,6 +99,7 @@ public class AdvocateClerkRegistrationValidatorTest {
     void validateApplicationExistence_ApplicationDoesNotExist() {
         // Arrange
         AdvocateClerk advocateClerk = new AdvocateClerk();
+        advocateClerk.setTenantId("pg");
         advocateClerk.setApplicationNumber("nonExistingAppNumber");
         when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
