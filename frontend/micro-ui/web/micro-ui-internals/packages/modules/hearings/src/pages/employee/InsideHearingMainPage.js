@@ -8,7 +8,7 @@ import EndHearing from "./EndHearing";
 import MarkAttendance from "./MarkAttendance";
 import debounce from "lodash/debounce";
 import AddParty from "./AddParty";
-import { add } from "lodash";
+import  add  from "lodash/add";
 
 const fieldStyle = { marginRight: 0 };
 
