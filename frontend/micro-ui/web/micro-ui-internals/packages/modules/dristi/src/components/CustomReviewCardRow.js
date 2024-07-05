@@ -219,7 +219,7 @@ const CustomReviewCardRow = ({
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
-                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader : data?.[value]?.header)}
+                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader || data?.[value]?.header : data?.[value]?.header)}
                 additionalElements={[
                   <React.Fragment>
                     {Array.isArray(data?.[value]?.data) && (
@@ -649,6 +649,8 @@ const CustomReviewCardRow = ({
     titleIndex,
     type,
     value,
+    disableScrutiny,
+    isCaseReAssigned,
   ]);
 
   return renderCard;
