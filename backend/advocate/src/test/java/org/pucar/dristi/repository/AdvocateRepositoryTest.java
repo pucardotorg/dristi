@@ -290,8 +290,7 @@ public class AdvocateRepositoryTest {
         Integer offset = 0;
 
         when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("SELECT * FROM advocates WHERE application_number = ? AND tenant_id = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(null);
-
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(Collections.emptyList());
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset);
 
