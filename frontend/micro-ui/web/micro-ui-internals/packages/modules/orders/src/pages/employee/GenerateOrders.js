@@ -27,11 +27,8 @@ import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow"
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
-const fieldStyle = { marginRight: 0 };
-
 const GenerateOrders = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -39,24 +36,9 @@ const GenerateOrders = () => {
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
-
-  const configKeys = {
-    SECTION_202_CRPC: configsOrderSection202CRPC,
-    DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
-    EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-    TRANSFER_TO_ADR: configsOrderTranferToADR,
-    NEXT_HEARING: configsScheduleHearingDate,
-    ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-    VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
-    CASE_TRANSFER: configsCaseTransfer,
-    CASE_SETTLEMENT: configsCaseSettlement,
-    SUMMONS: configsIssueSummons,
-    BAIL: configsBail,
-  };
 
   const { data: caseData, isCaseDetailsLoading } = useSearchCaseService(
     {
@@ -86,12 +68,26 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
   const modifiedFormConfig = useMemo(() => {
+    const configKeys = {
+      SECTION_202_CRPC: configsOrderSection202CRPC,
+      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+      APPROVE_REJECT_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      CASE_TRANSFER: configsCaseTransfer,
+      SETTLEMENT: configsCaseSettlement,
+      SUMMONS: configsIssueSummons,
+      BAIL: configsBail,
+    };
+    console.debug(orderType.code);
     return !orderType?.code
       ? applicationTypeConfig
       : configKeys.hasOwnProperty(orderType?.code)
       ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
       : applicationTypeConfig;
-  }, [orderType]);
+  }, [orderType?.code]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -134,12 +130,12 @@ const GenerateOrders = () => {
           setShowSuccessModal(true);
         }
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       })
       .catch(() => {
         refetchOrdersData();
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       });
   };
 
@@ -208,16 +204,6 @@ const GenerateOrders = () => {
   const handleReviewOrder = () => {
     handleSaveDraft();
     setShowReviewModal(true);
-  };
-
-  const handleCloseSignaturePopup = () => {
-    setShowSignatureModal(false);
-    setShowReviewModal(true);
-  };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    history.back(); // go to view case screen when clicking on close button.
   };
 
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
