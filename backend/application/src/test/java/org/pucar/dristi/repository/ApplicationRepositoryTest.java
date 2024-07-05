@@ -70,7 +70,6 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_Success() {
-        List<Object> preparedStmtList = new ArrayList<>();
 
         ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
         applicationSearchRequest.setRequestInfo(new RequestInfo());
