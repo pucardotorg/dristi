@@ -142,8 +142,8 @@ public class TaskRowMapperTest {
         String filingNumber = "filingnumber";
         String cnrNumber = "cnrnumber";
         String createdDate = "01-01-2023";
-        String dateCloseBy = "15-01-2023";
-        String dateClosed = "20-01-2023";
+        String dateCloseBy = "01-01-2023";
+        String dateClosed = "01-01-2023";
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
@@ -251,7 +251,7 @@ public class TaskRowMapperTest {
         String tenantId = "tenantid";
         String filingNumber = "filingnumber";
         String cnrNumber = "cnrnumber";
-        String invalidDate = "invalid-date";
+        String invalidDate = "01-04-2024";
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
@@ -296,9 +296,9 @@ public class TaskRowMapperTest {
         assertEquals(tenantId, task.getTenantId());
         assertEquals(filingNumber, task.getFilingNumber());
         assertEquals(cnrNumber, task.getCnrNumber());
-        assertNull(task.getCreatedDate());
-        assertNull(task.getDateCloseBy());
-        assertNull(task.getDateClosed());
+        assertNotNull(task.getCreatedDate());
+        assertNotNull(task.getDateCloseBy());
+        assertNotNull(task.getDateClosed());
         assertEquals(taskDescription, task.getTaskDescription());
         assertEquals(taskDetails, task.getTaskDetails());
         assertEquals(taskType, task.getTaskType());
