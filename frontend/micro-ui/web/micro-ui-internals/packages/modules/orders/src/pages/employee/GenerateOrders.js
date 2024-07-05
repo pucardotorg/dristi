@@ -57,7 +57,42 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+
+  const complainants = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((item) => item.partyType === "complainant.primary")
+      .map((item) => {
+        const person = item?.additionalDetails || {
+          firstName: "Vinod",
+          lastName: "H",
+          middleName: "",
+        };
+        const fullName = [person.firstName, person.middleName, person.lastName].filter((name) => name).join(" ");
+        return { code: fullName, name: fullName };
+      });
+  }, [caseDetails]);
+
+  const respondants = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((item) => item.partyType === "complainant.primary")
+      .map((item) => {
+        const person = item?.additionalDetails || {
+          firstName: "Venkat",
+          lastName: "V",
+          middleName: "",
+        };
+        const fullName = [person.firstName, person.middleName, person.lastName].filter((name) => name).join(" ");
+        return { code: fullName, name: fullName };
+      });
+  }, [caseDetails]);
+
   const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
@@ -85,13 +120,61 @@ const GenerateOrders = () => {
       WARRANT: configsIssueOfWarrants,
       OTHERS: configsOthers,
     };
-    console.debug(orderType.code);
-    return !orderType?.code
-      ? applicationTypeConfig
-      : configKeys.hasOwnProperty(orderType?.code)
-      ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
-      : applicationTypeConfig;
-  }, [orderType?.code]);
+
+    let newConfig = structuredClone(applicationTypeConfig);
+    if (orderType?.code && configKeys.hasOwnProperty(orderType?.code)) {
+      let orderTypeForm = configKeys[orderType?.code];
+      if (orderType?.code === "SECTION_202_CRPC") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "applicationFilledBy") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: complainants,
+                  },
+                };
+              }
+              if (field.key === "detailsSeekedOf") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: respondants,
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      if (orderType?.code === "MANDATORY_SUBMISSIONS_RESPONSES") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "submissionParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      newConfig = [...newConfig, ...orderTypeForm];
+    }
+    return newConfig;
+  }, [complainants, orderType?.code, respondants]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -251,6 +334,7 @@ const GenerateOrders = () => {
         {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
+            className={"generate-orders"}
             key={selectedOrder}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
