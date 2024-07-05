@@ -898,11 +898,13 @@ function EFilingCases({ path }) {
                           )
                         ) {
                           delete input.isOptional;
+                          body.isMandatory = true;
                           return {
                             ...input,
                             hideDocument: false,
                           };
                         } else if (body?.key === "inquiryAffidavitFileUpload") {
+                          delete body.isMandatory;
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
