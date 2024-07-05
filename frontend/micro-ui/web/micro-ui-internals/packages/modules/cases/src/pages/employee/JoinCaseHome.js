@@ -16,7 +16,7 @@ import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
 const CloseBtn = (props) => {
   return (
