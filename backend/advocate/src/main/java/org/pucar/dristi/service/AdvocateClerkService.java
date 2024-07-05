@@ -21,13 +21,13 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class AdvocateClerkService {
 
-    private  AdvocateClerkRepository advocateClerkRepository;
-    private  AdvocateClerkRegistrationValidator validator;
-    private  AdvocateClerkRegistrationEnrichment enrichmentUtil;
-    private  WorkflowService workflowService;
-    private  IndividualService individualService;
-    private  Producer producer;
-    private  Configuration config;
+    private final AdvocateClerkRepository advocateClerkRepository;
+    private final AdvocateClerkRegistrationValidator validator;
+    private final AdvocateClerkRegistrationEnrichment enrichmentUtil;
+    private final WorkflowService workflowService;
+    private final IndividualService individualService;
+    private final Producer producer;
+    private final Configuration config;
 
     @Autowired
     public AdvocateClerkService(AdvocateClerkRepository advocateClerkRepository, AdvocateClerkRegistrationValidator validator, AdvocateClerkRegistrationEnrichment enrichmentUtil,

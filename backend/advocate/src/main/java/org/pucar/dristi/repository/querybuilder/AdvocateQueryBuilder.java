@@ -35,12 +35,13 @@ public class AdvocateQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
+
             boolean firstCriteria = true;
 
             if (criteria != null) {
                 firstCriteria = addCriteriaToQuery(criteria, query, preparedStmtList, firstCriteria);
 
-                if(tenantId != null && !tenantId.isEmpty()){
+                if (tenantId != null && !tenantId.isEmpty()) {
                     addClauseIfRequiredForTenantId(query, firstCriteria);
                     query.append("LOWER(adv.tenantid) = LOWER(?)");
                     preparedStmtList.add(tenantId.toLowerCase());
@@ -57,18 +58,17 @@ public class AdvocateQueryBuilder {
             }
 
             return query.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
             throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION, ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION + e.getMessage());
         }
     }
 
     private boolean addCriteriaToQuery(AdvocateSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria) {
-        firstCriteria = addSingleCriteria(criteria.getId(), "adv.id = ?", query, preparedStmtList, firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getBarRegistrationNumber(), "adv.barRegistrationNumber = ?", query, preparedStmtList, firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getApplicationNumber(), "adv.applicationNumber = ?", query, preparedStmtList, firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getIndividualId(), "adv.individualId = ?", query, preparedStmtList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getId(), "adv.id", query, preparedStmtList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getBarRegistrationNumber(), "adv.barRegistrationNumber", query, preparedStmtList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getApplicationNumber(), "adv.applicationNumber", query, preparedStmtList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getIndividualId(), "adv.individualId", query, preparedStmtList, firstCriteria);
 
         return firstCriteria;
     }
@@ -76,12 +76,13 @@ public class AdvocateQueryBuilder {
     private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria) {
         if (value != null && !value.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append(column);
+            query.append(column).append(" = ? ");
             preparedStmtList.add(value);
-            firstCriteria = false;
+            return false; // Update firstCriteria flag
         }
         return firstCriteria;
     }
+
 
     public String getAdvocateSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
         try {
@@ -157,7 +158,7 @@ public class AdvocateQueryBuilder {
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         } else {
             query.append(" OR ");
         }
@@ -165,7 +166,7 @@ public class AdvocateQueryBuilder {
 
     private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         } else {
             query.append(" AND ");
         }
