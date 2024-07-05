@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Button } from "@egovernments/digit-ui-react-components";
 
-const OverlayDropdown = () => {
+export const Context = React.createContext();
+
+const OverlayDropdown = ({column}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showModal,setShowModal] = useState(false);
 
   const dropdownItems = [
-    { label: 'View Case', path: '/employee/hearings/view-case' },
-    { label: 'Reschedule hearing', path: '/employee/hearings/reschedule-hearing' },
-    { label: 'View transcript', path: '/employee/hearings/view-transcript' },
-    { label: 'View witness deposition', path: '/employee/hearings/view-witness-deposition' },
-    { label: 'View pending task', path: '/employee/hearings/view-pending-task' },
+    { label: 'View Case', path: '/employee/hearings/view-case' ,onClick: column.onViewCaseClick},
+    { label: 'Reschedule hearing', path: '/employee/hearings/reschedule-hearing',onClick: column.onRescheduleClick },
+    { label: 'View transcript', path: '/employee/hearings/view-transcript',onClick: column.onViewTranscriptClick },
+    { label: 'View witness deposition', path: '/employee/hearings/view-witness-deposition',onClick: column.onViewWitnessClick },
+    { label: 'View pending task', path: '/employee/hearings/view-pending-task',onClick: column.onViewPendingTaskClick },
   ];
 //[TODO: Dropdown values need to be referred from MDMS data]
   const handleNavigate = (path) => {
@@ -23,7 +26,7 @@ const OverlayDropdown = () => {
   };
  // [TODO: Inline css to be moved to css file , Component need to be referred from @egovernments/digit-ui-components]
   return (
-    <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }}>
       {/* Three dots or any other trigger */}
       <div
         style={{
@@ -51,8 +54,8 @@ const OverlayDropdown = () => {
               key={item.path}
               style={{ padding: '10px', cursor: 'pointer' }}
               onClick={() => {
-                handleNavigate(item.path);
                 setIsDropdownOpen(false);
+                return item.onClick?.();
               }}
             >
               {item.label}

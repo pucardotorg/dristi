@@ -1,6 +1,5 @@
-// ErrorTooltip.js
 import React from "react";
-import { ReactComponent as InfoToolTipIcon } from "../images/Vector.svg";
+import { InfoToolTipIcon } from "../icons/svgIndex";
 import { InfoIcon } from "../icons/svgIndex";
 
 const CustomErrorTooltip = ({ message, showTooltip, icon }) => {
