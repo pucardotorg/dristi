@@ -32,6 +32,10 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       updatedValue[input] = value;
     }
 
+    if (!value) {
+      updatedValue = null;
+    }
+
     onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
