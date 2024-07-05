@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HearingsHomeConfig";
+import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
