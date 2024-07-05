@@ -765,6 +765,7 @@ function EFilingCases({ path }) {
           return {
             ...config,
             body: config?.body.map((body) => {
+              body.state = state;
               if (body?.addUUID && body?.uuid !== index) {
                 body.uuid = index;
                 body.isUserVerified = disableConfigFields.some((field) => {
