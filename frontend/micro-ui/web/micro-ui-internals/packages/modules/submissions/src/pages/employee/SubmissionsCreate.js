@@ -2,9 +2,27 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
-import { applicationTypeConfig, configsRescheduleRequest, submissionTypeConfig } from "../../configs/submissionsCreateConfig";
+import {
+  applicationTypeConfig,
+  configs,
+  configsBail,
+  configsBailBond,
+  configsCaseTransfer,
+  configsCaseWithdrawal,
+  configsProductionOfDocuments,
+  configsRescheduleRequest,
+  configsSettlement,
+  configsSurety,
+  submissionTypeConfig,
+} from "../../configs/submissionsCreateConfig";
 import { transformCreateData } from "../../utils/createUtils";
 import { submissionService } from "../../hooks/services";
+import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
+import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
+import PaymentModal from "../../components/PaymentModal";
+import SuccessModal from "../../components/SuccessModal";
+import useSearchSubmissionService from "../../hooks/submissions/useSearchSubmissionService";
+import { CaseWorkflowState } from "../../utils/caseWorkFlow";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -16,6 +34,11 @@ const SubmissionsCreate = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const [formdata, setFormdata] = useState({});
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showsignatureModal, setShowsignatureModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   const reqCreate = {
     url: `/application/application/v1/create`,
     params: {},
@@ -27,6 +50,13 @@ const SubmissionsCreate = () => {
 
   const applicationConfigKeys = {
     RE_SCHEDULE: configsRescheduleRequest,
+    CHECKOUT: configsBail,
+    // DELAY: ,
+    // PENALTY_WAIVER: ,
+    // CASE_EDITING: ,
+    // DOCUMENT_SUBMISSION: ,
+    // RESPONSE_ON_DOCUMENT: ,
+    // OTHERS: ,
   };
   const submissionConfigKeys = {
     APPLICATION_TYPE: applicationTypeConfig,
@@ -71,18 +101,20 @@ const SubmissionsCreate = () => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
 
-  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
-  const onError = (resp) => {
-    history.push(`/${window.contextPath}/employee/submissions/submissions-response?isSuccess=${false}`, { message: "SUBMISSION_CREATION_FAILED" });
-  };
+  // const searchReqBody = {
+  //   tenantId,
+  //   criteria: {
+  //     tenantId,
+  //     filingNumber,
+  //   },
+  // };
 
-  const onSuccess = (resp) => {
-    history.push(`/${window.contextPath}/employee/submissions/submissions-response?appNo=${"NEW-NO-1"}&isSuccess=${true}`, {
-      message: "SUBMISSION_CREATION_SUCCESS",
-      showID: true,
-      label: "SUBMISSION_ID",
-    });
-  };
+  // const {
+  //   data: submissionData,
+  //   refetch: refetchSubmissionData,
+  //   isLoading: isSubmissionLoading,
+  //   isFetching: isSubmissionFetching,
+  // } = useSearchSubmissionService(searchReqBody, { tenantId, filingNumber }, filingNumber, Boolean(filingNumber));
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -97,7 +129,7 @@ const SubmissionsCreate = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const createOrder = () => {
+  const createSubmission = () => {
     const reqbody = {
       tenantId,
       application: {
@@ -105,16 +137,19 @@ const SubmissionsCreate = () => {
         filingNumber,
         cnrNumber: caseDetails?.cnrNumber,
         caseId: caseDetails?.id,
-        // referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
+        referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
         createdDate: formatDate(new Date()),
         applicationType,
         // applicationNumber: "example_application_number",
         // issuedBy: null,
-        // status: "example_status",
+        status: caseDetails?.status,
         // comment: "example_comment",
-        // isActive: true,
+        isActive: true,
+        statuteSection: {
+          tenantId: tenantId,
+        },
         additionalDetails: { formdata: formdata },
-        documents: [],
+        documents: [{}],
         workflow: {
           id: "workflow123",
           action: "CREATE",
@@ -126,29 +161,51 @@ const SubmissionsCreate = () => {
     };
     submissionService
       .createApplication(reqbody, { tenantId })
-      .then((res) => {
-        console.debug(res);
-      })
-      .catch();
+      .then((res) => {})
+      .catch(() => {});
   };
 
-  const onSubmit = async (data) => {
-    console.log(data, "data");
-    await mutation.mutate(
-      {
-        url: `application/application/v1/create`,
-        params: { tenantId },
-        body: transformCreateData(data),
-        config: {
-          enable: true,
-        },
-      },
-      {
-        onSuccess,
-        onError,
-      }
-    );
+  const handleBack = () => {
+    setShowReviewModal(false);
   };
+
+  const handleProceed = () => {
+    setShowsignatureModal(false);
+    setShowPaymentModal(true);
+    createSubmission();
+  };
+
+  const handleCloseSignaturePopup = () => {
+    setShowsignatureModal(false);
+    setShowReviewModal(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+  };
+
+  const handleSkipPayment = () => {
+    setShowPaymentModal(false);
+    setShowSuccessModal(true);
+  };
+
+  const handleMakePayment = () => {
+    setShowPaymentModal(false);
+    setShowSuccessModal(true);
+  };
+
+  const handleDownloadSubmission = () => {
+    ///
+  };
+
+  const handleCloseSuccessModal = () => {
+    //
+  };
+
+  const handlePendingPayment = () => {
+    //
+  };
+
   return (
     <div>
       <Header> {t("CREATE_SUBMISSION")}</Header>
@@ -158,9 +215,39 @@ const SubmissionsCreate = () => {
         config={modifiedFormConfig}
         defaultValues={defaultValue}
         onFormValueChange={onFormValueChange}
-        onSubmit={createOrder}
+        onSubmit={() => setShowReviewModal(true)}
         fieldStyle={fieldStyle}
       />
+      {showReviewModal && (
+        <ReviewSubmissionModal
+          t={t}
+          applicationType={formdata?.applicationType?.name}
+          submissionDate={formatDate(new Date())}
+          sender={caseDetails?.additionalDetails?.payerName}
+          additionalDetails={"additional-details"}
+          setShowReviewModal={setShowReviewModal}
+          setShowsignatureModal={setShowsignatureModal}
+          handleBack={handleBack}
+        />
+      )}
+      {showsignatureModal && <SubmissionSignatureModal t={t} handleProceed={handleProceed} handleCloseSignaturePopup={handleCloseSignaturePopup} />}
+      {showPaymentModal && (
+        <PaymentModal
+          t={t}
+          handleClosePaymentModal={handleClosePaymentModal}
+          handleSkipPayment={handleSkipPayment}
+          handleMakePayment={handleMakePayment}
+        />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          t={t}
+          handleDownloadSubmission={handleDownloadSubmission}
+          // isPaymentDone={true}
+          handleCloseSuccessModal={handleCloseSuccessModal}
+          handlePendingPayment={handlePendingPayment}
+        />
+      )}
     </div>
   );
 };

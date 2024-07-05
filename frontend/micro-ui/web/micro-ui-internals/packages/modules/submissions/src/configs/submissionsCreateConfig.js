@@ -138,7 +138,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: false,
+        isMandatory: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -146,7 +146,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "COURT_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "courtName",
         type: "text",
         populators: { name: "courtName", hideInForm: true },
@@ -154,7 +154,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "CASE_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "caseName",
         type: "text",
         populators: { name: "caseName", hideInForm: true },
@@ -162,7 +162,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "CNR_NUMBER",
-        isMandatory: false,
+        isMandatory: true,
         key: "cnrNumber",
         type: "text",
         populators: { name: "cnrNumber", hideInForm: true },
@@ -170,7 +170,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "FILING_NUMBER",
-        isMandatory: false,
+        isMandatory: true,
         key: "filingNumber",
         type: "text",
         populators: { name: "filingNumber", hideInForm: true },
@@ -178,7 +178,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "applicationDate",
         type: "text",
         populators: { name: "applicationDate" },
@@ -186,7 +186,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "APPLICANT_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "applicantName",
         type: "text",
         populators: { name: "applicantName", hideInForm: true },
@@ -194,7 +194,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "PARTY_TYPE",
-        isMandatory: false,
+        isMandatory: true,
         type: "dropdown",
         key: "partyType",
         populators: {
@@ -215,7 +215,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "REPRESENTED_BY",
-        isMandatory: false,
+        isMandatory: true,
         key: "representedBy",
         type: "text",
         populators: { name: "representedBy", hideInForm: true },
@@ -223,7 +223,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "HEARING_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "initialHearingDate",
         type: "date",
         populators: { name: "initialHearingDate" },
@@ -231,7 +231,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "RESCHEDULING_REASON",
-        isMandatory: false,
+        isMandatory: true,
         key: "reschedulingReason",
         type: "dropdown",
         populators: {
@@ -255,7 +255,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "PROPOSED_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "changedHearingDate",
         type: "date",
         populators: { name: "changedHearingDate" },
@@ -263,7 +263,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "COMMENTS",
-        isMandatory: false,
+        isMandatory: true,
         key: "comments",
         type: "textarea",
         populators: { name: "comments" },
@@ -272,13 +272,13 @@ export const configsRescheduleRequest = [
   },
 ];
 
-export const configSubmissionExtenstionRequest = [
+export const configsExtensionSubmissionDeadline = [
   {
     body: [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: false,
+        isMandatory: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -286,7 +286,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "COURT_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "courtName",
         type: "text",
         populators: { name: "courtName", hideInForm: true },
@@ -294,7 +294,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "CASE_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "caseName",
         type: "text",
         populators: { name: "caseName", hideInForm: true },
@@ -302,7 +302,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "CNR_NUMBER",
-        isMandatory: false,
+        isMandatory: true,
         key: "cnrNumber",
         type: "text",
         populators: { name: "cnrNumber", hideInForm: true },
@@ -310,7 +310,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "FILING_NUMBER",
-        isMandatory: false,
+        isMandatory: true,
         key: "filingNumber",
         type: "text",
         populators: { name: "filingNumber", hideInForm: true },
@@ -318,15 +318,15 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "applicationDate",
-        type: "text",
+        type: "date",
         populators: { name: "applicationDate" },
       },
       {
         inline: true,
         label: "APPLICANT_NAME",
-        isMandatory: false,
+        isMandatory: true,
         key: "applicantName",
         type: "text",
         populators: { name: "applicantName", hideInForm: true },
@@ -334,7 +334,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "PARTY_TYPE",
-        isMandatory: false,
+        isMandatory: true,
         type: "dropdown",
         key: "partyType",
         populators: {
@@ -355,7 +355,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "REPRESENTED_BY",
-        isMandatory: false,
+        isMandatory: true,
         key: "representedBy",
         type: "text",
         populators: { name: "representedBy", hideInForm: true },
@@ -363,7 +363,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "SUBMISSION_TYPE",
-        isMandatory: false,
+        isMandatory: true,
         type: "dropdown",
         key: "submissionType",
         populators: {
@@ -379,7 +379,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "SUBMISSION_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "initialSubmissionDate",
         type: "date",
         populators: { name: "initialSubmissionDate" },
@@ -387,15 +387,15 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "REQUESTED_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "changedSubmissionDate",
-        type: "date",
+        type: "date", // date picker here?
         populators: { name: "changedSubmissionDate" },
       },
       {
         inline: true,
         label: "EXTENSION_REASON",
-        isMandatory: false,
+        isMandatory: true,
         key: "extensionReason",
         type: "dropdown",
         populators: {
@@ -423,7 +423,7 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "EXTENSION_BENEFIT",
-        isMandatory: false,
+        isMandatory: true,
         key: "extensionBenefit",
         type: "textarea",
         populators: { name: "extensionBenefit" },
@@ -431,7 +431,871 @@ export const configSubmissionExtenstionRequest = [
       {
         inline: true,
         label: "COMMENTS",
-        isMandatory: false,
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsProductionOfDocuments = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "listOfProducedDocuments",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              // isMandatory: true,
+              // isOptional: "CS_IS_OPTIONAL",
+              isMandatory: true,
+              name: "documents",
+              // documentSubText: "PRODUCED_DOCUMENTS",
+              documentHeader: "PRODUCED_DOCUMENTS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["PDF", "JPEG"],
+              isMultipleUpload: true,
+              uploadGuidelines: "UPLOAD_PDF_50",
+              headerClassName: "dristi-font-bold",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "reasonForDocumentsSubmission",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              // isMandatory: true,
+              // isOptional: "CS_IS_OPTIONAL",
+              isMandatory: true,
+              name: "documents",
+              // documentSubText: "PRODUCED_DOCUMENTS",
+              documentHeader: "REASON_FOR_DOCUMENT_SUBMISSION",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["PDF", "JPEG"],
+              isMultipleUpload: true,
+              uploadGuidelines: "UPLOAD_PDF_50",
+              headerClassName: "dristi-font-bold",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsCaseWithdrawal = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "REASON_FOR_WITHDRAWAL",
+        isMandatory: true,
+        type: "dropdown",
+        key: "reasonForWithdrawal",
+        populators: {
+          name: "reasonForWithdrawal",
+          optionsKey: "name",
+          error: "required",
+          options: [
+            {
+              code: "REASON_1",
+              name: "REASON_1",
+            },
+            {
+              code: "REASON_2",
+              name: "REASON_2",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsCaseTransfer = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "REQUESTED_COURT",
+        isMandatory: true,
+        key: "requestedCourt",
+        type: "text",
+        populators: { name: "requestedCourt" },
+      },
+      {
+        inline: true,
+        label: "GROUNDS_FOR_SEEKING_TRANSFER",
+        isMandatory: true,
+        key: "groundsForTransfer",
+        type: "text",
+        populators: { name: "groundsForTransfer" },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsSettlement = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "REASON_FOR_SETTLEMENT",
+        isMandatory: true,
+        key: "reasonForSettlement",
+        type: "text",
+        populators: { name: "reasonForSettlement" },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsBailBond = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PLACE_OF_DETENTION",
+        isMandatory: true,
+        key: "placeOfDetention",
+        type: "text",
+        populators: { name: "placeOfDetention" },
+      },
+      {
+        inline: true,
+        label: "BAIL_AMOUNT",
+        isMandatory: true,
+        key: "bailAmount",
+        type: "number",
+        populators: { name: "bailAmount" },
+      },
+    ],
+  },
+];
+
+export const configsSurety = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "NAME_OF_SURETY",
+        isMandatory: true,
+        key: "nameOfSurety",
+        type: "text",
+        populators: { name: "nameOfSurety" },
+      },
+      {
+        inline: true,
+        label: "BAIL_AMOUNT",
+        isMandatory: true,
+        key: "bailAmount",
+        type: "text",
+        populators: { name: "bailAmount", validation: {} },
+      },
+    ],
+  },
+];
+
+export const configsBail = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "documentsListForBail",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              isMandatory: true,
+              name: "documents",
+              // documentSubText: "PRODUCED_DOCUMENTS",
+              documentHeader: "LIST_OF_DOCUMENTS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["PDF", "JPEG"],
+              isMultipleUpload: true,
+              uploadGuidelines: "UPLOAD_PDF_50",
+              headerClassName: "dristi-font-bold",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        inline: true,
+        label: "REASON_FOR_BAIL",
+        isMandatory: true,
+        key: "reasonForBail",
+        type: "textarea",
+        populators: { name: "reasonForBail" },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
         key: "comments",
         type: "textarea",
         populators: { name: "comments" },

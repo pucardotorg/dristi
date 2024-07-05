@@ -1,7 +1,16 @@
 import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
-function ReviewSubmissionModal({ setShowReviewModal, t, setShowsignatureModal, handleBack }) {
+function ReviewSubmissionModal({
+  applicationType,
+  submissionDate,
+  sender,
+  additionalDetails,
+  setShowReviewModal,
+  t,
+  setShowsignatureModal,
+  handleBack,
+}) {
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -35,13 +44,13 @@ function ReviewSubmissionModal({ setShowReviewModal, t, setShowsignatureModal, h
             <h2> {t("ADDITIONAL_DETAILS")}</h2>
           </div>
           <div className="values-div">
-            <h2> {"Extension Request"}</h2>
-            <h2> {"28 Mar’ 24, 09:15am"}</h2>
-            <h2> {"Sukeerth Reddy on behalf of Aparna B."}</h2>
-            <h2> {"This can help strengthen the case against the accused."}</h2>
+            <h2> {t(applicationType)}</h2>
+            <h2> {t(submissionDate)}</h2>
+            <h2> {t(sender)}</h2>
+            <h2> {t(additionalDetails)}</h2>
           </div>
         </div>
-        <div className="review-submission-appl-modal-doc-div">/// document hereee</div>
+        <div className="review-submission-appl-modal-doc-div">/// document here</div>
       </div>
     </Modal>
   );
