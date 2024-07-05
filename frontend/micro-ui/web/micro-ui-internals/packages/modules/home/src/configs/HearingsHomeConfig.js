@@ -800,12 +800,40 @@ export const TabFSOSearchConfig = {
   ],
 };
 
-const rolesToConfigMapping = [
+export const rolesToConfigMapping = [
   {
     roles: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
     config: TabLitigantSearchConfig,
+    isLitigant: true,
+    showJoinFileOption: true,
+    onRowClickRoute: {
+      url: "/dristi/home/file-case/case",
+      params: [{ key: "caseId", value: "id" }],
+    },
   },
   {
-    role: [],
+    roles: ["CASE_APPROVER"],
+    config: TabJudgeSearchConfig,
+    isJudge: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/admission",
+      urlDependentOn: "status",
+      urlDependentValue: "PENDING_ADMISSION",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
+  },
+  {
+    roles: ["CASE_REVIEWER"],
+    config: TabFSOSearchConfig,
+    isFSO: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/case",
+      urlDependentOn: "status",
+      urlDependentValue: "UNDER_SCRUTINY",
+      params: [{ key: "caseId", value: "id" }],
+    },
   },
 ];
