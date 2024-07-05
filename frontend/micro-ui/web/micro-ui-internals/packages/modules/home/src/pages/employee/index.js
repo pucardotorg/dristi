@@ -6,7 +6,7 @@ import HearingsResponse from "./HearingsResponse";
 import InsideHearingMainPage from "./InsideHearingMainPage";
 import HomeView from "./HomeView";
 import ViewHearing from "./ViewHearing";
-import HearingPopup from "./HearingPopUp";
+import HomePopUp from "./HomePopUp";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/inside-hearing`} component={() => <InsideHearingMainPage />} />
         <PrivateRoute path={`${path}`} component={() => <HomeView></HomeView>} />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
-        <PrivateRoute path={`${path}/hearing-popup`} component={() => <HearingPopup></HearingPopup>} />
+        <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
       </AppContainer>
     </Switch>
   );
