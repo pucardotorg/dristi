@@ -5,7 +5,7 @@ import useGetHearings from "../../../hooks/dristi/useGetHearings";
 const NextHearingCard = ({ width }) => {
   const searchParams = new URLSearchParams(location.search);
   const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnr");
+  const cnr = searchParams.get("cnrNumber");
   const title = searchParams.get("title");
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();

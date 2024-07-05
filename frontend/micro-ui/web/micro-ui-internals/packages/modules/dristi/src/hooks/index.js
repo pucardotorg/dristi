@@ -1,6 +1,6 @@
 import useGetAdvocateClerk from "./dristi/useGetAdvocateClerk";
 import useGetAdvocateClientServices from "./dristi/useGetAdvocateClientServices";
-import useGetHearings from "./dristi/useGetHearings";
+import useGetHearings from "./dristi/useGetHearings.js";
 import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import useIndividualService from "./dristi/useIndividualService";
@@ -26,6 +26,7 @@ export const Urls = {
     evidenceSearch: "/evidence/artifacts/v1/_search",
     evidenceCreate: "/evidence/artifacts/v1/_create",
     evidenceUpdate: "/evidence/artifacts/v1/_update",
+    searchHearings: "/hearing/v1/search",
     demandCreate: "/billing-service/demand/_create",
     ordersSearch: "/order/order/v1/search",
     submissionsSearch: "/application/application/v1/search",
