@@ -10,7 +10,6 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -24,7 +23,7 @@ function CaseFileAdmission({ t, path }) {
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+  const { data: caseFetchResponse, isLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -38,15 +37,7 @@ function CaseFileAdmission({ t, path }) {
     caseId,
     Boolean(caseId)
   );
-  const { data: hearingResponse } = useGetHearings(
-    {
-      criteria: { tenantId },
-    },
-    { applicationNumber: "", cnrNumber: "" },
-    "dristi",
-    true
-  );
-  const hearingDetails = useMemo(() => hearingResponse?.HearingList || null, [hearingResponse]);
+
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complainantDetails?.formdata || null, [caseDetails]);
   const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
@@ -229,11 +220,6 @@ function CaseFileAdmission({ t, path }) {
     caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
     additionalDetails: "CS_ADDITIONAL_DETAILS",
   };
-  const complainantFirstName = complainantFormData?.[0].data?.firstName;
-  const complainantLastName = complainantFormData?.[0].data?.lastName;
-
-  const respondentFirstName = respondentFormData?.[0].data?.respondentFirstName;
-  const respondentLastName = respondentFormData?.[0].data?.respondentLastName;
 
   if (!caseId) {
     return <Redirect to="admission" />;
@@ -263,10 +249,7 @@ function CaseFileAdmission({ t, path }) {
             <div className="employee-card-wrapper">
               <div className="header-content">
                 <div className="header-details">
-                  <Header>
-                    {`${complainantFirstName}  ${complainantLastName}`.trim()} <span style={{ color: "#77787B" }}>vs</span>{" "}
-                    {`${respondentFirstName}  ${respondentLastName}`.trim()}
-                  </Header>
+                  <Header>{caseDetails?.caseTitle}</Header>
                   <div className="header-icon" onClick={() => {}}>
                     <CustomArrowDownIcon />
                   </div>
@@ -310,7 +293,6 @@ function CaseFileAdmission({ t, path }) {
                   path={path}
                   handleScheduleCase={handleScheduleCase}
                   updatedConfig={updatedConfig}
-                  // hearingDetails={hearingDetails}
                   tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
                 ></AdmissionActionModal>

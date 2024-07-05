@@ -1407,6 +1407,124 @@ export const configsIssueSummons = [
   },
 ];
 
+export const configsIssueOfWarrants = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: false,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: false,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: false,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "DATE_OF_ORDER",
+        isMandatory: false,
+        key: "dateOfOrder",
+        type: "date",
+        populators: { name: "dateOfOrder", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "ISSUE_WARRANTS_FOR",
+        isMandatory: false,
+        key: "issueWarrantsFor",
+        type: "text",
+        populators: { name: "issueWarrantsFor", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "REASON_FOR_WARRANT",
+        isMandatory: false,
+        key: "reasonForWarrant",
+        type: "text",
+        populators: { name: "reasonForWarrant" },
+      },
+      {
+        inline: true,
+        label: "HEARING_DATE",
+        isMandatory: false,
+        key: "hearingDate",
+        type: "date",
+        populators: { name: "hearingDate", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "JUDGE_NAME",
+        isMandatory: false,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "JUDGE_DESIGNATION",
+        isMandatory: false,
+        key: "judgeDesignation",
+        type: "text",
+        populators: { name: "judgeDesignation", hideInForm: true },
+      },
+    ],
+  },
+];
+
+export const configsOthers = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "ORDER_TITLE",
+        isMandatory: false,
+        key: "orderTitle",
+        type: "text",
+        populators: { name: "orderTitle" },
+      },
+      {
+        inline: true,
+        label: "DETAILS",
+        isMandatory: false,
+        key: "otherDetails",
+        type: "textarea",
+        populators: { name: "otherDetails" },
+      },
+    ],
+  },
+];
+
 export const configsBail = [
   {
     body: [
