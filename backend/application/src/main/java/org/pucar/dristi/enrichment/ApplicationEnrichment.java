@@ -19,12 +19,13 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Component
 @Slf4j
 public class ApplicationEnrichment {
+    private final IdgenUtil idgenUtil;
+
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private UserUtil userUtils;
+    public ApplicationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
+
     public void enrichApplication(ApplicationRequest applicationRequest) {
         try {
             if(applicationRequest.getRequestInfo().getUserInfo() != null) {
@@ -39,7 +40,7 @@ public class ApplicationEnrichment {
                         .build();
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
-                application.setApplicationNumber(applicationIdList.get(0));//FIXME
+                application.setApplicationNumber(applicationIdList.get(0));
                 application.setIsActive(true);
 
                 if (application.getStatuteSection() != null) {

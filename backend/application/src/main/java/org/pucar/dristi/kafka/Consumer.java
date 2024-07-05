@@ -13,7 +13,7 @@ public class Consumer {
     * Value of the variable kafka.topics.consumer should be overwritten in application.properties
     */
     //@KafkaListener(topics = {"kafka.topics.consumer"})
-    public void listen(final HashMap<String, Object> record) {
+    public void listen(final HashMap<String, Object> entry) {
 
         //TODO
 
