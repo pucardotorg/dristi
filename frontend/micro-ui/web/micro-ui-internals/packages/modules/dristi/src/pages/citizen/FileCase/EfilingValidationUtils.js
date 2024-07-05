@@ -969,6 +969,9 @@ export const updateCaseDetails = async ({
                 partyCategory: data?.data?.complainantType?.code,
                 individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
                 partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                additionalDetails: {
+                  fullName: `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${data?.data?.lastName}`,
+                },
               };
             } else {
               if (data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.isUserVerified) {
@@ -1002,6 +1005,9 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+                  const firstName = Individual?.Individual?.firstName;
+                  const lastName = Individual?.Individual?.lastName;
+                  const middleName = Individual?.Individual?.middleName;
 
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
@@ -1043,6 +1049,9 @@ export const updateCaseDetails = async ({
                     partyCategory: data?.data?.complainantType?.code,
                     individualId: Individual?.Individual?.individualId,
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                    additionalDetails: {
+                      fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                    },
                   };
                 } else {
                   const Individual = await createIndividualUser({ data: data?.data, tenantId });
@@ -1056,6 +1065,9 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+                  const firstName = Individual?.Individual?.firstName;
+                  const lastName = Individual?.Individual?.lastName;
+                  const middleName = Individual?.Individual?.middleName;
 
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
                   complainantVerification[index] = {
@@ -1089,6 +1101,9 @@ export const updateCaseDetails = async ({
                     partyCategory: data?.data?.complainantType?.code,
                     individualId: Individual?.Individual?.individualId,
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                    additionalDetails: {
+                      fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                    },
                   };
                 }
               }
@@ -1165,10 +1180,15 @@ export const updateCaseDetails = async ({
     );
     const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
       ?.filter((representative) => representative?.advocateId)
-      .map((representative) => ({
+      .map((representative, idx) => ({
         ...representative,
         caseId: caseDetails?.id,
-        representing: representative?.advocateId ? [...litigants] : [],
+        representing: representative?.advocateId
+          ? [...litigants].map((item, index) => ({
+              ...(caseDetails.representatives?.[idx]?.representing?.[index] ? caseDetails.representatives?.[idx]?.representing?.[index] : {}),
+              ...item,
+            }))
+          : [],
       }));
     data.litigants = [...litigants].map((item, index) => ({
       ...(caseDetails.litigants?.[index] ? caseDetails.litigants?.[index] : {}),
@@ -1458,7 +1478,6 @@ export const updateCaseDetails = async ({
       },
     };
   }
-
   if (selected === "delayApplications") {
     const newFormData = await Promise.all(
       formdata
@@ -1705,6 +1724,9 @@ export const updateCaseDetails = async ({
                 ]
               : [],
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+            additionalDetails: {
+              advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+            },
             tenantId,
           };
         });
@@ -1748,7 +1770,6 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
-  console.log("caseTitle", caseTitle);
   return DRISTIService.caseUpdateService(
     {
       cases: {

@@ -28,6 +28,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   const hearingCounts = useMemo(() => {
     const counts = {};
+    if (!hearingDetails) return counts;
     const filteredHearings = hearingDetails.filter((hearing) => {
       const hearingDate = new Date(hearing.startTime);
       return hearingDate.getMonth() === currentMonth.getMonth() && hearingDate.getFullYear() === currentMonth.getFullYear();

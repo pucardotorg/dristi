@@ -85,6 +85,7 @@ function AdmissionActionModal({
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
       setLabel("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS");
+      return;
     }
     if (words?.length >= wordLimit) {
       setShowErrorToast(true);
