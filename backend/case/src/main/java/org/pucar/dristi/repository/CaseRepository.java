@@ -79,18 +79,18 @@ public class CaseRepository {
                 casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, requestInfo);
                 log.info("Final case query :: {}", casesQuery);
                 casesQuery = queryBuilder.addOrderByQuery(casesQuery, caseCriteria.getPagination());
-                if(caseCriteria.getPagination() !=  null) {
+                if (caseCriteria.getPagination() != null) {
                     Integer totalRecords = getTotalCount(casesQuery, preparedStmtList);
                     caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                    casesQuery = queryBuilder.addPaginationQuery(casesQuery,preparedStmtList, caseCriteria.getPagination());
+                    casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination());
                 }
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {
                     caseCriteria.setResponseList(list);
-                    log.info("Case list size :: {}",list.size());
+                    log.info("Case list size :: {}", list.size());
                 }
 
-                if(caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()){
+                if (caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()) {
                     continue;
                 }
 
@@ -138,7 +138,7 @@ public class CaseRepository {
                 setRepresentingDocuments(caseCriteria, idsRepresenting);
             }
             return searchCriteria;
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching case application list :: {}", e.toString());
@@ -158,7 +158,11 @@ public class CaseRepository {
                 if (courtCase.getRepresentatives() != null) {
                     courtCase.getRepresentatives().forEach(rep -> {
                         if (rep.getRepresenting() != null) {
-                            rep.getRepresenting().forEach(representing -> representing.setDocuments(caseRepresentingDocumentMap.get(representing.getId())));
+                            rep.getRepresenting().forEach(representing -> {
+                                if (representing != null) {
+                                    representing.setDocuments(caseRepresentingDocumentMap.get(representing.getId()));
+                                }
+                            });
                         }
                     });
                 }
@@ -177,7 +181,11 @@ public class CaseRepository {
         if (caseRepresentiveDocumentMap != null) {
             caseCriteria.getResponseList().forEach(courtCase -> {
                 if (courtCase.getRepresentatives() != null) {
-                    courtCase.getRepresentatives().forEach(rep -> rep.setDocuments(caseRepresentiveDocumentMap.get(UUID.fromString(rep.getId()))));
+                    courtCase.getRepresentatives().forEach(rep -> {
+                        if (rep != null) {
+                            rep.setDocuments(caseRepresentiveDocumentMap.get(UUID.fromString(rep.getId())));
+                        }
+                    });
                 }
             });
         }
@@ -193,7 +201,11 @@ public class CaseRepository {
         if (caseLinkedCaseDocumentMap != null) {
             caseCriteria.getResponseList().forEach(courtCase -> {
                 if (courtCase.getLinkedCases() != null) {
-                    courtCase.getLinkedCases().forEach(linkedCase -> linkedCase.setDocuments(caseLinkedCaseDocumentMap.get(linkedCase.getId())));
+                    courtCase.getLinkedCases().forEach(linkedCase -> {
+                        if (linkedCase != null) {
+                            linkedCase.setDocuments(caseLinkedCaseDocumentMap.get(linkedCase.getId()));
+                        }
+                    });
                 }
             });
         }
@@ -208,8 +220,12 @@ public class CaseRepository {
         Map<UUID, List<Document>> caseLitigantDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), litigantDocumentRowMapper);
         if (caseLitigantDocumentMap != null) {
             caseCriteria.getResponseList().forEach(courtCase -> {
-                if(courtCase.getLitigants()!=null){
-                    courtCase.getLitigants().forEach(litigant -> litigant.setDocuments(caseLitigantDocumentMap.get(litigant.getId())));
+                if (courtCase.getLitigants() != null) {
+                    courtCase.getLitigants().forEach(litigant -> {
+                        if (litigant != null) {
+                            litigant.setDocuments(caseLitigantDocumentMap.get(litigant.getId()));
+                        }
+                    });
                 }
             });
         }
@@ -223,7 +239,11 @@ public class CaseRepository {
         log.info("Final document query :: {}", casesDocumentQuery);
         Map<UUID, List<Document>> caseDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), caseDocumentRowMapper);
         if (caseDocumentMap != null) {
-            caseCriteria.getResponseList().forEach(courtCase -> courtCase.setDocuments(caseDocumentMap.get(courtCase.getId())));
+            caseCriteria.getResponseList().forEach(courtCase -> {
+                if (courtCase != null) {
+                    courtCase.setDocuments(caseDocumentMap.get(courtCase.getId()));
+                }
+            });
         }
     }
 
@@ -234,7 +254,7 @@ public class CaseRepository {
         Map<UUID, List<Party>> representingMap = jdbcTemplate.query(representingQuery, preparedStmtListDoc.toArray(), representingRowMapper);
         if (representingMap != null) {
             caseCriteria.getResponseList().forEach(courtCase -> {
-                if(courtCase.getRepresentatives()!=null){
+                if (courtCase.getRepresentatives() != null) {
                     courtCase.getRepresentatives().forEach(representative -> representative.setRepresenting(representingMap.get(UUID.fromString(representative.getId()))));
                 }
             });
@@ -330,9 +350,9 @@ public class CaseRepository {
             for (CaseExists caseExists : caseExistsRequest) {
                 if (
                         (caseExists.getCaseId() == null || caseExists.getCaseId().isEmpty()) &&
-                        (caseExists.getCourtCaseNumber() == null || caseExists.getCourtCaseNumber().isEmpty()) &&
-                        (caseExists.getCnrNumber() == null || caseExists.getCnrNumber().isEmpty()) &&
-                        (caseExists.getFilingNumber() == null || caseExists.getFilingNumber().isEmpty())
+                                (caseExists.getCourtCaseNumber() == null || caseExists.getCourtCaseNumber().isEmpty()) &&
+                                (caseExists.getCnrNumber() == null || caseExists.getCnrNumber().isEmpty()) &&
+                                (caseExists.getFilingNumber() == null || caseExists.getFilingNumber().isEmpty())
                 ) {
                     caseExists.setExists(false);
                 } else {
@@ -343,8 +363,7 @@ public class CaseRepository {
                 }
             }
             return caseExistsRequest;
-        }
-        catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error while checking case exist :: {}", e.toString());
