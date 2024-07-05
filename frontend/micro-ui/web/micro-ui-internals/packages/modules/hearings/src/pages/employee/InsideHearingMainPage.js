@@ -8,7 +8,11 @@ import EndHearing from "./EndHearing";
 import MarkAttendance from "./MarkAttendance";
 import debounce from "lodash/debounce";
 import AddParty from "./AddParty";
-import  add  from "lodash/add";
+import add from "lodash/add";
+
+import AdjournHearing from "./AdjournHearing";
+import { hearingService } from "../../hooks/services";
+import { DRISTIService } from "../../../../dristi/src/services";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -23,7 +27,8 @@ const InsideHearingMainPage = () => {
   const [options, setOptions] = useState([]);
   const [additionalDetails, setAdditionalDetails] = useState({});
   const [selectedWitness, setSelectedWitness] = useState({});
-  const [addPartyModal, setAddPartyModal]= useState(false);
+  const [addPartyModal, setAddPartyModal] = useState(false);
+  const [adjournHearing, setAdjournHearing] = useState(false);
 
   const [endHearingModalOpen, setEndHearingModalOpen] = useState(false);
 
@@ -33,13 +38,13 @@ const InsideHearingMainPage = () => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
 
-  const onCancel= ()=>{
+  const onCancel = () => {
     setAddPartyModal(false);
-  }
+  };
 
-  const onClickAddWitness = ()=>{
+  const onClickAddWitness = () => {
     setAddPartyModal(true);
-  }
+  };
 
   if (!hearingId) {
     const contextPath = window?.contextPath || "";
@@ -55,21 +60,50 @@ const InsideHearingMainPage = () => {
     return userRoles.some((role) => role.name === userRole);
   };
 
+  const reqBody = {
+    hearing: { tenantId, hearing },
+    criteria: {
+      tenantID: tenantId,
+      hearingId: hearingId,
+    },
+  };
   const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
-    { hearing: { tenantId } },
+    reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
     !checkUserApproval("CASE_VIEWER"),
     3000
   );
 
+  const getCaseDetails = async () => {
+    try {
+      const response = await DRISTIService.searchCaseService(
+        {
+          criteria: [
+            {
+              filingNumber: latestText?.HearingList[0]?.filingNumber[0],
+            },
+          ],
+          tenantId,
+        },
+        {}
+      );
+    } catch (error) {
+      const caseDetails = {
+        Case_Number: "FSM-29-04-23-898898",
+        Court_Name: "Kerala City Criminal Court",
+        Case_Type: "NIA S 138",
+      };
+      console.error("error");
+    }
+  };
+
   const { data: hearingResponse, refetch } = Digit.Hooks.hearings.useUpdateHearingsService(
-    { hearing: { tenantId, hearing } },
+    reqBody,
     { applicationNumber: "", cnrNumber: "" },
     "dristi",
     !checkUserApproval("CASE_VIEWER")
   );
-
 
   useEffect(() => {
     if (latestText) {
@@ -90,6 +124,8 @@ const InsideHearingMainPage = () => {
         setWitnessDepositionText(processedAdditionalDetails.witnesses[0]?.deposition || "");
         setAttendees(hearingData.attendees || []);
       }
+
+      getCaseDetails();
     }
   }, [latestText]);
 
@@ -253,7 +289,6 @@ const InsideHearingMainPage = () => {
                     marginTop: "10px",
                   }}
                   disabled={!checkUserApproval("CASE_VIEWER")}
-                  // onClick={() => console.log(witnessDepositionText)}  // for modal for add signature
                 >
                   Add Signature
                 </button>
@@ -264,6 +299,7 @@ const InsideHearingMainPage = () => {
       </Card>
       <Card>
         <HearingSideCard></HearingSideCard>
+        {adjournHearing && <AdjournHearing hearing={hearing} tenantID={tenantId} />}
       </Card>
       <ActionBar>
         <div
@@ -310,12 +346,7 @@ const InsideHearingMainPage = () => {
               width: "100%",
             }}
           >
-            <Button
-              label={"Adjourn Hearing"}
-              variation={"secondary"}
-              onClick={() => handleNavigate("/employee/hearings/adjourn-hearing")}
-              style={{ width: "100%" }}
-            />
+            <Button label={"Adjourn Hearing"} variation={"secondary"} onClick={() => setAdjournHearing(true)} style={{ width: "100%" }} />
 
             <Button
               label={"End Hearing"}
@@ -331,24 +362,16 @@ const InsideHearingMainPage = () => {
               attendees={attendees}
               setAttendees={setAttendees}
               hearing={hearing}
-              setAddPartyModal = {setAddPartyModal}
+              setAddPartyModal={setAddPartyModal}
             />
-          
           )}
         </div>
       </ActionBar>
 
       <div>
-        {addPartyModal && <AddParty 
-        onCancel={onCancel} 
-        onDismiss={onCancel} 
-        hearing= {hearing} 
-        tenantId={tenantId}
-        hearingId={hearingId}
-        ></AddParty>}
+        {addPartyModal && <AddParty onCancel={onCancel} onDismiss={onCancel} hearing={hearing} tenantId={tenantId} hearingId={hearingId}></AddParty>}
       </div>
       {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} hearing={hearing} />}
-
     </div>
   );
 };

@@ -72,7 +72,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
+const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper }) => {
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [transcript, setTranscript] = useState("");
@@ -128,7 +128,8 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
         headerBarEnd={<CloseBtn onClick={handleConfirmationModal} />}
         actionSaveLabel={<BackBtn text={t("Set Next Hearing Date")} />}
         actionCancelLabel={t("Back")}
-        actionSaveOnSubmit={() => alert("clicked")} // pass the handler of next modal
+        actionSaveOnSubmit={() => setStepper(stepper + 1)} // pass the handler of next modal
+        actionCancelOnSubmit={() => setStepper(stepper - 1)}
         formId="modal-action"
       >
         <div style={{ height: "308px", padding: "5px 24px 16px 24px", width: "100%" }}>
