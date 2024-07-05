@@ -184,7 +184,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       }}
       hideSubmit={userRoles.indexOf("APPLICATION_RESPONDER") !== -1 && documentSubmission.status === "PENDINGREVIEW"}
       actionCancelLabel={
-        userRoles.indexOf("APPLICATION_RESPONDER") !== -1 && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+        userRoles.indexOf("WORKFLOW_ABANDON") !== -1 && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
           ? t("Reject")
           : null
       }
