@@ -24,20 +24,31 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 @Slf4j
 public class HearingRegistrationValidator {
+    private final IndividualService individualService;
+    private final HearingRepository repository;
+    private final MdmsUtil mdmsUtil;
+    private final Configuration config;
+    private final ObjectMapper mapper;
+    private final CaseUtil caseUtil;
+    private final ApplicationUtil applicationUtil;
+
     @Autowired
-    private IndividualService individualService;
-    @Autowired
-    private HearingRepository repository;
-    @Autowired
-    private MdmsUtil mdmsUtil;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
-    private CaseUtil caseUtil;
-    @Autowired
-    private ApplicationUtil applicationUtil;
+    public HearingRegistrationValidator(
+            IndividualService individualService,
+            HearingRepository repository,
+            MdmsUtil mdmsUtil,
+            Configuration config,
+            ObjectMapper mapper,
+            CaseUtil caseUtil,
+            ApplicationUtil applicationUtil) {
+        this.individualService = individualService;
+        this.repository = repository;
+        this.mdmsUtil = mdmsUtil;
+        this.config = config;
+        this.mapper = mapper;
+        this.caseUtil = caseUtil;
+        this.applicationUtil = applicationUtil;
+    }
 
     /**
      * @param hearingRequest hearing application request
@@ -153,13 +164,4 @@ public class HearingRegistrationValidator {
         return applicationExistsRequest;
     }
 
-    public Hearing validateHearingExistenceForTranscriptUpdate(Hearing hearing) {
-        //checking if hearing exist or not
-        List<Hearing> existingHearings = repository.getHearings(hearing);
-        log.info("Existing Hearing :: {}", existingHearings);
-        if (existingHearings.isEmpty())
-            throw new CustomException(VALIDATION_EXCEPTION, "Hearing for transcript does not exist");
-
-        return existingHearings.get(0);
-    }
 }

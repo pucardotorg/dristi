@@ -1,5 +1,7 @@
 package org.pucar.dristi.web.controllers;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,14 +74,33 @@ public class HearingApiControllerTest {
 
     @Test
     public void testHearingV1SearchPost_Success() {
-        String cnrNumber = "12345";
-        String applicationNumber = "67890";
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .limit(10)
+                .offset(0)
+                .sortBy("ASC")
+                .build();
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
         List<Hearing> hearingList = List.of(new Hearing());
         int totalCount = hearingList.size();
 
-        when(hearingService.searchHearing(anyString(), anyString(), any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(hearingList);
 
-        ResponseEntity<HearingListResponse> response = hearingApiController.hearingV1SearchPost(cnrNumber, applicationNumber, null, null, null, null, null, null, null, null);
+        when(hearingService.searchHearing(any())).thenReturn(hearingList);
+
+        ResponseEntity<HearingListResponse> response = hearingApiController.hearingV1SearchPost(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -109,10 +131,10 @@ public class HearingApiControllerTest {
         Hearing hearing = new Hearing();  // Set up the response
         ResponseInfo responseInfo = new ResponseInfo();
 
-        when(hearingService.updateHearingTranscript(any(HearingRequest.class))).thenReturn(hearing);
+        when(hearingService.updateTranscriptAdditionalAttendees(any(HearingRequest.class))).thenReturn(hearing);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(responseInfo);
 
-        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateTranscriptPost(hearingRequest);
+        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateHearingTranscriptAdditionAuditDetailsPost(hearingRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

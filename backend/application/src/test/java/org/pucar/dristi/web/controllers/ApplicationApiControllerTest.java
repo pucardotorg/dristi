@@ -80,7 +80,7 @@ class ApplicationApiControllerTest {
         requestInfoBody.setRequestInfo(new RequestInfo());
 
         // Act
-        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(1, 1,"c",requestInfoBody);
+        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(requestInfoBody);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -156,7 +156,7 @@ class ApplicationApiControllerTest {
         requestInfoBody.setRequestInfo(new RequestInfo());
 
         Exception exception = assertThrows(CustomException.class, () -> {
-            controller.applicationV1SearchPost(1, 12,null, requestInfoBody);
+            controller.applicationV1SearchPost(requestInfoBody);
         });
 
         assertEquals("The request parameters did not meet the expected format.", exception.getMessage());
@@ -176,7 +176,7 @@ class ApplicationApiControllerTest {
         requestInfoBody.setCriteria(new ApplicationCriteria());
         requestInfoBody.setRequestInfo(new RequestInfo());
 
-        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(1, 12,"c",requestInfoBody);
+        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(requestInfoBody);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();

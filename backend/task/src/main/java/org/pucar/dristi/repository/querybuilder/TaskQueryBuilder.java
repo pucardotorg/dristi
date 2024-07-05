@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class TaskQueryBuilder {
 
     private static final String BASE_CASE_QUERY = "SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate," +
             " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
-            " task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
+            " task.taskdetails as taskdetails, task.assignedto as assignedto, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
             " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
     private static final String FROM_TASK_TABLE = " FROM dristi_task task";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
@@ -31,21 +32,13 @@ public class TaskQueryBuilder {
 
     private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_task task";
 
-    public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
+    public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
             boolean firstCriteria = true;
-
-            if (cnrNumber != null && !cnrNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = '").append(cnrNumber).append("'");
-                firstCriteria = false;
-            }
-
-            if (filingNumber != null && !filingNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.filingnumber = '").append(filingNumber).append("'");
-            }
+            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?" ,preparedStmtList);
+            firstCriteria = addTaskCriteria(filingNumber, query, firstCriteria, "task.filingnumber = ?",preparedStmtList);
+            addTaskCriteria(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
 
             return query.toString();
         } catch (Exception e) {
@@ -55,18 +48,25 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
+    public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
         try {
+            String taskNumber = criteria.getTaskNumber();
+            String cnrNumber = criteria.getCnrNumber();
+            String tenantId = criteria.getTenantId();
+            String id = criteria.getId();
+            String status = criteria.getStatus();
+            UUID orderId = criteria.getOrderId();
+
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", id);
-            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", tenantId);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", status);
-            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", orderId != null ? orderId.toString() : null);
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", cnrNumber);
-            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
+            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList);
+            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList);
+            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList);
+            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList);
+            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList);
+            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList);
 
             query.append(ORDERBY_CREATEDTIME);
 
@@ -77,17 +77,14 @@ public class TaskQueryBuilder {
         }
     }
 
-
-    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean isFirstCriteria, String condition, String parameter) {
+    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
         if (criteria != null && !criteria.isEmpty()) {
-            addClauseIfRequired(query, isFirstCriteria);
-            query.append(condition);
-            query.append("'");
-            query.append(parameter);
-            query.append("'");
-            return false;
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str);
+            preparedStmtList.add(criteria);
+            firstCriteria = false;
         }
-        return isFirstCriteria;
+        return firstCriteria;
     }
 
 

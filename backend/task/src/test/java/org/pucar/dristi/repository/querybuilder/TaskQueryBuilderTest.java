@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.TaskCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,46 +27,60 @@ public class TaskQueryBuilderTest {
     public void testCheckTaskExistQuery_withCnrNumber() {
         String cnrNumber = "123";
         String filingNumber = null;
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = '123'";
+        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = ? AND task.id = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String taskId = "123e4567-e89b-12d3-a456-556642440000"; // Replace with a valid UUID string
 
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
+        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, UUID.fromString(taskId), preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
     }
+
+
 
     @Test
     public void testCheckTaskExistQuery_withFilingNumber() {
         String cnrNumber = null;
         String filingNumber = "456";
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.filingnumber = '456'";
+        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.filingnumber = ? AND task.id = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String taskId = "123e4567-e89b-12d3-a456-556642440000"; // Replace with a valid UUID string
 
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
+        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, UUID.fromString(taskId), preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
     }
+
 
     @Test
     public void testCheckTaskExistQuery_withCnrNumberAndFilingNumber() {
         String cnrNumber = "123";
         String filingNumber = "456";
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = '123' AND task.filingnumber = '456'";
+        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = ? AND task.filingnumber = ? AND task.id = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String taskId = "123e4567-e89b-12d3-a456-556642440000"; // Replace with a valid UUID string
 
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
+        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, UUID.fromString(taskId), preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
     }
 
+
+
     @Test
     public void testCheckTaskExistQuery_withException() {
         String cnrNumber = "123";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String taskId="1234";
+
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
+            public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId,List<Object> preparedStmtList) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.checkTaskExistQuery(cnrNumber, null));
+        assertThrows(Exception.class, () -> taskQueryBuilder.checkTaskExistQuery(cnrNumber, null,UUID.fromString(taskId),preparedStmtList));
     }
 
 //    @Test
@@ -86,12 +101,12 @@ public class TaskQueryBuilderTest {
         String id = "1";
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
+            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList ) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(id, null, null, null, null,null));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(new TaskCriteria(), null));
     }
 
     @Test

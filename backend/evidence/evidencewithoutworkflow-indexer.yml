@@ -1,0 +1,129 @@
+ServiceMaps:
+  serviceName: Evidence Service
+  version: 1.0.0
+  mappings:
+    - topic: save-artifact-withoutworkflow-application
+      configKey: INDEX
+      indexes:
+        - name: artifact-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditdetails.createdTime
+          jsonPath: $.artifact
+          customJsonMapping:
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.artifactDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.artifactDetails.tenantId
+              - inJsonPath: $.artifactNumber
+                outJsonPath: $.Data.artifactDetails.artifactNumber
+              - inJsonPath: $.evidenceNumber
+                outJsonPath: $.Data.artifactDetails.evidenceNumber
+              - inJsonPath: $.externalRefNumber
+                outJsonPath: $.Data.artifactDetails.externalRefNumber
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.artifactDetails.caseId
+              - inJsonPath: $.application
+                outJsonPath: $.Data.artifactDetails.application
+              - inJsonPath: $.hearing
+                outJsonPath: $.Data.artifactDetails.hearing
+              - inJsonPath: $.order
+                outJsonPath: $.Data.artifactDetails.order
+              - inJsonPath: $.mediaType
+                outJsonPath: $.Data.artifactDetails.mediaType
+              - inJsonPath: $.artifactType
+                outJsonPath: $.Data.artifactDetails.artifactType
+              - inJsonPath: $.sourceType
+                outJsonPath: $.Data.artifactDetails.sourceType
+              - inJsonPath: $.sourceID
+                outJsonPath: $.Data.artifactDetails.sourceID
+              - inJsonPath: $.sourceName
+                outJsonPath: $.Data.artifactDetails.sourceName
+              - inJsonPath: $.applicableTo[*]
+                outJsonPath: $.Data.artifactDetails.applicableTo
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.artifactDetails.createdDate
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
+              - inJsonPath: $.status
+                outJsonPath: $.Data.artifactDetails.status
+              - inJsonPath: $.file
+                outJsonPath: $.Data.artifactDetails.file
+              - inJsonPath: $.description
+                outJsonPath: $.Data.artifactDetails.description
+              - inJsonPath: $.artifactDetails
+                outJsonPath: $.Data.artifactDetails.artifactDetails
+              - inJsonPath: $.comments[*]
+                outJsonPath: $.Data.artifactDetails.comments
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.artifactDetails.additionalDetails
+              - inJsonPath: $.auditdetails
+                outJsonPath: $.Data.auditDetails
+
+    - topic: update-artifact-withoutworkflow-application
+      configKey: INDEX
+      indexes:
+        - name: artifact-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditdetails.createdTime
+          jsonPath: $.artifact
+          customJsonMapping:
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.artifactDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.artifactDetails.tenantId
+              - inJsonPath: $.artifactNumber
+                outJsonPath: $.Data.artifactDetails.artifactNumber
+              - inJsonPath: $.evidenceNumber
+                outJsonPath: $.Data.artifactDetails.evidenceNumber
+              - inJsonPath: $.externalRefNumber
+                outJsonPath: $.Data.artifactDetails.externalRefNumber
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.artifactDetails.caseId
+              - inJsonPath: $.application
+                outJsonPath: $.Data.artifactDetails.application
+              - inJsonPath: $.hearing
+                outJsonPath: $.Data.artifactDetails.hearing
+              - inJsonPath: $.order
+                outJsonPath: $.Data.artifactDetails.order
+              - inJsonPath: $.mediaType
+                outJsonPath: $.Data.artifactDetails.mediaType
+              - inJsonPath: $.artifactType
+                outJsonPath: $.Data.artifactDetails.artifactType
+              - inJsonPath: $.sourceType
+                outJsonPath: $.Data.artifactDetails.sourceType
+              - inJsonPath: $.sourceID
+                outJsonPath: $.Data.artifactDetails.sourceID
+              - inJsonPath: $.sourceName
+                outJsonPath: $.Data.artifactDetails.sourceName
+              - inJsonPath: $.applicableTo[*]
+                outJsonPath: $.Data.artifactDetails.applicableTo
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.artifactDetails.createdDate
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
+              - inJsonPath: $.status
+                outJsonPath: $.Data.artifactDetails.status
+              - inJsonPath: $.file
+                outJsonPath: $.Data.artifactDetails.file
+              - inJsonPath: $.description
+                outJsonPath: $.Data.artifactDetails.description
+              - inJsonPath: $.artifactDetails
+                outJsonPath: $.Data.artifactDetails.artifactDetails
+              - inJsonPath: $.comments[*]
+                outJsonPath: $.Data.artifactDetails.comments
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.artifactDetails.additionalDetails
+              - inJsonPath: $.auditdetails
+                outJsonPath: $.Data.auditDetails

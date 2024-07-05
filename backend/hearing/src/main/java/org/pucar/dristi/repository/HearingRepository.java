@@ -43,14 +43,14 @@ public class HearingRepository {
     }
 
 
-    public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
 
         try {
             List<Hearing> hearingList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String hearingQuery;
-            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenentId, fromDate, toDate, limit, offset, sortBy);
+            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
             log.info("Final hearing list query: {}", hearingQuery);
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
@@ -88,11 +88,11 @@ public class HearingRepository {
         return getHearings(null,null,hearing.getHearingId(),null,hearing.getTenantId(),null,null,1,0,null);
     }
 
-    public void updateHearingTranscript(Hearing hearing) {
+    public void updateTranscriptAdditionalAttendees(Hearing hearing) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String hearingUpdateQuery = queryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearing.getHearingId() , hearing.getTenantId(), hearing.getTranscript(),hearing.getAuditDetails());
+        String hearingUpdateQuery = queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
         log.info("Final update query: {}", hearingUpdateQuery);
         int check = jdbcTemplate.update(hearingUpdateQuery, preparedStmtList.toArray());
-        if(check==0) throw new CustomException(HEARING_UPDATE_EXCEPTION,"Error while updating transcript");
+        if(check==0) throw new CustomException(HEARING_UPDATE_EXCEPTION,"Error while updating hearing");
     }
 }

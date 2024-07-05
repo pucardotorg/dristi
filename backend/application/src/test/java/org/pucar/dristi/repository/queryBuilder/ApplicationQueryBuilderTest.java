@@ -341,42 +341,57 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = "AN123";
 
         String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
-                "app.filingnumber = 'FN123' AND " +
-                "app.cnrnumber = 'CNR123' AND " +
-                "app.applicationnumber = 'AN123';";
+                "app.filingNumber = ? AND " +
+                "app.cnrNumber = ? AND " +
+                "app.applicationNumber = ?";
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, applicationNumber);
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, applicationNumber,preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(filingNumber, preparedStmtList.get(0));
+        assertEquals(cnrNumber, preparedStmtList.get(1));
+        assertEquals(applicationNumber, preparedStmtList.get(2));
+        assertEquals(3, preparedStmtList.size());
     }
 
     @Test
     void testOnlyFilingNumberProvided() {
         String filingNumber = "FN123";
 
-        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.filingnumber = 'FN123';";
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.filingNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, null);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, null, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(filingNumber, preparedStmtList.get(0));
+        assertEquals(1, preparedStmtList.size());
     }
 
     @Test
     void testOnlyCnrNumberProvided() {
         String cnrNumber = "CNR123";
 
-        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.cnrnumber = 'CNR123';";
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.cnrNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, null);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, null, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(cnrNumber, preparedStmtList.get(0));
+        assertEquals(1, preparedStmtList.size());
     }
 
     @Test
     void testOnlyApplicationNumberProvided() {
         String applicationNumber = "AN123";
 
-        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.applicationnumber = 'AN123';";
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.applicationNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, null, applicationNumber);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, null, applicationNumber, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(applicationNumber, preparedStmtList.get(0));
+        assertEquals(1, preparedStmtList.size());
     }
 
     @Test
@@ -385,11 +400,14 @@ class ApplicationQueryBuilderTest {
         String cnrNumber = "CNR123";
 
         String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
-                "app.filingnumber = 'FN123' AND " +
-                "app.cnrnumber = 'CNR123';";
+                "app.filingNumber = ? AND " +
+                "app.cnrNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, null);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, null, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(filingNumber, preparedStmtList.get(0));
+        assertEquals(2, preparedStmtList.size());
     }
 
     @Test
@@ -398,11 +416,14 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = "AN123";
 
         String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
-                "app.cnrnumber = 'CNR123' AND " +
-                "app.applicationnumber = 'AN123';";
+                "app.cnrNumber = ? AND " +
+                "app.applicationNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, applicationNumber);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, applicationNumber, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(cnrNumber, preparedStmtList.get(0));
+        assertEquals(2, preparedStmtList.size());
     }
 
     @Test
@@ -411,11 +432,14 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = "AN123";
 
         String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
-                "app.filingnumber = 'FN123' AND " +
-                "app.applicationnumber = 'AN123';";
+                "app.filingNumber = ? AND " +
+                "app.applicationNumber = ?";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, applicationNumber);
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, applicationNumber, preparedStmtList);
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(filingNumber, preparedStmtList.get(0));
+        assertEquals(2, preparedStmtList.size());
     }
 
     @Test
@@ -439,7 +463,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testCheckApplicationsExistQueryException() {
         try {
-            applicationQueryBuilder.checkApplicationExistQuery(null, null, null);
+            applicationQueryBuilder.checkApplicationExistQuery(null, null, null, null);
         } catch (Exception e) {
             assertEquals("Error occurred while building the application exist query ", e.getMessage());
         }

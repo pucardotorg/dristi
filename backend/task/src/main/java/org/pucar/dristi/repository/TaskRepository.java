@@ -7,6 +7,7 @@ import org.pucar.dristi.repository.querybuilder.TaskQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Amount;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.pucar.dristi.web.models.TaskExists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,15 +45,15 @@ public class TaskRepository {
     }
     
 
-    public List<Task> getApplications(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
+    public List<Task> getApplications(TaskCriteria criteria) {
         try {
             List<Task> taskList = new ArrayList<>();
+            List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtAm = new ArrayList<>();
             List<Object> preparedStmtDc = new ArrayList<>();
             String casesQuery = "";
-            casesQuery = queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
-            log.info("Final case query :: {}", casesQuery);
-            List<Task> list = jdbcTemplate.query(casesQuery, rowMapper);
+            casesQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList);             log.info("Final case query :: {}", casesQuery);
+            List<Task> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB task list :: {}", list);
             if (list != null) {
                 taskList.addAll(list);
@@ -97,13 +98,12 @@ public class TaskRepository {
 
     public TaskExists checkTaskExists(TaskExists taskExists) {
         try {
-            if (taskExists.getCnrNumber() == null && taskExists.getFilingNumber() == null) {
-                taskExists.setExists(false);
+            List<Object> preparedStmtList = new ArrayList<>();
+            if (taskExists.getCnrNumber() == null && taskExists.getFilingNumber() == null &&taskExists.getTaskId()==null) {                taskExists.setExists(false);
             } else {
-                String taskExistQuery = queryBuilder.checkTaskExistQuery(taskExists.getCnrNumber(), taskExists.getFilingNumber());
+                String taskExistQuery = queryBuilder.checkTaskExistQuery(taskExists.getCnrNumber(), taskExists.getFilingNumber(), taskExists.getTaskId(),preparedStmtList);
                 log.info("Final task exist query :: {}", taskExistQuery);
-                Integer count = jdbcTemplate.queryForObject(taskExistQuery, Integer.class);
-                taskExists.setExists(count != null && count > 0);
+                Integer count = jdbcTemplate.queryForObject(taskExistQuery, preparedStmtList.toArray(), Integer.class);                taskExists.setExists(count != null && count > 0);
             }
             return taskExists;
         } catch (CustomException e) {

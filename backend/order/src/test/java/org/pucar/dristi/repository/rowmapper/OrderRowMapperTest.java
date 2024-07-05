@@ -18,12 +18,14 @@ import static org.mockito.Mockito.*;
 class OrderRowMapperTest {
 
     private OrderRowMapper orderRowMapper;
+
     private ResultSet resultSet;
+
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        orderRowMapper = new OrderRowMapper();
+        orderRowMapper = new OrderRowMapper(new ObjectMapper());
         resultSet = mock(ResultSet.class);
         objectMapper = new ObjectMapper();
     }

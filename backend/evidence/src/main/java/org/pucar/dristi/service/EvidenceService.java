@@ -51,12 +51,16 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            workflowService.updateWorkflowStatus(body);
-
-            // Push the application to the topic for persister to listen and persist
-
-            producer.push(config.getEvidenceCreateTopic(), body);
-
+            if(body.getArtifact().getArtifactType() != null && body.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(body);
+                producer.push(config.getEvidenceCreateTopic(), body);
+            }
+            else {
+                if(body.getArtifact().getIsEvidence().equals(true)) {
+                    evidenceEnrichment.enrichEvidenceNumber(body);
+                }
+                producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
+            }
             return body.getArtifact();
         } catch (CustomException e){
             log.error("Custom Exception occurred while creating evidence");
@@ -68,7 +72,7 @@ public class EvidenceService {
     }
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
         try {
-                // Fetch applications from database according to the given search criteria
+            // Fetch applications from database according to the given search criteria
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
 
             // If no applications are found matching the given criteria, return an empty list
@@ -83,13 +87,13 @@ public class EvidenceService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.toString());
+            throw new CustomException(EVIDENCE_SEARCH_EXCEPTION,e.toString());
         }
     }
 
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
         try {
-            Artifact existingApplication = validateExistingApplication(evidenceRequest);
+            Artifact existingApplication = validateExistingEvidence(evidenceRequest);
 
             // Update workflow
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
@@ -97,15 +101,17 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            // Update workflow status
-            workflowService.updateWorkflowStatus(evidenceRequest);
-
-            // Enrich based on artifact status
-            enrichBasedOnStatus(evidenceRequest);
-
-            // Push to Kafka
-            producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
-
+            if(evidenceRequest.getArtifact().getArtifactType() != null &&evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(evidenceRequest);
+                enrichBasedOnStatus(evidenceRequest);
+                producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
+            }
+            else {
+                if(evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
+                    evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+                }
+                producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
+            }
             return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
@@ -113,22 +119,21 @@ public class EvidenceService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating evidence", e);
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.toString());
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error occurred while updating evidence: " + e.toString());
         }
     }
 
-    private Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
+    Artifact validateExistingEvidence(EvidenceRequest evidenceRequest) {
         try {
-            return validator.validateApplicationExistence(evidenceRequest);
+            return validator.validateEvidenceExistence(evidenceRequest);
         } catch (Exception e) {
             log.error("Error validating existing application", e);
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.toString());
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error validating existing application: " + e.toString());
         }
     }
 
-    private void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
+    void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
         String status = evidenceRequest.getArtifact().getStatus();
-
         if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {

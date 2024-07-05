@@ -87,13 +87,33 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_Success() {
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .limit(10)
+                .offset(0)
+                .sortBy("ASC")
+                .build();
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
+
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenReturn(Collections.singletonList(new Hearing()));
 
         // Act
-        List<Hearing> hearingList = hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", LocalDate.now(), LocalDate.now(), 10, 0, "DESC");
-
+        List<Hearing> hearingList = hearingService.searchHearing(request);
         // Assert
         assertNotNull(hearingList);
         assertFalse(hearingList.isEmpty());
@@ -101,12 +121,32 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_CustomException() {
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .limit(10)
+                .offset(0)
+                .sortBy("ASC")
+                .build();
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
 
         // Act & Assert
-        assertThrows(CustomException.class, () -> hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", LocalDate.now(), LocalDate.now(), 10, 0, "DESC"));
+        assertThrows(CustomException.class, () -> hearingService.searchHearing(request));
     }
 
     @Test
@@ -191,7 +231,7 @@ public class HearingServiceTest {
     }
 
     @Test
-    void testUpdateHearingTranscript_Success() {
+    void testUpdateTranscriptAdditionalAttendees_Success() {
         // Arrange
         Hearing hearing = new Hearing();
         hearing.setTranscript(Collections.singletonList("old transcript"));
@@ -205,56 +245,56 @@ public class HearingServiceTest {
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(updatedHearing);
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class))).thenReturn(hearing);
+        when(validator.validateHearingExistence(any(RequestInfo.class),any(Hearing.class))).thenReturn(hearing);
 
         // Act
-        Hearing result = hearingService.updateHearingTranscript(hearingRequest);
+        Hearing result = hearingService.updateTranscriptAdditionalAttendees(hearingRequest);
 
         // Assert
         assertNotNull(result);
         assertEquals("new transcript", result.getTranscript().get(0));
         verify(enrichmentUtil, times(1)).enrichHearingApplicationUponUpdate(hearingRequest);
-        verify(hearingRepository, times(1)).updateHearingTranscript(updatedHearing);
+        verify(hearingRepository, times(1)).updateTranscriptAdditionalAttendees(updatedHearing);
         assertEquals(updatedHearing.getAuditDetails(), result.getAuditDetails());
     }
 
     @Test
-    void testUpdateHearingTranscript_CustomException() {
+    void testUpdateTranscriptAdditionalAttendees_CustomException() {
         // Arrange
         HearingRequest hearingRequest = new HearingRequest();
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(new Hearing());
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class)))
+        when(validator.validateHearingExistence(any(RequestInfo.class),any(Hearing.class)))
                 .thenReturn(new Hearing());
         doThrow(new RuntimeException("Unexpected error"))
-                .when(hearingRepository).updateHearingTranscript(any(Hearing.class));
+                .when(hearingRepository).updateTranscriptAdditionalAttendees(any(Hearing.class));
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingTranscript(hearingRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateTranscriptAdditionalAttendees(hearingRequest));
 
         assertEquals(HEARING_UPDATE_EXCEPTION, exception.getCode());
         assertTrue(exception.getMessage().contains("Error occurred while updating hearing: Unexpected error"));
         verify(enrichmentUtil, times(1)).enrichHearingApplicationUponUpdate(hearingRequest);
-        verify(hearingRepository, times(1)).updateHearingTranscript(any(Hearing.class));
+        verify(hearingRepository, times(1)).updateTranscriptAdditionalAttendees(any(Hearing.class));
     }
 
     @Test
-    void updateHearingTranscript_ValidationFails() {
+    void updateTranscriptAdditionalAttendees_ValidationFails() {
         // Arrange
         HearingRequest hearingRequest = new HearingRequest();
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(new Hearing());
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class)))
+        when(validator.validateHearingExistence(any(RequestInfo.class), any(Hearing.class)))
                 .thenThrow(new CustomException("VALIDATION_ERROR", "Validation failed"));
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingTranscript(hearingRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateTranscriptAdditionalAttendees(hearingRequest));
 
         assertEquals("VALIDATION_ERROR", exception.getCode());
         assertEquals("Validation failed", exception.getMessage());
         verify(enrichmentUtil, never()).enrichHearingApplicationUponUpdate(any(HearingRequest.class));
-        verify(hearingRepository, never()).updateHearingTranscript(any(Hearing.class));
+        verify(hearingRepository, never()).updateTranscriptAdditionalAttendees(any(Hearing.class));
     }
 }

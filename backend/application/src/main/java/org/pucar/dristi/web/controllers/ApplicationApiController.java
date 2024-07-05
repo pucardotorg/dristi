@@ -70,9 +70,6 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)
     public ResponseEntity<ApplicationListResponse> applicationV1SearchPost(
-            @Parameter(in = ParameterIn.QUERY, description = "No of records return" ,schema=@Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-            @Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,
-            @Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" , schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody ApplicationSearchRequest request) {
                 List<Application> applicationList = applicationService.searchApplications(request);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
