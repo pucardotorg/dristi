@@ -1,11 +1,11 @@
 import { Button, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { userTypeOptions } from "../../registration/config";
 import JoinCaseHome from "../../../../../../cases/src/pages/employee/JoinCaseHome";
+import { userTypeOptions } from "../../registration/config";
+import { litigantInboxConfig } from "./litigantInboxConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -116,7 +116,11 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
+                  props?.original?.status === "CASE_ADMITTED"
+                    ? history.push(
+                        `${path}/admitted-case?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}&title=${props.original.caseTitle}`
+                      )
+                    : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
             }}

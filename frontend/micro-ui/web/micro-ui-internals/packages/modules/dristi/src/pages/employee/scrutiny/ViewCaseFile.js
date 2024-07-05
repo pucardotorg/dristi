@@ -1,28 +1,17 @@
-import {
-  BackButton,
-  CheckSvg,
-  CloseButton,
-  CloseSvg,
-  EditIcon,
-  FormComposerV2,
-  Header,
-  Loader,
-  TextInput,
-  Toast,
-} from "@egovernments/digit-ui-react-components";
+import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { useLocation, Redirect, useHistory } from "react-router-dom";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBackModal from "../../../components/SendCaseBackModal";
-import SuccessModal from "../../../components/SuccessModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
-import { DRISTIService } from "../../../services";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
-import ReactTooltip from "react-tooltip";
+import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
 function ViewCaseFile({ t }) {
   const history = useHistory();

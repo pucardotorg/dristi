@@ -1,9 +1,9 @@
-import { ArrowDirection, CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import { ArrowDirection } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import { Link } from "react-router-dom";
-import { FactCheckIcon, RightArrow } from "../icons/svgIndex";
-import Modal from "../components/Modal";
-import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import { Evidence } from "../components/Evidence";
+import { OrderName } from "../components/OrderName";
+import { OwnerColumn } from "../components/OwnerColumn";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -12,6 +12,9 @@ const businessServiceMap = {
 const inboxModuleNameMap = {
   "muster-roll-approval": "muster-roll-service",
 };
+
+const user = localStorage.getItem("user-info");
+const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
 
 export const UICustomizations = {
   businessServiceMap,
@@ -537,12 +540,119 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
+    // preProcess: (requestCriteria, additionalDetails) => {
+    //   console.log(requestCriteria, additionalDetails, "PREPROCESS");
+
+    //   return {
+    //     ...requestCriteria,
+    //     config: {
+    //       select: (data) => {
+    //         return { ...data };
+    //       },
+    //     },
+    //   };
+    // },
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
-          return <OwnerColumn name={row?.name.familyName} t={t} />;
+          console.log("document", row);
+          console.log("document Column", column);
+          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
+            row.workflow.action !== "PENDINGREVIEW" ? (
+            <OwnerColumn rowData={row} colData={column} t={t} />
+          ) : (
+            ""
+          );
+        case "File":
+          console.log("document", row);
+          console.log("document Column", column);
+          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
+            row.workflow.action !== "PENDINGREVIEW" ? (
+            <Evidence rowData={row} colData={column} t={t} />
+          ) : (
+            ""
+          );
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Parties":
+          return (
+            <span>{`${value
+              .slice(0, 2)
+              .map((party) => party.name)
+              .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+          );
+        case "Order Type":
+          return <OrderName rowData={row} colData={column} value={value} />;
+        case "Submission Name":
+          return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Document Type":
+          return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        default:
           break;
-
+      }
+    },
+  },
+  PartiesConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      console.log(requestCriteria, additionalDetails);
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            console.log(data, "CONFIG");
+            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
+            const finalLitigantsData = litigants.map((litigant) => {
+              return {
+                ...litigant,
+                name: litigant.additionalDetails?.fullName,
+              };
+            });
+            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ? data.criteria[0].responseList[0].representatives : [];
+            const finalRepresentativesData = reps.map((rep) => {
+              return {
+                ...rep,
+                name: rep.additionalDetails?.advocateName,
+                partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
+              };
+            });
+            return {
+              ...data,
+              criteria: {
+                ...data.criteria[0],
+                responseList: {
+                  ...data.criteria[0].responseList[0],
+                  parties: [...finalLitigantsData, ...finalRepresentativesData],
+                },
+              },
+            };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        // case "Document":
+        //   console.log("document", row);
+        //   return <OwnerColumn name={row?.name?.familyName} t={t} />;
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
         default:
           break;
       }
@@ -585,165 +695,5 @@ const CommentComponent = ({ key, comment }) => {
         <p className="comment-text">{comment?.text}</p>
       </div>
     </div>
-  );
-};
-
-const OwnerColumn = ({ name, t }) => {
-  const [show, setShow] = useState(false);
-  const [comment, setComment] = useState("");
-
-  const CloseBtn = (props) => {
-    return (
-      <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
-        <CloseSvg />
-      </div>
-    );
-  };
-  const Heading = (props) => {
-    return (
-      <div className="evidence-title">
-        <h1 className="heading-m">{props.label}</h1>
-        <h3 className="status">{props.status}</h3>
-      </div>
-    );
-  };
-
-  const documentSubmission = {
-    status: "Accepted",
-    details: {
-      applicationType: "Document Submission",
-      applicationSentOn: "28 Mar '24, 09:15am",
-      sender: "Sukeerth Reddy",
-      additionalDetails:
-        "This document could not be submitted during e-filing as it had to be retrieved from the complainant's mother's home located in Chitoor.",
-    },
-    applicationContent: {
-      tenantId: "pg",
-      fileStoreId: "a17c4b20-c0bd-4d58-aa3f-69f8261a0a49",
-      fileName: "test.pdf",
-    },
-    comments: [
-      {
-        author: "Sukeerth R.",
-        timestamp: "28 Mar '24, 09:45am",
-        text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        replies: 4,
-      },
-      {
-        author: "Venkat K.",
-        timestamp: "28 Mar '24, 09:45am",
-        text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        attachments: ["Affidavit"],
-        replies: 2,
-      },
-      {
-        author: "Sukeerth R.",
-        timestamp: "28 Mar '24, 09:45am",
-        text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        replies: 4,
-      },
-      {
-        author: "Venkat K.",
-        timestamp: "28 Mar '24, 09:45am",
-        text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        attachments: ["Affidavit"],
-        replies: 2,
-      },
-    ],
-  };
-
-  return (
-    <React.Fragment>
-      <div className="fack-check-icon" onClick={() => setShow(true)}>
-        <FactCheckIcon />
-      </div>
-      {show && (
-        <Modal
-          headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
-          actionSaveLabel={t("Mark as Evidence")}
-          actionSaveOnSubmit={() => {
-            setShow(false);
-          }}
-          formId="modal-action"
-          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}
-          className="evidence-modal"
-        >
-          <div className="evidence-modal-main">
-            <div className="application-details">
-              <div className="application-info">
-                <div className="info-row">
-                  <div className="info-key">
-                    <h3>Application Type</h3>
-                  </div>
-                  <div className="info-value">
-                    <h3>{documentSubmission.details.applicationType}</h3>
-                  </div>
-                </div>
-                <div className="info-row">
-                  <div className="info-key">
-                    <h3>Application Sent On</h3>
-                  </div>
-                  <div className="info-value">
-                    <h3>{documentSubmission.details.applicationSentOn}</h3>
-                  </div>
-                </div>
-                <div className="info-row">
-                  <div className="info-key">
-                    <h3>Sender</h3>
-                  </div>
-                  <div className="info-value">
-                    <h3>{documentSubmission.details.sender}</h3>
-                  </div>
-                </div>
-                <div className="info-row">
-                  <div className="info-key">
-                    <h3>Additional Details</h3>
-                  </div>
-                  <div className="info-value">
-                    <h3>{documentSubmission.details.additionalDetails}</h3>
-                  </div>
-                </div>
-              </div>
-              <div className="application-view">
-                <DocViewerWrapper
-                  key={documentSubmission.applicationContent.fileStoreId}
-                  fileStoreId={documentSubmission.applicationContent.fileStoreId}
-                  displayFilename={documentSubmission.applicationContent.fileName}
-                  tenantId={documentSubmission.applicationContent.tenantId}
-                  docWidth="100%"
-                  docHeight="unset"
-                  showDownloadOption={false}
-                  documentName={documentSubmission.applicationContent.fileName}
-                />
-              </div>
-            </div>
-            <div className="application-comment">
-              <div className="comment-section">
-                <h1 className="comment-xyzoo">Comments</h1>
-                <div className="comment-main">
-                  {documentSubmission.comments.map((comment, index) => (
-                    <CommentComponent key={index} comment={comment} />
-                  ))}
-                </div>
-              </div>
-              <div className="comment-send">
-                <div className="comment-input-wrapper">
-                  <TextInput
-                    placeholder={"Type here..."}
-                    value={comment}
-                    onChange={(e) => {
-                      setComment(e.target.value);
-                    }}
-                  />
-                  <div className="send-comment-btn">
-                    <RightArrow />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Modal>
-      )}
-    </React.Fragment>
   );
 };

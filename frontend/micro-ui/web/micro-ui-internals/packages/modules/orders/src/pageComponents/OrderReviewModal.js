@@ -1,7 +1,7 @@
+import { CloseSvg } from "@egovernments/digit-ui-components";
 import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
-import { CloseSvg } from "@egovernments/digit-ui-components";
-function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft }) {
+function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft, showActions = true }) {
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -17,9 +17,9 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     <Modal
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
-      actionCancelLabel={t("SAVE_DRAFT")}
+      actionCancelLabel={showActions && t("SAVE_DRAFT")}
       actionCancelOnSubmit={handleSaveDraft}
-      actionSaveLabel={t("ADD_SIGNATURE")}
+      actionSaveLabel={showActions && t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
         setShowsignatureModal(true);
         setShowReviewModal(false);
