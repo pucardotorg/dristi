@@ -272,6 +272,146 @@ export const configsRescheduleRequest = [
   },
 ];
 
+export const configsCheckoutRequest = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "REF_ORDER_ID",
+        isMandatory: true,
+        key: "refOrderId",
+        type: "text",
+        populators: { name: "refOrderId" },
+      },
+      {
+        inline: true,
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "FILING_NUMBER",
+        isMandatory: true,
+        key: "filingNumber",
+        type: "text",
+        populators: { name: "filingNumber", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "APPLICATION_DATE",
+        isMandatory: true,
+        key: "applicationDate",
+        type: "text",
+        populators: { name: "applicationDate" },
+      },
+      {
+        inline: true,
+        label: "APPLICANT_NAME",
+        isMandatory: true,
+        key: "applicantName",
+        type: "text",
+        populators: { name: "applicantName", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "partyType",
+        populators: {
+          optionsKey: "name",
+          hideInForm: true,
+          options: [
+            {
+              code: "complainant",
+              name: "Complainant",
+            },
+            {
+              code: "respondant",
+              name: "Respondant",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "REPRESENTED_BY",
+        isMandatory: true,
+        key: "representedBy",
+        type: "text",
+        populators: { name: "representedBy", hideInForm: true },
+      },
+      {
+        inline: true,
+        label: "HEARING_DATE",
+        isMandatory: true,
+        key: "initialHearingDate",
+        type: "date",
+        populators: { name: "initialHearingDate" },
+      },
+      {
+        inline: true,
+        label: "RESCHEDULING_REASON",
+        isMandatory: true,
+        key: "reschedulingReason",
+        type: "dropdown",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "conflict",
+              name: "Conflict",
+            },
+            {
+              code: "illness",
+              name: "Illness",
+            },
+            {
+              code: "other",
+              name: "Other",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
+        label: "PROPOSED_DATE",
+        isMandatory: true,
+        key: "changedHearingDate",
+        type: "date",
+        populators: { name: "changedHearingDate" },
+      },
+      {
+        inline: true,
+        label: "COMMENTS",
+        isMandatory: true,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
 export const configsExtensionSubmissionDeadline = [
   {
     body: [
@@ -1299,6 +1439,27 @@ export const configsBail = [
         key: "comments",
         type: "textarea",
         populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsOthers = [
+  {
+    body: [
+      {
+        label: "APPLICATION_TITLE",
+        isMandatory: false,
+        key: "applicationTitle",
+        type: "text",
+        populators: { name: "applicationTitle" },
+      },
+      {
+        label: "DETAILS",
+        isMandatory: false,
+        key: "applicationDetails",
+        type: "textarea",
+        populators: { name: "applicationDetails" },
       },
     ],
   },

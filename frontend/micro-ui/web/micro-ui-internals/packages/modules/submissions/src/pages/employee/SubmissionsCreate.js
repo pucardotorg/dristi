@@ -1,28 +1,25 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configs,
   configsBail,
-  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
+  configsCheckoutRequest,
+  configsExtensionSubmissionDeadline,
+  configsOthers,
   configsProductionOfDocuments,
   configsRescheduleRequest,
-  configsSettlement,
   configsSurety,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
-import { transformCreateData } from "../../utils/createUtils";
 import { submissionService } from "../../hooks/services";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
-import useSearchSubmissionService from "../../hooks/submissions/useSearchSubmissionService";
-import { CaseWorkflowState } from "../../utils/caseWorkFlow";
+import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -30,7 +27,6 @@ const SubmissionsCreate = () => {
   const defaultValue = {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const [formdata, setFormdata] = useState({});
@@ -39,34 +35,14 @@ const SubmissionsCreate = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const reqCreate = {
-    url: `/application/application/v1/create`,
-    params: {},
-    body: {},
-    config: {
-      enable: false,
-    },
-  };
-
-  const applicationConfigKeys = {
-    RE_SCHEDULE: configsRescheduleRequest,
-    CHECKOUT: configsBail,
-    // DELAY: ,
-    // PENALTY_WAIVER: ,
-    // CASE_EDITING: ,
-    // DOCUMENT_SUBMISSION: ,
-    // RESPONSE_ON_DOCUMENT: ,
-    // OTHERS: ,
-  };
-  const submissionConfigKeys = {
-    APPLICATION_TYPE: applicationTypeConfig,
-  };
-
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
 
   const submissionFormConfig = useMemo(() => {
+    const submissionConfigKeys = {
+      APPLICATION_TYPE: applicationTypeConfig,
+    };
     return submissionConfigKeys[submissionType] || [];
   }, [submissionType]);
 
@@ -75,6 +51,18 @@ const SubmissionsCreate = () => {
   }, [formdata?.applicationType?.type]);
 
   const applicationFormConfig = useMemo(() => {
+    const applicationConfigKeys = {
+      RE_SCHEDULE: configsRescheduleRequest,
+      EXTENSION_SUBMISSION_DEADLINE: configsExtensionSubmissionDeadline,
+      PRODUCTION_DOCUMENTS: configsProductionOfDocuments,
+      WITHDRAWAL: configsCaseWithdrawal,
+      TRANSFER: configsCaseTransfer,
+      SETTLEMENT: configsCaseSettlement,
+      BAIL_BOND: configsBail,
+      SURETY: configsSurety,
+      CHECKOUT_REQUEST: configsCheckoutRequest,
+      OTHERS: configsOthers,
+    };
     return applicationConfigKeys?.[applicationType] || [];
   }, [applicationType]);
 
@@ -82,7 +70,7 @@ const SubmissionsCreate = () => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
   }, [submissionFormConfig, applicationFormConfig]);
 
-  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
+  const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -100,21 +88,6 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-
-  // const searchReqBody = {
-  //   tenantId,
-  //   criteria: {
-  //     tenantId,
-  //     filingNumber,
-  //   },
-  // };
-
-  // const {
-  //   data: submissionData,
-  //   refetch: refetchSubmissionData,
-  //   isLoading: isSubmissionLoading,
-  //   isFetching: isSubmissionFetching,
-  // } = useSearchSubmissionService(searchReqBody, { tenantId, filingNumber }, filingNumber, Boolean(filingNumber));
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
