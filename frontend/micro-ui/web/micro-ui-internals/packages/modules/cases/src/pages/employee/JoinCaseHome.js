@@ -17,7 +17,6 @@ import { ApiDropdown, InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
-import { isEqual } from "lodash";
 
 const CloseBtn = (props) => {
   return (
@@ -433,7 +432,7 @@ const JoinCaseHome = ({ t }) => {
             <InfoCard
               variant={"default"}
               label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
-              additionalElements={{}}
+              additionalElements={[<span>Hello</span>, <span style={{ fontWeight: "bold" }}>World</span>]}
               inline
               text={t(JoinHomeLocalisation[errors.caseNumber.message])}
               textStyle={{}}
@@ -858,11 +857,6 @@ const JoinCaseHome = ({ t }) => {
         },
       ]);
   }, [caseDetails]);
-
-  const handleNavigate = (path) => {
-    const contextPath = window?.contextPath || ""; // Adjust as per your context path logic
-    history.push(`/${contextPath}${path}`);
-  };
 
   const closeModal = () => {
     setCaseNumber("");
