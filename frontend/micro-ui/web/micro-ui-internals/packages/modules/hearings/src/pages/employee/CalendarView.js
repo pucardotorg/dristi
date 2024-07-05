@@ -15,12 +15,13 @@ const MonthlyCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
-  const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
-    { applicationNumber: "", cnrNumber: "", tenantId },
-    "dristi",
-    true
-  );
+
+  const reqBody = {
+    hearing: { tenantId },
+    criteria: {},
+  };
+
+  const { data: hearingResponse, refetch: refetch } = useGetHearings(reqBody, { applicationNumber: "", cnrNumber: "", tenantId }, "dristi", true);
   const { data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
 
