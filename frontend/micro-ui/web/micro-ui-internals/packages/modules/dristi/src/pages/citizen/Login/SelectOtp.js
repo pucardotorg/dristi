@@ -107,7 +107,7 @@ const SelectOtp = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [otp]);
 
   return (
     <Modal

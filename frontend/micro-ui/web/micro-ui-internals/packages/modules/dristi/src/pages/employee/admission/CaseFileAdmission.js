@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Header, Loader, Toast, BackButton } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import AdmissionActionModal from "./AdmissionActionModal";
@@ -10,10 +10,10 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState(null);
@@ -23,7 +23,7 @@ function CaseFileAdmission({ t, path }) {
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+  const { data: caseFetchResponse, isLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -37,15 +37,7 @@ function CaseFileAdmission({ t, path }) {
     caseId,
     Boolean(caseId)
   );
-  const { data: hearingResponse } = useGetHearings(
-    {
-      hearing: { tenantId },
-    },
-    { applicationNumber: "", cnrNumber: "" },
-    "dristi",
-    true
-  );
-  const hearingDetails = useMemo(() => hearingResponse?.HearingList || null, [hearingResponse]);
+
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complainantDetails?.formdata || null, [caseDetails]);
   const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
@@ -74,7 +66,7 @@ function CaseFileAdmission({ t, path }) {
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
+  }, [caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
     const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
@@ -99,7 +91,7 @@ function CaseFileAdmission({ t, path }) {
   const caseInfo = [
     {
       key: "CASE_NUMBER",
-      value: caseDetails?.caseNumber,
+      value: caseDetails?.filingNumber,
     },
     {
       key: "CASE_CATEGORY",
@@ -191,6 +183,11 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 2 });
     });
   };
+
+  const handleScheduleNextHearing = () => {
+    history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`);
+  };
+
   const updateConfigWithCaseDetails = (config, caseDetails) => {
     const complainantNames = complainantFormData?.map((form) => {
       const firstName = form?.data?.firstName || "";
@@ -223,11 +220,6 @@ function CaseFileAdmission({ t, path }) {
     caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
     additionalDetails: "CS_ADDITIONAL_DETAILS",
   };
-  const complainantFirstName = complainantFormData?.[0].data?.firstName;
-  const complainantLastName = complainantFormData?.[0].data?.lastName;
-
-  const respondentFirstName = respondentFormData?.[0].data?.respondentFirstName;
-  const respondentLastName = respondentFormData?.[0].data?.respondentLastName;
 
   if (!caseId) {
     return <Redirect to="admission" />;
@@ -235,25 +227,6 @@ function CaseFileAdmission({ t, path }) {
 
   if (isLoading) {
     return <Loader />;
-  }
-  if (showModal) {
-    return (
-      <AdmissionActionModal
-        t={t}
-        setShowModal={setShowModal}
-        setSubmitModalInfo={setSubmitModalInfo}
-        submitModalInfo={submitModalInfo}
-        modalInfo={modalInfo}
-        setModalInfo={setModalInfo}
-        handleSendCaseBack={handleSendCaseBack}
-        handleAdmitCase={handleAdmitCase}
-        path={path}
-        handleScheduleCase={handleScheduleCase}
-        updatedConfig={updatedConfig}
-        // hearingDetails={hearingDetails}
-        tenantId={tenantId}
-      ></AdmissionActionModal>
-    );
   }
 
   return (
@@ -272,13 +245,11 @@ function CaseFileAdmission({ t, path }) {
             </div>
           </div>
           <div className="file-case-form-section">
+            <BackButton style={{ marginBottom: 0 }}></BackButton>
             <div className="employee-card-wrapper">
               <div className="header-content">
                 <div className="header-details">
-                  <Header>
-                    {`${complainantFirstName}  ${complainantLastName}`.trim()} <span style={{ color: "#77787B" }}>vs</span>{" "}
-                    {`${respondentFirstName}  ${respondentLastName}`.trim()}
-                  </Header>
+                  <Header>{caseDetails?.caseTitle}</Header>
                   <div className="header-icon" onClick={() => {}}>
                     <CustomArrowDownIcon />
                   </div>
@@ -299,14 +270,32 @@ function CaseFileAdmission({ t, path }) {
                 secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
                 showSecondaryLabel={true}
                 // actionClassName="admission-action-buttons"
-                actionClassName="e-filing-action-bar"
+                actionClassName="case-file-admission-action-bar"
                 showSkip={true}
                 onSkip={onSendBack}
                 noBreakLine
                 submitIcon={<RightArrow />}
+                skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}
               />
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
+              )}
+              {showModal && (
+                <AdmissionActionModal
+                  t={t}
+                  setShowModal={setShowModal}
+                  setSubmitModalInfo={setSubmitModalInfo}
+                  submitModalInfo={submitModalInfo}
+                  modalInfo={modalInfo}
+                  setModalInfo={setModalInfo}
+                  handleSendCaseBack={handleSendCaseBack}
+                  handleAdmitCase={handleAdmitCase}
+                  path={path}
+                  handleScheduleCase={handleScheduleCase}
+                  updatedConfig={updatedConfig}
+                  tenantId={tenantId}
+                  handleScheduleNextHearing={handleScheduleNextHearing}
+                ></AdmissionActionModal>
               )}
             </div>
           </div>

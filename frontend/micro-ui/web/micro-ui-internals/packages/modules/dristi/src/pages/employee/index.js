@@ -60,7 +60,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           {!location.pathname.endsWith("/registration-requests") &&
             !location.pathname.includes("/pending-payment-inbox") &&
             !location.pathname.includes("/case") &&
-            location.search.includes("?caseId") && (
+            location.search.includes("?caseId") &&
+            !location.pathname.includes("/employee/dristi/admission") && (
               <div className="back-button-home">
                 <BackButton />
                 {!isJudge && (

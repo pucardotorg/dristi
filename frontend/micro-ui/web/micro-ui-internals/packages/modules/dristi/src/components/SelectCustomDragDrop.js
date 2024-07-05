@@ -2,6 +2,7 @@ import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { FileUploadIcon } from "../icons/svgIndex";
+import { isEmptyObject } from "../Utils";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import RenderFileCard from "./RenderFileCard";
 import { useToast } from "./Toast/useToast";
@@ -53,21 +54,23 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
   );
 
   function setValue(value, input, isFileSizeLimitExceeded) {
+    let updatedValue = {
+      ...formData[config.key],
+    };
+
     if (Array.isArray(input)) {
-      onSelect(
-        config.key,
-        {
-          ...formData[config.key],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        },
-        { shouldValidate: isFileSizeLimitExceeded ? false : true }
-      );
+      updatedValue = {
+        ...updatedValue,
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      };
     } else {
-      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: isFileSizeLimitExceeded ? false : true });
+      updatedValue[input] = value;
     }
+
+    onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: isFileSizeLimitExceeded ? false : true });
   }
 
   const fileValidator = (file, input) => {
@@ -111,13 +114,15 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
         {showDocument && (
           <div className="drag-drop-visible-main">
             <div className="drag-drop-heading-main">
-              <div className="drag-drop-heading">
-                <h1 className={`card-label custom-document-header ${input?.headerClassName}`} style={input?.documentHeaderStyle}>
-                  {t(input?.documentHeader)}
-                </h1>
-                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
-                <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage)} />
-              </div>
+              {!config?.disableScrutinyHeader && (
+                <div className="drag-drop-heading">
+                  <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
+                    {t(input?.documentHeader)}
+                  </h1>
+                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
+                  <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage)} />
+                </div>
+              )}
               {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
             </div>
 

@@ -76,7 +76,6 @@ export const configs = [
         },
       },
       {
-        inline: true,
         label: "DEADLINE_FOR_SUBMISSION",
         isMandatory: false,
         key: "deadlineForSubmission",
@@ -89,6 +88,9 @@ export const configs = [
             moduleName: "Order",
             masterName: "DeadlineForSubmission",
             localePrefix: "",
+          },
+          validation: {
+            max: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -171,7 +173,6 @@ export const configs = [
         },
       },
       {
-        inline: true,
         label: "DEADLINE_TO_RESPOND",
         isMandatory: false,
         key: "deadlineToRespond",
@@ -185,31 +186,19 @@ export const configs = [
             masterName: "", // TO DO: ADD MDMS CONFIG
             localePrefix: "",
           },
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
   },
 ];
 
-export const configKeys = {
-  SECTION_202_CRPC: configsOrderSection202CRPC,
-  DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
-  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-  TRANSFER_TO_ADR: configsOrderTranferToADR,
-  NEXT_HEARING: configsScheduleHearingDate,
-  ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-  VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
-  CASE_TRANSFER: configsCaseTransfer,
-  CASE_SETTLEMENT: configsCaseSettlement,
-  SUMMONS: configsIssueSummons,
-  BAIL: configsBail,
-};
-
 export const configsOrderSection202CRPC = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -217,7 +206,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -225,7 +213,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -233,7 +220,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -241,7 +227,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "judgeDesignation", hideInForm: true },
       },
       {
-        inline: true,
         label: "DISTRICT",
         isMandatory: false,
         key: "district",
@@ -249,7 +234,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "district", hideInForm: true },
       },
       {
-        inline: true,
         label: "STATE",
         isMandatory: false,
         key: "state",
@@ -257,7 +241,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "state", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -265,7 +248,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "FILING_YEAR",
         isMandatory: false,
         key: "filingYear",
@@ -273,7 +255,6 @@ export const configsOrderSection202CRPC = [
         populators: { name: "filingYear", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPLICATION_FILLED_BY",
         isMandatory: false,
         key: "applicationFilledBy",
@@ -300,7 +281,6 @@ export const configsOrderSection202CRPC = [
         },
       },
       {
-        inline: true,
         label: "DETAILS_SEEKED_OF",
         isMandatory: false,
         key: "detailsSeekedOf",
@@ -327,7 +307,6 @@ export const configsOrderSection202CRPC = [
         },
       },
       {
-        inline: true,
         label: "LAW_SECTIONS",
         isMandatory: false,
         key: "lawSections",
@@ -335,23 +314,31 @@ export const configsOrderSection202CRPC = [
         populators: { name: "lawSections" },
       },
       {
-        inline: true,
         label: "RESPONSE_REQUIRED_BY",
         isMandatory: false,
         key: "responseRequiredBy",
         type: "date",
-        populators: { name: "responseRequiredBy" },
+        populators: {
+          name: "responseRequiredBy",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
         type: "date",
-        populators: { name: "dateOfOrder", hideInForm: true },
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -366,7 +353,6 @@ export const configsOrderMandatorySubmissions = [
   {
     body: [
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -374,7 +360,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -382,7 +367,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -390,7 +374,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "FILING_NUMBER",
         isMandatory: false,
         key: "filingNumber",
@@ -398,7 +381,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "filingNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -406,15 +388,19 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
         type: "date",
-        populators: { name: "dateOfOrder", hideInForm: true },
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "DOCUMENT_TYPE",
         isMandatory: false,
         key: "documentType",
@@ -441,7 +427,6 @@ export const configsOrderMandatorySubmissions = [
         },
       },
       {
-        inline: true,
         label: "DOCUMENT_NAME",
         isMandatory: false,
         key: "documentName",
@@ -449,7 +434,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "documentName" },
       },
       {
-        inline: true,
         label: "SUBMISSION_PARTY",
         isMandatory: false,
         key: "submissionParty",
@@ -476,15 +460,18 @@ export const configsOrderMandatorySubmissions = [
         },
       },
       {
-        inline: true,
         label: "SUBMISSION_DEADLINE",
         isMandatory: false,
         key: "submissionDeadline",
         type: "date",
-        populators: { name: "submissionDeadline" },
+        populators: {
+          name: "submissionDeadline",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "ADDITIONAL_COMMENTS",
         isMandatory: false,
         key: "additionalComments",
@@ -492,7 +479,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "additionalComments" },
       },
       {
-        inline: true,
         label: "IS_RESPONSE_REQUIRED",
         isMandatory: false,
         key: "isResponseRequired",
@@ -500,7 +486,6 @@ export const configsOrderMandatorySubmissions = [
         populators: { name: "isResponseRequired", title: "" },
       },
       {
-        inline: true,
         label: "RESPONDING_PARTY",
         isMandatory: false,
         key: "respondingParty",
@@ -527,15 +512,18 @@ export const configsOrderMandatorySubmissions = [
         },
       },
       {
-        inline: true,
         label: "RESPONSE_DEADLINE",
         isMandatory: false,
         key: "responseDeadline",
         type: "date",
-        populators: { name: "responseDeadline" },
+        populators: {
+          name: "responseDeadline",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -550,7 +538,6 @@ export const configsOrderSubmissionExtension = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -558,7 +545,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -566,7 +552,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -574,7 +559,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -582,7 +566,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "FILING_NUMBER",
         isMandatory: false,
         key: "filingNumber",
@@ -590,7 +573,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "filingNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -598,7 +580,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -606,7 +587,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "DOCUMENT_NAME",
         isMandatory: false,
         key: "documentName",
@@ -614,7 +594,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "documentName" },
       },
       {
-        inline: true,
         label: "ADVOCATE_NAME",
         isMandatory: false,
         key: "advocateName",
@@ -622,7 +601,6 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "advocateName", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPLICATION_DATE",
         isMandatory: false,
         key: "applicationDate",
@@ -630,39 +608,54 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "applicationDate", hideInForm: true },
       },
       {
-        inline: true,
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
         isMandatory: false,
         key: "originalSubmissionOrderDate",
         type: "date",
-        populators: { name: "originalSubmissionOrderDate" },
+        populators: {
+          name: "originalSubmissionOrderDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "ORIGINAL_DEADLINE",
         isMandatory: false,
         key: "originalDeadline",
         type: "date",
-        populators: { name: "originalDeadline" },
+        populators: {
+          name: "originalDeadline",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "PROPOSED_SUBMISSION_DATE",
         isMandatory: false,
         key: "proposedSubmissionDate",
         type: "date",
-        populators: { name: "proposedSubmissionDate" },
+        populators: {
+          name: "proposedSubmissionDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "NEW_SUBMISSION_DATE",
         isMandatory: false,
         key: "newSubmissionDate",
         type: "date",
-        populators: { name: "newSubmissionDate" },
+        populators: {
+          name: "newSubmissionDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -677,7 +670,6 @@ export const configsOrderTranferToADR = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -685,7 +677,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -693,7 +684,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -701,7 +691,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -709,7 +698,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "FILING_NUMBER",
         isMandatory: false,
         key: "filingNumber",
@@ -717,7 +705,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "filingNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -725,7 +712,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -733,7 +719,6 @@ export const configsOrderTranferToADR = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "ADR_MODE",
         isMandatory: false,
         key: "ADRMode",
@@ -760,7 +745,6 @@ export const configsOrderTranferToADR = [
         },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -775,7 +759,6 @@ export const configsScheduleHearingDate = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -783,7 +766,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -791,7 +773,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -799,7 +780,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -807,7 +787,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -815,7 +794,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -823,7 +801,6 @@ export const configsScheduleHearingDate = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "HEARING_PURPOSE",
         isMandatory: false,
         key: "hearingPurpose",
@@ -851,15 +828,18 @@ export const configsScheduleHearingDate = [
         },
       },
       {
-        inline: true,
         label: "HEARING_DATE",
         isMandatory: false,
         key: "hearingDate",
         type: "date",
-        populators: { name: "hearingDate" },
+        populators: {
+          name: "hearingDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -874,7 +854,6 @@ export const configsRescheduleHearingDate = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -882,7 +861,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -890,7 +868,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -898,7 +875,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -906,7 +882,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -914,7 +889,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPLICANT_NAME",
         isMandatory: false,
         key: "applicantName",
@@ -922,7 +896,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "applicantName", hideInForm: true },
       },
       {
-        inline: true,
         label: "RESCHEDULING_REASON",
         isMandatory: false,
         key: "reschedulingReason",
@@ -930,7 +903,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "reschedulingReason", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPLICTION_STATUS",
         isMandatory: false,
         key: "applicationStatus",
@@ -939,23 +911,30 @@ export const configsRescheduleHearingDate = [
         populators: { name: "applicationStatus", hideInForm: true },
       },
       {
-        inline: true,
         label: "ORIGINAL_HEARING_DATE",
         isMandatory: false,
         key: "originalHearingDate",
         type: "date",
-        populators: { name: "originalHearingDate" },
+        populators: {
+          name: "originalHearingDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "NEW_HEARING_DATE",
         isMandatory: false,
         key: "newHearingDate",
         type: "date",
-        populators: { name: "newHearingDate" },
+        populators: {
+          name: "newHearingDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -963,7 +942,6 @@ export const configsRescheduleHearingDate = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -978,7 +956,6 @@ export const configsVoluntarySubmissionStatus = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -986,7 +963,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -994,7 +970,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -1002,7 +977,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -1010,7 +984,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -1018,7 +991,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPLICANT_NAME",
         isMandatory: false,
         key: "applicantName",
@@ -1026,7 +998,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "applicantName", hideInForm: true },
       },
       {
-        inline: true,
         label: "SUBMISSION_DATE",
         isMandatory: false,
         key: "submissionDate",
@@ -1034,7 +1005,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "submissionDate", hideInForm: true },
       },
       {
-        inline: true,
         label: "SUBMISSION_ID",
         isMandatory: false,
         key: "submissionID",
@@ -1042,7 +1012,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "submissionID", hideInForm: true },
       },
       {
-        inline: true,
         label: "SUBMISSION_TYPE",
         isMandatory: false,
         key: "submissionType",
@@ -1050,7 +1019,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "submissionType", hideInForm: true },
       },
       {
-        inline: true,
         label: "APPROVAL_STATUS",
         isMandatory: false,
         key: "approvalStatus",
@@ -1059,7 +1027,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "approvalStatus" },
       },
       {
-        inline: true,
         label: "COMMENTS",
         isMandatory: false,
         key: "comments",
@@ -1067,7 +1034,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "comments" },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -1075,7 +1041,6 @@ export const configsVoluntarySubmissionStatus = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -1090,7 +1055,6 @@ export const configsCaseTransfer = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -1098,7 +1062,6 @@ export const configsCaseTransfer = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -1106,7 +1069,6 @@ export const configsCaseTransfer = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -1114,7 +1076,6 @@ export const configsCaseTransfer = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -1122,7 +1083,6 @@ export const configsCaseTransfer = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -1130,7 +1090,6 @@ export const configsCaseTransfer = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "COMPLAINANT_NAME",
         isMandatory: false,
         key: "complainantName",
@@ -1138,7 +1097,6 @@ export const configsCaseTransfer = [
         populators: { name: "complainantName", hideInForm: true },
       },
       {
-        inline: true,
         label: "COMPLAINANT_ADDRESS",
         isMandatory: false,
         key: "complainantAddress",
@@ -1146,7 +1104,6 @@ export const configsCaseTransfer = [
         populators: { name: "complainantAddress", hideInForm: true },
       },
       {
-        inline: true,
         label: "TRANSFER_SEEKED_TO",
         isMandatory: false,
         key: "transferSeekedTo",
@@ -1154,7 +1111,6 @@ export const configsCaseTransfer = [
         populators: { name: "transferSeekedTo" },
       },
       {
-        inline: true,
         label: "GROUNDS",
         isMandatory: false,
         key: "grounds",
@@ -1162,7 +1118,6 @@ export const configsCaseTransfer = [
         populators: { name: "grounds" },
       },
       {
-        inline: true,
         label: "APPROVAL_STATUS",
         isMandatory: false,
         key: "approvalStatus",
@@ -1171,7 +1126,6 @@ export const configsCaseTransfer = [
         populators: { name: "approvalStatus" },
       },
       {
-        inline: true,
         label: "CASE_TRANSFERRED_TO",
         isMandatory: false,
         key: "caseTransferredTo",
@@ -1179,7 +1133,6 @@ export const configsCaseTransfer = [
         populators: { name: "caseTransferredTo" },
       },
       {
-        inline: true,
         label: "COMMENTS",
         isMandatory: false,
         key: "comments",
@@ -1187,7 +1140,6 @@ export const configsCaseTransfer = [
         populators: { name: "comments" },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -1195,7 +1147,6 @@ export const configsCaseTransfer = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -1210,7 +1161,6 @@ export const configsCaseSettlement = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -1218,7 +1168,6 @@ export const configsCaseSettlement = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -1226,7 +1175,6 @@ export const configsCaseSettlement = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -1234,7 +1182,6 @@ export const configsCaseSettlement = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -1242,23 +1189,30 @@ export const configsCaseSettlement = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
         type: "date",
-        populators: { name: "dateOfOrder" },
+        populators: {
+          name: "dateOfOrder",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "SETTLEMENT_AGREEMENT_DATE",
         isMandatory: false,
         key: "settlementAgreementDate",
         type: "date",
-        populators: { name: "settlementAgreementDate" },
+        populators: {
+          name: "settlementAgreementDate",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "SETTLEMENT_MECHANISM",
         isMandatory: false,
         key: "settlementMechanism",
@@ -1285,7 +1239,6 @@ export const configsCaseSettlement = [
         },
       },
       {
-        inline: true,
         label: "SETTLEMENT_IMPLEMETED",
         isMandatory: false,
         key: "settlementImplemented",
@@ -1293,7 +1246,6 @@ export const configsCaseSettlement = [
         populators: { name: "settlementImplemented", title: "" },
       },
       {
-        inline: true,
         label: "COMMENTS",
         isMandatory: false,
         key: "comments",
@@ -1301,7 +1253,6 @@ export const configsCaseSettlement = [
         populators: { name: "comments", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -1309,7 +1260,6 @@ export const configsCaseSettlement = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -1324,7 +1274,6 @@ export const configsIssueSummons = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -1332,7 +1281,6 @@ export const configsIssueSummons = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -1340,7 +1288,6 @@ export const configsIssueSummons = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -1348,7 +1295,6 @@ export const configsIssueSummons = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -1356,7 +1302,6 @@ export const configsIssueSummons = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -1364,7 +1309,6 @@ export const configsIssueSummons = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
         label: "ISSUE_SUMMONS_TO",
         isMandatory: false,
         key: "issueSummonsTo",
@@ -1372,7 +1316,6 @@ export const configsIssueSummons = [
         populators: { name: "issueSummonsTo", hideInForm: true },
       },
       {
-        inline: true,
         label: "HEARING_DATE",
         isMandatory: false,
         key: "hearingDate",
@@ -1380,7 +1323,6 @@ export const configsIssueSummons = [
         populators: { name: "hearingDate", hideInForm: true },
       },
       {
-        inline: true,
         label: "COMMENTS",
         isMandatory: false,
         key: "comments",
@@ -1388,7 +1330,6 @@ export const configsIssueSummons = [
         populators: { name: "comments", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_NAME",
         isMandatory: false,
         key: "judgeName",
@@ -1396,7 +1337,6 @@ export const configsIssueSummons = [
         populators: { name: "judgeName", hideInForm: true },
       },
       {
-        inline: true,
         label: "JUDGE_DESIGNATION",
         isMandatory: false,
         key: "judgeDesignation",
@@ -1407,11 +1347,10 @@ export const configsIssueSummons = [
   },
 ];
 
-export const configsBail = [
+export const configsIssueOfWarrants = [
   {
     body: [
       {
-        inline: true,
         label: "REF_APPLICATION_ID",
         isMandatory: false,
         key: "refApplicationId",
@@ -1419,7 +1358,6 @@ export const configsBail = [
         populators: { name: "refApplicationId" },
       },
       {
-        inline: true,
         label: "COURT_NAME",
         isMandatory: false,
         key: "courtName",
@@ -1427,7 +1365,6 @@ export const configsBail = [
         populators: { name: "courtName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CASE_NAME",
         isMandatory: false,
         key: "caseName",
@@ -1435,7 +1372,6 @@ export const configsBail = [
         populators: { name: "caseName", hideInForm: true },
       },
       {
-        inline: true,
         label: "CNR_NUMBER",
         isMandatory: false,
         key: "cnrNumber",
@@ -1443,7 +1379,6 @@ export const configsBail = [
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
-        inline: true,
         label: "DATE_OF_ORDER",
         isMandatory: false,
         key: "dateOfOrder",
@@ -1451,7 +1386,111 @@ export const configsBail = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        inline: true,
+        label: "ISSUE_WARRANTS_FOR",
+        isMandatory: false,
+        key: "issueWarrantsFor",
+        type: "text",
+        populators: { name: "issueWarrantsFor", hideInForm: true },
+      },
+      {
+        label: "REASON_FOR_WARRANT",
+        isMandatory: false,
+        key: "reasonForWarrant",
+        type: "text",
+        populators: { name: "reasonForWarrant" },
+      },
+      {
+        label: "HEARING_DATE",
+        isMandatory: false,
+        key: "hearingDate",
+        type: "date",
+        populators: { name: "hearingDate", hideInForm: true },
+      },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments", hideInForm: true },
+      },
+      {
+        label: "JUDGE_NAME",
+        isMandatory: false,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        label: "JUDGE_DESIGNATION",
+        isMandatory: false,
+        key: "judgeDesignation",
+        type: "text",
+        populators: { name: "judgeDesignation", hideInForm: true },
+      },
+    ],
+  },
+];
+
+export const configsOthers = [
+  {
+    body: [
+      {
+        label: "ORDER_TITLE",
+        isMandatory: false,
+        key: "orderTitle",
+        type: "text",
+        populators: { name: "orderTitle" },
+      },
+      {
+        label: "DETAILS",
+        isMandatory: false,
+        key: "otherDetails",
+        type: "textarea",
+        populators: { name: "otherDetails" },
+      },
+    ],
+  },
+];
+
+export const configsBail = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "COURT_NAME",
+        isMandatory: false,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: false,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: false,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: false,
+        key: "dateOfOrder",
+        type: "date",
+        populators: { name: "dateOfOrder", hideInForm: true },
+      },
+      {
         label: "BAIL_OF",
         isMandatory: false,
         key: "bailOf",
@@ -1459,7 +1498,6 @@ export const configsBail = [
         populators: { name: "bailOf" },
       },
       {
-        inline: true,
         label: "SUMMARY",
         isMandatory: false,
         key: "summary",
@@ -1467,7 +1505,6 @@ export const configsBail = [
         populators: { name: "summary", hideInForm: true },
       },
       {
-        inline: true,
         label: "ATTACHED_DOCUMENTS",
         isMandatory: false,
         key: "attachedDocuments",
@@ -1475,7 +1512,6 @@ export const configsBail = [
         populators: { name: "attachedDocuments", hideInForm: true },
       },
       {
-        inline: true,
         label: "BAIL_TYPE",
         isMandatory: false,
         key: "bailType",
@@ -1502,7 +1538,6 @@ export const configsBail = [
         },
       },
       {
-        inline: true,
         label: "BAIL_AMOUNT",
         isMandatory: false,
         key: "bailAmount",
@@ -1510,7 +1545,6 @@ export const configsBail = [
         populators: { name: "bailAmount" },
       },
       {
-        inline: true,
         label: "OTHER_CONDITIONS",
         isMandatory: false,
         key: "otherConditions",
@@ -1584,16 +1618,20 @@ export const configsCreateOrderSchedule = [
         },
       },
       {
-        inline: true,
         label: "DATE_OF_HEARING",
         isMandatory: true,
         key: "doh",
         type: "date",
         disable: false,
-        populators: { name: "doh", error: "Required" },
+        populators: {
+          name: "doh",
+          error: "Required",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
-        inline: true,
         label: "Purpose of Hearing",
         isMandatory: true,
         description: "",
@@ -1602,7 +1640,6 @@ export const configsCreateOrderSchedule = [
         populators: { name: "purpose", error: "Error!" },
       },
       {
-        inline: true,
         label: "Additional notes (optional)",
         isMandatory: true,
         description: "",
@@ -1643,13 +1680,18 @@ export const configsCreateOrderWarrant = [
         },
       },
       {
-        inline: true,
         label: "DATE_OF_HEARING",
         isMandatory: true,
         key: "doh",
         type: "date",
         disable: false,
-        populators: { name: "doh", error: "Required" },
+        populators: {
+          name: "doh",
+          error: "Required",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
         isMandatory: true,
@@ -1743,7 +1785,7 @@ export const configsCreateOrderWarrant = [
       //   },
       // },
       // {
-      //   inline: true,
+      //
       //   label: "deadline for submission",
       //   isMandatory: false,
       //   key: "dob",
@@ -1793,13 +1835,18 @@ export const configsCreateOrderSummon = [
         },
       },
       {
-        inline: true,
         label: "DATE_OF_HEARING",
         isMandatory: true,
         key: "doh",
         type: "date",
         disable: false,
-        populators: { name: "doh", error: "Required" },
+        populators: {
+          name: "doh",
+          error: "Required",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
+        },
       },
       {
         isMandatory: true,
@@ -1890,7 +1937,7 @@ export const configsCreateOrderReIssueSummon = [
       //   },
       // },
       //   {
-      //     inline: true,
+      //
       //     label: "deadline for submission",
       //     isMandatory: false,
       //     key: "dob",

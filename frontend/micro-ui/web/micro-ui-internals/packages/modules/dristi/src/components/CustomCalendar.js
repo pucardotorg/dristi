@@ -7,7 +7,7 @@ import useGetHearings from "../hooks/dristi/useGetHearings";
 function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
+    { criteria: { tenantId }, tenantId },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
@@ -81,17 +81,19 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   return (
     <div>
-      <Calendar
-        date={selectedCustomDate}
-        onChange={handleSelect}
-        // minDate={minDate}
-        maxDate={maxDate}
-        dayContentRenderer={renderCustomDay}
-        navigatorRenderer={navigatorRenderer}
-        onShownDateChange={(date) => {
-          setCurrentMonth(date);
-        }}
-      />
+      <div>
+        <Calendar
+          date={selectedCustomDate}
+          onChange={handleSelect}
+          // minDate={minDate}
+          maxDate={maxDate}
+          dayContentRenderer={renderCustomDay}
+          navigatorRenderer={navigatorRenderer}
+          onShownDateChange={(date) => {
+            setCurrentMonth(date);
+          }}
+        />
+      </div>
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>

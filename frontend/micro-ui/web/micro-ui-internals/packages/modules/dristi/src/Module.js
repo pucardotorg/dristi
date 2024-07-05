@@ -43,7 +43,8 @@ import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
 import Modal from "./components/Modal";
 import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
-const Digit = window?.Digit || {};
+import CustomSortComponent from "./components/CustomSortComponent";
+import CustomErrorTooltip from "./components/CustomErrorTooltip";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -110,6 +111,8 @@ const componentsToRegister = {
   MODAL: Modal,
   CUSTOMCASEINFODIV: CustomCaseInfoDiv,
   DOCVIEWERWRAPPER: DocViewerWrapper,
+  CUSTOMERRORTOOLTIP: CustomErrorTooltip,
+  CustomSortComponent,
 };
 
 const overrideHooks = () => {
