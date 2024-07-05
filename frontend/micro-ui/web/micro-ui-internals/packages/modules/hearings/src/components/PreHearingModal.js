@@ -34,7 +34,7 @@ function PreHearingModal({ onCancel, hearings }) {
 
   const popUpStyle = {
     width: "70%",
-    height: "90%",
+    height: "fit-content",
     borderRadius: "0.3rem",
   };
 
@@ -59,9 +59,18 @@ function PreHearingModal({ onCancel, hearings }) {
       <div style={{ marginTop: "2rem" }}>
         <InboxSearchComposer configs={config} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0" }}>
-        <div> 24 May, 2024, 10:00 - 12:00 pm</div>
-        <Button onButtonClick={onRescheduleAllClick} label="Reschedule All Hearings" variation={"secondary"} />
+      <div
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
+      >
+        <div>
+          <strong>24 May, 2024</strong>, 10:00 - 12:00 pm
+        </div>
+        <Button
+          className="border-none dristi-font-bold"
+          onButtonClick={onRescheduleAllClick}
+          label="Reschedule All Hearings"
+          variation={"secondary"}
+        />
       </div>
     </Modal>
   );
