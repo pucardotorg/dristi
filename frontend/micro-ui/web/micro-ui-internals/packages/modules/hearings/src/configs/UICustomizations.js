@@ -371,7 +371,7 @@ export const UICustomizations = {
                       <div style={{ marginRight: "1rem" }}>{"-"}</div>
                     )}
 
-                    <OverlayDropdown style={{ position: "absolute" }} />
+                    {/* <OverlayDropdown style={{ position: "absolute" }} /> */}
                   </div>
                 );
               default:
