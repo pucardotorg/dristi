@@ -143,7 +143,14 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
                     : t("CS_COMMON_ADDRESS_DETAIL")
                 } ${index + 1}`}</h1>
               </b>
-              <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
+              <span
+                onClick={() => {
+                  if (!config?.disable) {
+                    handleDeleteLocation(data.id);
+                  }
+                }}
+                style={locationData.length === 1 ? { display: "none" } : {}}
+              >
                 <CrossIcon></CrossIcon>
               </span>
             </div>

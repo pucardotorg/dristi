@@ -64,6 +64,7 @@ export const judgeInboxConfig = {
           {
             label: "Stage",
             jsonPath: "status",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",

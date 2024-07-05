@@ -184,6 +184,7 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                data: adv,
               };
             });
           },
@@ -531,6 +532,8 @@ export const UICustomizations = {
       switch (key) {
         case "Case Type":
           return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
         default:
           return t("ES_COMMON_NA");
       }

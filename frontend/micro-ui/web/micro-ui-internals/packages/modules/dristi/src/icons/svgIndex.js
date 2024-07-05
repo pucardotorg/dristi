@@ -714,6 +714,26 @@ const FactCheckIcon = () => (
     />
   </svg>
 );
+
+const InfoToolTipIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V9H11V15ZM11 7H9V5H11V7Z"
+      fill="#0F3B8C"
+    />
+  </svg>
+);
+
+
+const InfoIcon = () => (
+  <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M7.7085 4.04171H9.29183V5.62504H7.7085V4.04171ZM7.7085 7.20837H9.29183V11.9584H7.7085V7.20837ZM8.50016 0.083374C4.13016 0.083374 0.583496 3.63004 0.583496 8.00004C0.583496 12.37 4.13016 15.9167 8.50016 15.9167C12.8702 15.9167 16.4168 12.37 16.4168 8.00004C16.4168 3.63004 12.8702 0.083374 8.50016 0.083374ZM8.50016 14.3334C5.00891 14.3334 2.16683 11.4913 2.16683 8.00004C2.16683 4.50879 5.00891 1.66671 8.50016 1.66671C11.9914 1.66671 14.8335 4.50879 14.8335 8.00004C14.8335 11.4913 11.9914 14.3334 8.50016 14.3334Z"
+      fill="#505A5F"
+    />
+  </svg>
+);
+
 export {
   AdvocateIcon,
   CalendarLeftArrow,
@@ -742,9 +762,7 @@ export {
   FileDownloadIcon,
   FileIcon,
   FileUploadIcon,
-  FlagIcon,
-  InfoIconRed,
-  JoinCaseIcon,
+  FlagIcon, InfoIcon, InfoIconRed, InfoToolTipIcon, JoinCaseIcon,
   LeftArrow,
   LitigentIcon,
   LoginIcon,
@@ -758,5 +776,6 @@ export {
   SuccessIcon,
   UploadIcon,
   WaitIcon,
-  WhiteRightArrow,
+  WhiteRightArrow
 };
+

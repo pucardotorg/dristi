@@ -7,11 +7,13 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
   configsOrderSection202CRPC,
   configsOrderSubmissionExtension,
   configsOrderTranferToADR,
+  configsOthers,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
   configsVoluntarySubmissionStatus,
@@ -27,11 +29,8 @@ import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow"
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
-const fieldStyle = { marginRight: 0 };
-
 const GenerateOrders = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -39,26 +38,11 @@ const GenerateOrders = () => {
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
 
-  const configKeys = {
-    SECTION_202_CRPC: configsOrderSection202CRPC,
-    DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
-    EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-    TRANSFER_TO_ADR: configsOrderTranferToADR,
-    NEXT_HEARING: configsScheduleHearingDate,
-    ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-    VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
-    CASE_TRANSFER: configsCaseTransfer,
-    CASE_SETTLEMENT: configsCaseSettlement,
-    SUMMONS: configsIssueSummons,
-    BAIL: configsBail,
-  };
-
-  const { data: caseData, isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -73,8 +57,31 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+
+  const complainants = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((item) => item?.partyType === "complainant.primary")
+      .map((item) => {
+        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+      });
+  }, [caseDetails]);
+
+  const respondants = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((item) => item?.partyType === "complainant.primary")
+      .map((item) => {
+        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+      });
+  }, [caseDetails]);
+
+  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
     filingNumber,
@@ -86,12 +93,76 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
   const modifiedFormConfig = useMemo(() => {
-    return !orderType?.code
-      ? applicationTypeConfig
-      : configKeys.hasOwnProperty(orderType?.code)
-      ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
-      : applicationTypeConfig;
-  }, [orderType]);
+    const configKeys = {
+      SECTION_202_CRPC: configsOrderSection202CRPC,
+      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+      APPROVE_REJECT_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      CASE_TRANSFER: configsCaseTransfer,
+      SETTLEMENT: configsCaseSettlement,
+      SUMMONS: configsIssueSummons,
+      BAIL: configsBail,
+      WARRANT: configsIssueOfWarrants,
+      OTHERS: configsOthers,
+    };
+
+    let newConfig = structuredClone(applicationTypeConfig);
+    if (orderType?.code && configKeys.hasOwnProperty(orderType?.code)) {
+      let orderTypeForm = configKeys[orderType?.code];
+      if (orderType?.code === "SECTION_202_CRPC") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "applicationFilledBy") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: complainants,
+                  },
+                };
+              }
+              if (field.key === "detailsSeekedOf") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: respondants,
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      if (orderType?.code === "MANDATORY_SUBMISSIONS_RESPONSES") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "submissionParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      newConfig = [...newConfig, ...orderTypeForm];
+    }
+    return newConfig;
+  }, [complainants, orderType?.code, respondants]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -134,12 +205,12 @@ const GenerateOrders = () => {
           setShowSuccessModal(true);
         }
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       })
       .catch(() => {
         refetchOrdersData();
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       });
   };
 
@@ -210,16 +281,6 @@ const GenerateOrders = () => {
     setShowReviewModal(true);
   };
 
-  const handleCloseSignaturePopup = () => {
-    setShowSignatureModal(false);
-    setShowReviewModal(true);
-  };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    history.back(); // go to view case screen when clicking on close button.
-  };
-
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
@@ -261,6 +322,7 @@ const GenerateOrders = () => {
         {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
+            className={"generate-orders"}
             key={selectedOrder}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}

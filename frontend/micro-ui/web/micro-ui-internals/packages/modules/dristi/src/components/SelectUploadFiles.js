@@ -52,7 +52,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
+function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setError }) {
   const checkIfTextPresent = () => {
     if (!formData) {
       return true;
@@ -117,7 +117,13 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    const maxFileSize = input?.maxFileSize * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: false });
+      setError(config.key, { message: t(input?.maxFileErrorMessage) });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    }
   };
 
   const handleDeleteFile = (input, index) => {

@@ -96,7 +96,7 @@ module.exports = function (app) {
     "/case/*",
     "/order/*",
     "/application/*" ,
-    "/order"
+    "/order",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));

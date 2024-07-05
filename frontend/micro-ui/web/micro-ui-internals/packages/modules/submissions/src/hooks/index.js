@@ -1,16 +1,17 @@
 import { useIndividualView } from "./useIndividualView";
 import utils from "../utils";
+import { submissionService } from "./services";
 const submissions = {
-  useIndividualView
+  useIndividualView,
 };
 
 const Hooks = {
-  submissions
+  submissions,
 };
 
 const Utils = {
   browser: {
-    submissions: () => { },
+    submissions: () => {},
   },
   submissions: {
     ...utils,
@@ -20,4 +21,5 @@ const Utils = {
 export const CustomisedHooks = {
   Hooks,
   Utils,
+  submissionService,
 };
