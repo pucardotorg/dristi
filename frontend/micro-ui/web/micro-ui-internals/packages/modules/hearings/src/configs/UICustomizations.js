@@ -348,4 +348,35 @@ export const UICustomizations = {
           }
         },
       },
+      PreHearingsConfig: {
+          preProcess: (data) => {
+            console.log("PreConfigData", data);
+            return data;
+          },
+          additionalCustomizations: (row, key, column, value, t, searchResult) => {
+            switch (key) {
+              case "Actions":
+                return (
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    {true ? (
+                      <Button
+                        variation={"secondary"}
+                        label={""}
+                        onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing")}
+                        style={{ marginRight: "1rem" }}
+                      >
+                        <strong>Start</strong>
+                      </Button>
+                    ) : (
+                      <div style={{ marginRight: "1rem" }}>{"-"}</div>
+                    )}
+
+                    {/* <OverlayDropdown style={{ position: "absolute" }} /> */}
+                  </div>
+                );
+              default:
+                return t("ES_COMMON_NA");
+            }
+          },
+        },
 };

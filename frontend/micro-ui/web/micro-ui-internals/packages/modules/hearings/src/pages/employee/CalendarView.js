@@ -1,14 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
-import { Modal } from "@egovernments/digit-ui-react-components";
 import useGetHearingSlotMetaData from "../../hooks/services/useGetHearingSlotMetaData";
+import PreHearingModal from "../../components/PreHearingModal";
+import { DataContext } from "../../components/DataContext";
+
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
+  const { updateHearingData } = useContext(DataContext);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
@@ -98,6 +101,10 @@ const MonthlyCalendar = () => {
 
   const handleEventClick = (arg) => {
     setCurrentEvent(arg.event);
+    updateHearingData({
+      hearingDate: arg.event.extendedProps.date.toISOString().split("T")[0],
+      hearingSlot: arg.event.extendedProps.slot,
+    });
     setShowModal(true);
   };
 
@@ -144,23 +151,7 @@ const MonthlyCalendar = () => {
         eventClick={handleEventClick}
       />
 
-      {showModal && (
-        <Modal
-          headerBarMain={<Heading label={"hearings"} />}
-          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          onClose={closeModal}
-          popupModuleActionBarStyles={{
-            display: "none",
-          }}
-        >
-          {currentEvent.extendedProps.hearings.map((hearing) => (
-            <div>
-              <div key={hearing.id}>id :- {hearing.id}</div>
-              <div> name:- {hearing.additionalDetails.name}</div>
-            </div>
-          ))}
-        </Modal>
-      )}
+      {showModal && <PreHearingModal onCancel={closeModal} />}
     </div>
   );
 };
