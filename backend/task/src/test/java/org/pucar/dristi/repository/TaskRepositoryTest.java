@@ -10,6 +10,7 @@ import org.pucar.dristi.repository.rowmapper.AmountRowMapper;
 import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.TaskRowMapper;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.pucar.dristi.web.models.TaskExists;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -64,7 +65,7 @@ public class TaskRepositoryTest {
         mockTaskList.add(mockTask2);
 
         // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList()))
+        when(queryBuilder.getTaskSearchQuery(any(),any()))
                 .thenReturn("SELECT * FROM tasks WHERE ...");
 
         // Mock JDBC template query method
@@ -72,7 +73,7 @@ public class TaskRepositoryTest {
                 .thenReturn(mockTaskList);
 
         // Test the method
-        List<Task> result = taskRepository.getApplications("id", "tenantId", "status", UUID.randomUUID(), "cnrNumber", "taskNumber");
+        List<Task> result = taskRepository.getApplications(new TaskCriteria());
 
         // Verify the result
         assertNotNull(result);
@@ -81,7 +82,7 @@ public class TaskRepositoryTest {
         assertEquals(id2, result.get(1).getId()); // Compare UUIDs directly
 
         // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList());
+        verify(queryBuilder, times(1)).getTaskSearchQuery(any(),anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
     }
 
@@ -89,7 +90,7 @@ public class TaskRepositoryTest {
     @Test
     public void testGetApplications_EmptyResult() {
         // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList()))
+        when(queryBuilder.getTaskSearchQuery(any(), anyList()))
                 .thenReturn("SELECT * FROM tasks WHERE ...");
 
         // Mock JDBC template query method to return empty list
@@ -97,21 +98,21 @@ public class TaskRepositoryTest {
                 .thenReturn(new ArrayList<>());
 
         // Test the method
-        List<Task> result = taskRepository.getApplications("id", "tenantId", "status", UUID.randomUUID(), "cnrNumber", "taskNumber");
+        List<Task> result = taskRepository.getApplications(new TaskCriteria());
 
         // Verify the result
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
         // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList());
+        verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
     }
 
     @Test
     public void testGetApplications_Exception() {
         // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList()))
+        when(queryBuilder.getTaskSearchQuery(any(), anyList()))
                 .thenReturn("SELECT * FROM tasks WHERE ...");
 
         // Mock JDBC template query method to throw exception
@@ -120,7 +121,7 @@ public class TaskRepositoryTest {
 
         // Test the method and expect CustomException
         try {
-            taskRepository.getApplications("id", "tenantId", "status", UUID.randomUUID(), "cnrNumber", "taskNumber");
+            taskRepository.getApplications(new TaskCriteria());
             fail("Expected CustomException was not thrown");
         } catch (CustomException e) {
             // Verify the exception
@@ -129,7 +130,7 @@ public class TaskRepositoryTest {
         }
 
         // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(anyString(), anyString(), anyString(), any(UUID.class), anyString(), anyString(), anyList());
+        verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
     }
 

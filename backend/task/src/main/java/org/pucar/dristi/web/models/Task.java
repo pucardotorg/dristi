@@ -88,7 +88,7 @@ public class Task {
     private String status = null;
 
     @JsonProperty("assignedTo")
-    private Object assignedTo = null;
+    private AssignedTo assignedTo = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;

@@ -43,38 +43,21 @@ public class ApplicationQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY app.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY app.createdtime ASC ";
 
-    private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app WHERE ";
+    private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app";
 
-    public String checkApplicationExistQuery(String filingNumber, String cnrNumber, String applicationNumber) {
+    public String checkApplicationExistQuery(String filingNumber, String cnrNumber, String applicationNumber, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APPLICATION_EXIST_QUERY);
-            boolean hasPreviousCondition = false;
+            boolean firstCriteria = true; // To check if it's the first criteria
 
-            if (filingNumber != null && !filingNumber.isEmpty()) {
-                query.append("app.filingnumber = '").append(filingNumber).append("'");
-                hasPreviousCondition = true;
-            }
+            firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
+            addCriteria(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
 
-            if (cnrNumber != null && !cnrNumber.isEmpty()) {
-                if (hasPreviousCondition) {
-                    query.append(" AND ");
-                }
-                query.append("app.cnrnumber = '").append(cnrNumber).append("'");
-                hasPreviousCondition = true;
-            }
-
-            if (applicationNumber != null && !applicationNumber.isEmpty()) {
-                if (hasPreviousCondition) {
-                    query.append(" AND ");
-                }
-                query.append("app.applicationnumber = '").append(applicationNumber).append("'");
-            }
-
-            query.append(";");
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building application exist query");
-            throw new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " + e.getMessage());
+            log.error("Error while building application exist query {}", e.getMessage());
+            throw new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query: " + e.getMessage());
         }
     }
 

@@ -2,22 +2,16 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.HearingRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.HearingRepository;
 import org.pucar.dristi.validator.HearingRegistrationValidator;
-import org.pucar.dristi.web.models.Hearing;
-import org.pucar.dristi.web.models.HearingExists;
-import org.pucar.dristi.web.models.HearingExistsRequest;
-import org.pucar.dristi.web.models.HearingRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,22 +70,36 @@ public class HearingService {
         }
     }
 
-    public List<Hearing> searchHearing(String cnrNumber, String applicationNumber, String hearingId, String fightingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public List<Hearing> searchHearing(HearingSearchRequest request) {
 
         try {
-            RequestInfo requestInfo = new RequestInfo();
-            requestInfo.setUserInfo(new User());
-            if (limit == null || limit < 1) limit = 10;
-            if (offset == null || offset < 0) offset = 0;
-            if (!Objects.equals(sortBy, "DESC")) sortBy = "ASC";
-            return hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, fightingNumber, tenentId, fromDate, toDate, limit, offset, sortBy);
+            HearingCriteria criteria = request.getCriteria();
+            validateCriteria(criteria);
+            return hearingRepository.getHearings(
+                    criteria.getCnrNumber(),
+                    criteria.getApplicationNumber(),
+                    criteria.getHearingId(),
+                    criteria.getFilingNumber(),
+                    criteria.getTenantId(),
+                    criteria.getFromDate(),
+                    criteria.getToDate(),
+                    criteria.getLimit(),
+                    criteria.getOffset(),
+                    criteria.getSortBy()
+            );
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching search results");
             throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
         }
+    }
+
+    private void validateCriteria(HearingCriteria criteria) {
+        if (criteria.getLimit() == null || criteria.getLimit() < 1) criteria.setLimit(10);
+        if (criteria.getOffset() == null || criteria.getOffset() < 0) criteria.setOffset(0);
+        if (!Objects.equals(criteria.getSortBy(), "DESC")) criteria.setSortBy("ASC");
     }
 
     public Hearing updateHearing(HearingRequest hearingRequest) {
@@ -147,13 +155,15 @@ public class HearingService {
         }
     }
 
-    public Hearing updateHearingTranscript(HearingRequest hearingRequest) {
+    public Hearing updateTranscriptAdditionalAttendees(HearingRequest hearingRequest) {
         try {
-            Hearing hearing = validator.validateHearingExistenceForTranscriptUpdate(hearingRequest.getHearing());
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(),hearingRequest.getHearing());
             enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
-            hearingRepository.updateHearingTranscript(hearingRequest.getHearing());
+            hearingRepository.updateTranscriptAdditionalAttendees(hearingRequest.getHearing());
             hearing.setTranscript(hearingRequest.getHearing().getTranscript());
             hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
+            hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
+            hearing.setAttendees(hearingRequest.getHearing().getAttendees());
             return hearing;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while verifying hearing");

@@ -14,10 +14,7 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.TaskRegistrationValidator;
-import org.pucar.dristi.web.models.Task;
-import org.pucar.dristi.web.models.TaskExists;
-import org.pucar.dristi.web.models.TaskExistsRequest;
-import org.pucar.dristi.web.models.TaskRequest;
+import org.pucar.dristi.web.models.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -101,19 +98,19 @@ public class TaskServiceTest {
 
     @Test
     void testSearchTaskSuccess() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString())).thenReturn(Collections.singletonList(task));
+        when(taskRepository.getApplications(any())).thenReturn(Collections.singletonList(task));
 
-        List<Task> result = taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", "task-number",requestInfo);
+        List<Task> result = taskService.searchTask(new TaskSearchRequest());
 
         assertEquals(1, result.size());
-        verify(taskRepository, times(1)).getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString());
+        verify(taskRepository, times(1)).getApplications(any());
     }
 
     @Test
     void testSearchTaskThrowsException() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
+        when(taskRepository.getApplications(any())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", "task-number",requestInfo));
+        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask(new TaskSearchRequest()));
 
         assertEquals(SEARCH_TASK_ERR, exception.getCode());
         assertEquals("Error", exception.getMessage());

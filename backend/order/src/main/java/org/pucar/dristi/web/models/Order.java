@@ -68,7 +68,7 @@ public class Order {
     private LocalDate createdDate = null;
 
     @JsonProperty("issuedBy")
-    private Object issuedBy = null;
+    private IssuedBy issuedBy = null;
 
     @JsonProperty("orderType")
     @NotNull

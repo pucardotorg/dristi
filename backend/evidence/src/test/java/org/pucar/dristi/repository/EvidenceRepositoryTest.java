@@ -56,7 +56,7 @@ public class EvidenceRepositoryTest {
         EvidenceSearchCriteria evidenceSearchCriteria = new EvidenceSearchCriteria();
         evidenceSearchCriteria.setId("testId");
         evidenceSearchCriteria.setCaseId("testCaseId");
-        evidenceSearchCriteria.setApplicationId("testApplication");
+        evidenceSearchCriteria.setApplicationNumber("testApplication");
         evidenceSearchCriteria.setHearing("testHearing");
         evidenceSearchCriteria.setOrder("testOrder");
         evidenceSearchCriteria.setSourceId("testSourceId");
@@ -71,7 +71,7 @@ public class EvidenceRepositoryTest {
         String documentQuery = "SELECT * FROM documents WHERE ...";
         String commentQuery = "SELECT * FROM comments WHERE ...";
 
-        when(queryBuilder.getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber()))
+        when(queryBuilder.getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationNumber(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber()))
                 .thenReturn(searchQuery);
 
         when(queryBuilder.getDocumentSearchQuery(anyList(), eq(preparedStmtListDoc))).thenReturn(documentQuery);
@@ -90,7 +90,7 @@ public class EvidenceRepositoryTest {
 
         // Verify behavior
         assertEquals(expectedArtifacts, actualArtifacts);
-        verify(queryBuilder, times(1)).getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber());
+        verify(queryBuilder, times(1)).getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationNumber(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber());
         verify(jdbcTemplate, times(1)).query(eq(searchQuery), any(Object[].class), eq(evidenceRowMapper));
 
         if (!actualArtifacts.isEmpty()) {
@@ -109,7 +109,7 @@ public class EvidenceRepositoryTest {
         List<Object> preparedStmtList = new ArrayList<>();
         String searchQuery = "SELECT * FROM artifacts WHERE ...";
 
-        when(queryBuilder.getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber()))
+        when(queryBuilder.getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationNumber(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber()))
                 .thenReturn(searchQuery);
 
         when(jdbcTemplate.query(eq(searchQuery), any(Object[].class), eq(evidenceRowMapper)))
@@ -117,7 +117,7 @@ public class EvidenceRepositoryTest {
 
         assertThrows(CustomException.class, () -> evidenceRepository.getArtifacts(evidenceSearchCriteria));
 
-        verify(queryBuilder, times(1)).getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber());
+        verify(queryBuilder, times(1)).getArtifactSearchQuery(preparedStmtList, evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationNumber(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(), evidenceSearchCriteria.getArtifactNumber());
         verify(jdbcTemplate, times(1)).query(eq(searchQuery), any(Object[].class), eq(evidenceRowMapper));
     }
 
