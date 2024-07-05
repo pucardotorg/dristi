@@ -160,7 +160,7 @@ public class ApplicationValidatorTest {
         application.setFilingNumber("file123");
         application.setReferenceId(UUID.randomUUID());
         when(caseUtil.fetchCaseDetails(any())).thenReturn(false);
-        RequestInfo requestInfo = new RequestInfo();
+
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(requestInfo, application));
 
@@ -172,7 +172,6 @@ public class ApplicationValidatorTest {
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnr123");
         application.setReferenceId(UUID.randomUUID());
-        RequestInfo requestInfo = new RequestInfo();
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(requestInfo, application));
@@ -185,7 +184,6 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnr123");
         application.setFilingNumber("file123");
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
-        RequestInfo requestInfo = new RequestInfo();
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(requestInfo, application));
@@ -199,7 +197,6 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnr123");
         application.setTenantId("tID");
         application.setFilingNumber("file123");
-        RequestInfo requestInfo = new RequestInfo();
 
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 

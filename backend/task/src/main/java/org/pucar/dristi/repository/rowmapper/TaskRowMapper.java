@@ -67,7 +67,8 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .taskDetails(rs.getString("taskdetails"))
                             .taskType(rs.getString("tasktype"))
                             .status(rs.getString("status"))
-                            .assignedTo(getObjectFromJson(rs.getString("assignedto"), new TypeReference<AssignedTo>() {}))
+                            .assignedTo(getObjectFromJson(rs.getString("assignedto"), new TypeReference<AssignedTo>() {
+                            }))
                             .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .auditDetails(auditdetails)
                             .build();
@@ -95,6 +96,8 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                 DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 localDate = LocalDate.parse(str, pattern);
             } catch (DateTimeParseException e) {
+                log.error("Date parsing failed for input: {}", str, e);
+                throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
             }
 
         return localDate;

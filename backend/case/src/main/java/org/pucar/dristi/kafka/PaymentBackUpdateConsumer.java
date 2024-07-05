@@ -16,8 +16,12 @@ public class PaymentBackUpdateConsumer {
 
     public static final Logger logger = LoggerFactory.getLogger(PaymentBackUpdateConsumer.class);
 
-    @Autowired
     private PaymentUpdateService paymentUpdateService;
+
+    @Autowired
+    public PaymentBackUpdateConsumer(PaymentUpdateService paymentUpdateService) {
+        this.paymentUpdateService = paymentUpdateService;
+    }
 
     @KafkaListener(topics = {"${kafka.topics.receipt.create}"})
     public void listenPayments(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {

@@ -21,11 +21,15 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("")
 public class ApplicationApiController{
-    @Autowired
+
     private ApplicationService applicationService;
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
+    @Autowired
+    public ApplicationApiController(ApplicationService applicationService, ResponseInfoFactory responseInfoFactory) {
+        this.applicationService = applicationService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @RequestMapping(value="/application/v1/create", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
