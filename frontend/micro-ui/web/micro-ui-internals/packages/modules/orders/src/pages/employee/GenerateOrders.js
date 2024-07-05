@@ -67,29 +67,17 @@ const GenerateOrders = () => {
 
   const complainants = useMemo(() => {
     return caseDetails?.litigants
-      ?.filter((item) => item.partyType === "complainant.primary")
+      ?.filter((item) => item?.partyType === "complainant.primary")
       .map((item) => {
-        const person = item?.additionalDetails || {
-          firstName: "Vinod",
-          lastName: "H",
-          middleName: "",
-        };
-        const fullName = [person.firstName, person.middleName, person.lastName].filter((name) => name).join(" ");
-        return { code: fullName, name: fullName };
+        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
       });
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
     return caseDetails?.litigants
-      ?.filter((item) => item.partyType === "complainant.primary")
+      ?.filter((item) => item?.partyType === "complainant.primary")
       .map((item) => {
-        const person = item?.additionalDetails || {
-          firstName: "Venkat",
-          lastName: "V",
-          middleName: "",
-        };
-        const fullName = [person.firstName, person.middleName, person.lastName].filter((name) => name).join(" ");
-        return { code: fullName, name: fullName };
+        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
       });
   }, [caseDetails]);
 

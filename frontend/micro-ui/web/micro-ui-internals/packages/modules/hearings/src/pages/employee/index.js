@@ -21,6 +21,8 @@ import ViewPendingTask from "./ViewPendingTask";
 import HearingPopup from "./HearingPopUp";
 import InsideHearing from "./InsideHearing";
 import ViewCase from "./ViewCase";
+import MonthlyCalendar from "./CalendarView";
+import { DataProvider } from "../../components/DataContext";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -50,7 +52,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/inside-hearing`} component={() => <InsideHearingMainPage />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
         <PrivateRoute path={`${path}/end-hearing`} component={() => <EndHearing />} />
-        <PrivateRoute path={`${path}/add-party`} component={() => <AddParty />} />
+        {/* <PrivateRoute path={`${path}/add-party`} component={() => <AddParty />} /> */}
         <PrivateRoute path={`${path}/adjourn-hearing`} component={() => <AdjournHearing />} />
         <PrivateRoute path={`${path}/orders`} component={() => <Orders />} />
         <PrivateRoute path={`${path}/parties`} component={() => <Parties />} />
@@ -60,11 +62,20 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/hearing-popup`} component={() => <HearingPopup></HearingPopup>} />
         <PrivateRoute path={`${path}/inside-hearings`} component={() => <InsideHearing></InsideHearing>} />
         <PrivateRoute path={`${path}/view-case`} component={() => <ViewCase></ViewCase>} />
-        <PrivateRoute path={`${path}/reschedule-hearing`} component={() => <RescheduleHearing></RescheduleHearing>} />
+        {/* <PrivateRoute path={`${path}/add-party`} component={() => <AddParty></AddParty>} /> */}
         <PrivateRoute path={`${path}/view-transcript`} component={() => <ViewTranscript></ViewTranscript>} />
         <PrivateRoute path={`${path}/view-witness-deposition`} component={() => <ViewWitnessDeposition></ViewWitnessDeposition>} />
         <PrivateRoute path={`${path}/view-pending-task`} component={() => <ViewPendingTask></ViewPendingTask>} />
         <PrivateRoute path={`${path}/submission`} component={() => <Submission></Submission>} />
+        <PrivateRoute
+          exact
+          path={`${path}/calendar`}
+          component={() => (
+            <DataProvider>
+              <MonthlyCalendar />
+            </DataProvider>
+          )}
+        />
       </AppContainer>
     </Switch>
   );

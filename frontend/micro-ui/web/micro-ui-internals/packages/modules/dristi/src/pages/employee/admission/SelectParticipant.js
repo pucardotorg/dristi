@@ -1,7 +1,7 @@
+import { Button, CardLabel, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import isEmpty from "lodash/isEmpty";
 import React, { useCallback, useEffect, useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
-import { Button, CardHeader, CardLabel, CardText, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
-import { formatDateInMonth } from "../../../Utils";
 
 function SelectParticipant({
   config,
@@ -17,12 +17,12 @@ function SelectParticipant({
   t,
 }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const isObjectEmpty = (obj) => {
-    return Object.keys(obj).length === 0;
-  };
-  const isEmpty = isObjectEmpty(selectedValues);
+
   const onSubmitSchedule = (props) => {
-    if (isEmpty) {
+    const isInvalid =
+      Object.keys(selectedValues).length === 0 ||
+      !Object.values(selectedValues).every((value) => (value ? Object.values(value).some((innerVal) => innerVal) : true));
+    if (isInvalid) {
       setShowErrorToast(true);
     } else {
       handleScheduleCase({ ...scheduleHearingParams, participant: selectedValues });
