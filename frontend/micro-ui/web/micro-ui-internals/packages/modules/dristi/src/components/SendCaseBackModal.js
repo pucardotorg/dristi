@@ -45,7 +45,7 @@ function SendCaseBackModal({ totalErrors, onCancel, onSubmit, t, heading, type, 
         />
       }
       actionCancelLabel={t(actionCancelLabel)}
-      actionCancelOnSubmit={onCancel}
+      actionCancelOnSubmit={() => onCancel()}
       actionSaveLabel={t(actionSaveLabel)}
       actionSaveOnSubmit={onSubmit}
       formId="modal-action"
@@ -58,7 +58,7 @@ function SendCaseBackModal({ totalErrors, onCancel, onSubmit, t, heading, type, 
           config={nodeConfig}
           t={t}
           onClick={() => {
-            handleCloseModal ? handleCloseModal() : onCancel();
+            handleCloseModal ? handleCloseModal(true) : onCancel(true);
           }}
         />
       </div>

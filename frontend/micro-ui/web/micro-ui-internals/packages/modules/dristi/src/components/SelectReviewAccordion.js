@@ -1,4 +1,4 @@
-import { Button, CardText, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, EditPencilIcon, CloseSvg, TextArea, HeaderBar } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
@@ -395,6 +395,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     setDeletePopup(true);
                   }
                 }}
+                style={
+                  !defaultError
+                    ? { padding: "8px 24px 8px 24px", background: "white", border: "1px #007e7e solid", color: "#007e7e", boxShadow: "none" }
+                    : { padding: "8px 24px 8px 24px", background: "white", border: "1px #bb2c2f solid", color: "#bb2c2f", boxShadow: "none" }
+                }
               />
               <Button
                 label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
@@ -406,6 +411,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     handleAddError();
                   }
                 }}
+                style={{ padding: "8px 24px 8px 24px", background: "#007e7e", border: "1px #007e7e solid", color: "white", boxShadow: "none" }}
               />
             </div>
           </Fragment>
@@ -414,18 +420,35 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       {deletePopup && (
         <CustomPopUp
           anchorRef={popupAnchor.current}
-          popupstyle={{ minWidth: "400px", maxWidth: "400px", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+          popupstyle={{ padding: 0, minWidth: "400px", maxWidth: "400px", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
         >
           <Fragment>
-            <div>{t("CS_DELETE_COMMENT")}</div>
-            <CardText>{t("CS_DELETE_HEADER")}</CardText>
+            {
+              <HeaderBar
+                main={<h1 className="heading-m">{t("CS_DELETE_COMMENT")}</h1>}
+                end={
+                  <div
+                    onClick={() => {
+                      setDeletePopup(false);
+                    }}
+                    style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}
+                  >
+                    <CloseSvg />
+                  </div>
+                }
+              />
+            }
+            <div style={{ padding: "16px 24px", margin: "0px !important" }}>
+              <h3>{`${t("CS_DELETE_HEADER")}`}</h3>
+            </div>
 
             <div
               style={{
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
                 alignItems: "center",
                 gap: "20px",
+                padding: "0px 16px 16px 0px",
               }}
             >
               <Button
@@ -433,8 +456,13 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 onButtonClick={() => {
                   setDeletePopup(false);
                 }}
+                style={{ padding: "8px 24px 8px 24px", background: "white", border: "1px #007e7e solid", color: "#007e7e", boxShadow: "none" }}
               />
-              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+              <Button
+                label={t("CS_COMMON_DELETE")}
+                onButtonClick={handleDeleteError}
+                style={{ padding: "8px 24px 8px 24px", background: "#bb2c2f", border: "1px #bb2c2f solid", color: "white", boxShadow: "none" }}
+              />
             </div>
           </Fragment>
         </CustomPopUp>

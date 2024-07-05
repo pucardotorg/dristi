@@ -1780,8 +1780,12 @@ function EFilingCases({ path }) {
                   label={
                     selected === "addSignature"
                       ? t("CS_SUBMIT_CASE")
+                      : !isCaseReAssigned && selected === "reviewCaseFile"
+                      ? "CS_CORE_WEB_PROCEED"
                       : isDisableAllFieldsMode
                       ? t("CS_GO_TO_HOME")
+                      : isCaseReAssigned && selected === "reviewCaseFile"
+                      ? "ADD_SIGNATURE"
                       : isCaseReAssigned
                       ? t("CS_COMMONS_NEXT")
                       : t("CS_COMMON_CONTINUE")
