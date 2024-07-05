@@ -206,3 +206,14 @@
   border: none;
   box-shadow: none;
 }
+
+.join-case-tooltip-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  .custom-error-tooltip {
+    height: 16px;
+    width: 16px;
+    margin-bottom: 8px;
+  }
+}

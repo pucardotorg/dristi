@@ -178,6 +178,7 @@ const JoinCaseHome = ({ t }) => {
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
   const SelectCustomDragDrop = window?.Digit?.ComponentRegistryService?.getComponent("SelectCustomDragDrop");
+  const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMERRORTOOLTIP");
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [show, setShow] = useState(false);
@@ -285,23 +286,37 @@ const JoinCaseHome = ({ t }) => {
         setIsDisabled(true);
       }
     } else if (step === 2) {
-      if (userType === "Litigant" && barRegNumber !== "") {
-        setIsDisabled(false);
+      if (userType === "Litigant" && representingYourself !== "Yes" && barRegNumber) {
+        if (barRegNumber === "") {
+          setAdvocateDetail({});
+          setFormData({});
+          setBarDetails([]);
+          setIsDisabled(true);
+        } else {
+          setIsDisabled(false);
+        }
+      }
+      if (userType === "Litigant" && representingYourself === "Yes" && affidavitText) {
+        if (affidavitText?.length > 20) {
+          setIsDisabled(false);
+          setErrors({
+            ...errors,
+            affidavitText: undefined,
+          });
+        } else {
+          setIsDisabled(true);
+          setErrors({
+            ...errors,
+            affidavitText: {
+              message: "Enter atleast 20 characters.",
+            },
+          });
+        }
       }
     }
 
     if (step !== 5) {
       setSuccess(false);
-    }
-
-    if (barRegNumber === "" && step === 2) {
-      setAdvocateDetail({});
-      setFormData({});
-      setBarDetails([]);
-      setIsDisabled(true);
-    }
-    if (affidavitText) {
-      setIsDisabled(false);
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties]);
 
@@ -427,6 +442,7 @@ const JoinCaseHome = ({ t }) => {
                 // disable={editScreen}
               />
             </div>
+            <p style={{ fontSize: "12px" }}>{`Filing Number Format: "F-<StatuteSection>-<YYYY>-<7 digit sequence number>"`}</p>
           </LabelFieldPair>
           {errors?.caseNumber && (
             <InfoCard
@@ -719,7 +735,10 @@ const JoinCaseHome = ({ t }) => {
               ) : (
                 <React.Fragment>
                   <LabelFieldPair className="case-label-field-pair">
-                    <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.AFFIDAVIT)}`}</CardLabel>
+                    <div className="join-case-tooltip-wrapper">
+                      <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.AFFIDAVIT)}`}</CardLabel>
+                      <CustomErrorTooltip message={`${t(JoinHomeLocalisation.AFFIDAVIT)}`} showTooltip={true} icon />
+                    </div>
                     <div style={{ width: "100%", maxWidth: "960px" }}>
                       <textarea
                         value={affidavitText}
@@ -773,7 +792,10 @@ const JoinCaseHome = ({ t }) => {
             className={`custom-info-card`}
           />
           <LabelFieldPair className="case-label-field-pair">
-            <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`}</CardLabel>
+            <div className="join-case-tooltip-wrapper">
+              <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`}</CardLabel>
+              <CustomErrorTooltip message={`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`} showTooltip={true} icon />
+            </div>
             <div style={{ width: "100%", maxWidth: "960px" }}>
               <TextInput
                 // t={t}
