@@ -49,7 +49,7 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
 
   const updateHearing = async () => {
     try {
-      await hearingService.updateHearing({ hearing: { tenantId, hearing } }, { applicationNumber: "", cnrNumber: "" });
+      await hearingService.updateHearing({ tenantId, hearing, hearingType: "", status: "" }, { applicationNumber: "", cnrNumber: "" });
     } catch (error) {
       console.error("Error updating hearing:", error);
     }

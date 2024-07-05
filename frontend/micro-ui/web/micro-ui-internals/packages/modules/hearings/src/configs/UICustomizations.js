@@ -362,7 +362,7 @@ export const UICustomizations = {
                       <Button
                         variation={"secondary"}
                         label={""}
-                        onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing")}
+                        onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing?hearingId=HEARING-ID-2024-07-05-000068")} // pass the dynamic hearingID
                         style={{ marginRight: "1rem" }}
                       >
                         <strong>Start</strong>

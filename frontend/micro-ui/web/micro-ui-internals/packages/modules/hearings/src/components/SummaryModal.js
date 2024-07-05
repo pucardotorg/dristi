@@ -85,11 +85,11 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
   );
 
   useEffect(() => {
-    if (latestText) {
-      const hearingData = latestText?.HearingList[0];
-      setTranscript(hearingData?.transcript[0]);
+    if (latestText && latestText?.HearingList?.[0]?.transcript?.[0]) {
+      const hearingData = latestText?.HearingList?.[0];
+      setTranscript(hearingData.transcript[0]);
     }
-  }, []);
+  }, [latestText, hearingId]);
 
   return (
     <div>

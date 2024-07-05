@@ -33,13 +33,13 @@ const InsideHearingMainPage = () => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
 
-  const onCancel= ()=>{
+  const onCancel = () => {
     setAddPartyModal(false);
-  }
+  };
 
-  const onClickAddWitness = ()=>{
+  const onClickAddWitness = () => {
     setAddPartyModal(true);
-  }
+  };
 
   if (!hearingId) {
     const contextPath = window?.contextPath || "";
@@ -55,8 +55,15 @@ const InsideHearingMainPage = () => {
     return userRoles.some((role) => role.name === userRole);
   };
 
+  const reqBody = {
+    hearing: { tenantId, hearing },
+    criteria: {
+      tenantID: tenantId,
+      hearingId: hearingId,
+    },
+  };
   const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
-    { hearing: { tenantId } },
+    reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
     !checkUserApproval("CASE_VIEWER"),
@@ -64,16 +71,15 @@ const InsideHearingMainPage = () => {
   );
 
   const { data: hearingResponse, refetch } = Digit.Hooks.hearings.useUpdateHearingsService(
-    { hearing: { tenantId, hearing } },
+    { tenantId, hearing, hearingType: "", status: "" },
     { applicationNumber: "", cnrNumber: "" },
     "dristi",
     !checkUserApproval("CASE_VIEWER")
   );
 
-
   useEffect(() => {
     if (latestText) {
-      const hearingData = latestText?.HearingList[0];
+      const hearingData = latestText?.HearingList?.[0];
       // hearing data with particular id will always give array of one object
       if (hearingData) {
         setHearing(hearingData);
@@ -83,7 +89,7 @@ const InsideHearingMainPage = () => {
           witnesses: additionalDetails.witnesses || [],
         };
         setAdditionalDetails(processedAdditionalDetails);
-        setOptions(processedAdditionalDetails.witnesses.map((witness) => ({ label: witness.name, value: witness.name })));
+        setOptions(processedAdditionalDetails.witnesses.map((witness) => ({ label: witness.partyName, value: witness.partyName })));
         setImmediateText(hearingData?.transcript[0]);
         setDelayedText(hearingData?.transcript[0]);
         setSelectedWitness(processedAdditionalDetails.witnesses[0] || {});
@@ -331,24 +337,16 @@ const InsideHearingMainPage = () => {
               attendees={attendees}
               setAttendees={setAttendees}
               hearing={hearing}
-              setAddPartyModal = {setAddPartyModal}
+              setAddPartyModal={setAddPartyModal}
             />
-          
           )}
         </div>
       </ActionBar>
 
       <div>
-        {addPartyModal && <AddParty 
-        onCancel={onCancel} 
-        onDismiss={onCancel} 
-        hearing= {hearing} 
-        tenantId={tenantId}
-        hearingId={hearingId}
-        ></AddParty>}
+        {addPartyModal && <AddParty onCancel={onCancel} onDismiss={onCancel} hearing={hearing} tenantId={tenantId} hearingId={hearingId}></AddParty>}
       </div>
       {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} hearing={hearing} />}
-
     </div>
   );
 };

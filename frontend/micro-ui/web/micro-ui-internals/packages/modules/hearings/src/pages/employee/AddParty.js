@@ -1,16 +1,15 @@
-import React, { useEffect,useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormComposerV2, Modal, Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
 import { hearingService } from "../../hooks/services/index.js";
 import _ from "lodash";
 
-const AddParty = ({ onCancel, onDismiss , hearing, tenantId,hearingId}) => {
+const AddParty = ({ onCancel, onDismiss, hearing, tenantId, hearingId }) => {
   const { t } = useTranslation();
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
-  const [partyHearing,setPartyHearing ]= useState(()=>_.cloneDeep(hearing));
-
+  const [partyHearing, setPartyHearing] = useState(() => _.cloneDeep(hearing));
 
   const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -22,10 +21,10 @@ const AddParty = ({ onCancel, onDismiss , hearing, tenantId,hearingId}) => {
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
-          <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
-            {" "}
-            <Close />{" "}
-          </div>
+        <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
+          {" "}
+          <Close />{" "}
+        </div>
       </div>
     );
   };
@@ -56,68 +55,66 @@ const AddParty = ({ onCancel, onDismiss , hearing, tenantId,hearingId}) => {
   };
 
   const handleSubmit = () => {
-    const cleanedData = aFormData.map(({ data }) => {
-      const newData = {};
-      Object.keys(data).forEach((key) => {
-        const newKey = key.replace(/\d+$/, '');
-        if (newKey === 'partyType') {
-          newData[newKey] = data[key].name;
-        } else {
-          newData[newKey] = data[key];
+    const cleanedData = aFormData
+      .map(({ data }) => {
+        const newData = {};
+        Object.keys(data).forEach((key) => {
+          const newKey = key.replace(/\d+$/, "");
+          if (newKey === "partyType") {
+            newData[newKey] = data[key].name;
+          } else {
+            newData[newKey] = data[key];
+          }
+        });
+        newData.deposition = "";
+        newData.isSigned = false;
+
+        const errors = validateFormData(newData);
+        if (Object.keys(errors).length > 0) {
+          console.log("Validation errors:", errors);
+          return null;
         }
-      });
-      newData.deposition = "";
-      newData.isSigned = false;
-  
-      const errors = validateFormData(newData);
-      if (Object.keys(errors).length > 0) {
-        console.log("Validation errors:", errors);
-        return null;
-      }
-      return newData;
-    }).filter(Boolean);
-  
+        return newData;
+      })
+      .filter(Boolean);
+
     if (cleanedData.length === aFormData.length) {
-      console.log(cleanedData,"dfddfd")
-      onAdd(cleanedData); 
+      console.log(cleanedData, "dfddfd");
+      onAdd(cleanedData);
       onDismiss();
     }
   };
 
-
   const onAdd = (cleanedData) => {
     const updatedHearing = { ...partyHearing };
-      const updatedAdditionalDetails = { ...partyHearing.additionalDetails };
+    const updatedAdditionalDetails = { ...partyHearing.additionalDetails };
 
-      if (updatedAdditionalDetails.witnesses) {
-        updatedAdditionalDetails.witnesses = [
-          ...updatedAdditionalDetails.witnesses,
-          ...cleanedData
-        ];
-      } else {
-        updatedAdditionalDetails.witnesses = cleanedData;
-      }
+    if (updatedAdditionalDetails.witnesses) {
+      updatedAdditionalDetails.witnesses = [...updatedAdditionalDetails.witnesses, ...cleanedData];
+    } else {
+      updatedAdditionalDetails.witnesses = cleanedData;
+    }
 
-      updatedHearing.additionalDetails = updatedAdditionalDetails;
-    hearingService.updateHearing({ hearing: { tenantId ,hearing:updatedHearing } },
-      { applicationNumber: "", cnrNumber: "", hearingId },)
-
+    updatedHearing.additionalDetails = updatedAdditionalDetails;
+    hearingService.updateHearing(
+      { tenantId, hearing: updatedHearing, status: hearing.status, hearingType: hearing.hearingType },
+      { applicationNumber: "", cnrNumber: "", hearingId }
+    );
   };
 
-  const onFormValueChange = useCallback((formData, index) => {
-    if (JSON.stringify(formData) !== JSON.stringify(aFormData[index].data)) {
-      setFormData(prevData =>
-        prevData.map((item, i) =>
-          i === index ? { ...item, data: formData } : item
-        )
-      );
-    }
-  }, [aFormData]);
+  const onFormValueChange = useCallback(
+    (formData, index) => {
+      if (JSON.stringify(formData) !== JSON.stringify(aFormData[index].data)) {
+        setFormData((prevData) => prevData.map((item, i) => (i === index ? { ...item, data: formData } : item)));
+      }
+    },
+    [aFormData]
+  );
 
   return (
     <Modal
       headerBarMain={<h1 className="heading-m">Add New Party</h1>}
-      headerBarEnd={<CloseBtn onClick={onDismiss}/>}
+      headerBarEnd={<CloseBtn onClick={onDismiss} />}
       actionCancelLabel="Back"
       actionCancelOnSubmit={onCancel}
       actionSaveLabel="Add"
@@ -132,7 +129,7 @@ const AddParty = ({ onCancel, onDismiss , hearing, tenantId,hearingId}) => {
           }}
         />
       ))}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: "3rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
         <Button onButtonClick={handleAddParty} label="Add Party" />
         <Button onButtonClick={handleRemoveParty} label="Remove Party" />
       </div>
