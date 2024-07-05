@@ -12,11 +12,11 @@ import {
 } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ApiDropdown, InfoCard } from "@egovernments/digit-ui-components";
+import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
+import { isEqual } from "lodash";
 
 const CloseBtn = (props) => {
   return (
@@ -432,9 +432,13 @@ const JoinCaseHome = ({ t }) => {
             <InfoCard
               variant={"default"}
               label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
-              additionalElements={[<span>Hello</span>, <span style={{ fontWeight: "bold" }}>World</span>]}
+              additionalElements={[
+                <p>
+                  If you think the entered number is correct, please contact <span style={{ fontWeight: "bold" }}>Nyaya Mitra</span> for support
+                </p>,
+              ]}
               inline
-              text={t(JoinHomeLocalisation[errors.caseNumber.message])}
+              // text={t(JoinHomeLocalisation[errors.caseNumber.message])}
               textStyle={{}}
               className={`custom-info-card error`}
             />
@@ -579,9 +583,14 @@ const JoinCaseHome = ({ t }) => {
             <InfoCard
               variant={"default"}
               label={t(JoinHomeLocalisation.PLEASE_NOTE)}
-              additionalElements={{}}
+              additionalElements={[
+                <p>
+                  You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a{" "}
+                  <span style={{ fontWeight: "bold" }}>Party in Person</span>
+                </p>,
+              ]}
               inline
-              text={t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}
+              // text={t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}
               textStyle={{}}
               className={`custom-info-card`}
             />
@@ -614,13 +623,29 @@ const JoinCaseHome = ({ t }) => {
               <InfoCard
                 variant={"default"}
                 label={userType === "Litigant" ? t(JoinHomeLocalisation.PLEASE_NOTE) : t("INFO")}
-                additionalElements={{}}
+                additionalElements={
+                  userType === "Litigant" && representingYourself !== "Yes"
+                    ? [
+                        <p>
+                          You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a{" "}
+                          <span style={{ fontWeight: "bold" }}>Party in Person</span>
+                        </p>,
+                      ]
+                    : userType === "Litigant" && representingYourself === "Yes"
+                    ? [
+                        <p>
+                          This submission is necessary if you choose to represent yourself{" "}
+                          <span style={{ fontWeight: "bold" }}>(Party in Person)</span>
+                        </p>,
+                      ]
+                    : {}
+                }
                 inline
                 text={
                   userType === "Litigant" && representingYourself !== "Yes"
-                    ? t(JoinHomeLocalisation.ADD_ADVOCATE_ANYTIME)
+                    ? undefined
                     : userType === "Litigant" && representingYourself === "Yes"
-                    ? t(JoinHomeLocalisation.SUBMISSION_NECESSARY)
+                    ? undefined
                     : t(JoinHomeLocalisation.FILL_FORM_VAKALATNAMA)
                 }
                 textStyle={{}}
