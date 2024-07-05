@@ -59,14 +59,14 @@ export const TabSearchconfig = {
               {
                 label: "Type",
                 isMandatory: false,
-                key: "type",
+                key: "hearingType",
                 type: "dropdown",
                 populators: {
-                  name: "type",
-                  optionsKey: "value",
+                  name: "hearingType",
+                  optionsKey: "type",
                   mdmsConfig: {
-                    masterName: "CaseType",
-                    moduleName: "Case",
+                    masterName: "HearingType",
+                    moduleName: "Hearing",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -175,14 +175,14 @@ export const TabSearchconfig = {
               {
                 label: "Type",
                 isMandatory: false,
-                key: "type",
+                key: "orderType",
                 type: "dropdown",
                 populators: {
-                  name: "type",
-                  optionsKey: "value",
+                  name: "orderType",
+                  optionsKey: "type",
                   mdmsConfig: {
-                    masterName: "CaseType",
-                    moduleName: "Case",
+                    masterName: "OrderType",
+                    moduleName: "Order",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -315,14 +315,14 @@ export const TabSearchconfig = {
               {
                 label: "Type",
                 isMandatory: false,
-                key: "type",
+                key: "applicationType",
                 type: "dropdown",
                 populators: {
-                  name: "type",
-                  optionsKey: "value",
+                  name: "applicationType",
+                  optionsKey: "type",
                   mdmsConfig: {
-                    masterName: "CaseType",
-                    moduleName: "Case",
+                    masterName: "ApplicationType",
+                    moduleName: "Application",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -367,12 +367,12 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Order ID",
+                label: "Documents",
                 isMandatory: false,
-                key: "orderId",
+                key: "documents",
                 type: "text",
                 populators: {
-                  name: "orderId",
+                  name: "documents",
                 },
               },
             ],
@@ -458,80 +458,9 @@ export const TabSearchconfig = {
       },
       sections: {
         search: {
-          uiConfig: {
-            formClassName: "custom-both-clear-search",
-            primaryLabel: "ES_COMMON_SEARCH",
-            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-            minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
-            fields: [
-              {
-                label: "Type",
-                isMandatory: false,
-                key: "type",
-                type: "dropdown",
-                populators: {
-                  name: "type",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "CaseType",
-                    moduleName: "Case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
-              {
-                label: "Status",
-                isMandatory: false,
-                key: "status",
-                type: "dropdown",
-                populators: {
-                  name: "status",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Status",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
-              {
-                label: "Owner",
-                isMandatory: false,
-                key: "owner",
-                type: "dropdown",
-                populators: {
-                  name: "owner",
-                },
-              },
-              {
-                label: "Order ID",
-                isMandatory: false,
-                key: "orderId",
-                type: "text",
-                populators: {
-                  name: "orderId",
-                },
-              },
-            ],
-          },
+          uiConfig: {},
 
-          show: true,
+          show: false,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),

@@ -1,5 +1,5 @@
 import { Button as ActionButton } from "@egovernments/digit-ui-components";
-import { Header, InboxSearchComposer, Menu } from "@egovernments/digit-ui-react-components";
+import { Button, Header, InboxSearchComposer, Menu } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -18,7 +18,7 @@ const defaultSearchValues = {
   IndividualID: "",
 };
 
-const AdmittedCases = () => {
+const AdmittedCases = ({ isJudge = true }) => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const filingNumber = searchParams.get("filingNumber");
@@ -227,24 +227,36 @@ const AdmittedCases = () => {
     <React.Fragment>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
         <Header styles={{ fontSize: "32px", marginTop: "40px" }}>{t(title)}</Header>
-        <div className="evidence-header-wrapper">
-          <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-            <div className="evidence-actions">
-              <ActionButton
-                variation={"primary"}
-                label={"Take Action"}
-                icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                isSuffix={true}
-                onClick={handleTakeAction}
-              ></ActionButton>
-              {showMenu && (
-                <Menu
-                  options={["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]}
-                  onSelect={(option) => handleSelect(option)}
-                ></Menu>
-              )}
+        <div>
+          {userRoles.includes("CITIZEN") && <Button variation={"outlined"} label={"Download Case File"} />}
+          {userRoles.includes("APPLICATION_CREATOR") && userRoles.includes("SUBMISSION_CREATOR") && (
+            <Button variation={"outlined"} label={"Download Case File"} />
+          )}
+          {isJudge && (
+            <div className="evidence-header-wrapper">
+              <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                <div className="evidence-actions">
+                  <ActionButton
+                    variation={"primary"}
+                    label={"Take Action"}
+                    icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                    isSuffix={true}
+                    onClick={handleTakeAction}
+                  ></ActionButton>
+                  {showMenu && (
+                    <Menu
+                      options={
+                        userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
+                          ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
+                          : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                      }
+                      onSelect={(option) => handleSelect(option)}
+                    ></Menu>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <div className="search-tabs-container">

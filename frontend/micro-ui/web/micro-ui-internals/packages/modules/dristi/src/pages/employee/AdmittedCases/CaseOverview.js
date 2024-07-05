@@ -17,6 +17,8 @@ const CaseOverview = () => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
+  const user = localStorage.getItem("user-info");
+  const userRoles = JSON.parse(user).roles.map((role) => role.code);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {
@@ -105,7 +107,9 @@ const CaseOverview = () => {
             }}
           >
             <Button variation={"outlined"} label={"Schedule Hearing"} />
-            <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
+            {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
+              <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
+            )}
           </div>
         </div>
       </div>

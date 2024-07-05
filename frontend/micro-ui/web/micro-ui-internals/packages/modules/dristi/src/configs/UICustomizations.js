@@ -613,15 +613,15 @@ export const UICustomizations = {
             const finalLitigantsData = litigants.map((litigant) => {
               return {
                 ...litigant,
-                name: litigant.additionalDetails?.firstName + " " + litigant.additionalDetails?.lastName,
+                name: litigant.additionalDetails?.fullName,
               };
             });
             const reps = data.criteria[0].responseList[0].representatives?.length > 0 ? data.criteria[0].responseList[0].representatives : [];
             const finalRepresentativesData = reps.map((rep) => {
               return {
                 ...rep,
-                name: rep.additionalDetails?.firstName + " " + rep.additionalDetails?.lastName,
-                partyType: `Advocate (for ${rep.representing.additionalDetails?.firstName + " " + rep.representing.additionalDetails?.lastName})`,
+                name: rep.additionalDetails?.advocateName,
+                partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
               };
             });
             return {
