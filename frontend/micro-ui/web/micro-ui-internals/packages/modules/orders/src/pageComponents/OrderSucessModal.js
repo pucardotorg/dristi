@@ -40,7 +40,9 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
       }}
       className={"orders-success-modal"}
     >
-      <CustomSubmitModal t={t} submitModalInfo={orderModalInfo} />
+      <div style={{ padding: "8px 24px" }}>
+        <CustomSubmitModal t={t} submitModalInfo={orderModalInfo} />
+      </div>
     </Modal>
   );
 }

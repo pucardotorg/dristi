@@ -6,8 +6,23 @@
         height: 70vh;
         display: flex;
         .review-order-modal-list-div {
-          cursor: pointer;
-          width: 25%;
+          width: 30%;
+          padding: 24px;
+          border-right: 1px #e8e8e8 solid;
+          .review-order-type-side-stepper {
+            padding: 14px 14px 10px 6px;
+            background-color: #e8e8e8;
+            h1 {
+              font-family: Lato;
+              font-size: 14px;
+              font-weight: 700;
+              line-height: 21px;
+              text-align: left;
+              color: #231f20;
+              word-wrap: break-word;
+              margin: 0px;
+            }
+          }
         }
         .review-order-modal-document-div {
           width: 70%;
@@ -26,19 +41,78 @@
 
 .add-signature-modal {
   &.popup-module {
-    width: 40vw;
-
     .popup-module-main {
       .add-signature-main-div {
-        height: 30vh;
+        padding: 24px;
         display: flex;
-        margin-bottom: 10px;
-
-        .note-div {
-          display: flex;
-
-          .icon-div {
+        flex-direction: column;
+        gap: 24px;
+      }
+      .not-signed {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        h1 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #3d3c3c;
+        }
+      }
+      .sign-button-wrap {
+        display: flex;
+        .aadhar-sign-in {
+          background: none;
+          color: #007e7e;
+          box-shadow: none;
+          padding: 8px 24px;
+        }
+        .upload-signature {
+          background: none;
+          color: #007e7e;
+          border: none;
+          box-shadow: none;
+          padding: 8px 24px;
+        }
+      }
+      .donwload-submission {
+        display: flex;
+        gap: 8px;
+        h2 {
+          margin: 0px;
+        }
+        span {
+          a {
+            color: #007e7e;
           }
+        }
+      }
+      .signed {
+        display: flex;
+        gap: 16px;
+        h1 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #3d3c3c;
+        }
+        h2 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: center;
+          color: #00703c;
+          padding: 6px;
+          background-color: #e4f2e4;
+          border-radius: 999px;
         }
       }
     }
@@ -103,6 +177,7 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    &:hover,
     &.selected-order {
       background-color: #e8e8e8;
     }
@@ -135,6 +210,7 @@
       margin-bottom: 74px !important;
     }
     .order-type-form-composer {
+      width: 100%;
       box-shadow: none;
       margin: 0px;
       padding: 0px;
@@ -158,7 +234,7 @@
           width: 100%;
           .employee-select-wrap {
             margin-bottom: 0px;
-            .jk-dropdown-unique {
+            #jk-dropdown-unique {
               margin-top: 40px !important;
             }
           }
@@ -172,6 +248,9 @@
             margin-bottom: 0px;
           }
         }
+      }
+      .card-label-error {
+        margin-left: 0px !important;
       }
     }
     .order-type-action {
@@ -199,11 +278,5 @@
         padding: 8px 24px;
       }
     }
-  }
-}
-
-.generate-orders {
-  .label-field-pair {
-    display: block;
   }
 }
