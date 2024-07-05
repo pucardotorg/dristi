@@ -18,24 +18,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Slf4j
 @Repository
 public class AdvocateClerkRepository {
 
-    @Autowired
-    private AdvocateClerkQueryBuilder queryBuilder;
+    private final AdvocateClerkQueryBuilder queryBuilder;
+    private final JdbcTemplate jdbcTemplate;
+    private final AdvocateClerkRowMapper rowMapper;
+    private final AdvocateClerkDocumentRowMapper documentRowMapper;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AdvocateClerkRowMapper rowMapper;
-
-    @Autowired
-    private AdvocateClerkDocumentRowMapper documentRowMapper;
+    public AdvocateClerkRepository(AdvocateClerkQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, AdvocateClerkRowMapper rowMapper, AdvocateClerkDocumentRowMapper documentRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.documentRowMapper = documentRowMapper;
+    }
 
     /** Used to get applications based on search criteria using query
      * @param searchCriteria
@@ -49,7 +50,7 @@ public class AdvocateClerkRepository {
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String query = queryBuilder.getAdvocateClerkSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
-                log.info("Final query :: {} ", query);
+                log.info(FINAL_QUERY, query);
                 List<AdvocateClerk> advocateClerkList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
                 if (advocateClerkList != null) {
                     advocateSearchCriteria.setResponseList(advocateClerkList);
@@ -65,7 +66,7 @@ public class AdvocateClerkRepository {
                 }
 
                 String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final query Document :: {}", advocateDocumentQuery);
+                log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
                 Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
                 if (advocateDocumentMap != null) {
                     advocateSearchCriteria.getResponseList().forEach(advocate -> {
@@ -78,8 +79,8 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_CLERK_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,FETCH_ADVOCATE_CLERK_EXCEPTION+e.getMessage());
         }
     }
 
@@ -89,7 +90,7 @@ public class AdvocateClerkRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
-            log.info("Final query ::  {}", query);
+            log.info(FINAL_QUERY, query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateClerkList.addAll(list);
@@ -104,7 +105,7 @@ public class AdvocateClerkRepository {
             }
 
             String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final query Document :: {}", advocateDocumentQuery);
+            log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateClerkList.forEach(advocate -> {
@@ -116,8 +117,8 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_CLERK_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,FETCH_ADVOCATE_CLERK_EXCEPTION+e.getMessage());
         }
     }
 
@@ -127,7 +128,7 @@ public class AdvocateClerkRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
-            log.info("Final query :: {}", query);
+            log.info(FINAL_QUERY, query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateClerkList.addAll(list);
@@ -142,7 +143,7 @@ public class AdvocateClerkRepository {
             }
 
             String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final query Document :: {}", advocateDocumentQuery);
+            log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateClerkList.forEach(advocate -> {
@@ -154,8 +155,8 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
+            log.error(FETCH_ADVOCATE_CLERK_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,FETCH_ADVOCATE_CLERK_EXCEPTION+e.getMessage());
         }
     }
 }

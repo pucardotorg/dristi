@@ -116,11 +116,9 @@ public class AdvocateClerkServiceTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         individualUserUUID.put("userUuid", userInfo.getUuid());
 
-//        when(individualService.searchIndividual(any(), any(), any())).thenReturn(true);
 
         // Act
         advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
@@ -189,7 +187,6 @@ public class AdvocateClerkServiceTest {
         Integer limit = null;
         Integer offset = null;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         individualUserUUID.put("userUuid", userInfo.getUuid());
 

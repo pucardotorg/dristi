@@ -124,7 +124,6 @@ public class AdvocateRegistrationValidatorTest {
         advocate.setApplicationNumber("testAppNumber");
         advocate.setTenantId("testTenantId");
         List<Advocate> advocates = new ArrayList<>();
-//        advocates.add(advocate);
         List<AdvocateSearchCriteria> existingApplications = new ArrayList<>();
         AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
         advocateSearchCriteria.setApplicationNumber("appNumber");

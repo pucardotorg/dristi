@@ -32,18 +32,12 @@ import java.util.List;
 @RequestMapping("")
 public class ClerkApiController {
 
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
-	@Autowired
 	private AdvocateClerkService advocateClerkService;
-
-	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 	@Autowired
-	public ClerkApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	public ClerkApiController(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory) {
+		this.advocateClerkService = advocateClerkService;
+		this.responseInfoFactory = responseInfoFactory;
 	}
 
 	@RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)
