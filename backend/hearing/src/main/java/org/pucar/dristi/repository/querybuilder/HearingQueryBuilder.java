@@ -33,66 +33,56 @@ public class HearingQueryBuilder {
     public String getHearingSearchQuery(List<Object> preparedStmtList, String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
-            if (cnrNumber != null && !cnrNumber.isEmpty()) {
-                query.append(" AND cnrNumbers @> ?::jsonb");
-                preparedStmtList.add("[\"" + cnrNumber + "\"]");
-            }
 
-            if (applicationNumber != null && !applicationNumber.isEmpty()) {
-                query.append(" AND applicationNumbers @> ?::jsonb");
-                preparedStmtList.add("[\"" + applicationNumber + "\"]");
-            }
-
-            if (hearingId != null && !hearingId.isEmpty()) {
-                query.append(" AND hearingid = ?");
-                preparedStmtList.add(hearingId);
-            }
-
-            if (filingNumber != null && !filingNumber.isEmpty()) {
-                query.append(" AND filingNumber @> ?::jsonb");
-                preparedStmtList.add("[\"" + filingNumber + "\"]");
-            }
-
-            if ( tenantId!= null && !tenantId.isEmpty()) {
-                query.append(" AND tenantId = ?");
-                preparedStmtList.add(tenantId);
-            }
-
-            if (fromDate != null) {
-                query.append(" AND startTime >= ?");
-                preparedStmtList.add(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
-            }
-
-            if (toDate != null) {
-                query.append(" AND startTime <= ?");
-                preparedStmtList.add(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
-            }
-
-            if (sortBy != null && !sortBy.isEmpty()) {
-                switch (sortBy) {
-                    case "startTime" -> query.append(" ORDER BY startTime DESC");
-                    case "endTime" -> query.append(" ORDER BY endTime DESC");
-                    default -> query.append(" ORDER BY id");
-                }
-            } else {
-                query.append(" ORDER BY id");
-            }
-
-            if (limit != null) {
-                query.append(" LIMIT ?");
-                preparedStmtList.add(limit);
-            }
-
-            if (offset != null) {
-                query.append(" OFFSET ?");
-                preparedStmtList.add(offset);
-            }
+            addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
+            addCriteriaString(applicationNumber, query, " AND applicationNumbers @> ?::jsonb", preparedStmtList, "[\"" + applicationNumber + "\"]");
+            addCriteriaString(hearingId, query, " AND hearingid = ?", preparedStmtList, hearingId);
+            addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
+            addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
+            addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
+            addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
+            addCriteriaSortBy(sortBy, query);
+            addCriteriaInteger(limit, query," LIMIT ?", preparedStmtList);
+            addCriteriaInteger(offset, query," OFFSET ?", preparedStmtList);
 
             return query.toString();
         }
          catch (Exception e) {
             log.error("Error while building hearing search query");
             throw new CustomException(SEARCH_QUERY_EXCEPTION,"Error occurred while building the hearing search query: "+ e.getMessage());
+        }
+    }
+
+    private void addCriteriaString(String criteria, StringBuilder query, String str, List<Object> preparedStmtList, Object listItem) {
+        if (criteria != null && !criteria.isEmpty()) {
+            query.append(str);
+            preparedStmtList.add(listItem);
+        }
+    }
+
+    private void addCriteriaDate(LocalDate criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
+        if (criteria != null) {
+            query.append(str);
+            preparedStmtList.add(criteria.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
+        }
+    }
+
+    private void addCriteriaInteger(Integer criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
+        if (criteria != null) {
+            query.append(str);
+            preparedStmtList.add(criteria);
+        }
+    }
+
+    private void addCriteriaSortBy(String sortBy, StringBuilder query) {
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "startTime" -> query.append(" ORDER BY startTime DESC");
+                case "endTime" -> query.append(" ORDER BY endTime DESC");
+                default -> query.append(" ORDER BY id");
+            }
+        } else {
+            query.append(" ORDER BY id");
         }
     }
 
