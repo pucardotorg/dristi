@@ -7,6 +7,8 @@ import HearingSideCard from "./HearingSideCard";
 import EndHearing from "./EndHearing";
 import MarkAttendance from "./MarkAttendance";
 import debounce from "lodash/debounce";
+import AddParty from "./AddParty";
+import  add  from "lodash/add";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -21,12 +23,23 @@ const InsideHearingMainPage = () => {
   const [options, setOptions] = useState([]);
   const [additionalDetails, setAdditionalDetails] = useState({});
   const [selectedWitness, setSelectedWitness] = useState({});
+  const [addPartyModal, setAddPartyModal]= useState(false);
+
   const [endHearingModalOpen, setEndHearingModalOpen] = useState(false);
+
   const textAreaRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+
+  const onCancel= ()=>{
+    setAddPartyModal(false);
+  }
+
+  const onClickAddWitness = ()=>{
+    setAddPartyModal(true);
+  }
 
   if (!hearingId) {
     const contextPath = window?.contextPath || "";
@@ -67,14 +80,14 @@ const InsideHearingMainPage = () => {
         const additionalDetails = hearingData?.additionalDetails || {};
         const processedAdditionalDetails = {
           ...additionalDetails,
-          witnesss: additionalDetails.witnesss || [],
+          witnesses: additionalDetails.witnesses || [],
         };
         setAdditionalDetails(processedAdditionalDetails);
-        setOptions(processedAdditionalDetails.witnesss.map((witness) => ({ label: witness.name, value: witness.name })));
+        setOptions(processedAdditionalDetails.witnesses.map((witness) => ({ label: witness.name, value: witness.name })));
         setImmediateText(hearingData?.transcript[0]);
         setDelayedText(hearingData?.transcript[0]);
-        setSelectedWitness(processedAdditionalDetails.witnesss[0] || {});
-        setWitnessDepositionText(processedAdditionalDetails.witnesss[0]?.deposition || "");
+        setSelectedWitness(processedAdditionalDetails.witnesses[0] || {});
+        setWitnessDepositionText(processedAdditionalDetails.witnesses[0]?.deposition || "");
         setAttendees(hearingData.attendees || []);
       }
     }
@@ -94,9 +107,9 @@ const InsideHearingMainPage = () => {
 
         const updatedHearing = { ...prevHearing };
         if (activeTab === "Witness Deposition") {
-          const witnessIndex = updatedHearing.additionalDetails.witnesss.findIndex((w) => w.name === selectedWitness);
+          const witnessIndex = updatedHearing.additionalDetails.witnesses.findIndex((w) => w.name === selectedWitness);
           if (witnessIndex >= 0) {
-            updatedHearing.additionalDetails.witnesss[witnessIndex].deposition = newText;
+            updatedHearing.additionalDetails.witnesses[witnessIndex].deposition = newText;
           }
         } else {
           updatedHearing.transcript[0] = newText;
@@ -124,7 +137,7 @@ const InsideHearingMainPage = () => {
 
   const handleDropdownChange = (event) => {
     const selectedName = event.target.value;
-    const selectedWitness = additionalDetails.witnesss.find((w) => w.name === selectedName);
+    const selectedWitness = additionalDetails.witnesses.find((w) => w.name === selectedName);
     setSelectedWitness(selectedWitness);
     setWitnessDepositionText(selectedWitness?.deposition || "");
   };
@@ -166,7 +179,7 @@ const InsideHearingMainPage = () => {
                   color: "#007E7E",
                   fontWeight: 700,
                 }}
-                // onClick={() => console.log("click")}  // for add new witness
+                onClick={onClickAddWitness}
               >
                 + Add New Witness
               </button>
@@ -318,12 +331,24 @@ const InsideHearingMainPage = () => {
               attendees={attendees}
               setAttendees={setAttendees}
               hearing={hearing}
+              setAddPartyModal = {setAddPartyModal}
             />
+          
           )}
         </div>
       </ActionBar>
 
+      <div>
+        {addPartyModal && <AddParty 
+        onCancel={onCancel} 
+        onDismiss={onCancel} 
+        hearing= {hearing} 
+        tenantId={tenantId}
+        hearingId={hearingId}
+        ></AddParty>}
+      </div>
       {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} hearing={hearing} />}
+
     </div>
   );
 };
