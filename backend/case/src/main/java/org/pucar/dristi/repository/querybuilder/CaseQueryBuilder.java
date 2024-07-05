@@ -21,7 +21,8 @@ public class CaseQueryBuilder {
             " cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
             " cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_CASES_TABLE = " FROM dristi_cases cases";
-    private static final String ORDERBY_CREATEDTIME = " ORDER BY cases.createdtime DESC ";
+    private static final String ORDERBY_CLAUSE = " ORDER BY cases.{orderBy} {sortingOrder} ";
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY cases.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
@@ -124,7 +125,6 @@ public class CaseQueryBuilder {
 
                 addRegistrationDateCriteria(criteria, firstCriteria, query);
             }
-            query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class CaseQueryBuilder {
     private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getAdvocateId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -170,7 +170,7 @@ public class CaseQueryBuilder {
     private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getLitigantId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -386,5 +386,13 @@ public class CaseQueryBuilder {
         preparedStatementList.add(pagination.getOffSet());
         return query + " LIMIT ? OFFSET ?";
 
+    }
+    public String addOrderByQuery(String query, Pagination pagination) {
+        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+            return query + DEFAULT_ORDERBY_CLAUSE;
+        } else {
+            query = query + ORDERBY_CLAUSE;
+        }
+        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 }

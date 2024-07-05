@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class TaskQueryBuilder {
 
     private static final String BASE_CASE_QUERY = "SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate," +
             " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
-            " task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
+            " task.taskdetails as taskdetails, task.assignedto as assignedto, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
             " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
     private static final String FROM_TASK_TABLE = " FROM dristi_task task";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
@@ -47,8 +48,15 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, List<Object> preparedStmtList) {
+    public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
         try {
+            String taskNumber = criteria.getTaskNumber();
+            String cnrNumber = criteria.getCnrNumber();
+            String tenantId = criteria.getTenantId();
+            String id = criteria.getId();
+            String status = criteria.getStatus();
+            UUID orderId = criteria.getOrderId();
+
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria

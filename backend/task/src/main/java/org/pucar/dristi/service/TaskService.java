@@ -10,10 +10,7 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.TaskRegistrationValidator;
-import org.pucar.dristi.web.models.Task;
-import org.pucar.dristi.web.models.TaskExists;
-import org.pucar.dristi.web.models.TaskExistsRequest;
-import org.pucar.dristi.web.models.TaskRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -77,11 +74,11 @@ public class TaskService {
         }
     }
 
-    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, RequestInfo requestInfo) {
+    public List<Task> searchTask(TaskSearchRequest request) {
 
         try {
             // Fetch tasks from database according to the given search criteria
-            List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber, taskNumber);
+            List<Task> result = taskRepository.getApplications(request.getCriteria());
             // If no task are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(result))
                 return new ArrayList<>();

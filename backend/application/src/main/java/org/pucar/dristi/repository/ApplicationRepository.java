@@ -121,9 +121,10 @@ public class ApplicationRepository {
                     {
                         applicationExist.setExists(false);
                 } else {
-                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber());
+                    List<Object> preparedStmtList = new ArrayList<>();
+                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber(), preparedStmtList);
                     log.info("Final application exist query: {}", applicationExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, preparedStmtList.toArray(), Integer.class);
                     applicationExist.setExists(count != null && count > 0);
                 }
             }
