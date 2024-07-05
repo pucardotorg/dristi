@@ -215,23 +215,13 @@ const GenerateOrders = () => {
   }
 
   return (
-    <div style={{ display: "flex", gap: "5%", marginBottom: "200px" }}>
-      <div style={{ width: "20%" }}>
-        <div style={{ color: "#007E7E" }} onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
-        <div>
+    <div className="generate-orders">
+      <div className="orders-list-main">
+        <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
+        <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  ...(selectedOrder === index ? { background: "#E8E8E8" } : {}),
-                }}
-                onClick={() => setSelectedOrder(index)}
-              >
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span
@@ -245,10 +235,10 @@ const GenerateOrders = () => {
               </div>
             );
           })}
-        </div>
+        </React.Fragment>
       </div>
-      <div style={{ minWidth: "70%" }}>
-        {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
+      <div className="view-order">
+        {orderList?.length > 0 && <Header className="order-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
             key={selectedOrder}
@@ -260,6 +250,8 @@ const GenerateOrders = () => {
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}
+            cardClassName={`order-type-form-composer`}
+            actionClassName={"order-type-action"}
           />
         )}
       </div>
