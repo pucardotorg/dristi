@@ -29,7 +29,6 @@ class AdvocateQueryBuilderTest {
     @Test
     void getAdvocateSearchQuery_NoCriteria() {
         // Arrange
-//        YourClass yourClass = new YourClass();
         AdvocateSearchCriteria criteria = null;
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -52,7 +51,6 @@ class AdvocateQueryBuilderTest {
     @Test
     void getAdvocateSearchQuery_WithCriteria() {
         // Arrange
-//        YourClass yourClass = new YourClass();
         AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
         criteria.setId("123");
         criteria.setBarRegistrationNumber("BAR123");
@@ -147,7 +145,6 @@ class AdvocateQueryBuilderTest {
         assertNotNull(query);
         assertTrue(query.contains("LOWER(adv.applicationnumber) LIKE LOWER(?)"));
         assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
-//        assertTrue(query.contains("ORDER BY createdtime DESC"));
         assertEquals(4, preparedStmtList.size());
         assertEquals("%123456%", preparedStmtList.get(0));
         assertEquals("%tenant1%", preparedStmtList.get(1));

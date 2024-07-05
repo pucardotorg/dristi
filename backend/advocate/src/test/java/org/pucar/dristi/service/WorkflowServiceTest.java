@@ -160,7 +160,6 @@ public class WorkflowServiceTest {
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setState(new State());
-        ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
 
         // Mock repository.fetchResult
         when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
@@ -252,24 +251,4 @@ public class WorkflowServiceTest {
             workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
         });
     }
-//
-//    @Test
-//    void getProcessInstanceForAdvocateRegistrationPayment_Success() {
-//        // Mock AdvocateRequest
-//        Advocate advocate = new Advocate();
-//        advocate.setApplicationNumber("APP001");
-//        advocate.setTenantId("tenant1");
-//
-//        AdvocateRequest updateRequest = new AdvocateRequest();
-//        updateRequest.setRequestInfo(new RequestInfo());
-//        updateRequest.setAdvocate(advocate);
-//
-//        // Execute the method
-//        ProcessInstanceRequest processInstanceRequest = workflowService.getProcessInstanceForAdvocateRegistrationPayment(updateRequest);
-//
-//        // Assertions
-//        assertNotNull(processInstanceRequest);
-//        assertEquals(1, processInstanceRequest.getProcessInstances().size());
-//        assertEquals("ADV", processInstanceRequest.getProcessInstances().get(0).getBusinessService());
-//    }
 }

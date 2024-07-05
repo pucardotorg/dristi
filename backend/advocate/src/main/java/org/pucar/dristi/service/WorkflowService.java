@@ -25,14 +25,16 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository repository;
+    private final Configuration config;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private Configuration config;
+    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
+        this.mapper = mapper;
+        this.repository = repository;
+        this.config = config;
+    }
 
 
     /** For updating workflow status of advocate by calling workflow
@@ -41,7 +43,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
         try {
             Advocate advocate =  advocateRequest.getAdvocate();
-            ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
+            ProcessInstance processInstance = getProcessInstanceForADV(advocate);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -76,7 +78,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
         AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
         try {
-            ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
+            ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -92,10 +94,9 @@ public class WorkflowService {
 
     /** for advocate clerk application process instance
      * @param advocateClerk
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    public ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+    public ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk) {
         try {
             Workflow workflow = advocateClerk.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -126,10 +127,9 @@ public class WorkflowService {
 
     /** for advocate application process instance
      * @param advocate
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstanceForADV(Advocate advocate) {
         try {
             Workflow workflow = advocate.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();

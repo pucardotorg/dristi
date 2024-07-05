@@ -20,11 +20,14 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class AdvocateClerkRegistrationEnrichment {
 
-    @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration configuration;
+    private final IdgenUtil idgenUtil;
+    private final Configuration configuration;
 
+    @Autowired
+    public AdvocateClerkRegistrationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
+        this.idgenUtil = idgenUtil;
+        this.configuration = configuration;
+    }
     /**
      * Enrich the advocate clerk application by setting values in different field
      *
