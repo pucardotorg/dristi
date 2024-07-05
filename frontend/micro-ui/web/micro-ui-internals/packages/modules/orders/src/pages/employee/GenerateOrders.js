@@ -7,11 +7,13 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
   configsOrderSection202CRPC,
   configsOrderSubmissionExtension,
   configsOrderTranferToADR,
+  configsOthers,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
   configsVoluntarySubmissionStatus,
@@ -80,6 +82,8 @@ const GenerateOrders = () => {
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
       BAIL: configsBail,
+      WARRANT: configsIssueOfWarrants,
+      OTHERS: configsOthers,
     };
     console.debug(orderType.code);
     return !orderType?.code
