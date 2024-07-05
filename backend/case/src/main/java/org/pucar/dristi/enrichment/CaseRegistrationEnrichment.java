@@ -24,12 +24,16 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class CaseRegistrationEnrichment {
 
-    @Autowired
     private IdgenUtil idgenUtil;
-    @Autowired
     private CaseUtil caseUtil;
-    @Autowired
     private Configuration config;
+
+    @Autowired
+    public CaseRegistrationEnrichment(IdgenUtil idgenUtil, CaseUtil caseUtil, Configuration config) {
+        this.idgenUtil = idgenUtil;
+        this.caseUtil = caseUtil;
+        this.config = config;
+    }
 
     public void enrichCaseRegistrationOnCreate(CaseRequest caseRequest) {
         try {
@@ -63,7 +67,6 @@ public class CaseRegistrationEnrichment {
 
         enrichCaseRegistrationFillingDate(courtCase);
 
-//                    courtCase.setIsActive(false);
         if (courtCase.getDocuments() != null) {
             List<Document> documentsListToCreate = courtCase.getDocuments().stream().filter(document -> document.getId() == null).toList();
             documentsListToCreate.forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
