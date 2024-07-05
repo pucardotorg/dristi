@@ -121,13 +121,16 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
   };
 
   const handleDeleteFile = (input, index) => {
-    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    const dataCopy = structuredClone(formData[config.key]);
+    let currentValue = (dataCopy && dataCopy?.["document"]) || [];
     currentValue.splice(index, 1);
+    let data = { document: currentValue };
     if (currentValue.length === 0) {
       setShowTextArea(true);
       setIsFileAdded(false);
+      data = { text: "" };
     }
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue });
+    onSelect(config.key, data, { shouldValidate: true });
   };
 
   const dragDropJSX = (
@@ -156,7 +159,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
     if ("text" in dataCopy) {
       delete dataCopy.text;
     }
-    onSelect(config.key, dataCopy);
+    onSelect(config.key, dataCopy, { shouldValidate: true });
   };
 
   function getFileStoreData(filesData, input) {

@@ -4,6 +4,7 @@ import { generateUUID } from "../Utils";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
 import LocationComponent from "./LocationComponent";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 const selectCompMultiConfig = {
   type: "component",
@@ -160,7 +161,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
           </div>
         ))}
       <Button
-        isDisabled={config?.disable}
+        isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
         className={"add-location-btn"}
         label={"Add Location"}
         style={{ alignItems: "center", margin: "10px 0px" }}

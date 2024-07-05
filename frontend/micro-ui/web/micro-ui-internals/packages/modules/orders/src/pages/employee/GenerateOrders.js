@@ -42,6 +42,7 @@ const GenerateOrders = () => {
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
+  const [prevOrder, setPrevOrder] = useState();
 
   const configKeys = {
     SECTION_202_CRPC: configsOrderSection202CRPC,
@@ -74,10 +75,10 @@ const GenerateOrders = () => {
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
   const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
-    { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,
-    Boolean(filingNumber)
+    Boolean(filingNumber && cnrNumber)
   );
 
   const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
@@ -127,13 +128,18 @@ const GenerateOrders = () => {
     ordersService
       .updateOrder(updatedreqBody, { tenantId })
       .then(() => {
+        setPrevOrder(currentOrder);
         refetchOrdersData();
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
+        setShowsignatureModal(false);
+        setDeleteOrderIndex(null)
       })
       .catch(() => {
         refetchOrdersData();
+        setShowsignatureModal(false);
+        setDeleteOrderIndex(null)
       });
   };
 
@@ -194,7 +200,7 @@ const GenerateOrders = () => {
       orderType: orderList[deleteOrderIndex].orderType,
     });
     selectedOrder((prev) => {
-      prev == deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
+      return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
     setDeleteOrderIndex(null);
   };
@@ -280,7 +286,7 @@ const GenerateOrders = () => {
         />
       )}
       {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
-      {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} setShowSuccessModal={setShowSuccessModal} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
 };

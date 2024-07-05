@@ -26,8 +26,8 @@ const paymentOption = [
     i18nKey: "Demand Draft",
   },
   {
-    code: "POSTAL_ORDER",
-    i18nKey: "Stamps",
+    code: "STAMP",
+    i18nKey: "Stamp",
   },
 ];
 
@@ -117,7 +117,6 @@ const ViewPaymentDetails = ({ location, match }) => {
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
           totalAmountPaid: 2000,
-          ...(additionDetails && { transactionNumber: additionDetails }),
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
         },

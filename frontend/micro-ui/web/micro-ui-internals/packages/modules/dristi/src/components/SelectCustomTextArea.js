@@ -1,5 +1,6 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
+import { isEmptyObject } from "../Utils";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
@@ -15,19 +16,27 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   );
 
   function setValue(value, input) {
+    let updatedValue = {
+      ...formData[config.key],
+    };
+
     if (Array.isArray(input)) {
-      onSelect(
-        config.key,
-        {
-          ...formData[config.key],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        },
-        { shouldValidate: true }
-      );
-    } else onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+      updatedValue = {
+        ...updatedValue,
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      };
+    } else {
+      updatedValue[input] = value;
+    }
+
+    if (!value) {
+      updatedValue = null;
+    }
+
+    onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {
@@ -44,14 +53,14 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
               {t(input?.textAreaHeader)}
             </h1>
           )}
-          {
+          {!config?.disableScrutinyHeader && (
             <span>
               <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
               </p>
             </span>
-          }
+          )}
         </div>
         <textarea
           value={formData?.[config.key]?.[input.name]}

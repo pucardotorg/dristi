@@ -3,6 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { judgeInboxConfig } from "./JudgeInboxConfig";
 const sectionsParentStyle = {
   height: "50%",
@@ -29,17 +30,18 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  // if (props?.original?.status === "CASE_ADMITTED") {
-                  //   history.push(`${location.pathname}/orders/orders-home?caseId=${props.original.filingNumber}&filingNumber=${"kjfkdkfjslj"}`);
-                  // } else {
+                  if (props?.original?.status === CaseWorkflowState.CASE_ADMITTED) {
+                    history.push(
+                      `${location.pathname}/orders/orders-home?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}`
+                    );
+                  } else if (props?.original?.status === CaseWorkflowState.PENDING_ADMISSION) {
                     const searchParams = new URLSearchParams();
                     console.log(props.original);
                     searchParams.set("filingNumber", props.original.filingNumber);
                     searchParams.set("caseId", props.original.id);
-                    searchParams.set("cnr", props.original.cnrNumber);
-                    searchParams.set("title", props.original.caseTitle);
-                    history.push(props.original.status === "CASE_ADMITTED" ? `${path}/admitted-case?${searchParams.toString()}` : `${path}/admission?${searchParams.toString()}`);
-                  // }
+                    history.push(`${path}/admission?${searchParams.toString()}`);
+                  } else {
+                  }
                 },
               },
             }}

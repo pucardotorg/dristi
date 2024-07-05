@@ -6,6 +6,7 @@ function CustomReviewCard({
   config,
   data,
   isScrutiny,
+  isJudge,
   t,
   dataIndex,
   handleOpenPopup,
@@ -34,6 +35,7 @@ function CustomReviewCard({
             data={data}
             handleOpenPopup={handleOpenPopup}
             isScrutiny={isScrutiny}
+            isJudge={isJudge}
             titleIndex={titleIndex}
             dataIndex={dataIndex}
             name={input.name}
@@ -46,6 +48,7 @@ function CustomReviewCard({
             handleClickImage={handleClickImage}
             setShowImageModal={setShowImageModal}
             isCaseReAssigned={isCaseReAssigned}
+            disableScrutiny={input?.disableScrutiny}
           />
         );
       })}
