@@ -41,7 +41,6 @@ public class ApplicationQueryBuilder {
 
     private static final String FROM_APP_TABLE = " FROM dristi_application app";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY app.createdtime DESC ";
-    private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY app.createdtime ASC ";
 
     private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app";
 

@@ -20,13 +20,11 @@ class StatuteSectionRowMapperTest {
 
     private StatuteSectionRowMapper statuteSectionRowMapper;
     private ResultSet resultSet;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         statuteSectionRowMapper = new StatuteSectionRowMapper();
         resultSet = mock(ResultSet.class);
-        objectMapper = new ObjectMapper();
     }
 
     @Test
