@@ -3,20 +3,14 @@ export const preHearingConfig = {
   type: "inbox",
   customHookName: "hearings.usePreHearingModalData",
   apiDetails: {
-    serviceName: "/case/case/v1/_search",
-    requestParam: {},
-    requestBody: {
+    serviceName: "/hearing/v1/search",
+    requestParam: {
       tenantId: Digit.ULBService.getCurrentTenantId(),
-      criteria: [
-        {
-          status: "CASE_ADMITTED",
-          pagination: { limit: 5, offSet: 0 },
-        },
-      ],
-      inbox: {
-        moduleSearchCriteria: {},
+    },
+    requestBody: {
+      //need to add criteria to get hearings based on particular day
+      criteria: {
         limit: 5,
-        offset: 0,
       },
     },
     minParametersForSearchForm: 0,
@@ -80,7 +74,7 @@ export const preHearingConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "caseTitle",
+            jsonPath: "caseName",
           },
           {
             label: "Stage",
@@ -101,7 +95,7 @@ export const preHearingConfig = {
           },
         ],
         enableColumnSort: true,
-        resultsJsonPath: "caseResponse.criteria[0].responseList",
+        resultsJsonPath: "items",
       },
       show: true,
     },

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { DataContext } from "./DataContext";
 import { preHearingConfig } from "../configs/PreHearingConfig";
 
-function PreHearingModal({ onCancel, hearings }) {
+function PreHearingModal({ onCancel }) {
   const { t } = useTranslation();
   const { hearingData } = useContext(DataContext);
   const [config, setConfig] = useState(preHearingConfig);

@@ -4,43 +4,80 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
   const client = useQueryClient();
 
   const fetchCombinedData = async () => {
-    const [caseResponse, pendingTaskResponse] = await Promise.all([
-      Digit.CustomService.getResponse({
-        url,
-        params,
-        body,
+    //need to filter this hearing list response based on slot
+    const hearingListResponse = await Digit.CustomService.getResponse({
+      url,
+      params,
+      body,
+      plainAccessRequest,
+    }).then((response) => ({
+      ...response,
+    }));
+
+    const filingNumbers = hearingListResponse.HearingList.map((hearing) => hearing.filingNumber).flat();
+
+    const caseDetailsPromises = filingNumbers.map((filingNumber) => {
+      const caseBody = {
+        tenantId: "pg",
+        criteria: [
+          {
+            filingNumber: filingNumber,
+          },
+        ],
+      };
+
+      return Digit.CustomService.getResponse({
+        url: "/case/case/v1/_search",
+        params: { tenantId: Digit.ULBService.getCurrentTenantId() },
+        body: caseBody,
         plainAccessRequest,
-      }).then((response) => {
-        return {
-          ...response,
-        };
-      }),
+      }).then((response) => ({
+        ...response,
+      }));
+    });
 
-      //Need to call pending task api here so we can populate that data into the pending tasks
+    const caseResponses = await Promise.all(caseDetailsPromises);
 
-      // Digit.CustomService.getResponse({
-      //   url: "/inbox/v2/_getFields",
-      //   params: { tenantId: Digit.ULBService.getCurrentTenantId() },
-      //   body: {
-      //     SearchCriteria: {
-      //       tenantId: "pg",
-      //       moduleName: "Pending Tasks Service",
-      //       moduleSearchCriteria: {
-      //         entityType: "case",
-      //       },
-      //       limit: 10,
-      //       offset: 0,
-      //     },
-      //   },
-      //   plainAccessRequest,
-      // }).then((response) => {
-      //   return {
-      //     ...response,
-      //   };
-      // }),
-    ]);
+    const pendingTaskPromises = filingNumbers.map((filingNumber) => {
+      return Digit.CustomService.getResponse({
+        url: "/inbox/v2/_getFields",
+        params: { tenantId: Digit.ULBService.getCurrentTenantId() },
+        body: {
+          SearchCriteria: {
+            tenantId: Digit.ULBService.getCurrentTenantId(),
+            moduleName: "Pending Tasks Service",
+            moduleSearchCriteria: {
+              referenceId: filingNumber,
+            },
+            limit: 10,
+            offset: 0,
+          },
+        },
+        plainAccessRequest,
+      }).then((response) => ({ filingNumber, data: response.data }));
+    });
 
-    return { caseResponse, pendingTaskResponse };
+    const pendingTaskResponses = await Promise.all(pendingTaskPromises);
+
+    const combinedData = hearingListResponse.HearingList.map((hearing) => {
+      const caseDetail = caseResponses.find((caseResponse) =>
+        caseResponse.criteria.some((caseItem) => caseItem.filingNumber === hearing.filingNumber[0])
+      );
+      const caseData = caseDetail ? caseDetail.criteria[0].responseList[0] : {};
+
+      const pendingTaskDetail = pendingTaskResponses.find((taskResponse) => taskResponse.filingNumber === hearing.filingNumber[0]);
+      const pendingTasksData = pendingTaskDetail ? pendingTaskDetail.data.length : 0;
+
+      return {
+        filingNumber: hearing.filingNumber[0],
+        caseName: caseData.caseTitle || "",
+        stage: caseData.stage || "",
+        caseType: caseData.caseType || "",
+        pendingTasks: pendingTasksData || 0,
+      };
+    });
+
+    return { items: combinedData };
   };
 
   const { isLoading, data, isFetching, refetch, error } = useQuery("GET_PRE_HEARING_DATA", fetchCombinedData, {
