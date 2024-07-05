@@ -112,7 +112,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
           <div className="drag-drop-visible-main">
             <div className="drag-drop-heading-main">
               <div className="drag-drop-heading">
-                <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
+                <h1 className={`card-label custom-document-header ${input?.headerClassName}`} style={input?.documentHeaderStyle}>
                   {t(input?.documentHeader)}
                 </h1>
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}

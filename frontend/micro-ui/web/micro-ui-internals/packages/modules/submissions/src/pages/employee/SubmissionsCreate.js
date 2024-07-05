@@ -2,7 +2,19 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
-import { applicationTypeConfig, configsRescheduleRequest, submissionTypeConfig } from "../../configs/submissionsCreateConfig";
+import {
+  applicationTypeConfig,
+  configs,
+  configsBail,
+  configsBailBond,
+  configsCaseTransfer,
+  configsCaseWithdrawal,
+  configsProductionOfDocuments,
+  configsRescheduleRequest,
+  configsSettlement,
+  configsSurety,
+  submissionTypeConfig,
+} from "../../configs/submissionsCreateConfig";
 import { transformCreateData } from "../../utils/createUtils";
 import { submissionService } from "../../hooks/services";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
@@ -38,7 +50,7 @@ const SubmissionsCreate = () => {
 
   const applicationConfigKeys = {
     RE_SCHEDULE: configsRescheduleRequest,
-    // CHECKOUT: ,
+    CHECKOUT: configsBail,
     // DELAY: ,
     // PENALTY_WAIVER: ,
     // CASE_EDITING: ,
