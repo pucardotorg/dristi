@@ -3,7 +3,7 @@ import NextHearingCard from "./NextHearingCard";
 import OrderDrafts from "./OrderDrafts";
 import SubmissionReview from "./SubmissionsReview";
 
-const ExtraComponent = ({ tab }) => {
+const ExtraComponent = ({ tab, setUpdateCounter }) => {
   switch (tab) {
     case "Hearings":
     case "Overview":
@@ -11,7 +11,7 @@ const ExtraComponent = ({ tab }) => {
     case "Orders":
       return <OrderDrafts />;
     case "Submissions":
-      return <SubmissionReview />;
+      return <SubmissionReview setUpdateCounter={setUpdateCounter} />;
     default:
       return <React.Fragment />;
   }

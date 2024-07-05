@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "../../../components/Modal";
 import DocViewerWrapper from "../docViewerWrapper";
 
-const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType }) => {
+const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter }) => {
   const { t } = useTranslation();
 
   const CloseBtn = (props) => {
@@ -93,14 +93,6 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       enable: false,
     },
   };
-  const reqEvidenceCreate = {
-    url: `/evidence/artifacts/v1/_create`,
-    params: {},
-    body: {},
-    config: {
-      enable: false,
-    },
-  };
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
   const evidenceUpdateMutation = Digit.Hooks.useCustomAPIMutationHook(reqEvidenceUpdate);
@@ -181,6 +173,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           });
         }
         setShow(false);
+        setUpdateCounter((prevCount) => prevCount + 1);
       }}
       hideSubmit={userRoles.indexOf("APPLICATION_RESPONDER") !== -1 && documentSubmission.status === "PENDINGREVIEW"}
       actionCancelLabel={
@@ -188,8 +181,8 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           ? t("Reject")
           : null
       }
-      actionCancelOnSubmit={() => {
-        mutation.mutate({
+      actionCancelOnSubmit={async () => {
+        await mutation.mutate({
           url: `/application/application/v1/update`,
           params: {},
           body: { application: rejectApplicationPayload },
@@ -198,6 +191,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           },
         });
         setShow(false);
+        setUpdateCounter((prevCount) => prevCount + 1);
       }}
       formId="modal-action"
       headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}

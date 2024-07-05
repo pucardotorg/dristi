@@ -5,7 +5,7 @@ import useGetSubmissions from "../../../hooks/dristi/useGetSubmissions";
 import { CustomArrowOut } from "../../../icons/svgIndex";
 import EvidenceModal from "./EvidenceModal";
 
-const SubmissionReview = () => {
+const SubmissionReview = ({ setUpdateCounter }) => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const filingNumber = searchParams.get("filingNumber");
@@ -57,7 +57,7 @@ const SubmissionReview = () => {
     setShow(true);
   };
 
-  const { data: applicationRes, refetch: refetchOrdersData, isLoading: isOrdersLoading } = useGetSubmissions(
+  const { data: applicationRes, refetch: refetchApplicationData, isLoading: isApplicationLoading } = useGetSubmissions(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -87,60 +87,63 @@ const SubmissionReview = () => {
             color: "#231F20",
           }}
         >
-          Submissions To Review ({applicationRes?.applicationList?.length})
+          Submissions To Review ({applicationRes?.applicationList?.filter((application) => application.workflow.action === "PENDINGREVIEW").length})
         </div>
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-          {applicationRes?.applicationList?.slice(0, 5).map((app) => (
-            <div
-              style={{
-                padding: "12px 16px",
-                borderRadius: "4px",
-                width: "300px",
-                cursor: "pointer",
-                background: "#ECF3FD66",
-              }}
-              onClick={() => docSetFunc(app)}
-            >
-              <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
-                <div
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    lineHeight: "18.75px",
-                    color: "#101828",
-                  }}
-                >
-                  {app?.applicationType?.charAt(0).toUpperCase()}
-                  {app?.applicationType?.slice(1).toLowerCase()}
-                </div>
-                <CustomArrowOut />
-              </div>
+          {applicationRes?.applicationList
+            ?.filter((application) => application.workflow.action === "PENDINGREVIEW")
+            .slice(0, 5)
+            .map((app) => (
               <div
                 style={{
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  lineHeight: "20px",
-                  color: "#101828",
-                  marginTop: "12px",
+                  padding: "12px 16px",
+                  borderRadius: "4px",
+                  width: "300px",
+                  cursor: "pointer",
+                  background: "#ECF3FD66",
                 }}
+                onClick={() => docSetFunc(app)}
               >
-                Date:
-                <span
+                <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      lineHeight: "18.75px",
+                      color: "#101828",
+                    }}
+                  >
+                    {app?.applicationType?.charAt(0).toUpperCase()}
+                    {app?.applicationType?.slice(1).toLowerCase()}
+                  </div>
+                  <CustomArrowOut />
+                </div>
+                <div
                   style={{
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "14px",
                     lineHeight: "20px",
+                    color: "#101828",
+                    marginTop: "12px",
                   }}
                 >
-                  {new Date(app?.auditDetails?.createdTime).toLocaleDateString("en-in", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
+                  Date:
+                  <span
+                    style={{
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    {new Date(app?.auditDetails?.createdTime).toLocaleDateString("en-in", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </Card>
       {show && (
@@ -152,6 +155,7 @@ const SubmissionReview = () => {
           setComment={setComment}
           userRoles={userRoles}
           modalType={"Submissions"}
+          setUpdateCounter={setUpdateCounter}
         />
       )}
     </React.Fragment>

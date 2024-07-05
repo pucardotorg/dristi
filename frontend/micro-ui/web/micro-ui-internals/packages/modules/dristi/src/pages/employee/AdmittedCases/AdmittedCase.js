@@ -202,6 +202,7 @@ const AdmittedCases = () => {
   const [tabData, setTabData] = useState(
     newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({ key: index, label: configItem.label, active: index === 0 ? true : false }))
   ); // setting number of tab component and making first index enable as default
+  const [updateCounter, setUpdateCounter] = useState(0);
   useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
@@ -260,11 +261,11 @@ const AdmittedCases = () => {
           ))}
         </div>
       </div>
-      <ExtraComponent tab={config.label} />
+      <ExtraComponent setUpdateCounter={setUpdateCounter} tab={config.label} />
       <div className="inbox-search-wrapper">
         {/* Pass defaultValues as props to InboxSearchComposer */}
         <InboxSearchComposer
-          key={config.label}
+          key={`${config.label}-${updateCounter}`}
           configs={config}
           defaultValues={defaultValues}
           showTab={false}
@@ -291,6 +292,7 @@ const AdmittedCases = () => {
           setComment={setComment}
           userRoles={userRoles}
           modalType={tabData.filter((tab) => tab.active)[0].label}
+          setUpdateCounter={setUpdateCounter}
         />
       )}
       {showReviewModal && (
