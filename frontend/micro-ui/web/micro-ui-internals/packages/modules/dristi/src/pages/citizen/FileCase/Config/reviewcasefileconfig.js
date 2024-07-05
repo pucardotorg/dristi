@@ -81,23 +81,23 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "address",
                   label: "ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "INDIVIDUAL",
                   value: "addressDetails",
                 },
                 {
                   type: "text",
                   label: "company_Name",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
                   value: "companyName",
                 },
                 {
                   type: "address",
                   label: "COMPANY_ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "addressCompanyDetails",
+                  value: "addressDetails",
                 },
                 {
                   type: "image",

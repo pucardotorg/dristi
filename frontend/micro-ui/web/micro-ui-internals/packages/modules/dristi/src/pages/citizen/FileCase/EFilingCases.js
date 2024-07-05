@@ -771,6 +771,20 @@ function EFilingCases({ path }) {
                   return field === body?.key;
                 });
               }
+
+              //isMandatory
+              if (
+                body?.isDocDependentOn &&
+                body?.isDocDependentKey &&
+                data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey] &&
+                body?.component === "SelectCustomDragDrop"
+              ) {
+                body.isMandatory = true;
+              } else if (body?.isDocDependentOn && body?.isDocDependentKey && body?.component === "SelectCustomDragDrop") {
+                body.isMandatory = false;
+              }
+
+              //withoutLabelFieldPair
               if (body?.isDocDependentOn && body?.isDocDependentKey && !data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey]) {
                 body.withoutLabelFieldPair = true;
               } else {
@@ -884,11 +898,13 @@ function EFilingCases({ path }) {
                           )
                         ) {
                           delete input.isOptional;
+                          body.isMandatory = true;
                           return {
                             ...input,
                             hideDocument: false,
                           };
                         } else if (body?.key === "inquiryAffidavitFileUpload") {
+                          delete body.isMandatory;
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
@@ -1030,13 +1046,13 @@ function EFilingCases({ path }) {
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
                     modifiedFormComponent.withoutLabel = true;
+                    modifiedFormComponent.disableScrutinyHeader = true;
                     return [
                       {
                         type: "component",
                         component: "ScrutinyInfo",
                         key: `${key}Scrutiny`,
                         label: modifiedFormComponent.label,
-                        withoutLabel: true,
                         populators: {
                           scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
                         },
@@ -1515,8 +1531,14 @@ function EFilingCases({ path }) {
         cases: {
           ...caseDetails,
           caseTitle:
-            caseDetails?.caseTitle ||
-            `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+            (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+              `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+                caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+                caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+              }`) ||
+            caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,

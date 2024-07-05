@@ -219,7 +219,7 @@ const CustomReviewCardRow = ({
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
-                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader : data?.[value]?.header)}
+                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader || data?.[value]?.header : data?.[value]?.header)}
                 additionalElements={[
                   <React.Fragment>
                     {Array.isArray(data?.[value]?.data) && (
@@ -241,11 +241,13 @@ const CustomReviewCardRow = ({
         );
 
       case "amount":
+        let amountValue = extractValue(data, value);
+        amountValue = amountValue ? `₹${amountValue}` : t("CS_NOT_AVAILABLE");
         return (
           <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
               <div className="label">{t(label)}</div>
-              <div className="value"> {`₹${extractValue(data, value)}`} </div>
+              <div className="value"> {amountValue} </div>
               {showFlagIcon && (
                 <div
                   className="flag"
@@ -501,7 +503,7 @@ const CustomReviewCardRow = ({
                     ) : (
                       <FlagIcon isError={true} />
                     )}
-                    {`${t(error.fileName) || ""} : ${error.FSOError}`}
+                    {`${error.fileName ? t(error.fileName) + " : " : ""}${error.FSOError}`}
                   </div>
                 );
               })}
@@ -647,6 +649,8 @@ const CustomReviewCardRow = ({
     titleIndex,
     type,
     value,
+    disableScrutiny,
+    isCaseReAssigned,
   ]);
 
   return renderCard;
