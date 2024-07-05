@@ -4,6 +4,7 @@ import { generateUUID } from "../Utils";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
 import LocationComponent from "./LocationComponent";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 const selectCompMultiConfig = {
   type: "component",
@@ -142,7 +143,14 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
                     : t("CS_COMMON_ADDRESS_DETAIL")
                 } ${index + 1}`}</h1>
               </b>
-              <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
+              <span
+                onClick={() => {
+                  if (!config?.disable) {
+                    handleDeleteLocation(data.id);
+                  }
+                }}
+                style={locationData.length === 1 ? { display: "none" } : {}}
+              >
                 <CrossIcon></CrossIcon>
               </span>
             </div>
@@ -160,7 +168,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
           </div>
         ))}
       <Button
-        isDisabled={config?.disable}
+        isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
         className={"add-location-btn"}
         label={"Add Location"}
         style={{ alignItems: "center", margin: "10px 0px" }}

@@ -41,6 +41,7 @@ import {
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
 import _, { isEqual, isMatch } from "lodash";
+import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -146,6 +147,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
+  const [caseResubmitSuccess, setCaseResubmitSuccess] = useState(false);
   const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
@@ -349,9 +351,14 @@ function EFilingCases({ path }) {
   }, [scrutinyObj]);
 
   const errorPages = useMemo(() => {
-    return Object.values(scrutinyErrors)
+    const pages = Object.values(scrutinyErrors)
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
+    return pages.sort((a, b) => {
+      const keyA = a.key;
+      const keyB = b.key;
+      return getAllKeys.indexOf(keyA) - getAllKeys.indexOf(keyB);
+    });
   }, [scrutinyErrors]);
 
   const sectionWiseErrors = useMemo(() => {
@@ -552,14 +559,25 @@ function EFilingCases({ path }) {
                   ...body,
                   populators: {
                     inputs: body?.populators?.inputs?.map((input) => {
+                      let dataobj =
+                        input?.key === "advocateDetails"
+                          ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
+                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata
+                            : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                          : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
+                      if (isCaseReAssigned) {
+                        dataobj =
+                          input?.key === "advocateDetails"
+                            ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
+                              ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata
+                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                            : errorCaseDetails?.additionalDetails?.[input?.key]?.formdata ||
+                              errorCaseDetails?.caseDetails?.[input?.key]?.formdata ||
+                              {};
+                      }
                       return {
                         ...input,
-                        data:
-                          input?.key === "advocateDetails"
-                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
-                              ? caseDetails?.additionalDetails?.[input?.key]?.formdata
-                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
-                            : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                        data: dataobj,
                       };
                     }),
                   },
@@ -747,11 +765,31 @@ function EFilingCases({ path }) {
           return {
             ...config,
             body: config?.body.map((body) => {
+              body.state = state;
               if (body?.addUUID && body?.uuid !== index) {
                 body.uuid = index;
                 body.isUserVerified = disableConfigFields.some((field) => {
                   return field === body?.key;
                 });
+              }
+
+              //isMandatory
+              if (
+                body?.isDocDependentOn &&
+                body?.isDocDependentKey &&
+                data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey] &&
+                body?.component === "SelectCustomDragDrop"
+              ) {
+                body.isMandatory = true;
+              } else if (body?.isDocDependentOn && body?.isDocDependentKey && body?.component === "SelectCustomDragDrop") {
+                body.isMandatory = false;
+              }
+
+              //withoutLabelFieldPair
+              if (body?.isDocDependentOn && body?.isDocDependentKey && !data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey]) {
+                body.withoutLabelFieldPair = true;
+              } else {
+                body.withoutLabelFieldPair = false;
               }
               if (selected === "delayApplications") {
                 if (
@@ -861,11 +899,13 @@ function EFilingCases({ path }) {
                           )
                         ) {
                           delete input.isOptional;
+                          body.isMandatory = true;
                           return {
                             ...input,
                             hideDocument: false,
                           };
                         } else if (body?.key === "inquiryAffidavitFileUpload") {
+                          delete body.isMandatory;
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
@@ -943,15 +983,32 @@ function EFilingCases({ path }) {
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
                 if (formComponent.type === "component") {
-                  if (["SelectCustomDragDrop", "SelectBulkInputs"].includes(formComponent.component)) {
+                  if (
+                    ["SelectCustomDragDrop", "SelectBulkInputs", "SelectCustomTextArea", "SelectUploadFiles", "SelectUserTypeComponent"].includes(
+                      formComponent.component
+                    )
+                  ) {
                     key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                   }
+                  if (formComponent.component === "VerifyPhoneNumber") {
+                    key = formComponent.key + "." + formComponent.name;
+                  }
+                }
+                if (selected === "demandNoticeDetails" && formComponent.component === "SelectUserTypeComponent") {
+                  key =
+                    formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name + "." + formComponent.populators?.inputs?.[0]?.optionsKey;
+                }
+                if (selected === "debtLiabilityDetails" && ["dropdown", "radio"].includes(formComponent.type)) {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
+                }
+                if (selected === "delayApplications" && formComponent.component === "CustomRadioInfoComponent") {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
                 }
-
+                modifiedFormComponent.state = state;
                 if (
                   modifiedFormComponent?.labelChildren === "OutlinedInfoIcon" &&
                   Object.keys(caseDetails?.additionalDetails?.scrutiny?.data || {}).length === 0
@@ -968,22 +1025,42 @@ function EFilingCases({ path }) {
                     </React.Fragment>
                   );
                 }
-                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
-                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index] && key in scrutiny?.[selected]?.form?.[index]) {
-                  modifiedFormComponent.disable = false;
-                  modifiedFormComponent.withoutLabel = true;
-                  return [
-                    {
-                      type: "component",
-                      component: "ScrutinyInfo",
-                      key: `${key}Scrutiny`,
-                      label: modifiedFormComponent.label,
-                      populators: {
-                        scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || judgeObj ? false : true;
+
+                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
+                  if (formComponent.component == "SelectUploadFiles") {
+                    if (formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name in scrutiny?.[selected]?.form?.[index]) {
+                      key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                    }
+                    if (formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name in scrutiny?.[selected]?.form?.[index]) {
+                      key = formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name;
+                    }
+                  }
+                  if (
+                    selected === "debtLiabilityDetails" &&
+                    formComponent.component === "CustomInput" &&
+                    scrutiny?.[selected]?.form?.[index]?.["liabilityType.name"]?.FSOError
+                  ) {
+                    modifiedFormComponent.disable = false;
+                  }
+                  if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
+                    modifiedFormComponent.disable = false;
+                    modifiedFormComponent.withoutLabel = true;
+                    modifiedFormComponent.disableScrutinyHeader = true;
+                    return [
+                      {
+                        type: "component",
+                        component: "ScrutinyInfo",
+                        key: `${key}Scrutiny`,
+                        label: modifiedFormComponent.label,
+                        populators: {
+                          scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                        },
                       },
-                    },
-                    modifiedFormComponent,
-                  ];
+                      modifiedFormComponent,
+                    ];
+                  }
                 }
                 return modifiedFormComponent;
               })
@@ -1270,7 +1347,17 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+        .some((data) =>
+          delayApplicationValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+          })
+        )
     ) {
       return;
     }
@@ -1295,7 +1382,19 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))
+        .some((data) =>
+          signatureValidation({
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setErrorMsg,
+            caseDetails: modifiedFormConfig?.[0].reduce((res, curr) => {
+              if (curr?.body && Array.isArray(curr.body) && curr.body?.length === 0) return res;
+              else res[curr?.body?.[0]?.key] = curr?.body?.[0]?.populators?.inputs?.[0]?.data;
+              return res;
+            }, {}),
+          })
+        )
     ) {
       return;
     }
@@ -1331,7 +1430,8 @@ function EFilingCases({ path }) {
             setFormdata(caseData);
             setIsDisabled(false);
             if (action === CaseWorkflowAction.EDIT_CASE) {
-              return history.push(`/${window.contextPath}/citizen/dristi/home`);
+              setCaseResubmitSuccess(true);
+              return;
             }
             setPrevSelected(selected);
             history.push(`?caseId=${caseId}&selected=${nextSelected}`);
@@ -1384,10 +1484,18 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    const isDrafted = isMatch(
-      JSON.parse(JSON.stringify(caseDetails?.additionalDetails?.[selected].formdata || caseDetails?.caseDetails?.[nextSelected]?.formdata)),
-      JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
-    );
+    const isDrafted =
+      caseDetails?.additionalDetails?.[selected]?.isCompleted || caseDetails?.caseDetails?.[selected]?.isCompleted
+        ? isMatch(
+            JSON.parse(
+              JSON.stringify(
+                caseDetails?.additionalDetails?.[selected]?.formdata ||
+                  caseDetails?.caseDetails?.[selected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
+              )
+            ),
+            JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
+          )
+        : false;
     updateCaseDetails({
       isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
@@ -1423,7 +1531,15 @@ function EFilingCases({ path }) {
       {
         cases: {
           ...caseDetails,
-          caseTitle: `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          caseTitle:
+            (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+              `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+                caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+                caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+              }`) ||
+            caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
@@ -1487,13 +1603,23 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
+
+  const handleGoToPage = (key) => {
+    history.push(`?caseId=${caseId}&selected=${key}`);
+  };
+  const handleGoToHome = () => {
+    history.push(homepagePath);
+  };
+
   if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
 
   if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
-    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    if (!judgeObj) {
+      history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    }
   }
 
   return (
@@ -1524,6 +1650,8 @@ function EFilingCases({ path }) {
                 pages={errorPages}
                 handlePageChange={handlePageChange}
                 showConfirmModal={confirmModalConfig ? true : false}
+                handleGoToPage={handleGoToPage}
+                selected={selected}
               />
             )}
             <div className="total-error-note">
@@ -1620,7 +1748,7 @@ function EFilingCases({ path }) {
                   inputs: [
                     {
                       infoHeader: "Note",
-                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${"CS_REVIEW_CAREFULLY"}`,
+                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${t("CS_REVIEW_CAREFULLY")}`,
                       type: "InfoComponent",
                     },
                   ],
@@ -1649,7 +1777,15 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_COMMON_CONTINUE")}
+                  label={
+                    selected === "addSignature"
+                      ? t("CS_SUBMIT_CASE")
+                      : isDisableAllFieldsMode
+                      ? t("CS_GO_TO_HOME")
+                      : isCaseReAssigned
+                      ? t("CS_COMMONS_NEXT")
+                      : t("CS_COMMON_CONTINUE")
+                  }
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
@@ -1796,7 +1932,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
           )}
-          {showReviewCorrectionModal && (
+          {showReviewCorrectionModal && isDraftInProgress && (
             <Modal
               headerBarMain={<Heading label={t("REVIEW_CASE_HEADER")} />}
               headerBarEnd={
@@ -1851,6 +1987,7 @@ function EFilingCases({ path }) {
       {openConfirmCorrectionModal && (
         <ConfirmCorrectionModal onCorrectionCancel={() => setOpenConfirmCorrectionModal(false)} onSubmit={onErrorCorrectionSubmit} />
       )}
+      {caseResubmitSuccess && <CorrectionsSubmitModal t={t} filingNumber={caseDetails?.filingNumber} handleGoToHome={handleGoToHome} />}
       {selected === "witnessDetails" && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
         <ActionBar className={"e-filing-action-bar"}>
           <SubmitBar

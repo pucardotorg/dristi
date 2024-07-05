@@ -249,7 +249,7 @@ const respondentFromconfig = [
     body: [
       {
         type: "text",
-        key: "company_Name",
+        key: "companyName",
         label: "company_Name",
         isMandatory: true,
         populators: {

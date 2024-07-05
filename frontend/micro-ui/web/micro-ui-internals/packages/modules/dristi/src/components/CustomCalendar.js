@@ -6,7 +6,7 @@ import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
 function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
   const { data: hearingResponse, refetch: refetch } = Digit.Hooks.hearings.useGetHearings(
-    { hearing: { tenantId }, tenantId },
+    { criteria: { tenantId }, tenantId },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
@@ -80,17 +80,19 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   return (
     <div>
-      <Calendar
-        date={selectedCustomDate}
-        onChange={handleSelect}
-        // minDate={minDate}
-        maxDate={maxDate}
-        dayContentRenderer={renderCustomDay}
-        navigatorRenderer={navigatorRenderer}
-        onShownDateChange={(date) => {
-          setCurrentMonth(date);
-        }}
-      />
+      <div>
+        <Calendar
+          date={selectedCustomDate}
+          onChange={handleSelect}
+          // minDate={minDate}
+          maxDate={maxDate}
+          dayContentRenderer={renderCustomDay}
+          navigatorRenderer={navigatorRenderer}
+          onShownDateChange={(date) => {
+            setCurrentMonth(date);
+          }}
+        />
+      </div>
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>

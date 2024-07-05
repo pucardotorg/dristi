@@ -1,20 +1,43 @@
 import React, { useState } from "react";
-import { CustomArrowDownIcon } from "../icons/svgIndex";
+import { CustomArrowDownIcon, CustomArrowUpIcon } from "../icons/svgIndex";
 
-function ErrorsAccordion({ handlePageChange, pages, t, showConfirmModal, totalErrorCount }) {
+function ErrorsAccordion({ handlePageChange, pages, t, showConfirmModal, totalErrorCount, handleGoToPage, selected }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleAccordionClick = () => {
-    setIsOpen((prev) => {
-      return !prev;
-    });
+    // disabling accordion Functionality as per the requirements
+    // setIsOpen((prev) => {
+    //   return !prev;
+    // });
   };
+  const index = pages.findIndex((page) => page.key === selected);
+  const resultIndex = index === -1 ? pages.length : index + 1;
+
+  const hangelGoToNext = () => {
+    if (resultIndex < pages.length) {
+      handleGoToPage(pages[resultIndex]?.key);
+    }
+  };
+  const handleGoToPrev = () => {
+    if (selected === pages[resultIndex - 1]?.key) {
+      if (resultIndex > 1) {
+        handleGoToPage(pages[resultIndex - 2]?.key);
+      }
+    } else {
+      handleGoToPage(pages[resultIndex - 1]?.key);
+    }
+  };
+
   return (
     <div key={"ErrorAccordion"} className="accordion-wrapper">
-      <div className={`accordion-title ${isOpen ? "open" : ""} total-error-count`} onClick={handleAccordionClick}>
+      <div className={`accordion-title ${isOpen ? "open" : ""} total-error-count`} style={{ cursor: "default" }} onClick={handleAccordionClick}>
         <span style={{ color: "#BB2C2F" }}>{`${totalErrorCount} ${t("CS_ERRORS_MARKED")}`}</span>
         <div className="icon">
-          <span className="reverse-arrow">
+          <span className="reverse-arrow" style={{ cursor: "pointer" }} onClick={hangelGoToNext}>
             <CustomArrowDownIcon />
+          </span>
+          <span>{`${resultIndex}/${pages.length}`}</span>
+          <span className="reverse-arrow" style={{ cursor: "pointer" }} onClick={handleGoToPrev}>
+            <CustomArrowUpIcon />
           </span>
         </div>
       </div>

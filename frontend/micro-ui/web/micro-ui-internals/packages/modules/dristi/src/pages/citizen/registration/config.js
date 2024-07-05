@@ -442,7 +442,7 @@ export const newConfig = [
               name: "ID_Proof",
               validation: {},
               clearFields: { aadharNumber: "" },
-              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
+              allowedFileTypes: /(.*?)(png|jpg|pdf)$/i,
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",

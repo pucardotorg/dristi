@@ -19,8 +19,8 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
         value: getFormattedDate(),
       },
       {
-        key: `${t("ORDER_ID")}:${t(order.orderType)}`,
-        value: order.id,
+        key: `${t("ORDER_ID")}:${t(order?.orderType)}`,
+        value: order?.id,
         showCopy: true,
       },
     ],

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
 import { Button, CardHeader, CardLabel, CardText, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 import { formatDateInMonth } from "../../../Utils";
@@ -28,9 +28,9 @@ function SelectParticipant({
       handleScheduleCase({ ...scheduleHearingParams, participant: selectedValues });
     }
   };
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     setShowErrorToast(false);
-  };
+  }, []);
   useEffect(() => {
     const timer = setTimeout(() => {
       closeToast();
@@ -39,20 +39,20 @@ function SelectParticipant({
     return () => clearTimeout(timer);
   }, [closeToast]);
   return (
-    <div>
-      <CardLabel>{t(config?.header)}</CardLabel>
+    <div className="select-participants-main-div">
+      <CardLabel className={"choose-participants-heading"}>{t(config?.header)}</CardLabel>
       {config?.checkBoxText && (
-        <CardText>
-          {t(config?.checkBoxText)}
-          {scheduleHearingParams?.date} ?
-        </CardText>
+        <span className="participants-present">
+          <h2>{t(config?.checkBoxText)}</h2>
+          <span>{scheduleHearingParams?.date} ? </span>
+        </span>
       )}
       <DependentCheckBoxComponent t={t} options={config} onInputChange={handleInputChange} selectedValues={selectedValues} />
-      <div className="action-button-application">
+      <div className="select-participants-submit-bar">
         <Button
           variation="secondary"
           onButtonClick={() => setModalInfo({ ...modalInfo, page: 0 })}
-          className="primary-label-btn"
+          className="primary-label-btn select-back-button"
           label={"Back"}
         ></Button>
 
@@ -61,7 +61,7 @@ function SelectParticipant({
           onSubmit={(props) => {
             onSubmitSchedule(props);
           }}
-          className="primary-label-btn"
+          className="primary-label-btn select-schedule-button"
           label={"Schedule"}
         ></SubmitBar>
       </div>

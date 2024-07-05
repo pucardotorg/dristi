@@ -73,42 +73,50 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
-            onSelect(config.key, {
-              ...formData[config.key],
-              [input]: value,
-              state: getLocation(location, "administrative_area_level_1") || "",
-              district: getLocation(location, "administrative_area_level_3") || "",
-              city: getLocation(location, "locality") || "",
-              locality: (() => {
-                const plusCode = getLocation(location, "plus_code");
-                const neighborhood = getLocation(location, "neighborhood");
-                const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                  .reduce((result, current) => {
-                    if (current) {
-                      result.push(current);
-                    }
-                    return result;
-                  }, [])
-                  .join(", ");
-              })(),
-              coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
-            });
+            onSelect(
+              config.key,
+              {
+                ...formData[config.key],
+                [input]: value,
+                state: getLocation(location, "administrative_area_level_1") || "",
+                district: getLocation(location, "administrative_area_level_3") || "",
+                city: getLocation(location, "locality") || "",
+                locality: (() => {
+                  const plusCode = getLocation(location, "plus_code");
+                  const neighborhood = getLocation(location, "neighborhood");
+                  const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                  const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                  return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                    .reduce((result, current) => {
+                      if (current) {
+                        result.push(current);
+                      }
+                      return result;
+                    }, [])
+                    .join(", ");
+                })(),
+                coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
+              },
+              { shouldValidate: true }
+            );
             coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
         .catch((err) => {
-          onSelect(configKey, {
-            ...formData[configKey],
-            ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
-              res[curr] = "";
-              if (curr === "pincode") {
-                res[curr] = value;
-              }
-              return res;
-            }, {}),
-          });
+          onSelect(
+            configKey,
+            {
+              ...formData[configKey],
+              ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
+                res[curr] = "";
+                if (curr === "pincode") {
+                  res[curr] = value;
+                }
+                return res;
+              }, {}),
+            },
+            { shouldValidate: true }
+          );
         });
       return;
     } else if (input === "pincode") {
@@ -120,25 +128,34 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     }
     if (Array.isArray(input)) {
       if (!config?.isUserVerified) {
-        onSelect(config.key, {
-          ...formData[config.key],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        });
+        onSelect(
+          config.key,
+          {
+            ...formData[config.key],
+            ...input.reduce((res, curr) => {
+              res[curr] = value[curr];
+              return res;
+            }, {}),
+          },
+          { shouldValidate: true }
+        );
       }
       if (!config?.isUserVerified) {
-        onSelect(configKey, {
-          ...formData[configKey],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        });
+        onSelect(
+          configKey,
+          {
+            ...formData[configKey],
+            ...input.reduce((res, curr) => {
+              res[curr] = value[curr];
+              return res;
+            }, {}),
+          },
+          { shouldValidate: true }
+        );
       }
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
+      onSelect(config.key, { ...formData?.[config.key], [input]: value }, { shouldValidate: true });
     }
   }
 
