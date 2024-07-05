@@ -30,7 +30,9 @@ function JudgeScreen({ path }) {
               resultsTable: {
                 onClickRow: (props) => {
                   if (props?.original?.status === "CASE_ADMITTED") {
-                    history.push(`${location.pathname}/orders/orders-home?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}`);
+                    history.push(
+                      `${location.pathname}/orders/orders-home?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}`
+                    );
                   } else {
                     const searchParams = new URLSearchParams();
                     searchParams.set("caseId", props.original.id);
