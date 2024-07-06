@@ -21,16 +21,16 @@ function SelectParticipant({
   const onSubmitSchedule = (props) => {
     const isInvalid =
       Object.keys(selectedValues).length === 0 ||
-      !Object.values(selectedValues).every((value) => (value ? Object.values(value).some((innerVal) => innerVal) : true));
+      !Object.values(selectedValues).every((value) => (value ? Object.values(value).some((innerVal) => innerVal) : false));
     if (isInvalid) {
       setShowErrorToast(true);
     } else {
       handleScheduleCase({ ...scheduleHearingParams, participant: selectedValues });
     }
   };
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
-  }, []);
+  };
   useEffect(() => {
     const timer = setTimeout(() => {
       closeToast();

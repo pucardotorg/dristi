@@ -1,10 +1,10 @@
-import React from "react";
 import { InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
-import { judgeInboxConfig } from "./JudgeInboxConfig";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { judgeInboxConfig } from "./JudgeInboxConfig";
 const sectionsParentStyle = {
   height: "50%",
   display: "flex",
@@ -31,11 +31,18 @@ function JudgeScreen({ path }) {
               resultsTable: {
                 onClickRow: (props) => {
                   if (props?.original?.status === CaseWorkflowState.CASE_ADMITTED) {
+                    const searchParams = new URLSearchParams();
+                    console.log(props.original);
+                    // searchParams.set("filingNumber", props.original.filingNumber);
+                    // searchParams.set("caseId", props.original.id);
+                    // searchParams.set("cnrNumber", props.original.cnrNumber);
                     history.push(
-                      `${location.pathname}/orders/orders-home?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}`
+                      `${path}/admitted-case?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}&title=${props.original.caseTitle}`
                     );
                   } else if (props?.original?.status === CaseWorkflowState.PENDING_ADMISSION) {
                     const searchParams = new URLSearchParams();
+                    console.log(props.original);
+                    searchParams.set("filingNumber", props.original.filingNumber);
                     searchParams.set("caseId", props.original.id);
                     history.push(`${path}/admission?${searchParams.toString()}`);
                   } else {

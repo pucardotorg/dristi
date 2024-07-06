@@ -56,9 +56,9 @@ function AdmissionActionModal({
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [label, setLabel] = useState(false);
 
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
-  }, []);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
