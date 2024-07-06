@@ -10,6 +10,8 @@ import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
 import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
+import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
+import { ordersService } from "../../../../../orders/src/hooks/services";
 const fieldStyle = { marginRight: 0 };
 
 const defaultSearchValues = {
@@ -22,23 +24,22 @@ const AdmittedCases = ({ isJudge = true }) => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnrNumber");
+  const cnrNumber = searchParams.get("cnrNumber");
   const title = searchParams.get("title");
   const caseId = searchParams.get("caseId");
   const [show, setShow] = useState(false);
   const [comment, setComment] = useState("");
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const history = useHistory();
-
+  const showDownLoadCaseFIle = userRoles.includes("CITIZEN");
+  const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
   const docSetFunc = (docObj) => {
     setDocumentSubmission(docObj);
-    console.log(docObj);
     setShow(true);
   };
 
@@ -182,21 +183,18 @@ const AdmittedCases = ({ isJudge = true }) => {
               requestParam: {
                 ...tabConfig.apiDetails?.requestParam,
                 filingNumber: filingNumber,
-                cnrNumber: cnr,
+                cnrNumber,
                 applicationNumber: "",
               },
             },
           };
     });
   }, [filingNumber]);
-  console.log(configList);
   const newTabSearchConfig = {
     ...TabSearchconfig,
     TabSearchconfig: configList,
   };
-  console.log(newTabSearchConfig);
 
-  console.log(filingNumber);
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
   const [config, setConfig] = useState(newTabSearchConfig?.TabSearchconfig?.[0]); // initially setting first index config as default from jsonarray
   const [tabData, setTabData] = useState(
@@ -208,18 +206,53 @@ const AdmittedCases = ({ isJudge = true }) => {
     setDefaultValues(defaultSearchValues);
   }, []);
 
-  console.log(config, tabData, "Admitted Cases Config");
-
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false }))); //setting tab enable which is being clicked
     setConfig(newTabSearchConfig?.TabSearchconfig?.[n]); // as per tab number filtering the config
   };
 
-  const handleSelect = (option) => {
-    console.log(option);
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
+  const handleMakeSubmission = () => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+  };
+
+  const handleSelect = (option) => {
     if (option == "Generate Order / Home") {
-      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+      const reqbody = {
+        order: {
+          createdDate: formatDate(new Date()),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "Bail",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: CaseWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {},
+        },
+      };
+      ordersService
+        .createOrder(reqbody, { tenantId })
+        .then(() => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+        })
+        .catch((err) => {});
     }
   };
 
@@ -227,37 +260,35 @@ const AdmittedCases = ({ isJudge = true }) => {
     <React.Fragment>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
         <Header styles={{ fontSize: "32px", marginTop: "40px" }}>{t(title)}</Header>
-        <div>
-          {userRoles.includes("CITIZEN") && <Button variation={"outlined"} label={"Download Case File"} />}
-          {userRoles.includes("APPLICATION_CREATOR") && userRoles.includes("SUBMISSION_CREATOR") && (
-            <Button variation={"outlined"} label={"Download Case File"} />
-          )}
-          {isJudge && (
-            <div className="evidence-header-wrapper">
-              <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                <div className="evidence-actions">
-                  <ActionButton
-                    variation={"primary"}
-                    label={"Take Action"}
-                    icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                    isSuffix={true}
-                    onClick={handleTakeAction}
-                  ></ActionButton>
-                  {showMenu && (
-                    <Menu
-                      options={
-                        userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
-                          ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
-                          : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
-                      }
-                      onSelect={(option) => handleSelect(option)}
-                    ></Menu>
-                  )}
-                </div>
+        <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
+          {showDownLoadCaseFIle && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
+          {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
+        </div>
+        {isJudge && (
+          <div className="evidence-header-wrapper">
+            <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+              <div className="evidence-actions">
+                <ActionButton
+                  variation={"primary"}
+                  label={"Take Action"}
+                  icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                  isSuffix={true}
+                  onClick={handleTakeAction}
+                ></ActionButton>
+                {showMenu && (
+                  <Menu
+                    options={
+                      userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
+                        ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
+                        : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                    }
+                    onSelect={(option) => handleSelect(option)}
+                  ></Menu>
+                )}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div className="search-tabs-container">
         <div>
