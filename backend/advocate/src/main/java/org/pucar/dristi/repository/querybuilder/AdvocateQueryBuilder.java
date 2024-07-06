@@ -165,7 +165,7 @@ public class AdvocateQueryBuilder {
 
     private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
-            query.append(" WHERE ");
+            query.append(" WHERE ( ");
         } else {
             query.append(" AND ");
         }

@@ -172,7 +172,7 @@ public class AdvocateClerkQueryBuilder {
 
     private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
-            query.append(" WHERE ");
+            query.append(" WHERE ( ");
         }else{
             query.append(" AND ");
         }
