@@ -28,7 +28,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     >
       <div className="review-order-body-main">
         <div className="review-order-modal-list-div">
-          <div style={{ cursor: "pointer", background: "#E8E8E8" }}>
+          <div className="review-order-type-side-stepper">
             <h1> {order?.orderType}</h1>
           </div>
         </div>

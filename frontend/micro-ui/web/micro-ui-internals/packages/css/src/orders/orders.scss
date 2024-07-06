@@ -1,23 +1,39 @@
 .review-order-modal {
   &.popup-module {
-    width: 80vw;
-
+    width: 80%;
     .popup-module-main {
       .review-order-body-main {
         height: 70vh;
         display: flex;
-        gap: 5%;
-        margin-bottom: 20px;
-
         .review-order-modal-list-div {
-          cursor: pointer;
-          width: 25%;
+          width: 30%;
+          padding: 24px;
+          border-right: 1px #e8e8e8 solid;
+          .review-order-type-side-stepper {
+            padding: 14px 14px 10px 6px;
+            background-color: #e8e8e8;
+            h1 {
+              font-family: Lato;
+              font-size: 14px;
+              font-weight: 700;
+              line-height: 21px;
+              text-align: left;
+              color: #231f20;
+              word-wrap: break-word;
+              margin: 0px;
+            }
+          }
         }
-
         .review-order-modal-document-div {
-          width: 72%;
-          background-color: grey !important;
+          width: 70%;
+          padding: 24px;
         }
+      }
+      .popup-module-action-bar {
+        padding-top: 16px;
+        border-top: 1px #e8e8e8 solid;
+        padding-right: 16px;
+        margin: 0px 0px 16px 0px;
       }
     }
   }
@@ -25,18 +41,78 @@
 
 .add-signature-modal {
   &.popup-module {
-    width: 40vw;
-
     .popup-module-main {
       .add-signature-main-div {
-        height: 30vh;
+        padding: 24px;
         display: flex;
-        margin-bottom: 10px;
-
-        .note-div {
-          display: flex;
-
-          .icon-div {}
+        flex-direction: column;
+        gap: 24px;
+      }
+      .not-signed {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        h1 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #3d3c3c;
+        }
+      }
+      .sign-button-wrap {
+        display: flex;
+        .aadhar-sign-in {
+          background: none;
+          color: #007e7e;
+          box-shadow: none;
+          padding: 8px 24px;
+        }
+        .upload-signature {
+          background: none;
+          color: #007e7e;
+          border: none;
+          box-shadow: none;
+          padding: 8px 24px;
+        }
+      }
+      .donwload-submission {
+        display: flex;
+        gap: 8px;
+        h2 {
+          margin: 0px;
+        }
+        span {
+          a {
+            color: #007e7e;
+          }
+        }
+      }
+      .signed {
+        display: flex;
+        gap: 16px;
+        h1 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #3d3c3c;
+        }
+        h2 {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: center;
+          color: #00703c;
+          padding: 6px;
+          background-color: #e4f2e4;
+          border-radius: 999px;
         }
       }
     }
@@ -47,12 +123,160 @@
   &.popup-module {
     width: 40vw;
 
-    .popup-module-main {}
+    .popup-module-main {
+    }
   }
 }
 
-.generate-orders {
-  .label-field-pair {
-    display: block;
+.order-submission {
+  .bread-crumb {
+    margin: 0px;
+    padding: 12px 40px;
+    gap: 8px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    border-top: 1px #e8e8e8 solid;
+    border-bottom: 0.5px #edeeef solid;
+    .li.bread-crumb--item {
+      margin-left: 0px;
+      a {
+        margin-right: 8px;
+      }
+    }
+  }
+  .generate-orders {
+    display: flex;
+    gap: 40px;
+  }
+  .orders-list-main {
+    width: 25%;
+    padding: 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    .add-order-button {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      color: #007e7e;
+      cursor: pointer;
+      width: 100%;
+    }
+  }
+  .order-item-main {
+    width: 100%;
+    padding: 12px 8px;
+    display: flex;
+    gap: 8px;
+    border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    &:hover,
+    &.selected-order {
+      background-color: #e8e8e8;
+    }
+    h1 {
+      margin: 0px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #3d3c3c;
+    }
+    span {
+      height: 16px;
+    }
+  }
+  .view-order {
+    padding: 24px;
+    width: 60%;
+    .order-header {
+      font-family: Roboto;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 46.88px;
+      text-align: left;
+      color: #0a0a0a;
+      margin-bottom: 32px;
+    }
+    .employeeCard {
+      margin-bottom: 74px !important;
+    }
+    .order-type-form-composer {
+      width: 100%;
+      box-shadow: none;
+      margin: 0px;
+      padding: 0px;
+      .label-field-pair {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: start;
+        margin-bottom: 24px;
+        .card-label {
+          width: 100%;
+          margin: 0px !important;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+        .field {
+          width: 100%;
+          .employee-select-wrap {
+            margin-bottom: 0px;
+            #jk-dropdown-unique {
+              margin-top: 40px !important;
+            }
+          }
+          .cell-text,
+          .custom-checkbox-emp {
+            margin: 0px;
+          }
+          .checkbox-wrap,
+          textarea,
+          input {
+            margin-bottom: 0px;
+          }
+        }
+      }
+      .card-label-error {
+        margin-left: 0px !important;
+      }
+    }
+    .order-type-action {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      box-shadow: none;
+      border-top: 1px #bbbbbd solid;
+      padding: 16px 24px;
+      .submit-bar {
+        width: fit-content;
+        padding: 8px 24px;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 17.75px;
+          text-align: center;
+          color: #ffffff;
+        }
+      }
+      .previous-button {
+        margin: 0px;
+        padding: 8px 24px;
+      }
+    }
   }
 }

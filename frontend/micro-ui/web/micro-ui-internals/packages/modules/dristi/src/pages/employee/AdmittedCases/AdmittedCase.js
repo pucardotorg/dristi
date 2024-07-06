@@ -10,6 +10,8 @@ import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
 import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
+import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
+import { ordersService } from "../../../../../orders/src/hooks/services";
 const fieldStyle = { marginRight: 0 };
 
 const defaultSearchValues = {
@@ -22,7 +24,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnrNumber");
+  const cnrNumber = searchParams.get("cnrNumber");
   const title = searchParams.get("title");
   const caseId = searchParams.get("caseId");
   const [show, setShow] = useState(false);
@@ -38,7 +40,6 @@ const AdmittedCases = ({ isJudge = true }) => {
 
   const docSetFunc = (docObj) => {
     setDocumentSubmission(docObj);
-    console.log(docObj);
     setShow(true);
   };
 
@@ -182,21 +183,18 @@ const AdmittedCases = ({ isJudge = true }) => {
               requestParam: {
                 ...tabConfig.apiDetails?.requestParam,
                 filingNumber: filingNumber,
-                cnrNumber: cnr,
+                cnrNumber,
                 applicationNumber: "",
               },
             },
           };
     });
   }, [filingNumber]);
-  console.log(configList);
   const newTabSearchConfig = {
     ...TabSearchconfig,
     TabSearchconfig: configList,
   };
-  console.log(newTabSearchConfig);
 
-  console.log(filingNumber);
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
   const [config, setConfig] = useState(newTabSearchConfig?.TabSearchconfig?.[0]); // initially setting first index config as default from jsonarray
   const [tabData, setTabData] = useState(
@@ -208,18 +206,49 @@ const AdmittedCases = ({ isJudge = true }) => {
     setDefaultValues(defaultSearchValues);
   }, []);
 
-  console.log(config, tabData, "Admitted Cases Config");
-
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false }))); //setting tab enable which is being clicked
     setConfig(newTabSearchConfig?.TabSearchconfig?.[n]); // as per tab number filtering the config
   };
 
-  const handleSelect = (option) => {
-    console.log(option);
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
+  const handleSelect = (option) => {
     if (option == "Generate Order / Home") {
-      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+      const reqbody = {
+        order: {
+          createdDate: formatDate(new Date()),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "Bail",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: CaseWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {},
+        },
+      };
+      ordersService
+        .createOrder(reqbody, { tenantId })
+        .then(() => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+        })
+        .catch((err) => {});
     }
   };
 
