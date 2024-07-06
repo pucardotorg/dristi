@@ -280,7 +280,10 @@ const GenerateOrders = () => {
     handleSaveDraft();
     setShowReviewModal(true);
   };
-
+  const handleGoBackSignatureModal = () => {
+    setShowsignatureModal(false);
+    setShowReviewModal(true);
+  };
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
@@ -339,7 +342,9 @@ const GenerateOrders = () => {
           handleSaveDraft={handleSaveDraft}
         />
       )}
-      {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
+      {showsignatureModal && (
+        <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
+      )}
       {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );

@@ -4,7 +4,7 @@ import Modal from "../../../dristi/src/components/Modal";
 import { Button } from "@egovernments/digit-ui-react-components";
 import { FileUploadIcon } from "../../../dristi/src/icons/svgIndex";
 
-function OrderSignatureModal({ t, order, handleIssueOrder }) {
+function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignatureModal }) {
   const [isSigned, setIsSigned] = useState(false);
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -18,14 +18,12 @@ function OrderSignatureModal({ t, order, handleIssueOrder }) {
     );
   };
 
-  const handleCloseSignaturePopup = () => {};
-
   return (
     <Modal
       headerBarMain={<Heading label={t("ADD_SIGNATURE")} />}
-      headerBarEnd={<CloseBtn onClick={() => handleCloseSignaturePopup()} />}
+      headerBarEnd={<CloseBtn onClick={handleGoBackSignatureModal} />}
       actionCancelLabel={t("BACK")}
-      actionCancelOnSubmit={() => handleCloseSignaturePopup()}
+      actionCancelOnSubmit={handleGoBackSignatureModal}
       actionSaveLabel={t("ISSUE_ORDER")}
       isDisabled={!isSigned}
       actionSaveOnSubmit={() => {
