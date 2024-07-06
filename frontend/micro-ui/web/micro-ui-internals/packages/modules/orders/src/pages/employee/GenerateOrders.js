@@ -312,7 +312,7 @@ const GenerateOrders = () => {
         </React.Fragment>
       </div>
       <div className="view-order">
-        {orderList?.length > 0 && <Header className="order-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
+        {orderList?.length > 0 && <Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
             className={"generate-orders"}
@@ -331,7 +331,14 @@ const GenerateOrders = () => {
         )}
       </div>
       {deleteOrderIndex !== null && (
-        <OrderDeleteModal t={t} deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
+        <div className="delete-order-warning-modal">
+          <OrderDeleteModal
+            t={t}
+            deleteOrderIndex={deleteOrderIndex}
+            setDeleteOrderIndex={setDeleteOrderIndex}
+            handleDeleteOrder={handleDeleteOrder}
+          />
+        </div>
       )}
       {showReviewModal && (
         <OrderReviewModal
