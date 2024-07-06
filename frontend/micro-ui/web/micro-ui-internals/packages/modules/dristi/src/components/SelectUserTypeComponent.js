@@ -56,8 +56,8 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         onSelect(config.key, { ...formData[config.key], [name]: value });
         return;
       }
-      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
-    } else onSelect(config.key, { ...formData[config.key], [name]: value });
+      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields }, { shouldValidate: true });
+    } else onSelect(config.key, { ...formData[config.key], [name]: value }, { shouldValidate: true });
 
     // if (
     //   value &&
@@ -159,21 +159,22 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
 
             {showDependentFields && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
-                  {t(input.label) +
-                    `${
-                      input?.hasMobileNo
-                        ? formData[config.key]?.[input?.mobileNoKey]
-                          ? input?.isMobileSecret
-                            ? input?.mobileCode
-                              ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                              : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                {!config?.disableScrutinyHeader && (
+                  <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
+                    {t(input.label) +
+                      `${
+                        input?.hasMobileNo
+                          ? formData[config.key]?.[input?.mobileNoKey]
+                            ? input?.isMobileSecret
+                              ? input?.mobileCode
+                                ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                                : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                              : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                            : ""
                           : ""
-                        : ""
-                    }`}
-                </CardLabel>
-
+                      }`}
+                  </CardLabel>
+                )}
                 <div className="field">
                   {["radioButton", "dropdown"].includes(input?.type) && (
                     <CustomDropdown

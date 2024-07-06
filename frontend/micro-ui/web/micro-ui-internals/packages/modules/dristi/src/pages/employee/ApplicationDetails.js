@@ -155,7 +155,11 @@ const ApplicationDetails = ({ location, match }) => {
         toast.error(t("ES_API_ERROR"));
       })
       .then(() => {
-        history.push(`/digit-ui/employee/dristi/registration-requests`);
+        history.push(
+          userType === "ADVOCATE_CLERK"
+            ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
+            : `/digit-ui/employee/dristi/registration-requests?type=advocate`
+        );
       });
   }
 

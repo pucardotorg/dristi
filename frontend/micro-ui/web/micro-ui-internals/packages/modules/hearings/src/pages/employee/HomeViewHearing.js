@@ -29,7 +29,7 @@ const HomeViewHearing = () => {
   };
   const handleNavigate = () => {
     const contextPath = window?.contextPath || ''; // Adjust as per your context path logic
-    history.push(`/${contextPath}/employee/hearings/view-hearing`);
+    history.push(`/${contextPath}/employee/hearings/calendar`);
   };
   return (
     <div className="home-view-hearing-container">

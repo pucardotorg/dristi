@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Switch, useRouteMatch } from "react-router-dom";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { useToast } from "../../components/Toast/useToast";
+import AdmittedCases from "../employee/AdmittedCases/AdmittedCase";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
@@ -119,7 +120,7 @@ const App = ({ stateCode, tenantId }) => {
     <div className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {!hideBack && !(location.pathname.includes("/login") || individualId) && (
+          {!hideBack && !(location.pathname.includes("/login") || location.pathname.includes("/registration/user-name") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>
@@ -142,12 +143,14 @@ const App = ({ stateCode, tenantId }) => {
               <FileCase t={t}></FileCase>
             </PrivateRoute>
           </div>
+
+          <PrivateRoute exact path={`${path}/home/admitted-case`} component={(props) => <AdmittedCases isJudge={false} />} />
           <div
             className={
               location.pathname.includes("/response") ||
-                location.pathname.includes("/login") ||
-                location.pathname.includes("/registration") ||
-                location.pathname.endsWith("/home")
+              location.pathname.includes("/login") ||
+              location.pathname.includes("/registration") ||
+              location.pathname.endsWith("/home")
                 ? `user-registration`
                 : ""
             }

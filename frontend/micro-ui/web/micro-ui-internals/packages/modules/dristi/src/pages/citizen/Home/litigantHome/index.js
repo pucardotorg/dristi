@@ -1,10 +1,11 @@
 import { Button, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import JoinCaseHome from "../../../../../../cases/src/pages/employee/JoinCaseHome";
 import { userTypeOptions } from "../../registration/config";
+import { litigantInboxConfig } from "./litigantInboxConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -75,19 +76,14 @@ function Home() {
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
   }
+
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <Button
-              variation={"secondary"}
-              className={"secondary-button-selector"}
-              label={t("JOIN_A_CASE")}
-              labelClassName={"secondary-label-selector"}
-              onButtonClick={() => {}}
-            />
+            <JoinCaseHome t={t} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}
@@ -108,7 +104,7 @@ function Home() {
                   ? {
                       searchKey: "filingNumber",
                       defaultFields: true,
-                      "advocateId ": advocateId,
+                      advocateId: advocateId,
                     }
                   : {
                       searchKey: "filingNumber",
@@ -120,7 +116,11 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
+                  props?.original?.status === "CASE_ADMITTED"
+                    ? history.push(
+                        `${path}/admitted-case?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}&title=${props.original.caseTitle}`
+                      )
+                    : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
             }}

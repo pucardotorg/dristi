@@ -15,7 +15,7 @@ function PaymentInbox() {
   const { t } = useTranslation();
   return (
     <React.Fragment>
-      <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
+      <div className="home-screen-wrapper payment-inbox" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
         <div className="header-class" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="header">{t("CS_PENDING_PAYMENT_HEADER_TEXT")}</div>
           <div className="sub-header">{t("CS_PENDING_PAYMENT_SUBHEADER_TEXT")}</div>

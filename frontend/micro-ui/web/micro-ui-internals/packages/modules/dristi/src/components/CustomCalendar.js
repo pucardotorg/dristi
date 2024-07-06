@@ -2,12 +2,11 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Calendar } from "react-date-range";
 import { CalendarLeftArrow, CalendarRightArrow } from "../icons/svgIndex";
 import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
-import useGetHearings from "../hooks/dristi/useGetHearings";
 
 function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
-  const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
+  const { data: hearingResponse, refetch: refetch } = Digit.Hooks.hearings.useGetHearings(
+    { criteria: { tenantId }, tenantId },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
@@ -28,6 +27,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   const hearingCounts = useMemo(() => {
     const counts = {};
+    if (!hearingDetails) return counts;
     const filteredHearings = hearingDetails.filter((hearing) => {
       const hearingDate = new Date(hearing.startTime);
       return hearingDate.getMonth() === currentMonth.getMonth() && hearingDate.getFullYear() === currentMonth.getFullYear();
@@ -81,17 +81,19 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   return (
     <div>
-      <Calendar
-        date={selectedCustomDate}
-        onChange={handleSelect}
-        // minDate={minDate}
-        maxDate={maxDate}
-        dayContentRenderer={renderCustomDay}
-        navigatorRenderer={navigatorRenderer}
-        onShownDateChange={(date) => {
-          setCurrentMonth(date);
-        }}
-      />
+      <div>
+        <Calendar
+          date={selectedCustomDate}
+          onChange={handleSelect}
+          // minDate={minDate}
+          maxDate={maxDate}
+          dayContentRenderer={renderCustomDay}
+          navigatorRenderer={navigatorRenderer}
+          onShownDateChange={(date) => {
+            setCurrentMonth(date);
+          }}
+        />
+      </div>
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { TextInput } from "@egovernments/digit-ui-react-components";
-import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import RenderFileCard from "./RenderFileCard";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
@@ -8,6 +7,7 @@ import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import { CustomAddIcon } from "../icons/svgIndex";
 import Button from "./Button";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
@@ -113,7 +113,9 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                 <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
                 <span
                   onClick={() => {
-                    handleDeleteDocument(index);
+                    if (!config?.disable) {
+                      handleDeleteDocument(index);
+                    }
                   }}
                   style={{ cursor: "pointer" }}
                 >
@@ -134,7 +136,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                           onChange={(e) => {
                             handleOnTextChange(e.target.value, input, index);
                           }}
-                          disable={input?.isDisabled}
+                          disable={input?.isDisabled || config?.disable}
                           defaultValue={undefined}
                           {...input?.validation}
                         />
@@ -162,6 +164,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                             t={t}
                             uploadErrorInfo={fileErrors}
                             input={input}
+                            disableUploadDelete={config?.disable}
                           />
                         )}
                         {showFileUploader && (
@@ -174,6 +177,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                               types={input?.fileTypes}
                               children={dragDropJSX}
                               key={input?.name}
+                              // disabled={config?.disable}
                             />
                             <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
                           </div>
@@ -187,6 +191,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
           );
         })}
       <Button
+        isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
         variation="secondary"
         onButtonClick={handleAddDocument}
         className="add-new-document"
