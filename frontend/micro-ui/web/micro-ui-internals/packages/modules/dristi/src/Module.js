@@ -45,6 +45,7 @@ import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 import CustomSortComponent from "./components/CustomSortComponent";
 import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import Button from "./components/Button";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -113,6 +114,7 @@ const componentsToRegister = {
   DOCVIEWERWRAPPER: DocViewerWrapper,
   CUSTOMERRORTOOLTIP: CustomErrorTooltip,
   CustomSortComponent,
+  CustomButton: Button,
 };
 
 const overrideHooks = () => {

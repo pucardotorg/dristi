@@ -13,10 +13,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
-import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
+import { AdvocateIcon, RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
-import { first } from "lodash";
+import { useTranslation } from "react-i18next";
 
 const CloseBtn = (props) => {
   return (
@@ -36,7 +36,6 @@ const Heading = (props) => {
 const JoinHomeLocalisation = {
   ENTER_CASE_NUMBER: "ENTER_CASE_NUMBER",
   INVALID_CASE_FILING_NUMBER: "INVALID_CASE_FILING_NUMBER",
-
   CONFIRM_JOIN_CASE: "CONFIRM_JOIN_CASE",
   PLEASE_NOTE: "PLEASE_NOTE",
   SIX_DIGIT_CODE_INFO: "SIX_DIGIT_CODE_INFO",
@@ -54,7 +53,6 @@ const JoinHomeLocalisation = {
   REPRESENT_SELF: "REPRESENT_SELF",
   YES: "YES",
   NO_HAVE_ADVOCATE: "NO_HAVE_ADVOCATE",
-
   SUBMISSION_NECESSARY: "SUBMISSION_NECESSARY",
   FILL_FORM_VAKALATNAMA: "FILL_FORM_VAKALATNAMA",
   PARTY_PARTIES: "PARTY_PARTIES",
@@ -66,22 +64,22 @@ const JoinHomeLocalisation = {
   CONFIRM_ATTENDANCE: "CONFIRM_ATTENDANCE",
   JOINING_THIS_CASE_AS: "JOINING_THIS_CASE_AS",
   SKIP_LATER: "SKIP_LATER",
-  CASE_NO_ADMITTED_STATUS: "The above case doesn't have admitted status",
-  INVALID_ACCESS_CODE_MESSAGE: "Access code is invalid/incorrect",
-  AFFIDAVIT_MINIMUM_CHAR_MESSAGE: "Enter atleast 20 characters",
-  FILLING_NUMBER_FORMATE_TEXT: `Filing Number Format:`,
-  FILLING_NUMBER_FORMATE_TEXT_VALUE: "F-<StatuteSection>-<YYYY>-<7 digit sequence number>",
-  INVALID_CASE_INFO_TEXT: "If you think the entered number is correct, please contact",
-  NYAYA_MITRA_TEXT: "Nyaya Mitra",
-  FOR_SUPPORT_TEXT: "for support",
-  COMPLAINANTS_TEXT: "Complainants",
-  RESPONDENTS_TEXT: "Respondents",
-  WHICH_PARTY_AFFILIATED: "Which party are you affiliated with in this case?",
-  ADD_ADVOCATE_LATER: "You can always add an Advocate at a later point in time during the course of this Case. Until then you will be considered a",
-  PARTY_IN_PERSON_TEXT: "Party in Person",
-  PRIMARY_ADD_SUPPORTING_ADVOCATE: "Only primary advocates can add supporting advocates",
-  CONTACT_PRIMARTY_ADVOCATE: "Please contact the primary advocate on this case to get yourself added",
-  REPRESENT_SELF_PARTY: "This submission is necessary if you choose to represent yourself",
+  CASE_NO_ADMITTED_STATUS: "CASE_NO_ADMITTED_STATUS",
+  INVALID_ACCESS_CODE_MESSAGE: "INVALID_ACCESS_CODE_MESSAGE",
+  AFFIDAVIT_MINIMUM_CHAR_MESSAGE: "AFFIDAVIT_MINIMUM_CHAR_MESSAGE",
+  FILLING_NUMBER_FORMATE_TEXT: `FILLING_NUMBER_FORMATE_TEXT`,
+  FILLING_NUMBER_FORMATE_TEXT_VALUE: "FILLING_NUMBER_FORMATE_TEXT_VALUE",
+  INVALID_CASE_INFO_TEXT: "INVALID_CASE_INFO_TEXT",
+  NYAYA_MITRA_TEXT: "NYAYA_MITRA_TEXT",
+  FOR_SUPPORT_TEXT: "FOR_SUPPORT_TEXT",
+  COMPLAINANTS_TEXT: "COMPLAINANTS_TEXT",
+  RESPONDENTS_TEXT: "RESPONDENTS_TEXT",
+  WHICH_PARTY_AFFILIATED: "WHICH_PARTY_AFFILIATED",
+  ADD_ADVOCATE_LATER: "ADD_ADVOCATE_LATER",
+  PARTY_IN_PERSON_TEXT: "PARTY_IN_PERSON_TEXT",
+  PRIMARY_ADD_SUPPORTING_ADVOCATE: "PRIMARY_ADD_SUPPORTING_ADVOCATE",
+  CONTACT_PRIMARTY_ADVOCATE: "CONTACT_PRIMARTY_ADVOCATE",
+  REPRESENT_SELF_PARTY: "REPRESENT_SELF_PARTY",
 };
 
 const barRegistrationSerachConfig = [
@@ -186,23 +184,26 @@ const barRegistrationSerachConfig = [
   },
 ];
 
-const JoinCaseHome = ({ t }) => {
+const JoinCaseHome = () => {
+  const { t } = useTranslation();
+
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
   const SelectCustomDragDrop = window?.Digit?.ComponentRegistryService?.getComponent("SelectCustomDragDrop");
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMERRORTOOLTIP");
+  const CustomButton = window?.Digit?.ComponentRegistryService?.getComponent("CustomButton");
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(0);
   const [caseNumber, setCaseNumber] = useState("");
   const [caseDetails, setCaseDetails] = useState({});
+  const [searchCaseResult, setSearchCaseResult] = useState({});
   const [userType, setUserType] = useState("");
   const [barRegNumber, setBarRegNumber] = useState("");
-  const [advocateName, setAdvocateName] = useState("");
   const [barDetails, setBarDetails] = useState([]);
-  const [selectedParty, setSelectedParty] = useState("");
+  const [selectedParty, setSelectedParty] = useState({});
   const [representingYourself, setRepresentingYourself] = useState("");
   const [roleOfNewAdvocate, setRoleOfNewAdvocate] = useState("");
   const [parties, setParties] = useState([]);
@@ -224,6 +225,10 @@ const JoinCaseHome = ({ t }) => {
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
   const [individualId, setIndividualId] = useState("");
   const [name, setName] = useState({});
+  const [isSignedAdvocate, setIsSignedAdvocate] = useState(false);
+  const [isSignedParty, setIsSignedParty] = useState(false);
+  const [complainantList, setComplainantList] = useState([]);
+  const [respondentList, setRespondentList] = useState([]);
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -254,33 +259,34 @@ const JoinCaseHome = ({ t }) => {
     if (!isEqual(formData, advocateDetailForm)) {
       setAdvocateDetailForm(formData);
     }
-    setIsDisabled(false);
   };
 
   useEffect(() => {
+    if (step === 0 && !caseNumber) {
+      setErrors({
+        ...errors,
+        caseNumber: undefined,
+      });
+    }
     if (step === 1) {
       if (
-        (userType && userType === "Litigant" && selectedParty && representingYourself) ||
-        (userType && userType === "Advocate" && selectedParty && barRegNumber === "") ||
-        (userType && userType === "Advocate" && selectedParty && barRegNumber && roleOfNewAdvocate)
+        (userType && userType === "Litigant" && selectedParty?.label && representingYourself) ||
+        (userType && userType === "Advocate" && selectedParty?.label && barRegNumber === "") ||
+        (userType && userType === "Advocate" && selectedParty?.label && barRegNumber && roleOfNewAdvocate)
       ) {
         setIsDisabled(false);
       } else {
         setIsDisabled(true);
       }
     } else if (step === 2) {
-      if (userType === "Litigant" && representingYourself !== "Yes" && barRegNumber) {
-        if (barRegNumber === "") {
-          setAdvocateDetail({});
-          setFormData({});
-          setBarDetails([]);
-          setIsDisabled(true);
-        } else {
+      if (userType === "Litigant" && representingYourself !== "Yes") {
+        if (advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber && advocateDetailForm?.vakalatnamaFileUpload) {
           setIsDisabled(false);
+        } else {
+          setIsDisabled(true);
         }
-      }
-      if (userType === "Litigant" && representingYourself === "Yes" && affidavitText) {
-        if (affidavitText?.length > 20) {
+      } else if (userType === "Litigant" && representingYourself === "Yes" && affidavitText) {
+        if (affidavitText?.length > 1) {
           setIsDisabled(false);
           setErrors({
             ...errors,
@@ -301,35 +307,38 @@ const JoinCaseHome = ({ t }) => {
     if (step !== 5) {
       setSuccess(false);
     }
-  }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties]);
+  }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
 
   const serarchCase = async (caseNumber) => {
-    const response = await DRISTIService.searchCaseService(
-      {
-        criteria: [
-          {
-            filingNumber: caseNumber,
-          },
-        ],
-        tenantId,
-      },
-      {}
-    );
-    if (response?.criteria[0]?.responseList?.length === 1) {
-      setIsDisabled(false);
-      setErrors({
-        ...errors,
-        caseNumber: undefined,
-      });
-    } else {
-      setIsDisabled(true);
-      if (caseNumber)
+    if (caseNumber) {
+      const response = await DRISTIService.searchCaseService(
+        {
+          criteria: [
+            {
+              filingNumber: caseNumber,
+            },
+          ],
+          tenantId,
+        },
+        {}
+      );
+      if (response?.criteria[0]?.responseList?.length === 1) {
+        setIsDisabled(false);
+        setSearchCaseResult(response?.criteria[0]?.responseList[0]);
         setErrors({
           ...errors,
-          caseNumber: {
-            message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
-          },
+          caseNumber: undefined,
         });
+      } else {
+        setIsDisabled(true);
+        if (caseNumber)
+          setErrors({
+            ...errors,
+            caseNumber: {
+              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
+            },
+          });
+      }
     }
   };
 
@@ -351,7 +360,6 @@ const JoinCaseHome = ({ t }) => {
       "",
       userInfo?.uuid && isUserLoggedIn
     );
-    console.log("individualData", individualData);
     setIndividualId(individualData?.Individual?.[0]?.individualId);
     setName(individualData?.Individual?.[0]?.name);
 
@@ -372,6 +380,7 @@ const JoinCaseHome = ({ t }) => {
       setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
       setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
       setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+      setAdvocateDetailForm(advocateResponse?.advocates[0]?.responseList[0]);
       setBarDetails([
         {
           key: "CASE_NUMBER",
@@ -396,6 +405,13 @@ const JoinCaseHome = ({ t }) => {
     fetchBasicUserInfo();
   }, [show]);
 
+  const paymentCalculation = [
+    { key: "Amount Due", value: 600, currency: "Rs" },
+    { key: "Court Fees", value: 400, currency: "Rs" },
+    { key: "Advocate Fees", value: 1000, currency: "Rs" },
+    { key: "Total Fees", value: 2000, currency: "Rs", isTotalFee: true },
+  ];
+
   const modalItem = [
     // 0
     {
@@ -405,7 +421,6 @@ const JoinCaseHome = ({ t }) => {
             <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CASE_NUMBER)}`}</CardLabel>
             <div style={{ width: "100%" }}>
               <TextInput
-                // t={t}
                 style={{ width: "100%" }}
                 type={"text"}
                 name="caseNumber"
@@ -424,11 +439,10 @@ const JoinCaseHome = ({ t }) => {
                     setCaseNumber("");
                   }
                 }}
-                // disable={editScreen}
               />
             </div>
             <p style={{ fontSize: "12px" }}>
-              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT_VALUE)}
+              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"F-<StatuteSection>-<YYYY>-<7 digit sequence number>"}
             </p>
           </LabelFieldPair>
           {errors?.caseNumber && (
@@ -504,7 +518,7 @@ const JoinCaseHome = ({ t }) => {
               selectedOption={userType}
               onSelect={(value) => {
                 setUserType(value);
-                setSelectedParty("");
+                setSelectedParty({});
                 setRepresentingYourself("");
                 setRoleOfNewAdvocate("");
               }}
@@ -528,27 +542,25 @@ const JoinCaseHome = ({ t }) => {
                     setRoleOfNewAdvocate("");
                     setRepresentingYourself("");
                   }}
-                  options={[
-                    `${caseDetails?.additionalDetails?.complainantDetails?.formdata
-                      ?.map((data) => `${data?.data?.firstName}${data?.data?.middleName && " " + data?.data?.middleName} ${data?.data?.lastName}`)
-                      .join(", ")}  ${t(JoinHomeLocalisation.COMPLAINANT_BRACK)}`,
-                    `${caseDetails?.additionalDetails?.respondentDetails?.formdata
-                      ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
-                      .join(", ")} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-                  ]}
+                  optionsKey={"label"}
+                  options={userType === "Litigant" ? respondentList : [...complainantList, ...respondentList]}
                 />
               </LabelFieldPair>
             </React.Fragment>
           )}
-          {selectedParty !== "" && barRegNumber !== "" && userType === "Advocate" && (
+          {selectedParty?.label && barRegNumber !== "" && userType === "Advocate" && (
             <React.Fragment>
               <hr className="horizontal-line" />
               <InfoCard
                 variant={"warning"}
                 label={t(JoinHomeLocalisation.WARNING)}
-                additionalElements={{}}
+                additionalElements={[
+                  <p>
+                    {t(JoinHomeLocalisation.FOR_THE_SELECTED)} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
+                    {t(JoinHomeLocalisation.ALREADY_AN_ADVOCATE)}
+                  </p>,
+                ]}
                 inline
-                text={t(`${t(JoinHomeLocalisation.FOR_THE_SELECTED)} ${selectedParty}, ${t(JoinHomeLocalisation.ALREADY_AN_ADVOCATE)}`)}
                 textStyle={{}}
                 className={`custom-info-card warning`}
               />
@@ -566,7 +578,7 @@ const JoinCaseHome = ({ t }) => {
               </LabelFieldPair>
             </React.Fragment>
           )}
-          {selectedParty !== "" && userType === "Litigant" && (
+          {selectedParty?.label !== "" && userType === "Litigant" && (
             <React.Fragment>
               <hr className="horizontal-line" />
               <LabelFieldPair className="case-label-field-pair">
@@ -637,7 +649,7 @@ const JoinCaseHome = ({ t }) => {
                     ? [
                         <p>
                           {t(JoinHomeLocalisation.REPRESENT_SELF_PARTY)}{" "}
-                          <span style={{ fontWeight: "bold" }}>{`(${JoinHomeLocalisation.PARTY_IN_PERSON_TEXT})`}</span>
+                          <span style={{ fontWeight: "bold" }}>{`(${t(JoinHomeLocalisation.PARTY_IN_PERSON_TEXT)})`}</span>
                         </p>,
                       ]
                     : {}
@@ -682,9 +694,9 @@ const JoinCaseHome = ({ t }) => {
                       <Dropdown
                         t={t}
                         option={parties}
-                        selected={parties.find((value) => value.title === party)}
-                        optionKey={"title"}
-                        select={(e) => setParty(e.title)}
+                        selected={party}
+                        optionKey={"label"}
+                        select={(e) => setParty(e)}
                         freeze={true}
                         disable={true}
                       />
@@ -729,7 +741,9 @@ const JoinCaseHome = ({ t }) => {
                       <textarea
                         value={affidavitText}
                         onChange={(e) => {
-                          setAffidavitText(e.target.value);
+                          let input = e.target.value;
+                          input = input.trim().replace(/\s+/g, " ");
+                          setAffidavitText(input);
                         }}
                         rows={5}
                         className="custom-textarea-style"
@@ -767,6 +781,102 @@ const JoinCaseHome = ({ t }) => {
     // 4
     {
       modalMain: (
+        <div className="e-sign-page">
+          <InfoCard
+            variant={"default"}
+            label={t(JoinHomeLocalisation.PLEASE_NOTE)}
+            additionalElements={{}}
+            inline
+            text={"This vakalatnama will formally be added to the case after all relevant parties have added their signatures."}
+            textStyle={{}}
+            className={`custom-info-card`}
+          />
+          <div className="select-signature-main">
+            <div className="select-signature-header">
+              <h1 className="signature-label">{"1. Advocate Signature"}</h1>
+            </div>
+            <div className="select-signature-list">
+              <div className="signature-body">
+                <div className="icon-and-title">
+                  <AdvocateIcon />
+                  <h3 className="signature-title">{advocateDetailForm?.additionalDetails?.username}</h3>
+                </div>
+                {isSignedAdvocate && <span className="signed">{t("SIGNED")}</span>}
+                {!isSignedAdvocate && (
+                  <div className="signed-button-group">
+                    <CustomButton
+                      label={"E-Sign"}
+                      onButtonClick={() => {
+                        setIsDisabled(false);
+                        setIsSignedAdvocate(true);
+                      }}
+                      className={"aadhar-sign-in"}
+                      labelClassName={"aadhar-sign-in"}
+                    ></CustomButton>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="select-signature-main" key={"advocate"}>
+            <div className="select-signature-header">
+              <h1 className="signature-label">{"2. Party Signature"}</h1>
+            </div>
+            <div className="select-signature-list" key={"party"}>
+              <div className="signature-body">
+                <div className="icon-and-title">
+                  <AdvocateIcon />
+                  <h3 className="signature-title">{selectedParty?.label}</h3>
+                </div>
+                {isSignedParty && <span className="signed">{t("SIGNED")}</span>}
+                {!isSignedParty && (
+                  <div className="signed-button-group">
+                    <CustomButton
+                      label={"E-Sign"}
+                      onButtonClick={() => {
+                        setIsSignedParty(true);
+                      }}
+                      className={"aadhar-sign-in"}
+                      labelClassName={"aadhar-sign-in"}
+                    ></CustomButton>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    // 5
+    {
+      modalMain: (
+        <div className="payment-due-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+          <div className="payment-calculator-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+            {paymentCalculation.map((item) => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderTop: item.isTotalFee && "1px solid #BBBBBD",
+                  fontSize: item.isTotalFee && "16px",
+                  fontWeight: item.isTotalFee && "700",
+                  paddingTop: item.isTotalFee && "12px",
+                }}
+              >
+                <span>{item.key}</span>
+                <span>
+                  {item.currency} {item.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    // 6
+    {
+      modalMain: (
         <div className="enter-validation-code">
           <InfoCard
             variant={"default"}
@@ -792,6 +902,7 @@ const JoinCaseHome = ({ t }) => {
                 onChange={(e) => {
                   let val = e.target.value;
                   val = val.substring(0, 6);
+                  val = val.replace(/\D/g, "");
                   setValidationCode(val);
                   if (val.length === 6) {
                     setIsDisabled(false);
@@ -813,7 +924,7 @@ const JoinCaseHome = ({ t }) => {
         </div>
       ),
     },
-    // 5
+    // 7
     {
       modalMain: (
         <div className="join-a-case-success">
@@ -870,7 +981,7 @@ const JoinCaseHome = ({ t }) => {
   ];
 
   useEffect(() => {
-    if (caseDetails?.caseCategory)
+    if (caseDetails?.caseCategory) {
       setCaseInfo([
         {
           key: "CASE_CATEGORY",
@@ -889,6 +1000,22 @@ const JoinCaseHome = ({ t }) => {
           value: caseDetails?.stage,
         },
       ]);
+
+      setComplainantList(
+        caseDetails?.additionalDetails?.complainantDetails?.formdata?.map((data) => ({
+          ...data?.data,
+          label: `${data?.data?.firstName} ${data?.data?.middleName && data?.data?.middleName + " "}${data?.data?.lastName} ${t(
+            JoinHomeLocalisation.COMPLAINANT_BRACK
+          )}`,
+        }))
+      );
+      setRespondentList(
+        caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((data) => ({
+          ...data?.data,
+          label: `${data?.data?.respondentFirstName} ${data?.data?.respondentFirstName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+        }))
+      );
+    }
   }, [caseDetails]);
 
   const closeModal = () => {
@@ -896,7 +1023,6 @@ const JoinCaseHome = ({ t }) => {
     setCaseDetails({});
     setUserType("");
     setBarRegNumber("");
-    setAdvocateName("");
     setBarDetails([]);
     setSelectedParty("");
     setSelectedParty("");
@@ -922,48 +1048,13 @@ const JoinCaseHome = ({ t }) => {
   const onProceed = async () => {
     if (step === 0) {
       if (!caseDetails?.caseNumber) {
-        const response = await DRISTIService.searchCaseService(
-          {
-            criteria: [
-              {
-                filingNumber: caseNumber,
-              },
-            ],
-            tenantId,
-          },
-          {}
-        );
-        if (response?.criteria[0]?.responseList?.length === 1) {
-          const caseData = response?.criteria[0]?.responseList[0];
-          if (caseData?.status === "CASE_ADMITTED") {
-            setCaseDetails(response?.criteria[0]?.responseList[0]);
-            setCaseNumber(response?.criteria[0]?.responseList[0]?.filingNumber);
-            setErrors({
-              ...errors,
-              caseNumber: undefined,
-            });
-          } else {
-            setErrors({
-              ...errors,
-              caseNumber: {
-                message: JoinHomeLocalisation.CASE_NO_ADMITTED_STATUS,
-              },
-            });
-            setIsDisabled(true);
-          }
-        } else {
-          setErrors({
-            ...errors,
-            caseNumber: {
-              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
-            },
-          });
-        }
+        setCaseDetails(searchCaseResult);
+        setCaseNumber(searchCaseResult?.filingNumber);
       } else {
         if (userType === t(JoinHomeLocalisation.ADVOCATE_OPT)) {
           const isFound = caseDetails?.representatives?.find((item) => item.advocateId === advocateId) !== undefined;
           if (isFound) {
-            setStep(5);
+            setStep(7);
             setMessageHeader("You are already part of this case");
             setSuccess(true);
           } else {
@@ -972,7 +1063,7 @@ const JoinCaseHome = ({ t }) => {
         } else if (userType === t(JoinHomeLocalisation.LITIGANT_OPT)) {
           const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId) !== undefined;
           if (isFound) {
-            setStep(5);
+            setStep(7);
             setMessageHeader("You are already part of this case");
             setSuccess(true);
           } else {
@@ -984,7 +1075,7 @@ const JoinCaseHome = ({ t }) => {
         setIsDisabled(true);
       }
     } else if (step === 1) {
-      if (userType && userType === "Litigant" && selectedParty && representingYourself) {
+      if (userType && userType === "Litigant" && selectedParty?.label && representingYourself) {
         setBarRegNumber("");
         setIsDisabled(true);
         setStep(step + 1);
@@ -993,8 +1084,8 @@ const JoinCaseHome = ({ t }) => {
           ...errors,
           barRegNumber: undefined,
         });
-      } else if (userType && userType === "Advocate" && selectedParty) {
-        setParties([...parties, { title: selectedParty, value: selectedParty }]);
+      } else if (userType && userType === "Advocate" && selectedParty?.label) {
+        setParties([...parties, selectedParty]);
         setParty(selectedParty);
         if (roleOfNewAdvocate !== "I’m a supporting advocate") {
           setStep(step + 1);
@@ -1046,9 +1137,9 @@ const JoinCaseHome = ({ t }) => {
       if (userType === "Litigant") {
         if (representingYourself !== "Yes" && advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.data?.barRegistrationNumber) {
           setIsDisabled(true);
-          setStep(step + 2);
+          setStep(step + 4);
         } else {
-          setStep(step + 2);
+          setStep(step + 4);
         }
       } else {
         setIsDisabled(false);
@@ -1057,7 +1148,13 @@ const JoinCaseHome = ({ t }) => {
     } else if (step === 3) {
       setIsDisabled(true);
       setStep(step + 1);
-    } else if (step === 4 && validationCode.length === 6) {
+    } else if (step === 4) {
+      setStep(step + 1);
+      setIsDisabled(false);
+    } else if (step === 5) {
+      setStep(step + 1);
+      setIsDisabled(true);
+    } else if (step === 6 && validationCode.length === 6) {
       if (userType === "Advocate") {
         const [res, err] = await submitJoinCase({
           caseFilingNumber: caseNumber,
@@ -1069,10 +1166,10 @@ const JoinCaseHome = ({ t }) => {
             representing: [
               {
                 tenantId: tenantId,
-                individualId: selectedParty.includes("Complainant")
+                individualId: selectedParty?.label.includes("Complainant")
                   ? caseDetails?.additionalDetails?.complainantDetails?.formdata[0]?.data?.complainantVerification?.individualDetails?.individualId
                   : caseDetails?.additionalDetails?.respondentDetails?.formdata[0]?.data?.individualDetails?.individualId,
-                partyType: selectedParty.includes("Complainant") ? "complainant.primary" : "respondent.primary",
+                partyType: selectedParty?.label.includes("Complainant") ? "complainant.primary" : "respondent.primary",
               },
             ],
           },
@@ -1092,7 +1189,7 @@ const JoinCaseHome = ({ t }) => {
         const cPrimary = caseDetails?.litigants?.find((item) => item?.partyType === "complainant.primary") !== undefined;
         const rPrimary = caseDetails?.litigants?.find((item) => item?.partyType === "respondent.primary") !== undefined;
         let partyType = "";
-        if (selectedParty.includes("Complainant")) {
+        if (selectedParty?.label.includes("Complainant")) {
           if (cPrimary) partyType = "complainant.additional";
           else partyType = "complainant.primary";
         } else {
@@ -1133,8 +1230,6 @@ const JoinCaseHome = ({ t }) => {
           }
         }
       }
-    } else if (step === 5) {
-      setStep(6);
     }
   };
 
@@ -1154,19 +1249,29 @@ const JoinCaseHome = ({ t }) => {
           actionCancelOnSubmit={() => {
             if (step === 0 && caseDetails?.caseNumber) {
               setCaseDetails({});
-            } else if (step === 4 && userType === "Litigant") setStep(step - 2);
-            else setStep(step - 1);
+            } else if (step === 6) {
+              if (userType === "Litigant") setStep(step - 4);
+              else setStep(step - 1);
+              setValidationCode("");
+            } else setStep(step - 1);
+            setIsDisabled(false);
           }}
           actionSaveLabel={
-            roleOfNewAdvocate === "I’m a supporting advocate" && step === 2
+            step === 2 && roleOfNewAdvocate === "I’m a supporting advocate"
               ? t("GOT_IT_TEXT")
+              : step === 3
+              ? "E-Sign"
+              : step === 4
+              ? "Done"
+              : step === 5
+              ? "Make Payment"
               : userType === "Litigant" && step === 0 && caseInfo.length === 0
               ? "Search"
               : t("PROCEED_TEXT")
           }
           actionSaveOnSubmit={onProceed}
           formId="modal-action"
-          headerBarMain={<Heading label={t("JOIN_A_CASE")} />}
+          headerBarMain={<Heading label={step === 4 ? "E-Sign" : step === 5 ? "Payment" : t("JOIN_A_CASE")} />}
           className={`join-a-case-modal ${success && "case-join-success"}`}
           popupModuleActionBarClassName={`${
             step === 2 && userType === "Litigant" && representingYourself !== "Yes" ? "join-case-form-composer" : ""
@@ -1174,13 +1279,21 @@ const JoinCaseHome = ({ t }) => {
           isDisabled={isDisabled}
         >
           {step >= 0 && modalItem[step]?.modalMain}
-          {step === 2 && userType === "Litigant" && representingYourself !== "Yes" && (
+          {((step === 2 && userType === "Litigant" && representingYourself !== "Yes") || step === 4 || step === 5) && (
             <Button
               className={"skip-button"}
               label={t(JoinHomeLocalisation.SKIP_LATER)}
               onButtonClick={() => {
-                setStep(4);
-                setBarRegNumber("");
+                if (userType === "Litigant") {
+                  setStep(6);
+                  setBarRegNumber("");
+                  setAdvocateDetailForm({});
+                } else {
+                  setStep(6);
+                  if (step === 4) {
+                    setIsSignedAdvocate(false);
+                  } else if (step === 5) setIsSignedParty(false);
+                }
               }}
             />
           )}

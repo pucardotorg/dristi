@@ -23,6 +23,7 @@
       padding-top: 4px;
       display: flex;
       gap: 24px;
+      flex-wrap: wrap;
     }
     .select-wrap {
       margin-bottom: 0px;
@@ -189,6 +190,13 @@
       }
     }
   }
+}
+
+.e-sign-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
 .view-document-vak::-webkit-scrollbar {
