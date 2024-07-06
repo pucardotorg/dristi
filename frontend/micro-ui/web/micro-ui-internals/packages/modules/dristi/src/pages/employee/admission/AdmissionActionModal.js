@@ -254,7 +254,13 @@ function AdmissionActionModal({
           actionCancelOnSubmit={() => {
             history.push(`/employee`);
           }}
-          actionSaveOnSubmit={handleScheduleNextHearing}
+          actionSaveOnSubmit={() => {
+            if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
+              handleScheduleNextHearing();
+            } else {
+              history.push(`/employee`);
+            }
+          }}
           className="case-types"
           formId="modal-action"
         >
