@@ -75,7 +75,7 @@ export const admitCaseSubmitConfig = {
   header: "CS_ADMIT_SUCCESS",
   subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
   backButtonText: "BACK_TO_HOME",
-  nextButtonText: "Schedule next hearing",
+  nextButtonText: "SCHEDULE_NEXT_HEARING",
   isArrow: false,
   showTable: true,
 };

@@ -29,15 +29,15 @@ const AdmittedCases = ({ isJudge = true }) => {
   const caseId = searchParams.get("caseId");
   const [show, setShow] = useState(false);
   const [comment, setComment] = useState("");
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const history = useHistory();
-
+  const showDownLoadCaseFIle = userRoles.includes("CITIZEN");
+  const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
   const docSetFunc = (docObj) => {
     setDocumentSubmission(docObj);
     setShow(true);
@@ -218,6 +218,10 @@ const AdmittedCases = ({ isJudge = true }) => {
     return `${day}-${month}-${year}`;
   };
 
+  const handleMakeSubmission = () => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+  };
+
   const handleSelect = (option) => {
     if (option == "Generate Order / Home") {
       const reqbody = {
@@ -256,37 +260,35 @@ const AdmittedCases = ({ isJudge = true }) => {
     <React.Fragment>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
         <Header styles={{ fontSize: "32px", marginTop: "40px" }}>{t(title)}</Header>
-        <div>
-          {userRoles.includes("CITIZEN") && <Button variation={"outlined"} label={"Download Case File"} />}
-          {userRoles.includes("APPLICATION_CREATOR") && userRoles.includes("SUBMISSION_CREATOR") && (
-            <Button variation={"outlined"} label={"Download Case File"} />
-          )}
-          {isJudge && (
-            <div className="evidence-header-wrapper">
-              <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                <div className="evidence-actions">
-                  <ActionButton
-                    variation={"primary"}
-                    label={"Take Action"}
-                    icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                    isSuffix={true}
-                    onClick={handleTakeAction}
-                  ></ActionButton>
-                  {showMenu && (
-                    <Menu
-                      options={
-                        userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
-                          ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
-                          : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
-                      }
-                      onSelect={(option) => handleSelect(option)}
-                    ></Menu>
-                  )}
-                </div>
+        <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
+          {showDownLoadCaseFIle && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
+          {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
+        </div>
+        {isJudge && (
+          <div className="evidence-header-wrapper">
+            <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+              <div className="evidence-actions">
+                <ActionButton
+                  variation={"primary"}
+                  label={"Take Action"}
+                  icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                  isSuffix={true}
+                  onClick={handleTakeAction}
+                ></ActionButton>
+                {showMenu && (
+                  <Menu
+                    options={
+                      userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
+                        ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
+                        : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                    }
+                    onSelect={(option) => handleSelect(option)}
+                  ></Menu>
+                )}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div className="search-tabs-container">
         <div>
