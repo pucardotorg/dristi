@@ -1,6 +1,7 @@
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
-  type: "inbox",
+  type: "search",
+  postProcessResult: true,
   customHookName: "hearings.usePreHearingModalData",
   apiDetails: {
     serviceName: "/hearing/v1/search",
@@ -9,45 +10,69 @@ export const preHearingConfig = {
     },
     requestBody: {
       //need to add criteria to get hearings based on particular day
-      criteria: {
-        limit: 5,
-      },
+      criteria: {},
     },
     minParametersForSearchForm: 0,
     masterName: "commonUiConfig",
     moduleName: "PreHearingsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-    filterFormJsonPath: "requestBody.Criteria",
-    tableFormJsonPath: "requestParam",
+    searchFormJsonPath: "requestBody.criteria",
+    filterFormJsonPath: "requestBody.criteria",
+    tableFormJsonPath: "requestBody.criteria",
   },
   sections: {
     filter: {
       uiConfig: {
         fields: [
           {
-            type: "locationdropdown",
+            type: "text",
             isMandatory: false,
             disable: false,
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
-              defaultText: "Type",
+              name: "caseTitle",
+              placeholder: "Newest First",
               selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
             },
           },
           {
-            type: "locationdropdown",
+            type: "dropdown",
             isMandatory: false,
             disable: false,
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
+              name: "type",
+              optionsKey: "name",
+              defaultText: "Type",
+              selectedText: "COMMON_SELECTED",
+              options: [
+                {
+                  code: "nias138",
+                  name: "NIA S138",
+                },
+                {
+                  code: "cias138",
+                  name: "CIA S138",
+                },
+              ],
+            },
+          },
+          {
+            type: "dropdown",
+            isMandatory: false,
+            disable: false,
+            populators: {
+              name: "stage",
+              optionsKey: "name",
               defaultText: "Stage",
               selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
+              options: [
+                {
+                  code: "Pre Trial",
+                  name: "Pre Trial",
+                },
+                {
+                  code: "Inquiry",
+                  name: "Inquiry",
+                },
+              ],
             },
           },
           {
@@ -55,12 +80,9 @@ export const preHearingConfig = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
-              defaultText: "Stage",
+              name: "caseTitle",
+              placeholder: "Search Case Name or ID",
               selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
             },
           },
         ],

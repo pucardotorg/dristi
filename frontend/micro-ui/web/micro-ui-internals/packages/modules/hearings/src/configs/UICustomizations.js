@@ -349,10 +349,28 @@ export const UICustomizations = {
         },
       },
       PreHearingsConfig: {
-          preProcess: (data) => {
-            console.log("PreConfigData", data);
-            return data;
+          preProcess: (requestCriteria) => {
+            const updatedCriteria = {
+              ...requestCriteria?.body.criteria,
+              ...requestCriteria?.state?.searchForm,
+              pagination: {
+                limit: 5,
+                offset: 0,
+              },
+              limit: 5,
+              fromDate: requestCriteria?.params.fromDate,
+              toDate: requestCriteria?.params.toDate,
+            };
+      
+            return {
+              ...requestCriteria,
+              body: {
+                ...requestCriteria?.body,
+                criteria: updatedCriteria,
+              },
+            };
           },
+          postProcess: (responseArray, uiConfig) => {},
           additionalCustomizations: (row, key, column, value, t, searchResult) => {
             switch (key) {
               case "Actions":

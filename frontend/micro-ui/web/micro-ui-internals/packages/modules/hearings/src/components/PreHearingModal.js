@@ -26,11 +26,12 @@ function PreHearingModal({ onCancel }) {
     const configCopy = structuredClone(preHearingConfig);
     configCopy.apiDetails.requestParam = {
       ...configCopy.apiDetails.requestParam,
-      fromDate: hearingData.hearingDate,
-      hearingSlot: hearingData.hearingSlot,
+      fromDate: hearingData.fromDate,
+      toDate: hearingData.toDate,
+      slot: hearingData.slot,
     };
     setConfig(configCopy);
-  }, [preHearingConfig, hearingData?.hearingDate, hearingData?.hearingSlot]);
+  }, [preHearingConfig, hearingData?.fromDate, , hearingData.toDate, hearingData?.slot]);
 
   const popUpStyle = {
     width: "70%",
@@ -63,7 +64,7 @@ function PreHearingModal({ onCancel }) {
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
       >
         <div>
-          <strong>{hearingData.hearingDate}</strong>, {hearingData.hearingSlot}
+          <strong>{hearingData.fromDate}</strong>, {hearingData.slot}
         </div>
         <Button
           className="border-none dristi-font-bold"
