@@ -1,5 +1,5 @@
 import { Button, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
@@ -52,6 +52,8 @@ function Home() {
     "/advocate/advocate/v1/_search"
   );
 
+  const [callRefetch, SetCallRefetch] = useState(false);
+
   if (userType === "ADVOCATE" && searchData) {
     const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
     if (advocateBarRegNumber) {
@@ -77,13 +79,17 @@ function Home() {
     return <Loader />;
   }
 
+  const refreshInbox = () => {
+    SetCallRefetch(true);
+  };
+
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <JoinCaseHome t={t} />
+            <JoinCaseHome refreshInbox={refreshInbox} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}
@@ -96,6 +102,7 @@ function Home() {
         </div>
         <div className="inbox-search-wrapper">
           <InboxSearchComposer
+            key={`InboxSearchComposer-${callRefetch}`}
             customStyle={sectionsParentStyle}
             configs={{
               ...litigantInboxConfig,
@@ -123,6 +130,10 @@ function Home() {
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
+              // search: {
+              //   callRefetch,
+              //   SetCallRefetch,
+              // },
             }}
           ></InboxSearchComposer>
         </div>
