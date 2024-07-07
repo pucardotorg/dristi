@@ -74,11 +74,12 @@ const GenerateOrders = () => {
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
-    return caseDetails?.litigants
-      ?.filter((item) => item?.partyType === "complainant.primary")
-      .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
-      });
+    // return caseDetails?.litigants
+    //   ?.filter((item) => item?.partyType === "respondant.primary")
+    //   .map((item) => {
+    //     return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+    //   });
+    return [{ code: "Respondant", name: "Respondant" }];
   }, [caseDetails]);
 
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
@@ -154,6 +155,15 @@ const GenerateOrders = () => {
                   },
                 };
               }
+              if (field.key === "respondingParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
               return field;
             }),
           };
@@ -163,6 +173,10 @@ const GenerateOrders = () => {
     }
     return newConfig;
   }, [complainants, orderType?.code, respondants]);
+
+  const defaultValue = useMemo(() => {
+    return structuredClone(currentOrder?.additionalDetails?.formdata) || {};
+  }, [currentOrder]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -177,7 +191,7 @@ const GenerateOrders = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const handleUpdateOrder = ({ action, oldOrderData, orderType }) => {
+  const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
     const newAdditionalData =
       action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
     const updatedreqBody = {
@@ -203,6 +217,9 @@ const GenerateOrders = () => {
         refetchOrdersData();
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
+        }
+        if (modal === "reviewModal") {
+          setShowReviewModal(true);
         }
         setShowsignatureModal(false);
         setDeleteOrderIndex(null);
@@ -248,11 +265,12 @@ const GenerateOrders = () => {
       });
   };
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = ({ modal }) => {
     handleUpdateOrder({
       action: CaseWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
+      modal,
     });
   };
 
@@ -276,10 +294,6 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
 
-  const handleReviewOrder = () => {
-    handleSaveDraft();
-    setShowReviewModal(true);
-  };
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
@@ -319,9 +333,11 @@ const GenerateOrders = () => {
             key={selectedOrder}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
-            defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
+            defaultValues={defaultValue}
             onFormValueChange={onFormValueChange}
-            onSubmit={handleReviewOrder}
+            onSubmit={() => {
+              handleSaveDraft({ modal: "reviewModal" });
+            }}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}

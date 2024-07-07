@@ -519,7 +519,7 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "responseDeadline",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -615,7 +615,7 @@ export const configsOrderSubmissionExtension = [
         populators: {
           name: "originalSubmissionOrderDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
