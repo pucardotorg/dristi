@@ -32,7 +32,7 @@ function OrderDeleteModal({ setDeleteOrderIndex, deleteOrderIndex, handleDeleteO
           }}
         />
       }
-      actionCancelLabel={t("CANCEL")}
+      actionCancelLabel={t("CS_COMMON_CANCEL")}
       actionCancelOnSubmit={() => {
         setDeleteOrderIndex(null);
       }}
