@@ -22,7 +22,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
     <Modal
       headerBarMain={<Heading label={t("ADD_SIGNATURE")} />}
       headerBarEnd={<CloseBtn onClick={handleGoBackSignatureModal} />}
-      actionCancelLabel={t("BACK")}
+      actionCancelLabel={t("CS_COMMON_BACK")}
       actionCancelOnSubmit={handleGoBackSignatureModal}
       actionSaveLabel={t("ISSUE_ORDER")}
       isDisabled={!isSigned}
@@ -50,7 +50,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
             <h1>{t("YOUR_SIGNATURE")}</h1>
             <div className="sign-button-wrap">
               <Button
-                label={t("CS_ESIGN_AADHAR")}
+                label={t("CS_ESIGN")}
                 onButtonClick={() => {
                   // setOpenAadharModal(true);
                   console.log("first");
@@ -61,7 +61,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
               />
               <Button
                 icon={<FileUploadIcon />}
-                label={t("CS_UPLOAD_ESIGNATURE")}
+                label={t("UPLOAD_DIGITAL_SIGN_CERTI")}
                 onButtonClick={() => {
                   // setOpenUploadSignatureModal(true);
                   setIsSigned(true);

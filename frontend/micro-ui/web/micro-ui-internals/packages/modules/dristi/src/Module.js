@@ -46,6 +46,7 @@ import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 import CustomSortComponent from "./components/CustomSortComponent";
 import CustomErrorTooltip from "./components/CustomErrorTooltip";
 import Button from "./components/Button";
+import MultiUploadWrapper from "./components/MultiUploadWrapper";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -115,6 +116,8 @@ const componentsToRegister = {
   CUSTOMERRORTOOLTIP: CustomErrorTooltip,
   CustomSortComponent,
   CustomButton: Button,
+  DocViewerWrapper,
+  MultiUploadWrapper,
 };
 
 const overrideHooks = () => {
