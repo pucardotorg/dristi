@@ -73,7 +73,7 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
         caseName: caseData.caseTitle || "",
         stage: caseData.stage || "",
         caseType: caseData.caseType || "",
-        pendingTasks: pendingTasksData || 0,
+        pendingTasks: pendingTasksData || "-",
       };
     });
 

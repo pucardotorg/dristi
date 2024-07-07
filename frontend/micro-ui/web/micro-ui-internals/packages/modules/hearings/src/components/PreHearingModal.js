@@ -63,7 +63,7 @@ function PreHearingModal({ onCancel }) {
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
       >
         <div>
-          <strong>24 May, 2024</strong>, 10:00 - 12:00 pm
+          <strong>{hearingData.hearingDate}</strong>, {hearingData.hearingSlot}
         </div>
         <Button
           className="border-none dristi-font-bold"
