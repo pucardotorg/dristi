@@ -109,7 +109,7 @@ public class OrderRegistrationServiceTest {
     }
 
     @Test
-    public void testSearchOrder_customException() {
+    public void testSearchOrder_Exception() {
         assertThrows(CustomException.class, () ->
                 orderRegistrationService.searchOrder(null));
     }
