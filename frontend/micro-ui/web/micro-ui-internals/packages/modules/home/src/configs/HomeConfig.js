@@ -1,8 +1,39 @@
 const defaultSearchValues = {
-  individualName: "",
-  mobileNumber: "",
-  IndividualID: "",
+  filingNumber: "",
+  caseType: "NIA S138",
+  substage: "",
 };
+
+export const CaseWorkflowState = {
+  CASE_RE_ASSIGNED: "CASE_RE_ASSIGNED",
+  DRAFT_IN_PROGRESS: "DRAFT_IN_PROGRESS",
+  UNDER_SCRUTINY: "UNDER_SCRUTINY",
+  CASE_ADMITTED: "CASE_ADMITTED",
+  PENDING_ADMISSION: "PENDING_ADMISSION",
+};
+
+export const subStageOptions = [
+  "Filing",
+  "Cognizance",
+  "Inquiry",
+  "Appearance",
+  "Framing of charges",
+  "Evidence",
+  "Arguments",
+  "Judgment",
+  "Post-Judgement",
+];
+export const outcomesOptions = [
+  "Withdrawn",
+  "Settled",
+  "Transferred",
+  "Dismissed",
+  "Allowed",
+  "Partly allowed",
+  "Convicted",
+  "Partly convicted",
+  "Abated",
+];
 
 export const userTypeOptions = [
   {
@@ -46,7 +77,7 @@ export const userTypeOptions = [
 
 export const TabLitigantSearchConfig = {
   tenantId: "pg",
-  moduleName: "homeHearingUIConfig",
+  moduleName: "homeLitigantUiConfig",
   showTab: true,
   TabSearchConfig: [
     {
@@ -60,7 +91,7 @@ export const TabLitigantSearchConfig = {
           criteria: [{}],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeLitigantUiConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -76,16 +107,53 @@ export const TabLitigantSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
                   name: "filingNumber",
                   error: "BR_PATTERN_ERR_MSG",
+                  style: { maxWidth: "250px", minWidth: "200px", width: "220px" },
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -104,8 +172,7 @@ export const TabLitigantSearchConfig = {
               },
               {
                 label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                jsonPath: "substage",
               },
               {
                 label: "Case ID",
@@ -117,7 +184,7 @@ export const TabLitigantSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -144,7 +211,7 @@ export const TabLitigantSearchConfig = {
           ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeLitigantUiConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -160,7 +227,19 @@ export const TabLitigantSearchConfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "CS_FILING_NO",
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Last Edited",
+                key: "sortCaseListByDate",
+                sortBy: "lastModifiedTime",
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -183,13 +262,8 @@ export const TabLitigantSearchConfig = {
           uiConfig: {
             columns: [
               {
-                label: "Case Name",
+                label: "Draft Name",
                 jsonPath: "caseTitle",
-              },
-              {
-                label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
               },
               {
                 label: "Case ID",
@@ -201,8 +275,9 @@ export const TabLitigantSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
-                jsonPath: "filingDate",
+                label: "Last Edited",
+                jsonPath: "auditDetails.lastModifiedTime",
+                additionalCustomization: true,
               },
             ],
 
@@ -211,6 +286,9 @@ export const TabLitigantSearchConfig = {
           },
           show: true,
         },
+      },
+      additionalDetails: {
+        sortBy: "sortCaseListByDate",
       },
     },
     {
@@ -221,10 +299,10 @@ export const TabLitigantSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{}],
+          criteria: [{ stage: "Post-Trial" }],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeLitigantUiConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -240,7 +318,7 @@ export const TabLitigantSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -250,6 +328,24 @@ export const TabLitigantSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Outcome",
+                isMandatory: false,
+                key: "outcome",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "outcome",
+                  options: outcomesOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -267,9 +363,8 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                label: "OutCome",
+                jsonPath: "outcome",
               },
               {
                 label: "Case ID",
@@ -281,7 +376,7 @@ export const TabLitigantSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -298,7 +393,7 @@ export const TabLitigantSearchConfig = {
 
 export const TabJudgeSearchConfig = {
   tenantId: "pg",
-  moduleName: "homeHearingUIConfig",
+  moduleName: "homeJudgeUIConfig",
   showTab: true,
   TabSearchConfig: [
     {
@@ -309,10 +404,14 @@ export const TabJudgeSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{}],
+          criteria: [
+            {
+              stage: "Pre-Trial",
+            },
+          ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeJudgeUIConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -328,7 +427,7 @@ export const TabJudgeSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -338,6 +437,42 @@ export const TabJudgeSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -356,8 +491,7 @@ export const TabJudgeSearchConfig = {
               },
               {
                 label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                jsonPath: "substage",
               },
               {
                 label: "Case ID",
@@ -369,7 +503,7 @@ export const TabJudgeSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -391,12 +525,12 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "DRAFT_IN_PROGRESS",
+              stage: "Trial",
             },
           ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeJudgeUIConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -412,7 +546,7 @@ export const TabJudgeSearchConfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "CS_FILING_NO",
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -422,6 +556,42 @@ export const TabJudgeSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -440,8 +610,7 @@ export const TabJudgeSearchConfig = {
               },
               {
                 label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                jsonPath: "substage",
               },
               {
                 label: "Case ID",
@@ -453,7 +622,7 @@ export const TabJudgeSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -473,10 +642,14 @@ export const TabJudgeSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{}],
+          criteria: [
+            {
+              stage: "Post-Trial",
+            },
+          ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeJudgeUIConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -492,7 +665,22 @@ export const TabJudgeSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Sort by",
+                key: "sortCaseListByDate",
+                sortBy: "createdtime",
+                ascText: "First",
+                descText: "Last",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -502,6 +690,42 @@ export const TabJudgeSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -520,9 +744,9 @@ export const TabJudgeSearchConfig = {
               },
               {
                 label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                jsonPath: "substage",
               },
+
               {
                 label: "Case ID",
                 jsonPath: "filingNumber",
@@ -533,7 +757,7 @@ export const TabJudgeSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -542,6 +766,9 @@ export const TabJudgeSearchConfig = {
             resultsJsonPath: "criteria[0].responseList",
           },
           show: true,
+        },
+        additionalDetails: {
+          sortBy: "sortCaseListByDate",
         },
       },
     },
@@ -553,10 +780,14 @@ export const TabJudgeSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{}],
+          criteria: [
+            {
+              stage: "Post-Trial",
+            },
+          ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeJudgeUIConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -572,7 +803,22 @@ export const TabJudgeSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Closed:",
+                key: "sortCaseListByDate",
+                sortBy: "createdtime",
+                ascText: "new first",
+                descText: "old first",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -582,6 +828,42 @@ export const TabJudgeSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Outcome",
+                isMandatory: false,
+                key: "outcome",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "outcome",
+                  options: outcomesOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -599,9 +881,8 @@ export const TabJudgeSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                label: "Outcome",
+                jsonPath: "outcome",
               },
               {
                 label: "Case ID",
@@ -613,7 +894,7 @@ export const TabJudgeSearchConfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "Filing Date",
                 jsonPath: "filingDate",
               },
             ],
@@ -624,13 +905,16 @@ export const TabJudgeSearchConfig = {
           show: true,
         },
       },
+      additionalDetails: {
+        sortBy: "sortCaseListByDate",
+      },
     },
   ],
 };
 
 export const TabFSOSearchConfig = {
   tenantId: "pg",
-  moduleName: "homeHearingUIConfig",
+  moduleName: "homeFSOUiConfig",
   showTab: true,
   TabSearchConfig: [
     {
@@ -641,10 +925,14 @@ export const TabFSOSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{}],
+          criteria: [
+            {
+              stage: "Pre-Trial",
+            },
+          ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeFSOUiConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -660,7 +948,22 @@ export const TabFSOSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "CS_FILING_NO",
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Filed",
+                key: "sortCaseListByDate",
+                sortBy: "createdtime",
+                ascText: "(new first)",
+                descText: "(old first)",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -670,6 +973,42 @@ export const TabFSOSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -688,8 +1027,7 @@ export const TabFSOSearchConfig = {
               },
               {
                 label: "Stage",
-                jsonPath: "status",
-                additionalCustomization: true,
+                jsonPath: "substage",
               },
               {
                 label: "Case ID",
@@ -702,7 +1040,8 @@ export const TabFSOSearchConfig = {
               },
               {
                 label: "Days Since Filing",
-                jsonPath: "filingDate",
+                jsonPath: "auditDetails.createdTime",
+                additionalCustomization: true,
               },
             ],
 
@@ -711,6 +1050,9 @@ export const TabFSOSearchConfig = {
           },
           show: true,
         },
+      },
+      additionalDetails: {
+        sortBy: "sortCaseListByDate",
       },
     },
     {
@@ -728,7 +1070,7 @@ export const TabFSOSearchConfig = {
           ],
         },
         masterName: "commonUiConfig",
-        moduleName: "homeHearingUIConfig",
+        moduleName: "homeFSOUiConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody",
@@ -744,7 +1086,22 @@ export const TabFSOSearchConfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "CS_FILING_NO",
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Filed",
+                key: "sortCaseListByDate",
+                sortBy: "createdtime",
+                ascText: "(new first)",
+                descText: "(old first)",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -754,6 +1111,24 @@ export const TabFSOSearchConfig = {
                   validation: {
                     pattern: {},
                     minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
                   },
                 },
               },
@@ -771,7 +1146,7 @@ export const TabFSOSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "Stage",
+                label: "Status",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
@@ -786,7 +1161,8 @@ export const TabFSOSearchConfig = {
               },
               {
                 label: "Days Since Filing",
-                jsonPath: "filingDate",
+                jsonPath: "auditDetails.createdTime",
+                additionalCustomization: true,
               },
             ],
 
@@ -794,6 +1170,9 @@ export const TabFSOSearchConfig = {
             resultsJsonPath: "criteria[0].responseList",
           },
           show: true,
+        },
+        additionalDetails: {
+          sortBy: "sortCaseListByDate",
         },
       },
     },
@@ -807,7 +1186,9 @@ export const rolesToConfigMapping = [
     isLitigant: true,
     showJoinFileOption: true,
     onRowClickRoute: {
-      url: "/dristi/home/file-case/case",
+      dependentUrl: "/dristi/home/file-case/case",
+      urlDependentOn: "status",
+      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
       params: [{ key: "caseId", value: "id" }],
     },
   },

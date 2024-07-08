@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useHistory, Link } from "react-router-dom";
 import { Header, ActionBar, SVG, SubmitBar, Card } from "@egovernments/digit-ui-react-components";
 import { Button, TextArea } from "@egovernments/digit-ui-components";
-import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
 
 const fieldStyle = { marginRight: 0 };
@@ -19,9 +18,8 @@ const InsideHearingMainPage = () => {
   return (
     <div style={{ display: "flex" }}>
       <Card>
-        <EvidenceHearingHeader></EvidenceHearingHeader>
         <div style={{ padding: "20px 40px", minWidth: "940px", minHeight: "453px" }}>
-          <TextArea style={{ minWidth: "940px", minHeight: "453px" }} ></TextArea>
+          <TextArea style={{ minWidth: "940px", minHeight: "453px" }}></TextArea>
         </div>
       </Card>
       <Card>

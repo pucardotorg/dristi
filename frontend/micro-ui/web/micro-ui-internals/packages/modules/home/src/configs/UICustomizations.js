@@ -74,8 +74,7 @@ export const UICustomizations = {
       }
     },
   },
-
-  homeHearingUIConfig: {
+  homeLitigantUiConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { createdFrom, createdTo } = data;
@@ -92,25 +91,172 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...additionalDetails,
+          ...("sortBy" in additionalDetails && {
+            [additionalDetails.sortBy]: undefined,
+            sortBy: undefined,
+          }),
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
           },
         },
       ];
-      if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
-        criteria.splice(0, 1, {
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const today = new Date();
+      const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        case "Last Edited":
+          const createdAt = new Date(value);
+          const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+          const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+          return <span>{differenceInDays} Days ago</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+  },
+  homeFSOUiConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      return false;
+    },
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const criteria = [
+        {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          [additionalDetails.searchKey]: "",
-          ...additionalDetails,
           tenantId,
+          ...additionalDetails,
+          ...("sortBy" in additionalDetails && {
+            [additionalDetails.sortBy]: undefined,
+            sortBy: undefined,
+          }),
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
           },
-        });
+        },
+      ];
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const today = new Date();
+      const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        case "Days Since Filing":
+          const createdAt = new Date(value);
+          const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+          const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+          return <span style={{ color: differenceInDays > 30 && "#9E400A", fontWeight: differenceInDays > 30 ? 500 : 400 }}>{differenceInDays}</span>;
+        default:
+          return t("ES_COMMON_NA");
       }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+  },
+  homeJudgeUIConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      return false;
+    },
+    preProcess: (requestCriteria, additionalDetails) => {
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId,
+          ...additionalDetails,
+          ...("sortBy" in additionalDetails && {
+            [additionalDetails.sortBy]: undefined,
+            sortBy: undefined,
+          }),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
+          },
+        },
+      ];
       return {
         ...requestCriteria,
         body: {

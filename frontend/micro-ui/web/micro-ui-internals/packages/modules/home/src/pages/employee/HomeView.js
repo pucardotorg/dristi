@@ -1,18 +1,18 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
+import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { CaseWorkflowState, TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { HomeService } from "../../hooks/services";
+import LitigantHomePage from "./LitigantHomePage";
 
-const fieldStyle = { marginRight: 0 };
 const defaultSearchValues = {
-  individualName: "",
-  mobileNumber: "",
-  IndividualID: "",
+  filingNumber: "",
+  caseType: "NIA S138",
 };
 
 const HomeView = () => {
@@ -20,10 +20,12 @@ const HomeView = () => {
   const location = useLocation();
   const { state } = location;
   const { t } = useTranslation();
+  const Digit = window.Digit || {};
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues);
   const [config, setConfig] = useState(TabLitigantSearchConfig?.TabSearchConfig?.[0]);
+  const [caseDetails, setCaseDetails] = useState(null);
   const [tabData, setTabData] = useState(
     TabLitigantSearchConfig?.TabSearchConfig?.map((configItem, index) => ({
       key: index,
@@ -55,8 +57,7 @@ const HomeView = () => {
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
     individualData?.Individual,
   ]);
-
-  const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading } = Digit?.Hooks?.dristi?.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -66,15 +67,6 @@ const HomeView = () => {
     userType,
     "/advocate/advocate/v1/_search"
   );
-
-  if (userType === "ADVOCATE" && searchData) {
-    const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
-    if (advocateBarRegNumber) {
-      window?.Digit.SessionStorage.set("isAdvocateAndApproved", true);
-    } else {
-      window?.Digit.SessionStorage.set("isAdvocateAndApproved", false);
-    }
-  }
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -88,10 +80,27 @@ const HomeView = () => {
     return searchResult?.[0]?.responseList?.[0]?.id;
   }, [searchResult]);
 
+  const additionalDetails = useMemo(() => {
+    return {
+      ...(advocateId
+        ? {
+            searchKey: "filingNumber",
+            defaultFields: true,
+            advocateId: advocateId,
+          }
+        : individualId
+        ? {
+            searchKey: "filingNumber",
+            defaultFields: true,
+            litigantId: individualId,
+          }
+        : {}),
+    };
+  }, [advocateId, individualId]);
+
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
   }, []);
-  console.log("config", config, tabData);
   useEffect(() => {
     if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
       const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
@@ -100,13 +109,18 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      setTabData(
-        tabConfig?.TabSearchConfig?.map((configItem, index) => ({
-          key: index,
-          label: configItem.label,
-          active: index === 0 ? true : false,
-        }))
-      );
+      (async function () {
+        const updatedTabData = await Promise.all(
+          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
+            return {
+              key: index,
+              label: configItem.label,
+              active: index === 0 ? true : false,
+            };
+          })
+        );
+        setTabData(updatedTabData);
+      })();
       setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     } else {
       const rolesToConfigMappingData =
@@ -122,32 +136,53 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      setTabData(
-        tabConfig?.TabSearchConfig?.map((configItem, index) => ({
-          key: index,
-          label: configItem.label,
-          active: index === 0 ? true : false,
-        }))
-      );
+      (async function () {
+        const updatedTabData = await Promise.all(
+          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
+            const response = await HomeService.customApiService(configItem?.apiDetails?.serviceName, {
+              tenantId,
+              criteria: [
+                {
+                  ...configItem?.apiDetails?.requestBody?.criteria?.[0],
+                  ...defaultSearchValues,
+                  ...additionalDetails,
+                  pagination: { offSet: 0, limit: 1 },
+                },
+              ],
+            });
+            const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
+            return {
+              key: index,
+              label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
+              active: index === 0 ? true : false,
+            };
+          })
+        );
+        setTabData(updatedTabData);
+      })();
       setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     }
-  }, [roles, state]);
+  }, [additionalDetails, roles, state, tenantId]);
 
-  const additionalDetails = useMemo(() => {
-    return {
-      ...(advocateId
-        ? {
-            searchKey: "filingNumber",
-            defaultFields: true,
-            advocateId: advocateId,
-          }
-        : {
-            searchKey: "filingNumber",
-            defaultFields: true,
-            litigantId: individualId,
-          }),
-    };
-  }, [advocateId, individualId]);
+  useEffect(() => {
+    (async function () {
+      if (userType) {
+        const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+          tenantId,
+
+          criteria: [
+            {
+              litigantId: individualId,
+
+              pagination: { offSet: 0, limit: 1 },
+            },
+          ],
+        });
+
+        setCaseDetails(caseData?.criteria?.[0]?.responseList?.[0]);
+      }
+    })();
+  }, [individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false })));
@@ -165,65 +200,82 @@ const HomeView = () => {
   }
   return (
     <div className="home-view-hearing-container">
-      <div className="left-side">
-        <UpcomingHearings handleNavigate={handleNavigate} />
-        <div className="content-wrapper">
-          <div className="header-class">
-            <div className="header">{t("CS_YOUR_CASE")}</div>
-            <div className="button-field" style={{ width: "50%" }}>
-              {hasJoinFileCaseOption && (
-                <React.Fragment>
-                  <JoinCaseHome t={t} />
-                  <Button
-                    className={"tertiary-button-selector"}
-                    label={t("FILE_A_CASE")}
-                    labelClassName={"tertiary-label-selector"}
-                    onButtonClick={() => {
-                      history.push("/digit-ui/citizen/dristi/home/file-case");
-                    }}
-                  />
-                </React.Fragment>
-              )}
+      {individualId && userType && !caseDetails ? (
+        <LitigantHomePage />
+      ) : (
+        <React.Fragment>
+          <div className="left-side">
+            <UpcomingHearings handleNavigate={handleNavigate} />
+            <div className="content-wrapper">
+              <div className="header-class">
+                <div className="header">{t("CS_YOUR_CASE")}</div>
+                <div className="button-field" style={{ width: "50%" }}>
+                  {hasJoinFileCaseOption && (
+                    <React.Fragment>
+                      <JoinCaseHome t={t} />
+                      <Button
+                        className={"tertiary-button-selector"}
+                        label={t("FILE_A_CASE")}
+                        labelClassName={"tertiary-label-selector"}
+                        onButtonClick={() => {
+                          history.push("/digit-ui/citizen/dristi/home/file-case");
+                        }}
+                      />
+                    </React.Fragment>
+                  )}
+                </div>
+              </div>
+              <div className="inbox-search-wrapper pucar-home home-view">
+                <InboxSearchComposer
+                  configs={{
+                    ...config,
+                    ...{
+                      additionalDetails: {
+                        ...config.additionalDetails,
+                        ...additionalDetails,
+                      },
+                    },
+                  }}
+                  defaultValues={defaultValues}
+                  showTab={true}
+                  tabData={tabData}
+                  onTabChange={onTabChange}
+                  additionalConfig={{
+                    resultsTable: {
+                      onClickRow: (row) => {
+                        const searchParams = new URLSearchParams();
+                        if (
+                          onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
+                            ? onRowClickData?.urlDependentValue.includes(row.original[onRowClickData?.urlDependentOn])
+                            : row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
+                        ) {
+                          onRowClickData.params.forEach((item) => {
+                            searchParams.set(item?.key, row.original[item?.value]);
+                          });
+                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
+                        } else if (onRowClickData?.url) {
+                          onRowClickData.params.forEach((item) => {
+                            searchParams.set(item?.key, row.original[item?.value]);
+                          });
+                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
+                        } else {
+                          if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
+                            history.push(
+                              `/${window?.contextPath}/${userInfoType}/dristi/admitted-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&cnrNumber=${row?.original?.cnrNumber}&title=${row?.original?.caseTitle}`
+                            );
+                        }
+                      },
+                    },
+                  }}
+                />
+              </div>
             </div>
           </div>
-          <div className="inbox-search-wrapper pucar-hearing-home">
-            <InboxSearchComposer
-              configs={{ ...config, ...additionalDetails }}
-              defaultValues={defaultValues}
-              showTab={true}
-              tabData={tabData}
-              onTabChange={onTabChange}
-              additionalConfig={{
-                resultsTable: {
-                  onClickRow: (row) => {
-                    const searchParams = new URLSearchParams();
-                    if (
-                      onRowClickData?.urlDependentOn &&
-                      onRowClickData?.urlDependentValue &&
-                      row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
-                    ) {
-                      onRowClickData.params.forEach((item) => {
-                        searchParams.set(item?.key, row.original[item?.value]);
-                      });
-                      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
-                    } else if (onRowClickData?.url) {
-                      onRowClickData.params.forEach((item) => {
-                        searchParams.set(item?.key, row.original[item?.value]);
-                      });
-                      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
-                    } else {
-                      history.push(`/${window?.contextPath}/${userInfoType}/orders/orders-home?caseId=${row?.original?.id}`);
-                    }
-                  },
-                },
-              }}
-            />
+          <div className="right-side">
+            <TasksComponent taskType={taskType} setTaskType={setTaskType} />
           </div>
-        </div>
-      </div>
-      <div className="right-side">
-        <TasksComponent taskType={taskType} setTaskType={setTaskType} />
-      </div>
+        </React.Fragment>
+      )}
     </div>
   );
 };

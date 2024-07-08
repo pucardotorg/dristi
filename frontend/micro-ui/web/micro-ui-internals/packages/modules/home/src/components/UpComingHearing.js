@@ -18,11 +18,11 @@ const UpcomingHearings = (props) => {
   const pendingTasks = 4;
   const upcomingHearings = 2;
   // [TODO: Time, Hearing Type, Pending Tasks, upcoming hearings need to be integrated with actual data]
-
+  const curHr = today.getHours();
   return (
     <div className="container">
       <div className="header">
-        Good afternoon, <span className="userName">{userName?.info?.name}</span>
+        {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
       </div>
       <div className="hearingCard">
         <div style={{ display: "flex", alignItems: "center" }}>
