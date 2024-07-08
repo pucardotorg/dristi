@@ -167,12 +167,10 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testUpdateTaskThrowsException() {
-        TaskRequest taskRequest = new TaskRequest();
-
+     void testUpdateTaskThrowsException() {
         doThrow(new RuntimeException("Unexpected error")).when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
         when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(true);
-        assertThrows(CustomException.class, () -> taskService.updateTask(taskRequest));
+        assertThrows(CustomException.class, () -> taskService.updateTask(new TaskRequest()));
     }
 
     @Test
@@ -190,10 +188,14 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testExistTaskThrows_Exception() {
+    void testExistTaskThrows_Exception() {
 
         doThrow(new RuntimeException("Unexpected error")).when(taskRepository).checkTaskExists(any());
-        assertThrows(CustomException.class, () -> taskService.existTask(new TaskExistsRequest()));
+        assertThrows(CustomException.class,  this::invokeExistTask);
+    }
+
+    private void invokeExistTask() {
+        taskService.existTask(new TaskExistsRequest());
     }
 
     @Test
@@ -210,7 +212,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testWorkflowUpdate_BailTask() {
+    void testWorkflowUpdate_BailTask() {
         task.setTaskType("bail"); // Task type in lowercase
         task.setTenantId("tenant1");
         task.setTaskNumber("T123");
@@ -226,7 +228,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testWorkflowUpdate_SummonTask() {
+    void testWorkflowUpdate_SummonTask() {
         task.setTaskType("summon"); // Task type in lowercase
         task.setTenantId("tenant2");
         task.setTaskNumber("T456");
@@ -242,7 +244,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testWorkflowUpdate_WarrantTask() {
+    void testWorkflowUpdate_WarrantTask() {
         task.setTaskType("warrant"); // Task type in lowercase
         task.setTenantId("tenant3");
         task.setTaskNumber("T789");
@@ -258,7 +260,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testWorkflowUpdate_DefaultTask() {
+    void testWorkflowUpdate_DefaultTask() {
         task.setTaskType("unknown_task"); // Task type not recognized
         task.setTenantId("tenant4");
         task.setTaskNumber("T999");

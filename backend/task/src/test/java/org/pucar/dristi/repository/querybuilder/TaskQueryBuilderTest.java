@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.TaskCriteria;
+import org.pucar.dristi.web.models.TaskExistsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,10 +48,12 @@ public class TaskQueryBuilderTest {
 
     @Test
     public void testGetTaskSearchQuery_Exception() {
-        CustomException exception = assertThrows(CustomException.class, () ->
-                taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>()));
-
+        CustomException exception = assertThrows(CustomException.class, this::invokeSearchTaskQuery);
         assertEquals(TASK_SEARCH_QUERY_EXCEPTION, exception.getCode());
+    }
+
+    private void invokeSearchTaskQuery() {
+        taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>());
     }
 
     @Test
@@ -69,10 +72,13 @@ public class TaskQueryBuilderTest {
     @Test
     public void testGetDocumentSearchQuery_Exception() {
 
-        CustomException exception = assertThrows(CustomException.class, () ->
-                taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null));
+        CustomException exception = assertThrows(CustomException.class,this::invokeDocumentSearchTaskQuery);
 
         assertEquals(DOCUMENT_SEARCH_QUERY_EXCEPTION, exception.getCode());
+    }
+
+    private void invokeDocumentSearchTaskQuery() {
+        taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null);
     }
 
     @Test
