@@ -270,6 +270,11 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
+        hearingId:
+          type: string
+          description: The formatted number given when a hearing gets created.
+          minLength: 2
+          maxLength: 64
         filingNumber:
           type: array
           items:
