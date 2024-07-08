@@ -219,7 +219,11 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           setShowSuccessModal(true);
         } else {
           setShow(false);
-          showToast();
+          const details = {
+            isError: false,
+            message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+          };
+          showToast(details);
         }
       }
       if (generateOrder) {

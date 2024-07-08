@@ -202,6 +202,8 @@ const AdmittedCases = ({ isJudge = true }) => {
     newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({ key: index, label: configItem.label, active: index === 0 ? true : false }))
   ); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
+  const [toastDetails, setToastDetails] = useState({});
+
   useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
@@ -257,8 +259,10 @@ const AdmittedCases = ({ isJudge = true }) => {
     }
   };
 
-  const showToast = (duration = 5000) => {
+  const showToast = (details, duration = 5000) => {
     setToast(true);
+    console.log(details);
+    setToastDetails(details);
     setTimeout(() => {
       setToast(false);
     }, duration);
@@ -357,7 +361,9 @@ const AdmittedCases = ({ isJudge = true }) => {
           showActions={false}
         />
       )}
-      {toast && <Toast error={false} label={t("ACTION_SUCCESSFUL")} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />}
+      {toast && toastDetails && (
+        <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
+      )}
     </React.Fragment>
   );
 };
