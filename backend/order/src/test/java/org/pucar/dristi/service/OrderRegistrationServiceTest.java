@@ -109,6 +109,12 @@ public class OrderRegistrationServiceTest {
     }
 
     @Test
+    public void testSearchOrder_customException() {
+        assertThrows(CustomException.class, () ->
+                orderRegistrationService.searchOrder(null));
+    }
+
+    @Test
     public void testUpdateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
@@ -128,6 +134,16 @@ public class OrderRegistrationServiceTest {
         assertNotNull(result);
         verify(validator, times(1)).validateApplicationExistence(orderRequest);
         verify(enrichmentUtil, times(1)).enrichOrderRegistrationUponUpdate(orderRequest);
+    }
+
+    @Test
+    public void testUpdateOrder_customException() {
+        OrderRequest orderRequest = new OrderRequest();
+
+        when(validator.validateApplicationExistence(any(OrderRequest.class))).thenReturn(true);
+
+       assertThrows(CustomException.class, () ->
+                orderRegistrationService.updateOrder(orderRequest));
     }
 
     @Test
@@ -156,5 +172,12 @@ public class OrderRegistrationServiceTest {
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);
 
         assertNotNull(result);
+    }
+
+    @Test
+    public void testExistOrder_customException() {
+
+       assertThrows(CustomException.class, () ->
+                orderRegistrationService.existsOrder(null));
     }
 }

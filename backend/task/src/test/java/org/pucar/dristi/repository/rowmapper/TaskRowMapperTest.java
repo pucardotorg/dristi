@@ -1,8 +1,8 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import kotlin.jvm.internal.TypeReference;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +13,12 @@ import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.AssignedTo;
 import org.pucar.dristi.web.models.Task;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -329,5 +331,27 @@ public class TaskRowMapperTest {
         verify(rs, times(1)).getLong("lastmodifiedtime");
         verify(rs, times(1)).getString("lastmodifiedby");
         verify(rs, times(1)).getObject("additionaldetails");
+    }
+
+    @Test
+    public void testExtractData_CustomException() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.next()).thenThrow(new CustomException("CUSTOM_EXCEPTION", "Custom exception occurred"));
+
+        assertThrows(CustomException.class, () -> taskRowMapper.extractData(rs));
+    }
+
+    @Test
+    public void testExtractData_DateTimeParseException() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.next()).thenReturn(true).thenReturn(false);
+        when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
+        when(rs.getString("orderid")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
+        when(rs.getString("createdby")).thenReturn("user");
+        when(rs.getString("createddate")).thenReturn("invalid-date");
+
+        assertThrows(CustomException.class, () -> taskRowMapper.extractData(rs));
     }
 }

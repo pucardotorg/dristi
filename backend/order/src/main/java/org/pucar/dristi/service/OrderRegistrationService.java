@@ -73,6 +73,9 @@ public class OrderRegistrationService {
                 return new ArrayList<>();
             return orderList;
 
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while searching order :: {}",e.toString());
+            throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results :: {}",e.toString());
             throw new CustomException(ORDER_SEARCH_EXCEPTION, e.getMessage());

@@ -15,6 +15,7 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,6 +67,35 @@ public class OrderApiControllerTest {
         OrderResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
         assertEquals(expectedOrders, actualResponse.getOrder());
+        assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
+    }
+
+    @Test
+    public void testOrderV1Exist_Success() {
+        // Mock OrderService response
+        OrderExists orderExists =new OrderExists();
+        List<OrderExists> orders = new ArrayList<>();
+        orders.add(orderExists);
+        when(orderRegistrationService.existsOrder(any(OrderExistsRequest.class)))
+                .thenReturn(orders);
+
+        // Mock ResponseInfoFactory response
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class), anyString()))
+                .thenReturn(expectedResponseInfo);
+
+        // Create mock OrderRequest
+        OrderExistsRequest requestBody = new OrderExistsRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+
+        // Perform POST request
+        ResponseEntity<OrderExistsResponse> response = controller.orderV1ExistsPost(requestBody);
+
+        // Verify response status and content
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        OrderExistsResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(orderExists, actualResponse.getOrder().get(0));
         assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
     }
 

@@ -29,21 +29,11 @@ import java.util.List;
 @RequestMapping("")
 public class OrderApiController {
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
     @Autowired
     private OrderRegistrationService orderService;
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    public OrderApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
 
     public void setMockInjects(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory){
         this.orderService = orderService;

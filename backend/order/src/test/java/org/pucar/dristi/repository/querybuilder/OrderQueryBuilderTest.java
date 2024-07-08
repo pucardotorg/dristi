@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,12 +58,13 @@ public class OrderQueryBuilderTest {
         criteria.setTenantId("tenant123");
         criteria.setId("id123");
         criteria.setStatus("status123");
+        criteria.setOrderNumber("order123");
 
         String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
         assertFalse(preparedStmtList.isEmpty());
-        assertEquals(6, preparedStmtList.size());
+        assertEquals(7, preparedStmtList.size());
     }
 
     @Test
@@ -108,5 +110,46 @@ public class OrderQueryBuilderTest {
 
         assertNotNull(query);
         assertTrue(preparedStmtList.isEmpty());
+    }
+
+    @Test
+    public void testCheckOrderExistQuery_Exception() {
+        List<Object> preparedStmtList = null;
+        String orderNumber = "order123";
+        String cnrNumber = null;
+        String filingNumber = null;
+        String applicationNumber = null;
+        UUID orderId = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.checkOrderExistQuery(orderNumber, cnrNumber, filingNumber, applicationNumber, orderId, preparedStmtList);
+        });
+    }
+        @Test
+        public void testGetOrderSearchQuery_Exception() {
+            List<Object> preparedStmtList = null;
+            OrderCriteria orderCriteria = new OrderCriteria();
+            orderCriteria.setOrderNumber("order123");
+
+            assertThrows(CustomException.class, () -> {
+                orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
+            });
+    }
+    @Test
+    public void testGetStatuteSectionSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getStatuteSectionSearchQuery(null, preparedStmtList);
+        });
+    }
+
+    @Test
+    public void testGetDocumentSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getDocumentSearchQuery(null, preparedStmtList);
+        });
     }
 }

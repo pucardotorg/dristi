@@ -32,15 +32,16 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("")
 public class TaskApiController {
 
-    private final TaskService taskService;
-    private final ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private TaskService taskService;
 
     @Autowired
-    public TaskApiController(TaskService taskService, ResponseInfoFactory responseInfoFactory) {
+    private ResponseInfoFactory responseInfoFactory;
+
+    public void setMockInjects(TaskService taskService, ResponseInfoFactory responseInfoFactory){
         this.taskService = taskService;
         this.responseInfoFactory = responseInfoFactory;
     }
-
 
     @RequestMapping(value = "/task/v1/create", method = RequestMethod.POST)
     public ResponseEntity<TaskResponse> taskV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "details for the creation of task", schema = @Schema()) @Valid @RequestBody TaskRequest body) {
