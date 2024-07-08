@@ -97,8 +97,6 @@ public class AdvocateRowMapperTest {
         when(resultSetMock.getString("status")).thenReturn("active");
         when(resultSetMock.getObject("additionalDetails")).thenReturn(null); // simulate additionalDetails as null
 
-        // Create AdvocateRowMapper instance
-        AdvocateRowMapper rowMapper = new AdvocateRowMapper();
 
         // Call extractData method
         List<Advocate> advocates = rowMapper.extractData(resultSetMock);
@@ -132,8 +130,6 @@ public class AdvocateRowMapperTest {
         when(pgObjectMock.getValue()).thenReturn("{}"); // JSON string
         when(resultSetMock.getObject("additionalDetails")).thenReturn(pgObjectMock);
 
-        // Create AdvocateRowMapper instance
-        AdvocateRowMapper rowMapper = new AdvocateRowMapper();
 
         // Call extractData method
         List<Advocate> advocates = rowMapper.extractData(resultSetMock);
@@ -146,8 +142,6 @@ public class AdvocateRowMapperTest {
 
     @Test
     public void testToUUID_withNullInput() {
-        // Create AdvocateRowMapper instance
-        AdvocateRowMapper rowMapper = new AdvocateRowMapper();
 
         // Call toUUID method
         UUID result = rowMapper.toUUID(null);

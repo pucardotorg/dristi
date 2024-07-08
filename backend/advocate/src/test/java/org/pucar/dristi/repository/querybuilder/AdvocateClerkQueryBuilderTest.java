@@ -182,8 +182,6 @@ public class AdvocateClerkQueryBuilderTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        // Mock AdvocateClerkQueryBuilder to throw CustomException
-        AdvocateClerkQueryBuilder queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
         doThrow(new CustomException("Error", "Simulated Exception"))
                 .when(queryBuilder)
                 .getAdvocateClerkSearchQuery(any(), any(), any(),any(),any());
