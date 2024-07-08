@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class IndividualUtilTest {
+ class IndividualUtilTest {
 
     @InjectMocks
     private IndividualUtil individualUtil;
@@ -43,7 +43,7 @@ public class IndividualUtilTest {
 
 
     @Test
-    public void testIndividualCallEmptyResponse() {
+     void testIndividualCallEmptyResponse() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
         Map<String, String> individualUserUUID = new HashMap<>();
@@ -60,7 +60,7 @@ public class IndividualUtilTest {
     }
 
     @Test
-    public void testIndividualCallCustomException() {
+     void testIndividualCallCustomException() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
         Map<String, String> individualUserUUID = new HashMap<>();
@@ -76,7 +76,7 @@ public class IndividualUtilTest {
     }
 
     @Test
-    public void testIndividualCallGenericException() {
+     void testIndividualCallGenericException() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
         Map<String, String> individualUserUUID = new HashMap<>();

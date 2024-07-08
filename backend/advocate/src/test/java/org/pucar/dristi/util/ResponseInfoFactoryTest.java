@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ResponseInfoFactoryTest {
+ class ResponseInfoFactoryTest {
 
     private ResponseInfoFactory responseInfoFactory;
 
@@ -18,7 +18,7 @@ public class ResponseInfoFactoryTest {
     }
 
     @Test
-    public void testCreateResponseInfoFromRequestInfo_Success() {
+     void testCreateResponseInfoFromRequestInfo_Success() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setApiId("apiId");
@@ -39,7 +39,7 @@ public class ResponseInfoFactoryTest {
     }
 
     @Test
-    public void testCreateResponseInfoFromRequestInfo_Failure() {
+     void testCreateResponseInfoFromRequestInfo_Failure() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setApiId("apiId");
@@ -60,7 +60,7 @@ public class ResponseInfoFactoryTest {
     }
 
     @Test
-    public void testCreateResponseInfoFromRequestInfo_NullRequestInfo() {
+     void testCreateResponseInfoFromRequestInfo_NullRequestInfo() {
         // Act
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
 
@@ -74,7 +74,7 @@ public class ResponseInfoFactoryTest {
     }
 
     @Test
-    public void testCreateResponseInfoFromRequestInfo_PartialRequestInfo() {
+     void testCreateResponseInfoFromRequestInfo_PartialRequestInfo() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setApiId("apiId");

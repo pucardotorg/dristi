@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.BUSINESS_SERVICE_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkflowUtilTest {
+ class WorkflowUtilTest {
 
     @Mock
     private ServiceRequestRepository repository;
@@ -55,7 +55,7 @@ public class WorkflowUtilTest {
     }
 
     @Test
-    public void testGetBusinessService() {
+     void testGetBusinessService() {
         // Arrange
         when(configs.getWfHost()).thenReturn("http://localhost:8080");
         when(configs.getWfBusinessServiceSearchPath()).thenReturn("/businessService/_search");
@@ -75,7 +75,7 @@ public class WorkflowUtilTest {
     }
 
     @Test
-    public void testGetBusinessService_ThrowsExceptionWhenEmptyResponse() {
+     void testGetBusinessService_ThrowsExceptionWhenEmptyResponse() {
         // Arrange
         when(configs.getWfHost()).thenReturn("http://localhost:8080");
         when(configs.getWfBusinessServiceSearchPath()).thenReturn("/businessService/_search");
@@ -92,7 +92,7 @@ public class WorkflowUtilTest {
     }
 
     @Test
-    public void testUpdateWorkflowStatus() {
+     void testUpdateWorkflowStatus() {
         // Arrange
         State state = new State();
         state.setApplicationStatus("UpdatedStatus");
@@ -120,7 +120,7 @@ public class WorkflowUtilTest {
     }
 
     @Test
-    public void testGetWorkflow() {
+     void testGetWorkflow() {
         // Arrange
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId("businessId");

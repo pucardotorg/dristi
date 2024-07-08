@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CREATE_EXCEPTION;
 
-public class AdvocateServiceTest {
+ class AdvocateServiceTest {
 
     @InjectMocks
     private AdvocateService advocateService;
@@ -53,7 +53,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testCreateAdvocateSuccess() {
+     void testCreateAdvocateSuccess() {
         AdvocateRequest request = mock(AdvocateRequest.class);
         Advocate advocate = mock(Advocate.class);
         when(request.getAdvocate()).thenReturn(advocate);
@@ -70,11 +70,11 @@ public class AdvocateServiceTest {
         verify(validator).validateAdvocateRegistration(request);
         verify(enrichmentUtil).enrichAdvocateRegistration(request);
         verify(workflowService).updateWorkflowStatus(request);
-        verify(producer).push(eq("advocateCreateTopic"), eq(request));
+        verify(producer).push("advocateCreateTopic", request);
     }
 
     @Test
-    public void testCreateAdvocateCustomException() {
+     void testCreateAdvocateCustomException() {
         AdvocateRequest request = mock(AdvocateRequest.class);
         CustomException customException = new CustomException("Error", "Error message");
 
@@ -87,7 +87,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testCreateAdvocateException() {
+     void testCreateAdvocateException() {
         AdvocateRequest request = mock(AdvocateRequest.class);
 
         doThrow(new RuntimeException("Runtime exception")).when(validator).validateAdvocateRegistration(request);
@@ -99,7 +99,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testSearchAdvocate() {
+     void testSearchAdvocate() {
         RequestInfo requestInfo = mock(RequestInfo.class);
         List<AdvocateSearchCriteria> criteria = new ArrayList<>();
         AdvocateSearchCriteria searchCriteria = mock(AdvocateSearchCriteria.class);
@@ -119,7 +119,7 @@ public class AdvocateServiceTest {
 
 
     @Test
-    public void testSearchAdvocateCustomException() {
+     void testSearchAdvocateCustomException() {
         RequestInfo requestInfo = mock(RequestInfo.class);
         List<AdvocateSearchCriteria> criteria = new ArrayList<>();
         criteria.add(mock(AdvocateSearchCriteria.class));
@@ -134,7 +134,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testSearchAdvocateByStatus() {
+     void testSearchAdvocateByStatus() {
         RequestInfo requestInfo = mock(RequestInfo.class);
         List<Advocate> advocates = new ArrayList<>();
         advocates.add(mock(Advocate.class));
@@ -148,7 +148,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testSearchAdvocateByApplicationNumber() {
+     void testSearchAdvocateByApplicationNumber() {
         RequestInfo requestInfo = mock(RequestInfo.class);
         List<Advocate> advocates = new ArrayList<>();
         advocates.add(mock(Advocate.class));
@@ -162,7 +162,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testUpdateAdvocateSuccess() {
+     void testUpdateAdvocateSuccess() {
         AdvocateRequest request = mock(AdvocateRequest.class);
         Advocate advocate = mock(Advocate.class);
         when(request.getAdvocate()).thenReturn(advocate);
@@ -181,12 +181,12 @@ public class AdvocateServiceTest {
         verify(validator).validateApplicationExistence(advocate);
         verify(enrichmentUtil).enrichAdvocateApplicationUponUpdate(request);
         verify(workflowService).updateWorkflowStatus(request);
-        verify(producer).push(eq("advocateUpdateTopic"), eq(request));
+        verify(producer).push("advocateUpdateTopic", request);
     }
 
 
     @Test
-    public void testUpdateAdvocateCustomException() {
+     void testUpdateAdvocateCustomException() {
         AdvocateRequest request = mock(AdvocateRequest.class);
         Advocate advocate = mock(Advocate.class);
         when(request.getAdvocate()).thenReturn(advocate);
@@ -201,7 +201,7 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    public void testUpdateAdvocateException() {
+     void testUpdateAdvocateException() {
         AdvocateRequest request = mock(AdvocateRequest.class);
         Advocate advocate = mock(Advocate.class);
         when(request.getAdvocate()).thenReturn(advocate);

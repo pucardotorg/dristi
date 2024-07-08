@@ -25,7 +25,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.pucar.dristi.config.ServiceConstants.IDGEN_ERROR;
 import static org.pucar.dristi.config.ServiceConstants.NO_IDS_FOUND_ERROR;
 
-public class IdgenUtilTest {
+ class IdgenUtilTest {
 
     @Mock
     private ObjectMapper mapper;
@@ -45,7 +45,7 @@ public class IdgenUtilTest {
     }
 
     @Test
-    public void testGetIdList_Success() {
+     void testGetIdList_Success() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         String tenantId = "tenantId";
@@ -74,7 +74,7 @@ public class IdgenUtilTest {
     }
 
     @Test
-    public void testGetIdList_NoIdsFound() {
+     void testGetIdList_NoIdsFound() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         String tenantId = "tenantId";
@@ -100,7 +100,7 @@ public class IdgenUtilTest {
     }
 
     @Test
-    public void testGetIdList_Exception() {
+     void testGetIdList_Exception() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         String tenantId = "tenantId";

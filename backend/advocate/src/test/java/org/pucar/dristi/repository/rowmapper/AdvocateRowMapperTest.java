@@ -78,7 +78,7 @@ public class AdvocateRowMapperTest {
     }
 
     @Test
-    public void testExtractData_withLastModifiedTimeNull() throws SQLException {
+     void testExtractData_withLastModifiedTimeNull() throws SQLException {
         // Mock ResultSet
         ResultSet resultSetMock = Mockito.mock(ResultSet.class);
         when(resultSetMock.next()).thenReturn(true, false); // simulate one row
@@ -107,7 +107,7 @@ public class AdvocateRowMapperTest {
     }
 
     @Test
-    public void testExtractData_withAdditionalDetails() throws SQLException {
+    void testExtractData_withAdditionalDetails() throws SQLException {
         // Mock ResultSet
         ResultSet resultSetMock = Mockito.mock(ResultSet.class);
         when(resultSetMock.next()).thenReturn(true, false); // simulate one row
@@ -141,7 +141,7 @@ public class AdvocateRowMapperTest {
     }
 
     @Test
-    public void testToUUID_withNullInput() {
+    void testToUUID_withNullInput() {
 
         // Call toUUID method
         UUID result = rowMapper.toUUID(null);
