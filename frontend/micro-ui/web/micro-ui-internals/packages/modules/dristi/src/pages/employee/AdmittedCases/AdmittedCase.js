@@ -12,7 +12,6 @@ import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
 import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-const fieldStyle = { marginRight: 0 };
 
 const defaultSearchValues = {
   individualName: "",
@@ -22,11 +21,11 @@ const defaultSearchValues = {
 
 const AdmittedCases = ({ isJudge = true }) => {
   const { t } = useTranslation();
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
-  const cnrNumber = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+  const urlParams = new URLSearchParams(window.location.search);
+  const filingNumber = urlParams.get("filingNumber");
+  const cnrNumber = urlParams.get("cnrNumber");
+  const title = urlParams.get("title");
+  const caseId = urlParams.get("caseId");
   const [show, setShow] = useState(false);
   const [comment, setComment] = useState("");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -189,7 +188,8 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
           };
     });
-  }, [filingNumber]);
+  }, [caseId, cnrNumber, filingNumber, tenantId]);
+
   const newTabSearchConfig = {
     ...TabSearchconfig,
     TabSearchconfig: configList,
@@ -223,7 +223,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    if (option == "Generate Order / Home") {
+    if (option === "GENERATE_ORDER_HOME") {
       const reqbody = {
         order: {
           createdDate: formatDate(new Date()),
@@ -279,7 +279,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                   <Menu
                     options={
                       userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
-                        ? ["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]
+                        ? ["GENERATE_ORDER_HOME", "Schedule Hearing", "Refer to ADR", "Abate Case"]
                         : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
                     }
                     onSelect={(option) => handleSelect(option)}
