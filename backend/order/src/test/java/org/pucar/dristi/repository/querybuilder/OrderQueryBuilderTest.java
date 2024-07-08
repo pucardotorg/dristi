@@ -32,7 +32,7 @@ public class OrderQueryBuilderTest {
     @Test
     public void testCheckOrderExistQuery() {
         UUID orderId = UUID.randomUUID();
-        String query = orderQueryBuilder.checkOrderExistQuery("order123", "cnr123", "filing123", "app123", orderId, preparedStmtList);
+        String query = orderQueryBuilder.checkOrderExistQuery("order123", "cnr123", "filing123", "app123", orderId, preparedStmt);
 
         assertNotNull(query);
         assertFalse(preparedStmt.isEmpty());
