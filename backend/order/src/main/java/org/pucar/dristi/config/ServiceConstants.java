@@ -8,12 +8,24 @@ import org.springframework.stereotype.Component;
 public class ServiceConstants {
 
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
+    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+    public static final String ORDER_EXISTS_EXCEPTION = "ORDER_EXISTS_EXCEPTION";
+    public static final String ORDER_UPDATE_EXCEPTION = "ORDER_UPDATE_EXCEPTION";
+    public static final String ORDER_CREATE_EXCEPTION = "ORDER_CREATE_EXCEPTION";
+    public static final String ORDER_SEARCH_EXCEPTION = "ORDER_SEARCH_EXCEPTION";
+    public static final String VALIDATION_EXCEPTION = "VALIDATION_EXCEPTION";
+    public static final String GET_WORKFLOW_EXCEPTION = "GET_WORKFLOW_EXCEPTION";
+    public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
+    public static final String STATUTE_SEARCH_QUERY_EXCEPTION = "STATUTE_SEARCH_QUERY_EXCEPTION";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
     public static final String IDGEN_ERROR = "IDGEN ERROR";
     public static final String NO_IDS_FOUND_ERROR = "No ids returned from idgen Service";
 
     public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "Exception occurred while fetching case details: ";
+    public static final String CREATE_ORDER_ERR = "Exception occurred while validating order details: ";
+    public static final String MDMS_DATA_NOT_FOUND = "MDMS data doesn't exist: ";
 
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
@@ -45,6 +57,6 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
-
+    public static final String JUDGEMENT = "JUDGEMENT";
 
 }

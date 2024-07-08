@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -30,73 +31,65 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Order {
-    @JsonProperty("id")
 
+    @JsonProperty("id")
     @Valid
     private UUID id = null;
 
     @JsonProperty("tenantId")
     @NotNull
-
     private String tenantId = null;
 
     @JsonProperty("filingNumber")
-
     private String filingNumber = null;
 
     @JsonProperty("cnrNumber")
-
     private String cnrNumber = null;
 
     @JsonProperty("applicationNumber")
-
     private List<String> applicationNumber = new ArrayList<>();
 
     @JsonProperty("hearingNumber")
-
     @Valid
-    private UUID hearingNumber = null;
+    private String hearingNumber = null;
 
     @JsonProperty("orderNumber")
-
     @Size(min = 24, max = 256)
     private String orderNumber = null;
 
+    @JsonProperty("linkedOrderNumber")
+    @Size(min = 24, max = 256)
+    private String linkedOrderNumber = null;
+
     @JsonProperty("createdDate")
     @NotNull
-
     @Valid
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdDate = null;
 
     @JsonProperty("issuedBy")
-
-    private Object issuedBy = null;
+    private IssuedBy issuedBy = null;
 
     @JsonProperty("orderType")
     @NotNull
     @Valid
-    private List<UUID> orderType = new ArrayList<>();
+    private String orderType = null;
 
     @JsonProperty("orderCategory")
-
     private String orderCategory = null;
 
     @JsonProperty("status")
     @NotNull
-
     private String status = null;
 
     @JsonProperty("comments")
-
     private String comments = null;
 
     @JsonProperty("isActive")
     @NotNull
-
     private Boolean isActive = null;
 
     @JsonProperty("statuteSection")
-
     @Valid
     private StatuteSection statuteSection = null;
 
@@ -105,27 +98,19 @@ public class Order {
     private List<Document> documents = null;
 
     @JsonProperty("additionalDetails")
-
-    private String additionalDetails = null;
+    private Object additionalDetails = null;
 
     @JsonProperty("auditDetails")
-
     @Valid
     private AuditDetails auditDetails = null;
 
     @JsonProperty("workflow")
-
     @Valid
     private Workflow workflow = null;
 
 
     public Order addApplicationIdsItem(String applicationNumbersItem) {
         this.applicationNumber.add(applicationNumbersItem);
-        return this;
-    }
-
-    public Order addOrderTypeItem(UUID orderTypeItem) {
-        this.orderType.add(orderTypeItem);
         return this;
     }
 

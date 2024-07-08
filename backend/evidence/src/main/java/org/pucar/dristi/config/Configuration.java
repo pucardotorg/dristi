@@ -82,4 +82,52 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
+
+	// Evidence
+	@Value("${evidence.kafka.create.topic}")
+	private String evidenceCreateTopic;
+
+	@Value("${evidence.kafka.create.withoutWorkflow.topic}")
+	private String evidenceCreateWithoutWorkflowTopic;
+
+	@Value("${evidence.kafka.update.topic}")
+	private String updateEvidenceKafkaTopic;
+
+	@Value("${evidence.kafka.update.withoutWorkflow.topic}")
+	private String updateEvidenceWithoutWorkflowKafkaTopic;
+
+	// Workflow/Business Module name
+	@Value("${egov.workflow.businessservice.module}")
+	private String businessServiceModule;
+
+	@Value("${egov.workflow.businessservice.name}")
+	private String businessServiceName;
+
+	// Case Config
+	@Value("${egov.case.host}")
+	private String caseHost;
+
+	@Value("${egov.case.path}")
+	private String caseExistsPath;
+
+	// Application Config
+	@Value("${egov.application.host}")
+	private String applicationHost;
+
+	@Value("${egov.application.path}")
+	private String applicationExistsPath;
+
+	// Order Config
+	@Value("${egov.order.host}")
+	private String orderHost;
+
+	@Value("${egov.order.path}")
+	private String orderExistsPath;
+
+	// Hearing Config
+	@Value("${egov.hearing.host}")
+	private String hearingHost;
+
+	@Value("${egov.hearing.path}")
+	private String hearingExistsPath;
 }

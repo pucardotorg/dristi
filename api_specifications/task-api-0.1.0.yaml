@@ -73,35 +73,13 @@ paths:
       summary: search for task(s)
       description: |
         search task(s) based on different parameters
-      parameters:
-        - name: id
-          in: query
-          description: id of the task(s) being searched
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: tenantId whose task(s) are being searched
-          schema:
-            type: string
-        - name: orderId
-          in: query
-          description: the order ID whose task(s) are being queried
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose task(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: the status of the task(s) being searched
-          schema:
-            type: string
+      requestBody:
+        description: Details for the search order(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TaskSearchRequest'
+        required: true
       responses:
         "200":
           description: ResponseInfo with list of task(s)
@@ -144,6 +122,32 @@ paths:
 
 components:
   schemas:
+    TaskSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/TaskCriteria'
+    TaskCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        cnrNumber:
+          type: string
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        tenantId:
+          type: string
+        id:
+          type: string
+        taskNumber:
+          type: string
+        status:
+          type: string
     TaskRequest:
       type: object
       properties:

@@ -22,14 +22,16 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class IdgenUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository restRepo;
+    private final Configuration configs;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private Configuration configs;
+    public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, Configuration configs) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+        this.configs = configs;
+    }
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();
@@ -46,6 +48,6 @@ public class IdgenUtil {
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+        return idResponses.stream().map(IdResponse::getId).toList();
     }
 }

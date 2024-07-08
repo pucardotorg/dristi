@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+	private ServiceConstants() {
+	}
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -43,5 +44,31 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+	public static final String EVIDENCE_CREATE_EXCEPTION = "ADVOCATE_CREATE_EXCEPTION";
+	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+	public static final String EVIDENCE_SEARCH_QUERY_EXCEPTION = "EVIDENCE_SEARCH_QUERY_EXCEPTION";
+	public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
+	public static final String COMMENT_SEARCH_QUERY_EXCEPTION = "COMMENT_SEARCH_QUERY_EXCEPTION";
+	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
+	public static final String PUBLISHED_STATE = "PUBLISHED";
+	public static final String ABATED_STATE = "ABATED";
+	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
+	public static final String AFFIDAVIT = "AFFIDAVIT";
+	public static final String COMPLAINANT = "COMPLAINANT";
+	public static final String DOCUMENTARY = "DOCUMENTARY";
+	public static final String DEPOSITION = "DEPOSITION";
+	public static final String ACCUSED = "ACCUSED";
+	public static final String COURT = "COURT";
+	public static final String CASE_EXCEPTION = "CASE_EXCEPTION";
+	public static final String ORDER_EXCEPTION = "ORDER_EXCEPTION";
+	public static final String APPLICATION_EXCEPTION = "APPLICATION_EXCEPTION";
+	public static final String HEARING_EXCEPTION = "HEARING_EXCEPTION";
+	public static final String EVIDENCE_UPDATE_EXCEPTION= "EVIDENCE_UPDATE_EXCEPTION";
+	public static final String EVIDENCE_SEARCH_EXCEPTION= "EVIDENCE_SEARCH_EXCEPTION";
+	public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+	public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
+	public static final String ERROR_WHILE_FETCHING_FROM_ORDER = "ERROR_WHILE_FETCHING_FROM_ORDER_SERVICE";
+	public static final String ERROR_WHILE_FETCHING_FROM_HEARING = "ERROR_WHILE_FETCHING_FROM_HEARING";
 
 }

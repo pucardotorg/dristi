@@ -1,0 +1,25 @@
+.delay-app-parent-container {
+  width: 100%;
+  max-width: 75%;
+  .delay-app-header-div {
+    h1 {
+      font-size: 40px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #3d3c3c;
+    }
+  }
+
+  .delay-app-main-div {
+    width: 100%;
+    border: solid 1px #bbbbbd;
+    padding: 0 10px 0 10px;
+    background: white;
+  }
+}
+
+.radio-selector-main-div {
+  padding: 0 10px 0 10px;
+}

@@ -305,7 +305,7 @@ components:
   schemas:
     Advocate:
       type: object
-      required: [tenantId, userId]
+      required: [tenantId, individualId]
       properties:
         id: 
           type: string
@@ -445,7 +445,7 @@ components:
 
     AdvocateClerk:
       type: object
-      required: [tenantId, userId]
+      required: [tenantId, individualId]
       properties:
         id: 
           type: string

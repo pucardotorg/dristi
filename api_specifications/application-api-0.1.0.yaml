@@ -75,49 +75,13 @@ paths:
       summary: search for application(s)
       description: |
         Gets the list of Application(s)
-      parameters:
-        - name: id
-          in: query
-          description: Search by application ID
-          schema:
-            type: string
-        - name: filingNumber
-          in: query
-          description: Search by filingNumber
-          schema:
-            type: string
-            format: uuid
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose task(s) are being queried
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: Search by tenantId 
-          schema:
-            type: string
-            format: uuid
-        - name: status
-          in: query
-          description: Search by status
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: No of records return
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset
-          schema:
-            type: integer
-        - name: sortBy
-          in: query
-          description: sorted by ascending by default if this parameter is not provided
-          schema:
-            type: string
+      requestBody:
+          description: Details for the search application(s) + RequestInfo meta data.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationSearchRequest'
+          required: true
       responses:
         "200":
           description: ResponseInfo with application(s) search successfully
@@ -160,10 +124,21 @@ paths:
 
 components:
   schemas:
+    ApplicationSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/ApplicationCriteria'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
     ApplicationRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
@@ -192,7 +167,7 @@ components:
     ApplicationExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         applicationList:
           type: array
@@ -207,7 +182,22 @@ components:
           type: array
           items:
           $ref: '#/components/schemas/ApplicationExists'
-
+    ApplicationCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        status:
+          type: string          
+        id:
+          type: string
+        tenantId:
+          type: string
     ApplicationExists:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple parameters are passed, then it will be a logical AND search
@@ -221,6 +211,20 @@ components:
         exists:
           type: boolean
 
+    IssuedBy:
+      type: object
+      properties:
+        benchID:
+          type: string
+        judgeID:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+        courtID:
+          type: string
     Application:
       required: [tenantId, caseId, createdDate, applicationType, status, isActive]
       type: object
@@ -237,7 +241,7 @@ components:
           description: This is tenantId of the case
         caseId:
           type: string
-          description: This is the required caseId of the associated case, which uniquely identifies it.
+          description: This is the caseId of the associated case
         filingNumber:
           type: string
           description: the associated case
@@ -253,7 +257,7 @@ components:
         createdDate:
           type: string
           format: datetime
-          description: the epoch datetime on which the application was created
+          description: the date on which the application was created
         createdBy:
           type: string
           format: uuid
@@ -274,19 +278,7 @@ components:
           description: number assigned to the application. applications are numbered serially for the court and affixed with the year.
           example: Application 1 of the year 2024
         issuedBy:
-          type: object
-          properties:
-            benchID:
-              type: string
-            judgeID:
-              type: array
-              items:
-                type: string
-                format: uuid
-                minLength: 36
-                maxLength: 36
-            courtID:
-              type: string
+          $ref: '#/components/schemas/IssuedBy'
         status:
           type: string
           description: workflow status
@@ -303,8 +295,10 @@ components:
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
-          type: string
-          description: This field is meant to hold any extra information that we want to store.
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:

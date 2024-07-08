@@ -1,0 +1,151 @@
+ServiceMaps:
+  serviceName: Evidence Service
+  version: 1.0.0
+  mappings:
+    - topic: save-artifact-application
+      configKey: INDEX
+      indexes:
+        - name: artifact-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditdetails.createdTime
+          jsonPath: $.artifact
+          customJsonMapping:
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.artifactDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.artifactDetails.tenantId
+              - inJsonPath: $.artifactNumber
+                outJsonPath: $.Data.artifactDetails.artifactNumber
+              - inJsonPath: $.evidenceNumber
+                outJsonPath: $.Data.artifactDetails.evidenceNumber
+              - inJsonPath: $.externalRefNumber
+                outJsonPath: $.Data.artifactDetails.externalRefNumber
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.artifactDetails.caseId
+              - inJsonPath: $.application
+                outJsonPath: $.Data.artifactDetails.application
+              - inJsonPath: $.hearing
+                outJsonPath: $.Data.artifactDetails.hearing
+              - inJsonPath: $.order
+                outJsonPath: $.Data.artifactDetails.order
+              - inJsonPath: $.mediaType
+                outJsonPath: $.Data.artifactDetails.mediaType
+              - inJsonPath: $.artifactType
+                outJsonPath: $.Data.artifactDetails.artifactType
+              - inJsonPath: $.sourceType
+                outJsonPath: $.Data.artifactDetails.sourceType
+              - inJsonPath: $.sourceID
+                outJsonPath: $.Data.artifactDetails.sourceID
+              - inJsonPath: $.sourceName
+                outJsonPath: $.Data.artifactDetails.sourceName
+              - inJsonPath: $.applicableTo[*]
+                outJsonPath: $.Data.artifactDetails.applicableTo
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.artifactDetails.createdDate
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
+              - inJsonPath: $.status
+                outJsonPath: $.Data.artifactDetails.status
+              - inJsonPath: $.file
+                outJsonPath: $.Data.artifactDetails.file
+              - inJsonPath: $.description
+                outJsonPath: $.Data.artifactDetails.description
+              - inJsonPath: $.artifactDetails
+                outJsonPath: $.Data.artifactDetails.artifactDetails
+              - inJsonPath: $.comments[*]
+                outJsonPath: $.Data.artifactDetails.comments
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.artifactDetails.additionalDetails
+              - inJsonPath: $.auditdetails
+                outJsonPath: $.Data.auditDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.artifactNumber,tenantId=$.tenantId,history=true
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+
+    - topic: update-artifact-application
+      configKey: INDEX
+      indexes:
+        - name: artifact-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditdetails.createdTime
+          jsonPath: $.artifact
+          customJsonMapping:
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.artifactDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.artifactDetails.tenantId
+              - inJsonPath: $.artifactNumber
+                outJsonPath: $.Data.artifactDetails.artifactNumber
+              - inJsonPath: $.evidenceNumber
+                outJsonPath: $.Data.artifactDetails.evidenceNumber
+              - inJsonPath: $.externalRefNumber
+                outJsonPath: $.Data.artifactDetails.externalRefNumber
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.artifactDetails.caseId
+              - inJsonPath: $.application
+                outJsonPath: $.Data.artifactDetails.application
+              - inJsonPath: $.hearing
+                outJsonPath: $.Data.artifactDetails.hearing
+              - inJsonPath: $.order
+                outJsonPath: $.Data.artifactDetails.order
+              - inJsonPath: $.mediaType
+                outJsonPath: $.Data.artifactDetails.mediaType
+              - inJsonPath: $.artifactType
+                outJsonPath: $.Data.artifactDetails.artifactType
+              - inJsonPath: $.sourceType
+                outJsonPath: $.Data.artifactDetails.sourceType
+              - inJsonPath: $.sourceID
+                outJsonPath: $.Data.artifactDetails.sourceID
+              - inJsonPath: $.sourceName
+                outJsonPath: $.Data.artifactDetails.sourceName
+              - inJsonPath: $.applicableTo[*]
+                outJsonPath: $.Data.artifactDetails.applicableTo
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.artifactDetails.createdDate
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
+              - inJsonPath: $.status
+                outJsonPath: $.Data.artifactDetails.status
+              - inJsonPath: $.file
+                outJsonPath: $.Data.artifactDetails.file
+              - inJsonPath: $.description
+                outJsonPath: $.Data.artifactDetails.description
+              - inJsonPath: $.artifactDetails
+                outJsonPath: $.Data.artifactDetails.artifactDetails
+              - inJsonPath: $.comments[*]
+                outJsonPath: $.Data.artifactDetails.comments
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.artifactDetails.additionalDetails
+              - inJsonPath: $.auditdetails
+                outJsonPath: $.Data.auditDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.artifactNumber,tenantId=$.tenantId,history=true
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status

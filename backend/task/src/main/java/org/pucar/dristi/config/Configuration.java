@@ -89,4 +89,52 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //Case
+    @Value("${task.kafka.update.topic}")
+    private String taskUpdateTopic;
+
+    @Value("${task.kafka.create.topic}")
+    private String taskCreateTopic;
+
+    @Value("${egov.workflow.task.business.name}")
+    private String taskBusinessName;
+
+    @Value("${egov.workflow.task.business.service.name}")
+    private String taskBusinessServiceName;
+
+    @Value("${egov.workflow.task.bail.business.name}")
+    private String taskBailBusinessName;
+
+    @Value("${egov.workflow.task.bail.business.service.name}")
+    private String taskBailBusinessServiceName;
+
+    @Value("${egov.workflow.task.summon.business.name}")
+    private String taskSummonBusinessName;
+
+    @Value("${egov.workflow.task.summon.business.service.name}")
+    private String taskSummonBusinessServiceName;
+
+    @Value("${egov.workflow.task.warrant.business.name}")
+    private String taskWarrantBusinessName;
+
+    @Value("${egov.workflow.task.warrant.business.service.name}")
+    private String taskWarrantBusinessServiceName;
+
+    @Value("${egov.idgen.taskNumber}")
+    private String taskNumber;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String casePath;
+
+    // Order Config
+    @Value("${egov.order.host}")
+    private String orderHost;
+
+    @Value("${egov.order.path}")
+    private String orderPath;
 }

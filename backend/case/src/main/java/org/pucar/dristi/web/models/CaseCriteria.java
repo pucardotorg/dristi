@@ -1,13 +1,12 @@
 package org.pucar.dristi.web.models;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -23,40 +22,77 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class CaseCriteria {
-	@JsonProperty("caseId")
+    @JsonProperty("caseId")
+    private String caseId = null;
 
-	private String caseId = null;
+    @JsonProperty("defaultFields")
+    private Boolean defaultFields = false;
 
-	@JsonProperty("cnrNumber")
+    @JsonProperty("cnrNumber")
+    private String cnrNumber = null;
 
-	private String cnrNumber = null;
+    @JsonProperty("filingNumber")
+    private String filingNumber = null;
 
-	@JsonProperty("filingNumber")
+    @JsonProperty("courtCaseNumber")
+    private String courtCaseNumber = null;
 
-	private String filingNumber = null;
+    @JsonProperty("filingFromDate")
+    @Valid
+    private LocalDate filingFromDate = null;
 
-	@JsonProperty("courtCaseNumber")
+    @JsonProperty("filingToDate")
+    @Valid
+    private LocalDate filingToDate = null;
 
-	private String courtCaseNumber = null;
+    @JsonProperty("registrationFromDate")
+    @Valid
+    private LocalDate registrationFromDate = null;
 
-	@JsonProperty("filingFromDate")
+    @JsonProperty("registrationToDate")
+    @Valid
+    private LocalDate registrationToDate = null;
+    //todo judgeid, stage, substage
 
-	@Valid
-	private LocalDate filingFromDate = null;
+    @JsonProperty("judgeId")
+    private String judgeId = null;
 
-	@JsonProperty("filingToDate")
+    @JsonProperty("stage")
+    private String stage = null;
 
-	@Valid
-	private LocalDate filingToDate = null;
+    @JsonProperty("substage")
+    private String substage = null;
 
-	@JsonProperty("registrationFromDate")
+    @JsonProperty("litigantId")
+    @Valid
+    private String litigantId = null;
 
-	@Valid
-	private LocalDate registrationFromDate = null;
+    @JsonProperty("advocateId")
+    @Valid
+    private String advocateId = null;
 
-	@JsonProperty("registrationToDate")
+    @JsonProperty("status")
+    @Valid
+    private String status = null;
 
-	@Valid
-	private LocalDate registrationToDate = null;
+    @JsonProperty("responseList")
+    @Valid
+    private List<CourtCase> responseList = null;
+
+
+    @JsonProperty("pagination")
+
+    @Valid
+    private Pagination pagination = null;
+
+
+
+    public CaseCriteria addResponseListItem(CourtCase responseListItem) {
+        if (this.responseList == null) {
+            this.responseList = new ArrayList<>();
+        }
+        this.responseList.add(responseListItem);
+        return this;
+    }
 
 }

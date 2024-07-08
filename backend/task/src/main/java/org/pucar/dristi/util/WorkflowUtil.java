@@ -19,14 +19,16 @@ import java.util.stream.Collectors;
 @Service
 public class WorkflowUtil {
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
+    private final ObjectMapper mapper;
+    private final Configuration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configuration configs;
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
 
@@ -74,7 +76,7 @@ public class WorkflowUtil {
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
 
-        return state.getApplicationStatus();
+        return state.getState();
     }
 
     /**
@@ -143,7 +145,9 @@ public class WorkflowUtil {
             List<String> userIds = null;
 
             if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
-                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+                userIds = processInstance.getAssignes().stream()
+                        .map(User::getUuid)
+                        .toList();
             }
 
             Workflow workflow = Workflow.builder()

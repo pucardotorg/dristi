@@ -36,4 +36,8 @@ public class MainConfiguration {
     converter.setObjectMapper(objectMapper);
     return converter;
     }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
 }

@@ -37,6 +37,10 @@ public class Application   {
 
                 private String tenantId = null;
 
+        @JsonProperty("caseId")
+        @NotNull
+        private String caseId = null;
+
         @JsonProperty("filingNumber")
 
                 private String filingNumber = null;
@@ -67,7 +71,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private List<UUID> applicationType = new ArrayList<>();
+                private String applicationType = null;
 
         @JsonProperty("applicationNumber")
 
@@ -75,7 +79,7 @@ public class Application   {
 
         @JsonProperty("issuedBy")
 
-                private Object issuedBy = null;
+                private IssuedBy issuedBy = null;
 
         @JsonProperty("status")
           @NotNull
@@ -102,7 +106,7 @@ public class Application   {
 
         @JsonProperty("additionalDetails")
 
-                private String additionalDetails = null;
+                private Object additionalDetails = null;
 
         @JsonProperty("auditDetails")
 
@@ -120,11 +124,6 @@ public class Application   {
             this.onBehalfOf = new ArrayList<>();
             }
         this.onBehalfOf.add(onBehalfOfItem);
-        return this;
-        }
-
-        public Application addApplicationTypeItem(UUID applicationTypeItem) {
-        this.applicationType.add(applicationTypeItem);
         return this;
         }
 
