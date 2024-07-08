@@ -132,8 +132,6 @@ public class ClerkApiControllerTest {
         body.setTenantId("tenant1");
         Integer limit = 10;
         Integer offset = 0;
-        List<AdvocateClerk> advocateList = new ArrayList<>(); // Your list of advocates here
-        //when(advocateService.searchAdvocateClerkApplications(requestInfo, criteria, "tenant1", limit, offset)).thenReturn(advocateList);
         ResponseInfo responseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(responseInfo);
 

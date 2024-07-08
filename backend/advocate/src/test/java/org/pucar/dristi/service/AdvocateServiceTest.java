@@ -144,7 +144,6 @@ public class AdvocateServiceTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
 
         // Act
         advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset);
@@ -267,7 +266,6 @@ public class AdvocateServiceTest {
         userInfo.setUuid(UUID.randomUUID().toString());
         requestInfo.setUserInfo(userInfo);
 
-        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
         String status = "testStatus";
         String tenantId = "testTenantId";
         Integer limit = null;
@@ -287,8 +285,7 @@ public class AdvocateServiceTest {
         userInfo.setUuid(UUID.randomUUID().toString());
         requestInfo.setUserInfo(userInfo);
 
-        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
-        String status = "testStatus";
+            String status = "testStatus";
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
@@ -358,8 +355,6 @@ public class AdvocateServiceTest {
         userInfo.setUuid(UUID.randomUUID().toString());
         requestInfo.setUserInfo(userInfo);
 
-        // Execution
-        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         when(advocateRepository.getListApplicationsByApplicationNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(CustomException.class);
 
@@ -417,7 +412,6 @@ public class AdvocateServiceTest {
         advocateRequest.setAdvocate(advocate);
 
         when(validator.validateApplicationExistence(any())).thenReturn(advocate);
-//        when(config.getAdvClerkUpdateTopic()).thenReturn("testTopic");
 
         // Act
         Advocate result = advocateService.updateAdvocate(advocateRequest);

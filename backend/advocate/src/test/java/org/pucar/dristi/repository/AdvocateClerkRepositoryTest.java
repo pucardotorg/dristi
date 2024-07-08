@@ -44,8 +44,6 @@ public class AdvocateClerkRepositoryTest {
     private AdvocateClerkSearchCriteria searchCriteria;
     private List<AdvocateClerk> advocateClerkList;
     private Map<UUID, List<Document>> documentMap;
-    private AtomicReference<Boolean> isIndividualLoggedInUser;
-
     @BeforeEach
     public void setUp() {
         searchCriteria = new AdvocateClerkSearchCriteria();

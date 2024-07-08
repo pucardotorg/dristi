@@ -13,11 +13,14 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class UrlShortenerUtil {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+	private final Configuration configs;
 
 	@Autowired
-	private Configuration configs;
+	public UrlShortenerUtil(RestTemplate restTemplate, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.configs = configs;
+	}
 
 	public String getShortenedUrl(String url) {
 		HashMap<String, String> body = new HashMap<>();
