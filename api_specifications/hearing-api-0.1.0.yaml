@@ -258,7 +258,7 @@ components:
       type: object
       required: [tenantId, hearingType, status]
       oneOf:
-        - required: [filingNumber, caseNumber]
+        - required: [filingNumber, cnrNumbers]
       properties:
         id:
           type: string

@@ -226,7 +226,7 @@ components:
         courtID:
           type: string
     Application:
-      required: [tenantId, caseId, createdDate, applicationType, status, isActive]
+      required: [tenantId, filingNumber, createdDate, applicationType, status, isActive]
       type: object
       properties:
         id:

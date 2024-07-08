@@ -95,7 +95,7 @@ paths:
 components:
   schemas:
     Artifact:
-      required: [tenantId, caseId]
+      required: [tenantId, filingNumber]
       type: object
       properties:
         id:
@@ -108,6 +108,11 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case based on the state.
+        filingNumber:
+          type: string
+          description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
+          minLength: 2
+          maxLength: 64
         artifactNumber:
           type: string
           description: Identification number assigned when an artifact is uploaded
@@ -123,9 +128,6 @@ components:
           description: Reference to a physical artifact or other evidence collected during the course of an investigation
           minLength: 2
           maxLength: 128
-        caseId:
-          type: string
-          description: Reference to the case UUID from the CourtCase entity
         application:
           type: string
           description: Application number with which this evidence is associated
@@ -282,7 +284,7 @@ components:
       type: object
       description: the fields specified will be used in a logical AND condition
       properties:
-        caseId:
+        filingNumber:
           type: string
         applicationId:
           type: string

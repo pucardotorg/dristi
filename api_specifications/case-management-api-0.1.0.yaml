@@ -253,7 +253,7 @@ components:
         witnesses:
           type: array
           items:
-            $ref: './hearing-api-0.1.0.yaml#/components/schemas/Hearing'
+            $ref: './case-api-0.1.0.yaml#/components/schemas/Witness'
         orders:
           type: array
           items:
