@@ -1,11 +1,12 @@
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../../components/Modal";
 import DocViewerWrapper from "../docViewerWrapper";
 
 const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter }) => {
   const { t } = useTranslation();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const CloseBtn = (props) => {
     return (
@@ -22,12 +23,53 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       </div>
     );
   };
+  const hideSubmit = useMemo(() => {
+    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission.status === "PENDINGREVIEW";
+  }, [documentSubmission.status, userRoles]);
 
-  console.log(documentSubmission);
+  const actionSaveLabel = useMemo(() => {
+    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+      ? t("Approve")
+      : (userRoles.includes("APPLICATION_RESPONDER") ||
+          userRoles.includes("DEPOSITION_CREATOR") ||
+          userRoles.includes("DEPOSITION_ESIGN") ||
+          userRoles.includes("DEPOSITION_PUBLISHER")) &&
+        documentSubmission[0].status !== "PENDINGREVIEW" &&
+        modalType === "Documents"
+      ? !documentSubmission[0]?.artifactList.isEvidence
+        ? t("Mark as Evidence")
+        : documentSubmission[0]?.artifactList.artifactType !== "DEPOSITION"
+        ? t("Unmark as Evidence")
+        : null
+      : null;
+  }, [documentSubmission, modalType, t, userRoles]);
 
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const actionCancelLabel = useMemo(() => {
+    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+      ? t("Reject")
+      : null;
+  }, [documentSubmission, modalType, t, userRoles]);
 
-  console.log(documentSubmission);
+  const reqCreate = {
+    url: `/application/application/v1/update`,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
+  const reqEvidenceUpdate = {
+    url: `/evidence/artifacts/v1/_update`,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
+
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
+  const evidenceUpdateMutation = Digit.Hooks.useCustomAPIMutationHook(reqEvidenceUpdate);
+
   // const markAsReadPayload = {
   //   tenantId: tenantId,
   //   artifact: {
@@ -75,124 +117,83 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       action: "ABANDON",
     },
   };
-  console.log(acceptApplicationPayload);
-
-  const reqCreate = {
-    url: `/application/application/v1/update`,
-    params: {},
-    body: {},
-    config: {
-      enable: false,
-    },
-  };
-  const reqEvidenceUpdate = {
-    url: `/evidence/artifacts/v1/_update`,
-    params: {},
-    body: {},
-    config: {
-      enable: false,
-    },
+  const handleRejectApplication = async () => {
+    await mutation.mutate({
+      url: `/application/application/v1/update`,
+      params: {},
+      body: { application: rejectApplicationPayload },
+      config: {
+        enable: true,
+      },
+    });
+    setShow(false);
+    setUpdateCounter((prevCount) => prevCount + 1);
   };
 
-  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
-  const evidenceUpdateMutation = Digit.Hooks.useCustomAPIMutationHook(reqEvidenceUpdate);
-
-  return (
-    <Modal
-      headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
-      actionSaveLabel={
-        userRoles.indexOf("APPLICATION_RESPONDER") !== -1 && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
-          ? t("Approve")
-          : (userRoles.indexOf("APPLICATION_RESPONDER") !== -1 ||
-              userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
-              userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
-              userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1) &&
-            documentSubmission[0].status !== "PENDINGREVIEW" &&
-            modalType === "Documents"
-          ? !documentSubmission[0]?.artifactList.isEvidence
-            ? t("Mark as Evidence")
-            : documentSubmission[0]?.artifactList.artifactType !== "DEPOSITION"
-            ? t("Unmark as Evidence")
-            : null
-          : null
-      }
-      actionSaveOnSubmit={async () => {
-        if (
-          (userRoles.indexOf("APPLICATION_RESPONDER") !== -1 ||
-            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
-            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
-            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1) &&
-          documentSubmission[0].status !== "PENDINGREVIEW" &&
-          modalType === "Documents"
-        ) {
-          if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
-            await evidenceUpdateMutation.mutate({
-              url: `/evidence/artifacts/v1/_update`,
-              params: {},
-              body: {
-                artifact: {
-                  ...documentSubmission[0].artifactList,
-                  isEvidence: !documentSubmission[0].artifactList.isEvidence,
-                  workflow: {
-                    ...documentSubmission[0].artifactList.workflow,
-                    action: "SIGN DEPOSITION",
-                  },
-                },
-              },
-              config: {
-                enable: true,
-              },
-            });
-          } else {
-            await evidenceUpdateMutation.mutate({
-              url: `/evidence/artifacts/v1/_update`,
-              params: {},
-              body: {
-                artifact: {
-                  ...documentSubmission[0].artifactList,
-                  isEvidence: !documentSubmission[0].artifactList.isEvidence,
-                },
-              },
-              config: {
-                enable: true,
-              },
-            });
-          }
-        } else if (
-          userRoles.indexOf("APPLICATION_RESPONDER") !== -1 &&
-          documentSubmission[0].status === "PENDINGREVIEW" &&
-          modalType === "Submissions"
-        ) {
-          await mutation.mutate({
-            url: `/application/application/v1/update`,
-            params: {},
-            body: { application: acceptApplicationPayload },
-            config: {
-              enable: true,
-            },
-          });
-        }
-        setShow(false);
-        setUpdateCounter((prevCount) => prevCount + 1);
-      }}
-      hideSubmit={userRoles.indexOf("APPLICATION_RESPONDER") !== -1 && documentSubmission.status === "PENDINGREVIEW"}
-      actionCancelLabel={
-        userRoles.indexOf("WORKFLOW_ABANDON") !== -1 && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
-          ? t("Reject")
-          : null
-      }
-      actionCancelOnSubmit={async () => {
-        await mutation.mutate({
-          url: `/application/application/v1/update`,
+  const handleAcceptApplication = async () => {
+    if (
+      (userRoles.includes("APPLICATION_RESPONDER") ||
+        userRoles.includes("DEPOSITION_CREATOR") ||
+        userRoles.includes("DEPOSITION_ESIGN") ||
+        userRoles.includes("DEPOSITION_PUBLISHER")) &&
+      documentSubmission[0].status !== "PENDINGREVIEW" &&
+      modalType === "Documents"
+    ) {
+      if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
+        await evidenceUpdateMutation.mutate({
+          url: `/evidence/artifacts/v1/_update`,
           params: {},
-          body: { application: rejectApplicationPayload },
+          body: {
+            artifact: {
+              ...documentSubmission[0].artifactList,
+              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+              workflow: {
+                ...documentSubmission[0].artifactList.workflow,
+                action: "SIGN DEPOSITION",
+              },
+            },
+          },
           config: {
             enable: true,
           },
         });
-        setShow(false);
-        setUpdateCounter((prevCount) => prevCount + 1);
-      }}
+      } else {
+        await evidenceUpdateMutation.mutate({
+          url: `/evidence/artifacts/v1/_update`,
+          params: {},
+          body: {
+            artifact: {
+              ...documentSubmission[0].artifactList,
+              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+            },
+          },
+          config: {
+            enable: true,
+          },
+        });
+      }
+    } else if (userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions") {
+      await mutation.mutate({
+        url: `/application/application/v1/update`,
+        params: {},
+        body: { application: acceptApplicationPayload },
+        config: {
+          enable: true,
+        },
+      });
+    }
+    setShow(false);
+    setUpdateCounter((prevCount) => prevCount + 1);
+  };
+
+  return (
+    <Modal
+      headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
+      actionSaveLabel={actionSaveLabel}
+      actionSaveOnSubmit={handleAcceptApplication}
+      hideSubmit={hideSubmit}
+      actionCancelLabel={actionCancelLabel}
+      actionCancelOnSubmit={handleRejectApplication}
       formId="modal-action"
       headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}
       className="evidence-modal"
