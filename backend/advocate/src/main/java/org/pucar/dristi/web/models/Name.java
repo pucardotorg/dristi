@@ -2,8 +2,9 @@ package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Size;
 
 @Validated
 @JsonIgnoreProperties(

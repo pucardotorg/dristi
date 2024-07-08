@@ -8,7 +8,6 @@ import org.pucar.dristi.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.AdvocateClerkRowMapper;
 import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

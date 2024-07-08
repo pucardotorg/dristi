@@ -12,9 +12,7 @@ import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

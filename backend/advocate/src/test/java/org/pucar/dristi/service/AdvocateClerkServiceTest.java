@@ -1,4 +1,5 @@
 package org.pucar.dristi.service;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -18,11 +19,10 @@ import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

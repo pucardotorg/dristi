@@ -16,7 +16,6 @@ import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

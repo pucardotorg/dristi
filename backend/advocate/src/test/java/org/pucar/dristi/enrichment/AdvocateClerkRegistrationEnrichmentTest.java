@@ -14,9 +14,10 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkRequest;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
