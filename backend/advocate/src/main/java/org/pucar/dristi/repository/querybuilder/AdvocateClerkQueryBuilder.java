@@ -3,13 +3,9 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -162,27 +158,27 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
+    void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");
         }else{
-            query.append(" OR ");
+            query.append(AND);
         }
     }
 
-    private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
+    void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
-            query.append(" WHERE ");
+            query.append(" WHERE ( ");
         }else{
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
-    private void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
+    void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");
         }else{
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 

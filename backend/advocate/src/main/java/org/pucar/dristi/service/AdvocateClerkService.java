@@ -8,12 +8,15 @@ import org.pucar.dristi.enrichment.AdvocateClerkRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateClerkRepository;
 import org.pucar.dristi.validators.AdvocateClerkRegistrationValidator;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.AdvocateClerk;
+import org.pucar.dristi.web.models.AdvocateClerkRequest;
+import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
