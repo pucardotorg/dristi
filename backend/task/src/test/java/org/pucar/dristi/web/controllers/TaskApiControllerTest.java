@@ -38,7 +38,6 @@ class TaskApiControllerTest {
     @BeforeEach
     void setUp() {
         controller.setMockInjects(taskService, responseInfoFactory);
-        MockitoAnnotations.initMocks(this);
     }
 
 
