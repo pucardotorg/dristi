@@ -80,6 +80,9 @@ const JoinHomeLocalisation = {
   PRIMARY_ADD_SUPPORTING_ADVOCATE: "PRIMARY_ADD_SUPPORTING_ADVOCATE",
   CONTACT_PRIMARTY_ADVOCATE: "CONTACT_PRIMARTY_ADVOCATE",
   REPRESENT_SELF_PARTY: "REPRESENT_SELF_PARTY",
+  NO_OBJECTION_UPLOAD_TEXT: "NO_OBJECTION_UPLOAD_TEXT",
+  COURT_ORDER_UPLOAD_TEXT: "COURT_ORDER_UPLOAD_TEXT",
+  ALREADY_PART_OF_CASE: "ALREADY_PART_OF_CASE",
 };
 
 const barRegistrationSerachConfig = [
@@ -184,6 +187,61 @@ const barRegistrationSerachConfig = [
   },
 ];
 
+const advocateVakalatnamaAndNocConfig = [
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "nocFileUpload",
+        isMandatory: true,
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "NO_OBJECTION_UPLOAD_TEXT",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "advocateCourtOrder",
+        isMandatory: true,
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "COURT_ORDER_UPLOAD_TEXT",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
 const JoinCaseHome = ({ refreshInbox }) => {
   const { t } = useTranslation();
 
@@ -209,6 +267,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [parties, setParties] = useState([]);
   const [advocateDetail, setAdvocateDetail] = useState({});
   const [advocateDetailForm, setAdvocateDetailForm] = useState({});
+  const [replaceAdvocateDocuments, setReplaceAdvocateDocuments] = useState({});
   const [primaryAdvocateDetail, setPrimaryAdvocateDetail] = useState([]);
 
   const [party, setParty] = useState("");
@@ -272,8 +331,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
     if (step === 1) {
       if (
         (userType && userType === "Litigant" && selectedParty?.label && representingYourself) ||
-        (userType && userType === "Advocate" && selectedParty?.label && barRegNumber === "") ||
-        (userType && userType === "Advocate" && selectedParty?.label && barRegNumber && roleOfNewAdvocate)
+        (userType && userType === "Advocate" && selectedParty?.label && caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0) ||
+        (userType &&
+          userType === "Advocate" &&
+          selectedParty?.label &&
+          caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
+          roleOfNewAdvocate)
       ) {
         setIsDisabled(false);
       } else {
@@ -305,7 +368,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       }
     }
 
-    if (step !== 7) {
+    if (step !== 8) {
       setSuccess(false);
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
@@ -559,39 +622,36 @@ const JoinCaseHome = ({ refreshInbox }) => {
             </React.Fragment>
           )}
           {/* warning message dependent on e-filing advocate details */}
-          {selectedParty?.label &&
-            barRegNumber !== "" &&
-            caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
-            userType === "Advocate" && (
-              <React.Fragment>
-                <hr className="horizontal-line" />
-                <InfoCard
-                  variant={"warning"}
-                  label={t(JoinHomeLocalisation.WARNING)}
-                  additionalElements={[
-                    <p>
-                      {t(JoinHomeLocalisation.FOR_THE_SELECTED)} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
-                      {t(JoinHomeLocalisation.ALREADY_AN_ADVOCATE)}
-                    </p>,
-                  ]}
-                  inline
-                  textStyle={{}}
-                  className={`custom-info-card warning`}
-                />
+          {selectedParty?.label && caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 && userType === "Advocate" && (
+            <React.Fragment>
+              <hr className="horizontal-line" />
+              <InfoCard
+                variant={"warning"}
+                label={t(JoinHomeLocalisation.WARNING)}
+                additionalElements={[
+                  <p>
+                    {t(JoinHomeLocalisation.FOR_THE_SELECTED)} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
+                    {t(JoinHomeLocalisation.ALREADY_AN_ADVOCATE)}
+                  </p>,
+                ]}
+                inline
+                textStyle={{}}
+                className={`custom-info-card warning`}
+              />
 
-                <LabelFieldPair className="case-label-field-pair">
-                  <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.PLEASE_CHOOSE_PROCEED)}`}</CardLabel>
-                  <RadioButtons
-                    selectedOption={roleOfNewAdvocate}
-                    onSelect={(value) => {
-                      setRoleOfNewAdvocate(value);
-                      setRepresentingYourself("");
-                    }}
-                    options={[t(JoinHomeLocalisation.PRIMARY_ADVOCATE), t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)]}
-                  />
-                </LabelFieldPair>
-              </React.Fragment>
-            )}
+              <LabelFieldPair className="case-label-field-pair">
+                <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.PLEASE_CHOOSE_PROCEED)}`}</CardLabel>
+                <RadioButtons
+                  selectedOption={roleOfNewAdvocate}
+                  onSelect={(value) => {
+                    setRoleOfNewAdvocate(value);
+                    setRepresentingYourself("");
+                  }}
+                  options={[t(JoinHomeLocalisation.PRIMARY_ADVOCATE), t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)]}
+                />
+              </LabelFieldPair>
+            </React.Fragment>
+          )}
           {selectedParty?.label && userType === "Litigant" && (
             <React.Fragment>
               <hr className="horizontal-line" />
@@ -891,6 +951,30 @@ const JoinCaseHome = ({ refreshInbox }) => {
     // 6
     {
       modalMain: (
+        <div className="noc-court-order-upload">
+          <FormComposerV2
+            config={advocateVakalatnamaAndNocConfig}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              console.log("formData", formData);
+              if (!isEqual(formData, replaceAdvocateDocuments)) {
+                setReplaceAdvocateDocuments(formData);
+              }
+              if (formData?.nocFileUpload && formData?.advocateCourtOrder) {
+                setIsDisabled(false);
+              } else setIsDisabled(true);
+            }}
+            defaultValues={replaceAdvocateDocuments}
+            cardStyle={{ minWidth: "100%" }}
+            secondaryLabel={t("CS_SAVE_DRAFT")}
+            className={`noc-court-order-upload-form`}
+            noBreakLine
+          />
+        </div>
+      ),
+    },
+    // 7
+    {
+      modalMain: (
         <div className="enter-validation-code">
           <InfoCard
             variant={"default"}
@@ -938,7 +1022,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         </div>
       ),
     },
-    // 7
+    // 8
     {
       modalMain: (
         <div className="join-a-case-success">
@@ -1059,8 +1143,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setUserType("");
     setBarRegNumber("");
     setBarDetails([]);
-    setSelectedParty("");
-    setSelectedParty("");
+    setSelectedParty({});
     setRepresentingYourself("");
     setRoleOfNewAdvocate("");
     setValidationCode("");
@@ -1068,6 +1151,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setCaseInfo([]);
     setStep(0);
     setShow(false);
+    setIsSignedAdvocate(false);
+    setIsSignedParty(false);
+    setAdvocateDetailForm({});
+    setReplaceAdvocateDocuments({});
   };
 
   const submitJoinCase = async (data) => {
@@ -1089,8 +1176,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         if (userType === t(JoinHomeLocalisation.ADVOCATE_OPT)) {
           const isFound = caseDetails?.representatives?.find((item) => item.advocateId === advocateId) !== undefined;
           if (isFound) {
-            setStep(7);
-            setMessageHeader("You are already part of this case");
+            setStep(8);
+            setMessageHeader(t(JoinHomeLocalisation.ALREADY_PART_OF_CASE));
             setSuccess(true);
           } else {
             setStep(step + 1);
@@ -1098,8 +1185,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         } else if (userType === t(JoinHomeLocalisation.LITIGANT_OPT)) {
           const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId) !== undefined;
           if (isFound) {
-            setStep(7);
-            setMessageHeader("You are already part of this case");
+            setStep(8);
+            setMessageHeader(t(JoinHomeLocalisation.ALREADY_PART_OF_CASE));
             setSuccess(true);
           } else {
             setStep(step + 1);
@@ -1172,10 +1259,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
       if (userType === "Litigant") {
         if (representingYourself !== "Yes" && advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.data?.barRegistrationNumber) {
           setIsDisabled(true);
-          setStep(step + 4);
+          setStep(step + 5);
         } else {
           setIsDisabled(true);
-          setStep(step + 4);
+          setStep(step + 5);
         }
       } else {
         setIsDisabled(false);
@@ -1188,81 +1275,191 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setStep(step + 1);
       setIsDisabled(false);
     } else if (step === 5) {
+      if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
+        setStep(step + 1);
+      } else {
+        setStep(step + 2);
+      }
+      setIsDisabled(true);
+    } else if (step === 6) {
       setStep(step + 1);
       setIsDisabled(true);
-    } else if (step === 6 && validationCode.length === 6) {
+    } else if (step === 7 && validationCode.length === 6) {
       if (userType === "Advocate") {
-        const [res, err] = await submitJoinCase({
-          additionalDetails: {
-            ...caseDetails?.additionalDetails,
-            advocateDetails: (() => {
-              return {
-                ...caseDetails?.additionalDetails?.advocateDetails,
-                formdata: [
-                  ...caseDetails?.additionalDetails?.advocateDetails?.formdata,
-                  {
-                    data: {
-                      advocateId: advocateDetailForm?.id,
-                      advocateName: advocateDetailForm?.additionalDetails?.username,
-                      barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
-                      vakalatnamaFileUpload: {
-                        document: [
+        if (caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0) {
+          const nocDocument = await Promise.all(
+            advocateDetailForm?.vakalatnamaFileUpload?.document?.map(async (document) => {
+              if (document) {
+                const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                return {
+                  documentType: uploadedData.fileType || document?.documentType,
+                  fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                  documentName: uploadedData.filename || document?.documentName,
+                  fileName: `Vakalatnama (${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName})`,
+                  individualId,
+                };
+              }
+            }) || []
+          );
+          const courOrderDocument = await Promise.all(
+            advocateDetailForm?.vakalatnamaFileUpload?.document?.map(async (document) => {
+              if (document) {
+                const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                return {
+                  documentType: uploadedData.fileType || document?.documentType,
+                  fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                  documentName: uploadedData.filename || document?.documentName,
+                  fileName: `Vakalatnama (${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName})`,
+                  individualId,
+                };
+              }
+            }) || []
+          );
+          const [res, err] = await submitJoinCase({
+            additionalDetails: {
+              ...caseDetails?.additionalDetails,
+              advocateDetails: (() => {
+                return {
+                  ...caseDetails?.additionalDetails?.advocateDetails,
+                  formdata: [
+                    ...caseDetails?.additionalDetails?.advocateDetails?.formdata,
+                    {
+                      data: {
+                        advocateId: advocateDetailForm?.id,
+                        advocateName: advocateDetailForm?.additionalDetails?.username,
+                        barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                        vakalatnamaFileUpload: {
+                          document: [
+                            {
+                              documentType: adovacteVakalatnama?.documentType,
+                              fileStore: adovacteVakalatnama?.fileStore,
+                              documentName: adovacteVakalatnama?.additionalDetails?.fileName,
+                              fileName: `Vakalatnama (${selectedParty?.label})`,
+                              individualId: selectedParty?.individualId,
+                            },
+                          ],
+                        },
+                        isAdvocateRepresenting: {
+                          code: "YES",
+                          name: "Yes",
+                          showForm: true,
+                          isEnabled: true,
+                        },
+                        advocateBarRegNumberWithName: [
                           {
-                            documentType: adovacteVakalatnama?.documentType,
-                            fileStore: adovacteVakalatnama?.fileStore,
-                            documentName: adovacteVakalatnama?.additionalDetails?.fileName,
-                            fileName: `Vakalatnama (${selectedParty?.label})`,
-                            individualId: selectedParty?.individualId,
+                            modified: true,
+                            advocateId: advocateDetailForm?.id,
+                            advocateName: advocateDetailForm?.additionalDetails?.username,
+                            barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                            barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                           },
                         ],
+                        barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                       },
-                      isAdvocateRepresenting: {
-                        code: "YES",
-                        name: "Yes",
-                        showForm: true,
-                        isEnabled: true,
-                      },
-                      advocateBarRegNumberWithName: [
-                        {
-                          modified: true,
-                          advocateId: advocateDetailForm?.id,
-                          advocateName: advocateDetailForm?.additionalDetails?.username,
-                          barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
-                          barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
-                        },
-                      ],
-                      barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                     },
-                  },
-                ],
-              };
-            })(),
-          },
-          caseFilingNumber: caseNumber,
-          tenantId: tenantId,
-          accessCode: validationCode,
-          representative: {
+                  ],
+                };
+              })(),
+            },
+            caseFilingNumber: caseNumber,
             tenantId: tenantId,
-            advocateId: advocateId,
-            representing: [
-              {
-                tenantId: tenantId,
-                individualId: selectedParty?.individualId || null,
-                partyType: selectedParty?.partyType,
-              },
-            ],
-          },
-        });
-        if (res) {
-          setStep(step + 1);
-          setSuccess(true);
-        } else {
-          setErrors({
-            ...errors,
-            validationCode: {
-              message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
+            accessCode: validationCode,
+            representative: {
+              tenantId: tenantId,
+              advocateId: advocateId,
+              representing: [
+                {
+                  tenantId: tenantId,
+                  individualId: selectedParty?.individualId || null,
+                  partyType: selectedParty?.partyType,
+                },
+              ],
             },
           });
+          if (res) {
+            setStep(step + 1);
+            setSuccess(true);
+          } else {
+            setErrors({
+              ...errors,
+              validationCode: {
+                message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
+              },
+            });
+          }
+        } else {
+          const [res, err] = await submitJoinCase({
+            additionalDetails: {
+              ...caseDetails?.additionalDetails,
+              advocateDetails: (() => {
+                return {
+                  ...caseDetails?.additionalDetails?.advocateDetails,
+                  formdata: [
+                    ...caseDetails?.additionalDetails?.advocateDetails?.formdata,
+                    {
+                      data: {
+                        advocateId: advocateDetailForm?.id,
+                        advocateName: advocateDetailForm?.additionalDetails?.username,
+                        barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                        vakalatnamaFileUpload: {
+                          document: [
+                            {
+                              documentType: adovacteVakalatnama?.documentType,
+                              fileStore: adovacteVakalatnama?.fileStore,
+                              documentName: adovacteVakalatnama?.additionalDetails?.fileName,
+                              fileName: `Vakalatnama (${selectedParty?.label})`,
+                              individualId: selectedParty?.individualId,
+                            },
+                          ],
+                        },
+                        isAdvocateRepresenting: {
+                          code: "YES",
+                          name: "Yes",
+                          showForm: true,
+                          isEnabled: true,
+                        },
+                        advocateBarRegNumberWithName: [
+                          {
+                            modified: true,
+                            advocateId: advocateDetailForm?.id,
+                            advocateName: advocateDetailForm?.additionalDetails?.username,
+                            barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                            barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
+                          },
+                        ],
+                        barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
+                      },
+                    },
+                  ],
+                };
+              })(),
+            },
+            caseFilingNumber: caseNumber,
+            tenantId: tenantId,
+            accessCode: validationCode,
+            representative: {
+              tenantId: tenantId,
+              advocateId: advocateId,
+              representing: [
+                {
+                  tenantId: tenantId,
+                  individualId: selectedParty?.individualId || null,
+                  partyType: selectedParty?.partyType,
+                },
+              ],
+            },
+          });
+          if (res) {
+            setStep(step + 1);
+            setSuccess(true);
+          } else {
+            setErrors({
+              ...errors,
+              validationCode: {
+                message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
+              },
+            });
+          }
         }
       } else {
         if (representingYourself === "Yes") {
@@ -1505,9 +1702,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
           actionCancelOnSubmit={() => {
             if (step === 0 && caseDetails?.caseNumber) {
               setCaseDetails({});
-            } else if (step === 6) {
-              if (userType === "Litigant") setStep(step - 4);
-              else setStep(step - 1);
+            } else if (step === 7) {
+              if (userType === "Litigant") setStep(step - 5);
+              else {
+                if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) setStep(step - 1);
+                else setStep(step - 2);
+              }
               setValidationCode("");
               setErrors({
                 ...errors,
@@ -1545,14 +1745,20 @@ const JoinCaseHome = ({ refreshInbox }) => {
               label={t(JoinHomeLocalisation.SKIP_LATER)}
               onButtonClick={() => {
                 if (userType === "Litigant") {
-                  setStep(6);
+                  setStep(7);
                   setBarRegNumber("");
                   setAdvocateDetailForm({});
                 } else {
-                  setStep(6);
-                  if (step === 4) {
-                    setIsSignedAdvocate(false);
-                  } else if (step === 5) setIsSignedParty(false);
+                  if (roleOfNewAdvocate) {
+                    setStep(6);
+                    if (step === 4) {
+                      setIsSignedAdvocate(false);
+                      setIsSignedParty(false);
+                    } else if (step === 5) {
+                    }
+                  } else {
+                    setStep(7);
+                  }
                 }
               }}
             />
