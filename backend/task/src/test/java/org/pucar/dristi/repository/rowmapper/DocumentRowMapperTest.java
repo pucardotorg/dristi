@@ -48,6 +48,20 @@ public class DocumentRowMapperTest {
         assertEquals("doc2", result.get(taskId2).get(0).getId());
     }
 
+
+    @Test
+    public void testExtractData_CustomException() throws Exception {
+        // Simulate CustomException being thrown
+        when(resultSet.next()).thenThrow(new CustomException("ERROR_CODE", "Error Message"));
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            documentRowMapper.extractData(resultSet);
+        });
+
+        assertEquals("ERROR_CODE", exception.getCode());
+        assertEquals("Error Message", exception.getMessage());
+    }
+
     @Test
     public void testExtractData_withAdditionalDetails() throws Exception {
         UUID taskId = UUID.randomUUID();

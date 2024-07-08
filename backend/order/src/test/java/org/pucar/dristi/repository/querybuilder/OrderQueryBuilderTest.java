@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,41 +15,41 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderQueryBuilderTest {
+class OrderQueryBuilderTest {
 
     @InjectMocks
     private OrderQueryBuilder orderQueryBuilder;
 
-    private List<Object> preparedStmtList;
+    private List<Object> preparedStmt;
     private List<String> ids;
 
     @BeforeEach
-    public void setUp() {
-        preparedStmtList = new ArrayList<>();
+    void setUp() {
+        preparedStmt = new ArrayList<>();
         ids = new ArrayList<>();
     }
 
     @Test
-    public void testCheckOrderExistQuery() {
+    void testCheckOrderExistQuery() {
         UUID orderId = UUID.randomUUID();
-        String query = orderQueryBuilder.checkOrderExistQuery("order123", "cnr123", "filing123", "app123", orderId, preparedStmtList);
+        String query = orderQueryBuilder.checkOrderExistQuery("order123", "cnr123", "filing123", "app123", orderId, preparedStmt);
 
         assertNotNull(query);
-        assertFalse(preparedStmtList.isEmpty());
-        assertEquals(5, preparedStmtList.size());
+        assertFalse(preparedStmt.isEmpty());
+        assertEquals(5, preparedStmt.size());
     }
 
     @Test
-    public void testCheckOrderExistQueryWithNullValues() {
+    void testCheckOrderExistQueryWithNullValues() {
         UUID orderId = null;
-        String query = orderQueryBuilder.checkOrderExistQuery(null, null, null, null, orderId, preparedStmtList);
+        String query = orderQueryBuilder.checkOrderExistQuery(null, null, null, null, orderId, preparedStmt);
 
         assertNotNull(query);
-        assertTrue(preparedStmtList.isEmpty());
+        assertTrue(preparedStmt.isEmpty());
     }
 
     @Test
-    public void testGetOrderSearchQuery() {
+    void testGetOrderSearchQuery() {
         OrderCriteria criteria = new OrderCriteria();
         criteria.setId("order123");
         criteria.setApplicationNumber("app123");
@@ -57,56 +58,100 @@ public class OrderQueryBuilderTest {
         criteria.setTenantId("tenant123");
         criteria.setId("id123");
         criteria.setStatus("status123");
+        criteria.setOrderNumber("order123");
 
-        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmtList);
+        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt);
 
         assertNotNull(query);
-        assertFalse(preparedStmtList.isEmpty());
-        assertEquals(6, preparedStmtList.size());
+        assertFalse(preparedStmt.isEmpty());
+        assertEquals(7, preparedStmt.size());
     }
 
     @Test
-    public void testGetOrderSearchQueryWithEmptyCriteria() {
+    void testGetOrderSearchQueryWithEmptyCriteria() {
         OrderCriteria criteria = new OrderCriteria();
-        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmtList);
+        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt);
 
         assertNotNull(query);
-        assertTrue(preparedStmtList.isEmpty());
+        assertTrue(preparedStmt.isEmpty());
     }
 
     @Test
-    public void testGetDocumentSearchQuery() {
+    void testGetDocumentSearchQuery() {
         ids.add("id123");
-        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
-        assertFalse(preparedStmtList.isEmpty());
-        assertEquals(1, preparedStmtList.size());
+        assertFalse(preparedStmt.isEmpty());
+        assertEquals(1, preparedStmt.size());
     }
 
     @Test
-    public void testGetDocumentSearchQueryWithEmptyIds() {
-        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+    void testGetDocumentSearchQueryWithEmptyIds() {
+        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
-        assertTrue(preparedStmtList.isEmpty());
+        assertTrue(preparedStmt.isEmpty());
     }
 
     @Test
-    public void testGetStatuteSectionSearchQuery() {
+    void testGetStatuteSectionSearchQuery() {
         ids.add("id123");
-        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtList);
+        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
-        assertFalse(preparedStmtList.isEmpty());
-        assertEquals(1, preparedStmtList.size());
+        assertFalse(preparedStmt.isEmpty());
+        assertEquals(1, preparedStmt.size());
     }
 
     @Test
-    public void testGetStatuteSectionSearchQueryWithEmptyIds() {
-        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtList);
+    void testGetStatuteSectionSearchQueryWithEmptyIds() {
+        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
-        assertTrue(preparedStmtList.isEmpty());
+        assertTrue(preparedStmt.isEmpty());
+    }
+
+    @Test
+    void testCheckOrderExistQuery_Exception() {
+        List<Object> preparedStmtList = null;
+        String orderNumber = "order123";
+        String cnrNumber = null;
+        String filingNumber = null;
+        String applicationNumber = null;
+        UUID orderId = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.checkOrderExistQuery(orderNumber, cnrNumber, filingNumber, applicationNumber, orderId, preparedStmtList);
+        });
+    }
+
+    @Test
+    void testGetOrderSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+        OrderCriteria orderCriteria = new OrderCriteria();
+        orderCriteria.setOrderNumber("order123");
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
+        });
+    }
+
+    @Test
+    void testGetStatuteSectionSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getStatuteSectionSearchQuery(null, preparedStmtList);
+        });
+    }
+
+    @Test
+    void testGetDocumentSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getDocumentSearchQuery(null, preparedStmtList);
+        });
     }
 }
