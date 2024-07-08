@@ -780,8 +780,7 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
     
     CaseExists:
       type: object
