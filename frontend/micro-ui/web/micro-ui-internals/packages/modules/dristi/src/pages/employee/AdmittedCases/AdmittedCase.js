@@ -1,5 +1,5 @@
 import { Button as ActionButton } from "@egovernments/digit-ui-components";
-import { Button, Header, InboxSearchComposer, Menu } from "@egovernments/digit-ui-react-components";
+import { Button, Header, InboxSearchComposer, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -34,6 +34,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
+  const [toast, setToast] = useState(false);
   const history = useHistory();
   const showDownLoadCaseFIle = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
@@ -256,6 +257,13 @@ const AdmittedCases = ({ isJudge = true }) => {
     }
   };
 
+  const showToast = (duration = 5000) => {
+    setToast(true);
+    setTimeout(() => {
+      setToast(false);
+    }, duration);
+  };
+
   return (
     <React.Fragment>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
@@ -336,6 +344,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           userRoles={userRoles}
           modalType={tabData.filter((tab) => tab.active)[0].label}
           setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
         />
       )}
       {showReviewModal && (
@@ -348,6 +357,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           showActions={false}
         />
       )}
+      {toast && <Toast error={false} label={t("ACTION_SUCCESSFUL")} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />}
     </React.Fragment>
   );
 };
