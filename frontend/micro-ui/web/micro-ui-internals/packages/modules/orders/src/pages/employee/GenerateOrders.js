@@ -7,11 +7,13 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
   configsOrderSection202CRPC,
   configsOrderSubmissionExtension,
   configsOrderTranferToADR,
+  configsOthers,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
   configsVoluntarySubmissionStatus,
@@ -27,11 +29,8 @@ import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow"
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
-const fieldStyle = { marginRight: 0 };
-
 const GenerateOrders = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -39,26 +38,11 @@ const GenerateOrders = () => {
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
 
-  const configKeys = {
-    SECTION_202_CRPC: configsOrderSection202CRPC,
-    DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
-    EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-    TRANSFER_TO_ADR: configsOrderTranferToADR,
-    NEXT_HEARING: configsScheduleHearingDate,
-    ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-    VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
-    CASE_TRANSFER: configsCaseTransfer,
-    CASE_SETTLEMENT: configsCaseSettlement,
-    SUMMONS: configsIssueSummons,
-    BAIL: configsBail,
-  };
-
-  const { data: caseData, isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -73,8 +57,32 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+
+  const complainants = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((item) => item?.partyType === "complainant.primary")
+      .map((item) => {
+        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+      });
+  }, [caseDetails]);
+
+  const respondants = useMemo(() => {
+    // return caseDetails?.litigants
+    //   ?.filter((item) => item?.partyType === "respondant.primary")
+    //   .map((item) => {
+    //     return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+    //   });
+    return [{ code: "Respondant", name: "Respondant" }];
+  }, [caseDetails]);
+
+  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
     filingNumber,
@@ -86,12 +94,89 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
   const modifiedFormConfig = useMemo(() => {
-    return !orderType?.code
-      ? applicationTypeConfig
-      : configKeys.hasOwnProperty(orderType?.code)
-      ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
-      : applicationTypeConfig;
-  }, [orderType]);
+    const configKeys = {
+      SECTION_202_CRPC: configsOrderSection202CRPC,
+      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+      APPROVE_REJECT_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      CASE_TRANSFER: configsCaseTransfer,
+      SETTLEMENT: configsCaseSettlement,
+      SUMMONS: configsIssueSummons,
+      BAIL: configsBail,
+      WARRANT: configsIssueOfWarrants,
+      OTHERS: configsOthers,
+    };
+
+    let newConfig = structuredClone(applicationTypeConfig);
+    if (orderType?.code && configKeys.hasOwnProperty(orderType?.code)) {
+      let orderTypeForm = configKeys[orderType?.code];
+      if (orderType?.code === "SECTION_202_CRPC") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "applicationFilledBy") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: complainants,
+                  },
+                };
+              }
+              if (field.key === "detailsSeekedOf") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: respondants,
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      if (orderType?.code === "MANDATORY_SUBMISSIONS_RESPONSES") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "submissionParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
+              if (field.key === "respondingParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      newConfig = [...newConfig, ...orderTypeForm];
+    }
+    return newConfig;
+  }, [complainants, orderType?.code, respondants]);
+
+  const defaultValue = useMemo(() => {
+    return structuredClone(currentOrder?.additionalDetails?.formdata) || {};
+  }, [currentOrder]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -106,7 +191,7 @@ const GenerateOrders = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const handleUpdateOrder = ({ action, oldOrderData, orderType }) => {
+  const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
     const newAdditionalData =
       action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
     const updatedreqBody = {
@@ -133,13 +218,16 @@ const GenerateOrders = () => {
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
+        if (modal === "reviewModal") {
+          setShowReviewModal(true);
+        }
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       })
       .catch(() => {
         refetchOrdersData();
         setShowsignatureModal(false);
-        setDeleteOrderIndex(null)
+        setDeleteOrderIndex(null);
       });
   };
 
@@ -177,11 +265,12 @@ const GenerateOrders = () => {
       });
   };
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = ({ modal }) => {
     handleUpdateOrder({
       action: CaseWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
+      modal,
     });
   };
 
@@ -205,43 +294,22 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
 
-  const handleReviewOrder = () => {
-    handleSaveDraft();
+  const handleGoBackSignatureModal = () => {
+    setShowsignatureModal(false);
     setShowReviewModal(true);
   };
-
-  const handleCloseSignaturePopup = () => {
-    setShowSignatureModal(false);
-    setShowReviewModal(true);
-  };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    history.back(); // go to view case screen when clicking on close button.
-  };
-
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
 
   return (
-    <div style={{ display: "flex", gap: "5%", marginBottom: "200px" }}>
-      <div style={{ width: "20%" }}>
-        <div style={{ color: "#007E7E" }} onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
-        <div>
+    <div className="generate-orders">
+      <div className="orders-list-main">
+        <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
+        <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  ...(selectedOrder === index ? { background: "#E8E8E8" } : {}),
-                }}
-                onClick={() => setSelectedOrder(index)}
-              >
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span
@@ -255,26 +323,38 @@ const GenerateOrders = () => {
               </div>
             );
           })}
-        </div>
+        </React.Fragment>
       </div>
-      <div style={{ minWidth: "70%" }}>
-        {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
+      <div className="view-order">
+        {orderList?.length > 0 && <Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
+            className={"generate-orders"}
             key={selectedOrder}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
-            defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
+            defaultValues={defaultValue}
             onFormValueChange={onFormValueChange}
-            onSubmit={handleReviewOrder}
+            onSubmit={() => {
+              handleSaveDraft({ modal: "reviewModal" });
+            }}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}
+            cardClassName={`order-type-form-composer`}
+            actionClassName={"order-type-action"}
           />
         )}
       </div>
       {deleteOrderIndex !== null && (
-        <OrderDeleteModal t={t} deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
+        <div className="delete-order-warning-modal">
+          <OrderDeleteModal
+            t={t}
+            deleteOrderIndex={deleteOrderIndex}
+            setDeleteOrderIndex={setDeleteOrderIndex}
+            handleDeleteOrder={handleDeleteOrder}
+          />
+        </div>
       )}
       {showReviewModal && (
         <OrderReviewModal
@@ -285,7 +365,9 @@ const GenerateOrders = () => {
           handleSaveDraft={handleSaveDraft}
         />
       )}
-      {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
+      {showsignatureModal && (
+        <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
+      )}
       {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );

@@ -44,6 +44,8 @@ import Modal from "./components/Modal";
 import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 import CustomSortComponent from "./components/CustomSortComponent";
+import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import MultiUploadWrapper from "./components/MultiUploadWrapper";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -110,7 +112,10 @@ const componentsToRegister = {
   MODAL: Modal,
   CUSTOMCASEINFODIV: CustomCaseInfoDiv,
   DOCVIEWERWRAPPER: DocViewerWrapper,
+  CUSTOMERRORTOOLTIP: CustomErrorTooltip,
   CustomSortComponent,
+  DocViewerWrapper,
+  MultiUploadWrapper,
 };
 
 const overrideHooks = () => {

@@ -92,9 +92,44 @@ export const DRISTIService = {
       data,
       params,
     }),
+  searchEvidence: (data) => {
+    return Request({
+      url: Urls.dristi.evidenceSearch,
+      useCache: false,
+      userService: false,
+      data,
+    });
+  },
   searchHearings: (data, params) => {
     return Request({
       url: Urls.dristi.searchHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  searchOrders: (data, params) => {
+    return Request({
+      url: Urls.dristi.ordersSearch,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  searchSubmissions: (data, params) => {
+    return Request({
+      url: Urls.dristi.submissionsSearch,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  updateSubmissions: (data, params) => {
+    return Request({
+      url: Urls.dristi.submissionsUpdate,
       useCache: false,
       userService: false,
       data,

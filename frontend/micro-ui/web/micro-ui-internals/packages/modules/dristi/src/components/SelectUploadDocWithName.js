@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { TextInput } from "@egovernments/digit-ui-react-components";
-import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import RenderFileCard from "./RenderFileCard";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
@@ -8,6 +7,7 @@ import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import { CustomAddIcon } from "../icons/svgIndex";
 import Button from "./Button";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
@@ -191,7 +191,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
           );
         })}
       <Button
-        isDisabled={config?.disable}
+        isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
         variation="secondary"
         onButtonClick={handleAddDocument}
         className="add-new-document"

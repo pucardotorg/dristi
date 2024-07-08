@@ -56,9 +56,9 @@ function AdmissionActionModal({
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [label, setLabel] = useState(false);
 
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
-  }, []);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,6 +85,7 @@ function AdmissionActionModal({
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
       setLabel("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS");
+      return;
     }
     if (words?.length >= wordLimit) {
       setShowErrorToast(true);
@@ -253,7 +254,13 @@ function AdmissionActionModal({
           actionCancelOnSubmit={() => {
             history.push(`/employee`);
           }}
-          actionSaveOnSubmit={handleScheduleNextHearing}
+          actionSaveOnSubmit={() => {
+            if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
+              handleScheduleNextHearing();
+            } else {
+              history.push(`/employee`);
+            }
+          }}
           className="case-types"
           formId="modal-action"
         >
