@@ -31,7 +31,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -56,7 +56,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -81,7 +81,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -106,7 +106,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -127,7 +127,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit: (businessService, action, setModalSubmit, data) => {
-    if (businessService === businessServiceMap?.["muster roll"] && action.action === "APPROVE") {
+    if (businessService === businessServiceMap?.["muster roll"] && action?.action === "APPROVE") {
       setModalSubmit(data?.acceptTerms);
     }
   },
@@ -659,22 +659,4 @@ export const UICustomizations = {
         return;
     }
   },
-};
-
-const CommentComponent = ({ key, comment }) => {
-  return (
-    <div className="comment-body" key={key}>
-      <div className="name-logo">
-        <div className="comment-avatar">
-          <span>{comment?.author[0]}</span>
-        </div>
-      </div>
-      <div className="comment-details">
-        <h3 className="comment-header">
-          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
-        </h3>
-        <p className="comment-text">{comment?.text}</p>
-      </div>
-    </div>
-  );
 };
