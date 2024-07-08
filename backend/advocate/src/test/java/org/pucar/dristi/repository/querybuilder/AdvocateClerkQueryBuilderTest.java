@@ -21,7 +21,7 @@ public class AdvocateClerkQueryBuilderTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        queryBuilder = new AdvocateClerkQueryBuilder();
+         queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
     }
 
     @Test
