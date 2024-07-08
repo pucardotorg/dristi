@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class TaskApiControllerTest {
+class TaskApiControllerTest {
 
     @InjectMocks
     private TaskApiController controller;
@@ -43,9 +43,9 @@ public class TaskApiControllerTest {
 
 
     @Test
-    public void testTaskV1CreatePost_Success() {
+    void testTaskV1CreatePost_Success() {
         // Mock TaskService response
-        Task task =new Task();
+        Task task = new Task();
         when(taskService.createTask(any(TaskRequest.class)))
                 .thenReturn(task);
 
@@ -71,9 +71,9 @@ public class TaskApiControllerTest {
     }
 
     @Test
-    public void testTaskV1Exist_Success() {
+    void testTaskV1Exist_Success() {
         // Mock TaskService response
-        TaskExists task =new TaskExists();
+        TaskExists task = new TaskExists();
         when(taskService.existTask(any(TaskExistsRequest.class)))
                 .thenReturn(task);
 
@@ -99,7 +99,7 @@ public class TaskApiControllerTest {
     }
 
     @Test
-    public void testTaskV1SearchPost_Success() {
+    void testTaskV1SearchPost_Success() {
 
         TaskSearchRequest TaskSearchRequest = new TaskSearchRequest();
         TaskSearchRequest.setCriteria(new TaskCriteria());
@@ -126,7 +126,7 @@ public class TaskApiControllerTest {
     }
 
     @Test
-    public void testTaskV1UpdatePost_Success() throws Exception {
+    void testTaskV1UpdatePost_Success() throws Exception {
         // Mock TaskService response
         when(taskService.updateTask(any(TaskRequest.class)))
                 .thenReturn(new Task());
@@ -151,7 +151,7 @@ public class TaskApiControllerTest {
     }
 
     @Test
-    public void testTaskV1CreatePost_InvalidRequest() throws Exception {
+    void testTaskV1CreatePost_InvalidRequest() throws Exception {
         // Prepare invalid request
         TaskRequest requestBody = new TaskRequest();  // Missing required fields
 
@@ -159,16 +159,16 @@ public class TaskApiControllerTest {
         when(taskService.createTask(requestBody)).thenThrow(new IllegalArgumentException("Invalid request"));
 
         // Perform POST request
-        try{
+        try {
             controller.taskV1CreatePost(requestBody);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             assertInstanceOf(IllegalArgumentException.class, e);
             assertEquals("Invalid request", e.getMessage());
         }
     }
+
     @Test
-    public void testTaskV1CreatePost_EmptyList() throws Exception {
+    void testTaskV1CreatePost_EmptyList() throws Exception {
         // Mock service to return empty list
         when(taskService.createTask(any(TaskRequest.class))).thenReturn(new Task());
 
@@ -189,8 +189,9 @@ public class TaskApiControllerTest {
         TaskResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
     }
+
     @Test
-    public void testTaskV1SearchPost_InvalidRequest() throws Exception {
+    void testTaskV1SearchPost_InvalidRequest() throws Exception {
 
         // Expected validation error
         when(taskService.searchTask(any())).thenThrow(new IllegalArgumentException("Invalid request"));
@@ -198,15 +199,14 @@ public class TaskApiControllerTest {
         // Perform POST request
         try {
             controller.taskV1SearchPost(new TaskSearchRequest());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             assertInstanceOf(IllegalArgumentException.class, e);
             assertEquals("Invalid request", e.getMessage());
         }
     }
 
     @Test
-    public void testTaskV1SearchPost_EmptyList() throws Exception {
+    void testTaskV1SearchPost_EmptyList() throws Exception {
         TaskSearchRequest TaskSearchRequest = new TaskSearchRequest();
         TaskSearchRequest.setCriteria(new TaskCriteria());
         TaskSearchRequest.setRequestInfo(new RequestInfo());
@@ -230,7 +230,7 @@ public class TaskApiControllerTest {
     }
 
     @Test
-    public void testTaskV1UpdatePost_InvalidRequest() throws Exception {
+    void testTaskV1UpdatePost_InvalidRequest() throws Exception {
         // Prepare invalid request
         TaskRequest requestBody = new TaskRequest();  // Missing required fields
 
@@ -240,8 +240,7 @@ public class TaskApiControllerTest {
         // Perform POST request
         try {
             controller.taskV1UpdatePost(requestBody);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             assertInstanceOf(IllegalArgumentException.class, e);
             assertEquals("Invalid request", e.getMessage());
         }

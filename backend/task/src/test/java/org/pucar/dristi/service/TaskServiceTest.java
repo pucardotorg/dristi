@@ -87,8 +87,6 @@ public class TaskServiceTest {
 
     @Test
     public void testCreateTask_CustomException() {
-        TaskRequest taskRequest = new TaskRequest();
-
         doThrow(new CustomException("VALIDATION_ERROR", "Validation failed")).when(validator).validateTaskRegistration(any(TaskRequest.class));
 
         CustomException exception = assertThrows(CustomException.class, () -> taskService.createTask(taskRequest));
@@ -100,7 +98,6 @@ public class TaskServiceTest {
 
     @Test
     public void testCreateTask_Exception() {
-        TaskRequest taskRequest = new TaskRequest();
 
         doThrow(new RuntimeException("Unexpected error")).when(validator).validateTaskRegistration(any(TaskRequest.class));
 
@@ -122,10 +119,13 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testSearchTaskThrowsException() {
-
+    void testSearchTaskThrowsException() {
         doThrow(new RuntimeException("Unexpected error")).when(taskRepository).getApplications(any(TaskCriteria.class));
-        assertThrows(CustomException.class, () -> taskService.searchTask(new TaskSearchRequest()));
+        assertThrows(CustomException.class, this::invokeSearchTask);
+    }
+
+    private void invokeSearchTask() {
+        taskService.searchTask(new TaskSearchRequest());
     }
 
     @Test
@@ -171,7 +171,7 @@ public class TaskServiceTest {
         TaskRequest taskRequest = new TaskRequest();
 
         doThrow(new RuntimeException("Unexpected error")).when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
-        when(validator.validateApplicationExistence(any(Task.class),any(RequestInfo.class))).thenReturn(true);
+        when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(true);
         assertThrows(CustomException.class, () -> taskService.updateTask(taskRequest));
     }
 
@@ -211,8 +211,6 @@ public class TaskServiceTest {
 
     @Test
     public void testWorkflowUpdate_BailTask() {
-        TaskRequest taskRequest = new TaskRequest();
-        Task task = new Task();
         task.setTaskType("bail"); // Task type in lowercase
         task.setTenantId("tenant1");
         task.setTaskNumber("T123");
@@ -229,8 +227,6 @@ public class TaskServiceTest {
 
     @Test
     public void testWorkflowUpdate_SummonTask() {
-        TaskRequest taskRequest = new TaskRequest();
-        Task task = new Task();
         task.setTaskType("summon"); // Task type in lowercase
         task.setTenantId("tenant2");
         task.setTaskNumber("T456");
@@ -247,8 +243,6 @@ public class TaskServiceTest {
 
     @Test
     public void testWorkflowUpdate_WarrantTask() {
-        TaskRequest taskRequest = new TaskRequest();
-        Task task = new Task();
         task.setTaskType("warrant"); // Task type in lowercase
         task.setTenantId("tenant3");
         task.setTaskNumber("T789");
@@ -265,8 +259,6 @@ public class TaskServiceTest {
 
     @Test
     public void testWorkflowUpdate_DefaultTask() {
-        TaskRequest taskRequest = new TaskRequest();
-        Task task = new Task();
         task.setTaskType("unknown_task"); // Task type not recognized
         task.setTenantId("tenant4");
         task.setTaskNumber("T999");

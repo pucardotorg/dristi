@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
-public class AmountRowMapperTest {
+class AmountRowMapperTest {
 
     private AmountRowMapper amountRowMapper;
 
@@ -29,13 +29,13 @@ public class AmountRowMapperTest {
     private ResultSet resultSet;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         amountRowMapper = new AmountRowMapper();
     }
 
     @Test
-    public void testExtractData_Success() throws Exception {
+    void testExtractData_Success() throws Exception {
         // Mock ResultSet behavior
         UUID taskId = UUID.randomUUID();
         UUID amountId = UUID.randomUUID();
@@ -69,7 +69,7 @@ public class AmountRowMapperTest {
     }
 
     @Test
-    public void testExtractData_CustomException() throws Exception {
+    void testExtractData_CustomException() throws Exception {
         // Simulate CustomException being thrown
         when(resultSet.next()).thenThrow(new CustomException("ERROR_CODE", "Error Message"));
 
@@ -82,7 +82,7 @@ public class AmountRowMapperTest {
     }
 
     @Test
-    public void testExtractData_GeneralException() throws Exception {
+    void testExtractData_GeneralException() throws Exception {
         // Simulate general exception being thrown
         when(resultSet.next()).thenThrow(new RuntimeException("General error"));
 

@@ -31,12 +31,12 @@ public class TaskQueryBuilderTest {
     @Test
     public void testGetTaskSearchQuery() {
         TaskCriteria criteria = new TaskCriteria();
-                criteria.setTaskNumber("TASK123");
-                criteria.setCnrNumber("CNR123");
-                criteria.setTenantId("tenant1");
-                criteria.setId("123e4567-e89b-12d3-a456-426614174000");
-                criteria.setStatus("Open");
-                criteria.setOrderId(UUID.randomUUID());
+        criteria.setTaskNumber("TASK123");
+        criteria.setCnrNumber("CNR123");
+        criteria.setTenantId("tenant1");
+        criteria.setId("123e4567-e89b-12d3-a456-426614174000");
+        criteria.setStatus("Open");
+        criteria.setOrderId(UUID.randomUUID());
         List<Object> preparedStmtList = new ArrayList<>();
         String query = taskQueryBuilder.getTaskSearchQuery(criteria, preparedStmtList);
 
@@ -47,10 +47,8 @@ public class TaskQueryBuilderTest {
 
     @Test
     public void testGetTaskSearchQuery_Exception() {
-        TaskQueryBuilder spyTaskQueryBuilder = Mockito.spy(taskQueryBuilder);
-
         CustomException exception = assertThrows(CustomException.class, () ->
-                spyTaskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>()));
+                taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>()));
 
         assertEquals(TASK_SEARCH_QUERY_EXCEPTION, exception.getCode());
     }
@@ -70,11 +68,9 @@ public class TaskQueryBuilderTest {
 
     @Test
     public void testGetDocumentSearchQuery_Exception() {
-        TaskQueryBuilder spyTaskQueryBuilder = Mockito.spy(taskQueryBuilder);
-        doThrow(new CustomException("Error searching task documents","Error")).when(spyTaskQueryBuilder).getDocumentSearchQuery(anyList(), anyList());
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                spyTaskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), new ArrayList<>()));
+                taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null));
 
         assertEquals(DOCUMENT_SEARCH_QUERY_EXCEPTION, exception.getCode());
     }
@@ -94,7 +90,7 @@ public class TaskQueryBuilderTest {
 
 
     @Test
-    public void testCheckTaskExistQuery_withCnrNumberAndFilingNumber() {
+    void testCheckTaskExistQuery_withCnrNumberAndFilingNumber() {
         String cnrNumber = "123";
         String filingNumber = "456";
         String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = ? AND task.filingnumber = ? AND task.id = ?";
@@ -107,29 +103,28 @@ public class TaskQueryBuilderTest {
     }
 
 
-
     @Test
-    public void testCheckTaskExistQuery_withException() {
+    void testCheckTaskExistQuery_withException() {
         String cnrNumber = "123";
         List<Object> preparedStmtList = new ArrayList<>();
-        String taskId="1234";
+        String taskId = "1234";
 
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId,List<Object> preparedStmtList) {
+            public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.checkTaskExistQuery(cnrNumber, null,UUID.fromString(taskId),preparedStmtList));
+        assertThrows(Exception.class, () -> taskQueryBuilder.checkTaskExistQuery(cnrNumber, null, UUID.fromString(taskId), preparedStmtList));
     }
 
     @Test
-    public void testGetTaskSearchQuery_withException() {
+    void testGetTaskSearchQuery_withException() {
         String id = "1";
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList ) {
+            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
                 throw new RuntimeException("Forced exception");
             }
         };
@@ -138,7 +133,7 @@ public class TaskQueryBuilderTest {
     }
 
     @Test
-    public void testGetDocumentSearchQuery_withIds() {
+    void testGetDocumentSearchQuery_withIds() {
         List<String> ids = new ArrayList<>();
         ids.add("1");
         ids.add("2");
@@ -153,7 +148,7 @@ public class TaskQueryBuilderTest {
     }
 
     @Test
-    public void testGetDocumentSearchQuery_withException() {
+    void testGetDocumentSearchQuery_withException() {
         List<String> ids = new ArrayList<>();
         ids.add("1");
         taskQueryBuilder = new TaskQueryBuilder() {
@@ -167,7 +162,7 @@ public class TaskQueryBuilderTest {
     }
 
     @Test
-    public void testGetAmountSearchQuery_withIds() {
+    void testGetAmountSearchQuery_withIds() {
         List<String> ids = new ArrayList<>();
         ids.add("1");
         ids.add("2");
@@ -182,7 +177,7 @@ public class TaskQueryBuilderTest {
     }
 
     @Test
-    public void testGetAmountSearchQuery_withException() {
+    void testGetAmountSearchQuery_withException() {
         List<String> ids = new ArrayList<>();
         ids.add("1");
         taskQueryBuilder = new TaskQueryBuilder() {

@@ -1,14 +1,10 @@
 package org.pucar.dristi.web.controllers;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.TaskService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 
-import java.util.UUID;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,26 +13,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
-import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-import jakarta.servlet.http.HttpServletRequest;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:14:50.003326400+05:30[Asia/Calcutta]")
 @Controller
 @RequestMapping("")
 public class TaskApiController {
 
-    @Autowired
     private TaskService taskService;
 
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
+    public TaskApiController(TaskService taskService, ResponseInfoFactory responseInfoFactory) {
+        this.taskService = taskService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     public void setMockInjects(TaskService taskService, ResponseInfoFactory responseInfoFactory){
         this.taskService = taskService;

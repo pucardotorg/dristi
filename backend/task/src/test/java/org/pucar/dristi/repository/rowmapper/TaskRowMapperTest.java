@@ -1,7 +1,5 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,15 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.AssignedTo;
 import org.pucar.dristi.web.models.Task;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -335,7 +330,6 @@ public class TaskRowMapperTest {
 
     @Test
     public void testExtractData_CustomException() throws SQLException {
-        ResultSet rs = mock(ResultSet.class);
 
         when(rs.next()).thenThrow(new CustomException("CUSTOM_EXCEPTION", "Custom exception occurred"));
 
@@ -344,8 +338,6 @@ public class TaskRowMapperTest {
 
     @Test
     public void testExtractData_DateTimeParseException() throws SQLException {
-        ResultSet rs = mock(ResultSet.class);
-
         when(rs.next()).thenReturn(true).thenReturn(false);
         when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
         when(rs.getString("orderid")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
