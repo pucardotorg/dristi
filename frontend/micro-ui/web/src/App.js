@@ -10,6 +10,7 @@ import { initOrdersComponents } from "@egovernments/digit-ui-module-orders";
 import { initSubmissionsComponents } from "@egovernments/digit-ui-module-submissions";
 import { initHearingsComponents } from "@egovernments/digit-ui-module-hearings";
 import { initCasesComponents } from "@egovernments/digit-ui-module-cases";
+import { initHomeComponents } from "@egovernments/digit-ui-module-home";
 
 window.contextPath =
   window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
@@ -28,6 +29,7 @@ const initDigitUI = () => {
   initHearingsComponents();
   initCasesComponents();
   initSubmissionsComponents();
+  initHomeComponents();
 };
 
 initLibraries().then(() => {

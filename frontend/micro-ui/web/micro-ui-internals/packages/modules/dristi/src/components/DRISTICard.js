@@ -16,8 +16,8 @@ const DRISTICard = () => {
     return res;
   }, true);
 
-  if (isScrutiny && !isNyayMitra && !isJudge) {
-    history.push("/digit-ui/employee/dristi/cases");
+  if (isScrutiny || isJudge) {
+    history.push("/digit-ui/employee/home");
   }
 
   let roleType = isJudge ? "isJudge" : "default";

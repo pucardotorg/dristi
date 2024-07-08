@@ -44,7 +44,7 @@ const TopBarComponent = ({
           <div
             style={{ display: "flex", gap: "16px", cursor: "pointer" }}
             onClick={() => {
-              const pathUnwind = pathname.split("/").slice(0, 5).join("/");
+              const pathUnwind = pathname.split("/").slice(0, 3).join("/") + "/home";
               history.push(pathUnwind);
             }}
           >
