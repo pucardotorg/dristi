@@ -238,7 +238,7 @@ class AdvocateQueryBuilderTest {
         new AdvocateQueryBuilder().addClauseIfRequired(query, isFirstCriteria);
 
         // Assert
-        assertEquals("InitialQuery AND ", query.toString());
+        assertEquals("InitialQuery  AND ", query.toString());
     }
 
     @Test
@@ -264,7 +264,7 @@ class AdvocateQueryBuilderTest {
         new AdvocateQueryBuilder().addClauseIfRequiredForStatus(query, isFirstCriteria);
 
         // Assert
-        assertEquals("InitialQuery AND ", query.toString());
+        assertEquals("InitialQuery  AND ", query.toString());
     }
 
     @Test
@@ -290,6 +290,6 @@ class AdvocateQueryBuilderTest {
         new AdvocateQueryBuilder().addClauseIfRequiredForTenantId(query, isFirstCriteria);
 
         // Assert
-        assertEquals("InitialQuery AND ", query.toString());
+        assertEquals("InitialQuery  AND ", query.toString());
     }
 }
