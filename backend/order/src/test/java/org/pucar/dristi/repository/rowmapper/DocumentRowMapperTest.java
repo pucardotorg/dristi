@@ -17,7 +17,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class DocumentRowMapperTest {
+class DocumentRowMapperTest {
 
     private DocumentRowMapper documentRowMapper;
 
@@ -25,13 +25,13 @@ public class DocumentRowMapperTest {
     private ResultSet resultSet;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         documentRowMapper = new DocumentRowMapper();
     }
 
     @Test
-    public void testExtractData_TypicalResultSet() throws Exception {
+    void testExtractData_TypicalResultSet() throws Exception {
         when(resultSet.next()).thenReturn(true, false);
         when(resultSet.getString("order_id")).thenReturn("550e8400-e29b-41d4-a716-446655440000");
         when(resultSet.getString("id")).thenReturn("doc1");
@@ -60,7 +60,7 @@ public class DocumentRowMapperTest {
     }
 
     @Test
-    public void testExtractData_NullAdditionalDetails() throws Exception {
+    void testExtractData_NullAdditionalDetails() throws Exception {
         when(resultSet.next()).thenReturn(true, false);
         when(resultSet.getString("order_id")).thenReturn("550e8400-e29b-41d4-a716-446655440000");
         when(resultSet.getString("id")).thenReturn("doc1");
@@ -85,7 +85,7 @@ public class DocumentRowMapperTest {
     }
 
     @Test
-    public void testExtractData_MultipleDocumentsSameOrderId() throws Exception {
+    void testExtractData_MultipleDocumentsSameOrderId() throws Exception {
         when(resultSet.next()).thenReturn(true, true, false);
         when(resultSet.getString("order_id")).thenReturn("550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440000");
         when(resultSet.getString("id")).thenReturn("doc1", "doc2");
@@ -122,7 +122,7 @@ public class DocumentRowMapperTest {
     }
 
     @Test
-    public void testExtractData_ExceptionThrown() throws Exception {
+    void testExtractData_ExceptionThrown() throws Exception {
         when(resultSet.next()).thenThrow(new SQLException("Test exception"));
 
         CustomException thrown = assertThrows(CustomException.class, () -> {

@@ -15,7 +15,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderQueryBuilderTest {
+class OrderQueryBuilderTest {
 
     @InjectMocks
     private OrderQueryBuilder orderQueryBuilder;
@@ -24,13 +24,13 @@ public class OrderQueryBuilderTest {
     private List<String> ids;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         preparedStmt = new ArrayList<>();
         ids = new ArrayList<>();
     }
 
     @Test
-    public void testCheckOrderExistQuery() {
+    void testCheckOrderExistQuery() {
         UUID orderId = UUID.randomUUID();
         String query = orderQueryBuilder.checkOrderExistQuery("order123", "cnr123", "filing123", "app123", orderId, preparedStmt);
 
@@ -40,7 +40,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testCheckOrderExistQueryWithNullValues() {
+    void testCheckOrderExistQueryWithNullValues() {
         UUID orderId = null;
         String query = orderQueryBuilder.checkOrderExistQuery(null, null, null, null, orderId, preparedStmt);
 
@@ -49,7 +49,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetOrderSearchQuery() {
+    void testGetOrderSearchQuery() {
         OrderCriteria criteria = new OrderCriteria();
         criteria.setId("order123");
         criteria.setApplicationNumber("app123");
@@ -68,7 +68,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetOrderSearchQueryWithEmptyCriteria() {
+    void testGetOrderSearchQueryWithEmptyCriteria() {
         OrderCriteria criteria = new OrderCriteria();
         String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt);
 
@@ -77,7 +77,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetDocumentSearchQuery() {
+    void testGetDocumentSearchQuery() {
         ids.add("id123");
         String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
 
@@ -87,7 +87,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetDocumentSearchQueryWithEmptyIds() {
+    void testGetDocumentSearchQueryWithEmptyIds() {
         String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
@@ -95,7 +95,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetStatuteSectionSearchQuery() {
+    void testGetStatuteSectionSearchQuery() {
         ids.add("id123");
         String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
 
@@ -105,7 +105,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetStatuteSectionSearchQueryWithEmptyIds() {
+    void testGetStatuteSectionSearchQueryWithEmptyIds() {
         String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
 
         assertNotNull(query);
@@ -113,7 +113,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testCheckOrderExistQuery_Exception() {
+    void testCheckOrderExistQuery_Exception() {
         List<Object> preparedStmtList = null;
         String orderNumber = "order123";
         String cnrNumber = null;
@@ -125,18 +125,20 @@ public class OrderQueryBuilderTest {
             orderQueryBuilder.checkOrderExistQuery(orderNumber, cnrNumber, filingNumber, applicationNumber, orderId, preparedStmtList);
         });
     }
-        @Test
-        public void testGetOrderSearchQuery_Exception() {
-            List<Object> preparedStmtList = null;
-            OrderCriteria orderCriteria = new OrderCriteria();
-            orderCriteria.setOrderNumber("order123");
 
-            assertThrows(CustomException.class, () -> {
-                orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
-            });
-    }
     @Test
-    public void testGetStatuteSectionSearchQuery_Exception() {
+    void testGetOrderSearchQuery_Exception() {
+        List<Object> preparedStmtList = null;
+        OrderCriteria orderCriteria = new OrderCriteria();
+        orderCriteria.setOrderNumber("order123");
+
+        assertThrows(CustomException.class, () -> {
+            orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
+        });
+    }
+
+    @Test
+    void testGetStatuteSectionSearchQuery_Exception() {
         List<Object> preparedStmtList = null;
 
         assertThrows(CustomException.class, () -> {
@@ -145,7 +147,7 @@ public class OrderQueryBuilderTest {
     }
 
     @Test
-    public void testGetDocumentSearchQuery_Exception() {
+    void testGetDocumentSearchQuery_Exception() {
         List<Object> preparedStmtList = null;
 
         assertThrows(CustomException.class, () -> {
