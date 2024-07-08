@@ -170,7 +170,11 @@ public class TaskServiceTest {
      void testUpdateTaskThrowsException() {
         doThrow(new RuntimeException("Unexpected error")).when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
         when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(true);
-        assertThrows(CustomException.class, () -> taskService.updateTask(new TaskRequest()));
+        assertThrows(CustomException.class, this::invokeUpdateTask);
+    }
+
+    private void invokeUpdateTask() {
+        taskService.updateTask(new TaskRequest());
     }
 
     @Test
