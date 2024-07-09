@@ -26,6 +26,7 @@ const HomeView = () => {
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues);
   const [config, setConfig] = useState(TabLitigantSearchConfig?.TabSearchConfig?.[0]);
   const [caseDetails, setCaseDetails] = useState(null);
+  const [isFetchCaseLoading, setIsFetchCaseLoading] = useState(false);
   const [tabData, setTabData] = useState(
     TabLitigantSearchConfig?.TabSearchConfig?.map((configItem, index) => ({
       key: index,
@@ -165,6 +166,7 @@ const HomeView = () => {
   }, [additionalDetails, roles, state, tenantId]);
 
   useEffect(() => {
+    setIsFetchCaseLoading(true);
     (async function () {
       if (userType) {
         const caseData = await HomeService.customApiService("/case/case/v1/_search", {
@@ -180,8 +182,10 @@ const HomeView = () => {
         });
 
         setCaseDetails(caseData?.criteria?.[0]?.responseList?.[0]);
+        setIsFetchCaseLoading(false);
       }
     })();
+    setIsFetchCaseLoading(false);
   }, [individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
@@ -195,12 +199,12 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
-  if (isLoading || isFetching || isSearchLoading) {
+  if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
     return <Loader />;
   }
   return (
     <div className="home-view-hearing-container">
-      {individualId && userType && !caseDetails ? (
+      {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
         <LitigantHomePage />
       ) : (
         <React.Fragment>
