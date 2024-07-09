@@ -209,6 +209,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [advocateId, setAdvocateId] = useState("");
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
   const [individualId, setIndividualId] = useState("");
+  const [individualAddress, setIndividualAddress] = useState({});
   const [name, setName] = useState({});
   const [isSignedAdvocate, setIsSignedAdvocate] = useState(false);
   const [isSignedParty, setIsSignedParty] = useState(false);
@@ -360,16 +361,21 @@ const JoinCaseHome = ({ refreshInbox }) => {
       });
     }
     if (step === 1) {
-      if (
-        (userType && userType === "Litigant" && selectedParty?.label && representingYourself) ||
-        (userType && userType === "Advocate" && selectedParty?.label && caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0) ||
-        (userType &&
-          userType === "Advocate" &&
-          selectedParty?.label &&
-          caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
-          roleOfNewAdvocate)
-      ) {
+      if (userType && userType === "Litigant" && selectedParty?.label && representingYourself) {
         setIsDisabled(false);
+      } else if (userType && userType === "Advocate") {
+        if (selectedParty?.label) {
+          if (selectedParty?.isComplainant) {
+            if (
+              (caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 && roleOfNewAdvocate) ||
+              caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0
+            ) {
+              setIsDisabled(false);
+            }
+          } else {
+            setIsDisabled(false);
+          }
+        }
       } else {
         setIsDisabled(true);
       }
@@ -397,6 +403,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
           });
         }
       }
+    } else if (step === 4) {
+      if (isSignedAdvocate && isSignedParty) {
+        setIsDisabled(false);
+      } else setIsDisabled(true);
     }
 
     if (step !== 8) {
@@ -417,7 +427,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {}
       );
-      if (response?.criteria[0]?.responseList?.length === 1) {
+      if (response?.criteria[0]?.responseList?.length === 1 && response?.criteria[0]?.responseList[0].status === "CASE_ADMITTED") {
+        console.log("first", response?.criteria[0]?.responseList);
         setIsDisabled(false);
         setSearchCaseResult(response?.criteria[0]?.responseList[0]);
         setErrors({
@@ -440,7 +451,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   useEffect(() => {
     const getData = setTimeout(() => {
       serarchCase(caseNumber);
-    }, 500);
+    }, 1000);
     return () => clearTimeout(getData);
   }, [caseNumber]);
 
@@ -457,6 +468,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
     );
     setIndividualId(individualData?.Individual?.[0]?.individualId);
     setName(individualData?.Individual?.[0]?.name);
+    const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+    const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+    const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+    const street = individualData?.Individual?.[0]?.address[0]?.street || "";
+    const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+    const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+    const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+    const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+    const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+    const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
     const identifierIdDetails = JSON.parse(
       individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
     );
@@ -466,7 +487,17 @@ const JoinCaseHome = ({ refreshInbox }) => {
         ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
         : null
     );
-
+    setIndividualAddress({
+      pincode: pincode,
+      district: addressLine2,
+      city: city,
+      state: addressLine1,
+      coordinates: {
+        longitude: latitude,
+        latitude: longitude,
+      },
+      locality: address,
+    });
     const advocateResponse = await DRISTIService.searchIndividualAdvocate(
       {
         criteria: [
@@ -847,7 +878,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         value={affidavitText}
                         onChange={(e) => {
                           let input = e.target.value;
-                          input = input.trim().replace(/\s+/g, " ");
+                          input = input.slice(0, 100).trimStart().replace(/\s+/g, " ");
                           setAffidavitText(input);
                         }}
                         rows={5}
@@ -1173,7 +1204,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
         caseDetails?.additionalDetails?.respondentDetails?.formdata
           ?.map((data, index) => ({
             ...data?.data,
-            label: `${data?.data?.respondentFirstName} ${data?.data?.respondentFirstName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+            label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+              data?.data?.respondentLastName
+            } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
             index: index,
             partyType: index === 0 ? "respondent.primary" : "respondent.additional",
             isRespondent: true,
@@ -1189,11 +1222,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setCaseNumber("");
     setCaseDetails({});
     setUserType("");
-    setBarRegNumber("");
-    setBarDetails([]);
     setSelectedParty({});
     setRepresentingYourself("");
     setRoleOfNewAdvocate("");
+    setBarRegNumber("");
+    setBarDetails([]);
     setValidationCode("");
     setErrors({});
     setCaseInfo([]);
@@ -1296,7 +1329,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               value: individualData.Individual[0]?.email || "Email Not Available",
             },
           ]);
-          setStep(step + 2);
+          setStep(step + 1);
         }
       }
     } else if (step === 2) {
@@ -1309,6 +1342,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           setIsDisabled(true);
           setStep(step + 5);
         } else {
+          if (affidavitText.endsWith(" ")) setAffidavitText(affidavitText.slice(0, -1));
           setIsDisabled(true);
           setStep(step + 5);
         }
@@ -1570,6 +1604,15 @@ const JoinCaseHome = ({ refreshInbox }) => {
                             respondentFirstName: name?.givenName,
                             respondentMiddleName: name?.otherNames,
                             respondentLastName: name?.familyName,
+                            addressDetails: [
+                              {
+                                ...data?.data?.addressDetails?.[0],
+                                addressDetails: {
+                                  ...data?.data?.addressDetails?.[0]?.addressDetails,
+                                  ...individualAddress,
+                                },
+                              },
+                            ],
                             respondentVerification: {
                               individualDetails: {
                                 individualId: individualId,
@@ -1817,10 +1860,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "Enter") {
-        onProceed();
+        if (!isDisabled) onProceed();
       }
     },
-    [onProceed]
+    [onProceed, isDisabled]
   );
 
   useEffect(() => {
