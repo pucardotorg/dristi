@@ -1308,7 +1308,7 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current, setReceiptDemandNoticeModal }))
     ) {
       return;
     }
