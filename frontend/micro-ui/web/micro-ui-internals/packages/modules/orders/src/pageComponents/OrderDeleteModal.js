@@ -24,7 +24,7 @@ function OrderDeleteModal({ setDeleteOrderIndex, deleteOrderIndex, handleDeleteO
 
   return (
     <Modal
-      headerBarMain={<Heading label={t("ARE_YOU_SURE")} />}
+      headerBarMain={<Heading label={t("ARE_YOU_SURE_TO_DELETE_ORDER")} />}
       headerBarEnd={
         <CloseBtn
           onClick={() => {

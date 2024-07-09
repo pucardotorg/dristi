@@ -311,9 +311,18 @@ export const configsOrderSection202CRPC = [
         label: "RESPONSE_REQUIRED_BY",
         isMandatory: true,
         key: "responseRequiredBy",
+        labelChildren: "OutlinedInfoIcon",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseRequiredBy",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -321,9 +330,17 @@ export const configsOrderSection202CRPC = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -387,9 +404,17 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -456,8 +481,16 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "submissionDeadline",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "submissionDeadline",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -521,8 +554,16 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "responseDeadline",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseDeadline",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -614,8 +655,16 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "originalSubmissionOrderDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalSubmissionOrderDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -623,8 +672,16 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "originalDeadline",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalDeadline",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -632,8 +689,16 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "proposedSubmissionDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "proposedSubmissionDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -641,8 +706,16 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "newSubmissionDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newSubmissionDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -829,8 +902,16 @@ export const configsScheduleHearingDate = [
         isMandatory: true,
         key: "hearingDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "hearingDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "mINTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -975,8 +1056,16 @@ export const configsRescheduleHearingDate = [
         isMandatory: true,
         key: "originalHearingDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalHearingDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -984,8 +1073,16 @@ export const configsRescheduleHearingDate = [
         isMandatory: false,
         key: "newHearingDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newHearingDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -1326,9 +1423,16 @@ export const configsCaseSettlement = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
-
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
+          },
           hideInForm: true,
         },
       },
@@ -1337,8 +1441,16 @@ export const configsCaseSettlement = [
         isMandatory: true,
         key: "settlementAgreementDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "settlementAgreementDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
       {
@@ -1655,13 +1767,6 @@ export const configsOthers = [
         type: "text",
         populators: { name: "orderTitle" },
       },
-      // {
-      //   label: "CS_DETAILS",
-      //   isMandatory: true,
-      //   key: "otherDetails",
-      //   type: "textarea",
-      //   populators: { name: "otherDetails" },
-      // },
     ],
   },
   {
@@ -1670,7 +1775,6 @@ export const configsOthers = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "otherDetails",
-        // withoutLabel: true,
         isMandatory: true,
         populators: {
           inputs: [
@@ -1679,7 +1783,6 @@ export const configsOthers = [
               textAreaHeader: "CS_DETAILS",
               placeholder: "TYPE_HERE_PLACEHOLDER",
               type: "TextAreaComponent",
-              // isOptional: true,
             },
           ],
         },
