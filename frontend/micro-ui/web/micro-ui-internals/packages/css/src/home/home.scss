@@ -249,7 +249,8 @@
   }
   .search-field-wrapper {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     align-items: center;
     .label-field-pair {
       flex: 0 0 auto;

@@ -2,6 +2,7 @@
 .view-document-vak,
 .general-details-vek,
 .select-user-join-case,
+.noc-court-order-upload,
 .case-number-input {
   margin: 24px 0px 24px 24px;
   padding-right: 24px;
@@ -23,6 +24,7 @@
       padding-top: 4px;
       display: flex;
       gap: 24px;
+      flex-wrap: wrap;
     }
     .select-wrap {
       margin-bottom: 0px;
@@ -191,6 +193,13 @@
   }
 }
 
+.e-sign-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
 .view-document-vak::-webkit-scrollbar {
   width: 8px;
 }
@@ -215,5 +224,39 @@
     height: 16px;
     width: 16px;
     margin-bottom: 8px;
+  }
+}
+
+.noc-court-order-upload {
+  .noc-court-order-upload-form {
+    .card {
+      min-width: 100%;
+      margin: 0px;
+      padding: 0px;
+      border: none;
+      box-shadow: none;
+      .label-field-pair {
+        margin-bottom: 24px;
+        .field {
+          .drag-drop-visible-main {
+            .drag-drop-heading-main {
+              .drag-drop-heading {
+                margin-left: 0px;
+                .card-label.custom-document-header {
+                  margin: 0px;
+                }
+                .custom-error-tooltip {
+                  flex-direction: column;
+                }
+                .custom-error-tooltip-message {
+                  bottom: unset;
+                  left: unset;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

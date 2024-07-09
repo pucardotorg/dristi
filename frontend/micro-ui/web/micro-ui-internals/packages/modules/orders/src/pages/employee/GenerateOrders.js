@@ -1,23 +1,24 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { Header, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBail,
+  configRejectSubmission, configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsIssueOfWarrants,
   configsIssueSummons,
+  configsJudgement,
   configsOrderMandatorySubmissions,
   configsOrderSection202CRPC,
   configsOrderSubmissionExtension,
   configsOrderTranferToADR,
   configsOthers,
+  configsRejectRescheduleHeadingDate,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
-  configsVoluntarySubmissionStatus,
+  configsVoluntarySubmissionStatus
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
@@ -34,6 +35,7 @@ const GenerateOrders = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
+  const applicationNumber = urlParams.get("applicationNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -103,7 +105,8 @@ const GenerateOrders = () => {
       REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
       SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-      APPROVE_REJECT_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
+      APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
       CASE_TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
@@ -111,6 +114,9 @@ const GenerateOrders = () => {
       WARRANT: configsIssueOfWarrants,
       WITHDRAWAL: configsCaseWithdrawal,
       OTHERS: configsOthers,
+      APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
+      JUDGEMENT: configsJudgement,
     };
 
     let newConfig = structuredClone(applicationTypeConfig);
@@ -197,8 +203,21 @@ const GenerateOrders = () => {
   }, [complainants, orderType?.code, respondants]);
 
   const defaultValue = useMemo(() => {
-    return structuredClone(currentOrder?.additionalDetails?.formdata) || {};
-  }, [currentOrder]);
+    if (currentOrder?.additionalDetails?.formdata) {
+      return structuredClone(currentOrder?.additionalDetails?.formdata);
+    }
+    if (currentOrder?.orderType && applicationNumber) {
+      return {
+        orderType: {
+          type: currentOrder?.orderType,
+          isactive: true,
+          code: currentOrder?.orderType,
+          name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
+        },
+      };
+    }
+    return {};
+  }, [currentOrder, applicationNumber]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {

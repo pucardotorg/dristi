@@ -190,9 +190,44 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
-                data: adv,
               };
             });
+          },
+        },
+      };
+    },
+  },
+  getAdvocateNameUsingBarRegistrationNumberJoinCase: {
+    getNames: (props) => {
+      console.log("props", props);
+      const removeOptions = props?.removeOptions ? props?.removeOptions : [];
+      return {
+        url: "/advocate/advocate/v1/status/_search",
+        params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
+        body: {
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+        config: {
+          select: (data) => {
+            return data.advocates
+              .filter((adv) => !removeOptions?.includes(adv?.barRegistrationNumber))
+              .map((adv) => {
+                return {
+                  icon: (
+                    <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span className="icon">{adv?.barRegistrationNumber}</span>
+                      <span className="icon" style={{ justifyContent: "end" }}>
+                        {adv?.additionalDetails?.username}
+                      </span>
+                    </span>
+                  ),
+                  barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
+                  advocateName: adv?.additionalDetails?.username,
+                  advocateId: adv?.id,
+                  barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                  data: adv,
+                };
+              });
           },
         },
       };

@@ -142,11 +142,6 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "text",
-                  label: "CS_PAYER_BANK",
-                  value: "payerbank",
-                },
-                {
-                  type: "text",
                   label: "CS_PAYEE_BANK",
                   value: "bankName",
                 },
@@ -352,17 +347,33 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+                  textDependentOn: "memorandumOfComplaint.document",
+                  textDependentValue: "Document Attached",
                   value: "memorandumOfComplaint.text",
                 },
                 {
                   type: "text",
                   label: "CS_PRAYER_FOR_RELIEF_HEADER",
+                  textDependentOn: "prayerForRelief.document",
+                  textDependentValue: "Document Attached",
                   value: "prayerForRelief.text",
+                },
+                {
+                  type: "text",
+                  label: "CS_SWORN_STATEMENT_HEADER",
+                  textDependentOn: "swornStatement.document",
+                  textDependentValue: "Document Attached",
+                  value: "swornStatement.text",
                 },
                 {
                   type: "text",
                   label: "CS_ADDITIONAL_DETAILS",
                   value: "additionalDetails.text",
+                },
+                {
+                  type: "text",
+                  label: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
+                  value: "additionalActsSections.text",
                 },
                 {
                   type: "image",

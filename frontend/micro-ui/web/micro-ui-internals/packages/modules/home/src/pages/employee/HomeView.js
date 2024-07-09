@@ -26,6 +26,7 @@ const HomeView = () => {
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues);
   const [config, setConfig] = useState(TabLitigantSearchConfig?.TabSearchConfig?.[0]);
   const [caseDetails, setCaseDetails] = useState(null);
+  const [isFetchCaseLoading, setIsFetchCaseLoading] = useState(false);
   const [tabData, setTabData] = useState(
     TabLitigantSearchConfig?.TabSearchConfig?.map((configItem, index) => ({
       key: index,
@@ -167,6 +168,7 @@ const HomeView = () => {
   useEffect(() => {
     (async function () {
       if (userType) {
+        setIsFetchCaseLoading(true);
         const caseData = await HomeService.customApiService("/case/case/v1/_search", {
           tenantId,
 
@@ -178,8 +180,8 @@ const HomeView = () => {
             },
           ],
         });
-
         setCaseDetails(caseData?.criteria?.[0]?.responseList?.[0]);
+        setIsFetchCaseLoading(false);
       }
     })();
   }, [individualId, tenantId, userType]);
@@ -195,12 +197,12 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
-  if (isLoading || isFetching || isSearchLoading) {
+  if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
     return <Loader />;
   }
   return (
     <div className="home-view-hearing-container">
-      {individualId && userType && !caseDetails ? (
+      {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
         <LitigantHomePage />
       ) : (
         <React.Fragment>
@@ -210,7 +212,7 @@ const HomeView = () => {
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
                 <div className="button-field" style={{ width: "50%" }}>
-                  {hasJoinFileCaseOption && (
+                  {individualId && userType && userInfoType === "citizen" && (
                     <React.Fragment>
                       <JoinCaseHome t={t} />
                       <Button
@@ -260,7 +262,9 @@ const HomeView = () => {
                           history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
                         } else {
                           if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
-                            history.push(`/${window?.contextPath}/${userInfoType}/dristi/admitted-case?caseId=${row?.original?.id}&tab=Overview`);
+                            history.push(
+                              `/${window?.contextPath}/${userInfoType}/dristi/home/admitted-case?caseId=${row?.original?.id}&tab=Overview`
+                            );
                         }
                       },
                     },

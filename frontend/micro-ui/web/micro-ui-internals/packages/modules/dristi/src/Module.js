@@ -45,6 +45,7 @@ import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 import CustomSortComponent from "./components/CustomSortComponent";
 import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import Button from "./components/Button";
 import MultiUploadWrapper from "./components/MultiUploadWrapper";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -114,6 +115,7 @@ const componentsToRegister = {
   DOCVIEWERWRAPPER: DocViewerWrapper,
   CUSTOMERRORTOOLTIP: CustomErrorTooltip,
   CustomSortComponent,
+  CustomButton: Button,
   DocViewerWrapper,
   MultiUploadWrapper,
 };

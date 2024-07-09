@@ -632,7 +632,7 @@ export const respondentValidation = ({
   }
 };
 
-export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
+export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors, setReceiptDemandNoticeModal }) => {
   if (selected === "demandNoticeDetails") {
     for (const key of ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"]) {
       if (!(key in formData) || formData[key]?.document?.length === 0) {
@@ -642,6 +642,10 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
       }
     }
 
+    if(formData?.delayApplicationType?.code === "NO") {
+      setReceiptDemandNoticeModal(true);
+      return true;
+    }
     if (formData?.proofOfService?.code === "YES" && formData?.["proofOfAcknowledgmentFileUpload"]?.document.length === 0) {
       setFormErrors("proofOfAcknowledgmentFileUpload", { type: "required" });
       setShowErrorToast(true);

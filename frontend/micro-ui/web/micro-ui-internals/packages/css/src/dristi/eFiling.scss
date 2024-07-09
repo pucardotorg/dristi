@@ -1447,13 +1447,28 @@
     border-bottom: 1px #bbbbbd solid;
   }
 
+  span.signed {
+    padding: 5px 0px 5px 0px;
+    border-radius: 15px;
+    width: 59px;
+    height: 28px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.41px;
+    text-align: center;
+    color: #00703c;
+    background-color: #e4f2e4;
+  }
+
   .signature-body {
     width: 100%;
     border-width: 1px 1px 0px 1px;
     border-color: #bbbbbd;
     border-style: solid;
-    padding: 20px 20px;
+    padding: 20px 24px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
@@ -1473,6 +1488,7 @@
       line-height: 18.75px;
       text-align: left;
       color: #0a0a0a;
+      margin: 0px;
     }
   }
 
