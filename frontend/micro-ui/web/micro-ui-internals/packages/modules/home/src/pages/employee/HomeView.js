@@ -180,12 +180,10 @@ const HomeView = () => {
             },
           ],
         });
-
         setCaseDetails(caseData?.criteria?.[0]?.responseList?.[0]);
         setIsFetchCaseLoading(false);
       }
     })();
-    setIsFetchCaseLoading(false);
   }, [individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
