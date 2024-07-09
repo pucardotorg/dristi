@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
-import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.OrderRequest;
