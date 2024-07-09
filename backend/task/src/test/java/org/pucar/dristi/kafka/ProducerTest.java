@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class ProducerTest {
+ class ProducerTest {
 
     @Mock
     private CustomKafkaTemplate<String, Object> kafkaTemplate;
@@ -24,7 +24,7 @@ public class ProducerTest {
     }
 
     @Test
-    public void testPush() {
+    void testPush() {
         // Arrange
         String topic = "test-topic";
         Object value = "test-value";

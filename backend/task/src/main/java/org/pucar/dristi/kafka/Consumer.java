@@ -13,6 +13,6 @@ public class Consumer {
     */
     //@KafkaListener(topics = {"kafka.topics.consumer"})
     public void listen(final HashMap<String, Object> recordData) {
-
+        // Method to listen to kafka topics
     }
 }
