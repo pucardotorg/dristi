@@ -15,7 +15,14 @@ import { initHomeComponents } from "@egovernments/digit-ui-module-home";
 window.contextPath =
   window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
 
-const enabledModules = ["DRISTI", "Submissions", "Orders", "Hearings", "Cases"];
+const enabledModules = [
+  "DRISTI",
+  "Submissions",
+  "Orders",
+  "Hearings",
+  "Cases",
+  "Home",
+];
 
 const moduleReducers = (initData) => ({
   initData,
