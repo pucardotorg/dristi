@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.models.AuditDetails;
+
 import org.springframework.validation.annotation.Validated;
 
 
@@ -32,5 +34,11 @@ public class JoinCaseRequest {
 
     @JsonProperty("litigant")
     private Party litigant = null;
+
+    @JsonProperty("additionDetails")
+    private Object additionDetails = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 }
