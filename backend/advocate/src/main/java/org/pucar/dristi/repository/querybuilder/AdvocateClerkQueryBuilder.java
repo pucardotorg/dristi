@@ -70,7 +70,7 @@ public class AdvocateClerkQueryBuilder {
         hasPreviousClause = addSingleCriteria(criteria.getId(), "advc.id", query, preparedStmtList, hasPreviousClause);
         hasPreviousClause = addSingleCriteria(criteria.getStateRegnNumber(), "advc.stateregnnumber", query, preparedStmtList, hasPreviousClause);
         hasPreviousClause = addSingleCriteria(criteria.getApplicationNumber(), "advc.applicationNumber", query, preparedStmtList, hasPreviousClause);
-        hasPreviousClause = addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, hasPreviousClause);
+        addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, hasPreviousClause);
     }
 
     private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList, boolean hasPreviousClause) {

@@ -111,107 +111,49 @@ public class Identifier {
         this.auditDetails = auditDetails;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        } else if (!(o instanceof Identifier)) {
-            return false;
-        } else {
-            Identifier other = (Identifier)o;
-            if (!other.canEqual(this)) {
-                return false;
-            } else {
-                label95: {
-                    Object this$isDeleted = this.getIsDeleted();
-                    Object other$isDeleted = other.getIsDeleted();
-                    if (this$isDeleted == null) {
-                        if (other$isDeleted == null) {
-                            break label95;
-                        }
-                    } else if (this$isDeleted.equals(other$isDeleted)) {
-                        break label95;
-                    }
+        if (this == o) return true;
+        if (!(o instanceof Identifier)) return false;
+        Identifier other = (Identifier) o;
+        if (!other.canEqual(this)) return false;
 
-                    return false;
-                }
+        Object this$isDeleted = this.getIsDeleted();
+        Object other$isDeleted = other.getIsDeleted();
+        if (this$isDeleted != null ? !this$isDeleted.equals(other$isDeleted) : other$isDeleted != null) return false;
 
-                Object this$id = this.getId();
-                Object other$id = other.getId();
-                if (this$id == null) {
-                    if (other$id != null) {
-                        return false;
-                    }
-                } else if (!this$id.equals(other$id)) {
-                    return false;
-                }
+        Object this$id = this.getId();
+        Object other$id = other.getId();
+        if (this$id != null ? !this$id.equals(other$id) : other$id != null) return false;
 
-                Object this$clientReferenceId = this.getClientReferenceId();
-                Object other$clientReferenceId = other.getClientReferenceId();
-                if (this$clientReferenceId == null) {
-                    if (other$clientReferenceId != null) {
-                        return false;
-                    }
-                } else if (!this$clientReferenceId.equals(other$clientReferenceId)) {
-                    return false;
-                }
+        Object this$clientReferenceId = this.getClientReferenceId();
+        Object other$clientReferenceId = other.getClientReferenceId();
+        if (this$clientReferenceId != null ? !this$clientReferenceId.equals(other$clientReferenceId) : other$clientReferenceId != null) return false;
 
-                label74: {
-                    Object this$individualId = this.getIndividualId();
-                    Object other$individualId = other.getIndividualId();
-                    if (this$individualId == null) {
-                        if (other$individualId == null) {
-                            break label74;
-                        }
-                    } else if (this$individualId.equals(other$individualId)) {
-                        break label74;
-                    }
+        Object this$individualId = this.getIndividualId();
+        Object other$individualId = other.getIndividualId();
+        if (this$individualId != null ? !this$individualId.equals(other$individualId) : other$individualId != null) return false;
 
-                    return false;
-                }
+        Object this$identifierType = this.getIdentifierType();
+        Object other$identifierType = other.getIdentifierType();
+        if (this$identifierType != null ? !this$identifierType.equals(other$identifierType) : other$identifierType != null) return false;
 
-                label67: {
-                    Object this$identifierType = this.getIdentifierType();
-                    Object other$identifierType = other.getIdentifierType();
-                    if (this$identifierType == null) {
-                        if (other$identifierType == null) {
-                            break label67;
-                        }
-                    } else if (this$identifierType.equals(other$identifierType)) {
-                        break label67;
-                    }
+        Object this$identifierId = this.getIdentifierId();
+        Object other$identifierId = other.getIdentifierId();
+        if (this$identifierId != null ? !this$identifierId.equals(other$identifierId) : other$identifierId != null) return false;
 
-                    return false;
-                }
+        Object this$auditDetails = this.getAuditDetails();
+        Object other$auditDetails = other.getAuditDetails();
+        if (this$auditDetails != null ? !this$auditDetails.equals(other$auditDetails) : other$auditDetails != null) return false;
 
-                Object this$identifierId = this.getIdentifierId();
-                Object other$identifierId = other.getIdentifierId();
-                if (this$identifierId == null) {
-                    if (other$identifierId != null) {
-                        return false;
-                    }
-                } else if (!this$identifierId.equals(other$identifierId)) {
-                    return false;
-                }
-
-                Object this$auditDetails = this.getAuditDetails();
-                Object other$auditDetails = other.getAuditDetails();
-                if (this$auditDetails == null) {
-                    if (other$auditDetails != null) {
-                        return false;
-                    }
-                } else if (!this$auditDetails.equals(other$auditDetails)) {
-                    return false;
-                }
-
-                return true;
-            }
-        }
+        return true;
     }
 
     protected boolean canEqual(Object other) {
         return other instanceof Identifier;
     }
 
+    @Override
     public int hashCode() {
         int result = 1;
         Object $isDeleted = this.getIsDeleted();

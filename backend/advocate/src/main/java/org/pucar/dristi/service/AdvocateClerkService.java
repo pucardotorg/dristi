@@ -28,18 +28,16 @@ public class AdvocateClerkService {
     private  AdvocateClerkRegistrationValidator validator;
     private  AdvocateClerkRegistrationEnrichment enrichmentUtil;
     private  WorkflowService workflowService;
-    private  IndividualService individualService;
     private  Producer producer;
     private  Configuration config;
 
     @Autowired
     public AdvocateClerkService(AdvocateClerkRepository advocateClerkRepository, AdvocateClerkRegistrationValidator validator, AdvocateClerkRegistrationEnrichment enrichmentUtil,
-                                WorkflowService workflowService, IndividualService individualService, Producer producer, Configuration config) {
+                                WorkflowService workflowService, Producer producer, Configuration config) {
         this.advocateClerkRepository = advocateClerkRepository;
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.workflowService = workflowService;
-        this.individualService = individualService;
         this.producer = producer;
         this.config = config;
     }
