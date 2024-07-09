@@ -89,9 +89,6 @@ export const configs = [
             masterName: "DeadlineForSubmission",
             localePrefix: "",
           },
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
     ],
@@ -185,9 +182,6 @@ export const configs = [
             moduleName: "Order",
             masterName: "", // TO DO: ADD MDMS CONFIG
             localePrefix: "",
-          },
-          validation: {
-            max: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -320,9 +314,6 @@ export const configsOrderSection202CRPC = [
         type: "date",
         populators: {
           name: "responseRequiredBy",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -333,9 +324,6 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -402,9 +390,6 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -473,9 +458,6 @@ export const configsOrderMandatorySubmissions = [
         type: "date",
         populators: {
           name: "submissionDeadline",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -541,9 +523,6 @@ export const configsOrderMandatorySubmissions = [
         type: "date",
         populators: {
           name: "responseDeadline",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -637,9 +616,6 @@ export const configsOrderSubmissionExtension = [
         type: "date",
         populators: {
           name: "originalSubmissionOrderDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -649,9 +625,6 @@ export const configsOrderSubmissionExtension = [
         type: "date",
         populators: {
           name: "originalDeadline",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -661,9 +634,6 @@ export const configsOrderSubmissionExtension = [
         type: "date",
         populators: {
           name: "proposedSubmissionDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -673,9 +643,6 @@ export const configsOrderSubmissionExtension = [
         type: "date",
         populators: {
           name: "newSubmissionDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -864,9 +831,6 @@ export const configsScheduleHearingDate = [
         type: "date",
         populators: {
           name: "hearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -904,6 +868,36 @@ export const configsScheduleHearingDate = [
       },
       {
         label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
+
+export const configsRejectRescheduleHeadingDate = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: true,
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "ORIGINAL_HEARING_DATE",
+        isMandatory: true,
+        key: "originalHearingDate",
+        type: "date",
+        populators: {
+          name: "originalHearingDate",
+        },
+      },
+      {
+        label: "REASON_FOR_REJECTION",
         isMandatory: false,
         key: "comments",
         type: "textarea",
@@ -983,9 +977,6 @@ export const configsRescheduleHearingDate = [
         type: "date",
         populators: {
           name: "originalHearingDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -995,9 +986,6 @@ export const configsRescheduleHearingDate = [
         type: "date",
         populators: {
           name: "newHearingDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1025,6 +1013,78 @@ export const configsRescheduleHearingDate = [
   },
 ];
 
+export const configsAcceptSubmission = [
+  {
+    body: [
+      {
+        label: "SUBMISSION_ID",
+        isMandatory: true,
+        key: "submissionId",
+        type: "dropdown",
+        populators: {
+          name: "settlementMechanism",
+          optionsKey: "name",
+          error: "Error!",
+          required: true,
+          options: [
+            {
+              code: "0001",
+              name: "0001",
+            },
+            {
+              code: "0002",
+              name: "0002",
+            },
+            {
+              code: "0003",
+              name: "0003",
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const configRejectSubmission = [
+  {
+    body: [
+      {
+        label: "SUBMISSION_ID",
+        isMandatory: true,
+        key: "submissionId",
+        type: "dropdown",
+        populators: {
+          name: "settlementMechanism",
+          optionsKey: "name",
+          error: "Error!",
+          required: true,
+          options: [
+            {
+              code: "0001",
+              name: "0001",
+            },
+            {
+              code: "0002",
+              name: "0002",
+            },
+            {
+              code: "0003",
+              name: "0003",
+            },
+          ],
+        },
+      },
+      {
+        label: "REASON_FOR_REJECTION_SUBMISSION",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
+    ],
+  },
+];
 export const configsVoluntarySubmissionStatus = [
   {
     body: [
@@ -1268,9 +1328,7 @@ export const configsCaseSettlement = [
         type: "date",
         populators: {
           name: "dateOfOrder",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
+
           hideInForm: true,
         },
       },
@@ -1281,9 +1339,6 @@ export const configsCaseSettlement = [
         type: "date",
         populators: {
           name: "settlementAgreementDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1807,9 +1862,6 @@ export const configsCreateOrderSchedule = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1869,9 +1921,6 @@ export const configsCreateOrderWarrant = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -2024,9 +2073,6 @@ export const configsCreateOrderSummon = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -2135,6 +2181,191 @@ export const configsCreateOrderReIssueSummon = [
       //     disable: false,
       //     populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
       //   },
+    ],
+  },
+];
+
+export const configsJudgement = [
+  {
+    body: [
+      {
+        label: "CASE_NUMBER",
+        isMandatory: true,
+        key: "caseNumber",
+        type: "text",
+        populators: { name: "caseNumber" },
+      },
+      {
+        label: "DATE_OF_JUDGEMENT",
+        isMandatory: true,
+        key: "dateOfJudgement",
+        type: "text",
+        populators: { name: "dateOfJudgement" },
+      },
+      {
+        label: "NAME_OF_JUDGE",
+        isMandatory: true,
+        key: "nameOfJudge",
+        type: "text",
+        populators: { name: "nameOfJudge" },
+      },
+      {
+        label: "NAME_OF_COURT",
+        isMandatory: true,
+        key: "nameOfCourt",
+        type: "text",
+        populators: { name: "nameOfCourt" },
+      },
+      {
+        label: "DESCRIPTION_OF_ACCUSED",
+        isMandatory: true,
+        key: "nameofRespondant",
+        type: "text",
+        populators: { name: "nameofRespondent" },
+      },
+      {
+        label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
+        isMandatory: true,
+        key: "addressRespondant",
+        type: "text",
+        populators: { name: "addressRespondant" },
+      },
+      {
+        label: "DATE_OF_OCCURENCE",
+        isMandatory: true,
+        key: "dateChequeReturnMemo",
+        type: "text",
+        populators: { name: "dateChequeReturnMemo" },
+      },
+      {
+        label: "DATE_COMPLAINT",
+        isMandatory: true,
+        key: "dateFiling",
+        type: "text",
+        populators: { name: "dateFiling" },
+      },
+      {
+        label: "DATE_OF_APPREHENSION",
+        isMandatory: true,
+        key: "dateApprehension",
+        type: "text",
+        populators: { name: "dateApprehension" },
+      },
+      {
+        label: "DATE_OF_RELEASE_ON_BAIL",
+        isMandatory: true,
+        key: "dateofReleaseOnBail",
+        type: "text",
+        populators: { name: "dateofReleaseOnBail" },
+      },
+      {
+        label: "DATE_OF_COMMENCEMENT_TRIAL",
+        isMandatory: true,
+        key: "dateofCommencementTrial",
+        type: "text",
+        populators: { name: "dateofCommencementTrial" },
+      },
+      {
+        label: "DATE_OF_CLOSE_TRIAL",
+        isMandatory: true,
+        key: "dateofCloseTrial",
+        type: "text",
+        populators: { name: "dateofCloseTrial" },
+      },
+      {
+        label: "DATE_OF_SENTENCE",
+        isMandatory: true,
+        key: "dateofSentence",
+        type: "text",
+        populators: { name: "dateofSentence" },
+      },
+      {
+        label: "NAME_COMPLAINANT",
+        isMandatory: true,
+        key: "nameofComplainant",
+        type: "text",
+        populators: { name: "nameofComplainant" },
+      },
+      {
+        label: "NAME_COMPLAINANT_ADVOCATE",
+        isMandatory: true,
+        key: "nameofComplainantAdvocate",
+        type: "text",
+        populators: { name: "nameofComplainantAdvocate" },
+      },
+      {
+        label: "NAME_RESPONDANT_ADVOCATE",
+        isMandatory: true,
+        key: "nameofRespondantAdvocate",
+        type: "text",
+        populators: { name: "nameofRespondantAdvocate" },
+      },
+      {
+        label: "OFFENSE",
+        isMandatory: true,
+        key: "offense",
+        type: "text",
+        populators: { name: "offense" },
+      },
+      {
+        type: "radio",
+        key: "plea",
+        label: "PLEA",
+        isMandatory: true,
+        populators: {
+          label: "PLEA",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "GUILTY",
+              name: "GUILTY",
+              isEnabled: true,
+            },
+            {
+              code: "NOTGUILTY",
+              name: "NOTGUILTY",
+              isEnabled: true,
+            },
+          ],
+        },
+      },
+      {
+        type: "dropdown",
+        key: "findings",
+        label: "FINDING",
+        isMandatory: true,
+        populators: {
+          label: "PLEA",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "GUILTY",
+              name: "GUILTY",
+              isEnabled: true,
+            },
+            {
+              code: "NOTGUILTY",
+              name: "NOTGUILTY",
+              isEnabled: true,
+            },
+          ],
+        },
+      },
+      {
+        label: "SENTENCE",
+        isMandatory: true,
+        key: "sentence",
+        type: "textarea",
+        populators: { name: "sentence" },
+      },
     ],
   },
 ];
