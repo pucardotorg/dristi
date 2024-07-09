@@ -32,16 +32,11 @@ function JudgeScreen({ path }) {
                 onClickRow: (props) => {
                   if (props?.original?.status === CaseWorkflowState.CASE_ADMITTED) {
                     const searchParams = new URLSearchParams();
-                    console.log(props.original);
-                    // searchParams.set("filingNumber", props.original.filingNumber);
-                    // searchParams.set("caseId", props.original.id);
-                    // searchParams.set("cnrNumber", props.original.cnrNumber);
                     history.push(
                       `${path}/admitted-case?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}&title=${props.original.caseTitle}`
                     );
                   } else if (props?.original?.status === CaseWorkflowState.PENDING_ADMISSION) {
                     const searchParams = new URLSearchParams();
-                    console.log(props.original);
                     searchParams.set("filingNumber", props.original.filingNumber);
                     searchParams.set("caseId", props.original.id);
                     history.push(`${path}/admission?${searchParams.toString()}`);

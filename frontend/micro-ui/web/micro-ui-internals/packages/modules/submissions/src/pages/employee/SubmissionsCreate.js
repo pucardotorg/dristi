@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
   configsBail,
@@ -20,11 +20,11 @@ import SubmissionSignatureModal from "../../components/SubmissionSignatureModal"
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
 import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
+import { DRISTIService } from "../../../../dristi/src/services";
 
 const fieldStyle = { marginRight: 0 };
 
 const SubmissionsCreate = () => {
-  const defaultValue = {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
@@ -34,7 +34,7 @@ const SubmissionsCreate = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const [loader, setLoader] = useState(false);
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -70,6 +70,13 @@ const SubmissionsCreate = () => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
   }, [submissionFormConfig, applicationFormConfig]);
 
+  const defaultFormValue = {
+    submissionType: {
+      code: "APPLICATION_TYPE",
+      name: "APPLICATION_TYPE",
+    },
+  };
+
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
@@ -94,7 +101,6 @@ const SubmissionsCreate = () => {
       setFormdata(formData);
     }
   };
-
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -102,40 +108,83 @@ const SubmissionsCreate = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const createSubmission = () => {
-    const reqbody = {
-      tenantId,
-      application: {
+  const onDocumentUpload = async (fileData, filename) => {
+    if (fileData?.fileStore) return fileData;
+    const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
+
+  const createSubmission = async (data) => {
+    try {
+      let documents = [];
+      if (applicationType === "PRODUCTION_DOCUMENTS") {
+        const documentres = await Promise.all([
+          onDocumentUpload(formdata?.listOfProducedDocuments?.documents?.[0], formdata?.listOfProducedDocuments?.documents?.[0]?.name),
+          onDocumentUpload(formdata?.reasonForDocumentsSubmission?.documents?.[0], formdata?.reasonForDocumentsSubmission?.documents?.[0]?.name),
+        ]);
+        documentres.forEach((res) => {
+          documents.push({
+            documentType: res?.fileType,
+            fileStore: res?.file?.files?.[0]?.fileStoreId,
+            additionalDetails: { name: res?.filename },
+          });
+        });
+
+        const file = {
+          documentType: documentres[0]?.fileType,
+          fileStore: documentres[0]?.file?.files?.[0]?.fileStoreId,
+          additionalDetails: {
+            name: documentres[0]?.filename,
+          },
+        };
+
+        const evidenceReqBody = {
+          artifact: {
+            artifactType: "AFFIDAVIT",
+            caseId: caseDetails?.id,
+            tenantId,
+            comments: [],
+            file,
+          },
+        };
+        DRISTIService.createEvidence(evidenceReqBody);
+      }
+      if (applicationType === "BAIL_BOND") {
+        const docres = await onDocumentUpload(formdata?.documentsListForBail?.documents?.[0], formdata?.documentsListForBail?.documents?.[0]?.name);
+        documents.push({
+          documentType: docres?.fileType,
+          fileStore: docres?.file?.files?.[0]?.fileStoreId,
+          additionalDetails: { name: docres?.filename },
+        });
+      }
+
+      const applicationReqBody = {
         tenantId,
-        filingNumber,
-        cnrNumber: caseDetails?.cnrNumber,
-        caseId: caseDetails?.id,
-        referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
-        createdDate: formatDate(new Date()),
-        applicationType,
-        // applicationNumber: "example_application_number",
-        // issuedBy: null,
-        status: caseDetails?.status,
-        // comment: "example_comment",
-        isActive: true,
-        statuteSection: {
-          tenantId: tenantId,
+        application: {
+          tenantId,
+          filingNumber,
+          cnrNumber: caseDetails?.cnrNumber,
+          caseId: caseDetails?.id,
+          referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
+          createdDate: formatDate(new Date()),
+          applicationType,
+          status: caseDetails?.status,
+          isActive: true,
+          statuteSection: { tenantId },
+          additionalDetails: { formdata },
+          documents,
+          workflow: {
+            id: "workflow123",
+            action: "CREATE",
+            status: "in_progress",
+            comments: "Workflow comments",
+            documents: [{}],
+          },
         },
-        additionalDetails: { formdata: formdata },
-        documents: [{}],
-        workflow: {
-          id: "workflow123",
-          action: "CREATE",
-          status: "in_progress",
-          comments: "Workflow comments",
-          documents: [{}],
-        },
-      },
-    };
-    submissionService
-      .createApplication(reqbody, { tenantId })
-      .then((res) => {})
-      .catch(() => {});
+      };
+      await submissionService.createApplication(applicationReqBody, { tenantId });
+      setLoader(false);
+    } catch (error) {}
   };
 
   const handleBack = () => {
@@ -143,6 +192,7 @@ const SubmissionsCreate = () => {
   };
 
   const handleProceed = () => {
+    setLoader(true);
     setShowsignatureModal(false);
     setShowPaymentModal(true);
     createSubmission();
@@ -179,14 +229,16 @@ const SubmissionsCreate = () => {
     //
   };
 
+  if (loader) {
+    return <Loader />;
+  }
   return (
     <div>
       <Header> {t("CREATE_SUBMISSION")}</Header>
-
       <FormComposerV2
         label={t("SUBMIT_BUTTON")}
         config={modifiedFormConfig}
-        defaultValues={defaultValue}
+        defaultValues={defaultFormValue}
         onFormValueChange={onFormValueChange}
         onSubmit={() => setShowReviewModal(true)}
         fieldStyle={fieldStyle}

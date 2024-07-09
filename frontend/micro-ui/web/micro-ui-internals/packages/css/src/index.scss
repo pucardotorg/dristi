@@ -143,6 +143,9 @@
 @import "./pages/employee/homehearing.scss";
 @import "./cases/pages/employeee/joinCaseHome.scss";
 
+/* @import "./home"; */
+@import "./home/home.scss";
+
 .wbh-header-container {
   display: flex !important;
   align-items: center;

@@ -56,9 +56,9 @@ function AdmissionActionModal({
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [label, setLabel] = useState(false);
 
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
-  }, []);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -254,7 +254,13 @@ function AdmissionActionModal({
           actionCancelOnSubmit={() => {
             history.push(`/employee`);
           }}
-          actionSaveOnSubmit={handleScheduleNextHearing}
+          actionSaveOnSubmit={() => {
+            if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
+              handleScheduleNextHearing();
+            } else {
+              history.push(`/employee`);
+            }
+          }}
           className="case-types"
           formId="modal-action"
         >

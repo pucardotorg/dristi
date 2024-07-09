@@ -821,7 +821,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         "document" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.document.length > 0)
     ) {
-      debugger;
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       setFormErrors("memorandumOfComplaint", { type: "required" });
       hasError = true;
@@ -1750,14 +1749,14 @@ export const updateCaseDetails = async ({
     };
   }
   const caseTitle =
-    caseDetails?.caseTitle ||
-    (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
-      `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
-        caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-      } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
-        caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
-      }`);
+    caseDetails?.status !== "DRAFT_IN_PROGRESS"
+      ? caseDetails?.caseTitle
+      : caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+        `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+          caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+        } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
+          caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+        }`;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,

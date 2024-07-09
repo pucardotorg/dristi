@@ -13,8 +13,7 @@ const inboxModuleNameMap = {
   "muster-roll-approval": "muster-roll-service",
 };
 
-const user = localStorage.getItem("user-info");
-const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
+const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
 
 export const UICustomizations = {
   businessServiceMap,
@@ -32,7 +31,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -57,7 +56,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -82,7 +81,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -107,7 +106,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -128,7 +127,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit: (businessService, action, setModalSubmit, data) => {
-    if (businessService === businessServiceMap?.["muster roll"] && action.action === "APPROVE") {
+    if (businessService === businessServiceMap?.["muster roll"] && action?.action === "APPROVE") {
       setModalSubmit(data?.acceptTerms);
     }
   },
@@ -541,7 +540,6 @@ export const UICustomizations = {
   },
   SearchIndividualConfig: {
     // preProcess: (requestCriteria, additionalDetails) => {
-    //   console.log(requestCriteria, additionalDetails, "PREPROCESS");
 
     //   return {
     //     ...requestCriteria,
@@ -553,31 +551,17 @@ export const UICustomizations = {
     //   };
     // },
     additionalCustomizations: (row, key, column, value, t) => {
+      const showDocument =
+        userRoles?.includes("APPLICATION_APPROVER") ||
+        userRoles?.includes("DEPOSITION_CREATOR") ||
+        userRoles?.includes("DEPOSITION_ESIGN") ||
+        userRoles?.includes("DEPOSITION_PUBLISHER") ||
+        row.workflow.action !== "PENDINGREVIEW";
       switch (key) {
         case "Document":
-          console.log("document", row);
-          console.log("document Column", column);
-          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
-            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
-            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
-            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
-            row.workflow.action !== "PENDINGREVIEW" ? (
-            <OwnerColumn rowData={row} colData={column} t={t} />
-          ) : (
-            ""
-          );
+          return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
         case "File":
-          console.log("document", row);
-          console.log("document Column", column);
-          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
-            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
-            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
-            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
-            row.workflow.action !== "PENDINGREVIEW" ? (
-            <Evidence rowData={row} colData={column} t={t} />
-          ) : (
-            ""
-          );
+          return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
@@ -605,13 +589,11 @@ export const UICustomizations = {
   },
   PartiesConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria, additionalDetails);
       return {
         ...requestCriteria,
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            console.log(data, "CONFIG");
             const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
             const finalLitigantsData = litigants.map((litigant) => {
               return {
@@ -644,7 +626,6 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         // case "Document":
-        //   console.log("document", row);
         //   return <OwnerColumn name={row?.name?.familyName} t={t} />;
         case "Date Added":
           const date = new Date(value);
@@ -678,22 +659,4 @@ export const UICustomizations = {
         return;
     }
   },
-};
-
-const CommentComponent = ({ key, comment }) => {
-  return (
-    <div className="comment-body" key={key}>
-      <div className="name-logo">
-        <div className="comment-avatar">
-          <span>{comment?.author[0]}</span>
-        </div>
-      </div>
-      <div className="comment-details">
-        <h3 className="comment-header">
-          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
-        </h3>
-        <p className="comment-text">{comment?.text}</p>
-      </div>
-    </div>
-  );
 };

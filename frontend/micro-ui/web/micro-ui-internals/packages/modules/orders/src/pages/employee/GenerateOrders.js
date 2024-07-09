@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Header, FormComposerV2 } from "@egovernments/digit-ui-react-components";
@@ -7,6 +7,7 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsCaseWithdrawal,
   configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
@@ -41,6 +42,7 @@ const GenerateOrders = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
@@ -74,11 +76,12 @@ const GenerateOrders = () => {
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
-    return caseDetails?.litigants
-      ?.filter((item) => item?.partyType === "complainant.primary")
-      .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
-      });
+    // return caseDetails?.litigants
+    //   ?.filter((item) => item?.partyType === "respondant.primary")
+    //   .map((item) => {
+    //     return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+    //   });
+    return [{ code: "Respondant", name: "Respondant" }];
   }, [caseDetails]);
 
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
@@ -106,6 +109,7 @@ const GenerateOrders = () => {
       SUMMONS: configsIssueSummons,
       BAIL: configsBail,
       WARRANT: configsIssueOfWarrants,
+      WITHDRAWAL: configsCaseWithdrawal,
       OTHERS: configsOthers,
     };
 
@@ -140,12 +144,40 @@ const GenerateOrders = () => {
           };
         });
       }
+      if (orderType?.code === "SCHEDULE_OF_HEARING_DATE") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "namesOfPartiesRequired") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: complainants,
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
       if (orderType?.code === "MANDATORY_SUBMISSIONS_RESPONSES") {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
             body: section.body.map((field) => {
               if (field.key === "submissionParty") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: [...complainants, ...respondants],
+                  },
+                };
+              }
+              if (field.key === "respondingParty") {
                 return {
                   ...field,
                   populators: {
@@ -164,9 +196,18 @@ const GenerateOrders = () => {
     return newConfig;
   }, [complainants, orderType?.code, respondants]);
 
+  const defaultValue = useMemo(() => {
+    return structuredClone(currentOrder?.additionalDetails?.formdata) || {};
+  }, [currentOrder]);
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
+    }
+    if (Object.keys(formState?.errors).length) {
+      setIsSubmitDisabled(true);
+    } else {
+      setIsSubmitDisabled(false);
     }
   };
 
@@ -177,7 +218,7 @@ const GenerateOrders = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const handleUpdateOrder = ({ action, oldOrderData, orderType }) => {
+  const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
     const newAdditionalData =
       action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
     const updatedreqBody = {
@@ -203,6 +244,9 @@ const GenerateOrders = () => {
         refetchOrdersData();
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
+        }
+        if (modal === "reviewModal") {
+          setShowReviewModal(true);
         }
         setShowsignatureModal(false);
         setDeleteOrderIndex(null);
@@ -248,11 +292,12 @@ const GenerateOrders = () => {
       });
   };
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = ({ modal }) => {
     handleUpdateOrder({
       action: CaseWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
+      modal,
     });
   };
 
@@ -276,33 +321,22 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
 
-  const handleReviewOrder = () => {
-    handleSaveDraft();
+  const handleGoBackSignatureModal = () => {
+    setShowsignatureModal(false);
     setShowReviewModal(true);
   };
-
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
 
   return (
-    <div style={{ display: "flex", gap: "5%", marginBottom: "200px" }}>
-      <div style={{ width: "20%" }}>
-        <div style={{ color: "#007E7E" }} onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
-        <div>
+    <div className="generate-orders">
+      <div className="orders-list-main">
+        <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
+        <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  ...(selectedOrder === index ? { background: "#E8E8E8" } : {}),
-                }}
-                onClick={() => setSelectedOrder(index)}
-              >
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span
@@ -316,27 +350,41 @@ const GenerateOrders = () => {
               </div>
             );
           })}
-        </div>
+        </React.Fragment>
       </div>
-      <div style={{ minWidth: "70%" }}>
-        {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
+      <div className="view-order">
+        {orderList?.length > 0 && <Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
         {orderList?.length > 0 && (
           <FormComposerV2
             className={"generate-orders"}
             key={selectedOrder}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
-            defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
-            onFormValueChange={onFormValueChange}
-            onSubmit={handleReviewOrder}
+            defaultValues={defaultValue}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
+            }}
+            onSubmit={() => {
+              handleSaveDraft({ modal: "reviewModal" });
+            }}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}
+            cardClassName={`order-type-form-composer`}
+            actionClassName={"order-type-action"}
+            isDisabled={isSubmitDisabled}
           />
         )}
       </div>
       {deleteOrderIndex !== null && (
-        <OrderDeleteModal t={t} deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
+        <div className="delete-order-warning-modal">
+          <OrderDeleteModal
+            t={t}
+            deleteOrderIndex={deleteOrderIndex}
+            setDeleteOrderIndex={setDeleteOrderIndex}
+            handleDeleteOrder={handleDeleteOrder}
+          />
+        </div>
       )}
       {showReviewModal && (
         <OrderReviewModal
@@ -347,7 +395,9 @@ const GenerateOrders = () => {
           handleSaveDraft={handleSaveDraft}
         />
       )}
-      {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
+      {showsignatureModal && (
+        <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
+      )}
       {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
