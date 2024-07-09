@@ -77,6 +77,8 @@ function Home() {
 
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
+  } else {
+    history.push(`/${window?.contextPath}/citizen/home`);
   }
 
   const refreshInbox = () => {

@@ -23,7 +23,8 @@ const Modal = ({
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
   submitTextClassName = "",
-  className
+  className,
+  cancelButtonBody,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -52,8 +53,13 @@ const Modal = ({
             }
           >
             {actionCancelLabel ? (
-              <ButtonSelector textStyles={{ margin: "0px", color: 'red' }} theme="border" label={actionCancelLabel} onSubmit={actionCancelOnSubmit} 
-              style={{border: '1px solid red'}}
+              <ButtonSelector
+                textStyles={{ margin: "0px", color: "red" }}
+                theme="border"
+                label={actionCancelLabel}
+                onSubmit={actionCancelOnSubmit}
+                style={{ border: "1px solid red" }}
+                ButtonBody={cancelButtonBody}
               />
             ) : (
               <div></div>

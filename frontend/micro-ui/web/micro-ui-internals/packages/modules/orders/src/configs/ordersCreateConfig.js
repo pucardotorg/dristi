@@ -321,7 +321,7 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "responseRequiredBy",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -344,6 +344,13 @@ export const configsOrderSection202CRPC = [
         key: "judgeName",
         type: "text",
         populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
       },
     ],
   },
@@ -482,8 +489,24 @@ export const configsOrderMandatorySubmissions = [
         label: "IS_RESPONSE_REQUIRED",
         isMandatory: true,
         key: "isResponseRequired",
-        type: "checkbox",
-        populators: { name: "isResponseRequired", title: "" },
+        type: "radio",
+        populators: {
+          name: "isResponseRequired",
+          optionsKey: "name",
+          title: "",
+          error: "Error!",
+          required: false,
+          options: [
+            {
+              code: "Yes",
+              name: "ES_COMMON_YES",
+            },
+            {
+              code: "No",
+              name: "ES_COMMON_NO",
+            },
+          ],
+        },
       },
       {
         label: "RESPONDING_PARTY",
@@ -627,7 +650,7 @@ export const configsOrderSubmissionExtension = [
         populators: {
           name: "originalDeadline",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -639,7 +662,7 @@ export const configsOrderSubmissionExtension = [
         populators: {
           name: "proposedSubmissionDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -651,7 +674,7 @@ export const configsOrderSubmissionExtension = [
         populators: {
           name: "newSubmissionDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -661,6 +684,13 @@ export const configsOrderSubmissionExtension = [
         key: "judgeDesignation",
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
+      },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
       },
     ],
   },
@@ -751,6 +781,13 @@ export const configsOrderTranferToADR = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
+      },
     ],
   },
 ];
@@ -785,13 +822,6 @@ export const configsScheduleHearingDate = [
         key: "cnrNumber",
         type: "text",
         populators: { name: "cnrNumber", hideInForm: true },
-      },
-      {
-        label: "JUDGE_NAME",
-        isMandatory: true,
-        key: "judgeName",
-        type: "text",
-        populators: { name: "judgeName", hideInForm: true },
       },
       {
         label: "DATE_OF_ORDER",
@@ -840,11 +870,44 @@ export const configsScheduleHearingDate = [
         },
       },
       {
+        label: "JUDGE_NAME",
+        isMandatory: true,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
         label: "JUDGE_DESIGNATION",
         isMandatory: true,
         key: "judgeDesignation",
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
+      },
+      {
+        label: "NAMES_OF_PARTIES_REQUIRED",
+        isMandatory: true,
+        key: "namesOfPartiesRequired",
+        type: "dropdown",
+        populators: {
+          name: "namesOfPartiesRequired",
+          allowMultiSelect: true,
+          optionsKey: "name",
+          error: "Error!",
+          required: true,
+          options: [
+            {
+              code: "PARTY_1",
+              name: "PARTY_1",
+            },
+          ],
+        },
+      },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
       },
     ],
   },
@@ -886,7 +949,10 @@ export const configsRescheduleHearingDate = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
-        populators: { name: "dateOfOrder", hideInForm: true },
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+        },
       },
       {
         label: "APPLICANT_NAME",
@@ -918,19 +984,19 @@ export const configsRescheduleHearingDate = [
         populators: {
           name: "originalHearingDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
       {
         label: "NEW_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "newHearingDate",
         type: "date",
         populators: {
           name: "newHearingDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -947,6 +1013,13 @@ export const configsRescheduleHearingDate = [
         key: "judgeDesignation",
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
+      },
+      {
+        label: "COMMENTS",
+        isMandatory: false,
+        key: "comments",
+        type: "textarea",
+        populators: { name: "comments" },
       },
     ],
   },
@@ -1198,6 +1271,7 @@ export const configsCaseSettlement = [
           validation: {
             max: new Date().toISOString().split("T")[0],
           },
+          hideInForm: true,
         },
       },
       {
@@ -1208,7 +1282,7 @@ export const configsCaseSettlement = [
         populators: {
           name: "settlementAgreementDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            min: new Date().toISOString().split("T")[0],
           },
         },
       },
@@ -1242,8 +1316,24 @@ export const configsCaseSettlement = [
         label: "SETTLEMENT_IMPLEMETED",
         isMandatory: true,
         key: "settlementImplemented",
-        type: "checkbox",
-        populators: { name: "settlementImplemented", title: "" },
+        type: "radio",
+        populators: {
+          name: "settlementImplemented",
+          optionsKey: "name",
+          title: "",
+          error: "Error!",
+          required: false,
+          options: [
+            {
+              code: "Yes",
+              name: "ES_COMMON_YES",
+            },
+            {
+              code: "No",
+              name: "ES_COMMON_NO",
+            },
+          ],
+        },
       },
       {
         label: "COMMENTS",
@@ -1430,6 +1520,75 @@ export const configsIssueOfWarrants = [
     ],
   },
 ];
+export const configsCaseWithdrawal = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: true,
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: true,
+        key: "dateOfOrder",
+        type: "date",
+        populators: { name: "dateOfOrder", hideInForm: true },
+      },
+      {
+        label: "APPLICATION_ON_BEHALF_OF",
+        isMandatory: true,
+        key: "applicationOnBehalfOf",
+        type: "text",
+        populators: { name: "applicationOnBehalfOf" },
+      },
+      {
+        label: "PARTY_TYPE",
+        isMandatory: true,
+        key: "partyType",
+        type: "text",
+        populators: { name: "partyType" },
+      },
+      {
+        label: "REASON_FOR_WITHDRAWAL",
+        isMandatory: true,
+        key: "reasonForWarrant",
+        type: "text",
+        populators: { name: "reasonForWithdrawal" },
+      },
+      {
+        label: "APPLICATION_STATUS",
+        isMandatory: true,
+        key: "applicationStatus",
+        type: "text",
+        populators: { name: "applicationStatus" },
+      },
+    ],
+  },
+];
 
 export const configsOthers = [
   {
@@ -1441,12 +1600,34 @@ export const configsOthers = [
         type: "text",
         populators: { name: "orderTitle" },
       },
+      // {
+      //   label: "CS_DETAILS",
+      //   isMandatory: true,
+      //   key: "otherDetails",
+      //   type: "textarea",
+      //   populators: { name: "otherDetails" },
+      // },
+    ],
+  },
+  {
+    body: [
       {
-        label: "DETAILS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "otherDetails",
-        type: "textarea",
-        populators: { name: "otherDetails" },
+        // withoutLabel: true,
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "CS_DETAILS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              // isOptional: true,
+            },
+          ],
+        },
       },
     ],
   },

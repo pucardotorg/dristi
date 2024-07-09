@@ -488,6 +488,7 @@ const SuccessIcon = () => (
     />
   </svg>
 );
+
 const UploadIcon = () => (
   <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M4.62061 13H10.6206V7H14.6206L7.62061 0L0.620605 7H4.62061V13ZM0.620605 15H14.6206V17H0.620605V15Z" fill="#007E7E" />
@@ -724,7 +725,6 @@ const InfoToolTipIcon = () => (
   </svg>
 );
 
-
 const InfoIcon = () => (
   <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -762,7 +762,11 @@ export {
   FileDownloadIcon,
   FileIcon,
   FileUploadIcon,
-  FlagIcon, InfoIcon, InfoIconRed, InfoToolTipIcon, JoinCaseIcon,
+  FlagIcon,
+  InfoIcon,
+  InfoIconRed,
+  InfoToolTipIcon,
+  JoinCaseIcon,
   LeftArrow,
   LitigentIcon,
   LoginIcon,
@@ -776,6 +780,5 @@ export {
   SuccessIcon,
   UploadIcon,
   WaitIcon,
-  WhiteRightArrow
+  WhiteRightArrow,
 };
-

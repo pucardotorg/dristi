@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Header, FormComposerV2 } from "@egovernments/digit-ui-react-components";
@@ -7,6 +7,7 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsCaseWithdrawal,
   configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
@@ -41,6 +42,7 @@ const GenerateOrders = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
@@ -107,6 +109,7 @@ const GenerateOrders = () => {
       SUMMONS: configsIssueSummons,
       BAIL: configsBail,
       WARRANT: configsIssueOfWarrants,
+      WITHDRAWAL: configsCaseWithdrawal,
       OTHERS: configsOthers,
     };
 
@@ -133,6 +136,25 @@ const GenerateOrders = () => {
                   populators: {
                     ...field.populators,
                     options: respondants,
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
+      if (orderType?.code === "SCHEDULE_OF_HEARING_DATE") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "namesOfPartiesRequired") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    options: complainants,
                   },
                 };
               }
@@ -181,6 +203,11 @@ const GenerateOrders = () => {
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
+    }
+    if (Object.keys(formState?.errors).length) {
+      setIsSubmitDisabled(true);
+    } else {
+      setIsSubmitDisabled(false);
     }
   };
 
@@ -334,7 +361,9 @@ const GenerateOrders = () => {
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
             defaultValues={defaultValue}
-            onFormValueChange={onFormValueChange}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
+            }}
             onSubmit={() => {
               handleSaveDraft({ modal: "reviewModal" });
             }}
@@ -343,6 +372,7 @@ const GenerateOrders = () => {
             showSecondaryLabel={true}
             cardClassName={`order-type-form-composer`}
             actionClassName={"order-type-action"}
+            isDisabled={isSubmitDisabled}
           />
         )}
       </div>

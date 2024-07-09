@@ -1,8 +1,13 @@
 import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import CustomSubmitModal from "../../../dristi/src/pages/citizen/FileCase/admission/CustomSubmitModal";
+import { FileDownloadIcon } from "../../../dristi/src/icons/svgIndex";
+import CustomCopyTextDiv from "../../../dristi/src/components/CustomCopyTextDiv";
+import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function OrderSucessModal({ order, t, setShowSuccessModal }) {
+  const history = useHistory();
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -11,21 +16,20 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
     return `${month}/${day}/${year}`;
   };
   const orderModalInfo = {
-    header: t("CS_ORDER_SUCCESSFULLY_ISSUED"),
+    header: "CS_ORDER_SUCCESSFULLY_ISSUED",
     subHeader: "CS_ORDER_CREATED_SUBTEXT",
     caseInfo: [
       {
         key: "ORDER_ISSUE_DATE",
         value: getFormattedDate(),
+        copyData: false,
       },
       {
         key: `${t("ORDER_ID")}:${t(order?.orderType)}`,
         value: order?.id,
-        showCopy: true,
+        copyData: true,
       },
     ],
-    isArrow: false,
-    showCopytext: true,
   };
 
   return (
@@ -34,14 +38,33 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
       actionCancelOnSubmit={() => {
         setShowSuccessModal(false);
       }}
-      actionSaveLabel={t("CLOSE")}
+      actionSaveLabel={t("CS_COMMON_CLOSE")}
       actionSaveOnSubmit={() => {
         setShowSuccessModal(false);
+        history.goBack();
       }}
       className={"orders-success-modal"}
+      cancelButtonBody={<FileDownloadIcon></FileDownloadIcon>}
     >
       <div style={{ padding: "8px 24px" }}>
-        <CustomSubmitModal t={t} submitModalInfo={orderModalInfo} />
+        <div>
+          <Banner
+            whichSvg={"tick"}
+            successful={true}
+            message={t(orderModalInfo?.header)}
+            headerStyles={{ fontSize: "32px" }}
+            style={{ minWidth: "100%", marginTop: "10px" }}
+          ></Banner>
+          {orderModalInfo?.subHeader && <CardLabel>{t(orderModalInfo?.subHeader)}</CardLabel>}
+          {
+            <CustomCopyTextDiv
+              t={t}
+              keyStyle={{ margin: "8px 0px" }}
+              valueStyle={{ margin: "8px 0px", fontWeight: 700 }}
+              data={orderModalInfo?.caseInfo}
+            />
+          }
+        </div>
       </div>
     </Modal>
   );
