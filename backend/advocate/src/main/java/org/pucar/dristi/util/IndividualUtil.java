@@ -20,12 +20,10 @@ import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_UTILITY_EXCEPT
 @Slf4j
 public class IndividualUtil {
 
-    private final ObjectMapper mapper;
     private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    public IndividualUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
-        this.mapper = mapper;
+    public IndividualUtil(ServiceRequestRepository serviceRequestRepository) {
         this.serviceRequestRepository = serviceRequestRepository;
     }
 
