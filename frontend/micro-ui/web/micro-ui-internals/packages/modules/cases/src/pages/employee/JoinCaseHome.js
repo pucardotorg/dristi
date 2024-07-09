@@ -10,7 +10,7 @@ import {
   RadioButtons,
   TextInput,
 } from "@egovernments/digit-ui-react-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { AdvocateIcon, RightArrow } from "../../../../dristi/src/icons/svgIndex";
@@ -84,108 +84,6 @@ const JoinHomeLocalisation = {
   COURT_ORDER_UPLOAD_TEXT: "COURT_ORDER_UPLOAD_TEXT",
   ALREADY_PART_OF_CASE: "ALREADY_PART_OF_CASE",
 };
-
-const barRegistrationSerachConfig = [
-  {
-    body: [
-      {
-        type: "apidropdown",
-        key: "advocateBarRegistrationNumber",
-        label: "CS_BAR_REGISTRATION",
-        populators: {
-          allowMultiSelect: false,
-          name: "advocateBarRegNumberWithName",
-          validation: {},
-          masterName: "commonUiConfig",
-          moduleName: "getAdvocateNameUsingBarRegistrationNumberJoinCase",
-          customfn: "getNames",
-          optionsKey: "barRegistrationNumber",
-          optionsCustomStyle: {
-            marginTop: "40px",
-            justifyContent: "space-between",
-            flexDirection: "row-reverse",
-            maxHeight: "200px",
-            overflowY: "scroll",
-          },
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
-    body: [
-      {
-        type: "component",
-        component: "AdvocateNameDetails",
-        key: "AdvocateNameDetails",
-        withoutLabel: true,
-        populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
-            },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {},
-            },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "lastName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
-            },
-          ],
-          validation: {},
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "vakalatnamaFileUpload",
-        isMandatory: true,
-        populators: {
-          inputs: [
-            {
-              name: "document",
-              documentHeader: "UPLOAD_VAKALATNAMA",
-              infoTooltipMessage: "Tooltip",
-              type: "DragDropComponent",
-              uploadGuidelines: "UPLOAD_DOC_50",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
-              isMultipleUpload: false,
-              downloadTemplateText: "VAKALATNAMA_TEMPLATE_TEXT",
-              downloadTemplateLink: "https://www.jsscacs.edu.in/sites/default/files/Department%20Files/Number%20System%20.pdf",
-            },
-          ],
-        },
-      },
-    ],
-  },
-];
 
 const advocateVakalatnamaAndNocConfig = [
   {
@@ -342,6 +240,111 @@ const JoinCaseHome = ({ refreshInbox }) => {
       ],
     },
   };
+
+  const barRegistrationSerachConfig = useMemo(() => {
+    return [
+      {
+        body: [
+          {
+            type: "apidropdown",
+            key: "advocateBarRegistrationNumber",
+            label: "CS_BAR_REGISTRATION",
+            populators: {
+              allowMultiSelect: false,
+              name: "advocateBarRegNumberWithName",
+              validation: {},
+              masterName: "commonUiConfig",
+              moduleName: "getAdvocateNameUsingBarRegistrationNumberJoinCase",
+              customfn: "getNames",
+              optionsKey: "barRegistrationNumber",
+              removeOptions: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((data) => data?.data?.barRegistrationNumber),
+              optionsCustomStyle: {
+                marginTop: "40px",
+                justifyContent: "space-between",
+                flexDirection: "row-reverse",
+                maxHeight: "200px",
+                overflowY: "scroll",
+              },
+            },
+          },
+        ],
+      },
+      {
+        dependentKey: { isAdvocateRepresenting: ["showForm"] },
+        body: [
+          {
+            type: "component",
+            component: "AdvocateNameDetails",
+            key: "AdvocateNameDetails",
+            withoutLabel: true,
+            populators: {
+              inputs: [
+                {
+                  label: "FIRST_NAME",
+                  type: "text",
+                  name: "firstName",
+                  isDisabled: true,
+                  inputFieldClassName: "user-details-form-style",
+                  validation: {
+                    isRequired: true,
+                  },
+                  isMandatory: true,
+                },
+                {
+                  label: "MIDDLE_NAME",
+                  type: "text",
+                  name: "middleName",
+                  isDisabled: true,
+                  inputFieldClassName: "user-details-form-style",
+                  validation: {},
+                },
+                {
+                  label: "LAST_NAME",
+                  type: "text",
+                  name: "lastName",
+                  isDisabled: true,
+                  inputFieldClassName: "user-details-form-style",
+                  validation: {
+                    isRequired: true,
+                  },
+                  isMandatory: true,
+                },
+              ],
+              validation: {},
+            },
+          },
+        ],
+      },
+      {
+        dependentKey: { isAdvocateRepresenting: ["showForm"] },
+        body: [
+          {
+            type: "component",
+            component: "SelectCustomDragDrop",
+            key: "vakalatnamaFileUpload",
+            isMandatory: true,
+            populators: {
+              inputs: [
+                {
+                  name: "document",
+                  documentHeader: "UPLOAD_VAKALATNAMA",
+                  infoTooltipMessage: "Tooltip",
+                  type: "DragDropComponent",
+                  uploadGuidelines: "UPLOAD_DOC_50",
+                  maxFileSize: 50,
+                  maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+                  fileTypes: ["JPG", "PNG", "PDF"],
+                  isMultipleUpload: false,
+                  downloadTemplateText: "VAKALATNAMA_TEMPLATE_TEXT",
+                  downloadTemplateLink: "https://www.jsscacs.edu.in/sites/default/files/Department%20Files/Number%20System%20.pdf",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ];
+  }, [caseDetails]);
 
   const onFormValueChange = (formData) => {
     if (!isEqual(formData, advocateDetailForm)) {
