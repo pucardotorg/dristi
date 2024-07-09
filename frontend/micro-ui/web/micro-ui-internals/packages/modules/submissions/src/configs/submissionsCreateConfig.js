@@ -586,7 +586,6 @@ export const configsProductionOfDocuments = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -1404,7 +1403,6 @@ export const configsBail = [
         populators: {
           inputs: [
             {
-              isMandatory: true,
               isMandatory: true,
               name: "documents",
               // documentSubText: "PRODUCED_DOCUMENTS",
