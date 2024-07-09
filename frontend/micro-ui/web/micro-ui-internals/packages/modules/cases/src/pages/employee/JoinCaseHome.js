@@ -360,16 +360,21 @@ const JoinCaseHome = ({ refreshInbox }) => {
       });
     }
     if (step === 1) {
-      if (
-        (userType && userType === "Litigant" && selectedParty?.label && representingYourself) ||
-        (userType && userType === "Advocate" && selectedParty?.label && caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0) ||
-        (userType &&
-          userType === "Advocate" &&
-          selectedParty?.label &&
-          caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
-          roleOfNewAdvocate)
-      ) {
+      if (userType && userType === "Litigant" && selectedParty?.label && representingYourself) {
         setIsDisabled(false);
+      } else if (userType && userType === "Advocate") {
+        if (selectedParty?.label) {
+          if (selectedParty?.isComplainant) {
+            if (
+              (caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 && roleOfNewAdvocate) ||
+              caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0
+            ) {
+              setIsDisabled(false);
+            }
+          } else {
+            setIsDisabled(false);
+          }
+        }
       } else {
         setIsDisabled(true);
       }
@@ -397,6 +402,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
           });
         }
       }
+    } else if (step === 4) {
+      if (isSignedAdvocate && isSignedParty) {
+        setIsDisabled(false);
+      } else setIsDisabled(true);
     }
 
     if (step !== 8) {
@@ -417,7 +426,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {}
       );
-      if (response?.criteria[0]?.responseList?.length === 1) {
+      if (response?.criteria[0]?.responseList?.length === 1 && response?.criteria[0]?.responseList[0].status === "CASE_ADMITTED") {
+        console.log("first", response?.criteria[0]?.responseList);
         setIsDisabled(false);
         setSearchCaseResult(response?.criteria[0]?.responseList[0]);
         setErrors({
@@ -847,7 +857,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         value={affidavitText}
                         onChange={(e) => {
                           let input = e.target.value;
-                          input = input.trim().replace(/\s+/g, " ");
+                          input = input.slice(0, 100).trimStart().replace(/\s+/g, " ");
                           setAffidavitText(input);
                         }}
                         rows={5}
@@ -1189,11 +1199,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setCaseNumber("");
     setCaseDetails({});
     setUserType("");
-    setBarRegNumber("");
-    setBarDetails([]);
     setSelectedParty({});
     setRepresentingYourself("");
     setRoleOfNewAdvocate("");
+    setBarRegNumber("");
+    setBarDetails([]);
     setValidationCode("");
     setErrors({});
     setCaseInfo([]);
@@ -1296,7 +1306,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               value: individualData.Individual[0]?.email || "Email Not Available",
             },
           ]);
-          setStep(step + 2);
+          setStep(step + 1);
         }
       }
     } else if (step === 2) {
@@ -1309,6 +1319,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           setIsDisabled(true);
           setStep(step + 5);
         } else {
+          if (affidavitText.endsWith(" ")) setAffidavitText(affidavitText.slice(0, -1));
           setIsDisabled(true);
           setStep(step + 5);
         }
@@ -1817,10 +1828,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "Enter") {
-        onProceed();
+        if (!isDisabled) onProceed();
       }
     },
-    [onProceed]
+    [onProceed, isDisabled]
   );
 
   useEffect(() => {

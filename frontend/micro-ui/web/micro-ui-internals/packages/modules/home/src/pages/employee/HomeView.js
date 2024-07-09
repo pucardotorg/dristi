@@ -34,6 +34,7 @@ const HomeView = () => {
       active: index === 0 ? true : false,
     }))
   );
+  const [callRefetch, SetCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
   const [hasJoinFileCaseOption, setHasJoinFileCaseOption] = useState(false);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
@@ -118,7 +119,7 @@ const HomeView = () => {
               label: configItem.label,
               active: index === 0 ? true : false,
             };
-          })
+          }) || []
         );
         setTabData(updatedTabData);
       })();
@@ -157,7 +158,7 @@ const HomeView = () => {
               label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
               active: index === 0 ? true : false,
             };
-          })
+          }) || []
         );
         setTabData(updatedTabData);
       })();
@@ -200,6 +201,11 @@ const HomeView = () => {
   if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
     return <Loader />;
   }
+
+  const refreshInbox = () => {
+    SetCallRefetch(true);
+  };
+
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
@@ -214,7 +220,7 @@ const HomeView = () => {
                 <div className="button-field" style={{ width: "50%" }}>
                   {individualId && userType && userInfoType === "citizen" && (
                     <React.Fragment>
-                      <JoinCaseHome t={t} />
+                      <JoinCaseHome refreshInbox={refreshInbox} t={t} />
                       <Button
                         className={"tertiary-button-selector"}
                         label={t("FILE_A_CASE")}
@@ -229,11 +235,12 @@ const HomeView = () => {
               </div>
               <div className="inbox-search-wrapper pucar-home home-view">
                 <InboxSearchComposer
+                  key={`InboxSearchComposer-${callRefetch}`}
                   configs={{
                     ...config,
                     ...{
                       additionalDetails: {
-                        ...config.additionalDetails,
+                        ...config?.additionalDetails,
                         ...additionalDetails,
                       },
                     },
