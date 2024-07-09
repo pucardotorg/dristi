@@ -31,9 +31,6 @@ class OrderRegistrationValidatorTest {
     private OrderRepository repository;
 
     @Mock
-    private MdmsUtil mdmsUtil;
-
-    @Mock
     private CaseUtil caseUtil;
 
     @InjectMocks

@@ -23,15 +23,12 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class OrderRegistrationValidator {
     private OrderRepository repository;
 
-    private MdmsUtil mdmsUtil;
-
     private CaseUtil caseUtil;
 
     @Autowired
-    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil, MdmsUtil mdmsUtil) {
+    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil) {
         this.repository = repository;
         this.caseUtil = caseUtil;
-        this.mdmsUtil = mdmsUtil;
     }
 
     public void validateOrderRegistration(OrderRequest orderRequest) throws CustomException {
