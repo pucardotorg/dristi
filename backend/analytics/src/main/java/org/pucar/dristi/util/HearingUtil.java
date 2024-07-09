@@ -8,10 +8,6 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_NUMBER;
-import static org.pucar.dristi.config.ServiceConstants.CNR_NUMBER;
-import static org.pucar.dristi.config.ServiceConstants.HEARING_ID;
-import static org.pucar.dristi.config.ServiceConstants.TENANT_ID;
 import static org.pucar.dristi.config.ServiceConstants.HEARING_PATH;
 
 @Slf4j
@@ -30,8 +26,18 @@ public class HearingUtil {
 	}
 
 	public Object getHearing(JSONObject request, String applicationNumber, String cnrNumber, String hearingId, String tenantId) {
-		StringBuilder url = getSearchURLWithParams(applicationNumber, cnrNumber, hearingId, tenantId);
+		StringBuilder url = getSearchURLWithParams();
 		log.info("Inside HearingUtil getHearing :: URL: {}", url);
+
+		request.put("tenantId", tenantId);
+		JSONObject criteria = new JSONObject();
+		if (!(applicationNumber == null)) criteria.put("applicationNumber", applicationNumber);
+		if (!(cnrNumber == null)) criteria.put("cnrNumber", cnrNumber);
+		criteria.put("hearingId",hearingId);
+		criteria.put("tenantId", tenantId);
+		request.put("criteria", criteria);
+
+		log.info("Inside HearingUtil getHearing :: Request: {}", request);
 
 		try {
 			String response = repository.fetchResult(url, request);
@@ -45,21 +51,9 @@ public class HearingUtil {
 		}
 	}
 
-	private StringBuilder getSearchURLWithParams(String applicationNumber, String cnrNumber, String hearingId, String tenantId) {
+	private StringBuilder getSearchURLWithParams() {
 		StringBuilder url = new StringBuilder(config.getHearingHost());
 		url.append(config.getHearingSearchPath());
-		url.append(APPLICATION_NUMBER);
-		if (applicationNumber != null) {
-			url.append(applicationNumber);
-		}
-		url.append(CNR_NUMBER);
-		if (cnrNumber != null) {
-			url.append(cnrNumber);
-		}
-		url.append(HEARING_ID);
-		url.append(hearingId);
-		url.append(TENANT_ID);
-		url.append(tenantId);
 		return url;
 	}
 }

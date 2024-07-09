@@ -62,10 +62,10 @@ public class IndexerUtils {
         this.producer = producer;
     }
 
-    public static JSONObject createRequestInfo() {
+    public JSONObject createRequestInfo() {
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("id", 73);
-		userInfo.put("tenantId","pg");
+		userInfo.put("tenantId",config.getStateLevelTenantId());
 
 		JSONObject requestInfo = new JSONObject();
 		requestInfo.put("apiId", "org.egov.pt");

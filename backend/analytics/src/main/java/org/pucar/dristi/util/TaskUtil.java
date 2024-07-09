@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static org.pucar.dristi.config.ServiceConstants.TASK_PATH;
-import static org.pucar.dristi.config.ServiceConstants.TENANT_ID;
-import static org.pucar.dristi.config.ServiceConstants.TASK_NUMBER;
 
 @Slf4j
 @Component
@@ -28,9 +26,16 @@ public class TaskUtil {
 	}
 
 	public Object getTask(JSONObject request, String tenantId, String taskNumber) {
-		StringBuilder url = getSearchURLWithParams(tenantId, taskNumber);
+		StringBuilder url = getSearchURLWithParams();
 		log.info("Inside TaskUtil getTask :: URL: {}", url);
 
+		request.put("tenantId", tenantId);
+		JSONObject criteria = new JSONObject();
+		criteria.put("taskNumber",taskNumber);
+		criteria.put("tenantId", tenantId);
+		request.put("criteria", criteria);
+
+		log.info("Inside HearingUtil getHearing :: Request: {}", request);
 		try {
 			String response = repository.fetchResult(url, request);
 			log.info("Inside TaskUtil getTask :: Response: {}", response);
@@ -43,11 +48,9 @@ public class TaskUtil {
 		}
 	}
 
-	private StringBuilder getSearchURLWithParams(String tenantId, String taskNumber) {
+	private StringBuilder getSearchURLWithParams() {
 		StringBuilder url = new StringBuilder(config.getTaskHost());
 		url.append(config.getTaskSearchPath());
-		url.append(TASK_NUMBER).append(taskNumber);
-		url.append(TENANT_ID).append(tenantId);
 		return url;
 	}
 }
