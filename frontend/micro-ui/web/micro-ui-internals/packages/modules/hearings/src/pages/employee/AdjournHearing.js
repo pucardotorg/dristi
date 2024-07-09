@@ -134,8 +134,10 @@ const AdjournHearing = (props) => {
   };
   const onFormValueChange = (setValue, formData, formState) => {
     if (formData?.reason) {
-      setReasonFormData(formData);
-      setDisable(false);
+      if (formData.reason !== reasonFormData.reason) {
+        setReasonFormData(formData);
+      }
+      if (formData.reason.code !== "Select a Reason") setDisable(false);
     }
   };
   const DateCard = ({ date, isSelected, onClick }) => (
@@ -165,13 +167,23 @@ const AdjournHearing = (props) => {
             config={config}
             onFormValueChange={onFormValueChange}
             isDisabled={true}
-            defaultValues={{
-              reason: {
-                code: reasonFormData?.reason?.code ? reasonFormData.reason.code : "Select reason",
-                name: reasonFormData?.reason?.name ? reasonFormData.reason.name : "Select reason",
-                isEnabled: true,
-              },
-            }}
+            defaultValues={
+              reasonFormData?.reason
+                ? {
+                    reason: {
+                      code: reasonFormData?.reason?.code,
+                      name: reasonFormData?.reason?.name,
+                      isEnabled: true,
+                    },
+                  }
+                : {
+                    reason: {
+                      code: "Select a Reason",
+                      name: "Select a Reason",
+                      isEnabled: true,
+                    },
+                  }
+            }
           ></FormComposerV2>
         </Modal>
       )}
@@ -189,6 +201,7 @@ const AdjournHearing = (props) => {
           actionCancelOnSubmit={onBack}
           style={{ marginTop: "5px" }}
           popupStyles={{ width: "50%", height: "auto" }}
+          isDisabled={selectedDate === null}
         >
           <Card style={{ marginTop: "20px" }}>
             <div className="case-card">
