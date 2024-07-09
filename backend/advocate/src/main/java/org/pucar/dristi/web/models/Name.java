@@ -58,59 +58,33 @@ public class Name {
         this.otherNames = otherNames;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        } else if (!(o instanceof Name)) {
-            return false;
-        } else {
-            Name other = (Name)o;
-            if (!other.canEqual(this)) {
-                return false;
-            } else {
-                label47: {
-                    Object this$givenName = this.getGivenName();
-                    Object other$givenName = other.getGivenName();
-                    if (this$givenName == null) {
-                        if (other$givenName == null) {
-                            break label47;
-                        }
-                    } else if (this$givenName.equals(other$givenName)) {
-                        break label47;
-                    }
+        if (this == o) return true;
+        if (!(o instanceof Name)) return false;
+        Name other = (Name) o;
+        if (!other.canEqual(this)) return false;
 
-                    return false;
-                }
+        Object this$givenName = this.getGivenName();
+        Object other$givenName = other.getGivenName();
+        if (this$givenName != null ? !this$givenName.equals(other$givenName) : other$givenName != null) return false;
 
-                Object this$familyName = this.getFamilyName();
-                Object other$familyName = other.getFamilyName();
-                if (this$familyName == null) {
-                    if (other$familyName != null) {
-                        return false;
-                    }
-                } else if (!this$familyName.equals(other$familyName)) {
-                    return false;
-                }
+        Object this$familyName = this.getFamilyName();
+        Object other$familyName = other.getFamilyName();
+        if (this$familyName != null ? !this$familyName.equals(other$familyName) : other$familyName != null) return false;
 
-                Object this$otherNames = this.getOtherNames();
-                Object other$otherNames = other.getOtherNames();
-                if (this$otherNames == null) {
-                    if (other$otherNames != null) {
-                        return false;
-                    }
-                } else if (!this$otherNames.equals(other$otherNames)) {
-                    return false;
-                }
+        Object this$otherNames = this.getOtherNames();
+        Object other$otherNames = other.getOtherNames();
+        if (this$otherNames != null ? !this$otherNames.equals(other$otherNames) : other$otherNames != null) return false;
 
-                return true;
-            }
-        }
+        return true;
     }
 
     protected boolean canEqual(Object other) {
         return other instanceof Name;
     }
 
+    @Override
     public int hashCode() {
         int result = 1;
         Object $givenName = this.getGivenName();
@@ -121,6 +95,7 @@ public class Name {
         result = result * 59 + ($otherNames == null ? 43 : $otherNames.hashCode());
         return result;
     }
+
 
     public String toString() {
         return "Name(givenName=" + this.getGivenName() + ", familyName=" + this.getFamilyName() + ", otherNames=" + this.getOtherNames() + ")";
