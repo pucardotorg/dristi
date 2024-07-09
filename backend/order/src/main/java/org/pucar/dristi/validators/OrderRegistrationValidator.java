@@ -1,7 +1,6 @@
 package org.pucar.dristi.validators;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.OrderRepository;
@@ -16,21 +15,21 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
 public class OrderRegistrationValidator {
-    @Autowired
     private OrderRepository repository;
 
-    @Autowired
-    private MdmsUtil mdmsUtil;
+    private CaseUtil caseUtil;
 
     @Autowired
-    private CaseUtil caseUtil;
+    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil) {
+        this.repository = repository;
+        this.caseUtil = caseUtil;
+    }
 
     public void validateOrderRegistration(OrderRequest orderRequest) throws CustomException {
         RequestInfo requestInfo = orderRequest.getRequestInfo();

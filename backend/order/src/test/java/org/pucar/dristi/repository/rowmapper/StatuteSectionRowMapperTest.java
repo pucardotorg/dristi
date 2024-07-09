@@ -1,6 +1,5 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,13 +17,11 @@ class StatuteSectionRowMapperTest {
 
     private StatuteSectionRowMapper statuteSectionRowMapper;
     private ResultSet resultSet;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         statuteSectionRowMapper = new StatuteSectionRowMapper();
         resultSet = mock(ResultSet.class);
-        objectMapper = new ObjectMapper();
     }
 
     @Test

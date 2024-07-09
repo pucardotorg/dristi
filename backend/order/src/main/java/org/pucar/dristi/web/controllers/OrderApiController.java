@@ -24,11 +24,15 @@ import java.util.List;
 @RequestMapping("")
 public class OrderApiController {
 
-    @Autowired
     private OrderRegistrationService orderService;
 
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
+    public OrderApiController(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory) {
+        this.orderService = orderService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     public void setMockInjects(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory){
         this.orderService = orderService;
