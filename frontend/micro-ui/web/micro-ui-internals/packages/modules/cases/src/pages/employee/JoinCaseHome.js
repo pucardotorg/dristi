@@ -209,6 +209,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [advocateId, setAdvocateId] = useState("");
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
   const [individualId, setIndividualId] = useState("");
+  const [individualAddress, setIndividualAddress] = useState({});
   const [name, setName] = useState({});
   const [isSignedAdvocate, setIsSignedAdvocate] = useState(false);
   const [isSignedParty, setIsSignedParty] = useState(false);
@@ -450,7 +451,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   useEffect(() => {
     const getData = setTimeout(() => {
       serarchCase(caseNumber);
-    }, 500);
+    }, 1000);
     return () => clearTimeout(getData);
   }, [caseNumber]);
 
@@ -467,6 +468,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
     );
     setIndividualId(individualData?.Individual?.[0]?.individualId);
     setName(individualData?.Individual?.[0]?.name);
+    const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+    const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+    const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+    const street = individualData?.Individual?.[0]?.address[0]?.street || "";
+    const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+    const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+    const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+    const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+    const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+    const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
     const identifierIdDetails = JSON.parse(
       individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
     );
@@ -476,7 +487,17 @@ const JoinCaseHome = ({ refreshInbox }) => {
         ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
         : null
     );
-
+    setIndividualAddress({
+      pincode: pincode,
+      district: addressLine2,
+      city: city,
+      state: addressLine1,
+      coordinates: {
+        longitude: latitude,
+        latitude: longitude,
+      },
+      locality: address,
+    });
     const advocateResponse = await DRISTIService.searchIndividualAdvocate(
       {
         criteria: [
@@ -1581,6 +1602,15 @@ const JoinCaseHome = ({ refreshInbox }) => {
                             respondentFirstName: name?.givenName,
                             respondentMiddleName: name?.otherNames,
                             respondentLastName: name?.familyName,
+                            addressDetails: [
+                              {
+                                ...data?.data?.addressDetails?.[0],
+                                addressDetails: {
+                                  ...data?.data?.addressDetails?.[0]?.addressDetails,
+                                  ...individualAddress,
+                                },
+                              },
+                            ],
                             respondentVerification: {
                               individualDetails: {
                                 individualId: individualId,
