@@ -214,6 +214,42 @@
     width: 40vw;
 
     .popup-module-main {
+      .popup-module-action-bar {
+        .selector-button-border {
+          border: 1px solid #007e7e !important;
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: center;
+          align-items: center;
+          height: 40px;
+          width: 276px;
+          padding: 8px 24px;
+          h2 {
+            width: 65% !important;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+            color: #007e7e !important;
+          }
+          svg path {
+            fill: #007e7e;
+          }
+        }
+        .selector-button-primary {
+          height: 40px;
+          width: 276px;
+          padding: 8px 24px;
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+          }
+        }
+      }
     }
   }
 }
@@ -241,6 +277,9 @@
     display: flex;
     gap: 40px;
     .delete-order-warning-modal {
+      .header-wrap {
+        padding-left: 8px !important;
+      }
       .popup-module-action-bar {
         .selector-button-border {
           width: fit-content !important;
@@ -261,6 +300,7 @@
           width: fit-content !important;
           height: 40px;
           padding: 8px 24px 8px 24px;
+          background-color: #bb2c2f !important;
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -374,6 +414,20 @@
       .card-label-error {
         margin-left: 0px !important;
       }
+      .submit-bar-disabled {
+        width: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .header {
+          font-family: Roboto;
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          line-height: 18.75px !important;
+          text-align: center !important;
+          color: #ffffff;
+        }
+      }
     }
     .order-type-action {
       display: flex;
@@ -411,5 +465,8 @@
         }
       }
     }
+  }
+  .employee-card-input.employee-card-input-error {
+    margin-bottom: 24px !important;
   }
 }

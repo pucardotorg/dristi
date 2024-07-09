@@ -91,7 +91,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
       <div className="review-order-body-main">
         <div className="review-order-modal-list-div">
           <div className="review-order-type-side-stepper">
-            <h1> {order?.orderType}</h1>
+            <h1> {t(order?.orderType)}</h1>
           </div>
         </div>
         <div className="review-order-modal-document-div">{/* {showDocument}  */} // Document will be shown here when filesData is available.</div>
