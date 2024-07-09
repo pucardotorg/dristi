@@ -120,7 +120,7 @@ class AdvocateRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateRegistration_MissingUserInfo() {
+     void testEnrichAdvocateRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateRequest advocateRequest = new AdvocateRequest();
         advocateRequest.setAdvocate(new Advocate());
@@ -132,7 +132,7 @@ class AdvocateRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateRegistration_IdgenUtilException() {
+     void testEnrichAdvocateRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateRequest advocateRequest = new AdvocateRequest();
         Advocate advocate = new Advocate();
