@@ -718,6 +718,14 @@ components:
         litigant:
           type: object
           $ref: '#/components/schemas/Party'
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
 
     JoinCaseResponse:
       type: object
@@ -735,6 +743,11 @@ components:
         litigant:
           type: object
           $ref: '#/components/schemas/Party'
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
 
     CaseCriteria:
       type: object
