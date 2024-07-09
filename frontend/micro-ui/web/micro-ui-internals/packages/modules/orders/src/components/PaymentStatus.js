@@ -31,7 +31,7 @@ const PaymentStatus = () => {
   };
 
   return (
-    <div style={{ width: "60rem", margin: "auto", padding: "2rem" }}>
+    <div className="payment-status-container">
       <Banner
         successful={isResponseSuccess}
         message={isResponseSuccess ? "Payment Successful" : "Payment Failed"}
@@ -40,31 +40,24 @@ const PaymentStatus = () => {
       />
       {isResponseSuccess ? (
         <div>
-          <div style={{ margin: "1rem 0", textAlign: "center" }}>The Summons would be sent to the relevant party.</div>
-          <div style={{ background: "#f7f5f3", padding: "1rem", borderRadius: "5px", marginBottom: "1rem" }}>
-            <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
+          <div className="payment-status-message">The Summons would be sent to the relevant party.</div>
+          <div className="payment-status-card">
+            <div className="payment-status-card-row">
               <div>Case Name & ID</div>
               <div>
                 <strong>Aditi vs Vikram, ID-12347283238</strong>
               </div>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+            <div className="payment-status-card-row">
               <div>Order ID 1: Order for Summons</div>
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div className="payment-status-copy">
                 <strong>KA08293928392</strong>
                 <button
                   onClick={() => {
                     copyToClipboard("KA08293928392");
                     dataCopy(true, "Copied", setCopied);
                   }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    backgroundColor: "#f7f5f3",
-                    color: "#007e7e",
-                    cursor: "pointer",
-                    marginLeft: "1rem",
-                  }}
+                  className="payment-status-button"
                 >
                   <CopyIcon />
                   <div style={{ marginLeft: "0.5rem" }}>{copied.isCopied ? copied.text : "Copy"}</div>
@@ -73,21 +66,14 @@ const PaymentStatus = () => {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>Transaction ID</div>
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div className="payment-status-copy">
                 <strong>#123456789</strong>
                 <button
                   onClick={() => {
                     copyToClipboard("#123456789");
                     dataCopy(true, "Copied", setCopied1);
                   }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    backgroundColor: "#f7f5f3",
-                    color: "#007e7e",
-                    cursor: "pointer",
-                    marginLeft: "1rem",
-                  }}
+                  className="payment-status-button"
                 >
                   <CopyIcon />
                   <div style={{ marginLeft: "0.5rem" }}>{copied1.isCopied ? copied1.text : "Copy"}</div>
@@ -98,6 +84,8 @@ const PaymentStatus = () => {
         </div>
       ) : (
         <InfoCard
+          className="payment-status-info-card"
+          headerWrapperClassName="payment-status-info-header"
           populators={{
             name: "infocard",
           }}
@@ -105,9 +93,13 @@ const PaymentStatus = () => {
           text={"You have a payment due of Rs 525/-. This is a mandatory step to send summons via selected delivery channel for your case."}
           label={"Note"}
           style={{ marginTop: "1.5rem" }}
+          textStyle={{
+            color: "#3D3C3C",
+            margin: "0.5rem 0",
+          }}
         />
       )}
-      <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+      <div className="payment-status-buttons">
         <Button
           variation={"secondary"}
           label={isResponseSuccess ? "Download Receipt" : "Back"}
