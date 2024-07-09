@@ -260,9 +260,7 @@ const HomeView = () => {
                           history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
                         } else {
                           if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
-                            history.push(
-                              `/${window?.contextPath}/${userInfoType}/dristi/admitted-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&cnrNumber=${row?.original?.cnrNumber}&title=${row?.original?.caseTitle}`
-                            );
+                            history.push(`/${window?.contextPath}/${userInfoType}/dristi/admitted-case?caseId=${row?.original?.id}&tab=Overview`);
                         }
                       },
                     },

@@ -12,13 +12,12 @@ import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 
-const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter, showToast }) => {
+const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const history = useHistory();
-  const urlParams = new URLSearchParams(window.location.search);
-  const filingNumber = urlParams.get("filingNumber");
-  const cnrNumber = urlParams.get("cnrNumber");
+  const filingNumber = caseData.filingNumber;
+  const cnrNumber = caseData.cnrNumber;
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
@@ -38,17 +37,17 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
     );
   };
   const hideSubmit = useMemo(() => {
-    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission.status === "PENDINGREVIEW";
+    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL";
   }, [documentSubmission.status, userRoles]);
 
   const actionSaveLabel = useMemo(() => {
-    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
       ? t("Approve")
       : (userRoles.includes("APPLICATION_RESPONDER") ||
           userRoles.includes("DEPOSITION_CREATOR") ||
           userRoles.includes("DEPOSITION_ESIGN") ||
           userRoles.includes("DEPOSITION_PUBLISHER")) &&
-        documentSubmission[0].status !== "PENDINGREVIEW" &&
+        documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL" &&
         modalType === "Documents"
       ? !documentSubmission[0]?.artifactList.isEvidence
         ? t("Mark as Evidence")
@@ -59,7 +58,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
   }, [documentSubmission, modalType, t, userRoles]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
       ? t("Reject")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
@@ -149,7 +148,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
         userRoles.includes("DEPOSITION_CREATOR") ||
         userRoles.includes("DEPOSITION_ESIGN") ||
         userRoles.includes("DEPOSITION_PUBLISHER")) &&
-      documentSubmission[0].status !== "PENDINGREVIEW" &&
+      documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL" &&
       modalType === "Documents"
     ) {
       if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
@@ -185,7 +184,11 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           },
         });
       }
-    } else if (userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGREVIEW" && modalType === "Submissions") {
+    } else if (
+      userRoles.includes("APPLICATION_RESPONDER") &&
+      documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" &&
+      modalType === "Submissions"
+    ) {
       await mutation.mutate({
         url: `/application/application/v1/update`,
         params: {},

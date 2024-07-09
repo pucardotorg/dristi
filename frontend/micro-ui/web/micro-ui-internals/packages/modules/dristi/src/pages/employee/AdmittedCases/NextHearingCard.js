@@ -2,12 +2,9 @@ import { Button, Card } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
-const NextHearingCard = ({ width }) => {
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+const NextHearingCard = ({ caseData, width }) => {
+  const filingNumber = caseData.filingNumber;
+  const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {

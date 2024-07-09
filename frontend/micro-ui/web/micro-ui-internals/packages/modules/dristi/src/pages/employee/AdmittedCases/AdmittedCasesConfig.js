@@ -549,8 +549,9 @@ export const TabSearchconfig = {
                 jsonPath: "name",
               },
               {
-                label: "Type",
+                label: "Party Type",
                 jsonPath: "partyType",
+                additionalCustomization: true,
               },
               {
                 label: "Date Added",

@@ -118,9 +118,7 @@ function Home() {
               resultsTable: {
                 onClickRow: (props) => {
                   props?.original?.status === "CASE_ADMITTED"
-                    ? history.push(
-                        `${path}/admitted-case?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}&title=${props.original.caseTitle}`
-                      )
+                    ? history.push(`${path}/admitted-case?caseId=${props.original.id}&tab=Overview`)
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
