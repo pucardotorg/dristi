@@ -162,7 +162,6 @@ const AdjournHearing = (props) => {
           isDisabled={disable}
         >
           <FormComposerV2
-            label={t("Adjourn Hearing")}
             config={config}
             onFormValueChange={onFormValueChange}
             isDisabled={true}
