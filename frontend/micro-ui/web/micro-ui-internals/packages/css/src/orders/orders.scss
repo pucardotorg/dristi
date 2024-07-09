@@ -329,6 +329,10 @@
       width: 100%;
     }
   }
+  .toast-success {
+    bottom: 90px !important;
+    right: 25vw !important;
+  }
   .order-item-main {
     width: 100%;
     padding: 12px 8px;
@@ -381,6 +385,11 @@
         gap: 8px;
         align-items: start;
         margin-bottom: 24px;
+        h2 {
+          span {
+            position: sticky !important;
+          }
+        }
         .card-label {
           width: 100%;
           margin: 0px !important;
