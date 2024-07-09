@@ -241,6 +241,34 @@ const advocateVakalatnamaAndNocConfig = [
     ],
   },
 ];
+const advocateVakalatnamaConfig = [
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "adcVakalatnamaFileUpload",
+        isMandatory: true,
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "UPLOAD_VAKALATNAMA",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
 
 const JoinCaseHome = ({ refreshInbox }) => {
   const { t } = useTranslation();
@@ -839,10 +867,27 @@ const JoinCaseHome = ({ refreshInbox }) => {
     {
       modalMain: (
         <div className="view-document-vak">
-          {adovacteVakalatnama && adovacteVakalatnama?.fileStore && (
+          <FormComposerV2
+            config={advocateVakalatnamaConfig}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              console.log("formData", formData);
+              if (!isEqual(formData, adovacteVakalatnama)) {
+                setAdovacteVakalatnama(formData);
+              }
+              if (formData?.adcVakalatnamaFileUpload) {
+                setIsDisabled(false);
+              } else setIsDisabled(true);
+            }}
+            defaultValues={adovacteVakalatnama}
+            cardStyle={{ minWidth: "100%" }}
+            secondaryLabel={t("CS_SAVE_DRAFT")}
+            className={`noc-court-order-upload-form`}
+            noBreakLine
+          />
+          {adovacteVakalatnama && adovacteVakalatnama?.adcVakalatnamaFileUpload?.document && (
             <DocViewerWrapper
-              key={adovacteVakalatnama?.fileStore}
-              fileStoreId={adovacteVakalatnama?.fileStore}
+              key={adovacteVakalatnama?.adcVakalatnamaFileUpload?.document?.[0]?.File?.name}
+              selectedDocs={adovacteVakalatnama?.adcVakalatnamaFileUpload?.document}
               tenantId={tenantId}
               docWidth="100%"
               docHeight="calc(100% - 84px)"
@@ -1119,6 +1164,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             JoinHomeLocalisation.COMPLAINANT_BRACK
           )}`,
           partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+          isComplainant: true,
           individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
         }))
       );
@@ -1129,6 +1175,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             label: `${data?.data?.respondentFirstName} ${data?.data?.respondentFirstName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
             index: index,
             partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+            isRespondent: true,
             individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
           }))
           ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
@@ -1288,7 +1335,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       if (userType === "Advocate") {
         if (caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0) {
           const nocDocument = await Promise.all(
-            advocateDetailForm?.vakalatnamaFileUpload?.document?.map(async (document) => {
+            replaceAdvocateDocuments?.nocFileUpload?.document?.map(async (document) => {
               if (document) {
                 const uploadedData = await onDocumentUpload(document, document.name, tenantId);
                 return {
@@ -1302,7 +1349,22 @@ const JoinCaseHome = ({ refreshInbox }) => {
             }) || []
           );
           const courOrderDocument = await Promise.all(
-            advocateDetailForm?.vakalatnamaFileUpload?.document?.map(async (document) => {
+            replaceAdvocateDocuments?.advocateCourtOrder?.document?.map(async (document) => {
+              if (document) {
+                const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                return {
+                  documentType: uploadedData.fileType || document?.documentType,
+                  fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                  documentName: uploadedData.filename || document?.documentName,
+                  fileName: `Vakalatnama (${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName})`,
+                  individualId,
+                };
+              }
+            }) || []
+          );
+
+          const vakalatnamaDocument = await Promise.all(
+            adovacteVakalatnama?.vakalatnamaFileUpload?.document?.map(async (document) => {
               if (document) {
                 const uploadedData = await onDocumentUpload(document, document.name, tenantId);
                 return {
@@ -1321,43 +1383,62 @@ const JoinCaseHome = ({ refreshInbox }) => {
               advocateDetails: (() => {
                 return {
                   ...caseDetails?.additionalDetails?.advocateDetails,
-                  formdata: [
-                    ...caseDetails?.additionalDetails?.advocateDetails?.formdata,
-                    {
-                      data: {
-                        advocateId: advocateDetailForm?.id,
-                        advocateName: advocateDetailForm?.additionalDetails?.username,
-                        barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
-                        vakalatnamaFileUpload: {
-                          document: [
+                  formdata: selectedParty?.isComplainant
+                    ? caseDetails?.additionalDetails?.advocateDetails?.formdata?.splice(0, 1, {
+                        data: {
+                          advocateId: advocateDetailForm?.id,
+                          advocateName: advocateDetailForm?.additionalDetails?.username,
+                          barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                          vakalatnamaFileUpload: vakalatnamaDocument?.length > 0 && vakalatnamaDocument,
+                          nocFileUpload: nocDocument?.length > 0 && nocDocument,
+                          courtOrderFileUpload: courOrderDocument?.length > 0 && courOrderDocument,
+                          isAdvocateRepresenting: {
+                            code: "YES",
+                            name: "Yes",
+                            showForm: true,
+                            isEnabled: true,
+                          },
+                          advocateBarRegNumberWithName: [
                             {
-                              documentType: adovacteVakalatnama?.documentType,
-                              fileStore: adovacteVakalatnama?.fileStore,
-                              documentName: adovacteVakalatnama?.additionalDetails?.fileName,
-                              fileName: `Vakalatnama (${selectedParty?.label})`,
-                              individualId: selectedParty?.individualId,
+                              modified: true,
+                              advocateId: advocateDetailForm?.id,
+                              advocateName: advocateDetailForm?.additionalDetails?.username,
+                              barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                              barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                             },
                           ],
+                          barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                         },
-                        isAdvocateRepresenting: {
-                          code: "YES",
-                          name: "Yes",
-                          showForm: true,
-                          isEnabled: true,
-                        },
-                        advocateBarRegNumberWithName: [
-                          {
-                            modified: true,
+                      })
+                    : [
+                        ...caseDetails?.additionalDetails?.advocateDetails?.formdata,
+                        {
+                          data: {
                             advocateId: advocateDetailForm?.id,
                             advocateName: advocateDetailForm?.additionalDetails?.username,
                             barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                            vakalatnamaFileUpload: vakalatnamaDocument?.length > 0 && vakalatnamaDocument,
+                            nocFileUpload: nocDocument?.length > 0 && nocDocument,
+                            courtOrderFileUpload: courOrderDocument?.length > 0 && courOrderDocument,
+                            isAdvocateRepresenting: {
+                              code: "YES",
+                              name: "Yes",
+                              showForm: true,
+                              isEnabled: true,
+                            },
+                            advocateBarRegNumberWithName: [
+                              {
+                                modified: true,
+                                advocateId: advocateDetailForm?.id,
+                                advocateName: advocateDetailForm?.additionalDetails?.username,
+                                barRegistrationNumber: advocateDetailForm?.barRegistrationNumber,
+                                barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
+                              },
+                            ],
                             barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                           },
-                        ],
-                        barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
-                      },
-                    },
-                  ],
+                        },
+                      ],
                 };
               })(),
             },
@@ -1374,6 +1455,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   partyType: selectedParty?.partyType,
                 },
               ],
+              additionalDetails: {
+                document: {
+                  vakalatnamaFileUpload: vakalatnamaDocument?.length > 0 && vakalatnamaDocument,
+                  nocFileUpload: nocDocument?.length > 0 && nocDocument,
+                  courtOrderFileUpload: courOrderDocument?.length > 0 && courOrderDocument,
+                },
+              },
             },
           });
           if (res) {
