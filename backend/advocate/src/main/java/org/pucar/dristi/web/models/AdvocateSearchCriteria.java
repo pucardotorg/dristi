@@ -37,11 +37,4 @@ public class AdvocateSearchCriteria {
 	@Valid
 	private List<Advocate> responseList = null;
 
-	public AdvocateSearchCriteria addResponseListItem(Advocate responseListItem) {
-		if (this.responseList == null) {
-			this.responseList = new ArrayList<>();
-		}
-		this.responseList.add(responseListItem);
-		return this;
-	}
 }

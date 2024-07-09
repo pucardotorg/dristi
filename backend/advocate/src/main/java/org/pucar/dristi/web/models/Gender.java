@@ -25,19 +25,6 @@ public enum Gender {
         return String.valueOf(this.value);
     }
 
-    @JsonCreator
-    public static Gender fromValue(String text) {
-        Gender[] var1 = values();
-        int var2 = var1.length;
 
-        for(int var3 = 0; var3 < var2; ++var3) {
-           Gender b = var1[var3];
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-
-        return null;
-    }
 }
 
