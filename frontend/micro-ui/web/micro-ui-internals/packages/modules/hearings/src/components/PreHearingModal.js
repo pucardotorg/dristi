@@ -57,7 +57,7 @@ function PreHearingModal({ onCancel }) {
         display: "none",
       }}
     >
-      <div style={{ marginTop: "2rem" }}>
+      <div style={{ minHeight: "35rem" }}>
         <InboxSearchComposer configs={config} />
       </div>
       <div

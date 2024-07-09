@@ -1,7 +1,11 @@
+const defaultSearchValues = {
+  stage: "",
+  type: "",
+};
+
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
   type: "search",
-  postProcessResult: true,
   customHookName: "hearings.usePreHearingModalData",
   apiDetails: {
     serviceName: "/hearing/v1/search",
@@ -9,7 +13,6 @@ export const preHearingConfig = {
       tenantId: Digit.ULBService.getCurrentTenantId(),
     },
     requestBody: {
-      //need to add criteria to get hearings based on particular day
       criteria: {},
     },
     minParametersForSearchForm: 0,
@@ -20,78 +23,71 @@ export const preHearingConfig = {
     tableFormJsonPath: "requestBody.criteria",
   },
   sections: {
-    filter: {
+    search: {
       uiConfig: {
+        formClassName: "custom-both-clear-search",
+        primaryLabel: "ES_COMMON_SEARCH",
+        secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+        minReqFields: 0,
+        defaultValues: defaultSearchValues,
         fields: [
           {
-            type: "text",
+            label: "Type",
             isMandatory: false,
-            disable: false,
-            populators: {
-              name: "caseTitle",
-              placeholder: "Newest First",
-              selectedText: "COMMON_SELECTED",
-            },
-          },
-          {
+            key: "type",
             type: "dropdown",
-            isMandatory: false,
-            disable: false,
             populators: {
               name: "type",
-              optionsKey: "name",
-              defaultText: "Type",
-              selectedText: "COMMON_SELECTED",
+              error: "Required",
+              optionsKey: "type",
               options: [
                 {
-                  code: "nias138",
-                  name: "NIA S138",
+                  type: "NIA S138",
                 },
                 {
-                  code: "cias138",
-                  name: "CIA S138",
+                  type: "CIA S138",
                 },
               ],
             },
           },
           {
-            type: "dropdown",
+            label: "Stage",
             isMandatory: false,
-            disable: false,
+            key: "stage",
+            type: "dropdown",
             populators: {
               name: "stage",
-              optionsKey: "name",
-              defaultText: "Stage",
-              selectedText: "COMMON_SELECTED",
+              error: "Required",
+              optionsKey: "stage",
               options: [
                 {
-                  code: "Pre Trial",
-                  name: "Pre Trial",
+                  stage: "Pre-Trial",
                 },
                 {
-                  code: "Inquiry",
-                  name: "Inquiry",
+                  stage: "Inquiry",
                 },
               ],
             },
           },
-          {
-            type: "text",
-            isMandatory: false,
-            disable: false,
-            populators: {
-              name: "caseTitle",
-              placeholder: "Search Case Name or ID",
-              selectedText: "COMMON_SELECTED",
-            },
-          },
+          // {
+          //   // label: "Search Case Id",
+          //   isMandatory: false,
+          //   key: "filingNumber",
+          //   type: "text",
+          //   populators: {
+          //     styles: { width: "400px" },
+          //     name: "filingNumber",
+          //     error: "Required",
+          //     placeholder: "Search Case Name or ID",
+          //     validation: { pattern: /^[A-Za-z]+$/i },
+          //   },
+          // },
         ],
       },
       show: true,
     },
     searchResult: {
       tenantId: Digit.ULBService.getCurrentTenantId(),
-      label: "",
       uiConfig: {
         columns: [
           {
@@ -112,7 +108,7 @@ export const preHearingConfig = {
           },
           {
             label: "Actions",
-            jsonPath: "caseDescription",
+            jsonPath: "",
             additionalCustomization: true,
           },
         ],

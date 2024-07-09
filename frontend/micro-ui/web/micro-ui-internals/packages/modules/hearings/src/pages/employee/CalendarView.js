@@ -16,7 +16,7 @@ const MonthlyCalendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
+    { hearing: { tenantId }, tenantId, criteria: {} },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
