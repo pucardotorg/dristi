@@ -1183,7 +1183,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
         caseDetails?.additionalDetails?.respondentDetails?.formdata
           ?.map((data, index) => ({
             ...data?.data,
-            label: `${data?.data?.respondentFirstName} ${data?.data?.respondentFirstName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+            label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+              data?.data?.respondentLastName
+            } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
             index: index,
             partyType: index === 0 ? "respondent.primary" : "respondent.additional",
             isRespondent: true,
