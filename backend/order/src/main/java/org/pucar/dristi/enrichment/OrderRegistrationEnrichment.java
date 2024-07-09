@@ -18,8 +18,12 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class OrderRegistrationEnrichment {
 
-    @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    public OrderRegistrationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {

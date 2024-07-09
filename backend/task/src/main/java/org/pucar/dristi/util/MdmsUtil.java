@@ -34,8 +34,6 @@ public class MdmsUtil {
     }
 
 
-
-
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                                                 List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
@@ -52,7 +50,6 @@ public class MdmsUtil {
         }
 
         return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,

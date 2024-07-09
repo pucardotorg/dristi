@@ -26,20 +26,24 @@ import static org.pucar.dristi.config.ServiceConstants.ORDER_SEARCH_EXCEPTION;
 @Repository
 public class OrderRepository {
 
-    @Autowired
     private OrderQueryBuilder queryBuilder;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     private OrderRowMapper rowMapper;
 
-    @Autowired
     private DocumentRowMapper documentRowMapper;
 
-    @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
+
+    @Autowired
+    public OrderRepository(OrderQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, OrderRowMapper rowMapper, DocumentRowMapper documentRowMapper, StatuteSectionRowMapper statuteSectionRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.documentRowMapper = documentRowMapper;
+        this.statuteSectionRowMapper = statuteSectionRowMapper;
+    }
 
     public List<Order> getOrders(OrderCriteria criteria) {
 

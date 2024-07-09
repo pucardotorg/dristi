@@ -124,18 +124,19 @@ public class TaskServiceTest {
         assertThrows(CustomException.class, this::invokeSearchTask);
     }
 
-    private void invokeSearchTask() {
-        taskService.searchTask(new TaskSearchRequest());
-    }
 
     @Test
     void testSearchTaskThrows_CustomException() {
         when(taskRepository.getApplications(any())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask(new TaskSearchRequest()));
+        CustomException exception = assertThrows(CustomException.class, this::invokeSearchTask);
 
         assertEquals(SEARCH_TASK_ERR, exception.getCode());
         assertEquals("Error", exception.getMessage());
+    }
+
+    private void invokeSearchTask() {
+        taskService.searchTask(new TaskSearchRequest());
     }
 
     @Test
