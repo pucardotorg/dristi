@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
@@ -150,7 +149,8 @@ public class CaseService {
 
             producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
 
-            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+            if(joinCaseRequest.getAdditionDetails() !=null)
+                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
@@ -161,7 +161,9 @@ public class CaseService {
             enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
             producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
-            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+
+            if(joinCaseRequest.getAdditionDetails() !=null)
+                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
@@ -187,12 +189,7 @@ public class CaseService {
 
             verifyRepresentativesAndJoinCase(joinCaseRequest, courtCase, caseObj, auditDetails);
 
-            return JoinCaseResponse.builder()
-                    .accessCode(joinCaseRequest.getAccessCode())
-                    .caseFilingNumber(filingNumber)
-                    .representative(joinCaseRequest.getRepresentative())
-                    .litigant(joinCaseRequest.getLitigant())
-                    .additionDetails(joinCaseRequest.getAdditionDetails()).build();
+            return JoinCaseResponse.builder().joinCaseRequest(joinCaseRequest).build();
 
         } catch(CustomException e){
             throw e;
