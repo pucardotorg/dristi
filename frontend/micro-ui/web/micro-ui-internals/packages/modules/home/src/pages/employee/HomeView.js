@@ -166,9 +166,9 @@ const HomeView = () => {
   }, [additionalDetails, roles, state, tenantId]);
 
   useEffect(() => {
-    setIsFetchCaseLoading(true);
     (async function () {
       if (userType) {
+        setIsFetchCaseLoading(true);
         const caseData = await HomeService.customApiService("/case/case/v1/_search", {
           tenantId,
 
@@ -212,7 +212,7 @@ const HomeView = () => {
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
                 <div className="button-field" style={{ width: "50%" }}>
-                  {hasJoinFileCaseOption && (
+                  {individualId && userType && userInfoType === "citizen" && (
                     <React.Fragment>
                       <JoinCaseHome t={t} />
                       <Button
