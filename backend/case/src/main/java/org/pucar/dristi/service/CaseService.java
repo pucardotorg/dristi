@@ -149,6 +149,8 @@ public class CaseService {
             enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
             producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
@@ -159,6 +161,7 @@ public class CaseService {
             enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
             producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
@@ -174,6 +177,7 @@ public class CaseService {
                     .createdTime(System.currentTimeMillis())
                     .lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
                     .lastModifiedTime(System.currentTimeMillis()).build();
+            joinCaseRequest.setAuditDetails(auditDetails);
 
             CourtCase caseObj = CourtCase.builder()
                     .id(caseId)
@@ -187,7 +191,8 @@ public class CaseService {
                     .accessCode(joinCaseRequest.getAccessCode())
                     .caseFilingNumber(filingNumber)
                     .representative(joinCaseRequest.getRepresentative())
-                    .litigant(joinCaseRequest.getLitigant()).build();
+                    .litigant(joinCaseRequest.getLitigant())
+                    .additionDetails(joinCaseRequest.getAdditionDetails()).build();
 
         } catch(CustomException e){
             throw e;

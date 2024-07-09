@@ -34,4 +34,7 @@ public class JoinCaseResponse {
 
     @JsonProperty("litigant")
     private Party litigant = null;
+
+    @JsonProperty("additionDetails")
+    private Object additionDetails = null;
 }
