@@ -1,5 +1,13 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,13 +18,6 @@ import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 import org.slf4j.Logger;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class CaseQueryBuilderTest {

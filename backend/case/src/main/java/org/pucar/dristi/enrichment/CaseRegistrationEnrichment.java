@@ -1,7 +1,16 @@
 package org.pucar.dristi.enrichment;
 
 
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.ACCESSCODE_LENGTH;
+import static org.pucar.dristi.config.ServiceConstants.DISTRICT;
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.ESTABLISHMENT_CODE;
+import static org.pucar.dristi.config.ServiceConstants.STATE;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
@@ -9,16 +18,16 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

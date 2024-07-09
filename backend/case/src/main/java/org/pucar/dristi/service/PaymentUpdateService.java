@@ -1,24 +1,32 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.kafka.Producer;
-import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.web.models.*;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.workflow.*;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.Role;
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.egov.common.contract.models.AuditDetails;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.workflow.ProcessInstanceRequest;
+import org.egov.common.contract.workflow.State;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.web.models.Bill;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.PaymentDetail;
+import org.pucar.dristi.web.models.PaymentRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

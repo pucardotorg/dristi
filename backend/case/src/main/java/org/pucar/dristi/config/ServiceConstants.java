@@ -1,8 +1,8 @@
 package org.pucar.dristi.config;
 
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {

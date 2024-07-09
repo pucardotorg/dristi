@@ -1,8 +1,27 @@
 package org.pucar.dristi.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
+import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -18,9 +37,16 @@ import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
-import org.pucar.dristi.web.models.*;
-
-import java.util.*;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.JoinCaseRequest;
+import org.pucar.dristi.web.models.JoinCaseResponse;
+import org.pucar.dristi.web.models.Party;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseServiceTest {
@@ -193,8 +219,8 @@ public class CaseServiceTest {
         joinCaseRequest.setLitigant(litigant);
 
         joinCaseRequest.setRepresentative(advocate);
-        when(validator.validateLitigantJoinCase(joinCaseRequest)).thenReturn(true);
-        when(validator.validateRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+        when(validator.canLitigantJoinCase(joinCaseRequest)).thenReturn(true);
+        when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
         assertEquals("validAccessCode", response.getAccessCode());

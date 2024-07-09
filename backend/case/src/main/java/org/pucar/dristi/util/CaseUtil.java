@@ -1,8 +1,8 @@
 package org.pucar.dristi.util;
 
-import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class CaseUtil {
