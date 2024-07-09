@@ -20,7 +20,6 @@ public class OrderRegistrationEnrichment {
 
     private IdgenUtil idgenUtil;
 
-    @Autowired
     public OrderRegistrationEnrichment(IdgenUtil idgenUtil) {
         this.idgenUtil = idgenUtil;
     }
