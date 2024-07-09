@@ -144,10 +144,10 @@
     }
     .selector-button-border {
       background-color: white;
-      border: 1px #007e7e solid;
+      border: 1px #007e7e solid !important;
       box-shadow: none;
       h2 {
-        color: #007e7e;
+        color: #007e7e !important;
         font-family: Roboto;
         font-size: 16px;
         font-weight: 700;
