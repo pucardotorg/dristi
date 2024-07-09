@@ -730,24 +730,11 @@ components:
     JoinCaseResponse:
       type: object
       properties:
-        RequestInfo:
+        ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        accessCode:
-          type: string
-        caseFilingNumber:
-          type: string
-        representative:
-          type: object
-          $ref: '#/components/schemas/AdvocateMapping'
-        litigant:
-          type: object
-          $ref: '#/components/schemas/Party'
-        additionalDetails:
-          type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        joinCaseRequest:
+          $ref: '#/components/schemas/JoinCaseRequest'
 
     CaseCriteria:
       type: object
