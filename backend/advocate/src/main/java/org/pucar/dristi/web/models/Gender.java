@@ -19,6 +19,7 @@ public enum Gender {
         this.value = value;
     }
 
+    @Override
     @JsonValue
     public String toString() {
         return String.valueOf(this.value);
