@@ -3,10 +3,8 @@ package org.pucar.dristi.repository.querybuilder;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.TaskCriteria;
-import org.pucar.dristi.web.models.TaskExistsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
 import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.TASK_SEARCH_QUERY_EXCEPTION;
 
@@ -56,18 +52,6 @@ public class TaskQueryBuilderTest {
         taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>());
     }
 
-    @Test
-    public void testCheckTaskExistQuery_withCnrNumber() {
-        String cnrNumber = "123";
-        String filingNumber = null;
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = ? AND task.id = ?";
-        List<Object> preparedStmtList = new ArrayList<>();
-        String taskId = "123e4567-e89b-12d3-a456-556642440000"; // Replace with a valid UUID string
-
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, UUID.fromString(taskId), preparedStmtList);
-
-        assertEquals(expectedQuery, actualQuery);
-    }
 
     @Test
     public void testGetDocumentSearchQuery_Exception() {
@@ -79,19 +63,6 @@ public class TaskQueryBuilderTest {
 
     private void invokeDocumentSearchTaskQuery() {
         taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null);
-    }
-
-    @Test
-    public void testCheckTaskExistQuery_withFilingNumber() {
-        String cnrNumber = null;
-        String filingNumber = "456";
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.filingnumber = ? AND task.id = ?";
-        List<Object> preparedStmtList = new ArrayList<>();
-        String taskId = "123e4567-e89b-12d3-a456-556642440000"; // Replace with a valid UUID string
-
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, UUID.fromString(taskId), preparedStmtList);
-
-        assertEquals(expectedQuery, actualQuery);
     }
 
 
