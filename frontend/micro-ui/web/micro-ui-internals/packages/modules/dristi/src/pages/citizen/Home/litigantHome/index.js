@@ -132,10 +132,6 @@ function Home() {
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
-              // search: {
-              //   callRefetch,
-              //   SetCallRefetch,
-              // },
             }}
           ></InboxSearchComposer>
         </div>
