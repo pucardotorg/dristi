@@ -10,8 +10,9 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 
-const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter }) => {
+const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const history = useHistory();
@@ -209,12 +210,21 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       if (showConfirmationModal.type === "reject") {
         await handleRejectApplication();
       }
-      if (showConfirmationModal.type === "accept") {
+      if (showConfirmationModal.type === "accept" || showConfirmationModal.type === "documents-confirmation") {
         await handleAcceptApplication();
       }
       if (!generateOrder) {
         setShowConfirmationModal(null);
-        setShowSuccessModal(true);
+        if (modalType !== "Documents") {
+          setShowSuccessModal(true);
+        } else {
+          setShow(false);
+          const details = {
+            isError: false,
+            message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+          };
+          showToast(details);
+        }
       }
       if (generateOrder) {
         const reqbody = {
@@ -258,7 +268,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={() => {
-            setShowConfirmationModal({ type: "accept" });
+            modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
           }}
           hideSubmit={hideSubmit}
           actionCancelLabel={actionCancelLabel}
@@ -354,6 +364,16 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleAction}
+        />
+      )}
+      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
+        <ConfirmEvidenceAction
+          t={t}
+          setShowConfirmationModal={setShowConfirmationModal}
+          type={showConfirmationModal.type}
+          setShow={setShow}
+          handleAction={handleAction}
+          isEvidence={documentSubmission[0].artifactList.isEvidence}
         />
       )}
       {showSuccessModal && modalType === "Submissions" && (

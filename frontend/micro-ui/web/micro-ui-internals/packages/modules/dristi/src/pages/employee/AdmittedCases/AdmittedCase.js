@@ -1,5 +1,5 @@
 import { Button as ActionButton } from "@egovernments/digit-ui-components";
-import { Button, Header, InboxSearchComposer, Menu } from "@egovernments/digit-ui-react-components";
+import { Button, Header, InboxSearchComposer, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -34,6 +34,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
+  const [toast, setToast] = useState(false);
   const history = useHistory();
   const showDownLoadCaseFIle = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
@@ -201,6 +202,8 @@ const AdmittedCases = ({ isJudge = true }) => {
     newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({ key: index, label: configItem.label, active: index === 0 ? true : false }))
   ); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
+  const [toastDetails, setToastDetails] = useState({});
+
   useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
@@ -254,6 +257,15 @@ const AdmittedCases = ({ isJudge = true }) => {
         })
         .catch((err) => {});
     }
+  };
+
+  const showToast = (details, duration = 5000) => {
+    setToast(true);
+    console.log(details);
+    setToastDetails(details);
+    setTimeout(() => {
+      setToast(false);
+    }, duration);
   };
 
   return (
@@ -336,6 +348,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           userRoles={userRoles}
           modalType={tabData.filter((tab) => tab.active)[0].label}
           setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
         />
       )}
       {showReviewModal && (
@@ -347,6 +360,9 @@ const AdmittedCases = ({ isJudge = true }) => {
           handleSaveDraft={() => {}}
           showActions={false}
         />
+      )}
+      {toast && toastDetails && (
+        <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}
     </React.Fragment>
   );
