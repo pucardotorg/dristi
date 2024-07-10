@@ -5,13 +5,10 @@ import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderRevi
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { CustomArrowOut } from "../../../icons/svgIndex";
 
-const OrderDrafts = () => {
+const OrderDrafts = ({ caseData }) => {
   const { t } = useTranslation();
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+  const filingNumber = caseData.filingNumber;
+  const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});

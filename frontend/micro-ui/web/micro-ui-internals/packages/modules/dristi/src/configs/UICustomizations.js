@@ -15,6 +15,13 @@ const inboxModuleNameMap = {
 
 const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
 
+const partyTypes = {
+  "complainant.primary": "Complainant",
+  "complainant.additional": "Complainant",
+  "respondant.primary": "Respondant",
+  "respondant.additional": "Respondant",
+};
+
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
@@ -669,6 +676,8 @@ export const UICustomizations = {
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
+        case "Party Type":
+          return partyTypes[value] ? partyTypes[value] : value;
         default:
           break;
       }

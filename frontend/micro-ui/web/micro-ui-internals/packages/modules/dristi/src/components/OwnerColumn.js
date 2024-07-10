@@ -11,7 +11,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     return formattedDate;
   };
 
-  const docObj = rowData.documents.map((doc) => {
+  const docObj = rowData?.documents?.map((doc) => {
     return {
       status: rowData.workflow.action,
       details: {

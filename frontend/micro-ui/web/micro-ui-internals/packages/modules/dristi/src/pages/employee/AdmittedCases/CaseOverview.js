@@ -5,15 +5,15 @@ import { useHistory } from "react-router-dom";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import useGetHearings from "../../../hooks/dristi/useGetHearings";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
+import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 
-const CaseOverview = () => {
+const CaseOverview = ({ caseData }) => {
   const { t } = useTranslation();
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
+  const filingNumber = caseData.filingNumber;
   const history = useHistory();
-  const cnr = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+  const cnr = caseData.cnrNumber;
+  const caseId = caseData.caseId;
+  const { path } = useRouteMatch();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
@@ -158,15 +158,24 @@ const CaseOverview = () => {
             marginTop: "10px",
           }}
         >
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "16px",
-              lineHeight: "18.75px",
-              color: "#231F20",
-            }}
-          >
-            Recent Orders
+          <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "16px",
+                lineHeight: "18.75px",
+                color: "#231F20",
+                width: "40%",
+              }}
+            >
+              Recent Orders
+            </div>
+            <div
+              style={{ color: "#007E7E", cursor: "pointer", fontWeight: 700, fontSize: "16px", lineHeight: "18.75px" }}
+              onClick={() => history.replace(`${path}?caseId=${caseId}&tab=Orders`)}
+            >
+              ALL_ORDERS_LINK
+            </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
             {ordersRes?.list

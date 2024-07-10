@@ -270,7 +270,7 @@ const HomeView = () => {
                         } else {
                           if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
                             history.push(
-                              `/${window?.contextPath}/${userInfoType}/dristi/home/admitted-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&cnrNumber=${row?.original?.cnrNumber}&title=${row?.original?.caseTitle}`
+                              `/${window?.contextPath}/${userInfoType}/dristi/home/admitted-case?caseId=${row?.original?.id}&tab=Overview`
                             );
                         }
                       },

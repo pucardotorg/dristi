@@ -5,13 +5,10 @@ import useGetSubmissions from "../../../hooks/dristi/useGetSubmissions";
 import { CustomArrowOut } from "../../../icons/svgIndex";
 import EvidenceModal from "./EvidenceModal";
 
-const SubmissionReview = ({ setUpdateCounter }) => {
+const SubmissionReview = ({ caseData, setUpdateCounter }) => {
   const { t } = useTranslation();
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
-  const cnr = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+  const filingNumber = caseData.filingNumber;
+  const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [show, setShow] = useState(false);
   const [documentSubmission, setDocumentSubmission] = useState();
@@ -156,6 +153,7 @@ const SubmissionReview = ({ setUpdateCounter }) => {
           userRoles={userRoles}
           modalType={"Submissions"}
           setUpdateCounter={setUpdateCounter}
+          caseData={caseData}
         />
       )}
     </React.Fragment>
