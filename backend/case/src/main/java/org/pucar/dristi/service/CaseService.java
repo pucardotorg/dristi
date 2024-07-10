@@ -1,6 +1,24 @@
 package org.pucar.dristi.service;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
+import static org.pucar.dristi.config.ServiceConstants.CASE_EXIST_ERR;
+import static org.pucar.dristi.config.ServiceConstants.CREATE_CASE_ERR;
+import static org.pucar.dristi.config.ServiceConstants.CREATE_DEMAND_STATUS;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_DETAILS;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_ID;
+import static org.pucar.dristi.config.ServiceConstants.JOIN_CASE_ERR;
+import static org.pucar.dristi.config.ServiceConstants.JOIN_CASE_INVALID_REQUEST;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
+import static org.pucar.dristi.config.ServiceConstants.UPDATE_CASE_ERR;
+import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
@@ -10,19 +28,21 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.JoinCaseRequest;
+import org.pucar.dristi.web.models.JoinCaseResponse;
+import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
-import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
 
 @Service
@@ -141,7 +161,7 @@ public class CaseService {
     }
 
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-            if (!validator.validateLitigantJoinCase(joinCaseRequest))
+            if (!validator.canLitigantJoinCase(joinCaseRequest))
                 throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
             log.info("enriching litigants");
@@ -154,7 +174,7 @@ public class CaseService {
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-            if (!validator.validateRepresentativeJoinCase(joinCaseRequest))
+            if (!validator.canRepresentativeJoinCase(joinCaseRequest))
                 throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
             log.info("enriching representatives");

@@ -1,8 +1,8 @@
 package org.pucar.dristi.kafka;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class Consumer {
