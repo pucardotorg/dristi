@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
-public class AdvocateClerkQueryBuilderTest {
+ class AdvocateClerkQueryBuilderTest {
 
     private AdvocateClerkQueryBuilder queryBuilder;
 
@@ -156,7 +156,7 @@ public class AdvocateClerkQueryBuilderTest {
     }
 
     @Test
-    public void testGetAdvocateClerkSearchQuery_withNullCriteria() {
+     void testGetAdvocateClerkSearchQuery_withNullCriteria() {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
         Integer limit = 10;
@@ -195,7 +195,7 @@ public class AdvocateClerkQueryBuilderTest {
         assertEquals("Simulated Exception", thrown.getMessage());
     }
     @Test
-    public void testGetDocumentSearchQuery_withValidIds() {
+     void testGetDocumentSearchQuery_withValidIds() {
         List<String> ids = List.of("clerk1", "clerk2");
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -207,7 +207,7 @@ public class AdvocateClerkQueryBuilderTest {
         assertEquals(List.of("clerk1", "clerk2"), preparedStmtList);
     }
     @Test
-    public void testGetDocumentSearchQuery_withEmptyIds() {
+     void testGetDocumentSearchQuery_withEmptyIds() {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
 

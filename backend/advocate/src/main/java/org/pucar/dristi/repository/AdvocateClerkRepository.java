@@ -107,9 +107,7 @@ public class AdvocateClerkRepository {
             log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             if (advocateDocumentMap != null) {
-                advocateClerkList.forEach(advocate -> {
-                    advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
-                });
+                advocateClerkList.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
             }
         }
     }

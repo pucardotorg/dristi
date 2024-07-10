@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AdvocateClerkDocumentRowMapperTest {
+ class AdvocateClerkDocumentRowMapperTest {
 
     @Mock
     private ResultSet rs;
