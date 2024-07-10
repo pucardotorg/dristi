@@ -218,6 +218,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [complainantList, setComplainantList] = useState([]);
   const [respondentList, setRespondentList] = useState([]);
   const [individualDoc, setIndividualDoc] = useState([]);
+  const [advocateName, setAdvocateName] = useState("");
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -432,7 +433,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
         {}
       );
       if (response?.criteria[0]?.responseList?.length === 1) {
-        console.log("first", response?.criteria[0]?.responseList[0]?.status);
         if (response?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED") {
           setIsDisabled(false);
           setSearchCaseResult(response?.criteria[0]?.responseList[0]);
@@ -528,20 +528,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     if (advocateResponse?.advocates[0]?.responseList?.length > 0) {
       setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
       setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
-      setBarDetails([
-        {
-          key: "CASE_NUMBER",
-          value: caseDetails?.filingNumber,
-        },
-        {
-          key: "Court Complex",
-          value: caseDetails?.courtName,
-        },
-        {
-          key: "Advocate",
-          value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
-        },
-      ]);
+      setAdvocateName(advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username);
       setUserType(t(JoinHomeLocalisation.ADVOCATE_OPT));
     } else {
       setUserType(t(JoinHomeLocalisation.LITIGANT_OPT));
@@ -558,10 +545,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
     { key: "Advocate Fees", value: 1000, currency: "Rs" },
     { key: "Total Fees", value: 2000, currency: "Rs", isTotalFee: true },
   ];
-
-  useEffect(() => {
-    console.log("errors", errors);
-  }, [errors]);
 
   const modalItem = [
     // 0
@@ -703,8 +686,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             </React.Fragment>
           )}
           {selectedParty?.label &&
-            selectedParty?.isComplainant &&
-            caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
+            caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) !== undefined &&
             userType === "Advocate" && (
               <React.Fragment>
                 <hr className="horizontal-line" />
@@ -1058,7 +1040,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
             config={advocateVakalatnamaAndNocConfig}
             onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
               if (!isEqual(formData, replaceAdvocateDocuments)) {
-                console.log("formData", formData);
                 setReplaceAdvocateDocuments(formData);
               }
               if (formData?.nocFileUpload && formData?.advocateCourtOrder) {
@@ -1187,11 +1168,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
     },
   ];
 
-  useEffect(() => {
-    console.log("adovacteVakalatnama", adovacteVakalatnama);
-    console.log("replaceAdvocateDocuments", replaceAdvocateDocuments);
-  }, [adovacteVakalatnama, replaceAdvocateDocuments]);
-
   const onDocumentUpload = async (fileData, filename, tenantId) => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -1242,11 +1218,28 @@ const JoinCaseHome = ({ refreshInbox }) => {
             isRespondent: true,
             individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
           }))
-          ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
+          ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
           ?.map((data) => data)
       );
     }
   }, [caseDetails]);
+
+  useEffect(() => {
+    setBarDetails([
+      {
+        key: "CASE_NUMBER",
+        value: caseDetails?.caseNumber,
+      },
+      {
+        key: "Court Complex",
+        value: caseDetails?.courtName,
+      },
+      {
+        key: "Advocate",
+        value: advocateName,
+      },
+    ]);
+  }, [caseDetails, advocateName]);
 
   const closeModal = () => {
     setCaseNumber("");
@@ -1934,7 +1927,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 validationCode: undefined,
               });
             } else if (step === 3 && userType === "Advocate") {
-              setStep(step - 2);
+              setStep(step - 1);
             } else setStep(step - 1);
             setIsDisabled(false);
           }}
