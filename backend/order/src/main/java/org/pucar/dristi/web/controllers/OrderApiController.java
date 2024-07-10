@@ -10,18 +10,19 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.FileDeleteService;
+import org.pucar.dristi.service.FileDownloadService;
 import org.pucar.dristi.service.OrderRegistrationService;
+import org.pucar.dristi.service.PDFSignatureService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:13:43.389623100+05:30[Asia/Calcutta]")
@@ -35,6 +36,10 @@ public class OrderApiController {
 
     @Autowired
     private OrderRegistrationService orderService;
+
+    @Autowired
+    private FileDownloadService fileDownloadService;
+
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
@@ -80,6 +85,14 @@ public class OrderApiController {
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
             OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/process-file")
+    public ResponseEntity<String> processFile() throws Exception {
+            String response = fileDownloadService.downloadAndExtractSignature();
+        return new ResponseEntity<String>(response, HttpStatus.OK);
+
     }
 }
 
