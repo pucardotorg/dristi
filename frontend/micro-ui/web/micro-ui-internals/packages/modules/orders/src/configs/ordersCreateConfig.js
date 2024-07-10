@@ -300,13 +300,30 @@ export const configsOrderSection202CRPC = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "LAW_SECTIONS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "lawSections",
-        type: "textarea",
-        populators: { name: "lawSections" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "LAW_SECTIONS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "RESPONSE_REQUIRED_BY",
         isMandatory: true,
@@ -350,12 +367,26 @@ export const configsOrderSection202CRPC = [
         type: "text",
         populators: { name: "judgeName", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -493,13 +524,31 @@ export const configsOrderMandatorySubmissions = [
           },
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "ADDITIONAL_COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "additionalComments",
-        type: "textarea",
-        populators: { name: "additionalComments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "IS_RESPONSE_REQUIRED",
         isMandatory: true,
@@ -725,12 +774,26 @@ export const configsOrderSubmissionExtension = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -821,12 +884,26 @@ export const configsOrderTranferToADR = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -947,12 +1024,26 @@ export const configsScheduleHearingDate = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -977,12 +1068,26 @@ export const configsRejectRescheduleHeadingDate = [
           name: "originalHearingDate",
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "REASON_FOR_REJECTION",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -1099,12 +1204,26 @@ export const configsRescheduleHearingDate = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -1172,12 +1291,26 @@ export const configRejectSubmission = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "REASON_FOR_REJECTION_SUBMISSION",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "REASON_FOR_REJECTION_SUBMISSION",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
@@ -1256,13 +1389,31 @@ export const configsVoluntarySubmissionStatus = [
         disable: true,
         populators: { name: "approvalStatus" },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1340,13 +1491,30 @@ export const configsCaseTransfer = [
         type: "text",
         populators: { name: "transferSeekedTo" },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "GROUNDS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "grounds",
-        type: "textarea",
-        populators: { name: "grounds" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "GROUNDS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "APPROVAL_STATUS",
         isMandatory: false,
@@ -1362,13 +1530,31 @@ export const configsCaseTransfer = [
         type: "text",
         populators: { name: "caseTransferredTo" },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1502,13 +1688,31 @@ export const configsCaseSettlement = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1579,13 +1783,31 @@ export const configsIssueSummons = [
         type: "date",
         populators: { name: "hearingDate", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1663,13 +1885,31 @@ export const configsIssueOfWarrants = [
         type: "date",
         populators: { name: "hearingDate", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -2462,12 +2702,25 @@ export const configsJudgement = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "SENTENCE",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "sentence",
-        type: "textarea",
-        populators: { name: "sentence" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "SENTENCE",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+        },
       },
     ],
   },
