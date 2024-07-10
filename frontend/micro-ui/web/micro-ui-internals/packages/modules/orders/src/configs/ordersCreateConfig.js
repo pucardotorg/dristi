@@ -2005,7 +2005,7 @@ export const configsOthers = [
         isMandatory: true,
         key: "orderTitle",
         type: "text",
-        populators: { name: "orderTitle" },
+        populators: { name: "orderTitle", error: "MAX_15_WORDS_ARE_ALLOWED", validation: { pattern: /^(\b\w+\b\s*){0,15}$/i } },
       },
     ],
   },
