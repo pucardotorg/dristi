@@ -642,7 +642,7 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
       }
     }
 
-    if(formData?.delayApplicationType?.code === "NO") {
+    if (formData?.delayApplicationType?.code === "NO") {
       setReceiptDemandNoticeModal(true);
       return true;
     }
@@ -1536,6 +1536,7 @@ export const updateCaseDetails = async ({
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
                           artifactType: "complainant",
+                          sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
                           tenantId,
                           comments: [],

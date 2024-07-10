@@ -97,6 +97,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
       await DRISTIService.createEvidence({
         artifact: {
           artifactType: "complainant",
+          sourceType: "COMPLAINANT",
           caseId: caseId,
           tenantId,
           artifactId: currentDocumentDataCopy?.[index].document?.[0]?.artifactId,
