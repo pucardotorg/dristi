@@ -1,6 +1,7 @@
 const defaultSearchValues = {
   stage: "",
   type: "",
+  caseNameOrId: "",
 };
 
 export const preHearingConfig = {
@@ -25,11 +26,14 @@ export const preHearingConfig = {
   sections: {
     search: {
       uiConfig: {
-        formClassName: "custom-both-clear-search",
+        formClassName: "inbox-filter",
         primaryLabel: "ES_COMMON_SEARCH",
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 0,
         defaultValues: defaultSearchValues,
+        searchWrapperStyles: {
+          marginLeft: "auto",
+        },
         fields: [
           {
             label: "Type",
@@ -37,6 +41,7 @@ export const preHearingConfig = {
             key: "type",
             type: "dropdown",
             populators: {
+              styles: { width: "150px" },
               name: "type",
               error: "Required",
               optionsKey: "type",
@@ -56,6 +61,7 @@ export const preHearingConfig = {
             key: "stage",
             type: "dropdown",
             populators: {
+              styles: { width: "150px" },
               name: "stage",
               error: "Required",
               optionsKey: "stage",
@@ -69,19 +75,15 @@ export const preHearingConfig = {
               ],
             },
           },
-          // {
-          //   // label: "Search Case Id",
-          //   isMandatory: false,
-          //   key: "filingNumber",
-          //   type: "text",
-          //   populators: {
-          //     styles: { width: "400px" },
-          //     name: "filingNumber",
-          //     error: "Required",
-          //     placeholder: "Search Case Name or ID",
-          //     validation: { pattern: /^[A-Za-z]+$/i },
-          //   },
-          // },
+          {
+            label: "Search Case Name or ID",
+            isMandatory: false,
+            key: "caseNameOrId",
+            type: "text",
+            populators: {
+              name: "caseNameOrId",
+            },
+          },
         ],
       },
       show: true,

@@ -4,6 +4,18 @@ import { useQuery, useQueryClient } from "react-query";
 const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessRequest, state, changeQueryName = "Random" }) => {
   const client = useQueryClient();
 
+  const { searchForm } = state;
+  const { stage, type, caseNameOrId } = searchForm;
+
+  const idPattern = /^F-C\.\d{4}\.\d{3}-\d{4}-\d{6}$/;
+
+  if (caseNameOrId && idPattern.test(caseNameOrId)) {
+    body.criteria = {
+      ...body.criteria,
+      filingNumber: caseNameOrId,
+    };
+  }
+
   const fetchCombinedData = async () => {
     //need to filter this hearing list response based on slot
     const hearingListResponse = await Digit.CustomService.getResponse({
@@ -16,9 +28,6 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
     }));
 
     const filingNumbers = hearingListResponse.HearingList.map((hearing) => hearing.filingNumber).flat();
-
-    const { searchForm } = state;
-    const { stage, type } = searchForm;
 
     const caseBody = {
       tenantId: "pg",
