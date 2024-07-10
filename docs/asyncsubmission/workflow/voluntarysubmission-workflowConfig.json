@@ -1,8 +1,8 @@
 {
   "BusinessServices": [
     {
-      "tenantId": "kl",
-      "businessService": "asyncsubmission",
+      "tenantId": "pg",
+      "businessService": "async-voluntary-submission-services",
       "business": "async-voluntary-submission-services",
       "businessServiceSla": 30,
       "states": [
@@ -17,9 +17,45 @@
           "actions": [
             {
               "action": "CREATE",
+              "nextState": "PENDINGESIGN",
+              "roles": [
+                "SUBMISSION_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDINGESIGN",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
+              "roles": [
+                "SUBMISSION_RESPONDER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDINGPAYMENT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "PAY",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "Lawyer"
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -37,22 +73,35 @@
               "action": "AUTOESCALATE",
               "nextState": "PENDINGAPPROVAL",
               "roles": [
-                "System"
+                "WORKFLOW_AUTOAPPROVE"
+              ]
+            },
+            {
+              "action": "APPROVE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "RESPOND",
               "nextState": "PENDINGAPPROVAL",
               "roles": [
-                "Lawyer"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -70,22 +119,21 @@
               "action": "APPROVE",
               "nextState": "COMPLETED",
               "roles": [
-                "Judge"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "Judge"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]

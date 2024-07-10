@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "asyncsubmission",
-      "business": "async-order-submission-services",
+      "businessService": "asynsubmissionwithresponse",
+      "business": "async-order-submission-withresponse-services",
       "businessServiceSla": 30,
       "states": [
         {
@@ -26,8 +26,8 @@
         },
         {
           "sla": null,
-          "state": PENDINGSUBMISSION,
-          "applicationStatus": null,
+          "state": "PENDINGSUBMISSION",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": true,
           "isTerminateState": false,
@@ -67,7 +67,7 @@
           "actions": [
             {
               "action": "PAY",
-              "nextState": "COMPLETED",
+              "nextState": "PENDINGRESPONSE",
               "roles": [
                 "SYSTEM_ADMIN"
               ]
@@ -95,6 +95,38 @@
               "nextState": "PENDINGSUBMISSION",
               "roles": [
                 "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "PENDINGRESPONSE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "RESPOND",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_RESPONDER"
+              ]
+            },
+            {
+              "action": "AUTOESCALATE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "WORKFLOW_AUTOAPPROVE"
               ]
             },
             {
