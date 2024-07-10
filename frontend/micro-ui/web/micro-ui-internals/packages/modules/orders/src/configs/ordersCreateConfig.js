@@ -986,7 +986,7 @@ export const configsScheduleHearingDate = [
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
-              masterName: "mINTodayDateValidation",
+              masterName: "minTodayDateValidation",
             },
           },
         },
