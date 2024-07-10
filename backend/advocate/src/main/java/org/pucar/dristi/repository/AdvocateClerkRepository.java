@@ -8,7 +8,6 @@ import org.pucar.dristi.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.AdvocateClerkRowMapper;
 import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -108,9 +107,7 @@ public class AdvocateClerkRepository {
             log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             if (advocateDocumentMap != null) {
-                advocateClerkList.forEach(advocate -> {
-                    advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
-                });
+                advocateClerkList.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
             }
         }
     }

@@ -1,6 +1,8 @@
 package org.pucar.dristi.web.models;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.models.AuditDetails;
+
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,5 +39,11 @@ public class JoinCaseRequest {
 
     @JsonProperty("litigant")
     private Party litigant = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 }

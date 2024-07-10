@@ -41,8 +41,8 @@ import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
+
 
 
 @Service
@@ -168,6 +168,9 @@ public class CaseService {
             enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
             producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+
+            if(joinCaseRequest.getAdditionalDetails() !=null)
+                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
@@ -178,6 +181,9 @@ public class CaseService {
             enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
             producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+
+            if(joinCaseRequest.getAdditionalDetails() !=null)
+                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
@@ -193,6 +199,7 @@ public class CaseService {
                     .createdTime(System.currentTimeMillis())
                     .lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
                     .lastModifiedTime(System.currentTimeMillis()).build();
+            joinCaseRequest.setAuditDetails(auditDetails);
 
             CourtCase caseObj = CourtCase.builder()
                     .id(caseId)
@@ -202,11 +209,7 @@ public class CaseService {
 
             verifyRepresentativesAndJoinCase(joinCaseRequest, courtCase, caseObj, auditDetails);
 
-            return JoinCaseResponse.builder()
-                    .accessCode(joinCaseRequest.getAccessCode())
-                    .caseFilingNumber(filingNumber)
-                    .representative(joinCaseRequest.getRepresentative())
-                    .litigant(joinCaseRequest.getLitigant()).build();
+            return JoinCaseResponse.builder().joinCaseRequest(joinCaseRequest).build();
 
         } catch(CustomException e){
             throw e;

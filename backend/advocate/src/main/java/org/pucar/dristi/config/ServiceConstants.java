@@ -75,4 +75,5 @@ public class ServiceConstants {
 	public static final String ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION = "Error while building advocate search query :: {}";
 	public static final String ADVOCATE_LIST_QUERY = "Final advocate list query :: {}";
 	public static final String DOCUMENT_LIST_QUERY = "Final document query :: {}";
+	public static final String AND = " AND ";
 }

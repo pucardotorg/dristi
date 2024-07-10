@@ -10,7 +10,6 @@ import org.pucar.dristi.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_SERVICE_EXCEPTION;
@@ -37,8 +36,8 @@ public class IndividualService {
             individualSearchRequest.setIndividual(individualSearch);
             StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
             uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
-            Boolean isIndividualValid = individualUtils.individualCall(individualSearchRequest, uri, individualUserUUID);
-            return isIndividualValid;
+            return individualUtils.individualCall(individualSearchRequest, uri, individualUserUUID);
+
 
         } catch(CustomException e){
             throw e;

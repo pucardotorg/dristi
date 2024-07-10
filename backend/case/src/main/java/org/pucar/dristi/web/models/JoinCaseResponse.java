@@ -22,17 +22,6 @@ public class JoinCaseResponse {
     @Valid
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("accessCode")
-    @NotNull
-    private String accessCode = null;
-
-    @JsonProperty("caseFilingNumber")
-    @NotNull
-    private String caseFilingNumber = null;
-
-    @JsonProperty("representative")
-    private AdvocateMapping representative = null;
-
-    @JsonProperty("litigant")
-    private Party litigant = null;
+    @JsonProperty("joinCaseRequest")
+    private JoinCaseRequest joinCaseRequest = null;
 }

@@ -223,10 +223,10 @@ public class CaseServiceTest {
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
-        assertEquals("validAccessCode", response.getAccessCode());
-        assertEquals("12345", response.getCaseFilingNumber());
-        assertEquals(litigant, response.getLitigant());
-        assertEquals(advocate, response.getRepresentative());
+        assertEquals("validAccessCode", response.getJoinCaseRequest().getAccessCode());
+        assertEquals("12345", response.getJoinCaseRequest().getCaseFilingNumber());
+        assertEquals(litigant, response.getJoinCaseRequest().getLitigant());
+        assertEquals(advocate, response.getJoinCaseRequest().getRepresentative());
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.pucar.dristi.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
@@ -24,7 +23,6 @@ import org.pucar.dristi.web.models.AdvocateRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkflowServiceTest {
+ class WorkflowServiceTest {
 
     @InjectMocks
     private WorkflowService workflowService;

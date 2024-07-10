@@ -12,16 +12,14 @@ import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class IndividualServiceTest {
+ class IndividualServiceTest {
 
     @Mock
     IndividualUtil individualUtil;
@@ -59,7 +57,7 @@ public class IndividualServiceTest {
     }
 
     @Test
-    public void testSearchIndividual_Exception() {
+     void testSearchIndividual_Exception() {
         // Arrange
         AdvocateRequest advocateRequest = new AdvocateRequest();
         advocateRequest.setAdvocate(new Advocate());

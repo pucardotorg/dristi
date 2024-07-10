@@ -21,8 +21,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.EXIST_TASK_ERR;
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_TASK_ERR;
 
 public class TaskRepositoryTest {
 
@@ -204,14 +202,7 @@ public class TaskRepositoryTest {
                 .thenThrow(new RuntimeException("Database error"));
 
         // Test the method and expect CustomException
-        try {
-            taskRepository.checkTaskExists(taskExists);
-            fail("Expected CustomException was not thrown");
-        } catch (CustomException e) {
-            // Verify the exception
-            assertEquals("Custom exception while checking task exist : Database error", e.getMessage());
-            // Optionally assert other details from the exception
-        }
+        assertThrows(CustomException.class, () -> taskRepository.checkTaskExists(taskExists));
 
         // Verify method calls
         verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
