@@ -149,7 +149,7 @@ public class CaseService {
 
             producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
 
-            if(joinCaseRequest.getAdditionDetails() !=null)
+            if(joinCaseRequest.getAdditionalDetails() !=null)
                 producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
@@ -162,7 +162,7 @@ public class CaseService {
 
             producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
 
-            if(joinCaseRequest.getAdditionDetails() !=null)
+            if(joinCaseRequest.getAdditionalDetails() !=null)
                 producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 

@@ -35,8 +35,8 @@ public class JoinCaseRequest {
     @JsonProperty("litigant")
     private Party litigant = null;
 
-    @JsonProperty("additionDetails")
-    private Object additionDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
