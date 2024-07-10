@@ -14,10 +14,7 @@ import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
@@ -223,32 +220,38 @@ public class CaseService {
         if(joinCaseRequest.getRepresentative() != null) {
             //for representative to join a case
             // Stream over the representatives to create a list of advocateIds
-            List<String> advocateIds = courtCase.getRepresentatives().stream()
-                    .map(AdvocateMapping::getAdvocateId)
-                    .toList();
-            if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
-                    advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
-
-                Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
-                        .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
-                        .findFirst();
-
-                if(existingRepresentativeOptional.isEmpty())
-                    throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-
-                AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
-                List<String> individualIds = existingRepresentative.getRepresenting().stream()
-                        .map(Party::getIndividualId)
+            List<String> advocateIds = new ArrayList<>();
+            if(courtCase.getRepresentatives()!=null){
+                 advocateIds = courtCase.getRepresentatives().stream()
+                        .map(AdvocateMapping::getAdvocateId)
                         .toList();
-
-                if(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
-                    individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())){
-                    throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
-                } else{
-                    joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
-                }
-
             }
+
+            if(!advocateIds.isEmpty()){
+                if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
+                        advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
+
+                    Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
+                            .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
+                            .findFirst();
+
+                    if(existingRepresentativeOptional.isEmpty())
+                        throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+
+                    AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
+                    List<String> individualIds = existingRepresentative.getRepresenting().stream()
+                            .map(Party::getIndividualId)
+                            .toList();
+
+                    if(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
+                            individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())){
+                        throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+                    } else{
+                        joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
+                    }
+                }
+            }
+
             caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
             verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
         }
