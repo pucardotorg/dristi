@@ -140,11 +140,13 @@ const SubmissionsCreate = () => {
 
         const evidenceReqBody = {
           artifact: {
-            artifactType: "AFFIDAVIT",
+            artifactType: "DOCUMENTARY",
             caseId: caseDetails?.id,
             tenantId,
             comments: [],
             file,
+            sourceType: "COMPLAINANT",
+            //ACCUSED // COURT - if respondant is uplading submission
           },
         };
         DRISTIService.createEvidence(evidenceReqBody);
