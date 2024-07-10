@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -434,6 +434,10 @@ const LitigantHomePage = () => {
   const today = new Date();
   const history = useHistory();
   const curHr = today.getHours();
+  const [callRefetch, SetCallRefetch] = useState(false);
+  const refreshInbox = () => {
+    SetCallRefetch(true);
+  };
   return (
     <div className="response-main" style={{ width: "100%", padding: 40 }}>
       <div className="header">
@@ -443,6 +447,7 @@ const LitigantHomePage = () => {
         {t("What are you planning to do today?")}
       </div>
       <div
+        key={`${callRefetch}`}
         className="join-file-case-wrapper"
         style={{
           display: "flex",
@@ -545,7 +550,7 @@ const LitigantHomePage = () => {
                 {t("following your case smooth and easy")}
               </span>
             </React.Fragment>
-            <JoinCaseHome t={t} />
+            <JoinCaseHome refreshInbox={refreshInbox} t={t} />
           </div>
         </div>
       </div>

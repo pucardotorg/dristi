@@ -1,9 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { useHistory } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { Header, FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configRejectSubmission, configsBail,
+  configRejectSubmission,
+  configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
   configsCaseWithdrawal,
@@ -18,7 +21,7 @@ import {
   configsRejectRescheduleHeadingDate,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
-  configsVoluntarySubmissionStatus
+  configsVoluntarySubmissionStatus,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
@@ -30,6 +33,22 @@ import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchC
 import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
+
+const OutlinedInfoIcon = () => (
+  <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
+    <g clip-path="url(#clip0_7603_50401)">
+      <path
+        d="M8.70703 5.54232H10.2904V7.12565H8.70703V5.54232ZM8.70703 8.70898H10.2904V13.459H8.70703V8.70898ZM9.4987 1.58398C5.1287 1.58398 1.58203 5.13065 1.58203 9.50065C1.58203 13.8707 5.1287 17.4173 9.4987 17.4173C13.8687 17.4173 17.4154 13.8707 17.4154 9.50065C17.4154 5.13065 13.8687 1.58398 9.4987 1.58398ZM9.4987 15.834C6.00745 15.834 3.16536 12.9919 3.16536 9.50065C3.16536 6.0094 6.00745 3.16732 9.4987 3.16732C12.9899 3.16732 15.832 6.0094 15.832 9.50065C15.832 12.9919 12.9899 15.834 9.4987 15.834Z"
+        fill="#3D3C3C"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_7603_50401">
+        <rect width="19" height="19" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
 
 const GenerateOrders = () => {
   const { t } = useTranslation();
@@ -45,6 +64,19 @@ const GenerateOrders = () => {
   const [formdata, setFormdata] = useState({});
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
@@ -73,7 +105,7 @@ const GenerateOrders = () => {
     return caseDetails?.litigants
       ?.filter((item) => item?.partyType === "complainant.primary")
       .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+        return { code: item?.additionalDetails?.fullName || "complainants", name: item?.additionalDetails?.fullName || "complainants" };
       });
   }, [caseDetails]);
 
@@ -81,9 +113,9 @@ const GenerateOrders = () => {
     // return caseDetails?.litigants
     //   ?.filter((item) => item?.partyType === "respondant.primary")
     //   .map((item) => {
-    //     return { code: item?.additionalDetails?.fullName || "Respondant", name: item?.additionalDetails?.fullName || "Respondant" };
+    //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
     //   });
-    return [{ code: "Respondant", name: "Respondant" }];
+    return [{ code: "Respondent", name: "Respondent" }];
   }, [caseDetails]);
 
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
@@ -132,7 +164,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: complainants ? complainants : [],
                   },
                 };
               }
@@ -160,7 +192,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: complainants ? complainants : [],
                   },
                 };
               }
@@ -199,7 +231,42 @@ const GenerateOrders = () => {
       }
       newConfig = [...newConfig, ...orderTypeForm];
     }
-    return newConfig;
+    const updatedConfig = newConfig.map((config) => {
+      return {
+        ...config,
+        body: config?.body.map((body) => {
+          if (body?.labelChildren === "OutlinedInfoIcon") {
+            body.labelChildren = (
+              <React.Fragment>
+                <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`${body.label}-tooltip`}>
+                  {" "}
+                  <OutlinedInfoIcon />
+                </span>
+                <ReactTooltip id={`${body.label}-tooltip`} place="bottom" content={body?.tooltipValue || ""}>
+                  {t(body?.tooltipValue || body.label)}
+                </ReactTooltip>
+              </React.Fragment>
+            );
+          }
+
+          if (body?.populators?.validation?.customValidationFn) {
+            const customValidations =
+              Digit.Customizations[body.populators.validation.customValidationFn.moduleName][
+                body.populators.validation.customValidationFn.masterName
+              ];
+
+            body.populators.validation = {
+              ...body.populators.validation,
+              ...customValidations(),
+            };
+          }
+          return {
+            ...body,
+          };
+        }),
+      };
+    });
+    return updatedConfig;
   }, [complainants, orderType?.code, respondants]);
 
   const defaultValue = useMemo(() => {
@@ -261,6 +328,9 @@ const GenerateOrders = () => {
       .then(() => {
         setPrevOrder(currentOrder);
         refetchOrdersData();
+        if (!modal) {
+          setShowErrorToast(true);
+        }
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
@@ -373,7 +443,7 @@ const GenerateOrders = () => {
       </div>
       <div className="view-order">
         {orderList?.length > 0 && <Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
-        {orderList?.length > 0 && (
+        {orderList?.length > 0 && modifiedFormConfig && (
           <FormComposerV2
             className={"generate-orders"}
             key={selectedOrder}
@@ -418,6 +488,15 @@ const GenerateOrders = () => {
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
       {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
+      {showErrorToast && (
+        <Toast
+          style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}
+          error={true}
+          label={t("DRAFT_SAVED_SUCCESSFULLY")}
+          isDleteBtn={true}
+          onClose={closeToast}
+        />
+      )}
     </div>
   );
 };
