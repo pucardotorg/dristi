@@ -35,9 +35,7 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
   return (
     <Modal
       actionCancelLabel={t("DOWNLOAD_ORDER")}
-      actionCancelOnSubmit={() => {
-        setShowSuccessModal(false);
-      }}
+      actionCancelOnSubmit={() => {}}
       actionSaveLabel={t("CS_COMMON_CLOSE")}
       actionSaveOnSubmit={() => {
         setShowSuccessModal(false);
