@@ -37,25 +37,25 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     );
   };
   const hideSubmit = useMemo(() => {
-    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL";
-  }, [documentSubmission.status, userRoles]);
-
-  const actionSaveLabel = useMemo(() => {
-    return userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
-      ? t("Approve")
-      : (userRoles.includes("APPLICATION_RESPONDER") ||
+    return modalType === "Submissions"
+      ? userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL"
+      : !(
+          userRoles.includes("APPLICATION_RESPONDER") ||
           userRoles.includes("DEPOSITION_CREATOR") ||
           userRoles.includes("DEPOSITION_ESIGN") ||
-          userRoles.includes("DEPOSITION_PUBLISHER")) &&
-        documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL" &&
-        modalType === "Documents"
-      ? !documentSubmission[0]?.artifactList.isEvidence
-        ? t("Mark as Evidence")
-        : documentSubmission[0]?.artifactList.artifactType !== "DEPOSITION"
-        ? t("Unmark as Evidence")
-        : null
-      : null;
-  }, [documentSubmission, modalType, t, userRoles]);
+          userRoles.includes("DEPOSITION_PUBLISHER")
+        );
+  }, [documentSubmission, modalType, userRoles]);
+
+  const actionSaveLabel = useMemo(() => {
+    let label = "";
+    if (modalType === "Submissions") {
+      label = t("Approve");
+    } else {
+      label = !documentSubmission[0]?.artifactList.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
+    }
+    return label;
+  }, [documentSubmission, modalType, t]);
 
   const actionCancelLabel = useMemo(() => {
     return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
@@ -130,6 +130,56 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
       action: "ABANDON",
     },
   };
+
+  const handleMarkEvidence = async () => {
+    if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
+      await evidenceUpdateMutation.mutate({
+        url: `/evidence/artifacts/v1/_update`,
+        params: {},
+        body: {
+          artifact: {
+            ...documentSubmission[0].artifactList,
+            isEvidence: !documentSubmission[0].artifactList.isEvidence,
+            workflow: {
+              ...documentSubmission[0].artifactList.workflow,
+              action: "SIGN DEPOSITION",
+            },
+          },
+        },
+        config: {
+          enable: true,
+        },
+      });
+    } else {
+      await evidenceUpdateMutation.mutate({
+        url: `/evidence/artifacts/v1/_update`,
+        params: {},
+        body: {
+          artifact: {
+            ...documentSubmission[0].artifactList,
+            isEvidence: !documentSubmission[0].artifactList.isEvidence,
+          },
+        },
+        config: {
+          enable: true,
+        },
+      });
+    }
+    setUpdateCounter((prevCount) => prevCount + 1);
+  };
+
+  const handleAcceptApplication = async () => {
+    await mutation.mutate({
+      url: `/application/application/v1/update`,
+      params: {},
+      body: { application: acceptApplicationPayload },
+      config: {
+        enable: true,
+      },
+    });
+    setUpdateCounter((prevCount) => prevCount + 1);
+  };
+
   const handleRejectApplication = async () => {
     await mutation.mutate({
       url: `/application/application/v1/update`,
@@ -142,65 +192,6 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     setUpdateCounter((prevCount) => prevCount + 1);
   };
 
-  const handleAcceptApplication = async () => {
-    if (
-      (userRoles.includes("APPLICATION_RESPONDER") ||
-        userRoles.includes("DEPOSITION_CREATOR") ||
-        userRoles.includes("DEPOSITION_ESIGN") ||
-        userRoles.includes("DEPOSITION_PUBLISHER")) &&
-      documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL" &&
-      modalType === "Documents"
-    ) {
-      if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
-        await evidenceUpdateMutation.mutate({
-          url: `/evidence/artifacts/v1/_update`,
-          params: {},
-          body: {
-            artifact: {
-              ...documentSubmission[0].artifactList,
-              isEvidence: !documentSubmission[0].artifactList.isEvidence,
-              workflow: {
-                ...documentSubmission[0].artifactList.workflow,
-                action: "SIGN DEPOSITION",
-              },
-            },
-          },
-          config: {
-            enable: true,
-          },
-        });
-      } else {
-        await evidenceUpdateMutation.mutate({
-          url: `/evidence/artifacts/v1/_update`,
-          params: {},
-          body: {
-            artifact: {
-              ...documentSubmission[0].artifactList,
-              isEvidence: !documentSubmission[0].artifactList.isEvidence,
-            },
-          },
-          config: {
-            enable: true,
-          },
-        });
-      }
-    } else if (
-      userRoles.includes("APPLICATION_RESPONDER") &&
-      documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" &&
-      modalType === "Submissions"
-    ) {
-      await mutation.mutate({
-        url: `/application/application/v1/update`,
-        params: {},
-        body: { application: acceptApplicationPayload },
-        config: {
-          enable: true,
-        },
-      });
-    }
-    setUpdateCounter((prevCount) => prevCount + 1);
-  };
-
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -208,26 +199,32 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     return `${day}-${month}-${year}`;
   };
 
-  const handleAction = async (generateOrder) => {
+  const handleEvidenceAction = async () => {
+    try {
+      await handleMarkEvidence();
+      if (modalType !== "Documents") {
+        setShowSuccessModal(true);
+      } else {
+        setShow(false);
+        const details = {
+          isError: false,
+          message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+        };
+        showToast(details);
+      }
+    } catch (error) {}
+  };
+
+  const handleApplicationAction = async (generateOrder) => {
     try {
       if (showConfirmationModal.type === "reject") {
         await handleRejectApplication();
       }
-      if (showConfirmationModal.type === "accept" || showConfirmationModal.type === "documents-confirmation") {
+      if (showConfirmationModal.type === "accept") {
         await handleAcceptApplication();
       }
       if (!generateOrder) {
         setShowConfirmationModal(null);
-        if (modalType !== "Documents") {
-          setShowSuccessModal(true);
-        } else {
-          setShow(false);
-          const details = {
-            isError: false,
-            message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
-          };
-          showToast(details);
-        }
       }
       if (generateOrder) {
         const reqbody = {
@@ -366,7 +363,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
           setShowConfirmationModal={setShowConfirmationModal}
           type={showConfirmationModal.type}
           setShow={setShow}
-          handleAction={handleAction}
+          handleAction={handleApplicationAction}
         />
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
@@ -375,7 +372,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
           setShowConfirmationModal={setShowConfirmationModal}
           type={showConfirmationModal.type}
           setShow={setShow}
-          handleAction={handleAction}
+          handleAction={handleEvidenceAction}
           isEvidence={documentSubmission[0].artifactList.isEvidence}
         />
       )}
