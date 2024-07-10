@@ -1,4 +1,4 @@
-import { Button, Card } from "@egovernments/digit-ui-react-components";
+import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -55,6 +55,9 @@ const CaseOverview = ({ caseData }) => {
 
   console.log(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
 
+  if (isHearingsLoading || isOrdersLoading) {
+    return <Loader />;
+  }
   return hearingRes?.HearingList?.length === 0 && ordersRes?.list?.length === 0 ? (
     <div
       style={{
@@ -98,19 +101,32 @@ const CaseOverview = ({ caseData }) => {
           >
             A summary of this case's proceedings, hearings, orders and other activities will be visible here. Take your first action on the case
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              width: "100%",
-              marginTop: "16px",
-            }}
-          >
-            <Button variation={"outlined"} label={"Schedule Hearing"} />
-            {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
-              <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
-            )}
-          </div>
+          {!userRoles.includes("CITIZEN") ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                width: "100%",
+                marginTop: "16px",
+              }}
+            >
+              <Button variation={"outlined"} label={"Schedule Hearing"} />
+              {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
+                <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                width: "100%",
+                marginTop: "16px",
+              }}
+            >
+              <Button variation={"outlined"} label={"Raise Application"} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -168,13 +184,13 @@ const CaseOverview = ({ caseData }) => {
                 width: "40%",
               }}
             >
-              Recent Orders
+              {t("RECENT_ORDERS")}
             </div>
             <div
               style={{ color: "#007E7E", cursor: "pointer", fontWeight: 700, fontSize: "16px", lineHeight: "18.75px" }}
               onClick={() => history.replace(`${path}?caseId=${caseId}&tab=Orders`)}
             >
-              ALL_ORDERS_LINK
+              {t("ALL_ORDERS_LINK")}
             </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>

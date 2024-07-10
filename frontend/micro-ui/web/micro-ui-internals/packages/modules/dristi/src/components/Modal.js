@@ -64,17 +64,20 @@ const Modal = ({
             ) : (
               <div></div>
             )}
-            {actionSaveLabel && !hideSubmit ? (
-              <ButtonSelector
-                textStyles={{ margin: "0px" }}
-                label={actionSaveLabel}
-                onSubmit={actionSaveOnSubmit}
-                formId={formId}
-                isDisabled={isDisabled}
-                style={style}
-                textClassName={submitTextClassName}
-              />
-            ) : null}
+            {actionSaveLabel && !hideSubmit
+              ? (console.log(style),
+                (
+                  <ButtonSelector
+                    textStyles={{ margin: "0px" }}
+                    label={actionSaveLabel}
+                    onSubmit={actionSaveOnSubmit}
+                    formId={formId}
+                    isDisabled={isDisabled}
+                    style={style}
+                    textClassName={submitTextClassName}
+                  />
+                ))
+              : null}
           </div>
         </div>
       </div>

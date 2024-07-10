@@ -80,11 +80,13 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
       actionCancelLabel={showActions && t("SAVE_DRAFT")}
-      actionCancelOnSubmit={handleSaveDraft}
+      actionCancelOnSubmit={showActions && handleSaveDraft}
       actionSaveLabel={showActions && t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
-        setShowsignatureModal(true);
-        setShowReviewModal(false);
+        if (showActions) {
+          setShowsignatureModal(true);
+          setShowReviewModal(false);
+        }
       }}
       className={"review-order-modal"}
     >

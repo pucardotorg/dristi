@@ -144,7 +144,7 @@ const App = ({ stateCode, tenantId }) => {
             </PrivateRoute>
           </div>
 
-          <PrivateRoute exact path={`${path}/home/admitted-case`} component={(props) => <AdmittedCases isJudge={false} />} />
+          <PrivateRoute exact path={`${path}/home/view-case`} component={(props) => <AdmittedCases isJudge={false} />} />
           <div
             className={
               location.pathname.includes("/response") ||

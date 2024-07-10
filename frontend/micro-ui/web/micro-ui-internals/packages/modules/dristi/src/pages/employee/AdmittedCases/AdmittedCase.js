@@ -1,5 +1,5 @@
 import { Button as ActionButton } from "@egovernments/digit-ui-components";
-import { Button, Header, InboxSearchComposer, Menu, Toast } from "@egovernments/digit-ui-react-components";
+import { Button, Header, InboxSearchComposer, Loader, Menu, Toast, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
@@ -13,6 +13,7 @@ import "./tabs.css";
 import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowOut, CustomThreeDots } from "../../../icons/svgIndex";
 
 const defaultSearchValues = {
   individualName: "",
@@ -54,7 +55,8 @@ const AdmittedCases = ({ isJudge = true }) => {
     caseId
   );
 
-  const filingNumber = caseData?.criteria[0]?.responseList[0]?.filingNumber;
+  const filingNumber = urlParams.get("filingNumber");
+  console.log(filingNumber);
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
@@ -65,8 +67,6 @@ const AdmittedCases = ({ isJudge = true }) => {
     title: title,
     stage: stage,
   };
-
-  console.log(filingNumber, cnrNumber, title, stage);
 
   const docSetFunc = (docObj) => {
     setDocumentSubmission(docObj);
@@ -80,6 +80,7 @@ const AdmittedCases = ({ isJudge = true }) => {
 
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
+    setShowOtherMenu(false);
   };
 
   const configList = useMemo(() => {
@@ -94,6 +95,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: [
                   {
                     filingNumber: filingNumber,
+                    pagination: { offSet: 0, limit: 1 },
                   },
                 ],
               },
@@ -109,6 +111,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
+                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -140,6 +143,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
+                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -154,6 +158,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   caseId: caseId,
                   tenantId: tenantId,
+                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -185,6 +190,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
+                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -215,6 +221,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 filingNumber: filingNumber,
                 cnrNumber,
                 applicationNumber: "",
+                pagination: { offSet: 0, limit: 1 },
               },
             },
           };
@@ -239,6 +246,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   ); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
   const [toastDetails, setToastDetails] = useState({});
+  const [showOtherMenu, setShowOtherMenu] = useState(false);
 
   useEffect(() => {
     // Set default values when component mounts
@@ -246,7 +254,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   }, []);
 
   const onTabChange = (n) => {
-    history.replace(`${path}?caseId=${caseId}&tab=${newTabSearchConfig?.TabSearchconfig?.[n].label}`);
+    history.replace(`${path}?caseId=${caseId}&filingNumber=${filingNumber}&tab=${newTabSearchConfig?.TabSearchconfig?.[n].label}`);
     // urlParams.set("tab", newTabSearchConfig?.TabSearchconfig?.[n].label);
   };
 
@@ -262,7 +270,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    if (option === "GENERATE_ORDER_HOME") {
+    if (option === t("GENERATE_ORDER_HOME")) {
       const reqbody = {
         order: {
           createdDate: formatDate(new Date()),
@@ -304,10 +312,16 @@ const AdmittedCases = ({ isJudge = true }) => {
     }, duration);
   };
 
-  return (
+  // if (caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED") {
+  //   history.replace(`${path}?caseId=${caseId}&filingNumber=${filingNumber}&tab=Complaints`);
+  // }
+
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "84px", width: "100%", height: "100%", zIndex: 10 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px", background: "white" }}>
+      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 10, background: "white" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
             <div
@@ -324,26 +338,49 @@ const AdmittedCases = ({ isJudge = true }) => {
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
-            <div className="evidence-header-wrapper">
-              <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                <div className="evidence-actions">
-                  <ActionButton
-                    variation={"primary"}
-                    label={"Take Action"}
-                    icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                    isSuffix={true}
-                    onClick={handleTakeAction}
-                  ></ActionButton>
-                  {showMenu && (
-                    <Menu
-                      options={
-                        userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
-                          ? ["GENERATE_ORDER_HOME", "Schedule Hearing", "Refer to ADR", "Abate Case"]
-                          : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
-                      }
-                      onSelect={(option) => handleSelect(option)}
-                    ></Menu>
-                  )}
+            <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
+              <div className="evidence-header-wrapper">
+                <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                  <div className="evidence-actions">
+                    <ActionButton
+                      variation={"primary"}
+                      label={"Take Action"}
+                      icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                      isSuffix={true}
+                      onClick={handleTakeAction}
+                    ></ActionButton>
+                    {showMenu && (
+                      <Menu
+                        options={
+                          userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
+                            ? [t("GENERATE_ORDER_HOME"), "Schedule Hearing", "Refer to ADR", "Abate Case"]
+                            : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                        }
+                        onSelect={(option) => handleSelect(option)}
+                      ></Menu>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="evidence-header-wrapper">
+                <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                  <div className="evidence-actions">
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setShowOtherMenu((prev) => !prev);
+                        setShowMenu(false);
+                      }}
+                    >
+                      <CustomThreeDots />
+                      {showOtherMenu && (
+                        <Menu
+                          options={[t("DOWNLOAD_CASE_FILE")]}
+                          // onSelect={() => {}}
+                        ></Menu>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -357,6 +394,11 @@ const AdmittedCases = ({ isJudge = true }) => {
                 onClick={() => {
                   onTabChange(num);
                 }}
+                disabled={
+                  caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
+                  caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
+                  config.label !== "Complaint"
+                }
               >
                 {t(i?.label)}
               </button>
@@ -368,9 +410,9 @@ const AdmittedCases = ({ isJudge = true }) => {
       {config.label !== "Overview" && config.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {config.label === "Orders" && (
+          {!showDownLoadCaseFIle && config.label === "Orders" && (
             <div
-              onClick={() => handleSelect("GENERATE_ORDER_HOME")}
+              onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
             >
               {t("GENERATE_ORDERS_LINK")}
