@@ -22,7 +22,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
@@ -47,7 +46,6 @@ public class CaseRegistrationValidator {
 
 	private CaseRepository repository;
 
-	private CaseService caseService;
 
 	private MdmsUtil mdmsUtil;
 
@@ -59,11 +57,10 @@ public class CaseRegistrationValidator {
 	
 	@Autowired
 	public CaseRegistrationValidator(IndividualService indService, CaseRepository caseRepo,
-			CaseService caseSvc, MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, AdvocateUtil advocateUtil,
+			 MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, AdvocateUtil advocateUtil,
 			Configuration config) {
 		this.individualService = indService;
 		this.repository = caseRepo;
-		this.caseService = caseSvc;
 		this.mdmsUtil = mdmsUtil;
 		this.fileStoreUtil = fileStoreUtil;
 		this.advocateUtil = advocateUtil;
@@ -75,10 +72,6 @@ public class CaseRegistrationValidator {
 	 * To do validation-> 1. Validate MDMS data 2. Fetch court department info from
 	 * HRMS 3. Validate artifact Ids
 	 */
-	@Autowired
-	public void setCaseService(@Lazy CaseService caseService) {
-		this.caseService = caseService;
-	}
 
 	public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException {
 		CourtCase courtCase = caseRequest.getCases();

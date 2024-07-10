@@ -57,8 +57,6 @@ public class CaseRegistrationValidatorTest {
 
     @Mock
     private IndividualService individualService;
-    @Mock
-    private CaseService caseService;
 
     @Mock
     private Configuration configuration;
@@ -313,7 +311,6 @@ public class CaseRegistrationValidatorTest {
         lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
         lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
         lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
-        caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
@@ -418,7 +415,6 @@ public class CaseRegistrationValidatorTest {
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
         lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
         lenient().when(advocateUtil.doesAdvocateExist(new RequestInfo(), "123")).thenReturn(true);
-        caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
@@ -507,7 +503,6 @@ public class CaseRegistrationValidatorTest {
         lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
 
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenThrow(new CustomException());
-        caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))

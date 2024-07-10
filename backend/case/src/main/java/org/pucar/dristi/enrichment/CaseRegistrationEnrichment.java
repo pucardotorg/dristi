@@ -178,7 +178,12 @@ public class CaseRegistrationEnrichment {
             statuteSection.setAuditdetails(auditDetails);
         });
         List<StatuteSection> statutesAndSectionsListToUpdate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() != null).toList();
-        statutesAndSectionsListToUpdate.forEach(statuteSection -> statuteSection.setAuditdetails(auditDetails));
+
+        statutesAndSectionsListToUpdate.forEach(statuteSection -> {
+            statuteSection.setAuditdetails(auditDetails);
+            statuteSection.setStrSections(listToString(statuteSection.getSections()));
+            statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
+        });
     }
 
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
