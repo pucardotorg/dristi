@@ -48,6 +48,26 @@
   }
 }
 
+.case-number-input {
+  .case-label-field-pair {
+    .text-input {
+      width: calc(100% - 40px);
+      input {
+        border-right: none;
+      }
+    }
+    .icon-div {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      border: 1px #505a5f solid;
+      border-left: none;
+    }
+  }
+}
+
 .case-input-label {
   margin: 0px;
   font-family: Roboto;
