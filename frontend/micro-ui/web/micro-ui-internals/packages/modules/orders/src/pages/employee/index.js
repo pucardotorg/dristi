@@ -7,6 +7,7 @@ import OrdersCreate from "./OrdersCreate";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 // import MakeSubmission from "./MakeSubmission";
+import ReviewSummonsNoticeAndWarrant from "./ReviewSummonsNoticeAndWarrant";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path, stateCode, userType, tenants }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container order-submission">
+      <AppContainer className="ground-container">
         <React.Fragment>
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
@@ -36,7 +37,8 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/orders-create`} component={() => <OrdersCreate />} />
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
-        {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
+        <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} />
+        <PrivateRoute path={`${path}/Summons&Notice`} component={() => <ReviewSummonsNoticeAndWarrant />} />
       </AppContainer>
     </Switch>
   );
