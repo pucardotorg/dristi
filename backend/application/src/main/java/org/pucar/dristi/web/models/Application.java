@@ -26,113 +26,114 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Application   {
-        @JsonProperty("id")
+public class Application {
+	@JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+	@Valid
+	private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("tenantId")
+	@NotNull
 
-                private String tenantId = null;
+	private String tenantId = null;
 
-        @JsonProperty("caseId")
-        @NotNull
-        private String caseId = null;
+	@JsonProperty("caseId")
+	@NotNull
+	private String caseId = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("filingNumber")
 
-                private String filingNumber = null;
+	private String filingNumber = null;
 
-        @JsonProperty("cnrNumber")
+	@JsonProperty("cnrNumber")
 
-                private String cnrNumber = null;
+	private String cnrNumber = null;
 
-        @JsonProperty("referenceId")
+	@JsonProperty("referenceId")
 
-          @Valid
-                private UUID referenceId = null;
+	@Valid
+	private UUID referenceId = null;
 
-        @JsonProperty("createdDate")
-          @NotNull
+	@JsonProperty("createdDate")
+	@NotNull
 
-                private String createdDate = null;
+	private String createdDate = null;
 
-        @JsonProperty("createdBy")
+	@JsonProperty("createdBy")
 
-          @Valid
-                private UUID createdBy = null;
+	@Valid
+	private UUID createdBy = null;
 
-        @JsonProperty("onBehalfOf")
-          @Valid
-                private List<UUID> onBehalfOf = null;
+	@JsonProperty("onBehalfOf")
+	@Valid
+	private List<UUID> onBehalfOf = null;
 
-        @JsonProperty("applicationType")
-          @NotNull
-          @Valid
-                private String applicationType = null;
+	@JsonProperty("applicationType")
+	@NotNull
+	@Valid
+	private String applicationType = null;
 
-        @JsonProperty("applicationNumber")
+	@JsonProperty("applicationNumber")
 
-        @Size(min=24,max=48)         private String applicationNumber = null;
+	@Size(min = 24, max = 48)
+	private String applicationNumber = null;
 
-        @JsonProperty("issuedBy")
+	@JsonProperty("issuedBy")
 
-                private Object issuedBy = null;
+	private Object issuedBy = null;
 
-        @JsonProperty("status")
-          @NotNull
+	@JsonProperty("status")
+	@NotNull
 
-                private String status = null;
+	private String status = null;
 
-        @JsonProperty("comment")
+	@JsonProperty("comment")
 
-                private String comment = null;
+	private String comment = null;
 
-        @JsonProperty("isActive")
-          @NotNull
+	@JsonProperty("isActive")
+	@NotNull
 
-                private Boolean isActive = null;
+	private Boolean isActive = null;
 
-        @JsonProperty("statuteSection")
+	@JsonProperty("statuteSection")
 
-          @Valid
-                private StatuteSection statuteSection = null;
+	@Valid
+	private StatuteSection statuteSection = null;
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-        @JsonProperty("additionalDetails")
+	@JsonProperty("additionalDetails")
 
-                private Object additionalDetails = null;
+	private Object additionalDetails = null;
 
-        @JsonProperty("auditDetails")
+	@JsonProperty("auditDetails")
 
-          @Valid
-                private AuditDetails auditDetails = null;
+	@Valid
+	private AuditDetails auditDetails = null;
 
-        @JsonProperty("workflow")
+	@JsonProperty("workflow")
 
-          @Valid
-                private Workflow workflow = null;
+	@Valid
+	private Workflow workflow = null;
 
 
-        public Application addOnBehalfOfItem(UUID onBehalfOfItem) {
-            if (this.onBehalfOf == null) {
-            this.onBehalfOf = new ArrayList<>();
-            }
-        this.onBehalfOf.add(onBehalfOfItem);
-        return this;
-        }
+	public Application addOnBehalfOfItem(UUID onBehalfOfItem) {
+		if (this.onBehalfOf == null) {
+			this.onBehalfOf = new ArrayList<>();
+		}
+		this.onBehalfOf.add(onBehalfOfItem);
+		return this;
+	}
 
-        public Application addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
+	public Application addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
 }

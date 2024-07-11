@@ -1,18 +1,16 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CaseFileResponse
@@ -23,23 +21,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseFileResponse   {
-        @JsonProperty("requestInfo")
+public class CaseFileResponse {
+	@JsonProperty("requestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+	@Valid
+	private ResponseInfo responseInfo = null;
 
-        @JsonProperty("caseFiles")
-          @Valid
-                private List<CaseFile> caseFiles = null;
+	@JsonProperty("caseFiles")
+	@Valid
+	private List<CaseFile> caseFiles = null;
 
 
-        public CaseFileResponse addCaseFilesItem(CaseFile caseFilesItem) {
-            if (this.caseFiles == null) {
-            this.caseFiles = new ArrayList<>();
-            }
-        this.caseFiles.add(caseFilesItem);
-        return this;
-        }
+	public CaseFileResponse addCaseFilesItem(CaseFile caseFilesItem) {
+		if (this.caseFiles == null) {
+			this.caseFiles = new ArrayList<>();
+		}
+		this.caseFiles.add(caseFilesItem);
+		return this;
+	}
 
 }
