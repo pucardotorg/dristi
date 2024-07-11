@@ -37,7 +37,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
   const history = useHistory();
-  const showDownLoadCaseFIle = userRoles.includes("CITIZEN");
+  const isCitizen = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
@@ -82,6 +82,9 @@ const AdmittedCases = ({ isJudge = true }) => {
     setShowMenu(!showMenu);
     setShowOtherMenu(false);
   };
+  const applicationNumber = useMemo(() => {
+    return documentSubmission?.[0]?.applicationList?.applicationNumber;
+  }, [documentSubmission]);
 
   const configList = useMemo(() => {
     return TabSearchconfig?.TabSearchconfig.map((tabConfig) => {
@@ -334,7 +337,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             <div>{stage}</div>
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
-            {showDownLoadCaseFIle && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
+            {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
@@ -410,7 +413,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       {config.label !== "Overview" && config.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {!showDownLoadCaseFIle && config.label === "Orders" && (
+          {!isCitizen && config.label === "Orders" && (
             <div
               onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -441,7 +444,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
-      {show && (
+      {show && documentSubmission && (
         <EvidenceModal
           documentSubmission={documentSubmission}
           show={show}
