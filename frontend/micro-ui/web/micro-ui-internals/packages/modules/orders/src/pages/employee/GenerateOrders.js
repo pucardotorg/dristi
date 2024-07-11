@@ -56,15 +56,20 @@ const GenerateOrders = () => {
   const filingNumber = urlParams.get("filingNumber");
   const applicationNumber = urlParams.get("applicationNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [selectedOrder, setSelectedOrder] = useState(0);
+  const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [formdata, setFormdata] = useState({});
+  const [formdata, setFormdata] = useState(null);
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+
+  const setSelectedOrder = (orderIndex) => {
+    _setSelectedOrder(orderIndex);
+    setFormdata(null);
+  };
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -270,11 +275,13 @@ const GenerateOrders = () => {
   }, [complainants, orderType?.code, respondants]);
 
   const defaultValue = useMemo(() => {
-    if (currentOrder?.additionalDetails?.formdata) {
-      return structuredClone(currentOrder?.additionalDetails?.formdata);
-    }
-    if (currentOrder?.orderType && applicationNumber) {
-      return {
+    let returnValue = {};
+    if (formdata) {
+      returnValue = formdata;
+    } else if (currentOrder?.additionalDetails?.formdata) {
+      returnValue = structuredClone(currentOrder?.additionalDetails?.formdata);
+    } else if (currentOrder?.orderType && applicationNumber) {
+      returnValue = {
         orderType: {
           type: currentOrder?.orderType,
           isactive: true,
@@ -282,12 +289,19 @@ const GenerateOrders = () => {
           name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
         },
       };
+    } else {
+      returnValue = {};
     }
-    return {};
-  }, [currentOrder, applicationNumber]);
+    // merge returnValue with system filled;
+
+    return returnValue;
+  }, [currentOrder, applicationNumber, orderType.code]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
-    if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
+    if (formdata?.orderType?.code && formdata?.orderType?.code !== formData?.orderType?.code) {
+      debugger;
+      setFormdata({ orderType: formData.orderType });
+    } else if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
     }
     if (Object.keys(formState?.errors).length) {
@@ -404,7 +418,7 @@ const GenerateOrders = () => {
       oldOrderData: orderList[deleteOrderIndex],
       orderType: orderList[deleteOrderIndex].orderType,
     });
-    selectedOrder((prev) => {
+    setSelectedOrder((prev) => {
       return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
     setDeleteOrderIndex(null);
@@ -446,7 +460,7 @@ const GenerateOrders = () => {
         {orderList?.length > 0 && modifiedFormConfig && (
           <FormComposerV2
             className={"generate-orders"}
-            key={selectedOrder}
+            key={`${selectedOrder}=${orderType.code}`}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
             defaultValues={defaultValue}
