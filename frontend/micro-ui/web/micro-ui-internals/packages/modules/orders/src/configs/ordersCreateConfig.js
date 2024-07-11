@@ -107,6 +107,12 @@ export const configs = [
               isOptional: true,
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
           mdmsConfig: {
             moduleName: "Order",
             masterName: "", // TO DO: ADD CONFIG IN MDMS
@@ -318,6 +324,12 @@ export const configsOrderSection202CRPC = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -386,6 +398,12 @@ export const configsOrderSection202CRPC = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -543,6 +561,12 @@ export const configsOrderMandatorySubmissions = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -793,6 +817,12 @@ export const configsOrderSubmissionExtension = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -903,6 +933,12 @@ export const configsOrderTranferToADR = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1043,6 +1079,12 @@ export const configsScheduleHearingDate = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1087,6 +1129,12 @@ export const configsRejectRescheduleHeadingDate = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1175,7 +1223,7 @@ export const configsRescheduleHearingDate = [
       },
       {
         label: "NEW_HEARING_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "newHearingDate",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
@@ -1223,6 +1271,12 @@ export const configsRescheduleHearingDate = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1310,6 +1364,12 @@ export const configRejectSubmission = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1408,6 +1468,12 @@ export const configsVoluntarySubmissionStatus = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1489,7 +1555,16 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "transferSeekedTo",
         type: "text",
-        populators: { name: "transferSeekedTo" },
+        populators: {
+          name: "transferSeekedTo",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1509,6 +1584,12 @@ export const configsCaseTransfer = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1528,7 +1609,16 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "caseTransferredTo",
         type: "text",
-        populators: { name: "caseTransferredTo" },
+        populators: {
+          name: "caseTransferredTo",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1549,6 +1639,12 @@ export const configsCaseTransfer = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1707,6 +1803,12 @@ export const configsCaseSettlement = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1802,6 +1904,12 @@ export const configsIssueSummons = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -1876,7 +1984,16 @@ export const configsIssueOfWarrants = [
         isMandatory: true,
         key: "reasonForWarrant",
         type: "text",
-        populators: { name: "reasonForWarrant" },
+        populators: {
+          name: "reasonForWarrant",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
       {
         label: "HEARING_DATE",
@@ -1904,6 +2021,12 @@ export const configsIssueOfWarrants = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -2005,7 +2128,16 @@ export const configsOthers = [
         isMandatory: true,
         key: "orderTitle",
         type: "text",
-        populators: { name: "orderTitle", error: "MAX_15_WORDS_ARE_ALLOWED", validation: { pattern: /^(\b\w+\b\s*){0,15}$/i } },
+        populators: {
+          name: "orderTitle",
+          error: "MAX_15_WORDS_ARE_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "orderTitleValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -2025,6 +2157,12 @@ export const configsOthers = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -2128,7 +2266,16 @@ export const configsBail = [
         isMandatory: true,
         key: "otherConditions",
         type: "text",
-        populators: { name: "otherConditions" },
+        populators: { 
+          name: "otherConditions",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -2561,10 +2708,19 @@ export const configsJudgement = [
       },
       {
         label: "DESCRIPTION_OF_ACCUSED",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameofRespondant",
         type: "text",
-        populators: { name: "nameofRespondent" },
+        populators: { 
+          name: "nameofRespondent",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
       {
         label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
@@ -2577,49 +2733,49 @@ export const configsJudgement = [
         label: "DATE_OF_OCCURENCE",
         isMandatory: true,
         key: "dateChequeReturnMemo",
-        type: "text",
+        type: "date",
         populators: { name: "dateChequeReturnMemo" },
       },
       {
         label: "DATE_COMPLAINT",
         isMandatory: true,
         key: "dateFiling",
-        type: "text",
+        type: "date",
         populators: { name: "dateFiling" },
       },
       {
         label: "DATE_OF_APPREHENSION",
         isMandatory: true,
         key: "dateApprehension",
-        type: "text",
+        type: "date",
         populators: { name: "dateApprehension" },
       },
       {
         label: "DATE_OF_RELEASE_ON_BAIL",
         isMandatory: true,
         key: "dateofReleaseOnBail",
-        type: "text",
+        type: "date",
         populators: { name: "dateofReleaseOnBail" },
       },
       {
         label: "DATE_OF_COMMENCEMENT_TRIAL",
         isMandatory: true,
         key: "dateofCommencementTrial",
-        type: "text",
+        type: "date",
         populators: { name: "dateofCommencementTrial" },
       },
       {
         label: "DATE_OF_CLOSE_TRIAL",
         isMandatory: true,
         key: "dateofCloseTrial",
-        type: "text",
+        type: "date",
         populators: { name: "dateofCloseTrial" },
       },
       {
         label: "DATE_OF_SENTENCE",
         isMandatory: true,
         key: "dateofSentence",
-        type: "text",
+        type: "date",
         populators: { name: "dateofSentence" },
       },
       {
@@ -2720,6 +2876,12 @@ export const configsJudgement = [
               type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
