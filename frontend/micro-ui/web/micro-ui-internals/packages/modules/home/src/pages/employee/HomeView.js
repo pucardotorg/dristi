@@ -268,10 +268,24 @@ const HomeView = () => {
                           });
                           history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
                         } else {
-                          if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
-                            history.push(
-                              `/${window?.contextPath}/${userInfoType}/dristi/home/admitted-case?caseId=${row?.original?.id}&tab=Overview`
-                            );
+                          const statusArray = [
+                            "CASE_ADMITTED",
+                            "ADMISSION_HEARING_SCHEDULED",
+                            "PAYMENT_PENDING",
+                            "UNDER_SCRUTINY",
+                            "PENDING_ADMISSION",
+                          ];
+                          if (statusArray.includes(row?.original?.status)) {
+                            if (row?.original?.status === "CASE_ADMITTED" || row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
+                              history.push(
+                                `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
+                              );
+                            } else {
+                              history.push(
+                                `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaints`
+                              );
+                            }
+                          }
                         }
                       },
                     },

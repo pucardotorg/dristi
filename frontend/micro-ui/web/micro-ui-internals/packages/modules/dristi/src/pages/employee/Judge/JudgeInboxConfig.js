@@ -9,7 +9,7 @@ export const judgeInboxConfig = {
       criteria: [
         {
           defaultValues: true,
-          status: "CASE_ADMITTED",
+          status: "",
           filingNumber: "",
         },
       ],

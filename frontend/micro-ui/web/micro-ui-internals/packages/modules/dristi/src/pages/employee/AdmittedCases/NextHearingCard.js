@@ -50,6 +50,7 @@ const NextHearingCard = ({ caseData, width }) => {
   };
 
   return (
+    !isHearingsLoading &&
     hearingRes?.HearingList?.filter((hearing) => hearing.startTime > Date.now()).length !== 0 && (
       <Card
         style={{

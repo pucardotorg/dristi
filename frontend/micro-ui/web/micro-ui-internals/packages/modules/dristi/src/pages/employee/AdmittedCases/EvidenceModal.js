@@ -131,41 +131,72 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     },
   };
 
+  const onSuccess = async (result) => {
+    setShow(false);
+    const details = showToast({
+      isError: false,
+      message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+    });
+    counterUpdate();
+  };
+  const onError = async (result) => {
+    setShow(false);
+    const details = showToast({
+      isError: true,
+      message: documentSubmission[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+    });
+  };
+
+  const counterUpdate = () => {
+    setUpdateCounter((prevCount) => prevCount + 1);
+  };
+
   const handleMarkEvidence = async () => {
     if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
-      await evidenceUpdateMutation.mutate({
-        url: `/evidence/artifacts/v1/_update`,
-        params: {},
-        body: {
-          artifact: {
-            ...documentSubmission[0].artifactList,
-            isEvidence: !documentSubmission[0].artifactList.isEvidence,
-            workflow: {
-              ...documentSubmission[0].artifactList.workflow,
-              action: "SIGN DEPOSITION",
+      await evidenceUpdateMutation.mutate(
+        {
+          url: `/evidence/artifacts/v1/_update`,
+          params: {},
+          body: {
+            artifact: {
+              ...documentSubmission[0].artifactList,
+              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+              workflow: {
+                ...documentSubmission[0].artifactList.workflow,
+                action: "SIGN DEPOSITION",
+              },
             },
           },
-        },
-        config: {
-          enable: true,
-        },
-      });
-    } else {
-      await evidenceUpdateMutation.mutate({
-        url: `/evidence/artifacts/v1/_update`,
-        params: {},
-        body: {
-          artifact: {
-            ...documentSubmission[0].artifactList,
-            isEvidence: !documentSubmission[0].artifactList.isEvidence,
+          config: {
+            enable: true,
           },
         },
-        config: {
-          enable: true,
+        {
+          onSuccess,
+          onError,
+        }
+      );
+    } else {
+      await evidenceUpdateMutation.mutate(
+        {
+          url: `/evidence/artifacts/v1/_update`,
+          params: {},
+          body: {
+            artifact: {
+              ...documentSubmission[0].artifactList,
+              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+            },
+          },
+          config: {
+            enable: true,
+          },
         },
-      });
+        {
+          onSuccess,
+          onError,
+        }
+      );
     }
-    setUpdateCounter((prevCount) => prevCount + 1);
   };
 
   const handleAcceptApplication = async () => {
@@ -177,7 +208,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
         enable: true,
       },
     });
-    setUpdateCounter((prevCount) => prevCount + 1);
+    counterUpdate();
   };
 
   const handleRejectApplication = async () => {
@@ -189,7 +220,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
         enable: true,
       },
     });
-    setUpdateCounter((prevCount) => prevCount + 1);
+    counterUpdate();
   };
 
   const formatDate = (date) => {
@@ -200,19 +231,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
   };
 
   const handleEvidenceAction = async () => {
-    try {
-      await handleMarkEvidence();
-      if (modalType !== "Documents") {
-        setShowSuccessModal(true);
-      } else {
-        setShow(false);
-        const details = {
-          isError: false,
-          message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
-        };
-        showToast(details);
-      }
-    } catch (error) {}
+    await handleMarkEvidence();
   };
 
   const handleApplicationAction = async (generateOrder) => {
@@ -220,7 +239,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
       if (showConfirmationModal.type === "reject") {
         await handleRejectApplication();
       }
-      if (showConfirmationModal.type === "accept") {
+      if (showConfirmationModal.type === "accept" || showConfirmationModal.type === "documents-confirmation") {
         await handleAcceptApplication();
       }
       if (!generateOrder) {
@@ -261,6 +280,9 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
       }
     } catch (error) {}
   };
+
+  console.log(modalType === "Documents" && documentSubmission[0].artifactList.isEvidence);
+
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (
@@ -359,6 +381,25 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Submissions" && (
         <ConfirmSubmissionAction
+          t={t}
+          setShowConfirmationModal={setShowConfirmationModal}
+          type={showConfirmationModal.type}
+          setShow={setShow}
+          handleAction={handleApplicationAction}
+        />
+      )}
+      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
+        <ConfirmEvidenceAction
+          t={t}
+          setShowConfirmationModal={setShowConfirmationModal}
+          type={showConfirmationModal.type}
+          setShow={setShow}
+          handleAction={handleEvidenceAction}
+          isEvidence={documentSubmission[0].artifactList.isEvidence}
+        />
+      )}
+      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
+        <ConfirmEvidenceAction
           t={t}
           setShowConfirmationModal={setShowConfirmationModal}
           type={showConfirmationModal.type}

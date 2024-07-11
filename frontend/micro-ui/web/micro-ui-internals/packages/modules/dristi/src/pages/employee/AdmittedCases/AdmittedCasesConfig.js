@@ -383,14 +383,14 @@ export const TabSearchconfig = {
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
-            customDefaultPagination: {
-              searchForm: {},
-              filterForm: {},
-              tableForm: {
-                limit: 10,
-                offset: 0,
-              },
-            },
+            // customDefaultPagination: {
+            //   searchForm: {},
+            //   filterForm: {},
+            //   tableForm: {
+            //     limit: 10,
+            //     offset: 0,
+            //   },
+            // },
             columns: [
               {
                 label: "Submission Name",
@@ -465,14 +465,14 @@ export const TabSearchconfig = {
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
-            customDefaultPagination: {
-              searchForm: {},
-              filterForm: {},
-              tableForm: {
-                limit: 10,
-                offset: 0,
-              },
-            },
+            // customDefaultPagination: {
+            //   searchForm: {},
+            //   filterForm: {},
+            //   tableForm: {
+            //     limit: 10,
+            //     offset: 0,
+            //   },
+            // },
             columns: [
               {
                 label: "Document Type",
