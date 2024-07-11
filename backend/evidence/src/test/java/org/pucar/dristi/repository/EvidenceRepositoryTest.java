@@ -1,6 +1,5 @@
 package org.pucar.dristi.repository;
 
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,7 +78,6 @@ public class EvidenceRepositoryTest {
 
         // Mock jdbcTemplate behavior
         List<Artifact> expectedArtifacts = Collections.singletonList(new Artifact());
-        List<Document> expectedDocuments = Collections.singletonList(new Document());
         List<Comment> expectedComments = Collections.singletonList(new Comment());
 
         when(jdbcTemplate.query(eq(searchQuery), any(Object[].class), eq(evidenceRowMapper))).thenReturn(expectedArtifacts);

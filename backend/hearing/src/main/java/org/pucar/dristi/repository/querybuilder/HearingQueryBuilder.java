@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.Hearing;
+import org.pucar.dristi.web.models.HearingCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,8 +31,19 @@ public class HearingQueryBuilder {
         this.mapper = mapper;
     }
 
-    public String getHearingSearchQuery(List<Object> preparedStmtList, String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria) {
         try {
+            String cnrNumber = criteria.getCnrNumber();
+            String applicationNumber = criteria.getApplicationNumber();
+            String hearingId = criteria.getHearingId();
+            String filingNumber = criteria.getFilingNumber();
+            String tenantId = criteria.getTenantId();
+            LocalDate fromDate = criteria.getFromDate();
+            LocalDate toDate = criteria.getToDate();
+            Integer limit = criteria.getLimit();
+            Integer offset = criteria.getOffset();
+            String sortBy = criteria.getSortBy();
+
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
@@ -42,14 +54,13 @@ public class HearingQueryBuilder {
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
             addCriteriaSortBy(sortBy, query);
-            addCriteriaInteger(limit, query," LIMIT ?", preparedStmtList);
-            addCriteriaInteger(offset, query," OFFSET ?", preparedStmtList);
+            addCriteriaInteger(limit, query, " LIMIT ?", preparedStmtList);
+            addCriteriaInteger(offset, query, " OFFSET ?", preparedStmtList);
 
             return query.toString();
-        }
-         catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error while building hearing search query");
-            throw new CustomException(SEARCH_QUERY_EXCEPTION,"Error occurred while building the hearing search query: "+ e.getMessage());
+            throw new CustomException(SEARCH_QUERY_EXCEPTION, "Error occurred while building the hearing search query: " + e.getMessage());
         }
     }
 
@@ -97,10 +108,11 @@ public class HearingQueryBuilder {
                 preparedStmtList.addAll(ids);
             }
 
+
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -116,7 +128,7 @@ public class HearingQueryBuilder {
             preparedStmtList.add(additionalDetailsJson);
             preparedStmtList.add(attendeesJson);
         } catch (JsonProcessingException e) {
-            throw new CustomException(PARSING_ERROR,"Error parsing data to JSON : " + e.getMessage());
+            throw new CustomException(PARSING_ERROR, "Error parsing data to JSON : " + e.getMessage());
         }
 
         // Add other parameters to preparedStmtList
