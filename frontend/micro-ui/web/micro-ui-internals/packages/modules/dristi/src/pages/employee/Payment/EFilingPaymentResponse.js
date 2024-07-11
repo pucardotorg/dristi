@@ -4,6 +4,19 @@ import Button from "../../../components/Button";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { useTranslation } from "react-i18next";
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "PAYMENT_FAILED_NOTE_MSG",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 function EFilingPaymentResponse() {
   const history = useHistory();
@@ -20,7 +33,7 @@ function EFilingPaymentResponse() {
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
         {state?.state?.success && <CardLabel className={"e-filing-card-label"}>{t("CS_PAYMENT_SUCCESSFUL_SUB_TEXT")}</CardLabel>}
-        {state?.state?.receiptData && state?.state?.success && (
+        {state?.state?.receiptData && state?.state?.success ? (
           <CustomCopyTextDiv
             t={t}
             keyStyle={{ margin: "8px 0px" }}
@@ -29,6 +42,8 @@ function EFilingPaymentResponse() {
             tableDataClassName={"e-filing-table-data-style"}
             tableValueClassName={"e-filing-table-value-style"}
           />
+        ) : (
+          <SelectCustomNote t={t} config={customNoteConfig} />
         )}
         <div className="button-field" style={{ width: "100%", marginTop: 16 }}>
           <Button

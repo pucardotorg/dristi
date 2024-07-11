@@ -6,6 +6,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
+        number: 1,
         withoutLabel: true,
         textAreaMaxLength: "255",
         populators: {
@@ -15,6 +16,7 @@ export const reviewCaseFileFormConfig = [
               name: "complainantDetails",
               label: "CS_COMPLAINT_DETAILS",
               icon: "ComplainantDetailsIcon",
+              disableScrutiny: true,
               config: [
                 {
                   type: "title",
@@ -29,7 +31,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "image",
                   label: "CS_ID_PROOF",
-                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                  value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
                 },
                 {
                   type: "address",
@@ -79,23 +81,23 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "address",
                   label: "ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "INDIVIDUAL",
                   value: "addressDetails",
                 },
                 {
                   type: "text",
                   label: "company_Name",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
                   value: "companyName",
                 },
                 {
                   type: "address",
                   label: "COMPANY_ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "addressCompanyDetails",
+                  value: "addressDetails",
                 },
                 {
                   type: "image",
@@ -113,6 +115,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "caseSpecificDetails",
         label: "CS_CASE_SPECIFIC_DETAILS",
+        number: 2,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -125,7 +128,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "title",
                   label: "CS_CHEQUE_NO",
-                  value: "chequeNumber",
+                  value: ["chequeNumber"],
                 },
                 {
                   type: "amount",
@@ -150,7 +153,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_NAME_SIGNATORY",
-                  value: "signatory",
+                  value: "chequeSignatoryName",
                 },
                 {
                   type: "text",
@@ -199,6 +202,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_CHEQUE_RECIEVED_FOR",
                   value: "liabilityType.name",
+                },
+                {
+                  type: "amount",
+                  label: "CS_PARIAL_AMOUNT",
+                  value: "totalAmount",
                 },
                 {
                   type: "text",
@@ -289,6 +297,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "additionalDetails",
         label: "CS_ADDITIONAL_DETAILS",
+        number: 3,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -368,10 +377,11 @@ export const reviewCaseFileFormConfig = [
               name: "advocateDetails",
               label: "CS_ADVOCATE_DETAILS",
               icon: "AdvocateDetailsIcon",
+              disableScrutiny: true,
               config: [
                 {
                   type: "title",
-                  value: "advocateName",
+                  value: ["advocateName"],
                 },
                 {
                   type: "text",
@@ -380,7 +390,7 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "image",
-                  label: "CS_ID_PROOF",
+                  label: "CS_VAKALAT_NAMA",
                   value: ["vakalatnamaFileUpload.document"],
                 },
               ],

@@ -7,11 +7,13 @@ import {
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
+  configsIssueOfWarrants,
   configsIssueSummons,
   configsOrderMandatorySubmissions,
   configsOrderSection202CRPC,
   configsOrderSubmissionExtension,
   configsOrderTranferToADR,
+  configsOthers,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
   configsVoluntarySubmissionStatus,
@@ -27,11 +29,8 @@ import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow"
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
-const fieldStyle = { marginRight: 0 };
-
 const GenerateOrders = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -39,23 +38,9 @@ const GenerateOrders = () => {
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
-
-  const configKeys = {
-    SECTION_202_CRPC: configsOrderSection202CRPC,
-    DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
-    EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-    TRANSFER_TO_ADR: configsOrderTranferToADR,
-    NEXT_HEARING: configsScheduleHearingDate,
-    ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-    VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
-    CASE_TRANSFER: configsCaseTransfer,
-    CASE_SETTLEMENT: configsCaseSettlement,
-    SUMMONS: configsIssueSummons,
-    BAIL: configsBail,
-  };
+  const [prevOrder, setPrevOrder] = useState();
 
   const { data: caseData, isCaseDetailsLoading } = useSearchCaseService(
     {
@@ -74,10 +59,10 @@ const GenerateOrders = () => {
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
   const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
-    { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,
-    Boolean(filingNumber)
+    Boolean(filingNumber && cnrNumber)
   );
 
   const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
@@ -85,12 +70,28 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
   const modifiedFormConfig = useMemo(() => {
+    const configKeys = {
+      SECTION_202_CRPC: configsOrderSection202CRPC,
+      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+      APPROVE_REJECT_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+      CASE_TRANSFER: configsCaseTransfer,
+      SETTLEMENT: configsCaseSettlement,
+      SUMMONS: configsIssueSummons,
+      BAIL: configsBail,
+      WARRANT: configsIssueOfWarrants,
+      OTHERS: configsOthers,
+    };
+    console.debug(orderType.code);
     return !orderType?.code
       ? applicationTypeConfig
       : configKeys.hasOwnProperty(orderType?.code)
       ? [...applicationTypeConfig, ...configKeys[orderType?.code]]
       : applicationTypeConfig;
-  }, [orderType]);
+  }, [orderType?.code]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -127,13 +128,18 @@ const GenerateOrders = () => {
     ordersService
       .updateOrder(updatedreqBody, { tenantId })
       .then(() => {
+        setPrevOrder(currentOrder);
         refetchOrdersData();
         if (action === CaseWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
+        setShowsignatureModal(false);
+        setDeleteOrderIndex(null);
       })
       .catch(() => {
         refetchOrdersData();
+        setShowsignatureModal(false);
+        setDeleteOrderIndex(null);
       });
   };
 
@@ -194,7 +200,7 @@ const GenerateOrders = () => {
       orderType: orderList[deleteOrderIndex].orderType,
     });
     selectedOrder((prev) => {
-      prev == deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
+      return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
     setDeleteOrderIndex(null);
   };
@@ -202,16 +208,6 @@ const GenerateOrders = () => {
   const handleReviewOrder = () => {
     handleSaveDraft();
     setShowReviewModal(true);
-  };
-
-  const handleCloseSignaturePopup = () => {
-    setShowSignatureModal(false);
-    setShowReviewModal(true);
-  };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    history.back(); // go to view case screen when clicking on close button.
   };
 
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
@@ -280,7 +276,7 @@ const GenerateOrders = () => {
         />
       )}
       {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
-      {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} setShowSuccessModal={setShowSuccessModal} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
 };

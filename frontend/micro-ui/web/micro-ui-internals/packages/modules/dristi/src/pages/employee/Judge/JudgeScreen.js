@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import { judgeInboxConfig } from "./JudgeInboxConfig";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 const sectionsParentStyle = {
   height: "50%",
   display: "flex",
@@ -29,12 +30,15 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  if (props?.original?.status === "CASE_ADMITTED") {
-                    history.push(`${location.pathname}/orders/orders-home?caseId=${props.original.filingNumber}&filingNumber=${"kjfkdkfjslj"}`);
-                  } else {
+                  if (props?.original?.status === CaseWorkflowState.CASE_ADMITTED) {
+                    history.push(
+                      `${location.pathname}/orders/orders-home?filingNumber=${props.original.filingNumber}&caseId=${props.original.id}&cnrNumber=${props.original.cnrNumber}`
+                    );
+                  } else if (props?.original?.status === CaseWorkflowState.PENDING_ADMISSION) {
                     const searchParams = new URLSearchParams();
                     searchParams.set("caseId", props.original.id);
                     history.push(`${path}/admission?${searchParams.toString()}`);
+                  } else {
                   }
                 },
               },

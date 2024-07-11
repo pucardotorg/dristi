@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import { hearingService } from "../../../../hearings/src/hooks/services/index";
 import AddParty from "./AddParty";
-const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingData,setAddPartyModal,handleModal }) => {
+const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
   const [formError, setFormError] = useState("");
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
-  const onClickAddWitness = ()=>{
+  const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
-  }
+  };
 
   const onFormSubmit = async (data) => {
     const onlineAttendees = data.onlineAttendees || [];
@@ -17,7 +18,6 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
     const onlineIds = onlineAttendees.map((a) => a.value);
     const offlineIds = offlineAttendees.map((a) => a.value);
     const duplicateIds = onlineIds.filter((id) => offlineIds.includes(id));
-
 
     if (duplicateIds.length > 0) {
       setFormError("Attendees cannot be selected for both online and offline.");
@@ -34,8 +34,8 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
       return attendee;
     });
     try {
-      const details = { ...hearingData, attendees: updatedAttendees };
-      hearingService.updateHearing({ hearing: { ...details } }, "");
+      const hearing = { ...hearingData, attendees: updatedAttendees };
+      hearingService.updateHearing({ tenantId, hearing, hearingType: "", status: "" }, "");
     } catch (error) {
       console.error("Error updating hearing:", error);
     }
@@ -43,7 +43,7 @@ const AddAttendees = ({ attendees = [], setAttendees,  handleAttendees, hearingD
     handleAttendees();
     setFormError("");
   };
-  
+
   const formConfig = [
     {
       isMandatory: true,
