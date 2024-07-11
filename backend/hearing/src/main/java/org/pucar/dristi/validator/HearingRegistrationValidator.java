@@ -142,10 +142,11 @@ public class HearingRegistrationValidator {
      */
     public Hearing validateHearingExistence(RequestInfo requestInfo,Hearing hearing) {
         //checking if hearing exist or not
-        List<Hearing> existingHearings = repository.getHearings(hearing);
+        List<Hearing> existingHearings = repository.checkHearingsExist(hearing);
         log.info("Existing Hearing :: {}", existingHearings);
         if (existingHearings.isEmpty())
             throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
+
 
         hearing.getAttendees().forEach(attendee -> {
             if(ObjectUtils.isEmpty(attendee.getIndividualId())){

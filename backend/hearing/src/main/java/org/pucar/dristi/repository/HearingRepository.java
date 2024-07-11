@@ -8,11 +8,11 @@ import org.pucar.dristi.repository.querybuilder.HearingQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.HearingDocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.HearingRowMapper;
 import org.pucar.dristi.web.models.Hearing;
+import org.pucar.dristi.web.models.HearingCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +43,14 @@ public class HearingRepository {
     }
 
 
-    public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public List<Hearing> getHearings(HearingCriteria criteria) {
 
         try {
             List<Hearing> hearingList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String hearingQuery;
-            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
+            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
             log.info("Final hearing list query: {}", hearingQuery);
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
@@ -84,8 +84,9 @@ public class HearingRepository {
         }
     }
 
-    public List<Hearing> getHearings(Hearing hearing) {
-        return getHearings(null,null,hearing.getHearingId(),null,hearing.getTenantId(),null,null,1,0,null);
+    public List<Hearing> checkHearingsExist(Hearing hearing) {
+        HearingCriteria criteria = HearingCriteria.builder().hearingId(hearing.getHearingId()).tenantId(hearing.getTenantId()).limit(1).offset(0).build();
+        return getHearings(criteria);
     }
 
     public void updateTranscriptAdditionalAttendees(Hearing hearing) {

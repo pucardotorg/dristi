@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.util.*;
 
 @Component
 @Slf4j
