@@ -33,6 +33,7 @@ import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchC
 import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
+import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -90,6 +91,20 @@ const GenerateOrders = () => {
           filingNumber: filingNumber,
         },
       ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    filingNumber,
+    filingNumber
+  );
+
+  const { data: applicationData, isLoading: isApplicationDetailsLoading } = useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber: "F-C.1973.002-2024-000505",
+        tenantId: tenantId,
+      },
       tenantId,
     },
     {},
@@ -276,7 +291,7 @@ const GenerateOrders = () => {
 
   const defaultValue = useMemo(() => {
     let returnValue = {};
-    if (formdata) {
+    if (formdata && currentOrder?.additionalDetails?.formdata?.orderType?.code !== formdata?.orderType?.code) {
       returnValue = formdata;
     } else if (currentOrder?.additionalDetails?.formdata) {
       returnValue = structuredClone(currentOrder?.additionalDetails?.formdata);
@@ -299,7 +314,6 @@ const GenerateOrders = () => {
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (formdata?.orderType?.code && formdata?.orderType?.code !== formData?.orderType?.code) {
-      debugger;
       setFormdata({ orderType: formData.orderType });
     } else if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
