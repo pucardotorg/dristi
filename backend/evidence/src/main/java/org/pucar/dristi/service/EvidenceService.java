@@ -11,7 +11,6 @@ import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
 import org.pucar.dristi.web.models.EvidenceSearchCriteria;
-import org.pucar.dristi.web.models.EvidenceSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

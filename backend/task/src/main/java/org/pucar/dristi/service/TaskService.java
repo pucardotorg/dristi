@@ -64,7 +64,7 @@ public class TaskService {
             return body.getTask();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while creating task :: {}",e.toString());
+            log.error("Custom Exception occurred while creating task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating task :: {}", e.toString());
@@ -78,7 +78,7 @@ public class TaskService {
             // Fetch tasks from database according to the given search criteria
             return taskRepository.getApplications(request.getCriteria());
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching task :: {}",e.toString());
+            log.error("Custom Exception occurred while searching task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching task results :: {}", e.toString());
@@ -98,12 +98,16 @@ public class TaskService {
 
             workflowUpdate(body);
 
+            String status = body.getTask().getStatus();
+            if (ISSUESUMMON.equalsIgnoreCase(status))
+                producer.push(config.getTaskIssueSummonTopic(), body);
+
             producer.push(config.getTaskUpdateTopic(), body);
 
             return body.getTask();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating task :: {}",e.toString());
+            log.error("Custom Exception occurred while updating task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating task :: {}", e.toString());
@@ -116,7 +120,7 @@ public class TaskService {
         try {
             return taskRepository.checkTaskExists(taskExistsRequest.getTask());
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while exist task check :: {}",e.toString());
+            log.error("Custom Exception occurred while exist task check :: {}", e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to exist task :: {}", e.toString());
@@ -124,7 +128,7 @@ public class TaskService {
         }
     }
 
-    private void workflowUpdate(TaskRequest taskRequest){
+    private void workflowUpdate(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
         RequestInfo requestInfo = taskRequest.getRequestInfo();
 
@@ -134,18 +138,14 @@ public class TaskService {
         Workflow workflow = task.getWorkflow();
 
         String status = switch (taskType) {
-            case BAIL ->
-                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
-                            config.getTaskBailBusinessServiceName(), workflow, config.getTaskBailBusinessName());
-            case SUMMON ->
-                    workflowUtil.updateWorkflowStatus(requestInfo,tenantId, taskNumber,
-                            config.getTaskSummonBusinessServiceName(), workflow, config.getTaskSummonBusinessName());
-            case WARRANT ->
-                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
-                            config.getTaskWarrantBusinessServiceName(), workflow, config.getTaskWarrantBusinessName());
-            default ->
-                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
-                            config.getTaskBusinessServiceName(), workflow, config.getTaskBusinessName());
+            case BAIL -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskBailBusinessServiceName(), workflow, config.getTaskBailBusinessName());
+            case SUMMON -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskSummonBusinessServiceName(), workflow, config.getTaskSummonBusinessName());
+            case WARRANT -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskWarrantBusinessServiceName(), workflow, config.getTaskWarrantBusinessName());
+            default -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskBusinessServiceName(), workflow, config.getTaskBusinessName());
         };
 
         task.setStatus(status);

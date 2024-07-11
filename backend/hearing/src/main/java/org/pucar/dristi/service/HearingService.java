@@ -75,18 +75,7 @@ public class HearingService {
         try {
             HearingCriteria criteria = request.getCriteria();
             validateCriteria(criteria);
-            return hearingRepository.getHearings(
-                    criteria.getCnrNumber(),
-                    criteria.getApplicationNumber(),
-                    criteria.getHearingId(),
-                    criteria.getFilingNumber(),
-                    criteria.getTenantId(),
-                    criteria.getFromDate(),
-                    criteria.getToDate(),
-                    criteria.getLimit(),
-                    criteria.getOffset(),
-                    criteria.getSortBy()
-            );
+            return hearingRepository.getHearings(criteria);
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
@@ -143,7 +132,9 @@ public class HearingService {
     public HearingExists isHearingExist(HearingExistsRequest body) {
         try {
             HearingExists order = body.getOrder();
-            List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(), order.getApplicationNumber(), order.getHearingId(), order.getFilingNumber(), body.getRequestInfo().getUserInfo().getTenantId(), null, null, 1, 0, null);
+            HearingCriteria criteria = HearingCriteria.builder().cnrNumber(order.getCnrNumber())
+                    .filingNumber( order.getFilingNumber()).applicationNumber(order.getApplicationNumber()).hearingId(order.getHearingId()).tenantId(body.getRequestInfo().getUserInfo().getTenantId()).limit(1).offset(0).build();
+            List<Hearing> hearingList = hearingRepository.getHearings(criteria);
             order.setExists(!hearingList.isEmpty());
             return order;
         } catch (CustomException e) {
