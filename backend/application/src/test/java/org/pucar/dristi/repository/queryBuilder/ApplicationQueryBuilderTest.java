@@ -43,7 +43,7 @@ class ApplicationQueryBuilderTest {
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ? ORDER BY app.createdtime DESC ";
+                " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ?";
 
         String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
@@ -67,14 +67,24 @@ class ApplicationQueryBuilderTest {
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app ORDER BY app.createdtime DESC ";
+                " FROM dristi_application app";
 
         String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(0, preparedStmtList.size());
     }
+    @Test
+    public void testAddOrderByQuery_WithSorting() {
+        String query = "SELECT * FROM table_name";
+        Pagination pagination = new Pagination(); // Replace with actual values
+        String expectedOrderByClause = " ORDER BY app.createdtime DESC ";
+        String expectedResult = query + expectedOrderByClause;
 
+        String result = applicationQueryBuilder.addOrderByQuery(query, pagination);
+
+        assertEquals(expectedResult, result);
+    }
     @Test
     void testGetApplicationSearchQueryWithApplicationNumber() {
         // Prepare inputs

@@ -1,7 +1,6 @@
 package org.pucar.dristi.validators;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -11,10 +10,8 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -88,7 +85,7 @@ public class EvidenceValidator {
         EvidenceSearchCriteria evidenceSearchCriteria = createEvidenceSearchCriteria(evidenceRequest);
 
         // Get existing applications using the repository method with EvidenceSearchCriteria
-        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria);
+        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria,null);
 
         log.info("Existing application :: {}", existingApplications.size());
 

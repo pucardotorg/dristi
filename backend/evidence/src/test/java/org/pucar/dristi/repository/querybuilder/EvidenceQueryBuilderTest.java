@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.web.models.Pagination;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? " +
                 "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
                 "AND art.sourceName = ? " +
-                "AND art.artifactNumber = ? ORDER BY art.createdTime DESC ";
+                "AND art.artifactNumber = ?";
         List<Object> preparedStmtList=new ArrayList<>();
 
         // Calling the method under test
@@ -72,7 +73,7 @@ public class EvidenceQueryBuilderTest {
                 "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art";
         List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
         String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application, hearing, order, sourceId, sourceName,artifactNumber);
@@ -108,7 +109,15 @@ public class EvidenceQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+    @Test
+    public void testGetTotalCountQuery() {
+        String baseQuery = "SELECT * FROM table_name";
+        String expectedResult = "SELECT COUNT(*) FROM (SELECT * FROM table_name) total_result";
 
+        String result = queryBuilder.getTotalCountQuery(baseQuery);
+
+        assertEquals(expectedResult, result);
+    }
     @Test
     void testGetDocumentSearchQuery() {
         List<String> ids = List.of("doc1", "doc2", "doc3");
@@ -133,6 +142,29 @@ public class EvidenceQueryBuilderTest {
         String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
         assertEquals(expectedQuery, query);
         assertTrue(preparedStmtList.isEmpty());
+    }
+
+    @Test
+    public void testAddOrderByQuery_DefaultOrder() {
+        String query = "SELECT * FROM table_name";
+        Pagination pagination = null;
+        String expectedResult = query + " ORDER BY art.createdtime DESC ";
+
+        String result = queryBuilder.addOrderByQuery(query, pagination);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testAddOrderByQuery_WithSorting() {
+        String query = "SELECT * FROM table_name";
+        Pagination pagination = new Pagination(); // Replace with actual values
+        String expectedOrderByClause = " ORDER BY art.createdtime DESC ";
+        String expectedResult = query + expectedOrderByClause;
+
+        String result = queryBuilder.addOrderByQuery(query, pagination);
+
+        assertEquals(expectedResult, result);
     }
 
     @Test

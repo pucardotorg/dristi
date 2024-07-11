@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackages = { "org.pucar.dristi", "org.pucar.dristi.web.controllers", "org.pucar.dristi.config" })
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
 	}
 

@@ -55,7 +55,7 @@ public class ApplicationRepository {
                     applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(),
                     applicationSearchRequest.getCriteria().getApplicationNumber(), preparedStmtList);
             log.info("Final application search query: {}", applicationQuery);
-
+            applicationQuery = queryBuilder.addOrderByQuery(applicationQuery, applicationSearchRequest.getPagination());
             if(applicationSearchRequest.getPagination() !=  null) {
                 Integer totalRecords = getTotalCountApplication(applicationQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);

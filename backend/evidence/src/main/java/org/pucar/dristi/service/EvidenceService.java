@@ -8,10 +8,7 @@ import org.pucar.dristi.enrichment.EvidenceEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.validators.EvidenceValidator;
-import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.EvidenceRequest;
-import org.pucar.dristi.web.models.EvidenceSearchCriteria;
-import org.pucar.dristi.web.models.EvidenceSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -70,10 +67,10 @@ public class EvidenceService {
             throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.toString());
         }
     }
-    public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
+    public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
+            List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria,pagination);
 
             // If no applications are found matching the given criteria, return an empty list
             if(CollectionUtils.isEmpty(artifacts))
