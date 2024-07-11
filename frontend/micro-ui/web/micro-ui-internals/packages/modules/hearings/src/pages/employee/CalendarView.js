@@ -102,9 +102,14 @@ const MonthlyCalendar = () => {
 
   const handleEventClick = (arg) => {
     setCurrentEvent(arg.event);
+    const fromDate = new Date(arg.event.extendedProps.date);
+    const toDate = new Date(fromDate);
+    toDate.setDate(fromDate.getDate() + 1);
+
     updateHearingData({
-      hearingDate: arg.event.extendedProps.date.toISOString().split("T")[0],
-      hearingSlot: arg.event.extendedProps.slot,
+      fromDate: fromDate.toISOString().split("T")[0],
+      toDate: toDate.toISOString().split("T")[0],
+      slot: arg.event.extendedProps.slot,
     });
     setShowModal(true);
   };

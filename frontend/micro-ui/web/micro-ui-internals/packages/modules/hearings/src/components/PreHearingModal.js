@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { DataContext } from "./DataContext";
 import { preHearingConfig } from "../configs/PreHearingConfig";
 
-function PreHearingModal({ onCancel, hearings }) {
+function PreHearingModal({ onCancel }) {
   const { t } = useTranslation();
   const { hearingData } = useContext(DataContext);
   const [config, setConfig] = useState(preHearingConfig);
@@ -26,11 +26,12 @@ function PreHearingModal({ onCancel, hearings }) {
     const configCopy = structuredClone(preHearingConfig);
     configCopy.apiDetails.requestParam = {
       ...configCopy.apiDetails.requestParam,
-      fromDate: hearingData.hearingDate,
-      hearingSlot: hearingData.hearingSlot,
+      fromDate: hearingData.fromDate,
+      toDate: hearingData.toDate,
+      slot: hearingData.slot,
     };
     setConfig(configCopy);
-  }, [preHearingConfig, hearingData?.hearingDate, hearingData?.hearingSlot]);
+  }, [preHearingConfig, hearingData?.fromDate, , hearingData.toDate, hearingData?.slot]);
 
   const popUpStyle = {
     width: "70%",
@@ -56,14 +57,14 @@ function PreHearingModal({ onCancel, hearings }) {
         display: "none",
       }}
     >
-      <div style={{ marginTop: "2rem" }}>
+      <div style={{ minHeight: "35rem" }}>
         <InboxSearchComposer configs={config} />
       </div>
       <div
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
       >
         <div>
-          <strong>24 May, 2024</strong>, 10:00 - 12:00 pm
+          <strong>{hearingData.fromDate}</strong>, {hearingData.slot}
         </div>
         <Button
           className="border-none dristi-font-bold"

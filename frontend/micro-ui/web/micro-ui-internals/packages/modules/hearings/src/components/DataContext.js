@@ -4,8 +4,9 @@ const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
   const [hearingData, setHearingData] = useState({
-    hearingDate: "",
-    hearingSlot: "",
+    fromDate: "",
+    toDate: "",
+    slot: "",
   });
 
   const updateHearingData = (data) => {
