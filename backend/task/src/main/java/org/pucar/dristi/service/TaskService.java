@@ -99,7 +99,7 @@ public class TaskService {
             workflowUpdate(body);
 
             String status = body.getTask().getStatus();
-            if (status!=null && status.equalsIgnoreCase(ISSUESUMMON))
+            if (ISSUESUMMON.equalsIgnoreCase(status))
                 producer.push(config.getTaskIssueSummonTopic(), body);
 
             producer.push(config.getTaskUpdateTopic(), body);
