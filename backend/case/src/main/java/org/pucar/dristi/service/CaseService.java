@@ -14,11 +14,6 @@ import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +38,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -65,7 +64,7 @@ public class CaseService {
 
 
     @Autowired
-    public CaseService(CaseRegistrationValidator validator,CaseRegistrationEnrichment enrichmentUtil, CaseRepository caseRepository, WorkflowService workflowService, Configuration config, Producer producer, BillingUtil billingUtil) {
+    public CaseService(CaseRegistrationValidator validator, CaseRegistrationEnrichment enrichmentUtil, CaseRepository caseRepository, WorkflowService workflowService, Configuration config, Producer producer, BillingUtil billingUtil) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.caseRepository = caseRepository;
@@ -90,7 +89,7 @@ public class CaseService {
 
             producer.push(config.getCaseCreateTopic(), body);
             return body.getCases();
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating case :: {}", e.toString());
@@ -105,13 +104,13 @@ public class CaseService {
             caseRepository.getApplications(caseSearchRequests.getCriteria(), caseSearchRequests.getRequestInfo());
 
             // If no applications are found matching the given criteria, return an empty list
-            for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()){
+            for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()) {
                 searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
             }
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results :: {}",e.toString());
+            log.error("Error while fetching to search results :: {}", e.toString());
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
         }
     }
@@ -128,7 +127,7 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(caseRequest);
 
-            if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())){
+            if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())) {
                 billingUtil.createDemand(caseRequest);
             }
             if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
@@ -139,10 +138,10 @@ public class CaseService {
 
             return caseRequest.getCases();
 
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating case :: {}",e.toString());
+            log.error("Error occurred while updating case :: {}", e.toString());
             throw new CustomException(UPDATE_CASE_ERR, "Exception occurred while updating case: " + e.getMessage());
         }
 
@@ -152,38 +151,38 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             return caseRepository.checkCaseExists(caseExistsRequest.getCriteria());
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist case :: {}",e.toString());
+            log.error("Error while fetching to exist case :: {}", e.toString());
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }
     }
 
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-            if (!validator.canLitigantJoinCase(joinCaseRequest))
-                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+        if (!validator.canLitigantJoinCase(joinCaseRequest))
+            throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
-            log.info("enriching litigants");
-            enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
+        log.info("enriching litigants");
+        enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
-            producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+        producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
 
-            if(joinCaseRequest.getAdditionalDetails() !=null)
-                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+        if (joinCaseRequest.getAdditionalDetails() != null)
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-            if (!validator.canRepresentativeJoinCase(joinCaseRequest))
-                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+        if (!validator.canRepresentativeJoinCase(joinCaseRequest))
+            throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
-            log.info("enriching representatives");
-            enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
+        log.info("enriching representatives");
+        enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
-            producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+        producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
 
-            if(joinCaseRequest.getAdditionalDetails() !=null)
-                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+        if (joinCaseRequest.getAdditionalDetails() != null)
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
@@ -211,29 +210,32 @@ public class CaseService {
 
             return JoinCaseResponse.builder().joinCaseRequest(joinCaseRequest).build();
 
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Invalid request for joining a case :: {}",e.toString());
+            log.error("Invalid request for joining a case :: {}", e.toString());
             throw new CustomException(JOIN_CASE_ERR, JOIN_CASE_INVALID_REQUEST);
         }
     }
 
     private void verifyRepresentativesAndJoinCase(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
-        if(joinCaseRequest.getRepresentative() != null) {
+        if (joinCaseRequest.getRepresentative() != null) {
             //for representative to join a case
             // Stream over the representatives to create a list of advocateIds
-            List<String> advocateIds = courtCase.getRepresentatives().stream()
+            List<String> advocateIds = Optional.ofNullable(courtCase.getRepresentatives())
+                    .orElse(Collections.emptyList())
+                    .stream()
                     .map(AdvocateMapping::getAdvocateId)
                     .toList();
-            if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
-                    advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
+
+            if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null &&
+                    advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
 
                 Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
                         .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
                         .findFirst();
 
-                if(existingRepresentativeOptional.isEmpty())
+                if (existingRepresentativeOptional.isEmpty())
                     throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
 
                 AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
@@ -241,27 +243,27 @@ public class CaseService {
                         .map(Party::getIndividualId)
                         .toList();
 
-                if(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
-                    individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())){
+                if (joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
+                        individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())) {
                     throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
-                } else{
+                } else {
                     joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
                 }
-
             }
+
             caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
             verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
         }
     }
 
     private void verifyLitigantsAndJoinCase(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
-        if(joinCaseRequest.getLitigant() != null) { //for litigant to join a case
+        if (joinCaseRequest.getLitigant() != null) { //for litigant to join a case
             // Stream over the litigants to create a list of individualIds
             List<String> individualIds = courtCase.getLitigants().stream()
                     .map(Party::getIndividualId)
                     .toList();
-            if(joinCaseRequest.getLitigant().getIndividualId() != null &&
-                    individualIds.contains(joinCaseRequest.getLitigant().getIndividualId())){
+            if (joinCaseRequest.getLitigant().getIndividualId() != null &&
+                    individualIds.contains(joinCaseRequest.getLitigant().getIndividualId())) {
                 throw new CustomException(VALIDATION_ERR, "Litigant is already a part of the given case");
             }
             caseObj.setLitigants(Collections.singletonList(joinCaseRequest.getLitigant()));
@@ -285,7 +287,7 @@ public class CaseService {
         }
         String caseAccessCode = courtCase.getAccessCode();
 
-        if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
+        if (!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
             throw new CustomException(VALIDATION_ERR, "Invalid access code");
         }
         return courtCase;
