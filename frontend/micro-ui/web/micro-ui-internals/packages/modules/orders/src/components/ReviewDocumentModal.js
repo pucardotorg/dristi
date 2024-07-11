@@ -55,7 +55,7 @@ const ReviewDocumentModal = ({ handleClose }) => {
         actionSaveLabel={t("E-Sign")}
       >
         <div style={{ height: "620px" }}>
-          <div style={{ width: "696px", height: "194px", marginTop: "20px", backgroundColor: "#F7F5F3", padding: "16px 24px" }}>
+          <div style={{ width: "100%", height: "194px", marginTop: "20px", backgroundColor: "#F7F5F3", padding: "16px 24px" }}>
             <div style={{ display: "flex", width: "520px", justifyContent: "space-between", marginBottom: "15px", color: "#3D3C3C" }}>
               <div style={{ fontWeight: 700, fontSize: "16px", color: "#0A0A0A" }}>Issued to</div>
               <div>Vikram Singh</div>
@@ -81,7 +81,7 @@ const ReviewDocumentModal = ({ handleClose }) => {
             </div>
           </div>
 
-          <div style={{ width: "696px", height: "400px", border: "1px solid #BBBBBD", marginTop: "5px" }}>
+          <div style={{ width: "100%", height: "400px", border: "1px solid #BBBBBD", marginTop: "1rem" }}>
             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
               Document preview Spaces
             </div>
