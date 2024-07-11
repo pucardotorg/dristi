@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.Attendee;
 import org.pucar.dristi.web.models.Hearing;
+import org.pucar.dristi.web.models.HearingCriteria;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,19 +39,24 @@ class HearingQueryBuilderTest {
     void getHearingSearchQuery_NoCriteria() {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
-        String cnrNumber = null;
-        String applicationNumber = null;
-        String hearingId = null;
-        String filingNumber = null;
-        String tenantId = null;
-        LocalDate fromDate = null;
-        LocalDate toDate = null;
         Integer limit = 10;
         Integer offset = 0;
-        String sortBy = null;
+
+        HearingCriteria criteria = HearingCriteria.builder()
+                .cnrNumber(null)
+                .applicationNumber(null)
+                .hearingId(null)
+                .filingNumber(null)
+                .tenantId(null)
+                .fromDate(null)
+                .toDate(null)
+                .limit(limit)
+                .offset(offset)
+                .sortBy(null)
+                .build();
 
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
 
         // Assert
         assertNotNull(query);
@@ -78,8 +84,22 @@ class HearingQueryBuilderTest {
         Integer offset = 0;
         String sortBy = "startTime";
 
+        HearingCriteria criteria = HearingCriteria.builder()
+                .cnrNumber(cnrNumber)
+                .applicationNumber(applicationNumber)
+                .hearingId(hearingId)
+                .filingNumber(filingNumber)
+                .tenantId(tenantId)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .limit(limit)
+                .offset(offset)
+                .sortBy(sortBy)
+                .build();
+
+
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
 
         // Assert
         assertNotNull(query);
@@ -109,8 +129,21 @@ class HearingQueryBuilderTest {
         Integer offset = 0;
         String sortBy = "startTime";
 
+        HearingCriteria criteria = HearingCriteria.builder()
+                .cnrNumber(cnrNumber)
+                .applicationNumber(applicationNumber)
+                .hearingId(hearingId)
+                .filingNumber(filingNumber)
+                .tenantId(tenantId)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .limit(limit)
+                .offset(offset)
+                .sortBy(sortBy)
+                .build();
+
         // Act & Assert
-        assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy));
+        assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria));
     }
 
     @Test
