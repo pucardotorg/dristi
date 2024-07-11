@@ -1,18 +1,15 @@
 const defaultSearchValues = {
-  id: "",
-  individualId: "",
-  individualName: "",
+  taskType: "",
+  status: "",
+  taskNumber: "",
 };
-
-export const statusOptions = ["Sign Pending", "Signed", "Sent", "Delivered", "Not Delivered"];
 
 export const SummonsTabsConfig = {
   tenantId: "pg",
   moduleName: "commonCampaignUiConfig",
-  showTab: true, // setting true will enable tab screen
+  showTab: true,
   SummonsTabsConfig: [
     {
-      // customHookName: "orders.useSummonsNoticeWarrant",
       label: "Pending",
       type: "search",
       apiDetails: {
@@ -21,18 +18,14 @@ export const SummonsTabsConfig = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
         requestBody: {
-          apiOperation: "SEARCH",
-          Individual: {
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-          },
           criteria: {},
         },
         masterName: "commonUiConfig",
         moduleName: "SearchIndividualConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
-        filterFormJsonPath: "requestBody.Individual",
-        searchFormJsonPath: "requestBody.Individual",
+        filterFormJsonPath: "requestBody.criteria",
+        searchFormJsonPath: "requestBody.criteria",
       },
       sections: {
         search: {
@@ -41,80 +34,44 @@ export const SummonsTabsConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
-              {
-                type: "component",
-                component: "CustomSortComponent",
-                isMandatory: false,
-                disable: false,
-                name: "Issue Date",
-                key: "sortCaseListByDate",
-                sortBy: "createdtime",
-                // ascText: "First",
-                // descText: "Last",
-                showAdditionalText: true,
-                showIcon: true,
-                icon: "UpDownArrowIcon",
-                populators: {},
-              },
               {
                 label: "Order Type",
                 isMandatory: false,
-                key: "orderType",
+                key: "taskType",
                 type: "dropdown",
+                disable: false,
                 populators: {
-                  tyles: { width: "150px" },
-                  name: "orderType",
-                  optionsKey: "orderType",
-                  // showIcon: true,
-                  // isSearchable: true,
-                  options: [
-                    {
-                      orderType: "Summon",
-                    },
-                    {
-                      orderType: "Warrant",
-                    },
-                  ],
+                  name: "taskType",
+                  options: ["Summon", "Warrant"],
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
                 },
               },
               {
                 label: "E-Sign Status",
                 isMandatory: false,
-                key: "eSignStatus",
+                key: "status",
                 type: "dropdown",
                 disable: false,
                 populators: {
-                  name: "eSignStatus",
-                  optionsKey: "eSignStatus",
-                  // showIcon: true,
-                  // isSearchable: true,
-                  options: [
-                    {
-                      eSignStatus: "Signed",
-                    },
-                    {
-                      eSignStatus: "Sign Pending",
-                    },
-                  ],
-                  // styles: {
-                  //   maxWidth: "250px",
-                  //   minWidth: "200px",
-                  // },
-                  // optionsCustomStyle: {
-                  //   overflowX: "hidden",
-                  // },
+                  name: "status",
+                  options: ["Signed", "Sign Pending"],
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
                 },
               },
               {
                 label: "Seach E-process or Case ID",
                 isMandatory: false,
                 type: "text",
-                key: "eprocess",
+                key: "taskNumber",
                 disable: false,
                 populators: {
-                  name: "id",
+                  name: "taskNumber",
                 },
               },
             ],
@@ -161,24 +118,20 @@ export const SummonsTabsConfig = {
     {
       label: "Sent",
       type: "search",
-      customHookName: "",
       apiDetails: {
-        serviceName: "/individual/v1/_search",
+        serviceName: "/task/v1/search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
         requestBody: {
-          apiOperation: "SEARCH",
-          Individual: {
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-          },
+          criteria: {},
         },
         masterName: "commonUiConfig",
         moduleName: "SearchIndividualConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
-        filterFormJsonPath: "requestBody.Individual",
-        searchFormJsonPath: "requestBody.Individual",
+        filterFormJsonPath: "requestBody.criteria",
+        searchFormJsonPath: "requestBody.criteria",
       },
       sections: {
         search: {
@@ -187,37 +140,44 @@ export const SummonsTabsConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "E Process Id",
+                label: "Order Type",
                 isMandatory: false,
-                type: "text",
-                key: "eprocess",
+                key: "taskType",
+                type: "dropdown",
                 disable: false,
                 populators: {
-                  name: "id",
+                  name: "taskType",
+                  options: ["Summon", "Warrant"],
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
                 },
               },
               {
-                label: "Case Name",
+                label: "E-Sign Status",
                 isMandatory: false,
-                key: "individualName",
-                type: "text",
+                key: "status",
+                type: "dropdown",
+                disable: false,
                 populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
+                  name: "status",
+                  options: ["Signed", "Sign Pending"],
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
                 },
               },
               {
-                label: "Case ID",
+                label: "Seach E-process or Case ID",
                 isMandatory: false,
                 type: "text",
-                key: "IndividualId",
+                key: "taskNumber",
                 disable: false,
                 populators: {
-                  name: "individualId",
+                  name: "taskNumber",
                 },
               },
             ],
@@ -231,35 +191,31 @@ export const SummonsTabsConfig = {
             columns: [
               {
                 label: "E-process ID",
-                jsonPath: "id",
+                jsonPath: "taskNumber",
               },
               {
                 label: "Status",
                 jsonPath: "status",
               },
               {
-                label: "Case Name",
-                jsonPath: "name.givenName",
-              },
-              {
-                label: "Case ID",
-                jsonPath: "individualId",
+                label: "Case Name & ID",
+                jsonPath: "filingNumber",
               },
               {
                 label: "Order Type",
-                jsonPath: "address.type",
+                jsonPath: "taskType",
               },
               {
                 label: "Delivery Channel",
-                jsonPath: "vcLink",
+                jsonPath: "deliveryChannel",
               },
               {
                 label: "Issued",
-                jsonPath: "isActive",
+                jsonPath: "issued",
               },
             ],
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "list",
           },
           show: true,
         },

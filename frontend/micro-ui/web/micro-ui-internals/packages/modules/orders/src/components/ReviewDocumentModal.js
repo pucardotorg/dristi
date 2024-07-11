@@ -28,7 +28,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const ReviewDocumentModal = ({ handleOpen }) => {
+const ReviewDocumentModal = ({ handleClose }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -51,7 +51,7 @@ const ReviewDocumentModal = ({ handleOpen }) => {
         }}
         headerBarMainStyle={{ padding: "0px 10px 0px 10px" }}
         headerBarMain={<Heading label={"Review Document: Summons Document"} />}
-        headerBarEnd={<CloseBtn onClick={handleOpen} />}
+        headerBarEnd={<CloseBtn onClick={handleClose} />}
         actionSaveLabel={t("E-Sign")}
       >
         <div style={{ height: "620px" }}>

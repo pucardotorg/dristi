@@ -28,7 +28,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const PrintAndSendDocumentModal = ({ handleOpen }) => {
+const PrintAndSendDocumentModal = ({ handleClose }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -45,7 +45,7 @@ const PrintAndSendDocumentModal = ({ handleOpen }) => {
         }}
         headerBarMainStyle={{ padding: "0px 10px 0px 10px" }}
         headerBarMain={<Heading label={t("Print & Send Documents")} />}
-        headerBarEnd={<CloseBtn onClick={handleOpen} />}
+        headerBarEnd={<CloseBtn onClick={handleClose} />}
         actionSaveLabel={t("Mark As Sent")}
       >
         <div style={{ height: "310px" }}>

@@ -12,7 +12,8 @@ const defaultSearchValues = {
 
 const ReviewSummonsNoticeAndWarrant = () => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [openSigned, setOpenSigned] = useState(false);
+  const [openUnsigned, setOpenUnsigned] = useState(false);
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues);
   const [config, setConfig] = useState(SummonsTabsConfig?.SummonsTabsConfig?.[0]);
 
@@ -21,7 +22,14 @@ const ReviewSummonsNoticeAndWarrant = () => {
   );
 
   const handleOpen = (props) => {
-    setOpen(!open);
+    //change status to signed or unsigned
+    if (props.values.status === "PAYMENT_PENDING") setOpenSigned(true);
+    else setOpenUnsigned(true);
+  };
+
+  const handleClose = () => {
+    setOpenSigned(false);
+    setOpenUnsigned(false);
   };
   useEffect(() => {
     // Set default values when component mounts
@@ -56,8 +64,8 @@ const ReviewSummonsNoticeAndWarrant = () => {
               },
             }}
           ></InboxSearchComposer>
-          {/* {open && <PrintAndSendDocumentModal handleOpen={handleOpen} />} */}
-          {open && <ReviewDocumentModal handleOpen={handleOpen} />}
+          {openUnsigned && <PrintAndSendDocumentModal handleClose={handleClose} />}
+          {openSigned && <ReviewDocumentModal handleClose={handleClose} />}
         </div>
       </div>
     </div>
