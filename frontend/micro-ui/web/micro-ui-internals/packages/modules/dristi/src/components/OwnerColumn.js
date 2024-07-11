@@ -30,7 +30,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         documentUid: doc.documentUid,
         additionalDetails: doc.additionalDetails,
       },
-      comments: [],
+      comments: rowData.comment ? JSON.parse(rowData.comment) : [],
       applicationList: rowData,
     };
   });

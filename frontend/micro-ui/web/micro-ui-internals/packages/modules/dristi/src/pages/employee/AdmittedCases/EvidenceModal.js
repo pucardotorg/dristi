@@ -12,14 +12,19 @@ import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 
-const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComment, userRoles, modalType, setUpdateCounter, showToast }) => {
+const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
+  const [comments, setComments] = useState(documentSubmission[0].comments);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
+  const [currentComment, setCurrentComment] = useState("");
   const history = useHistory();
   const filingNumber = caseData.filingNumber;
   const cnrNumber = caseData.cnrNumber;
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
+  const user = Digit.UserService.getUser()?.info?.userName;
+  // console.log();
 
   const CloseBtn = (props) => {
     return (
@@ -37,6 +42,9 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     );
   };
   const hideSubmit = useMemo(() => {
+    if (userRoles.includes("CITIZEN")) {
+      return true;
+    }
     return modalType === "Submissions"
       ? userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL"
       : !(
@@ -131,6 +139,19 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     },
   };
 
+  const applicationCommentsPayload = (newComment) => {
+    return {
+      ...documentSubmission[0].applicationList,
+      comment: documentSubmission[0].applicationList.comment
+        ? JSON.stringify([...documentSubmission[0].applicationList.comment, newComment])
+        : JSON.stringify([newComment]),
+      workflow: {
+        ...documentSubmission[0].applicationList?.workflow,
+        action: "RESPOND",
+      },
+    };
+  };
+
   const onSuccess = async (result) => {
     setShow(false);
     const details = showToast({
@@ -223,6 +244,19 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     counterUpdate();
   };
 
+  const submitCommentApplication = async (newComment) => {
+    // console.log(applicationCommentsPayload(newComment), comments);
+    await mutation.mutate({
+      url: `/application/application/v1/update`,
+      params: {},
+      body: { application: applicationCommentsPayload(newComment) },
+      config: {
+        enable: true,
+      },
+    });
+    counterUpdate();
+  };
+
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -281,6 +315,12 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
     } catch (error) {}
   };
 
+  const handleSubmitComment = async (newComment) => {
+    if (modalType === "Submissions") {
+      await submitCommentApplication(newComment);
+    }
+  };
+
   console.log(modalType === "Documents" && documentSubmission[0].artifactList.isEvidence);
 
   return (
@@ -301,61 +341,65 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
           headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}
           className="evidence-modal"
         >
-          {documentSubmission.map((docSubmission) => (
-            <div className="evidence-modal-main">
-              <div className="application-details">
-                <div className="application-info">
-                  <div className="info-row">
-                    <div className="info-key">
-                      <h3>Application Type</h3>
+          <div className="evidence-modal-main">
+            <div className="application-details">
+              {documentSubmission.map((docSubmission) => (
+                <div>
+                  <div className="application-info">
+                    <div className="info-row">
+                      <div className="info-key">
+                        <h3>Application Type</h3>
+                      </div>
+                      <div className="info-value">
+                        <h3>{docSubmission?.details?.applicationType}</h3>
+                      </div>
                     </div>
-                    <div className="info-value">
-                      <h3>{docSubmission?.details?.applicationType}</h3>
+                    <div className="info-row">
+                      <div className="info-key">
+                        <h3>Application Sent On</h3>
+                      </div>
+                      <div className="info-value">
+                        <h3>{docSubmission.details.applicationSentOn}</h3>
+                      </div>
                     </div>
-                  </div>
-                  <div className="info-row">
-                    <div className="info-key">
-                      <h3>Application Sent On</h3>
+                    <div className="info-row">
+                      <div className="info-key">
+                        <h3>Sender</h3>
+                      </div>
+                      <div className="info-value">
+                        <h3>{docSubmission.details.sender}</h3>
+                      </div>
                     </div>
-                    <div className="info-value">
-                      <h3>{docSubmission.details.applicationSentOn}</h3>
+                    <div className="info-row">
+                      <div className="info-key">
+                        <h3>Additional Details</h3>
+                      </div>
+                      <div className="info-value">
+                        <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3>
+                      </div>
                     </div>
-                  </div>
-                  <div className="info-row">
-                    <div className="info-key">
-                      <h3>Sender</h3>
-                    </div>
-                    <div className="info-value">
-                      <h3>{docSubmission.details.sender}</h3>
-                    </div>
-                  </div>
-                  <div className="info-row">
-                    <div className="info-key">
-                      <h3>Additional Details</h3>
-                    </div>
-                    <div className="info-value">
-                      <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3>
+                    <div className="application-view">
+                      <DocViewerWrapper
+                        key={docSubmission.applicationContent.fileStoreId}
+                        fileStoreId={docSubmission.applicationContent.fileStoreId}
+                        displayFilename={docSubmission.applicationContent.fileName}
+                        tenantId={docSubmission.applicationContent.tenantId}
+                        docWidth="100%"
+                        docHeight="unset"
+                        showDownloadOption={false}
+                        documentName={docSubmission.applicationContent.fileName}
+                      />
                     </div>
                   </div>
                 </div>
-                <div className="application-view">
-                  <DocViewerWrapper
-                    key={docSubmission.applicationContent.fileStoreId}
-                    fileStoreId={docSubmission.applicationContent.fileStoreId}
-                    displayFilename={docSubmission.applicationContent.fileName}
-                    tenantId={docSubmission.applicationContent.tenantId}
-                    docWidth="100%"
-                    docHeight="unset"
-                    showDownloadOption={false}
-                    documentName={docSubmission.applicationContent.fileName}
-                  />
-                </div>
-              </div>
+              ))}
+            </div>
+            {modalType === "Submissions" && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">Comments</h1>
                   <div className="comment-main">
-                    {docSubmission.comments.map((comment, index) => (
+                    {comments.map((comment, index) => (
                       <CommentComponent key={index} comment={comment} />
                     ))}
                   </div>
@@ -364,19 +408,35 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, comment, setComm
                   <div className="comment-input-wrapper">
                     <TextInput
                       placeholder={"Type here..."}
-                      value={comment}
+                      value={currentComment}
                       onChange={(e) => {
-                        setComment(e.target.value);
+                        setCurrentComment(e.target.value);
                       }}
                     />
-                    <div className="send-comment-btn">
+                    <div
+                      className="send-comment-btn"
+                      onClick={() => {
+                        const newComment = {
+                          text: currentComment,
+                          author: user,
+                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }),
+                        };
+                        setComments((prev) => [...prev, newComment]);
+                        setCurrentComment("");
+                        handleSubmitComment(newComment);
+                      }}
+                    >
                       <RightArrow />
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </Modal>
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Submissions" && (

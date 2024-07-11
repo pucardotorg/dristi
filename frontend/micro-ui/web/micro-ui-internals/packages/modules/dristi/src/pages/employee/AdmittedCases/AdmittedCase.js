@@ -28,7 +28,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   const caseId = urlParams.get("caseId");
   const activeTab = urlParams.get("tab");
   const [show, setShow] = useState(false);
-  const [comment, setComment] = useState("");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -446,8 +445,6 @@ const AdmittedCases = ({ isJudge = true }) => {
           documentSubmission={documentSubmission}
           show={show}
           setShow={setShow}
-          comment={comment}
-          setComment={setComment}
           userRoles={userRoles}
           modalType={tabData.filter((tab) => tab.active)[0].label}
           setUpdateCounter={setUpdateCounter}
