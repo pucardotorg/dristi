@@ -472,7 +472,7 @@ const LitigantHomePage = () => {
           >
             <FileNewCaseIcon />
             <React.Fragment>
-              <span className="header userName">{t("Join a new case")}</span>
+              <span className="header userName">{t("Join an ongoing case")}</span>
               <span
                 className="subtext"
                 style={{
@@ -535,7 +535,7 @@ const LitigantHomePage = () => {
                   textAlign: "center",
                 }}
               >
-                {t("Start your fight for justice - PUCAR makes filing and ")}
+                {t("Seeking to represent a client in an ongoing case? ")}
               </span>
               <span
                 className="subtext"
@@ -547,7 +547,7 @@ const LitigantHomePage = () => {
                   textAlign: "center",
                 }}
               >
-                {t("following your case smooth and easy")}
+                {t("Join in as an advocate")}
               </span>
             </React.Fragment>
             <JoinCaseHome refreshInbox={refreshInbox} t={t} />
