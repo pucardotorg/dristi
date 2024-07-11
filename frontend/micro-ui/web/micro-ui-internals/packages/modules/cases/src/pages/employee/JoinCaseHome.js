@@ -83,8 +83,10 @@ const JoinHomeLocalisation = {
   NO_OBJECTION_UPLOAD_TEXT: "NO_OBJECTION_UPLOAD_TEXT",
   COURT_ORDER_UPLOAD_TEXT: "COURT_ORDER_UPLOAD_TEXT",
   ALREADY_PART_OF_CASE: "ALREADY_PART_OF_CASE",
-  CASE_NOT_ADMITTED_TEXT: "The above case is not in the admitted state.",
-  JOIN_CASE_BACK_TEXT: "Back",
+  CASE_NOT_ADMITTED_TEXT: "CASE_NOT_ADMITTED_TEXT",
+  JOIN_CASE_BACK_TEXT: "JOIN_CASE_BACK_TEXT",
+  ABOVE_SELECTED_PARTY: "ABOVE_SELECTED_PARTY",
+  ALREADY_JOINED_CASE: "ALREADY_JOINED_CASE",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -364,7 +366,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       });
     }
     if (step === 1) {
-      if (userType && userType === "Litigant" && selectedParty?.label && representingYourself) {
+      if (userType && userType === "Litigant" && selectedParty?.label && !selectedParty?.individualId && representingYourself) {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
         if (selectedParty?.label) {
@@ -578,7 +580,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               </div>
             </div>
             <p style={{ fontSize: "12px" }}>
-              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"F-<StatuteSection>-<YYYY>-<7 digit sequence number>"}
+              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"F-<StatuteSection>-<YYYY>-<6 digit sequence number>"}
             </p>
           </LabelFieldPair>
           {errors?.caseNumber && (
@@ -717,7 +719,25 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 </LabelFieldPair>
               </React.Fragment>
             )}
-          {selectedParty?.label && userType === "Litigant" && (
+          {selectedParty?.label && userType === "Litigant" && selectedParty?.individualId && (
+            <React.Fragment>
+              <hr className="horizontal-line" />
+              <InfoCard
+                variant={"warning"}
+                label={t(JoinHomeLocalisation.WARNING)}
+                additionalElements={[
+                  <p>
+                    {t(JoinHomeLocalisation.ABOVE_SELECTED_PARTY)} <span style={{ fontWeight: "bold" }}>{`${selectedParty?.label}`}</span>{" "}
+                    {t(JoinHomeLocalisation.ALREADY_JOINED_CASE)}
+                  </p>,
+                ]}
+                inline
+                textStyle={{}}
+                className={`custom-info-card warning`}
+              />
+            </React.Fragment>
+          )}
+          {selectedParty?.label && userType === "Litigant" && !selectedParty?.individualId && (
             <React.Fragment>
               <hr className="horizontal-line" />
               <LabelFieldPair className="case-label-field-pair">
@@ -1125,7 +1145,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   <div className="complainants-respondents">
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
-                      <div className="case-info-value">
+                      <div cla0ssName="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.complainantDetails?.formdata
                             ?.map(
@@ -1207,22 +1227,35 @@ const JoinCaseHome = ({ refreshInbox }) => {
         }))
       );
       setRespondentList(
-        caseDetails?.additionalDetails?.respondentDetails?.formdata
-          ?.map((data, index) => ({
-            ...data?.data,
-            label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-              data?.data?.respondentLastName
-            } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-            index: index,
-            partyType: index === 0 ? "respondent.primary" : "respondent.additional",
-            isRespondent: true,
-            individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
-          }))
-          ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
-          ?.map((data) => data)
+        userType === "Advocate"
+          ? caseDetails?.additionalDetails?.respondentDetails?.formdata
+              ?.map((data, index) => ({
+                ...data?.data,
+                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+                  data?.data?.respondentLastName
+                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+                index: index,
+                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+                isRespondent: true,
+                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
+              }))
+              ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
+              ?.map((data) => data)
+          : caseDetails?.additionalDetails?.respondentDetails?.formdata
+              ?.map((data, index) => ({
+                ...data?.data,
+                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+                  data?.data?.respondentLastName
+                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+                index: index,
+                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+                isRespondent: true,
+                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
+              }))
+              ?.map((data) => data)
       );
     }
-  }, [caseDetails]);
+  }, [caseDetails, t, userType]);
 
   useEffect(() => {
     setBarDetails([
@@ -1316,11 +1349,17 @@ const JoinCaseHome = ({ refreshInbox }) => {
         if (roleOfNewAdvocate !== "I’m a supporting advocate") {
           setStep(step + 1);
         } else {
+          const replaceAdvocate = caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId);
+          console.log("replaceAdvocate", replaceAdvocate);
+          const advocateFormdataCopy = structuredClone(caseDetails?.additionalDetails?.advocateDetails?.formdata);
+          console.log("advocateFormdataCopy", advocateFormdataCopy);
+          const idx = advocateFormdataCopy?.findIndex((adv) => adv?.data?.advocateId === replaceAdvocate?.advocateId);
+          console.log("advocateFormdataCopy[idx]", advocateFormdataCopy[idx]);
           const advocateResponse = await DRISTIService.searchIndividualAdvocate(
             {
               criteria: [
                 {
-                  barRegistrationNumber: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber,
+                  barRegistrationNumber: idx !== -1 ? advocateFormdataCopy[idx]?.data?.barRegistrationNumber : "",
                 },
               ],
               tenantId,
@@ -1341,11 +1380,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
           setPrimaryAdvocateDetail([
             {
               key: "Name",
-              value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName,
+              value: idx !== -1 ? advocateFormdataCopy[idx]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName : "",
             },
             {
               key: "Bar Council Id",
-              value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber,
+              value: idx !== -1 ? advocateFormdataCopy[idx]?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber : "",
             },
             {
               key: "Email",
@@ -1391,7 +1430,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setIsDisabled(true);
     } else if (step === 7 && validationCode.length === 6) {
       if (userType === "Advocate") {
-        if (caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0) {
+        const replaceAdvocate = caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId);
+        if (replaceAdvocate !== undefined) {
           const nocDocument = await Promise.all(
             replaceAdvocateDocuments?.nocFileUpload?.document?.map(async (document) => {
               if (document) {
@@ -1439,8 +1479,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
               ...caseDetails?.additionalDetails,
               advocateDetails: (() => {
                 const advocateFormdataCopy = structuredClone(caseDetails?.additionalDetails?.advocateDetails?.formdata);
-                if (selectedParty?.isComplainant)
-                  advocateFormdataCopy.splice(0, 1, {
+                const idx = advocateFormdataCopy?.findIndex((adv) => adv?.data?.advocateId === replaceAdvocate?.advocateId);
+                if (idx !== -1)
+                  advocateFormdataCopy[idx] = {
                     data: {
                       advocateId: advocateDetailForm?.id,
                       advocateName: advocateDetailForm?.additionalDetails?.username,
@@ -1465,7 +1506,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                       ],
                       barRegistrationNumberOriginal: advocateDetailForm?.barRegistrationNumber,
                     },
-                  });
+                  };
                 return {
                   ...caseDetails?.additionalDetails?.advocateDetails,
                   formdata: selectedParty?.isComplainant
