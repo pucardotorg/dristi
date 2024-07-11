@@ -59,6 +59,12 @@ const AdmittedCases = ({ isJudge = true }) => {
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
+  const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
+    ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
+        ?.split(" ")
+        ?.map((splitString) => splitString.charAt(0))
+        ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
+    : "";
   const caseRelatedData = {
     caseId: caseId,
     filingNumber: filingNumber,
@@ -323,6 +329,18 @@ const AdmittedCases = ({ isJudge = true }) => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
+            {statue && (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    width: "5px",
+                    height: "32px",
+                    borderLeft: "2px solid #0000001a",
+                  }}
+                ></div>
+                <div>{statue}</div>
+              </div>
+            )}
             <div
               style={{
                 width: "5px",
@@ -415,6 +433,22 @@ const AdmittedCases = ({ isJudge = true }) => {
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
             >
               {t("GENERATE_ORDERS_LINK")}
+            </div>
+          )}
+          {!showDownLoadCaseFIle && config.label === "Submissions" && (
+            <div
+              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+            >
+              {t("REQUEST_DOCUMENTS_LINK")}
+            </div>
+          )}
+          {showDownLoadCaseFIle && config.label === "Submissions" && (
+            <div
+              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+            >
+              {t("MAKE_SUBMISSION")}
             </div>
           )}
         </div>

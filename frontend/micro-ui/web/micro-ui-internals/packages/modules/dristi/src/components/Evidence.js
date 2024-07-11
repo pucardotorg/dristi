@@ -1,5 +1,5 @@
 import React from "react";
-import { FactCheckIcon } from "../icons/svgIndex";
+import { FactCheckIcon, FactCrossIcon } from "../icons/svgIndex";
 
 export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
   const getDate = (value) => {
@@ -38,7 +38,13 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
-        {showAsHeading ? <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div> : <FactCheckIcon />}
+        {showAsHeading ? (
+          <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div>
+        ) : rowData.isEvidence ? (
+          <FactCrossIcon />
+        ) : (
+          <FactCheckIcon />
+        )}
       </div>
     </React.Fragment>
   );

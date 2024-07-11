@@ -12,8 +12,8 @@ import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 
-const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
-  const [comments, setComments] = useState(documentSubmission[0].comments);
+const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
+  const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
@@ -37,7 +37,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
     return (
       <div className="evidence-title">
         <h1 className="heading-m">{props.label}</h1>
-        <h3 className="status">{props.status}</h3>
+        <h3 className="status">{props?.status}</h3>
       </div>
     );
   };
@@ -46,7 +46,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
       return true;
     }
     return modalType === "Submissions"
-      ? userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0].status !== "PENDINGRESPONSEAPPROVAL"
+      ? userRoles.includes("APPLICATION_RESPONDER") && documentSubmission[0]?.status !== "PENDINGRESPONSEAPPROVAL"
       : !(
           userRoles.includes("APPLICATION_RESPONDER") ||
           userRoles.includes("DEPOSITION_CREATOR") ||
@@ -66,7 +66,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
   }, [documentSubmission, modalType, t]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0].status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
+    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission[0]?.status === "PENDINGRESPONSEAPPROVAL" && modalType === "Submissions"
       ? t("Reject")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
@@ -98,10 +98,10 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
   //     caseId: caseId,
   //     artifactType: "AFFIDAVIT",
   //     sourceType: "COURT",
-  //     application: documentSubmission[0].details.applicationId,
+  //     application: documentSubmission[0]?.details.applicationId,
   //     isActive: true,
   //     isEvidence: true,
-  //     status: documentSubmission[0].status,
+  //     status: documentSubmission[0]?.status,
   //     file: documentSubmission.map((doc) => {
   //       return {
   //         id: doc?.applicationContent?.id,
@@ -112,41 +112,41 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
   //       };
   //     }),
   //     comments: [],
-  //     auditDetails: documentSubmission[0].details.auditDetails,
+  //     auditDetails: documentSubmission[0]?.details.auditDetails,
   //     workflow: {
   //       comments: documentSubmission[0]?.applicationList?.workflow.comments,
   //       documents: [{}],
   //       id: documentSubmission[0]?.applicationList?.workflow.id,
-  //       status: documentSubmission[0]?.applicationList?.workflow.status,
+  //       status: documentSubmission[0]?.applicationList?.workflow?.status,
   //       action: "TYPE DEPOSITION",
   //     },
   //   },
   // };
 
   const acceptApplicationPayload = {
-    ...documentSubmission[0].applicationList,
+    ...documentSubmission[0]?.applicationList,
     workflow: {
-      ...documentSubmission[0].applicationList?.workflow,
+      ...documentSubmission[0]?.applicationList?.workflow,
       action: "REQUESTFILERESPONSE",
     },
   };
 
   const rejectApplicationPayload = {
-    ...documentSubmission[0].applicationList,
+    ...documentSubmission[0]?.applicationList,
     workflow: {
-      ...documentSubmission[0].applicationList?.workflow,
+      ...documentSubmission[0]?.applicationList?.workflow,
       action: "ABANDON",
     },
   };
 
   const applicationCommentsPayload = (newComment) => {
     return {
-      ...documentSubmission[0].applicationList,
-      comment: documentSubmission[0].applicationList.comment
-        ? JSON.stringify([...documentSubmission[0].applicationList.comment, newComment])
+      ...documentSubmission[0]?.applicationList,
+      comment: documentSubmission[0]?.applicationList.comment
+        ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),
       workflow: {
-        ...documentSubmission[0].applicationList?.workflow,
+        ...documentSubmission[0]?.applicationList?.workflow,
         action: "RESPOND",
       },
     };
@@ -156,7 +156,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
     setShow(false);
     const details = showToast({
       isError: false,
-      message: documentSubmission[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+      message: documentSubmission[0]?.artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
     });
     counterUpdate();
   };
@@ -164,7 +164,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
     setShow(false);
     const details = showToast({
       isError: true,
-      message: documentSubmission[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+      message: documentSubmission[0]?.artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
     });
   };
 
@@ -173,17 +173,17 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
   };
 
   const handleMarkEvidence = async () => {
-    if (documentSubmission[0].artifactList.artifactType === "DEPOSITION") {
+    if (documentSubmission[0]?.artifactList.artifactType === "DEPOSITION") {
       await evidenceUpdateMutation.mutate(
         {
           url: `/evidence/artifacts/v1/_update`,
           params: {},
           body: {
             artifact: {
-              ...documentSubmission[0].artifactList,
-              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+              ...documentSubmission[0]?.artifactList,
+              isEvidence: !documentSubmission[0]?.artifactList.isEvidence,
               workflow: {
-                ...documentSubmission[0].artifactList.workflow,
+                ...documentSubmission[0]?.artifactList.workflow,
                 action: "SIGN DEPOSITION",
               },
             },
@@ -204,8 +204,8 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
           params: {},
           body: {
             artifact: {
-              ...documentSubmission[0].artifactList,
-              isEvidence: !documentSubmission[0].artifactList.isEvidence,
+              ...documentSubmission[0]?.artifactList,
+              isEvidence: !documentSubmission[0]?.artifactList.isEvidence,
             },
           },
           config: {
@@ -321,7 +321,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
     }
   };
 
-  console.log(modalType === "Documents" && documentSubmission[0].artifactList.isEvidence);
+  console.log(modalType === "Documents" && documentSubmission[0]?.artifactList.isEvidence);
 
   return (
     <React.Fragment>
@@ -338,12 +338,12 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
             setShowConfirmationModal({ type: "reject" });
           }}
           formId="modal-action"
-          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}
+          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission?.status} />}
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
             <div className="application-details">
-              {documentSubmission.map((docSubmission) => (
+              {documentSubmission?.map((docSubmission) => (
                 <div>
                   <div className="application-info">
                     <div className="info-row">
@@ -399,7 +399,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">Comments</h1>
                   <div className="comment-main">
-                    {comments.map((comment, index) => (
+                    {comments?.map((comment, index) => (
                       <CommentComponent key={index} comment={comment} />
                     ))}
                   </div>
@@ -455,7 +455,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission[0].artifactList.isEvidence}
+          isEvidence={documentSubmission[0]?.artifactList.isEvidence}
         />
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
@@ -474,7 +474,7 @@ const EvidenceModal = ({ caseData, documentSubmission, setShow, userRoles, modal
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission[0].artifactList.isEvidence}
+          isEvidence={documentSubmission[0]?.artifactList.isEvidence}
         />
       )}
       {showSuccessModal && modalType === "Submissions" && (
