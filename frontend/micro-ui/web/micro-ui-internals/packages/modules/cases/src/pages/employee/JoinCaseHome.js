@@ -1145,7 +1145,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   <div className="complainants-respondents">
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
-                      <div cla0ssName="case-info-value">
+                      <div className="case-info-value">
                         <span>
                           {caseDetails?.additionalDetails?.complainantDetails?.formdata
                             ?.map(
