@@ -13,7 +13,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
-import { AdvocateIcon, RightArrow } from "../../../../dristi/src/icons/svgIndex";
+import { AdvocateIcon, RightArrow, SearchIcon } from "../../../../dristi/src/icons/svgIndex";
 import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
@@ -83,6 +83,8 @@ const JoinHomeLocalisation = {
   NO_OBJECTION_UPLOAD_TEXT: "NO_OBJECTION_UPLOAD_TEXT",
   COURT_ORDER_UPLOAD_TEXT: "COURT_ORDER_UPLOAD_TEXT",
   ALREADY_PART_OF_CASE: "ALREADY_PART_OF_CASE",
+  CASE_NOT_ADMITTED_TEXT: "The above case is not in the admitted state.",
+  JOIN_CASE_BACK_TEXT: "Back",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -216,6 +218,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [complainantList, setComplainantList] = useState([]);
   const [respondentList, setRespondentList] = useState([]);
   const [individualDoc, setIndividualDoc] = useState([]);
+  const [advocateName, setAdvocateName] = useState("");
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -371,6 +374,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
               caseDetails?.additionalDetails?.advocateDetails?.formdata?.length === 0
             ) {
               setIsDisabled(false);
+            } else {
+              setIsDisabled(true);
             }
           } else {
             setIsDisabled(false);
@@ -414,7 +419,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
 
-  const serarchCase = async (caseNumber) => {
+  const searchCase = async (caseNumber) => {
     if (caseNumber) {
       const response = await DRISTIService.searchCaseService(
         {
@@ -427,14 +432,24 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {}
       );
-      if (response?.criteria[0]?.responseList?.length === 1 && response?.criteria[0]?.responseList[0].status === "CASE_ADMITTED") {
-        console.log("first", response?.criteria[0]?.responseList);
-        setIsDisabled(false);
-        setSearchCaseResult(response?.criteria[0]?.responseList[0]);
-        setErrors({
-          ...errors,
-          caseNumber: undefined,
-        });
+      if (response?.criteria[0]?.responseList?.length === 1) {
+        if (response?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED") {
+          setIsDisabled(false);
+          setSearchCaseResult(response?.criteria[0]?.responseList[0]);
+          setErrors({
+            ...errors,
+            caseNumber: undefined,
+          });
+        } else {
+          setIsDisabled(true);
+          setErrors({
+            ...errors,
+            caseNumber: {
+              type: "not-admitted",
+              message: JoinHomeLocalisation.CASE_NOT_ADMITTED_TEXT,
+            },
+          });
+        }
       } else {
         setIsDisabled(true);
         if (caseNumber)
@@ -450,7 +465,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
 
   useEffect(() => {
     const getData = setTimeout(() => {
-      serarchCase(caseNumber);
+      searchCase(caseNumber);
     }, 1000);
     return () => clearTimeout(getData);
   }, [caseNumber]);
@@ -513,23 +528,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     if (advocateResponse?.advocates[0]?.responseList?.length > 0) {
       setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
       setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
-      setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-      setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-      setAdvocateDetailForm(advocateResponse?.advocates[0]?.responseList[0]);
-      setBarDetails([
-        {
-          key: "CASE_NUMBER",
-          value: caseDetails?.caseNumber,
-        },
-        {
-          key: "Court Complex",
-          value: caseDetails?.courtName,
-        },
-        {
-          key: "Advocate",
-          value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
-        },
-      ]);
+      setAdvocateName(advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username);
       setUserType(t(JoinHomeLocalisation.ADVOCATE_OPT));
     } else {
       setUserType(t(JoinHomeLocalisation.LITIGANT_OPT));
@@ -554,9 +553,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         <div className="case-number-input">
           <LabelFieldPair className="case-label-field-pair">
             <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CASE_NUMBER)}`}</CardLabel>
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100%", display: "flex" }}>
               <TextInput
-                style={{ width: "100%" }}
                 type={"text"}
                 name="caseNumber"
                 value={caseNumber}
@@ -575,6 +573,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   }
                 }}
               />
+              <div className="icon-div">
+                <SearchIcon />
+              </div>
             </div>
             <p style={{ fontSize: "12px" }}>
               {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"F-<StatuteSection>-<YYYY>-<7 digit sequence number>"}
@@ -584,12 +585,15 @@ const JoinCaseHome = ({ refreshInbox }) => {
             <InfoCard
               variant={"default"}
               label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
-              additionalElements={[
-                <p>
-                  {t(JoinHomeLocalisation.INVALID_CASE_INFO_TEXT)}{" "}
-                  <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.NYAYA_MITRA_TEXT)}</span> {t(JoinHomeLocalisation.FOR_SUPPORT_TEXT)}
-                </p>,
-              ]}
+              additionalElements={
+                !errors?.caseNumber?.type && [
+                  <p>
+                    {t(JoinHomeLocalisation.INVALID_CASE_INFO_TEXT)}{" "}
+                    <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.NYAYA_MITRA_TEXT)}</span> {t(JoinHomeLocalisation.FOR_SUPPORT_TEXT)}
+                  </p>,
+                ]
+              }
+              text={errors?.caseNumber?.type === "not-admitted" && t(errors?.caseNumber?.message)}
               inline
               textStyle={{}}
               className={`custom-info-card error`}
@@ -682,8 +686,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             </React.Fragment>
           )}
           {selectedParty?.label &&
-            selectedParty?.isComplainant &&
-            caseDetails?.additionalDetails?.advocateDetails?.formdata?.length > 0 &&
+            caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) !== undefined &&
             userType === "Advocate" && (
               <React.Fragment>
                 <hr className="horizontal-line" />
@@ -880,6 +883,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                           let input = e.target.value;
                           input = input.slice(0, 100).trimStart().replace(/\s+/g, " ");
                           setAffidavitText(input);
+                          if (!input) setIsDisabled(true);
                         }}
                         rows={5}
                         className="custom-textarea-style"
@@ -902,6 +906,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       modalMain: (
         <div className="view-document-vak">
           <FormComposerV2
+            key={2}
             config={advocateVakalatnamaConfig}
             onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
               if (!isEqual(formData, adovacteVakalatnama)) {
@@ -1031,6 +1036,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       modalMain: (
         <div className="noc-court-order-upload">
           <FormComposerV2
+            key={1}
             config={advocateVakalatnamaAndNocConfig}
             onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
               if (!isEqual(formData, replaceAdvocateDocuments)) {
@@ -1177,7 +1183,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {
           key: "CASE_TYPE",
-          value: caseDetails.caseType,
+          value: `${caseDetails?.statutesAndSections?.[0]?.sections?.[0]}, ${caseDetails?.statutesAndSections?.[0]?.subsections?.[0]}`,
         },
         {
           key: "SUBMITTED_ON",
@@ -1212,11 +1218,28 @@ const JoinCaseHome = ({ refreshInbox }) => {
             isRespondent: true,
             individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
           }))
-          ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
+          ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
           ?.map((data) => data)
       );
     }
   }, [caseDetails]);
+
+  useEffect(() => {
+    setBarDetails([
+      {
+        key: "CASE_NUMBER",
+        value: caseDetails?.caseNumber,
+      },
+      {
+        key: "Court Complex",
+        value: caseDetails?.courtName,
+      },
+      {
+        key: "Advocate",
+        value: advocateName,
+      },
+    ]);
+  }, [caseDetails, advocateName]);
 
   const closeModal = () => {
     setCaseNumber("");
@@ -1352,7 +1375,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       }
     } else if (step === 3) {
       setIsDisabled(true);
-      setStep(step + 1);
+      setStep(step + 3);
     } else if (step === 4) {
       setStep(step + 1);
       setIsDisabled(false);
@@ -1886,15 +1909,17 @@ const JoinCaseHome = ({ refreshInbox }) => {
       {show && (
         <Modal
           headerBarEnd={<CloseBtn onClick={closeModal} />}
-          actionCancelLabel={((step === 0 && caseDetails?.caseNumber) || step !== 0) && t("CS_COMMON_BACK")}
+          actionCancelLabel={((step === 0 && caseDetails?.caseNumber) || step !== 0) && t(JoinHomeLocalisation.JOIN_CASE_BACK_TEXT)}
           actionCancelOnSubmit={() => {
             if (step === 0 && caseDetails?.caseNumber) {
               setCaseDetails({});
+            } else if (step === 6) {
+              setStep(step - 3);
             } else if (step === 7) {
               if (userType === "Litigant") setStep(step - 5);
               else {
-                if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) setStep(step - 1);
-                else setStep(step - 2);
+                if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) setStep(step - 3);
+                else setStep(step - 4);
               }
               setValidationCode("");
               setErrors({
@@ -1902,16 +1927,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 validationCode: undefined,
               });
             } else if (step === 3 && userType === "Advocate") {
-              setStep(step - 2);
+              setStep(step - 1);
             } else setStep(step - 1);
             setIsDisabled(false);
           }}
           actionSaveLabel={
             step === 2 && roleOfNewAdvocate === "I’m a supporting advocate"
               ? t("GOT_IT_TEXT")
-              : step === 3
-              ? "E-Sign"
-              : step === 4
+              : // : step === 3
+              // ? "E-Sign"
+              step === 4
               ? "Done"
               : step === 5
               ? "Make Payment"

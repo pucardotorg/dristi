@@ -221,7 +221,7 @@ export const UICustomizations = {
                       </span>
                     </span>
                   ),
-                  barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
+                  barRegistrationNumber: `${adv?.barRegistrationNumber}`,
                   advocateName: adv?.additionalDetails?.username,
                   advocateId: adv?.id,
                   barRegistrationNumberOriginal: adv?.barRegistrationNumber,
