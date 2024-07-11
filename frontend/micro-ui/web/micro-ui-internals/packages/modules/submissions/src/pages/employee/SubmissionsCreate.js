@@ -29,6 +29,7 @@ const SubmissionsCreate = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
+  const orderId = urlParams.get("orderId");
   const [formdata, setFormdata] = useState({});
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(false);
@@ -95,7 +96,6 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
       setFormdata(formData);
@@ -116,29 +116,28 @@ const SubmissionsCreate = () => {
 
   const createSubmission = async (data) => {
     try {
+      let documentsList = [];
+      if (formdata?.listOfProducedDocuments?.documents?.length > 0) {
+        documentsList = [...documentsList, ...formdata?.listOfProducedDocuments?.documents];
+      }
+      if (formdata?.reasonForDocumentsSubmission?.documents?.length > 0) {
+        documentsList = [...documentsList, ...formdata?.reasonForDocumentsSubmission?.documents];
+      }
+      if (formdata?.documentsListForBail?.documents) {
+        documentsList = [...documentsList, ...formdata?.documentsListForBail?.documents];
+      }
+      const documentres = await Promise.all(documentsList?.map((doc) => onDocumentUpload(doc, doc?.name)));
       let documents = [];
-      if (applicationType === "PRODUCTION_DOCUMENTS") {
-        const documentres = await Promise.all([
-          onDocumentUpload(formdata?.listOfProducedDocuments?.documents?.[0], formdata?.listOfProducedDocuments?.documents?.[0]?.name),
-          onDocumentUpload(formdata?.reasonForDocumentsSubmission?.documents?.[0], formdata?.reasonForDocumentsSubmission?.documents?.[0]?.name),
-        ]);
-        documentres.forEach((res) => {
-          documents.push({
-            documentType: res?.fileType,
-            fileStore: res?.file?.files?.[0]?.fileStoreId,
-            additionalDetails: { name: res?.filename },
-          });
-        });
-
-        const file = {
-          documentType: documentres[0]?.fileType,
-          fileStore: documentres[0]?.file?.files?.[0]?.fileStoreId,
-          additionalDetails: {
-            name: documentres[0]?.filename,
-          },
+      let file = null;
+      let evidenceReqBody = {};
+      documentres.forEach((res) => {
+        file = {
+          documentType: res?.fileType,
+          fileStore: res?.file?.files?.[0]?.fileStoreId,
+          additionalDetails: { name: res?.filename },
         };
-
-        const evidenceReqBody = {
+        documents.push(file);
+        evidenceReqBody = {
           artifact: {
             artifactType: "DOCUMENTARY",
             caseId: caseDetails?.id,
@@ -150,15 +149,7 @@ const SubmissionsCreate = () => {
           },
         };
         DRISTIService.createEvidence(evidenceReqBody);
-      }
-      if (applicationType === "BAIL_BOND") {
-        const docres = await onDocumentUpload(formdata?.documentsListForBail?.documents?.[0], formdata?.documentsListForBail?.documents?.[0]?.name);
-        documents.push({
-          documentType: docres?.fileType,
-          fileStore: docres?.file?.files?.[0]?.fileStoreId,
-          additionalDetails: { name: docres?.filename },
-        });
-      }
+      });
 
       const applicationReqBody = {
         tenantId,
@@ -184,7 +175,7 @@ const SubmissionsCreate = () => {
           },
         },
       };
-      await submissionService.createApplication(applicationReqBody, { tenantId });
+      // await submissionService.createApplication(applicationReqBody, { tenantId });
       setLoader(false);
     } catch (error) {}
   };
