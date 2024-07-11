@@ -26,7 +26,7 @@
         },
         {
           "sla": null,
-          "state": PENDINGSUBMISSION,
+          "state": "PENDINGSUBMISSION",
           "applicationStatus": null,
           "docUploadRequired": true,
           "isStartState": true,
