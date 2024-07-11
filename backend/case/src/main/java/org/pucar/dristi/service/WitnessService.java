@@ -1,21 +1,27 @@
 package org.pucar.dristi.service;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.CREATE_WITNESS_ERR;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_WITNESS_ERR;
+import static org.pucar.dristi.config.ServiceConstants.UPDATE_WITNESS_ERR;
+import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.WitnessRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.WitnessRepository;
 import org.pucar.dristi.validators.WitnessRegistrationValidator;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.pucar.dristi.web.models.WitnessSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service

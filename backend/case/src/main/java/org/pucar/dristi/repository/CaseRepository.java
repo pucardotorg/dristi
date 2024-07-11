@@ -1,22 +1,39 @@
 package org.pucar.dristi.repository;
 
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
-import org.pucar.dristi.repository.rowmapper.*;
-import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
+import org.pucar.dristi.repository.rowmapper.CaseRowMapper;
+import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LinkedCaseDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LinkedCaseRowMapper;
+import org.pucar.dristi.repository.rowmapper.LitigantDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LitigantRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentativeRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentingDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentingRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentiveDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.StatuteSectionRowMapper;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.StatuteSection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j

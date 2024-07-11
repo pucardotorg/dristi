@@ -35,12 +35,5 @@ public class AdvocateClerkListResponse {
 	@Valid
 	private Pagination pagination = null;
 
-	public AdvocateClerkListResponse addClerksItem(AdvocateClerkSearchCriteria clerksItem) {
-		if (this.clerks == null) {
-			this.clerks = new ArrayList<>();
-		}
-		this.clerks.add(clerksItem);
-		return this;
-	}
 
 }

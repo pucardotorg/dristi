@@ -1,6 +1,16 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -13,14 +23,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.AuditDetails;
+import org.pucar.dristi.web.models.Bill;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.Payment;
+import org.pucar.dristi.web.models.PaymentDetail;
+import org.pucar.dristi.web.models.PaymentRequest;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentUpdateServiceTest {
