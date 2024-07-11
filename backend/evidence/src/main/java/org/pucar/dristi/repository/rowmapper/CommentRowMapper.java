@@ -52,7 +52,7 @@ public class CommentRowMapper implements ResultSetExtractor<List<Comment>> {
 
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
-                    comment.setAdditionalDetails(String.valueOf(objectMapper.readTree(additionalDetailsObject.getValue())));
+                    comment.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));
                 }
 
                 commentMap.put(id, comment);

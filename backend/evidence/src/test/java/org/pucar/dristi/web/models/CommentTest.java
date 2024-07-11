@@ -28,7 +28,7 @@ public class CommentTest {
         String individualId = "testIndividualId";
         String commentText = "testComment";
         Boolean isActive = true;
-        String additionalDetails = "testAdditionalDetails";
+        Object additionalDetails = "testAdditionalDetails";
         AuditDetails auditDetails = new AuditDetails();
 
         comment.setId(id);

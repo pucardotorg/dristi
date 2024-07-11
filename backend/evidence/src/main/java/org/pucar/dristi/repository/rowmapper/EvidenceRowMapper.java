@@ -71,7 +71,7 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
 
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
-                    artifact.setAdditionalDetails(String.valueOf(objectMapper.readTree(additionalDetailsObject.getValue())));
+                    artifact.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));
                 }
 
                 artifactMap.put(id, artifact);
