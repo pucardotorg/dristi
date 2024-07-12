@@ -356,7 +356,7 @@ const GenerateOrders = () => {
       .then(() => {
         setPrevOrder(currentOrder);
         refetchOrdersData();
-        if (!modal) {
+        if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
           setShowErrorToast(true);
         }
         if (action === CaseWorkflowAction.ESIGN) {
@@ -423,6 +423,7 @@ const GenerateOrders = () => {
       action: CaseWorkflowAction.ESIGN,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
+      modal: "issueModal",
     });
   };
 
@@ -431,6 +432,7 @@ const GenerateOrders = () => {
       action: CaseWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
       orderType: orderList[deleteOrderIndex].orderType,
+      modal: "deleteModal",
     });
     setSelectedOrder((prev) => {
       return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
