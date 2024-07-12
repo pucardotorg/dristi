@@ -263,7 +263,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
               moduleName: "getAdvocateNameUsingBarRegistrationNumberJoinCase",
               customfn: "getNames",
               optionsKey: "barRegistrationNumber",
-              removeOptions: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((data) => data?.data?.barRegistrationNumber),
+              removeOptionsKey: "id",
+              removeOptions: caseDetails?.representatives
+                ?.filter((reps) => reps?.representing?.[0]?.partyType?.includes("complainant"))
+                ?.map((data) => data?.advocateId),
               optionsCustomStyle: {
                 marginTop: "40px",
                 justifyContent: "space-between",
