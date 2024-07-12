@@ -281,16 +281,6 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
           showActions={false}
         />
       )}
-      <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
-      {showScheduleHearingModal && (
-        <ScheduleHearing
-          setUpdateCounter={setUpdateCounter}
-          showToast={showToast}
-          tenantId={tenantId}
-          caseData={caseData}
-          setShowModal={setShowScheduleHearingModal}
-        />
-      )}
     </React.Fragment>
   );
 };
