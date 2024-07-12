@@ -1,5 +1,5 @@
 import { Button as ActionButton } from "@egovernments/digit-ui-components";
-import { Button, Header, InboxSearchComposer, Loader, Menu, Toast, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
@@ -13,7 +13,8 @@ import "./tabs.css";
 import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowOut, CustomThreeDots } from "../../../icons/svgIndex";
+import { CustomThreeDots } from "../../../icons/svgIndex";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 
 const defaultSearchValues = {
   individualName: "",
@@ -28,7 +29,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   const caseId = urlParams.get("caseId");
   const activeTab = urlParams.get("tab");
   const [show, setShow] = useState(false);
-  const [comment, setComment] = useState("");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -40,7 +40,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const isCitizen = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
 
-  const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+  const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -60,17 +60,18 @@ const AdmittedCases = ({ isJudge = true }) => {
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
+  const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
+    ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
+        ?.split(" ")
+        ?.map((splitString) => splitString.charAt(0))
+        ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
+    : "";
   const caseRelatedData = {
     caseId: caseId,
     filingNumber: filingNumber,
     cnrNumber: cnrNumber,
     title: title,
     stage: stage,
-  };
-
-  const docSetFunc = (docObj) => {
-    setDocumentSubmission(docObj);
-    setShow(true);
   };
 
   const orderSetFunc = (order) => {
@@ -82,11 +83,19 @@ const AdmittedCases = ({ isJudge = true }) => {
     setShowMenu(!showMenu);
     setShowOtherMenu(false);
   };
-  const applicationNumber = useMemo(() => {
-    return documentSubmission?.[0]?.applicationList?.applicationNumber;
-  }, [documentSubmission]);
 
   const configList = useMemo(() => {
+    const docSetFunc = (docObj) => {
+      const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
+      const status = docObj?.[0]?.applicationList?.status;
+      if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN].includes(status) && isCitizen) {
+        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=F-C.1973.002-2024-000822&applicationNumber=${applicationNumber}`);
+      } else {
+        setDocumentSubmission(docObj);
+        setShow(true);
+      }
+    };
+
     return TabSearchconfig?.TabSearchconfig.map((tabConfig) => {
       return tabConfig.label === "Parties"
         ? {
@@ -229,7 +238,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
           };
     });
-  }, [caseId, cnrNumber, filingNumber, tenantId]);
+  }, [caseId, cnrNumber, filingNumber, history, isCitizen, tenantId]);
 
   const newTabSearchConfig = {
     ...TabSearchconfig,
@@ -239,14 +248,17 @@ const AdmittedCases = ({ isJudge = true }) => {
   const indexOfActiveTab = newTabSearchConfig?.TabSearchconfig?.findIndex((tabData) => tabData.label === activeTab);
 
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
-  const [config, setConfig] = useState(newTabSearchConfig?.TabSearchconfig?.[indexOfActiveTab]); // initially setting first index config as default from jsonarray
-  const [tabData, setTabData] = useState(
-    newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({
+  const config = useMemo(() => {
+    return newTabSearchConfig?.TabSearchconfig?.[indexOfActiveTab];
+  }, [indexOfActiveTab, newTabSearchConfig?.TabSearchconfig]); // initially setting first index config as default from jsonarray
+
+  const tabData = useMemo(() => {
+    return newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({
       key: index,
       label: configItem.label,
       active: index === indexOfActiveTab ? true : false,
-    }))
-  ); // setting number of tab component and making first index enable as default
+    }));
+  }, [indexOfActiveTab, newTabSearchConfig?.TabSearchconfig]); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
   const [toastDetails, setToastDetails] = useState({});
   const [showOtherMenu, setShowOtherMenu] = useState(false);
@@ -327,6 +339,18 @@ const AdmittedCases = ({ isJudge = true }) => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
+            {statue && (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    width: "5px",
+                    height: "32px",
+                    borderLeft: "2px solid #0000001a",
+                  }}
+                ></div>
+                <div>{statue}</div>
+              </div>
+            )}
             <div
               style={{
                 width: "5px",
@@ -421,6 +445,22 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("GENERATE_ORDERS_LINK")}
             </div>
           )}
+          {!isCitizen && config.label === "Submissions" && (
+            <div
+              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+            >
+              {t("REQUEST_DOCUMENTS_LINK")}
+            </div>
+          )}
+          {isCitizen && config.label === "Submissions" && (
+            <div
+              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+            >
+              {t("MAKE_SUBMISSION")}
+            </div>
+          )}
         </div>
       )}
       <div className="inbox-search-wrapper">
@@ -449,8 +489,6 @@ const AdmittedCases = ({ isJudge = true }) => {
           documentSubmission={documentSubmission}
           show={show}
           setShow={setShow}
-          comment={comment}
-          setComment={setComment}
           userRoles={userRoles}
           modalType={tabData.filter((tab) => tab.active)[0].label}
           setUpdateCounter={setUpdateCounter}
