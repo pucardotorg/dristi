@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
@@ -21,12 +21,15 @@ import SuccessModal from "../../components/SuccessModal";
 import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const fieldStyle = { marginRight: 0 };
 
 const SubmissionsCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
+  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const orderId = urlParams.get("orderId");
@@ -72,12 +75,6 @@ const SubmissionsCreate = () => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
   }, [submissionFormConfig, applicationFormConfig]);
 
-  const defaultFormValue = {
-    submissionType: {
-      code: "APPLICATION_TYPE",
-      name: "APPLICATION_TYPE",
-    },
-  };
   const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
@@ -92,6 +89,30 @@ const SubmissionsCreate = () => {
     applicationNumber,
     applicationNumber
   );
+
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
+  useEffect(() => {
+    if (applicationDetails) {
+      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN || true) {
+        setShowReviewModal(true);
+      }
+      if (applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT) {
+        setShowPaymentModal(true);
+      }
+    }
+  }, [applicationDetails]);
+
+  const defaultFormValue = useMemo(() => {
+    if (applicationDetails?.additionalDetails?.formdata) {
+      return applicationDetails?.additionalDetails?.formdata;
+    }
+    return {
+      submissionType: {
+        code: "APPLICATION_TYPE",
+        name: "APPLICATION_TYPE",
+      },
+    };
+  }, [applicationDetails?.additionalDetails?.formdata]);
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -183,27 +204,49 @@ const SubmissionsCreate = () => {
           documents,
           workflow: {
             id: "workflow123",
-            action: "CREATE",
+            action: CaseWorkflowAction.CREATE,
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
           },
         },
       };
-      await submissionService.createApplication(applicationReqBody, { tenantId });
+      const res = await submissionService.createApplication(applicationReqBody, { tenantId });
       setLoader(false);
-    } catch (error) {}
+      return res;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const updateSubmission = async (action) => {
+    const reqBody = {
+      ...applicationDetails,
+      workflow: { action },
+      tenantId,
+    };
+    await submissionService.updateApplication(reqBody, { tenantId });
+    setShowSuccessModal(true);
+    setLoader(false);
+  };
+
+  const handleOpenReview = async () => {
+    setLoader(true);
+    const res = await createSubmission();
+    const newapplicationNumber = res?.application?.applicationNumber;
+    if (newapplicationNumber) {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`);
+    }
   };
 
   const handleBack = () => {
-    setShowReviewModal(false);
+    history.push(`/digit-ui/employee/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
-  const handleProceed = () => {
+  const handleAddSignature = () => {
     setLoader(true);
     setShowsignatureModal(false);
-    setShowPaymentModal(true);
-    createSubmission();
+    updateSubmission(CaseWorkflowAction.ESIGN);
   };
 
   const handleCloseSignaturePopup = () => {
@@ -237,18 +280,18 @@ const SubmissionsCreate = () => {
     //
   };
 
-  if (loader) {
+  if (loader || isApplicationLoading) {
     return <Loader />;
   }
   return (
     <div>
       <Header> {t("CREATE_SUBMISSION")}</Header>
       <FormComposerV2
-        label={t("SUBMIT_BUTTON")}
+        label={t("REVIEW_SUBMISSION")}
         config={modifiedFormConfig}
         defaultValues={defaultFormValue}
         onFormValueChange={onFormValueChange}
-        onSubmit={() => setShowReviewModal(true)}
+        onSubmit={handleOpenReview}
         fieldStyle={fieldStyle}
       />
       {showReviewModal && (
@@ -263,7 +306,9 @@ const SubmissionsCreate = () => {
           handleBack={handleBack}
         />
       )}
-      {showsignatureModal && <SubmissionSignatureModal t={t} handleProceed={handleProceed} handleCloseSignaturePopup={handleCloseSignaturePopup} />}
+      {showsignatureModal && (
+        <SubmissionSignatureModal t={t} handleProceed={handleAddSignature} handleCloseSignaturePopup={handleCloseSignaturePopup} />
+      )}
       {showPaymentModal && (
         <PaymentModal
           t={t}

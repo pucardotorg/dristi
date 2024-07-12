@@ -20,4 +20,5 @@ export const CaseWorkflowAction = {
   REJECT: "REJECT",
   AUTOESCALATE: "AUTOESCALATE",
   ABANDON: "ABANDON",
+  CREATE: "CREATE",
 };

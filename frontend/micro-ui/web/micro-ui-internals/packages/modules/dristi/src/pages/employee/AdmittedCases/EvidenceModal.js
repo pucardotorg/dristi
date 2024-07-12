@@ -46,7 +46,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       return true;
     }
     return modalType === "Submissions"
-      ? !(userRoles.includes("APPLICATION_RESPONDER") && documentSubmission?.[0].status === "PENDINGREVIEW")
+      ? !(userRoles.includes("APPLICATION_RESPONDER") && documentSubmission?.[0]?.status === "PENDINGREVIEW")
       : !(userRoles.includes("APPLICATION_RESPONDER") || userRoles.includes("DEPOSITION_ESIGN") || userRoles.includes("DEPOSITION_PUBLISHER"));
   }, [documentSubmission, modalType, userRoles]);
 
@@ -61,7 +61,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   }, [documentSubmission, modalType, t]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0].status === "PENDINGREVIEW" && modalType === "Submissions"
+    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
       ? t("Reject")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
@@ -119,17 +119,17 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   // };
 
   const acceptApplicationPayload = {
-    ...documentSubmission?.[0].applicationList,
+    ...documentSubmission?.[0]?.applicationList,
     workflow: {
-      ...documentSubmission?.[0].applicationList?.workflow,
+      ...documentSubmission?.[0]?.applicationList?.workflow,
       action: "REQUESTFILERESPONSE",
     },
   };
 
   const rejectApplicationPayload = {
-    ...documentSubmission?.[0].applicationList,
+    ...documentSubmission?.[0]?.applicationList,
     workflow: {
-      ...documentSubmission?.[0].applicationList?.workflow,
+      ...documentSubmission?.[0]?.applicationList?.workflow,
       action: "ABANDON",
     },
   };
@@ -333,7 +333,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             setShowConfirmationModal({ type: "reject" });
           }}
           formId="modal-action"
-          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission?.[0].status} />}
+          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission?.[0]?.status} />}
           className="evidence-modal"
         >
           <div className="evidence-modal-main">

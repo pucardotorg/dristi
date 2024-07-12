@@ -484,7 +484,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
-      {show && documentSubmission && (
+      {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
           show={show}
