@@ -581,17 +581,6 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    // preProcess: (requestCriteria, additionalDetails) => {
-
-    //   return {
-    //     ...requestCriteria,
-    //     config: {
-    //       select: (data) => {
-    //         return { ...data };
-    //       },
-    //     },
-    //   };
-    // },
     additionalCustomizations: (row, key, column, value, t) => {
       const showDocument =
         userRoles?.includes("APPLICATION_APPROVER") ||
@@ -624,6 +613,8 @@ export const UICustomizations = {
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Status":
+          return value ? "Marked as Evidence" : "Action Pending";
         default:
           break;
       }

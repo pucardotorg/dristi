@@ -489,7 +489,8 @@ export const TabSearchconfig = {
               },
               {
                 label: "Status",
-                jsonPath: "status",
+                jsonPath: "isEvidence",
+                additionalCustomization: true,
               },
               {
                 label: "Evidence Number",
