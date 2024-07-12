@@ -264,6 +264,8 @@ components:
           type: string
         criteria:
           $ref: '#/components/schemas/EvidenceSearchCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
           
     EvidenceSearchResponse:
       type: object
@@ -277,6 +279,8 @@ components:
           description: his is an output field and will contain the list of artifacts found as per the search criteria
           items:
             $ref: '#/components/schemas/Artifact'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
           
     EvidenceSearchCriteria:
       type: object

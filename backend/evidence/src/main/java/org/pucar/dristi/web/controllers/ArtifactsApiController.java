@@ -43,25 +43,26 @@ public class ArtifactsApiController {
     }
 
     @RequestMapping(value = "/artifacts/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<EvidenceSearchResponse> artifactsV1SearchPost(
-            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceSearchRequest body) {
+	public ResponseEntity<EvidenceSearchResponse> artifactsV1SearchPost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceSearchRequest body) {
 
-        List<Artifact> artifactList = evidenceService.searchEvidence(body.getRequestInfo(), body.getCriteria());
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        EvidenceSearchResponse artifactResponse = EvidenceSearchResponse.builder()
-                .artifacts(artifactList)
-                .responseInfo(responseInfo)
-                .build();
-        return new ResponseEntity<>(artifactResponse, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/artifacts/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<EvidenceResponse> artifactsV1UpdatePost(
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact to be updated + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
-        Artifact response = evidenceService.updateEvidence(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifact(response).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
-    }
+		List<Artifact> artifactList = evidenceService.searchEvidence(body.getRequestInfo(), body.getCriteria(),body.getPagination());
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+		EvidenceSearchResponse artifactResponse = EvidenceSearchResponse.builder()
+				.artifacts(artifactList)
+				.responseInfo(responseInfo)
+				.pagination(body.getPagination())
+				.build();
+		return new ResponseEntity<>(artifactResponse, HttpStatus.OK);
+	}
+  
+	@RequestMapping(value = "/artifacts/v1/_update", method = RequestMethod.POST)
+	public ResponseEntity<EvidenceResponse> artifactsV1UpdatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact to be updated + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
+				Artifact response = evidenceService.updateEvidence(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifact(response).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
+	}
 
 }
