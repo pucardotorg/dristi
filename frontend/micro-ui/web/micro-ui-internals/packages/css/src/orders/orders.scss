@@ -45,3 +45,284 @@
     }
   }
 }
+
+.order-submission {
+  .bread-crumb {
+    margin: 0px;
+    padding: 12px 40px;
+    gap: 8px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    border-top: 1px #e8e8e8 solid;
+    border-bottom: 0.5px #edeeef solid;
+    .li.bread-crumb--item {
+      margin-left: 0px;
+      a {
+        margin-right: 8px;
+      }
+    }
+  }
+  .generate-orders {
+    display: flex;
+    gap: 40px;
+    .delete-order-warning-modal {
+      .popup-module-action-bar {
+        .selector-button-border {
+          width: fit-content !important;
+          height: 40px !important;
+          padding: 8px 24px 8px 24px !important;
+          border: solid 1px #007e7e !important;
+          background: white !important;
+          h2 {
+            font-family: Roboto !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            line-height: 18.75px !important;
+            text-align: center !important;
+            color: #007e7e !important;
+          }
+        }
+        .selector-button-primary {
+          width: fit-content !important;
+          height: 40px;
+          padding: 8px 24px 8px 24px;
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+  .orders-list-main {
+    width: 25%;
+    padding: 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    .add-order-button {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      color: #007e7e;
+      cursor: pointer;
+      width: 100%;
+    }
+  }
+  .order-item-main {
+    width: 100%;
+    padding: 12px 8px;
+    display: flex;
+    gap: 8px;
+    border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    &:hover,
+    &.selected-order {
+      background-color: #e8e8e8;
+    }
+    h1 {
+      margin: 0px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #3d3c3c;
+    }
+    span {
+      height: 16px;
+    }
+  }
+  .view-order {
+    padding: 24px;
+    width: 60%;
+    .order-header {
+      font-family: Roboto;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 46.88px;
+      text-align: left;
+      color: #0a0a0a;
+      margin-bottom: 32px;
+    }
+    .employeeCard {
+      margin-bottom: 74px !important;
+    }
+    .order-type-form-composer {
+      width: 100%;
+      box-shadow: none;
+      margin: 0px;
+      padding: 0px;
+      .label-field-pair {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: start;
+        margin-bottom: 24px;
+        .card-label {
+          width: 100%;
+          margin: 0px !important;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+        .field {
+          width: 100%;
+          .employee-select-wrap {
+            margin-bottom: 0px;
+            #jk-dropdown-unique {
+              margin-top: 40px !important;
+              max-height: 275px !important;
+            }
+          }
+          .cell-text,
+          .custom-checkbox-emp {
+            margin: 0px;
+          }
+          .checkbox-wrap,
+          textarea,
+          input {
+            margin-bottom: 0px;
+          }
+        }
+      }
+      .card-label-error {
+        margin-left: 0px !important;
+      }
+    }
+    .order-type-action {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      box-shadow: none;
+      border-top: 1px #bbbbbd solid;
+      padding: 16px 24px;
+      .submit-bar {
+        width: 164px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+          color: #ffffff;
+        }
+      }
+      .previous-button {
+        padding: 8px 24px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        border: solid 1px #007e7e !important;
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+          color: #007e7e !important;
+        }
+      }
+    }
+  }
+}
+
+.bail-submission {
+  .employeeCard {
+    margin-bottom: 90px !important;
+    width: 590px;
+    box-shadow: none;
+    margin: 0px;
+    padding: 0px;
+    .label-field-pair {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 24px;
+      .card-label {
+        width: 100%;
+        margin: 0px !important;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0a0a0a;
+      }
+      .field {
+        width: 100%;
+        .employee-select-wrap {
+          margin-bottom: 0px;
+          #jk-dropdown-unique {
+            margin-top: 40px !important;
+            max-height: 275px !important;
+          }
+        }
+        .cell-text,
+        .custom-checkbox-emp {
+          margin: 0px;
+        }
+        .checkbox-wrap,
+        textarea,
+        input {
+          margin-bottom: 0px;
+        }
+      }
+    }
+    .card-label-error {
+      margin-left: 0px !important;
+    }
+  }
+  .action-bar-wrap {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 16px;
+    box-shadow: none;
+    border-top: 1px #bbbbbd solid;
+    padding: 16px 24px;
+    .submit-bar {
+      width: 190px;
+      height: 40px;
+      padding: 8px 24px 8px 24px;
+      box-shadow: none !important;
+      header {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #ffffff;
+      }
+    }
+    .previous-button {
+      padding: 8px 24px;
+      height: 40px;
+      padding: 8px 24px 8px 24px;
+      border: solid 1px #007e7e !important;
+      h2 {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+      }
+    }
+  }
+}

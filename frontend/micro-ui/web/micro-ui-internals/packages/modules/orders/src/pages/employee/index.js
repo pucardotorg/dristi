@@ -7,6 +7,7 @@ import OrdersCreate from "./OrdersCreate";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 import MakeSubmission from "./MakeSubmission";
+import MakeSubmissionBail from "./MakeSubmissionbail";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
         <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} />
+        <PrivateRoute path={`${path}/makesubmissionbail`} component={() => <MakeSubmissionBail />} />
       </AppContainer>
     </Switch>
   );
