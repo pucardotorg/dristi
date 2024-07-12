@@ -9,28 +9,6 @@ import { DRISTIService } from "../../../services";
 
 const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast }) => {
   const { t } = useTranslation();
-  const caseInfo = [
-    {
-      key: "CASE_NUMBER",
-      value: caseData.case.filingNumber,
-    },
-    {
-      key: "CASE_CATEGORY",
-      value: caseData.case.caseCategory,
-    },
-    {
-      key: "CASE_TYPE",
-      value: "NIA S138",
-    },
-    {
-      key: "COURT_NAME",
-      value: "Kerala City Criminal Court",
-    },
-    {
-      key: "SUBMITTED_ON",
-      value: caseData.case.filingDate,
-    },
-  ];
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
   const [scheduleHearingParams, setScheduleHearingParams] = useState({});
@@ -44,6 +22,26 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           filingNumber: [caseData.filingNumber],
           hearingType: data.purpose,
           status: true,
+          additionalDetails: {
+            participants: Object.values(data.participant)
+              .map((val) => Object.keys(val))
+              .flat(Infinity)
+              .map((name) => {
+                return { name: name };
+              }),
+          },
+          startTime: Date.parse(
+            `${data.date
+              .split(" ")
+              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              .join(" ")}`
+          ),
+          endTime: Date.parse(
+            `${data.date
+              .split(" ")
+              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              .join(" ")}`
+          ),
           workflow: {
             action: "CREATE",
             assignes: [],

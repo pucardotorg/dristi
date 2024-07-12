@@ -22,13 +22,12 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
-  const [showScheduleHearingModal, setShowScheduleHearing] = useState(false);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
-        cnrNumber: cnrNumber,
         tenantId: tenantId,
       },
     },
@@ -96,6 +95,10 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
   };
 
+  const openHearingModule = () => {
+    setShowScheduleHearingModal(true);
+  };
+
   if (isHearingsLoading || isOrdersLoading) {
     return <Loader />;
   }
@@ -151,9 +154,18 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
                 marginTop: "16px",
               }}
             >
-              <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={() => setShowScheduleHearing(true)} />
+              <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
               {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
                 <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
+              )}
+              {showScheduleHearingModal && (
+                <ScheduleHearing
+                  setUpdateCounter={setUpdateCounter}
+                  showToast={showToast}
+                  tenantId={tenantId}
+                  caseData={caseData}
+                  setShowModal={setShowScheduleHearingModal}
+                />
               )}
             </div>
           ) : (
@@ -269,15 +281,14 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
           showActions={false}
         />
       )}
-      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={() => setShowScheduleHearing(true)} /> */}
-
+      <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
       {showScheduleHearingModal && (
         <ScheduleHearing
           setUpdateCounter={setUpdateCounter}
           showToast={showToast}
           tenantId={tenantId}
           caseData={caseData}
-          setShowModal={setShowScheduleHearing}
+          setShowModal={setShowScheduleHearingModal}
         />
       )}
     </React.Fragment>
