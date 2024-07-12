@@ -3,8 +3,11 @@ package org.pucar.dristi.repository.querybuilder;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.Pagination;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +15,15 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public class EvidenceQueryBuilderTest {
 
-    private final EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
+    @InjectMocks
+    private  EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
 
     @Test
     void testGetArtifactSearchQuery_WithAllFields() {
@@ -42,7 +49,7 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? " +
                 "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
                 "AND art.sourceName = ? " +
-                "AND art.artifactNumber = ? ORDER BY art.createdTime DESC ";
+                "AND art.artifactNumber = ?";
         List<Object> preparedStmtList=new ArrayList<>();
 
         // Calling the method under test
@@ -72,7 +79,7 @@ public class EvidenceQueryBuilderTest {
                 "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art";
         List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
         String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application, hearing, order, sourceId, sourceName,artifactNumber);
@@ -81,7 +88,51 @@ public class EvidenceQueryBuilderTest {
         assertEquals(expectedQuery, query);
     }
 
+    @Test
+    public void testGetArtifactSearchQuery_exception() {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String id = "testId";
+        String caseId = "testCaseId";
+        String application = "testApplication";
+        String hearing = "testHearing";
+        String order = "testOrder";
+        String sourceId = "testSourceId";
+        String sourceName = "testSourceName";
+        String artifactNumber = "testArtifactNumber";
 
+        // Inject a scenario that causes an exception
+        EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).addArtifactCriteria(anyString(), any(), anyList(), anyBoolean(), anyString());
+
+        // Execute the method and assert that the CustomException is thrown
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList, id, caseId, application, hearing, order, sourceId, sourceName, artifactNumber);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assert(exception.getMessage().contains("Error occurred while building the artifact search query: java.lang.RuntimeException: Test Exception"));
+    }
+
+    @Test
+    public void testGetDocumentSearchQuery_exception() {
+        List<String> ids = new ArrayList<>();
+        ids.add("testId1");
+        ids.add("testId2");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Inject a scenario that causes an exception
+        EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getDocumentSearchQuery(anyList(), anyList());
+
+        // Execute the method and assert that the RuntimeException is thrown
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            spyQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assert(exception.getMessage().contains("Test Exception"));
+    }
     @Test
     void testGetArtifactSearchQueryWithNullValues() {
         // Mock the EvidenceQueryBuilder
@@ -107,8 +158,35 @@ public class EvidenceQueryBuilderTest {
         // Assertions
         assertEquals(expectedQuery, actualQuery);
     }
+    @Test
+    public void testAddPaginationQuery() {
+        // Setup
+        String query = "SELECT * FROM table";
+        Pagination pagination = new Pagination();
+        pagination.setLimit(10.0);
+        pagination.setOffSet(20.0);
 
+        List<Object> preparedStatementList = new ArrayList<>();
 
+        // Invoke the method
+        String resultQuery = queryBuilder.addPaginationQuery(query, pagination, preparedStatementList);
+
+        // Asserts
+        assertEquals("SELECT * FROM table LIMIT ? OFFSET ?", resultQuery);
+
+        assertEquals(2, preparedStatementList.size());
+        assertEquals(10.0, preparedStatementList.get(0)); // Check the limit value
+        assertEquals(20.0, preparedStatementList.get(1)); // Check the offset value
+    }
+    @Test
+    public void testGetTotalCountQuery() {
+        String baseQuery = "SELECT * FROM table_name";
+        String expectedResult = "SELECT COUNT(*) FROM (SELECT * FROM table_name) total_result";
+
+        String result = queryBuilder.getTotalCountQuery(baseQuery);
+
+        assertEquals(expectedResult, result);
+    }
     @Test
     void testGetDocumentSearchQuery() {
         List<String> ids = List.of("doc1", "doc2", "doc3");
@@ -120,6 +198,27 @@ public class EvidenceQueryBuilderTest {
         String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
         assertEquals(expectedQuery, query);
         assertEquals(ids, preparedStmtList);
+    }
+    @Test
+    public void testGetCommentSearchQuery_exception() {
+        // Setup
+        List<String> artifactIds = new ArrayList<>();
+        artifactIds.add("artifactId1");
+        artifactIds.add("artifactId2");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Mocking the query builder to spy and throw an exception
+        EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getCommentSearchQuery(anyList(), anyList());
+
+        // Invoke the method and expect RuntimeException
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            spyQueryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assertTrue(exception.getMessage().contains("Test Exception"));
     }
 
     @Test
@@ -136,6 +235,29 @@ public class EvidenceQueryBuilderTest {
     }
 
     @Test
+    public void testAddOrderByQuery_DefaultOrder() {
+        String query = "SELECT * FROM table_name";
+        Pagination pagination = null;
+        String expectedResult = query + " ORDER BY art.createdtime DESC ";
+
+        String result = queryBuilder.addOrderByQuery(query, pagination);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testAddOrderByQuery_WithSorting() {
+        String query = "SELECT * FROM table_name";
+        Pagination pagination = new Pagination(); // Replace with actual values
+        String expectedOrderByClause = " ORDER BY art.createdtime DESC ";
+        String expectedResult = query + expectedOrderByClause;
+
+        String result = queryBuilder.addOrderByQuery(query, pagination);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
     void testGetCommentSearchQuery() {
         List<String> artifactIds = List.of("art1", "art2", "art3");
         List<Object> preparedStmtList = new ArrayList<>();
@@ -148,6 +270,26 @@ public class EvidenceQueryBuilderTest {
         String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
         assertEquals(expectedQuery, query);
         assertEquals(artifactIds, preparedStmtList);
+    }
+    @Test
+    public void testAddOrderByQuery() {
+        // Test case 1: Pagination is not null
+        Pagination pagination = new Pagination();
+        pagination.setSortBy("createdTime");
+        pagination.setOrder(Order.DESC);
+
+        String query1 = "SELECT * FROM table";
+        String expectedQuery1 = "SELECT * FROM table ORDER BY art.createdTime DESC ";
+
+        String result1 = queryBuilder.addOrderByQuery(query1, pagination);
+        assertEquals(expectedQuery1.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name()), result1);
+
+        // Test case 2: Pagination is null
+        String query2 = "SELECT * FROM table";
+        String expectedQuery2 = "SELECT * FROM table" + " ORDER BY art.createdtime DESC ";
+
+        String result2 = queryBuilder.addOrderByQuery(query2, null);
+        assertEquals(expectedQuery2, result2);
     }
 
     @Test

@@ -157,7 +157,7 @@ class EvidenceValidatorTest {
     @Test
     void validateEvidenceExistence_ShouldThrowException_WhenNoExistingApplicationsFound() {
         EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        when(repository.getArtifacts(any(EvidenceSearchCriteria.class))).thenReturn(new ArrayList<>());
+        when(repository.getArtifacts(any(EvidenceSearchCriteria.class), isNull())).thenReturn(new ArrayList<>());
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             evidenceValidator.validateEvidenceExistence(evidenceRequest);
@@ -166,6 +166,7 @@ class EvidenceValidatorTest {
         assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
         assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: case does not exist", exception.getMessage());
     }
+
     private EvidenceRequest createValidEvidenceRequest() {
         EvidenceRequest evidenceRequest = new EvidenceRequest();
         Artifact artifact = new Artifact();

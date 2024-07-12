@@ -269,7 +269,7 @@ class HearingRegistrationValidatorTest {
         RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.singletonList(hearing);
 
-        when(repository.getHearings(any())).thenReturn(existingHearings);
+        when(repository.checkHearingsExist(any())).thenReturn(existingHearings);
 
         // Act
         Hearing result = validator.validateHearingExistence(requestInfo,hearing);

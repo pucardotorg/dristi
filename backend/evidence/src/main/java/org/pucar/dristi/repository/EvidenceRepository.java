@@ -8,14 +8,13 @@
     import org.pucar.dristi.web.models.Artifact;
     import org.pucar.dristi.web.models.Comment;
     import org.pucar.dristi.web.models.EvidenceSearchCriteria;
+    import org.pucar.dristi.web.models.Pagination;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.jdbc.core.JdbcTemplate;
     import org.springframework.stereotype.Repository;
 
     import java.util.ArrayList;
     import java.util.List;
-    import java.util.Map;
-    import java.util.UUID;
 
     @Slf4j
     @Repository
@@ -42,7 +41,7 @@
             this.commentRowMapper = commentRowMapper;
         }
 
-        public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria) {
+        public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
             try {
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
@@ -58,7 +57,14 @@
                         evidenceSearchCriteria.getSourceName(),
                         evidenceSearchCriteria.getArtifactNumber()
                 );
+                    artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
                 log.info("Final artifact query: {}", artifactQuery);
+                if(pagination !=  null) {
+                    Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
+                    log.info("Total count without pagination :: {}", totalRecords);
+                    pagination.setTotalCount(Double.valueOf(totalRecords));
+                    artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
+                }
 
                 List<Artifact> artifactList = jdbcTemplate.query(artifactQuery,preparedStmtList.toArray(), evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
@@ -89,6 +95,10 @@
                 throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.toString());
             }
         }
-
+        public Integer getTotalCountArtifact(String baseQuery, List<Object> preparedStmtList) {
+            String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+            log.info("Final count query :: {}", countQuery);
+            return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+        }
     }
 
