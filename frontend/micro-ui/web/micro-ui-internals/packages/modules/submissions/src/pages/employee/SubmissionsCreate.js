@@ -190,7 +190,7 @@ const SubmissionsCreate = () => {
           },
         },
       };
-      // await submissionService.createApplication(applicationReqBody, { tenantId });
+      await submissionService.createApplication(applicationReqBody, { tenantId });
       setLoader(false);
     } catch (error) {}
   };
