@@ -16,7 +16,10 @@ import AdvocateJoinSucess from "../advocate/AdvocateJoinSucess";
 import CaseAndFilingSearch from "./CaseAndFilingSearch";
 import LitigantSucess from "./LitigantSuccess";
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [

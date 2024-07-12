@@ -7,7 +7,10 @@ import SubmissionsCreate from "./SubmissionsCreate";
 import SubmissionsSearch from "./SubmissionsSearch";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
