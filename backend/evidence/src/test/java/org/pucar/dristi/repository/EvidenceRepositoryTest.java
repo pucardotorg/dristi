@@ -55,10 +55,6 @@ class EvidenceRepositoryTest {
         EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
         Pagination pagination = new Pagination();
 
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Object> preparedStmtListDoc = new ArrayList<>();
-        List<Object> preparedStmtListCom = new ArrayList<>();
-
         String artifactQuery = "SELECT * FROM artifact";
         String documentQuery = "SELECT * FROM document";
         String commentQuery = "SELECT * FROM comment";
@@ -95,8 +91,6 @@ class EvidenceRepositoryTest {
         EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
         Pagination pagination = new Pagination();
 
-        List<Object> preparedStmtList = new ArrayList<>();
-
         String artifactQuery = "SELECT * FROM artifact";
 
         when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any()))
@@ -116,9 +110,6 @@ class EvidenceRepositoryTest {
     void testGetArtifactsWithGeneralException() {
         EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
         Pagination pagination = new Pagination();
-
-        List<Object> preparedStmtList = new ArrayList<>();
-
         String artifactQuery = "SELECT * FROM artifact";
 
         when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any()))

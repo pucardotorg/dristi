@@ -45,7 +45,6 @@ class ApplicationRepositoryTest {
     @InjectMocks
     private ApplicationRepository applicationRepository;
 
-    private List<Application> applicationList;
     private List<Document> documentList;
     private Map<UUID, StatuteSection> statuteSectionsMap;
     private Map<UUID, List<Document>> documentMap;
@@ -55,7 +54,6 @@ class ApplicationRepositoryTest {
         // Setting up sample data
         Application application = new Application();
         application.setId(UUID.randomUUID());
-        applicationList = Collections.singletonList(application);
 
         Document document = new Document();
         documentList = Collections.singletonList(document);
@@ -77,9 +75,6 @@ class ApplicationRepositoryTest {
         Pagination pagination = new Pagination();
         searchRequest.setPagination(pagination);
 
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Object> preparedStmtListStatute = new ArrayList<>();
-        List<Object> preparedStmtListDoc = new ArrayList<>();
 
         String applicationQuery = "SELECT * FROM applications";
         String documentQuery = "SELECT * FROM documents WHERE applicationId IN (?)";

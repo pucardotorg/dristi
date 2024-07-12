@@ -4,7 +4,9 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 
 import java.util.ArrayList;
@@ -13,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_QUERY_EXCEPTION;
 
@@ -25,7 +30,8 @@ class ApplicationQueryBuilderTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-
+    @Mock
+    private Pagination pagination;
     private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app WHERE ";
 
     @Test
@@ -50,6 +56,72 @@ class ApplicationQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
         assertEquals(2, preparedStmtList.size());
         assertEquals("test-id", preparedStmtList.get(0));
+    }
+    @Test
+    public void testCheckApplicationExistQuery_exception() {
+        String filingNumber = "testFilingNumber";
+        String cnrNumber = "testCnrNumber";
+        String applicationNumber = "testApplicationNumber";
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Inject a scenario that causes an exception
+        ApplicationQueryBuilder spyQueryBuilder = spy(applicationQueryBuilder);
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).addCriteria(anyString(), any(), anyBoolean(), anyString(), anyList());
+
+        // Execute the method and assert that the CustomException is thrown
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            spyQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, applicationNumber, preparedStmtList);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assert(exception.getMessage().contains("Error occurred while building the application exist query: Test Exception"));
+    }
+    @Test
+    public void testAddOrderByQuery_withPagination() {
+        String baseQuery = "SELECT * FROM applications";
+        String expectedQuery = "SELECT * FROM applications ORDER BY app.createdtime DESC ";
+
+        pagination.setSortBy("createdTime");
+        pagination.setOrder(Order.DESC);
+
+        String actualQuery = applicationQueryBuilder.addOrderByQuery(baseQuery, pagination);
+
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testAddOrderByQuery_withDefaultOrderBy() {
+        String baseQuery = "SELECT * FROM applications";
+        String expectedQuery = "SELECT * FROM applications ORDER BY app.createdtime DESC ";
+
+        pagination.setSortBy(null);
+        pagination.setOrder(null);
+
+        String actualQuery = applicationQueryBuilder.addOrderByQuery(baseQuery, pagination);
+
+        assertEquals(expectedQuery, actualQuery);
+    }
+    @Test
+    public void testGetApplicationSearchQuery_exception() {
+        String id = "testId";
+        String filingNumber = "testFilingNumber";
+        String cnrNumber = "testCnrNumber";
+        String tenantId = "testTenantId";
+        String status = "testStatus";
+        String applicationNumber = "testApplicationNumber";
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Inject a scenario that causes an exception
+        ApplicationQueryBuilder spyQueryBuilder = spy(applicationQueryBuilder);
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).addCriteria(anyString(), any(), anyBoolean(), anyString(), anyList());
+
+        // Execute the method and assert that the CustomException is thrown
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            spyQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assert(exception.getMessage().contains("Error occurred while building the application search query: Test Exception"));
     }
 
     @Test
