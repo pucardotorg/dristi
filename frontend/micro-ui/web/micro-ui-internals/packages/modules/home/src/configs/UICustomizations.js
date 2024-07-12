@@ -96,8 +96,8 @@ export const UICustomizations = {
             sortBy: undefined,
           }),
           pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
             ...("sortBy" in additionalDetails && {
               ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
             }),
@@ -173,8 +173,8 @@ export const UICustomizations = {
             sortBy: undefined,
           }),
           pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
             ...("sortBy" in additionalDetails && {
               ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
             }),
@@ -249,8 +249,8 @@ export const UICustomizations = {
             sortBy: undefined,
           }),
           pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
             ...("sortBy" in additionalDetails && {
               ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
             }),

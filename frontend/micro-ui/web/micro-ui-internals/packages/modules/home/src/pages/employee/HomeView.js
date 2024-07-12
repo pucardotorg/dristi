@@ -54,7 +54,7 @@ const HomeView = () => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
-  const individualId = individualData?.Individual?.[0]?.individualId;
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData?.Individual]);
 
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
     individualData?.Individual,
@@ -199,6 +199,10 @@ const HomeView = () => {
   const refreshInbox = () => {
     SetCallRefetch(true);
   };
+
+  if (isUserLoggedIn && !individualId && userInfoType === "citizen") {
+    history.push(`/${window?.contextPath}/${userInfoType}/dristi/home`);
+  }
 
   return (
     <div className="home-view-hearing-container">
