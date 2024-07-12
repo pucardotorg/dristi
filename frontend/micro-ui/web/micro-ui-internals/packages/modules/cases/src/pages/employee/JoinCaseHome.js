@@ -466,8 +466,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
 
     if (step !== 8) {
       setSuccess(false);
-    } else {
-      searchCase(caseNumber);
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
 
