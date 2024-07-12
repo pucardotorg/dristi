@@ -10,7 +10,8 @@ function CommentComponent({ key, comment }) {
       </div>
       <div className="comment-details">
         <h3 className="comment-header">
-          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
+          {comment?.author} <br />
+          <span className="times-stamp">{comment?.timestamp} </span>
         </h3>
         <p className="comment-text">{comment?.text}</p>
       </div>

@@ -18,8 +18,8 @@ const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.co
 const partyTypes = {
   "complainant.primary": "Complainant",
   "complainant.additional": "Complainant",
-  "respondant.primary": "Respondant",
-  "respondant.additional": "Respondant",
+  "respondent.primary": "Respondent",
+  "respondent.additional": "Respondent",
 };
 
 export const UICustomizations = {
@@ -27,7 +27,7 @@ export const UICustomizations = {
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -102,7 +102,7 @@ export const UICustomizations = {
     }
     if (businessService === businessServiceMap?.["works.purchase"]) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
