@@ -85,7 +85,7 @@ public class EvidenceValidator {
         EvidenceSearchCriteria evidenceSearchCriteria = createEvidenceSearchCriteria(evidenceRequest);
 
         // Get existing applications using the repository method with EvidenceSearchCriteria
-        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria);
+        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria,null);
 
         log.info("Existing application :: {}", existingApplications.size());
 
