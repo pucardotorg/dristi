@@ -8,11 +8,13 @@ import HomeView from "./HomeView";
 import ViewHearing from "./ViewHearing";
 import HomePopUp from "./HomePopUp";
 const bredCrumbStyle = { maxWidth: "min-content" };
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home`,
       content: t("HOME"),
       show: true,
     },

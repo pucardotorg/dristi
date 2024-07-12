@@ -8,11 +8,13 @@ import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 import MakeSubmission from "./MakeSubmission";
 const bredCrumbStyle={ maxWidth: "min-content" };
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home`,
       content: t("HOME"),
       show: true,
     },
