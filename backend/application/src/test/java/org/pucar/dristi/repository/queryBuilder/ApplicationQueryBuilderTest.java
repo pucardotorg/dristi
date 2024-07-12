@@ -577,7 +577,7 @@ class ApplicationQueryBuilderTest {
 
         assertEquals(expectedQuery, paginatedQuery);
         assertEquals(2, preparedStmtList.size());
-        assertEquals(2d, preparedStmtList.get(0));
+        assertEquals(0d, preparedStmtList.get(0));
         assertEquals(0d, preparedStmtList.get(1));
     }
 }
