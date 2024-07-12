@@ -262,8 +262,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "applicationFilledBy",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "COMPLAINANT_1",
@@ -288,8 +289,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "detailsSeekedOf",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "RESPONDANT_1",
@@ -507,8 +509,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "submissionParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -582,8 +585,9 @@ export const configsOrderMandatorySubmissions = [
           name: "isResponseRequired",
           optionsKey: "name",
           title: "",
-          error: "Error!",
-          required: false,
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "Yes",
@@ -604,8 +608,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "respondingParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -968,8 +973,9 @@ export const configsScheduleHearingDate = [
         populators: {
           name: "hearingPurpose",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           hideInForm: true,
           options: [
             {
@@ -1735,8 +1741,9 @@ export const configsCaseSettlement = [
           name: "settlementImplemented",
           optionsKey: "name",
           title: "",
-          error: "Error!",
-          required: false,
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "Yes",
