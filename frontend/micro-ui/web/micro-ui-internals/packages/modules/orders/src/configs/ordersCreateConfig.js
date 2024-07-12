@@ -200,7 +200,7 @@ export const configsOrderSection202CRPC = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -340,7 +340,6 @@ export const configsOrderSection202CRPC = [
         label: "RESPONSE_REQUIRED_BY",
         isMandatory: true,
         key: "responseRequiredBy",
-        labelChildren: "OutlinedInfoIcon",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
@@ -655,7 +654,7 @@ export const configsOrderSubmissionExtension = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -725,53 +724,29 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "originalSubmissionOrderDate",
         type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalSubmissionOrderDate",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
         label: "ORIGINAL_DEADLINE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "originalDeadline",
         type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalDeadline",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
         label: "PROPOSED_SUBMISSION_DATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "proposedSubmissionDate",
         type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "proposedSubmissionDate",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
@@ -834,7 +809,7 @@ export const configsOrderTranferToADR = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -950,7 +925,7 @@ export const configsScheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1103,7 +1078,7 @@ export const configsRejectRescheduleHeadingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "originalHearingDate",
         type: "date",
         populators: {
@@ -1146,7 +1121,7 @@ export const configsRescheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1206,19 +1181,11 @@ export const configsRescheduleHearingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "originalHearingDate",
         type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "originalHearingDate",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
@@ -1380,7 +1347,7 @@ export const configsVoluntarySubmissionStatus = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1503,7 +1470,7 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1674,7 +1641,7 @@ export const configsCaseSettlement = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1723,16 +1690,8 @@ export const configsCaseSettlement = [
         isMandatory: true,
         key: "settlementAgreementDate",
         type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "settlementAgreementDate",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
@@ -1838,7 +1797,7 @@ export const configsIssueSummons = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1939,7 +1898,7 @@ export const configsIssueOfWarrants = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2055,7 +2014,7 @@ export const configsCaseWithdrawal = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2090,28 +2049,28 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "APPLICATION_ON_BEHALF_OF",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "applicationOnBehalfOf",
         type: "text",
         populators: { name: "applicationOnBehalfOf" },
       },
       {
         label: "PARTY_TYPE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "partyType",
         type: "text",
         populators: { name: "partyType" },
       },
       {
         label: "REASON_FOR_WITHDRAWAL",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "reasonForWarrant",
         type: "text",
         populators: { name: "reasonForWithdrawal" },
       },
       {
         label: "APPLICATION_STATUS",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "applicationStatus",
         type: "text",
         populators: { name: "applicationStatus" },
@@ -2174,7 +2133,7 @@ export const configsBail = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2230,7 +2189,7 @@ export const configsBail = [
       },
       {
         label: "BAIL_TYPE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "bailType",
         type: "dropdown",
         populators: {
@@ -2680,28 +2639,28 @@ export const configsJudgement = [
     body: [
       {
         label: "CASE_NUMBER",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "caseNumber",
         type: "text",
         populators: { name: "caseNumber" },
       },
       {
         label: "DATE_OF_JUDGEMENT",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateOfJudgement",
-        type: "text",
+        type: "date",
         populators: { name: "dateOfJudgement" },
       },
       {
         label: "NAME_OF_JUDGE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "nameOfJudge",
         type: "text",
         populators: { name: "nameOfJudge" },
       },
       {
         label: "NAME_OF_COURT",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "nameOfCourt",
         type: "text",
         populators: { name: "nameOfCourt" },
@@ -2724,84 +2683,84 @@ export const configsJudgement = [
       },
       {
         label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "addressRespondant",
         type: "text",
         populators: { name: "addressRespondant" },
       },
       {
         label: "DATE_OF_OCCURENCE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateChequeReturnMemo",
         type: "date",
         populators: { name: "dateChequeReturnMemo" },
       },
       {
         label: "DATE_COMPLAINT",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateFiling",
         type: "date",
         populators: { name: "dateFiling" },
       },
       {
         label: "DATE_OF_APPREHENSION",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateApprehension",
         type: "date",
         populators: { name: "dateApprehension" },
       },
       {
         label: "DATE_OF_RELEASE_ON_BAIL",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateofReleaseOnBail",
         type: "date",
         populators: { name: "dateofReleaseOnBail" },
       },
       {
         label: "DATE_OF_COMMENCEMENT_TRIAL",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateofCommencementTrial",
         type: "date",
         populators: { name: "dateofCommencementTrial" },
       },
       {
         label: "DATE_OF_CLOSE_TRIAL",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateofCloseTrial",
         type: "date",
         populators: { name: "dateofCloseTrial" },
       },
       {
         label: "DATE_OF_SENTENCE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "dateofSentence",
         type: "date",
         populators: { name: "dateofSentence" },
       },
       {
         label: "NAME_COMPLAINANT",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "nameofComplainant",
         type: "text",
         populators: { name: "nameofComplainant" },
       },
       {
         label: "NAME_COMPLAINANT_ADVOCATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "nameofComplainantAdvocate",
         type: "text",
         populators: { name: "nameofComplainantAdvocate" },
       },
       {
         label: "NAME_RESPONDANT_ADVOCATE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "nameofRespondantAdvocate",
         type: "text",
         populators: { name: "nameofRespondantAdvocate" },
       },
       {
         label: "OFFENSE",
-        isMandatory: true,
+        isMandatory: false,    // Change this to mandatory after system filled is implememnted
         key: "offense",
         type: "text",
         populators: { name: "offense" },
