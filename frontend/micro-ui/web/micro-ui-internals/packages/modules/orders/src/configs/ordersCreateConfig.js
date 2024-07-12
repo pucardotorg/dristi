@@ -1074,7 +1074,7 @@ export const configsRejectRescheduleHeadingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1296,7 +1296,7 @@ export const configRejectSubmission = [
         key: "submissionId",
         type: "dropdown",
         populators: {
-          name: "settlementMechanism",
+          name: "submissionId",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
