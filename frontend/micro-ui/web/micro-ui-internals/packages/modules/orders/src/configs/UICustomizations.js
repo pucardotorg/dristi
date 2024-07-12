@@ -30,13 +30,13 @@ export const UICustomizations = {
 
   alphaNumericValidation: () => {
     return {
-      pattern: /[^a-zA-Z0-9]/g,
+      pattern: /[^a-zA-Z0-9\s]/g,
     };
   },
 
   alphaNumericInputTextValidation: () => {
     return {
-      pattern: /^[a-zA-Z0-9]+$/i,
+      pattern: /^[a-zA-Z0-9 ]+$/i,
     };
   },
 };
