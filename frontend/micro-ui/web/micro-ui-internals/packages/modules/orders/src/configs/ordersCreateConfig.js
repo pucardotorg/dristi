@@ -200,7 +200,7 @@ export const configsOrderSection202CRPC = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -262,8 +262,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "applicationFilledBy",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "COMPLAINANT_1",
@@ -288,8 +289,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "detailsSeekedOf",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "RESPONDANT_1",
@@ -473,8 +475,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "documentType",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "DOCUMENT_TYPE_1",
@@ -506,8 +509,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "submissionParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -581,8 +585,9 @@ export const configsOrderMandatorySubmissions = [
           name: "isResponseRequired",
           optionsKey: "name",
           title: "",
-          error: "Error!",
-          required: false,
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "Yes",
@@ -603,8 +608,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "respondingParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -654,7 +660,7 @@ export const configsOrderSubmissionExtension = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -702,8 +708,8 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        label: "DOCUMENT_NAME",
-        isMandatory: true,
+        label: "EXTENSION_DOCUMENT_NAME",
+        isMandatory: false,
         key: "documentName",
         type: "text",
         populators: { name: "documentName" },
@@ -724,7 +730,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "originalSubmissionOrderDate",
         type: "date",
         populators: {
@@ -733,7 +739,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "ORIGINAL_DEADLINE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "originalDeadline",
         type: "date",
         populators: {
@@ -742,7 +748,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "PROPOSED_SUBMISSION_DATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "proposedSubmissionDate",
         type: "date",
         populators: {
@@ -809,7 +815,7 @@ export const configsOrderTranferToADR = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -864,8 +870,9 @@ export const configsOrderTranferToADR = [
         populators: {
           name: "ADRMode",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "MODE_1",
@@ -925,7 +932,7 @@ export const configsScheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -966,8 +973,9 @@ export const configsScheduleHearingDate = [
         populators: {
           name: "hearingPurpose",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           hideInForm: true,
           options: [
             {
@@ -1025,8 +1033,9 @@ export const configsScheduleHearingDate = [
           name: "namesOfPartiesRequired",
           allowMultiSelect: true,
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -1071,14 +1080,14 @@ export const configsRejectRescheduleHeadingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "originalHearingDate",
         type: "date",
         populators: {
@@ -1121,7 +1130,7 @@ export const configsRescheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1181,7 +1190,7 @@ export const configsRescheduleHearingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "originalHearingDate",
         type: "date",
         populators: {
@@ -1261,8 +1270,9 @@ export const configsAcceptSubmission = [
         populators: {
           name: "settlementMechanism",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "0001",
@@ -1292,10 +1302,11 @@ export const configRejectSubmission = [
         key: "submissionId",
         type: "dropdown",
         populators: {
-          name: "settlementMechanism",
+          name: "submissionId",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "0001",
@@ -1347,7 +1358,7 @@ export const configsVoluntarySubmissionStatus = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1470,7 +1481,7 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1641,7 +1652,7 @@ export const configsCaseSettlement = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1702,8 +1713,9 @@ export const configsCaseSettlement = [
         populators: {
           name: "settlementMechanism",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "MECHANISM_1",
@@ -1729,8 +1741,9 @@ export const configsCaseSettlement = [
           name: "settlementImplemented",
           optionsKey: "name",
           title: "",
-          error: "Error!",
-          required: false,
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "Yes",
@@ -1797,7 +1810,7 @@ export const configsIssueSummons = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1898,7 +1911,7 @@ export const configsIssueOfWarrants = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2014,7 +2027,7 @@ export const configsCaseWithdrawal = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2049,28 +2062,28 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "APPLICATION_ON_BEHALF_OF",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "applicationOnBehalfOf",
         type: "text",
         populators: { name: "applicationOnBehalfOf" },
       },
       {
         label: "PARTY_TYPE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "partyType",
         type: "text",
         populators: { name: "partyType" },
       },
       {
         label: "REASON_FOR_WITHDRAWAL",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "reasonForWarrant",
         type: "text",
         populators: { name: "reasonForWithdrawal" },
       },
       {
         label: "APPLICATION_STATUS",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "applicationStatus",
         type: "text",
         populators: { name: "applicationStatus" },
@@ -2133,7 +2146,7 @@ export const configsBail = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -2170,8 +2183,20 @@ export const configsBail = [
         label: "BAIL_OF",
         isMandatory: true,
         key: "bailOf",
-        type: "text",
-        populators: { name: "bailOf" },
+        type: "dropdown",
+        populators: {
+          name: "bailOf",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "NAME_OF_PARTY",
+              name: "Name of Party",
+            },
+          ],
+        },
       },
       {
         label: "SUMMARY",
@@ -2189,28 +2214,20 @@ export const configsBail = [
       },
       {
         label: "BAIL_TYPE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "bailType",
         type: "dropdown",
         populators: {
           name: "bailType",
-          optionsKey: "name",
-          error: "Error!",
+          optionsKey: "type",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
-          options: [
-            {
-              code: "SURETY",
-              name: "SURETY",
-            },
-            {
-              code: "BAIL_BOND",
-              name: "BAIL_BOND",
-            },
-            {
-              code: "CASH",
-              name: "CASH",
-            },
-          ],
+          isMandatory: true,
+          mdmsConfig: {
+            masterName: "BailType",
+            moduleName: "Order",
+            localePrefix: "BAIL_TYPE"
+          },
         },
       },
       {
@@ -2225,7 +2242,7 @@ export const configsBail = [
         isMandatory: true,
         key: "otherConditions",
         type: "text",
-        populators: { 
+        populators: {
           name: "otherConditions",
           error: "CS_ALPHANUMERIC_ALLOWED",
           validation: {
@@ -2639,28 +2656,28 @@ export const configsJudgement = [
     body: [
       {
         label: "CASE_NUMBER",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "caseNumber",
         type: "text",
         populators: { name: "caseNumber" },
       },
       {
         label: "DATE_OF_JUDGEMENT",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateOfJudgement",
         type: "date",
         populators: { name: "dateOfJudgement" },
       },
       {
         label: "NAME_OF_JUDGE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "nameOfJudge",
         type: "text",
         populators: { name: "nameOfJudge" },
       },
       {
         label: "NAME_OF_COURT",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "nameOfCourt",
         type: "text",
         populators: { name: "nameOfCourt" },
@@ -2670,7 +2687,7 @@ export const configsJudgement = [
         isMandatory: false,
         key: "nameofRespondant",
         type: "text",
-        populators: { 
+        populators: {
           name: "nameofRespondent",
           error: "CS_ALPHANUMERIC_ALLOWED",
           validation: {
@@ -2683,84 +2700,84 @@ export const configsJudgement = [
       },
       {
         label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "addressRespondant",
         type: "text",
         populators: { name: "addressRespondant" },
       },
       {
         label: "DATE_OF_OCCURENCE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateChequeReturnMemo",
         type: "date",
         populators: { name: "dateChequeReturnMemo" },
       },
       {
         label: "DATE_COMPLAINT",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateFiling",
         type: "date",
         populators: { name: "dateFiling" },
       },
       {
         label: "DATE_OF_APPREHENSION",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateApprehension",
         type: "date",
         populators: { name: "dateApprehension" },
       },
       {
         label: "DATE_OF_RELEASE_ON_BAIL",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateofReleaseOnBail",
         type: "date",
         populators: { name: "dateofReleaseOnBail" },
       },
       {
         label: "DATE_OF_COMMENCEMENT_TRIAL",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateofCommencementTrial",
         type: "date",
         populators: { name: "dateofCommencementTrial" },
       },
       {
         label: "DATE_OF_CLOSE_TRIAL",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateofCloseTrial",
         type: "date",
         populators: { name: "dateofCloseTrial" },
       },
       {
         label: "DATE_OF_SENTENCE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "dateofSentence",
         type: "date",
         populators: { name: "dateofSentence" },
       },
       {
         label: "NAME_COMPLAINANT",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "nameofComplainant",
         type: "text",
         populators: { name: "nameofComplainant" },
       },
       {
         label: "NAME_COMPLAINANT_ADVOCATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "nameofComplainantAdvocate",
         type: "text",
         populators: { name: "nameofComplainantAdvocate" },
       },
       {
         label: "NAME_RESPONDANT_ADVOCATE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "nameofRespondantAdvocate",
         type: "text",
         populators: { name: "nameofRespondantAdvocate" },
       },
       {
         label: "OFFENSE",
-        isMandatory: false,    // Change this to mandatory after system filled is implememnted
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "offense",
         type: "text",
         populators: { name: "offense" },
@@ -2773,6 +2790,7 @@ export const configsJudgement = [
         populators: {
           label: "PLEA",
           type: "radioButton",
+          name: "plea",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
@@ -2799,6 +2817,7 @@ export const configsJudgement = [
         populators: {
           label: "PLEA",
           type: "radioButton",
+          name: "findings",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
