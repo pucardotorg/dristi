@@ -201,6 +201,7 @@ export const UICustomizations = {
     getNames: (props) => {
       console.log("props", props);
       const removeOptions = props?.removeOptions ? props?.removeOptions : [];
+      const removeOptionsKey = props?.removeOptionsKey || "";
       return {
         url: "/advocate/advocate/v1/status/_search",
         params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
@@ -210,7 +211,7 @@ export const UICustomizations = {
         config: {
           select: (data) => {
             return data.advocates
-              .filter((adv) => !removeOptions?.includes(adv?.barRegistrationNumber))
+              .filter((adv) => !removeOptions?.includes(adv?.[removeOptionsKey]))
               .map((adv) => {
                 return {
                   icon: (

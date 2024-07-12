@@ -21,4 +21,22 @@ export const UICustomizations = {
       max: new Date().toISOString().split("T")[0],
     };
   },
+
+  orderTitleValidation: () => {
+    return {
+      pattern: /^(\b\w+\b\s*){0,15}$/i,
+    };
+  },
+
+  alphaNumericValidation: () => {
+    return {
+      pattern: /[^a-zA-Z0-9\s]/g,
+    };
+  },
+
+  alphaNumericInputTextValidation: () => {
+    return {
+      pattern: /^[a-zA-Z0-9 ]+$/i,
+    };
+  },
 };
