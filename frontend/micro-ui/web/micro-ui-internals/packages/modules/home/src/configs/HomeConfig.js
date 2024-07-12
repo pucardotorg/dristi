@@ -41,7 +41,17 @@ export const userTypeOptions = [
     name: "LITIGANT_TEXT",
     showBarDetails: false,
     isVerified: false,
-    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+    ],
     subText: "LITIGANT_SUB_TEXT",
   },
   {
@@ -50,7 +60,18 @@ export const userTypeOptions = [
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
-    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "ADVOCATE_ROLE",
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+    ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
       requestKey: "advocate",
@@ -64,7 +85,18 @@ export const userTypeOptions = [
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
-    role: ["ADVOCATE_CLERK_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "ADVOCATE_CLERK_ROLE",
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+    ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
       requestKey: "clerk",
@@ -1181,7 +1213,17 @@ export const TabFSOSearchConfig = {
 
 export const rolesToConfigMapping = [
   {
-    roles: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    roles: [
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+    ],
     config: TabLitigantSearchConfig,
     isLitigant: true,
     showJoinFileOption: true,
@@ -1218,3 +1260,44 @@ export const rolesToConfigMapping = [
     },
   },
 ];
+
+export const pendingTaskCaseActions = {
+  PAYMENT_PENDING: {
+    actionFor: ["LITIGANT/ADVOCATE"],
+    actionName: "Make Payment",
+    redirectTo: "",
+  },
+  UNDER_SCRUTINY: {
+    actionFor: ["FSO"],
+    actionName: "Case Filed and ready for FSO to review",
+    redirectTo: "",
+  },
+  CASE_RE_ASSIGNED: {
+    actionFor: ["LITIGANT/ADVOCATE"],
+    actionName: "Case Sent Back from Edit",
+    redirectTo: "",
+  },
+  PENDING_ADMISSION: {
+    actionFor: ["JUDGE"],
+    actionName: "Case Approved from Scrutiny",
+    redirectTo: "",
+  },
+
+  SCHEDULE_ADMISSION_HEARING: {
+    actionFor: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectTo: "",
+  },
+  ADMISSION_HEARING_SCHEDULED: {
+    actionFor: ["JUDGE"],
+    actionName: "Admission hearing scheduled",
+    redirectTo: "",
+  },
+  CASE_ADMITTED: {
+    actionFor: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectTo: "",
+  },
+};
+
+export const pendingTaskSubmissionActions = {};

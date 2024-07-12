@@ -889,7 +889,17 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             name: "Citizen",
             tenantId: tenantId,
           },
-          ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"]?.map((role) => ({
+          ...[
+            "CASE_CREATOR",
+            "CASE_EDITOR",
+            "CASE_VIEWER",
+            "DEPOSITION_CREATOR",
+            "DEPOSITION_VIEWER",
+            "APPLICATION_CREATOR",
+            "APPLICATION_VIEWER",
+            "HEARING_VIEWER",
+            "ORDER_VIEWER",
+          ]?.map((role) => ({
             code: role,
             name: role,
             tenantId: tenantId,

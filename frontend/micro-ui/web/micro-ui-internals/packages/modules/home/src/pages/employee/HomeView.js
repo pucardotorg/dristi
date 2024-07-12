@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import { CaseWorkflowState, TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
@@ -39,8 +39,8 @@ const HomeView = () => {
   const [hasJoinFileCaseOption, setHasJoinFileCaseOption] = useState(false);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
-  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, []);
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
+  const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
@@ -103,6 +103,34 @@ const HomeView = () => {
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
   }, []);
+
+  const getTotalCountForTab = useCallback(
+    async function (tabConfig) {
+      const updatedTabData = await Promise.all(
+        tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
+          const response = await HomeService.customApiService(configItem?.apiDetails?.serviceName, {
+            tenantId,
+            criteria: [
+              {
+                ...configItem?.apiDetails?.requestBody?.criteria?.[0],
+                ...defaultSearchValues,
+                ...additionalDetails,
+                pagination: { offSet: 0, limit: 1 },
+              },
+            ],
+          });
+          const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
+          return {
+            key: index,
+            label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
+            active: index === 0 ? true : false,
+          };
+        }) || []
+      );
+      setTabData(updatedTabData);
+    },
+    [additionalDetails, tenantId]
+  );
   useEffect(() => {
     if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
       const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
@@ -111,18 +139,7 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      (async function () {
-        const updatedTabData = await Promise.all(
-          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
-            return {
-              key: index,
-              label: configItem.label,
-              active: index === 0 ? true : false,
-            };
-          }) || []
-        );
-        setTabData(updatedTabData);
-      })();
+      getTotalCountForTab(tabConfig);
       setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     } else {
       const rolesToConfigMappingData =
@@ -138,33 +155,10 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      (async function () {
-        const updatedTabData = await Promise.all(
-          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
-            const response = await HomeService.customApiService(configItem?.apiDetails?.serviceName, {
-              tenantId,
-              criteria: [
-                {
-                  ...configItem?.apiDetails?.requestBody?.criteria?.[0],
-                  ...defaultSearchValues,
-                  ...additionalDetails,
-                  pagination: { offSet: 0, limit: 1 },
-                },
-              ],
-            });
-            const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
-            return {
-              key: index,
-              label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
-              active: index === 0 ? true : false,
-            };
-          }) || []
-        );
-        setTabData(updatedTabData);
-      })();
+      getTotalCountForTab(tabConfig);
       setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     }
-  }, [additionalDetails, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, roles, state, tenantId]);
 
   useEffect(() => {
     (async function () {
