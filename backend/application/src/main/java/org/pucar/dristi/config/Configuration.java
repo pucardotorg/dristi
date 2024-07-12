@@ -77,6 +77,12 @@ public class Configuration {
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
 
+    // Order Config
+    @Value("${egov.order.host}")
+    private String orderHost;
+
+    @Value("${egov.order.path}")
+    private String orderExistsPath;
 
     //URLShortening
     @Value("${egov.url.shortner.host}")
