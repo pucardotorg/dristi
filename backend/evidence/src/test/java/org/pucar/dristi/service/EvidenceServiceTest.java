@@ -92,9 +92,9 @@ class EvidenceServiceTest {
     void testSearchEvidence_NoArtifacts() {
         RequestInfo requestInfo = new RequestInfo();
         EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
-        when(repository.getArtifacts(criteria)).thenReturn(Collections.emptyList());
+        when(repository.getArtifacts(criteria,null)).thenReturn(Collections.emptyList());
 
-        List<Artifact> result = evidenceService.searchEvidence(requestInfo, criteria);
+        List<Artifact> result = evidenceService.searchEvidence(requestInfo, criteria,null);
 
         assertTrue(result.isEmpty());
     }
@@ -103,7 +103,7 @@ class EvidenceServiceTest {
     void testSearchEvidence_WithArtifacts() {
         RequestInfo requestInfo = new RequestInfo();
         EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
-        when(repository.getArtifacts(criteria)).thenReturn(List.of(artifact));
+        when(repository.getArtifacts(criteria,null)).thenReturn(List.of(artifact));
 
         // Mocking the ProcessInstance and Workflow
         ProcessInstance processInstance = new ProcessInstance();
@@ -115,7 +115,7 @@ class EvidenceServiceTest {
         when(workflowService.getCurrentWorkflow(requestInfo, artifact.getTenantId(), artifact.getArtifactNumber())).thenReturn(processInstance);
         when(workflowService.getWorkflowFromProcessInstance(processInstance)).thenReturn(expectedWorkflow);
 
-        List<Artifact> result = evidenceService.searchEvidence(requestInfo, criteria);
+        List<Artifact> result = evidenceService.searchEvidence(requestInfo, criteria,null);
 
         assertFalse(result.isEmpty());
         assertEquals(expectedWorkflow, result.get(0).getWorkflow());
