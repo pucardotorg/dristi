@@ -79,7 +79,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("pucar");
             processInstance.setTenantId(application.getTenantId());
-            processInstance.setBusinessService(setBusinessServiceAccordingToWorkflow(application));
+            processInstance.setBusinessService(getBusinessServiceFromAppplication(application));
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -99,7 +99,7 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
-    String setBusinessServiceAccordingToWorkflow(Application application) {
+    String getBusinessServiceFromAppplication(Application application) {
         if(application.getReferenceId() == null){
             return ASYNC_VOLUNTARY_SUBMISSION_SERVICES;
         }

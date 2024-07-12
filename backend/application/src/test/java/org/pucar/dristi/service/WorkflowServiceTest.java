@@ -3,7 +3,6 @@ package org.pucar.dristi.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
@@ -17,11 +16,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
-import org.pucar.dristi.service.WorkflowService;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 
-import java.util.*;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -104,7 +104,7 @@ public class WorkflowServiceTest {
         when(mockApplication.getReferenceId()).thenReturn(null);
 
         // Act
-        String result = workflowService.setBusinessServiceAccordingToWorkflow(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
         assertEquals(ASYNC_VOLUNTARY_SUBMISSION_SERVICES, result);
@@ -117,7 +117,7 @@ public class WorkflowServiceTest {
         when(mockApplication.isResponseRequired()).thenReturn(true);
 
         // Act
-        String result = workflowService.setBusinessServiceAccordingToWorkflow(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
         assertEquals(ASYNSUBMISSIONWITHRESPONSE, result);
@@ -130,7 +130,7 @@ public class WorkflowServiceTest {
         when(mockApplication.isResponseRequired()).thenReturn(false);
 
         // Act
-        String result = workflowService.setBusinessServiceAccordingToWorkflow(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
         assertEquals(ASYNCSUBMISSIONWITHOUTRESPONSE, result);

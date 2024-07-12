@@ -135,13 +135,13 @@ public class Application   {
         this.documents.add(documentsItem);
         return this;
         }
-    public Boolean isResponseRequired() {
+    public boolean isResponseRequired() {
         if (additionalDetails instanceof Map) {
             Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
             if (detailsMap.containsKey("isResponseRequired")) {
-                return (Boolean) detailsMap.get("isResponseRequired");
+                return (boolean) detailsMap.get("isResponseRequired");
             }
         }
-        return null;
+        return false;
     }
 }
