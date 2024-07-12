@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.Hearing;
 import org.pucar.dristi.web.models.HearingCriteria;
+import org.pucar.dristi.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ public class HearingQueryBuilder {
 
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.hearingid as hearingid ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_hearing_document doc";
+    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
 
     private final ObjectMapper mapper;
 
@@ -31,7 +33,7 @@ public class HearingQueryBuilder {
         this.mapper = mapper;
     }
 
-    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria) {
+    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria, Pagination pagination) {
         try {
             String cnrNumber = criteria.getCnrNumber();
             String applicationNumber = criteria.getApplicationNumber();
@@ -40,10 +42,6 @@ public class HearingQueryBuilder {
             String tenantId = criteria.getTenantId();
             LocalDate fromDate = criteria.getFromDate();
             LocalDate toDate = criteria.getToDate();
-            Integer limit = criteria.getLimit();
-            Integer offset = criteria.getOffset();
-            String sortBy = criteria.getSortBy();
-
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
@@ -53,10 +51,7 @@ public class HearingQueryBuilder {
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
-            addCriteriaSortBy(sortBy, query);
-            addCriteriaInteger(limit, query, " LIMIT ?", preparedStmtList);
-            addCriteriaInteger(offset, query, " OFFSET ?", preparedStmtList);
-
+            addSortAndOrder(pagination,query);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building hearing search query");
@@ -64,36 +59,34 @@ public class HearingQueryBuilder {
         }
     }
 
-    private void addCriteriaString(String criteria, StringBuilder query, String str, List<Object> preparedStmtList, Object listItem) {
+    void addCriteriaString(String criteria, StringBuilder query, String str, List<Object> preparedStmtList, Object listItem) {
         if (criteria != null && !criteria.isEmpty()) {
             query.append(str);
             preparedStmtList.add(listItem);
         }
     }
 
-    private void addCriteriaDate(LocalDate criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
+    void addCriteriaDate(LocalDate criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
         if (criteria != null) {
             query.append(str);
             preparedStmtList.add(criteria.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
         }
     }
 
-    private void addCriteriaInteger(Integer criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
-        if (criteria != null) {
-            query.append(str);
-            preparedStmtList.add(criteria);
+    void addSortAndOrder(Pagination pagination, StringBuilder query) {
+        if (pagination == null || query == null) {
+            return;
         }
-    }
 
-    private void addCriteriaSortBy(String sortBy, StringBuilder query) {
-        if (sortBy != null && !sortBy.isEmpty()) {
-            switch (sortBy) {
-                case "startTime" -> query.append(" ORDER BY startTime DESC");
-                case "endTime" -> query.append(" ORDER BY endTime DESC");
-                default -> query.append(" ORDER BY id");
-            }
-        } else {
-            query.append(" ORDER BY id");
+        String sortBy = pagination.getSortBy();
+        switch (sortBy != null ? sortBy : "default") {
+            case "startTime" -> query.append(" ORDER BY startTime ");
+            case "endTime" -> query.append(" ORDER BY endTime ");
+            default -> query.append(" ORDER BY id");
+        }
+
+        if (pagination.getOrder() != null) {
+            query.append(pagination.getOrder().toString().toUpperCase());
         }
     }
 
@@ -138,5 +131,15 @@ public class HearingQueryBuilder {
         preparedStmtList.add(hearing.getTenantId());
 
         return query;
+    }
+
+    public String getTotalCountQuery(String baseQuery) {
+        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
+    }
+
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+        preparedStatementList.add(pagination.getLimit());
+        preparedStatementList.add(pagination.getOffSet());
+        return query + " LIMIT ? OFFSET ?";
     }
 }
