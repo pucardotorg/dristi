@@ -2,11 +2,9 @@ package org.pucar.dristi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.RequestInfo;
+import org.pucar.dristi.web.models.TaskSearchRequest;
 import org.pucar.dristi.web.models.VcEntityCriteria;
-import org.pucar.dristi.web.models.OrderSearchRequest;
-import org.pucar.dristi.web.models.VcEntityOrderSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,17 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class OrderSearchService {
-
-    @Autowired
-    private RestTemplate restTemplate;
+public class TaskSearchService {
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    public String searchOrder(String referenceId) throws JsonProcessingException {
-        String url = "https://dristi-dev.pucar.org/order/order/v1/search";
+    @Autowired
+    private RestTemplate restTemplate;
 
+    public ResponseEntity<Object> getTaskSearchResponse(String referenceId) throws JsonProcessingException {
+        String url = "https://dristi-dev.pucar.org/task/v1/search";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json, text/plain, */*");
         headers.set("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
@@ -42,26 +39,24 @@ public class OrderSearchService {
         headers.set("sec-ch-ua-mobile", "?0");
         headers.set("sec-ch-ua-platform", "\"Linux\"");
 
-        RequestInfo requestInfo = new RequestInfo();
+        RequestInfo requestInfo= new RequestInfo();
         requestInfo.setAuthToken("94fca590-d0ed-4ec5-8157-47815b15a47b");
 
-        VcEntityCriteria criteria = VcEntityCriteria.builder()
+        VcEntityCriteria criteria= VcEntityCriteria.builder()
                 .id(referenceId)
                 .build();
 
-        VcEntityOrderSearchRequest vcEntityOrderSearchRequest = VcEntityOrderSearchRequest.builder()
+        TaskSearchRequest taskSearchRequest= TaskSearchRequest.builder()
                 .requestInfo(requestInfo)
                 .tenantId("pg")
                 .criteria(criteria)
                 .build();
 
-        HttpEntity<VcEntityOrderSearchRequest> entity = new HttpEntity<>(vcEntityOrderSearchRequest, headers);
+        HttpEntity<TaskSearchRequest> entity = new HttpEntity<>(taskSearchRequest, headers);
+
+        String entityString = objectMapper.writeValueAsString(entity);
+        System.out.println("task search entity as String: " + entityString);
         ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.POST, entity, Object.class);
-        String responseBodyString = objectMapper.writeValueAsString(response.getBody());
-        System.out.println("Response from the order search: " + responseBodyString);
-        // Extract cnrNumber from the response
-        String cnrNumber = JsonPath.parse(responseBodyString).read("$.list[0].cnrNumber", String.class);
-        System.out.println("CNR Number: " + cnrNumber);
-        return cnrNumber;
+        return response;
     }
 }

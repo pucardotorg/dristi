@@ -1,6 +1,7 @@
 package org.pucar.dristi.web.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -10,19 +11,18 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.dristi.service.FileDeleteService;
-import org.pucar.dristi.service.FileDownloadService;
-import org.pucar.dristi.service.OrderRegistrationService;
-import org.pucar.dristi.service.PDFSignatureService;
+import org.pucar.dristi.service.*;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:13:43.389623100+05:30[Asia/Calcutta]")
@@ -39,6 +39,9 @@ public class OrderApiController {
 
     @Autowired
     private FileDownloadService fileDownloadService;
+
+    @Autowired
+    private PDFSummonsOrderService pdfSummonsOrderService;
 
 
     @Autowired
@@ -92,7 +95,11 @@ public class OrderApiController {
     public ResponseEntity<String> processFile() throws Exception {
             String response = fileDownloadService.downloadAndExtractSignature();
         return new ResponseEntity<String>(response, HttpStatus.OK);
+    }
 
+    @RequestMapping(value = "/getpdf", method = RequestMethod.POST)
+    public ResponseEntity<InputStreamResource>getPdf() throws IOException {
+        return pdfSummonsOrderService.getPdfService("33ed5611-6c08-4d43-a78f-4eb7ad486a7f","summon");
     }
 }
 

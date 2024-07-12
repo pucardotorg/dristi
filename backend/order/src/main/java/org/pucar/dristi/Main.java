@@ -8,10 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan(basePackages = { "org.pucar.dristi", "org.pucar.dristi.web.controllers" , "org.pucar.dristi.config"})
 public class Main {
 

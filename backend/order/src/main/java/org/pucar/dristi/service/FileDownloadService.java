@@ -25,6 +25,9 @@ import java.util.List;
 public class FileDownloadService {
 
     @Autowired
+    private ServiceUrlMapperVCService serviceUrlMapperService;
+
+    @Autowired
     private ServiceUrlEntityRequestService serviceUrlEntityRequestService;
 
     public String downloadAndExtractSignature() throws Exception {
@@ -45,22 +48,13 @@ public class FileDownloadService {
         if (downloadedFile.exists()) {
             downloadedFile.delete();
         }
-        String referenceId="3f0d5571-199f-414f-b5d1-6024e2a1fb8e";
+        String referenceId="33ed5611-6c08-4d43-a78f-4eb7ad486a7f";
         String refCode="summon";
-        String serviceUrl=getSVcUrlMapping(refCode);
+        String serviceUrl=serviceUrlMapperService.getSVcUrlMapping(refCode);
         serviceUrlEntityRequestService.getEntityDetails(signDate,serviceUrl, referenceId);
         return "VC generated";
     }
 
-    public String getSVcUrlMapping(String refCode){
-        String urlMapping=null;
-        switch (refCode) {
-            case "summon":
-                urlMapping = "https://dristi-dev.pucar.org/task/v1/search";
-                break;
-        }
-        return urlMapping;
-    }
 
     private String getS3Url(String apiUrl, String authToken, String tenantId) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();

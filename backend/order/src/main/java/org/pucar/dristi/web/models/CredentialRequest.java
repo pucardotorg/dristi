@@ -18,6 +18,10 @@ import java.util.Calendar;
 @Builder
 public class CredentialRequest {
 
+    @JsonProperty("module")
+    @Valid
+    private String module;
+
     @JsonProperty("id")
     @Valid
     private String id;

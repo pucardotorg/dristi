@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.RequestInfo;
-import org.pucar.dristi.web.models.CredentialRequest;
-import org.pucar.dristi.web.models.VcEntityCriteria;
-import org.pucar.dristi.web.models.TaskSearchRequest;
+import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,41 +28,18 @@ public class ServiceUrlEntityRequestService {
 
     @Autowired
     private OrderSearchService orderSearchService;
+
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private QrCodeImageService qrCodeImageService;
+
+    @Autowired
+    private TaskSearchService taskSearchService;
+
     public void getEntityDetails(Calendar signDate, String serviceUrl, String referenceId) throws JsonProcessingException {
-        String url = "https://dristi-dev.pucar.org/task/v1/search";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json, text/plain, */*");
-        headers.set("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
-        headers.set("Connection", "keep-alive");
-        headers.set("Content-Type", "application/json;charset=UTF-8");
-        headers.set("Origin", "http://localhost:3000");
-        headers.set("Referer", "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true");
-        headers.set("Sec-Fetch-Dest", "empty");
-        headers.set("Sec-Fetch-Mode", "cors");
-        headers.set("Sec-Fetch-Site", "same-origin");
-        headers.set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
-        headers.set("sec-ch-ua", "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\"");
-        headers.set("sec-ch-ua-mobile", "?0");
-        headers.set("sec-ch-ua-platform", "\"Linux\"");
-
-        RequestInfo requestInfo= new RequestInfo();
-        requestInfo.setAuthToken("8077727e-98b4-47e0-8d1d-fece069d09a7");
-
-        VcEntityCriteria criteria= VcEntityCriteria.builder()
-                .id(referenceId)
-                .build();
-
-        TaskSearchRequest taskSearchRequest= TaskSearchRequest.builder()
-                .requestInfo(requestInfo)
-                .tenantId("pg")
-                .criteria(criteria)
-                .build();
-
-        HttpEntity<TaskSearchRequest> entity = new HttpEntity<>(taskSearchRequest, headers);
-
-        String entityString = objectMapper.writeValueAsString(entity);
-        System.out.println("task search entity as String: " + entityString);
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.POST, entity, Object.class);
+        ResponseEntity<Object> response= taskSearchService.getTaskSearchResponse(referenceId);
         String responseBodyString = objectMapper.writeValueAsString(response.getBody());
         System.out.println("Response from the task search: " + responseBodyString);
         String taskDetailsString = JsonPath.parse(responseBodyString).read("$.list[0].taskDetails", String.class);
@@ -77,12 +53,17 @@ public class ServiceUrlEntityRequestService {
         String summonId = taskDetailsJson.path("summonDetails").path("summonId").asText();
         String respondentName = taskDetailsJson.path("respondentDetails").path("name").asText();
         String summonIssueDate = taskDetailsJson.path("summonDetails").path("issueDate").asText();
+        String address = taskDetailsJson.path("respondentDetails").path("address").asText();
+        String caseCharge = taskDetailsJson.path("caseDetails").path("caseCharge").asText();
+        String judgeName = taskDetailsJson.path("caseDetails").path("judgeName").asText();
+        String hearingDate = taskDetailsJson.path("caseDetails").path("hearingDate").asText();
+
+
 
         System.out.println("court name"+ courtName);
         System.out.println("summonId"+ summonId);
         System.out.println("respondant name"+ respondentName);
         System.out.println("summon issue date"+ summonIssueDate);
-
 
         String cnrNumber = orderSearchService.searchOrder(orderId);
 
@@ -94,11 +75,14 @@ public class ServiceUrlEntityRequestService {
                 .orderPdfSignature(signDate)
                 .respondentName(respondentName)
                 .id(referenceId)
+                .module("Pucar.SummonsOrder")
                 .build();
-
 
         String credentialRequestString = objectMapper.writeValueAsString(credentialRequest);
         System.out.println("task search entity as String: " + credentialRequestString);
+
+        producer.push("create-vc",credentialRequest);
+        //qrCodeImageService.getQrImage("Pucar.SummonsOrder", referenceId);
 
     }
 }
