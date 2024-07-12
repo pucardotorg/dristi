@@ -57,8 +57,8 @@
                         evidenceSearchCriteria.getSourceName(),
                         evidenceSearchCriteria.getArtifactNumber()
                 );
-                log.info("Final artifact query: {}", artifactQuery);
                     artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
+                log.info("Final artifact query: {}", artifactQuery);
                 if(pagination !=  null) {
                     Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
                     log.info("Total count without pagination :: {}", totalRecords);
