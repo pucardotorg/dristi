@@ -14,13 +14,13 @@ import {
   configsSurety,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
-import { submissionService } from "../../hooks/services";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
 import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
+import { submissionService } from "../../hooks/services";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -29,6 +29,7 @@ const SubmissionsCreate = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
+  const applicationNumber = urlParams.get("applicationNumber");
   const [formdata, setFormdata] = useState({});
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(false);
@@ -76,6 +77,20 @@ const SubmissionsCreate = () => {
       name: "APPLICATION_TYPE",
     },
   };
+  const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        applicationNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    "dristi",
+    applicationNumber,
+    applicationNumber
+  );
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
