@@ -92,7 +92,6 @@ function CaseType({ t }) {
     const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
       individualData?.Individual,
     ]);
-
     const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
       {
         criteria: [{ individualId }],

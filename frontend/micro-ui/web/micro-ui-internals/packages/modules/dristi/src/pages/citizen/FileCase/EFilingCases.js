@@ -1535,7 +1535,6 @@ function EFilingCases({ path }) {
 
   const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
-    debugger;
     await DRISTIService.caseUpdateService(
       {
         cases: {

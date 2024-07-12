@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { CaseWorkflowState, TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
+import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
@@ -36,13 +36,12 @@ const HomeView = () => {
   );
   const [callRefetch, SetCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
-  const [hasJoinFileCaseOption, setHasJoinFileCaseOption] = useState(false);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userInfoType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -131,6 +130,7 @@ const HomeView = () => {
     },
     [additionalDetails, tenantId]
   );
+
   useEffect(() => {
     if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
       const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
@@ -140,7 +140,6 @@ const HomeView = () => {
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
       getTotalCountForTab(tabConfig);
-      setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     } else {
       const rolesToConfigMappingData =
         rolesToConfigMapping?.find((item) =>
@@ -156,17 +155,16 @@ const HomeView = () => {
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
       getTotalCountForTab(tabConfig);
-      setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
     }
   }, [additionalDetails, getTotalCountForTab, roles, state, tenantId]);
 
+  // calling case api for tab's count
   useEffect(() => {
     (async function () {
       if (userType) {
         setIsFetchCaseLoading(true);
         const caseData = await HomeService.customApiService("/case/case/v1/_search", {
           tenantId,
-
           criteria: [
             {
               litigantId: individualId,

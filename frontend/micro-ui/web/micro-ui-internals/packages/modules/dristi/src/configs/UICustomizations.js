@@ -190,6 +190,7 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                advocateUuid: adv?.auditDetails?.createdBy,
               };
             });
           },
