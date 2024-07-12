@@ -25,6 +25,8 @@ public class HearingQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.hearingid as hearingid ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_hearing_document doc";
     private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY createdtime DESC ";
+    private static final String ORDERBY_CLAUSE = " ORDER BY {orderBy} {sortingOrder} ";
 
     private final ObjectMapper mapper;
 
@@ -33,7 +35,7 @@ public class HearingQueryBuilder {
         this.mapper = mapper;
     }
 
-    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria, Pagination pagination) {
+    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria) {
         try {
             String cnrNumber = criteria.getCnrNumber();
             String applicationNumber = criteria.getApplicationNumber();
@@ -51,7 +53,6 @@ public class HearingQueryBuilder {
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
-            addSortAndOrder(pagination,query);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building hearing search query");
@@ -72,22 +73,13 @@ public class HearingQueryBuilder {
             preparedStmtList.add(criteria.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
         }
     }
-
-    void addSortAndOrder(Pagination pagination, StringBuilder query) {
-        if (pagination == null || query == null) {
-            return;
+    public String addOrderByQuery(String query, Pagination pagination) {
+        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+            return query + DEFAULT_ORDERBY_CLAUSE;
+        } else {
+            query = query + ORDERBY_CLAUSE;
         }
-
-        String sortBy = pagination.getSortBy();
-        switch (sortBy != null ? sortBy : "default") {
-            case "startTime" -> query.append(" ORDER BY startTime ");
-            case "endTime" -> query.append(" ORDER BY endTime ");
-            default -> query.append(" ORDER BY id");
-        }
-
-        if (pagination.getOrder() != null) {
-            query.append(pagination.getOrder().toString().toUpperCase());
-        }
+        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {

@@ -52,7 +52,8 @@ public class HearingRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String hearingQuery;
-            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, hearingSearchRequest.getCriteria(), hearingSearchRequest.getPagination());
+            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, hearingSearchRequest.getCriteria());
+            hearingQuery = queryBuilder.addOrderByQuery(hearingQuery, hearingSearchRequest.getPagination());
             log.info("Hearing list query: {}", hearingQuery);
 
             if(hearingSearchRequest.getPagination() !=  null) {

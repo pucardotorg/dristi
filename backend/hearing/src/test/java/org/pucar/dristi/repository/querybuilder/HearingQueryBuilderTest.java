@@ -39,16 +39,14 @@ class HearingQueryBuilderTest {
     void getHearingSearchQuery_NoCriteria() {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
-        Pagination pagination = Pagination.builder().limit(10d).offSet(0d).build();
         HearingCriteria criteria = HearingCriteria.builder().build();
 
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria, pagination);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
 
         // Assert
         assertNotNull(query);
         assertTrue(query.contains("SELECT * FROM dristi_hearing WHERE 1=1"));
-        assertTrue(query.contains("ORDER BY id"));
     }
 
     @Test
@@ -62,7 +60,6 @@ class HearingQueryBuilderTest {
         String tenantId = "tenant1";
         LocalDate fromDate = LocalDate.of(2023, 1, 1);
         LocalDate toDate = LocalDate.of(2023, 12, 31);
-        Pagination pagination = Pagination.builder().sortBy("startTime").order(Order.DESC).build();
 
         HearingCriteria criteria = HearingCriteria.builder()
                 .cnrNumber(cnrNumber)
@@ -75,7 +72,7 @@ class HearingQueryBuilderTest {
                 .build();
 
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria, pagination);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
 
         // Assert
         assertNotNull(query);
@@ -86,7 +83,6 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
         assertTrue(query.contains("AND startTime <= ?"));
-        assertTrue(query.contains("ORDER BY startTime DESC"));
         assertEquals(7, preparedStmtList.size());
         assertEquals("[\"CNR123\"]", preparedStmtList.get(0));
         assertEquals("[\"APP456\"]", preparedStmtList.get(1));
@@ -102,10 +98,9 @@ class HearingQueryBuilderTest {
         // Arrange
         List<Object> preparedStmtList = null;
         HearingCriteria criteria = HearingCriteria.builder().hearingId("Hearing123").build();
-        Pagination pagination = Pagination.builder().build();
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria, pagination));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria));
         assertEquals(SEARCH_QUERY_EXCEPTION, exception.getCode());
     }
 
@@ -230,16 +225,16 @@ class HearingQueryBuilderTest {
     }
 
     @Test
-    void addSortAndOrder() {
+    void addOrderByQueryTest() {
         // Arrange
-        StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
+        String query = "SELECT * FROM dristi_hearing WHERE 1=1";
         Pagination pagination = Pagination.builder().sortBy("startTime").order(Order.ASC).build();
 
         // Act
-        hearingQueryBuilder.addSortAndOrder(pagination, query);
+        query = hearingQueryBuilder.addOrderByQuery(query, pagination);
 
         // Assert
-        assertTrue(query.toString().contains("ORDER BY startTime ASC"));
+        assertTrue(query.contains("ORDER BY startTime ASC"));
     }
 
     @Test
