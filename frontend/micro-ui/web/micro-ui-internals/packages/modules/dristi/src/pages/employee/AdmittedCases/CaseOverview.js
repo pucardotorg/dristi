@@ -269,7 +269,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
           showActions={false}
         />
       )}
-      <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={() => setShowScheduleHearing(true)} />
+      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={() => setShowScheduleHearing(true)} /> */}
 
       {showScheduleHearingModal && (
         <ScheduleHearing
