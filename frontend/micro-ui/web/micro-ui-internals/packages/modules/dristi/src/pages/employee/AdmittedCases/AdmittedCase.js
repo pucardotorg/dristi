@@ -2,7 +2,7 @@ import { Button as ActionButton } from "@egovernments/digit-ui-components";
 import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import ViewCaseFile from "../scrutiny/ViewCaseFile";
 import { TabSearchconfig } from "./AdmittedCasesConfig";
@@ -39,6 +39,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
+  const location = useLocation();
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -56,7 +57,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   );
 
   const filingNumber = urlParams.get("filingNumber");
-  console.log(filingNumber);
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
@@ -264,6 +264,16 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
   useEffect(() => {
+    if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
+      showToast(true);
+      setToastDetails({
+        isError: false,
+        message: "ORDER_SUCCESSFULLY_ISSUED",
+      });
+    }
+  }, [history.location]);
+
+  useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
   }, []);
@@ -312,7 +322,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       ordersService
         .createOrder(reqbody, { tenantId })
         .then(() => {
-          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
         })
         .catch((err) => {});
     }
@@ -320,10 +330,10 @@ const AdmittedCases = ({ isJudge = true }) => {
 
   const showToast = (details, duration = 5000) => {
     setToast(true);
-    console.log(details);
     setToastDetails(details);
     setTimeout(() => {
       setToast(false);
+      history.replace(history.location.pathname + history.location.search, { from: "" });
     }, duration);
   };
 
@@ -424,7 +434,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 disabled={
                   caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
                   caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-                  config.label !== "Complaint"
+                  config?.label !== "Complaint"
                 }
               >
                 {t(i?.label)}
@@ -433,11 +443,11 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
         </div>
       </div>
-      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config.label} />
-      {config.label !== "Overview" && config.label !== "Complaints" && (
+      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
+      {config?.label !== "Overview" && config?.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
-          <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {!isCitizen && config.label === "Orders" && (
+          <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
+          {!isCitizen && config?.label === "Orders" && (
             <div
               onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -445,7 +455,7 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("GENERATE_ORDERS_LINK")}
             </div>
           )}
-          {!isCitizen && config.label === "Submissions" && (
+          {!isCitizen && config?.label === "Submissions" && (
             <div
               // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -453,7 +463,7 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("REQUEST_DOCUMENTS_LINK")}
             </div>
           )}
-          {isCitizen && config.label === "Submissions" && (
+          {isCitizen && config?.label === "Submissions" && (
             <div
               // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -466,7 +476,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       <div className="inbox-search-wrapper">
         {/* Pass defaultValues as props to InboxSearchComposer */}
         <InboxSearchComposer
-          key={`${config.label}-${updateCounter}`}
+          key={`${config?.label}-${updateCounter}`}
           configs={config}
           defaultValues={defaultValues}
           showTab={false}

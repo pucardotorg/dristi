@@ -84,6 +84,12 @@ const GenerateOrders = () => {
     return () => clearTimeout(timer);
   }, [closeToast]);
 
+  useEffect(() => {
+    if (!filingNumber) {
+      history.push("/employee/home");
+    }
+  }, []);
+
   const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
       criteria: [
