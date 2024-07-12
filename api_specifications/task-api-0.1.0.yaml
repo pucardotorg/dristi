@@ -218,7 +218,7 @@ components:
 
     Task:
       description: A task is created as part of an Order. It will always be linked to an order
-      required: [tenantId, orderId, taskType, createdDate, status]
+      required: [tenantId, orderId, taskType, createdDate, status, filingNumber]
       type: object
       properties:
         id:

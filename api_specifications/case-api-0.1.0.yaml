@@ -241,7 +241,7 @@ components:
         - statutesAndSections
         - litigants
       oneOf:
-        - required: [filingNumber, caseNumber]
+        - required: [filingNumber, cnrNumber]
       type: object
       properties:
         id:
@@ -281,7 +281,7 @@ components:
           description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
           minLength: 2
           maxLength: 64
-        courCaseNumber:
+        courtCaseNumber:
           type: string
           description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
           minLength: 10
@@ -780,8 +780,7 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
     
     CaseExists:
       type: object
