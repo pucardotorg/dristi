@@ -62,8 +62,6 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .hearingId(rs.getString("hearingid"))
                             .hearingType(rs.getString("hearingtype"))
                             .status(rs.getString("status"))
-                            .startTime(Long.valueOf(rs.getString("starttime")))
-                            .endTime(Long.valueOf(rs.getString("endtime")))
                             .vcLink(rs.getString("vclink"))
                             .isActive(rs.getBoolean("isactive"))
                             .notes(rs.getString("notes"))
@@ -81,6 +79,14 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             }))
                             .transcript(getListFromJson(rs.getString("transcript")))
                             .build();
+                    String startTime = rs.getString("starttime");
+                    String endTime = rs.getString("endtime");
+                    if(startTime!=null && !startTime.isEmpty()){
+                        hearing.setStartTime(Long.valueOf(startTime));
+                    }
+                    if(endTime!=null && !endTime.isEmpty()){
+                        hearing.setEndTime(Long.valueOf(endTime));
+                    }
                 }
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if(pgObject!=null)
