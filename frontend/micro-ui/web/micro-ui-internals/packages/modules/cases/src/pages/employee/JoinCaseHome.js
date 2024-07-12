@@ -221,6 +221,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [respondentList, setRespondentList] = useState([]);
   const [individualDoc, setIndividualDoc] = useState([]);
   const [advocateName, setAdvocateName] = useState("");
+  const [joinCaseRequest, setJoinCaseRequest] = useState({});
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -263,7 +264,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
               moduleName: "getAdvocateNameUsingBarRegistrationNumberJoinCase",
               customfn: "getNames",
               optionsKey: "barRegistrationNumber",
-              removeOptions: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((data) => data?.data?.barRegistrationNumber),
+              removeOptionsKey: "id",
+              removeOptions: caseDetails?.representatives
+                ?.filter((reps) => reps?.representing?.[0]?.partyType?.includes("complainant"))
+                ?.map((data) => data?.advocateId),
               optionsCustomStyle: {
                 marginTop: "40px",
                 justifyContent: "space-between",
@@ -358,6 +362,50 @@ const JoinCaseHome = ({ refreshInbox }) => {
     }
   };
 
+  const searchCase = async (caseNumber) => {
+    if (caseNumber) {
+      const response = await DRISTIService.searchCaseService(
+        {
+          criteria: [
+            {
+              filingNumber: caseNumber,
+            },
+          ],
+          tenantId,
+        },
+        {}
+      );
+      if (response?.criteria[0]?.responseList?.length === 1) {
+        if (response?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED") {
+          setIsDisabled(false);
+          setSearchCaseResult(response?.criteria[0]?.responseList[0]);
+          setErrors({
+            ...errors,
+            caseNumber: undefined,
+          });
+        } else {
+          setIsDisabled(true);
+          setErrors({
+            ...errors,
+            caseNumber: {
+              type: "not-admitted",
+              message: JoinHomeLocalisation.CASE_NOT_ADMITTED_TEXT,
+            },
+          });
+        }
+      } else {
+        setIsDisabled(true);
+        if (caseNumber)
+          setErrors({
+            ...errors,
+            caseNumber: {
+              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
+            },
+          });
+      }
+    }
+  };
+
   useEffect(() => {
     if (step === 0 && !caseNumber) {
       setErrors({
@@ -420,50 +468,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setSuccess(false);
     }
   }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
-
-  const searchCase = async (caseNumber) => {
-    if (caseNumber) {
-      const response = await DRISTIService.searchCaseService(
-        {
-          criteria: [
-            {
-              filingNumber: caseNumber,
-            },
-          ],
-          tenantId,
-        },
-        {}
-      );
-      if (response?.criteria[0]?.responseList?.length === 1) {
-        if (response?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED") {
-          setIsDisabled(false);
-          setSearchCaseResult(response?.criteria[0]?.responseList[0]);
-          setErrors({
-            ...errors,
-            caseNumber: undefined,
-          });
-        } else {
-          setIsDisabled(true);
-          setErrors({
-            ...errors,
-            caseNumber: {
-              type: "not-admitted",
-              message: JoinHomeLocalisation.CASE_NOT_ADMITTED_TEXT,
-            },
-          });
-        }
-      } else {
-        setIsDisabled(true);
-        if (caseNumber)
-          setErrors({
-            ...errors,
-            caseNumber: {
-              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
-            },
-          });
-      }
-    }
-  };
 
   useEffect(() => {
     const getData = setTimeout(() => {
@@ -1159,7 +1163,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
                       <div className="case-info-value">
                         <span>
-                          {caseDetails?.additionalDetails?.respondentDetails?.formdata
+                          {joinCaseRequest?.additionalDetails?.respondentDetails?.formdata
                             ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
                             .join(", ")}
                         </span>
@@ -1711,6 +1715,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             {}
           );
           if (res) {
+            setJoinCaseRequest(res?.joinCaseRequest);
             setStep(step + 1);
             setSuccess(true);
           } else {
@@ -1869,6 +1874,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             {}
           );
           if (res) {
+            setJoinCaseRequest(res?.joinCaseRequest);
             setStep(step + 1);
             setSuccess(true);
           } else {
@@ -1900,6 +1906,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     caseDetails?.representatives,
     caseNumber,
     errors,
+    individualAddress,
     individualDoc,
     individualId,
     isUserLoggedIn,
