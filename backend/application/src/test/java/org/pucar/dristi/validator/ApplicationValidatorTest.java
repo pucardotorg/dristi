@@ -212,8 +212,6 @@ public class ApplicationValidatorTest {
     @Test
     void testCreateOrderExistRequest() {
         // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        Application application = new Application();
         application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
 
         // Act
@@ -230,11 +228,8 @@ public class ApplicationValidatorTest {
     @Test
     void testValidateOrderDetails_OrderExists() {
         // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        Application application = new Application();
         application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
 
-        ApplicationRequest applicationRequest = new ApplicationRequest();
         applicationRequest.setRequestInfo(requestInfo);
         applicationRequest.setApplication(application);
 
@@ -248,11 +243,8 @@ public class ApplicationValidatorTest {
     @Test
     void testValidateOrderDetails_OrderDoesNotExist() {
         // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        Application application = new Application();
         application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
 
-        ApplicationRequest applicationRequest = new ApplicationRequest();
         applicationRequest.setRequestInfo(requestInfo);
         applicationRequest.setApplication(application);
 
@@ -268,11 +260,8 @@ public class ApplicationValidatorTest {
     @Test
     void testValidateOrderDetails_NoReferenceId() {
         // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        Application application = new Application();
         application.setReferenceId(null);
 
-        ApplicationRequest applicationRequest = new ApplicationRequest();
         applicationRequest.setRequestInfo(requestInfo);
         applicationRequest.setApplication(application);
 
