@@ -78,15 +78,19 @@ class ApplicationQueryBuilderTest {
     }
     @Test
     public void testAddOrderByQuery_withPagination() {
-        String baseQuery = "SELECT * FROM applications";
-        String expectedQuery = "SELECT * FROM applications ORDER BY app.createdtime DESC ";
+        // Setup
+        ApplicationQueryBuilder queryBuilder = new ApplicationQueryBuilder();
+        String query = "SELECT * FROM applications";
+        Pagination paginationNotNull = new Pagination();
+        paginationNotNull.setSortBy("columnName");
+        paginationNotNull.setOrder(Order.ASC);
 
-        pagination.setSortBy("createdTime");
-        pagination.setOrder(Order.DESC);
+        // Execute
+        String resultQuery = queryBuilder.addOrderByQuery(query, paginationNotNull);
 
-        String actualQuery = applicationQueryBuilder.addOrderByQuery(baseQuery, pagination);
-
-        assertEquals(expectedQuery, actualQuery);
+        // Assert
+        String expectedQuery = "SELECT * FROM applications ORDER BY app.columnName ASC ";
+        assertEquals(expectedQuery, resultQuery);
     }
 
     @Test
@@ -149,7 +153,6 @@ class ApplicationQueryBuilderTest {
     @Test
     public void testAddOrderByQuery_WithSorting() {
         String query = "SELECT * FROM table_name";
-        Pagination pagination = new Pagination(); // Replace with actual values
         String expectedOrderByClause = " ORDER BY app.createdtime DESC ";
         String expectedResult = query + expectedOrderByClause;
 
@@ -565,7 +568,6 @@ class ApplicationQueryBuilderTest {
     @Test
     void addPagination_Query_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
         String query = "SELECT * FROM dristi_application app WHERE app.id = '111'";
-        Pagination pagination = new Pagination();
         pagination.setLimit(2d);
         pagination.setOffSet(0d);
         List<Object> preparedStmtList = new ArrayList<>();
