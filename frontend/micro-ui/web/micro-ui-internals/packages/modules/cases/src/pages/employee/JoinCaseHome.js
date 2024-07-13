@@ -175,11 +175,11 @@ const advocateVakalatnamaConfig = [
 const JoinCaseHome = ({ refreshInbox }) => {
   const { t } = useTranslation();
 
-  const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
-  const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
-  const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
+  const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
+  const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CustomCaseInfoDiv");
+  const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const SelectCustomDragDrop = window?.Digit?.ComponentRegistryService?.getComponent("SelectCustomDragDrop");
-  const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMERRORTOOLTIP");
+  const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
   const CustomButton = window?.Digit?.ComponentRegistryService?.getComponent("CustomButton");
   const tenantId = Digit.ULBService.getCurrentTenantId();
 

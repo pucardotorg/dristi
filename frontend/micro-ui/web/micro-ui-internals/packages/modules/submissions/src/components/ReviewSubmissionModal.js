@@ -10,7 +10,9 @@ function ReviewSubmissionModal({
   t,
   setShowsignatureModal,
   handleBack,
+  documents,
 }) {
+  const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };

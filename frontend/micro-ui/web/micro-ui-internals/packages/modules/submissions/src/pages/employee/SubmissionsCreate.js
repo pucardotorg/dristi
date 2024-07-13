@@ -304,6 +304,7 @@ const SubmissionsCreate = () => {
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
+          documents={applicationDetails?.documents || []}
         />
       )}
       {showsignatureModal && (
