@@ -194,9 +194,6 @@ const HomeView = () => {
     SetCallRefetch(true);
   };
 
-  if (isUserLoggedIn && !individualId && userInfoType === "citizen") {
-    history.push(`/${window?.contextPath}/${userInfoType}/dristi/home`);
-  }
   const onRowClick = (row) => {
     const searchParams = new URLSearchParams();
     if (
@@ -231,6 +228,10 @@ const HomeView = () => {
 
   if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
     return <Loader />;
+  }
+
+  if (isUserLoggedIn && !individualId && userInfoType === "citizen") {
+    history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
   }
 
   return (
