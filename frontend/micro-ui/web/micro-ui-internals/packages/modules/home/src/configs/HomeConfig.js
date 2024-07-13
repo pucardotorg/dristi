@@ -1249,6 +1249,20 @@ export const rolesToConfigMapping = [
     },
   },
   {
+    roles: ["HEARING_CREATOR"],
+    config: TabJudgeSearchConfig,
+    isCourtOfficer: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/admission",
+      urlDependentOn: "status",
+      urlDependentValue: "PENDING_ADMISSION",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
+  },
+  {
     roles: ["CASE_REVIEWER"],
     config: TabFSOSearchConfig,
     isFSO: true,

@@ -1308,7 +1308,15 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current, setReceiptDemandNoticeModal }))
+        .some((data) =>
+          demandNoticeFileValidation({
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setFormErrors: setFormErrors.current,
+            setReceiptDemandNoticeModal,
+          })
+        )
     ) {
       return;
     }
@@ -1540,6 +1548,7 @@ function EFilingCases({ path }) {
               }`) ||
             caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
+          courtId: data?.court?.code,
           workflow: {
             ...caseDetails?.workflow,
             action: "SUBMIT_CASE",

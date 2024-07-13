@@ -8,6 +8,10 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function OrderSucessModal({ order, t, setShowSuccessModal }) {
   const history = useHistory();
+  const searchParams = new URLSearchParams(history.location.search);
+  searchParams.set("caseId", history.location.state.caseId);
+  searchParams.set("tab", history.location.state.tab);
+
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -32,15 +36,22 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
     ],
   };
 
+  const handleDownloadOrders = () => {
+    // setShowSuccessModal(false);
+    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
+  };
+
+  const handleClose = () => {
+    setShowSuccessModal(false);
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
+  };
+
   return (
     <Modal
       actionCancelLabel={t("DOWNLOAD_ORDER")}
-      actionCancelOnSubmit={() => {}}
+      actionCancelOnSubmit={handleDownloadOrders}
       actionSaveLabel={t("CS_COMMON_CLOSE")}
-      actionSaveOnSubmit={() => {
-        setShowSuccessModal(false);
-        history.goBack();
-      }}
+      actionSaveOnSubmit={handleClose}
       className={"orders-success-modal"}
       cancelButtonBody={<FileDownloadIcon></FileDownloadIcon>}
     >

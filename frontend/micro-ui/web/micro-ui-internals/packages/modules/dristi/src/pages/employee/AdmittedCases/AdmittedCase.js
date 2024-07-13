@@ -2,7 +2,7 @@ import { Button as ActionButton } from "@egovernments/digit-ui-components";
 import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import ViewCaseFile from "../scrutiny/ViewCaseFile";
 import { TabSearchconfig } from "./AdmittedCasesConfig";
@@ -39,6 +39,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
+  const location = useLocation();
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -56,22 +57,25 @@ const AdmittedCases = ({ isJudge = true }) => {
   );
 
   const filingNumber = urlParams.get("filingNumber");
-  console.log(filingNumber);
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
+  const status = caseData?.criteria[0]?.responseList[0]?.status;
   const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
     ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
         ?.split(" ")
         ?.map((splitString) => splitString.charAt(0))
         ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
     : "";
+  const caseNumber = caseData?.criteria[0]?.responseList[0]?.caseNumber;
   const caseRelatedData = {
     caseId: caseId,
     filingNumber: filingNumber,
     cnrNumber: cnrNumber,
     title: title,
     stage: stage,
+    case: caseData?.criteria[0].responseList[0],
+    statue: statue,
   };
 
   const orderSetFunc = (order) => {
@@ -264,6 +268,16 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
   useEffect(() => {
+    if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
+      showToast(true);
+      setToastDetails({
+        isError: false,
+        message: "ORDER_SUCCESSFULLY_ISSUED",
+      });
+    }
+  }, [history.location]);
+
+  useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
   }, []);
@@ -312,7 +326,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       ordersService
         .createOrder(reqbody, { tenantId })
         .then(() => {
-          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
         })
         .catch((err) => {});
     }
@@ -320,10 +334,10 @@ const AdmittedCases = ({ isJudge = true }) => {
 
   const showToast = (details, duration = 5000) => {
     setToast(true);
-    console.log(details);
     setToastDetails(details);
     setTimeout(() => {
       setToast(false);
+      history.replace(history.location.pathname + history.location.search, { from: "" });
     }, duration);
   };
 
@@ -335,7 +349,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     <Loader />
   ) : (
     <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 10, background: "white" }}>
+      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
@@ -362,7 +376,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
-            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
+            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} disabled={status !== "CASE_ADMITTED"} />}
           </div>
           {isJudge && (
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
@@ -424,7 +438,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 disabled={
                   caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
                   caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-                  config.label !== "Complaint"
+                  config?.label !== "Complaint"
                 }
               >
                 {t(i?.label)}
@@ -433,11 +447,11 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
         </div>
       </div>
-      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config.label} />
-      {config.label !== "Overview" && config.label !== "Complaints" && (
+      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
+      {config?.label !== "Overview" && config?.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
-          <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {!isCitizen && config.label === "Orders" && (
+          <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
+          {!isCitizen && config?.label === "Orders" && (
             <div
               onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -445,7 +459,7 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("GENERATE_ORDERS_LINK")}
             </div>
           )}
-          {!isCitizen && config.label === "Submissions" && (
+          {!isCitizen && config?.label === "Submissions" && (
             <div
               // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -453,9 +467,9 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("REQUEST_DOCUMENTS_LINK")}
             </div>
           )}
-          {isCitizen && config.label === "Submissions" && (
+          {isCitizen && config?.label === "Submissions" && (
             <div
-              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              onClick={handleMakeSubmission}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
             >
               {t("MAKE_SUBMISSION")}
@@ -466,7 +480,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       <div className="inbox-search-wrapper">
         {/* Pass defaultValues as props to InboxSearchComposer */}
         <InboxSearchComposer
-          key={`${config.label}-${updateCounter}`}
+          key={`${config?.label}-${updateCounter}`}
           configs={config}
           defaultValues={defaultValues}
           showTab={false}
@@ -476,7 +490,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
         <div>
-          <CaseOverview caseData={caseRelatedData} />
+          <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (

@@ -1,4 +1,5 @@
 import { useToast } from "../../../components/Toast/useToast";
+import { getUserDetails } from "../../../hooks/useGetAccessToken";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
@@ -615,18 +616,7 @@ export const respondentValidation = ({
     toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
     setFormErrors("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
     return true;
-  }
-  // else if (
-  //   formData &&
-  //   formData?.phonenumbers?.textfieldValue &&
-  //   formData?.phonenumbers?.textfieldValue?.length === 10 &&
-  //   formData?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue)
-  // ) {
-  //   toast.error("DUPLICATE_MOBILE_NUMBER");
-  //   // setFormErrors("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
-  //   return true;
-  // }
-  else {
+  } else {
     clearFormDataErrors("phonenumbers");
     return false;
   }
@@ -944,6 +934,11 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
     },
   };
   const response = await window?.Digit.DRISTIService.postIndividualService(Individual, tenantId);
+  const refreshToken = window.localStorage.getItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  window.localStorage.removeItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  if (refreshToken) {
+    await getUserDetails(refreshToken, data?.complainantVerification?.userDetails?.mobileNumber);
+  }
   return response;
 };
 
@@ -976,6 +971,15 @@ export const updateCaseDetails = async ({
           .filter((item) => item.isenabled)
           .map(async (data, index) => {
             if (data?.data?.complainantVerification?.individualDetails) {
+              const Individual = await DRISTIService.searchIndividualUser(
+                {
+                  Individual: {
+                    individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+                  },
+                },
+                { tenantId, limit: 1, offset: 0 }
+              );
+              const userUuid = Individual?.Individual?.[0]?.userUuid || "";
               return {
                 tenantId,
                 caseId: caseDetails?.id,
@@ -984,6 +988,7 @@ export const updateCaseDetails = async ({
                 partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                 additionalDetails: {
                   fullName: `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${data?.data?.lastName}`,
+                  uuid: userUuid ? userUuid : null,
                 },
               };
             } else {
@@ -1008,7 +1013,6 @@ export const updateCaseDetails = async ({
                       },
                     });
                   const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -1018,9 +1022,10 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-                  const firstName = Individual?.Individual?.firstName;
-                  const lastName = Individual?.Individual?.lastName;
-                  const middleName = Individual?.Individual?.middleName;
+                  const firstName = Individual?.Individual?.name?.givenName;
+                  const lastName = Individual?.Individual?.name?.familyName;
+                  const middleName = Individual?.Individual?.name?.otherNames;
+                  const userUuid = Individual?.Individual?.userUuid;
 
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
@@ -1064,6 +1069,7 @@ export const updateCaseDetails = async ({
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                     additionalDetails: {
                       fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
                     },
                   };
                 } else {
@@ -1078,10 +1084,10 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-                  const firstName = Individual?.Individual?.firstName;
-                  const lastName = Individual?.Individual?.lastName;
-                  const middleName = Individual?.Individual?.middleName;
-
+                  const firstName = Individual?.Individual?.name?.givenName;
+                  const lastName = Individual?.Individual?.name?.familyName;
+                  const middleName = Individual?.Individual?.name?.otherNames;
+                  const userUuid = Individual?.Individual?.userUuid;
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
                   complainantVerification[index] = {
                     individualDetails: {
@@ -1116,6 +1122,7 @@ export const updateCaseDetails = async ({
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                     additionalDetails: {
                       fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
                     },
                   };
                 }
@@ -1740,6 +1747,7 @@ export const updateCaseDetails = async ({
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+              uuid: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateUuid,
             },
             tenantId,
           };
