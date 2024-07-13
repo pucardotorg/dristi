@@ -267,6 +267,14 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [toastDetails, setToastDetails] = useState({});
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
+  const isTabDisabled = useMemo(() => {
+    return (
+      caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
+      caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
+      config?.label !== "Complaint"
+    );
+  }, [caseData, config]);
+
   useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
       showToast(true);
@@ -382,7 +390,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                  <div className="evidence-actions">
+                  <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
                     <ActionButton
                       variation={"primary"}
                       label={"Take Action"}
@@ -435,11 +443,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 onClick={() => {
                   onTabChange(num);
                 }}
-                disabled={
-                  caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
-                  caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-                  config?.label !== "Complaint"
-                }
+                disabled={isTabDisabled}
               >
                 {t(i?.label)}
               </button>
