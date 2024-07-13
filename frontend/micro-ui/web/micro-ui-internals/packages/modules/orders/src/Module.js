@@ -5,6 +5,8 @@ import { default as EmployeeApp } from "./pages/employee";
 import OrdersCard from "./components/OrdersCard";
 import { overrideHooks, updateCustomConfigs } from "./utils";
 import DeliveryChannels from "./pageComponents/DeliveryChannels";
+import SummonsOrderComponent from "./components/SummonsOrderComponent";
+
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -25,7 +27,8 @@ export const OrdersModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   OrdersModule,
   OrdersCard,
-  DeliveryChannels
+  DeliveryChannels,
+  SummonsOrderComponent
 };
 
 export const initOrdersComponents = () => {

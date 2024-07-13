@@ -1324,12 +1324,39 @@ export const configsIssueSummons = [
   {
     body: [
       {
-        inline: true,
-        label: "REF_APPLICATION_ID",
-        isMandatory: false,
-        key: "refApplicationId",
-        type: "text",
-        populators: { name: "refApplicationId" },
+        type: "date",
+        label: "Date for Hearing",
+        labelChildren: "OutlinedInfoIcon",
+        isMandatory: true,
+        populators: {
+          name: "date",
+          validation: {
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        type: "component",
+        component: "SummonsOrderComponent",
+        key: "SummonsOrder",
+        label: "Party to Summon",
+        populators: {
+          inputs: [
+            {
+              name: "select party",
+              type: "dropdown",
+            },
+            {
+              name : "select deleivery channels",
+              type : "checkbox"
+            }
+          ],
+        },
       },
       {
         inline: true,
@@ -1527,6 +1554,14 @@ export const configsOthers = [
 
 export const configsBail = [
   {
+    defaultValues: {
+      orderType: {
+        id: 9,
+        type: "BAIL",
+        isactive: true,
+        code: "BAIL",
+      },
+    },
     body: [
       {
         inline: true,
@@ -1609,10 +1644,6 @@ export const configsBail = [
               name: "SURETY",
             },
             {
-              code: "BAIL_BOND",
-              name: "BAIL_BOND",
-            },
-            {
               code: "CASH",
               name: "CASH",
             },
@@ -1620,20 +1651,13 @@ export const configsBail = [
         },
       },
       {
-        inline: true,
-        label: "BAIL_AMOUNT",
-        isMandatory: false,
-        key: "bailAmount",
-        type: "text",
-        populators: { name: "bailAmount" },
-      },
-      {
-        inline: true,
-        label: "OTHER_CONDITIONS",
-        isMandatory: false,
-        key: "otherConditions",
-        type: "text",
-        populators: { name: "otherConditions" },
+        inline : true,
+        label: "Brief Summary",
+        type: "textarea",
+        key:"briefSummary",
+        populators:{
+          name:"briefSummary"
+        },
       },
     ],
   },
@@ -1808,12 +1832,15 @@ export const configsCreateOrderWarrant = [
         type: "radio",
         key: "bailable",
         label: "Is this a bailable warrant?",
-        disable: false,
         populators: {
           name: "bailable",
+          label: "bailableRadioButton",
+          type: "radioButton",
           optionsKey: "name",
           error: "Error!",
           required: false,
+          isMandatory: true,
+          isDependent: true,
           options: [
             {
               code: "Yes",
@@ -1869,7 +1896,7 @@ export const configsCreateOrderWarrant = [
       //   disable: false,
       //   populators: { name: "dob", error: "Required"},
       // },
-
+ 
       //   {
       //     label: "Additional notes",
       //     isMandatory: true,
