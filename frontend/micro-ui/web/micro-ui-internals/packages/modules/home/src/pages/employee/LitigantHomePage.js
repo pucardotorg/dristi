@@ -428,6 +428,13 @@ const JoinOngoingCaseIcon = () => (
   </svg>
 );
 
+const subtextStyle = {
+  fontFamily: "Roboto",
+  fontSize: "16px",
+  fontWeight: "400",
+  lineHeight: "18.75px",
+  textAlign: "center",
+};
 const LitigantHomePage = () => {
   const userName = Digit.SessionStorage.get("User");
   const { t } = useTranslation();
@@ -472,30 +479,12 @@ const LitigantHomePage = () => {
           >
             <FileNewCaseIcon />
             <React.Fragment>
-              <span className="header userName">{t("Join an ongoing case")}</span>
-              <span
-                className="subtext"
-                style={{
-                  fontFamily: "Roboto",
-                  fontSize: "16px",
-                  fontWeight: "400",
-                  lineHeight: "18.75px",
-                  textAlign: "center",
-                }}
-              >
-                {t("Start your fight for justice - PUCAR makes filing and ")}
+              <span className="header userName">{t("CS_JOIN_NEW_CASE")}</span>
+              <span className="subtext" style={subtextStyle}>
+                {t("CS_JOIN_NEW_CASE_SUBTEXT_1")}
               </span>
-              <span
-                className="subtext"
-                style={{
-                  fontFamily: "Roboto",
-                  fontSize: "16px",
-                  fontWeight: "400",
-                  lineHeight: "18.75px",
-                  textAlign: "center",
-                }}
-              >
-                {t("following your case smooth and easy")}
+              <span className="subtext" style={subtextStyle}>
+                {t("CS_JOIN_NEW_CASE_SUBTEXT_2")}
               </span>
             </React.Fragment>
             <Button
@@ -524,30 +513,12 @@ const LitigantHomePage = () => {
           >
             <JoinOngoingCaseIcon />
             <React.Fragment>
-              <span className="header userName">{t("Join a new case")}</span>
-              <span
-                className="subtext"
-                style={{
-                  fontFamily: "Roboto",
-                  fontSize: "16px",
-                  fontWeight: "400",
-                  lineHeight: "18.75px",
-                  textAlign: "center",
-                }}
-              >
-                {t("Seeking to represent a client in an ongoing case? ")}
+              <span className="header userName">{t("CS_JOIN_ONGOING_CASE")}</span>
+              <span className="subtext" style={subtextStyle}>
+                {t("CS_JOIN_ONGOING_CASE_SUBTEXT_1")}
               </span>
-              <span
-                className="subtext"
-                style={{
-                  fontFamily: "Roboto",
-                  fontSize: "16px",
-                  fontWeight: "400",
-                  lineHeight: "18.75px",
-                  textAlign: "center",
-                }}
-              >
-                {t("Join in as an advocate")}
+              <span className="subtext" style={subtextStyle}>
+                {t("CS_JOIN_ONGOING_CASE_SUBTEXT_2")}
               </span>
             </React.Fragment>
             <JoinCaseHome refreshInbox={refreshInbox} t={t} />
