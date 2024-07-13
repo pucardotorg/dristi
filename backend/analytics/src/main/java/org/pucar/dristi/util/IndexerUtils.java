@@ -175,7 +175,8 @@ public class IndexerUtils {
 				caseDetails = processHearingEntity(request, referenceId, action, tenantId);
 				break;
 			case "case":
-				caseDetails = processCaseEntity(request, referenceId, action, tenantId);
+				if(!action.contains("SAVE_DRAFT"))
+                    caseDetails = processCaseEntity(request, referenceId, action, tenantId);
 				break;
 			case "evidence":
 				caseDetails = processEvidenceEntity(request, referenceId);
