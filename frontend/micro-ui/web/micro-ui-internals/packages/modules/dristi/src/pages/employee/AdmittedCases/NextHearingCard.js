@@ -10,7 +10,6 @@ const NextHearingCard = ({ caseData, width }) => {
     {
       criteria: {
         filingNumber: filingNumber,
-        cnrNumber: cnr,
         tenantId: tenantId,
       },
     },

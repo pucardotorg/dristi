@@ -60,18 +60,22 @@ const AdmittedCases = ({ isJudge = true }) => {
   const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
   const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
   const stage = caseData?.criteria[0]?.responseList[0]?.stage;
+  const status = caseData?.criteria[0]?.responseList[0]?.status;
   const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
     ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
         ?.split(" ")
         ?.map((splitString) => splitString.charAt(0))
         ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
     : "";
+  const caseNumber = caseData?.criteria[0]?.responseList[0]?.caseNumber;
   const caseRelatedData = {
     caseId: caseId,
     filingNumber: filingNumber,
     cnrNumber: cnrNumber,
     title: title,
     stage: stage,
+    case: caseData?.criteria[0].responseList[0],
+    statue: statue,
   };
 
   const orderSetFunc = (order) => {
@@ -345,7 +349,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     <Loader />
   ) : (
     <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 10, background: "white" }}>
+      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
@@ -372,7 +376,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
-            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
+            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} disabled={status !== "CASE_ADMITTED"} />}
           </div>
           {isJudge && (
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
@@ -465,7 +469,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
           {isCitizen && config?.label === "Submissions" && (
             <div
-              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+              onClick={handleMakeSubmission}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
             >
               {t("MAKE_SUBMISSION")}
@@ -486,7 +490,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
         <div>
-          <CaseOverview caseData={caseRelatedData} />
+          <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (

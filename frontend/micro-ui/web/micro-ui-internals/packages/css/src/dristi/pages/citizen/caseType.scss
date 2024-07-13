@@ -387,6 +387,30 @@
     }
   }
 
+  .evidence-details {
+    padding: 24px 12px 0px 24px;
+    width: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    .application-view {
+      .docviewer-wrapper {
+        margin-top: 0px !important;
+        .employeeCard {
+          padding: 0px !important;
+          margin-bottom: 0px !important;
+          box-shadow: none;
+          border: 1px #bbbbbd solid;
+          border-radius: 4px;
+          #pdf-page-info {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
   .application-info {
     padding: 16px 24px;
     background: #f7f5f3;

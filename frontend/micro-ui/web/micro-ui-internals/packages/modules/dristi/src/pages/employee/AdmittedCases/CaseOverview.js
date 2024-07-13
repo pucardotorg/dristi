@@ -6,12 +6,15 @@ import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderRevi
 import useGetHearings from "../../../hooks/dristi/useGetHearings";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { ordersService } from "../../../../../orders/src/hooks/services";
+import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
+import ScheduleHearing from "./ScheduleHearing";
 
-const CaseOverview = ({ caseData }) => {
+const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
-  const cnr = caseData.cnrNumber;
+  const cnrNumber = caseData.cnrNumber;
   const caseId = caseData.caseId;
   const { path } = useRouteMatch();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -19,17 +22,17 @@ const CaseOverview = ({ caseData }) => {
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
-        cnrNumber: cnr,
         tenantId: tenantId,
       },
     },
     {},
-    cnr + filingNumber,
+    cnrNumber + filingNumber,
     true
   );
 
@@ -41,7 +44,7 @@ const CaseOverview = ({ caseData }) => {
       },
     },
     {},
-    cnr + filingNumber,
+    cnrNumber + filingNumber,
     true
   );
 
@@ -49,11 +52,52 @@ const CaseOverview = ({ caseData }) => {
     (hearing1, hearing2) => hearing2.endTime - hearing1.endTime
   )[0];
 
-  const navigateOrdersGenerate = () => {
-    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
-  console.log(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+  const navigateOrdersGenerate = () => {
+    const reqbody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "Bail",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+    ordersService
+      .createOrder(reqbody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+      })
+      .catch((err) => {});
+  };
+
+  const handleMakeSubmission = () => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+  };
+
+  const openHearingModule = () => {
+    setShowScheduleHearingModal(true);
+  };
 
   if (isHearingsLoading || isOrdersLoading) {
     return <Loader />;
@@ -110,9 +154,18 @@ const CaseOverview = ({ caseData }) => {
                 marginTop: "16px",
               }}
             >
-              <Button variation={"outlined"} label={"Schedule Hearing"} />
+              <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
               {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
                 <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
+              )}
+              {showScheduleHearingModal && (
+                <ScheduleHearing
+                  setUpdateCounter={setUpdateCounter}
+                  showToast={showToast}
+                  tenantId={tenantId}
+                  caseData={caseData}
+                  setShowModal={setShowScheduleHearingModal}
+                />
               )}
             </div>
           ) : (
@@ -124,7 +177,7 @@ const CaseOverview = ({ caseData }) => {
                 marginTop: "16px",
               }}
             >
-              <Button variation={"outlined"} label={"Raise Application"} />
+              <Button variation={"outlined"} label={"Raise Application"} onClick={handleMakeSubmission} />
             </div>
           )}
         </div>

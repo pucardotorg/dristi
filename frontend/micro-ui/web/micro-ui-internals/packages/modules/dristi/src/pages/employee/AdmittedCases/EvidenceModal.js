@@ -1,4 +1,4 @@
-import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, Loader, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../../components/Modal";
@@ -65,6 +65,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       ? t("Reject")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
+
+  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: documentSubmission.map((docSubmission) => docSubmission.details.sender),
+      },
+    },
+    { tenantId, limit: 10, offset: 0 },
+    "DRISTI",
+    "",
+    true
+  );
 
   const reqCreate = {
     url: `/application/application/v1/update`,
@@ -318,6 +330,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   console.log(modalType === "Documents" && documentSubmission[0]?.artifactList.isEvidence);
 
+  if (isLoading) return <div></div>;
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (
@@ -337,8 +350,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
-            <div className="application-details">
-              {documentSubmission?.map((docSubmission) => (
+            <div className={modalType === "Submissions" ? "application-details" : "evidence-details"}>
+              {documentSubmission?.map((docSubmission, index) => (
                 <div>
                   <div className="application-info">
                     <div className="info-row">
@@ -362,7 +375,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>Sender</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{docSubmission.details.sender}</h3>
+                        <h3>{`${data.Individual[index].name.givenName} ${data.Individual[index].name.familyName}`}</h3>
                       </div>
                     </div>
                     <div className="info-row">
@@ -370,7 +383,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>Additional Details</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3>
+                        {/* <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3> */}
+                        <h3>N/A</h3>
                       </div>
                     </div>
                     <div className="application-view">
