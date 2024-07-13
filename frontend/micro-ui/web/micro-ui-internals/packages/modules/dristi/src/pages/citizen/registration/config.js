@@ -14,6 +14,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -34,6 +36,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -59,6 +63,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
