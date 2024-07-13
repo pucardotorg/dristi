@@ -12,7 +12,6 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
   const [scheduleHearingParams, setScheduleHearingParams] = useState({});
-  const [submitModalInfo, setSubmitModalInfo] = useState({});
 
   const updateCaseDetails = async (data = {}) => {
     return DRISTIService.createHearings(
@@ -22,14 +21,9 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           filingNumber: [caseData.filingNumber],
           hearingType: data.purpose,
           status: true,
-          additionalDetails: {
-            participants: Object.values(data.participant)
-              .map((val) => Object.keys(val))
-              .flat(Infinity)
-              .map((name) => {
-                return { name: name };
-              }),
-          },
+          attendees: Object.values(data.participant)
+            .map((val) => val.attendees.map((attendee) => JSON.parse(attendee)))
+            .flat(Infinity),
           startTime: Date.parse(
             `${data.date
               .split(" ")
@@ -90,7 +84,6 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
 
   const handleScheduleCase = async (props) => {
     await updateCaseDetails(props).then((res) => {
-      setUpdateCounter((prev) => prev + 1);
       setShowModal(false);
       res.responseInfo.status === "successful"
         ? showToast({
@@ -104,28 +97,14 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
     });
   };
 
-  const complainantFormData = caseData.case.additionalDetails?.complainantDetails?.formdata;
-  const respondentFormData = caseData.case.additionalDetails?.respondentDetails?.formdata;
-
   const updateConfigWithCaseDetails = (config, caseDetails) => {
-    const complainantNames = complainantFormData?.map((form) => {
-      const firstName = form?.data?.firstName || "";
-      const middleName = form?.data?.middleName || "";
-      const lastName = form?.data?.lastName || "";
-      return `${firstName} ${middleName} ${lastName}`.trim();
-    });
-
-    const respondentNames = respondentFormData?.map((form) => {
-      const firstName = form?.data?.respondentFirstName || "";
-      const lastName = form?.data?.respondentLastName || "";
-      return `${firstName} ${lastName}`.trim();
+    const litigantsNames = caseDetails.litigants.map((litigant) => {
+      return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId };
     });
 
     config.checkBoxes.forEach((checkbox) => {
-      if (checkbox.key === "Compliant") {
-        checkbox.dependentFields = complainantNames;
-      } else if (checkbox.key === "Respondent") {
-        checkbox.dependentFields = respondentNames;
+      if (checkbox.key === "Litigants") {
+        checkbox.dependentFields = litigantsNames;
       }
     });
 
@@ -154,7 +133,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           setPurposeValue={setPurposeValue}
           scheduleHearingParams={scheduleHearingParams}
           setScheduleHearingParam={setScheduleHearingParams}
-          submitModalInfo={submitModalInfo}
+          submitModalInfo={{}}
           handleClickDate={handleClickDate}
           handleScheduleCase={handleScheduleCase}
           handleAdmitCase={() => {}}

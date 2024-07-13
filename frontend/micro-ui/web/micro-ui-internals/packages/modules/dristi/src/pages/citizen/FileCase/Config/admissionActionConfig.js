@@ -50,15 +50,9 @@ export const selectParticipantConfig = {
   checkBoxText: "HEADER_PARTICIPANT",
   checkBoxes: [
     {
-      key: "Compliant",
-      name: "CS_COMPLAINANTS",
-      dependentText: "CS_COMPLAINANT_SELECT",
-      dependentFields: [],
-    },
-    {
-      key: "Respondent",
-      name: "CS_RESPONDANT",
-      dependentText: "CS_RESPONDANT_SELECT",
+      key: "Litigants",
+      name: "CS_LITIGANTS",
+      dependentText: "CS_LITIGANT_SELECT",
       dependentFields: [],
     },
   ],

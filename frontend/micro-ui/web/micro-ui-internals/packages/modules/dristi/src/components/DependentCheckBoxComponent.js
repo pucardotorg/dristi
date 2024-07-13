@@ -27,10 +27,10 @@ function DependentFields({ t, option, selectedValues, handleInputChange }) {
           <div key={field} style={{ display: "flex", flexDirection: "row", gap: "40px", justifyContent: "flex-start" }}>
             <label>
               <CheckBox
-                value={field}
-                label={field}
+                value={JSON.stringify(field)}
+                label={field.name}
                 name={"Checkbox"}
-                checked={selectedValues?.[field] || false}
+                checked={selectedValues?.attendees?.map((attendee) => JSON.parse(attendee).individualId).includes(field.individualId) || false}
                 onChange={(e) => handleInputChange(e, option?.name)}
                 styles={{ alignItems: "center", textAlign: "center" }}
               />
@@ -46,16 +46,23 @@ function DependentCheckBoxComponent({ t, options, onInputChange, selectedValues 
   const toggleCheckbox = (option) => {
     const updatedValues = {
       ...selectedValues,
-      [option]: selectedValues[option] ? null : {},
+      [option]: selectedValues[option] ? null : { attendees: [] },
     };
     onInputChange(updatedValues);
   };
 
   const handleInputChange = (e, option) => {
     const { value, checked } = e.target;
+    const index = selectedValues[option].attendees
+      .map((attendee) => JSON.parse(attendee).individualId)
+      .findIndex((id) => id === JSON.parse(value).individualId);
     const newSelectedValues = {
       ...selectedValues,
-      [option]: { ...selectedValues[option], [value]: checked },
+      [option]: {
+        attendees: checked
+          ? [...selectedValues[option].attendees, value]
+          : [...selectedValues[option].attendees.slice(0, index), ...selectedValues[option].attendees.slice(index + 1)],
+      },
     };
     onInputChange(newSelectedValues);
   };
