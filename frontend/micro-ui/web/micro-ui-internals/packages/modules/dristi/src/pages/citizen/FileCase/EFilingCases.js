@@ -433,7 +433,7 @@ function EFilingCases({ path }) {
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
 
-    if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted) {
+    if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
   }, [selected, caseDetails]);
@@ -1543,7 +1543,7 @@ function EFilingCases({ path }) {
             (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
               `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
                 caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
+              } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
                 caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
               }`) ||
             caseDetails?.caseTitle,
