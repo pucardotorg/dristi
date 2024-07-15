@@ -68,7 +68,7 @@ function EfilingPaymentBreakdown({ amount = 2000 }) {
   );
 
   if (caseDetails?.status && caseDetails?.status !== "PAYMENT_PENDING") {
-    history.push(`/${window?.contextPath}/${userInfoType}/home`);
+    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`);
   }
 
   const onCancel = () => {
