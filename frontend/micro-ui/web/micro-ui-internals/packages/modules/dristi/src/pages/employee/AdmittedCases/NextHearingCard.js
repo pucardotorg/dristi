@@ -1,12 +1,11 @@
 import { Button, Card } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 const NextHearingCard = ({ caseData, width }) => {
   const filingNumber = caseData.filingNumber;
   const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
+  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,

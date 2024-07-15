@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
@@ -24,7 +23,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
+  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
