@@ -36,7 +36,7 @@ function CaseType({ t }) {
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
   const onCancel = () => {
-    history.push("/digit-ui/citizen/home");
+    history.push("/digit-ui/citizen/home/home-pending-task");
   };
   const onSelect = () => {
     setPage(1);
