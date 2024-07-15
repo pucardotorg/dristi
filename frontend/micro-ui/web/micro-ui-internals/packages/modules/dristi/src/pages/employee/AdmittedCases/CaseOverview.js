@@ -279,18 +279,24 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
                 <div
                   style={{
                     padding: "12px 16px",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    lineHeight: "18.75px",
                     border: "1px solid #BBBBBD",
-                    color: "#BBBBBD",
+                    color: "#505A5F",
                     borderRadius: "4px",
                     width: "300px",
                     cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                   onClick={() => {
                     setShowReviewModal(true);
                     setCurrentOrder(order);
                   }}
                 >
-                  {order?.orderType}
+                  {t(order?.orderType)}
                 </div>
               ))}
           </div>

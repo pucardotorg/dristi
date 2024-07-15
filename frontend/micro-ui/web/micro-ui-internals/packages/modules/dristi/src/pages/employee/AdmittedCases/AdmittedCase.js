@@ -301,37 +301,43 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    if (option === t("GENERATE_ORDER_HOME")) {
-      const reqbody = {
-        order: {
-          createdDate: formatDate(new Date()),
+    console.log(option === t("SCHEDULE_HEARING"));
+    let reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
           tenantId,
-          cnrNumber,
-          filingNumber: filingNumber,
-          statuteSection: {
-            tenantId,
-          },
-          orderType: "Bail",
-          status: "",
-          isActive: true,
-          workflow: {
-            action: CaseWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          additionalDetails: {},
         },
-      };
-      ordersService
-        .createOrder(reqbody, { tenantId })
-        .then(() => {
-          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
-        })
-        .catch((err) => {});
+        orderType: "REFERRAL_CASE_TO_ADR",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+    if (option === t("GENERATE_ORDER_HOME")) {
+      reqBody.order.orderType = "Bail";
+    } else if (option === t("SCHEDULE_HEARING")) {
+      reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
+    } else if (option === t("REFER_TO_ADR")) {
+      reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
     }
+    ordersService
+      .createOrder(reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      })
+      .catch((err) => {});
   };
 
   const showToast = (details, duration = 5000) => {
@@ -431,8 +437,8 @@ const AdmittedCases = ({ isJudge = true }) => {
                       <Menu
                         options={
                           userRoles.includes("ORDER_CREATOR")
-                            ? [t("GENERATE_ORDER_HOME"), "Schedule Hearing", "Refer to ADR", "Abate Case"]
-                            : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                            ? [t("GENERATE_ORDER_HOME"), t("SCHEDULE_HEARING"), t("REFER_TO_ADR")]
+                            : [t("SCHEDULE_HEARING"), t("REFER_TO_ADR")]
                         }
                         onSelect={(option) => handleSelect(option)}
                       ></Menu>
