@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import { Button, Modal } from "@egovernments/digit-ui-react-components";
 import { FormComposerV2 } from "@egovernments/digit-ui-components";
-import { Card } from "@egovernments/digit-ui-react-components";
-import useGetAvailableDates from "../../hooks/hearings/useGetAvailableDates";
 import SummaryModal from "../../components/SummaryModal";
+import NextHearingModal from "../../components/NextHearingModal";
 const AdjournHearing = (props) => {
-  const { tenantId } = props;
+  const { tenantId, hearing } = props;
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
@@ -49,13 +47,6 @@ const AdjournHearing = (props) => {
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}${path}`);
-  };
-
-  const { data: datesResponse, refetch: refetchGetAvailableDates } = useGetAvailableDates(true);
-  const Dates = useMemo(() => datesResponse || [], [datesResponse]);
-  const { t } = useTranslation();
-  const closeSetDate = () => {
-    handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`);
   };
 
   const onSubmit = (data) => {
@@ -125,10 +116,6 @@ const AdjournHearing = (props) => {
     );
   };
 
-  const onBack = () => {
-    setStepper(stepper - 1);
-  };
-
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -140,17 +127,6 @@ const AdjournHearing = (props) => {
       if (formData.reason.code !== "Select a Reason") setDisable(false);
     }
   };
-  const DateCard = ({ date, isSelected, onClick }) => (
-    <div
-      className="date-card"
-      style={{
-        border: `1px solid ${isSelected ? "#007BFF" : "#DDD"}`,
-      }}
-      onClick={onClick}
-    >
-      {date}
-    </div>
-  );
 
   return (
     <div>
@@ -190,48 +166,7 @@ const AdjournHearing = (props) => {
       {stepper === 2 && (
         <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} stepper={stepper} setStepper={setStepper} />
       )}
-      {stepper === 3 && (
-        <Modal
-          headerBarMain={<Heading label={"Set Next Hearing Date"} />}
-          headerBarEnd={<CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />}
-          onClose={closeSetDate}
-          actionSaveLabel="Generate Order"
-          actionSaveOnSubmit={onGenerateOrder}
-          actionCancelLabel="Back"
-          actionCancelOnSubmit={onBack}
-          style={{ marginTop: "5px" }}
-          popupStyles={{ width: "50%", height: "auto" }}
-          isDisabled={selectedDate === null}
-        >
-          <Card style={{ marginTop: "20px" }}>
-            <div className="case-card">
-              <div className="case-details">
-                Case Number:
-                <div> {caseDetails.Case_Number} </div>
-              </div>
-              <div className="case-details">
-                Court Name:
-                <div> {caseDetails.Court_Name} </div>
-              </div>
-              <div className="case-details">
-                Case Type:
-                <div> {caseDetails.Case_Type} </div>
-              </div>
-            </div>
-          </Card>
-          <div style={{ margin: "10px" }}>Select a Date</div>
-          <Card>
-            <div className="case-card">
-              {Dates.map((date, index) => (
-                <DateCard key={index} date={date} isSelected={selectedDate === date} onClick={() => setSelectedDate(date)} />
-              ))}
-            </div>
-          </Card>
-          <div className="footClass">
-            Dates Doesn't work? <Button label={"Select Custom Date"} variation={"teritiary"} onClick={() => {}} style={{ border: "none" }} />
-          </div>
-        </Modal>
-      )}
+      {stepper === 3 && <NextHearingModal hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />}
     </div>
   );
 };
