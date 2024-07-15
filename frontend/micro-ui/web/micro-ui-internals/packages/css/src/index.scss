@@ -132,6 +132,7 @@
 @import "../src/pages/employee/nyayMitra.scss";
 @import "../src/dristi/pages/citizen/Home/litigantHome.scss";
 @import "../src/orders/orders.scss";
+@import "../src/submissions/submissionApplication.scss";
 
 @import "./components/microplanning.scss";
 @import "./pages/employee/index.scss";
@@ -143,6 +144,9 @@
 @import "./cases/pages/employeee/joinCaseHome.scss";
 @import "./hearings/pages/employee/AdjournHearing.scss";
 @import "./hearings/prehearing.scss";
+
+/* @import "./home"; */
+@import "./home/home.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -925,5 +929,5 @@ input[type="number"] {
 }
 
 .dristi-font-bold {
-  font-weight: 700;
+  font-weight: 700 !important;
 }

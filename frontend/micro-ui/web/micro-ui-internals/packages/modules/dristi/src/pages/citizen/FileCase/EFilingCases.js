@@ -1308,7 +1308,15 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+        .some((data) =>
+          demandNoticeFileValidation({
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setFormErrors: setFormErrors.current,
+            setReceiptDemandNoticeModal,
+          })
+        )
     ) {
       return;
     }
@@ -1533,14 +1541,14 @@ function EFilingCases({ path }) {
           ...caseDetails,
           caseTitle:
             (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
               `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
                 caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
                 caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
               }`) ||
             caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
+          courtId: data?.court?.code,
           workflow: {
             ...caseDetails?.workflow,
             action: "SUBMIT_CASE",
