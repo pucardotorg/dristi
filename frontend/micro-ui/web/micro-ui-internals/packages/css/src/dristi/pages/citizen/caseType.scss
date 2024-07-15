@@ -7,6 +7,7 @@
 .popup-module.edit-case-name-modal,
 .popup-module.join-a-case-modal,
 .popup-module.evidence-modal,
+.popup-module.review-submission-appl-modal,
 .popup-module.review-order-modal,
 .popup-module.add-signature-modal,
 .popup-module.orders-success-modal,
@@ -314,6 +315,7 @@
   }
 }
 
+.popup-module.review-submission-appl-modal,
 .popup-module.evidence-modal {
   max-width: 80% !important;
   width: 80% !important;
@@ -360,6 +362,7 @@
   }
 }
 
+.review-submission-appl-body-main,
 .evidence-modal-main {
   display: flex;
   height: calc(100% - 65px);
