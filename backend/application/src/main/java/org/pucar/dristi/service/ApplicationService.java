@@ -49,6 +49,7 @@ public class ApplicationService {
         try {
             validator.validateApplication(body);
             enrichmentUtil.enrichApplication(body);
+            validator.validateOrderDetails(body);
             workflowService.updateWorkflowStatus(body);
             producer.push(config.getApplicationCreateTopic(), body);
             return body.getApplication();
@@ -67,7 +68,7 @@ public class ApplicationService {
             }
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
-
+            validator.validateOrderDetails(applicationRequest);
             workflowService.updateWorkflowStatus(applicationRequest);
 
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);

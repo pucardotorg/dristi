@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -79,7 +79,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("pucar");
             processInstance.setTenantId(application.getTenantId());
-            processInstance.setBusinessService("application");
+            processInstance.setBusinessService(getBusinessServiceFromAppplication(application));
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -97,6 +97,17 @@ public class WorkflowService {
         } catch (Exception e) {
             log.error("Error getting process instance for Application: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+        }
+    }
+    String getBusinessServiceFromAppplication(Application application) {
+        if(application.getReferenceId() == null){
+            return ASYNC_VOLUNTARY_SUBMISSION_SERVICES;
+        }
+        else if(application.isResponseRequired()){
+            return ASYNSUBMISSIONWITHRESPONSE;
+        }
+        else {
+            return ASYNCSUBMISSIONWITHOUTRESPONSE;
         }
     }
 
