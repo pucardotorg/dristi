@@ -51,6 +51,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -71,6 +73,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -96,6 +100,8 @@ export const userTypeOptions = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -1223,6 +1229,8 @@ export const rolesToConfigMapping = [
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
       "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
     ],
     config: TabLitigantSearchConfig,
     isLitigant: true,
@@ -1277,40 +1285,62 @@ export const rolesToConfigMapping = [
 
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
-    actionFor: ["LITIGANT/ADVOCATE"],
+    actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Make Payment",
-    redirectTo: "",
+    redirectDetails: {
+      url: "/dristi/home/file-case/case",
+      urlDependentOn: "status",
+      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
+      params: [{ key: "caseId", value: "id" }],
+    },
   },
   UNDER_SCRUTINY: {
-    actionFor: ["FSO"],
+    actorName: ["FSO"],
     actionName: "Case Filed and ready for FSO to review",
-    redirectTo: "",
+    redirectDetails: {
+      url: "/dristi/home/file-case/case",
+      urlDependentOn: "status",
+      urlDependentValue: ["UNDER_SCRUTINY"],
+      params: [{ key: "caseId", value: "id" }],
+    },
   },
   CASE_RE_ASSIGNED: {
-    actionFor: ["LITIGANT/ADVOCATE"],
+    actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Case Sent Back from Edit",
-    redirectTo: "",
+    redirectDetails: {
+      url: "/dristi/home/file-case/case",
+      urlDependentOn: "status",
+      urlDependentValue: ["UNDER_SCRUTINY"],
+      params: [{ key: "caseId", value: "id" }],
+    },
   },
   PENDING_ADMISSION: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Case Approved from Scrutiny",
-    redirectTo: "",
+    redirectDetails: {
+      dependentUrl: "/dristi/admission",
+      urlDependentOn: "status",
+      urlDependentValue: "PENDING_ADMISSION",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
   },
-
   SCHEDULE_ADMISSION_HEARING: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
-    redirectTo: "",
+    redirectDetails: "",
   },
   ADMISSION_HEARING_SCHEDULED: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Admission hearing scheduled",
-    redirectTo: "",
+    redirectDetails: "",
   },
   CASE_ADMITTED: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
-    redirectTo: "",
+    redirectDetails: "",
   },
 };
 

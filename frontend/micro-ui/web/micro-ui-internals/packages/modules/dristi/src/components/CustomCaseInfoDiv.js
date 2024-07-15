@@ -69,7 +69,7 @@ const CustomCaseInfoDiv = ({ t, data, column = 3, children, style, ...props }) =
               {partitionData(data).map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {row.map(({ key, value, copyData }, cellIndex) => (
-                    <td key={cellIndex} className={props?.tableDataClassName}>
+                    <td key={cellIndex} className={`${props?.tableDataClassName} column-${column}`}>
                       <h2 className="case-info-title">{t(key)}</h2>
                       <div className={"case-info-value"}>
                         <span className={props?.tableValueClassName}>{value}</span>{" "}

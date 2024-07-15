@@ -889,6 +889,8 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "APPLICATION_VIEWER",
             "HEARING_VIEWER",
             "ORDER_VIEWER",
+            "SUBMISSION_CREATOR",
+            "SUBMISSION_RESPONDER",
           ]?.map((role) => ({
             code: role,
             name: role,
@@ -946,6 +948,38 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   if (fileData?.fileStore) return fileData;
   const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+};
+
+const getAllAssignees = (caseDetails) => {
+  if (Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0) {
+    return caseDetails?.representatives
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        if (curr && curr?.representing && Array.isArray(curr?.representing || []) && curr?.representing?.length > 0) {
+          const representingUuids = curr?.representing?.reduce((result, current) => {
+            if (current && current?.additionalDetails?.uuid) {
+              result.push(current?.additionalDetails?.uuid);
+            }
+            return result;
+          }, []);
+          res.push(representingUuids);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  } else if (Array.isArray(caseDetails?.litigants || []) && caseDetails?.litigants?.length > 0) {
+    return caseDetails?.litigants
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  }
+  return null;
 };
 
 export const updateCaseDetails = async ({
@@ -1074,7 +1108,6 @@ export const updateCaseDetails = async ({
                   };
                 } else {
                   const Individual = await createIndividualUser({ data: data?.data, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -1084,9 +1117,9 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-                  const firstName = Individual?.Individual?.name?.givenName;
-                  const lastName = Individual?.Individual?.name?.familyName;
-                  const middleName = Individual?.Individual?.name?.otherNames;
+                  const firstName = Individual?.Individual?.name?.givenName || "";
+                  const lastName = Individual?.Individual?.name?.familyName || "";
+                  const middleName = Individual?.Individual?.name?.otherNames || "";
                   const userUuid = Individual?.Individual?.userUuid;
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
                   complainantVerification[index] = {
@@ -1792,6 +1825,9 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+
+  const assignees = getAllAssignees(caseDetails);
+
   return DRISTIService.caseUpdateService(
     {
       cases: {
@@ -1804,6 +1840,9 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          ...(action === "SUBMIT_CASE" && {
+            assignees,
+          }),
         },
       },
       tenantId,

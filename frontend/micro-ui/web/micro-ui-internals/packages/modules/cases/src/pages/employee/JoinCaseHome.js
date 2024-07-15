@@ -87,6 +87,8 @@ const JoinHomeLocalisation = {
   JOIN_CASE_BACK_TEXT: "JOIN_CASE_BACK_TEXT",
   ABOVE_SELECTED_PARTY: "ABOVE_SELECTED_PARTY",
   ALREADY_JOINED_CASE: "ALREADY_JOINED_CASE",
+  COURT_COMPLEX_TEXT: "COURT_COMPLEX_TEXT",
+  CASE_NUMBER: "CASE_NUMBER",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -175,11 +177,11 @@ const advocateVakalatnamaConfig = [
 const JoinCaseHome = ({ refreshInbox }) => {
   const { t } = useTranslation();
 
-  const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
-  const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
-  const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
+  const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
+  const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CustomCaseInfoDiv");
+  const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const SelectCustomDragDrop = window?.Digit?.ComponentRegistryService?.getComponent("SelectCustomDragDrop");
-  const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMERRORTOOLTIP");
+  const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
   const CustomButton = window?.Digit?.ComponentRegistryService?.getComponent("CustomButton");
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -856,7 +858,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         t={t}
                         option={parties}
                         selected={party}
-                        optionKey={"label"}
+                        optionKey={"fullName"}
                         select={(e) => setParty(e)}
                         freeze={true}
                         disable={true}
@@ -1200,6 +1202,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
+  const createShorthand = (fullname) => {
+    const words = fullname.split(" ");
+    const firstChars = words.map((word) => word.charAt(0));
+    const shorthand = firstChars.join("");
+    return shorthand;
+  };
+
   useEffect(() => {
     if (caseDetails?.caseCategory) {
       setCaseInfo([
@@ -1209,7 +1218,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {
           key: "CASE_TYPE",
-          value: `${caseDetails?.statutesAndSections?.[0]?.sections?.[0]}, ${caseDetails?.statutesAndSections?.[0]?.subsections?.[0]}`,
+          value: `${createShorthand(caseDetails?.statutesAndSections?.[0]?.sections?.[0])} S${
+            caseDetails?.statutesAndSections?.[0]?.subsections?.[0]
+          }`,
         },
         {
           key: "SUBMITTED_ON",
@@ -1227,6 +1238,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           label: `${data?.data?.firstName} ${data?.data?.middleName && data?.data?.middleName + " "}${data?.data?.lastName} ${t(
             JoinHomeLocalisation.COMPLAINANT_BRACK
           )}`,
+          fullName: `${data?.data?.firstName} ${data?.data?.middleName && data?.data?.middleName + " "}${data?.data?.lastName}`,
           partyType: index === 0 ? "complainant.primary" : "complainant.additional",
           isComplainant: true,
           individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
@@ -1240,6 +1252,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
                   data?.data?.respondentLastName
                 } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+                fullName: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+                  data?.data?.respondentLastName
+                }`,
                 index: index,
                 partyType: index === 0 ? "respondent.primary" : "respondent.additional",
                 isRespondent: true,
@@ -1270,15 +1285,15 @@ const JoinCaseHome = ({ refreshInbox }) => {
         value: caseDetails?.caseNumber,
       },
       {
-        key: "Court Complex",
-        value: caseDetails?.courtName,
+        key: JoinHomeLocalisation.COURT_COMPLEX_TEXT,
+        value: caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "",
       },
       {
-        key: "Advocate",
+        key: JoinHomeLocalisation.ADVOCATE_OPT,
         value: advocateName,
       },
     ]);
-  }, [caseDetails, advocateName]);
+  }, [caseDetails, advocateName, t]);
 
   const closeModal = () => {
     setCaseNumber("");

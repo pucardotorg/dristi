@@ -93,7 +93,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
       if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN].includes(status) && isCitizen) {
-        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=F-C.1973.002-2024-000822&applicationNumber=${applicationNumber}`);
+        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
       } else {
         setDocumentSubmission(docObj);
         setShow(true);
@@ -261,6 +261,14 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [toastDetails, setToastDetails] = useState({});
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
+  const isTabDisabled = useMemo(() => {
+    return (
+      caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
+      caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
+      config?.label !== "Complaint"
+    );
+  }, [caseData, config]);
+
   useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
       showToast(true);
@@ -411,7 +419,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                  <div className="evidence-actions">
+                  <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
                     <ActionButton
                       variation={"primary"}
                       label={"Take Action"}
@@ -464,11 +472,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 onClick={() => {
                   onTabChange(num);
                 }}
-                disabled={
-                  caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
-                  caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-                  config?.label !== "Complaint"
-                }
+                disabled={isTabDisabled}
               >
                 {t(i?.label)}
               </button>
@@ -527,7 +531,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
-      {show && documentSubmission && (
+      {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
           show={show}
