@@ -72,8 +72,6 @@ public class HearingService {
     public List<Hearing> searchHearing(HearingSearchRequest request) {
 
         try {
-            if(request.getPagination()==null) request.setPagination(new Pagination());
-            validatePagination(request.getPagination());
             return hearingRepository.getHearings(request);
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
@@ -82,11 +80,6 @@ public class HearingService {
             log.error("Error while fetching search results");
             throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
         }
-    }
-
-    private void validatePagination(Pagination pagination) {
-        if (pagination.getLimit() == null || pagination.getLimit() < 1) pagination.setLimit(10.0);
-        if (pagination.getOffSet() == null || pagination.getOffSet() < 0) pagination.setOffSet((double) 0);
     }
 
     public Hearing updateHearing(HearingRequest hearingRequest) {
