@@ -446,9 +446,80 @@ export const TabSearchconfig = {
       },
       sections: {
         search: {
-          uiConfig: {},
+          uiConfig: {
+            formClassName: "custom-both-clear-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: defaultSearchValues, // Set default values for search fields
+            fields: [
+              {
+                label: "Type",
+                isMandatory: false,
+                key: "evidenceType",
+                type: "dropdown",
+                populators: {
+                  name: "evidenceType",
+                  optionsKey: "type",
+                  mdmsConfig: {
+                    masterName: "EvidenceType",
+                    moduleName: "Evidence",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Status",
+                isMandatory: false,
+                key: "status",
+                type: "dropdown",
+                populators: {
+                  name: "status",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Status",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Owner",
+                isMandatory: false,
+                key: "owner",
+                type: "dropdown",
+                populators: {
+                  name: "owner",
+                },
+              },
+              {
+                label: "Documents",
+                isMandatory: false,
+                key: "documentName",
+                type: "text",
+                populators: {
+                  name: "documentName",
+                },
+              },
+            ],
+          },
 
-          show: false,
+          show: true,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
