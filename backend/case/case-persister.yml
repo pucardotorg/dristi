@@ -423,10 +423,9 @@ serviceMaps:
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: UPDATE dristi_case_representatives SET advocateid = ?, isactive = ?, lastmodifiedtime = ?, lastmodifiedby = ?  WHERE case_id = ?;
+        - query: UPDATE dristi_case_representatives SET isactive = ?, lastmodifiedtime = ?, lastmodifiedby = ?  WHERE case_id = ?;
           basePath: $
           jsonMaps:
-            - jsonPath: $.advocateId
             - jsonPath: $.isActive
             - jsonPath: $.auditDetails.lastModifiedBy
             - jsonPath: $.auditDetails.lastModifiedTime
