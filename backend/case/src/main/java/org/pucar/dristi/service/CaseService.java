@@ -1,16 +1,6 @@
 package org.pucar.dristi.service;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
-import static org.pucar.dristi.config.ServiceConstants.CASE_EXIST_ERR;
-import static org.pucar.dristi.config.ServiceConstants.CREATE_CASE_ERR;
-import static org.pucar.dristi.config.ServiceConstants.CREATE_DEMAND_STATUS;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_DETAILS;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_ID;
-import static org.pucar.dristi.config.ServiceConstants.JOIN_CASE_ERR;
-import static org.pucar.dristi.config.ServiceConstants.JOIN_CASE_INVALID_REQUEST;
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
-import static org.pucar.dristi.config.ServiceConstants.UPDATE_CASE_ERR;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
@@ -176,15 +166,11 @@ public class CaseService {
         if (!validator.canRepresentativeJoinCase(joinCaseRequest))
             throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
-        if (joinCaseRequest.getRepresentative().getId() != null) {
+        if (joinCaseRequest.getRepresentative().getId() != null
+                && joinCaseRequest.getRepresentative().getRepresenting() != null
+                && PRIMARY.equalsIgnoreCase(joinCaseRequest.getRepresentative().getRepresenting().get(0).getPartyType())){
             joinCaseRequest.getRepresentative().setIsActive(false);
             producer.push(config.getUpdateRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
-        }
-
-        if (joinCaseRequest.getRepresentative().getRepresenting() != null &&
-                joinCaseRequest.getRepresentative().getRepresenting().get(0).getId() != null) {
-            joinCaseRequest.getRepresentative().getRepresenting().get(0).setIsActive(false);
-            producer.push(config.getUpdateRepresentingJoinCaseTopic(), joinCaseRequest.getRepresentative().getRepresenting().get(0));
         }
 
         log.info("enriching representatives");

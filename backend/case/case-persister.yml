@@ -423,29 +423,14 @@ serviceMaps:
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: UPDATE dristi_case_representatives SET isactive = ?, lastmodifiedtime = ?, lastmodifiedby = ?  WHERE case_id = ?;
+        - query: UPDATE dristi_case_representatives SET isactive = ? WHERE case_id = ?;
           basePath: $
           jsonMaps:
             - jsonPath: $.isActive
-            - jsonPath: $.auditDetails.lastModifiedBy
-            - jsonPath: $.auditDetails.lastModifiedTime
-
-    - version: 1.0
-      description: Update representing for a case in dristi_case_representing table
-      fromTopic: update-representing-join-case
-      isTransaction: true
-      isAuditEnabled: true
-      module: CASE
-      objectIdJsonPath: $.id
-      tenantIdJsonPath: $.tenantId
-      auditAttributeBasePath: $
-      queryMaps:
-        - query: UPDATE dristi_case_representing SET isActive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE case_id = ?;
-          basePath: $
+        - query: UPDATE dristi_case_representing SET isactive = ? WHERE case_id = ?;
+          basePath: $.representing.*.isActive
           jsonMaps:
             - jsonPath: $.isActive
-            - jsonPath: $.auditDetails.lastModifiedBy
-            - jsonPath: $.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update case overall workflow in tables
