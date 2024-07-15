@@ -47,6 +47,7 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .externalRefNumber(rs.getString("externalRefNumber"))
                             .caseId(rs.getString("caseId"))
                             .application(rs.getString("application"))
+                            .filingNumber(rs.getString("filingNumber"))
                             .hearing(rs.getString("hearing"))
                             .order(rs.getString("orders"))
                             .mediaType(rs.getString("mediaType"))

@@ -102,6 +102,7 @@ public class EvidenceValidator {
         evidenceSearchCriteria.setId(String.valueOf(evidenceRequest.getArtifact().getId()));
         evidenceSearchCriteria.setCaseId(evidenceRequest.getArtifact().getCaseId());
         evidenceSearchCriteria.setApplicationNumber(evidenceRequest.getArtifact().getApplication());
+        evidenceSearchCriteria.setFilingNumber(evidenceRequest.getArtifact().getFilingNumber());
         evidenceSearchCriteria.setHearing(evidenceRequest.getArtifact().getHearing());
         evidenceSearchCriteria.setOrder(evidenceRequest.getArtifact().getOrder());
         evidenceSearchCriteria.setSourceId(evidenceRequest.getArtifact().getSourceID());

@@ -48,7 +48,9 @@ public class Artifact {
 
 	@Size(min = 2, max = 64)
 	private String evidenceNumber = null;
+	@JsonProperty("filingNumber")
 
+	private String filingNumber = null;
 	@JsonProperty("externalRefNumber")
 
 	@Size(min = 2, max = 128)
