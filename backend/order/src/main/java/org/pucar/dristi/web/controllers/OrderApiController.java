@@ -1,14 +1,10 @@
 package org.pucar.dristi.web.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.OrderRegistrationService;
 import org.pucar.dristi.util.ResponseInfoFactory;
@@ -20,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -29,20 +24,14 @@ import java.util.List;
 @RequestMapping("")
 public class OrderApiController {
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
-    @Autowired
     private OrderRegistrationService orderService;
 
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public OrderApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public OrderApiController(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory) {
+        this.orderService = orderService;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     public void setMockInjects(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory){

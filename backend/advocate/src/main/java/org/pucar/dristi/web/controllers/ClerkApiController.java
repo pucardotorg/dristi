@@ -1,11 +1,9 @@
 package org.pucar.dristi.web.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.AdvocateClerkService;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,18 +29,12 @@ import java.util.List;
 @RequestMapping("")
 public class ClerkApiController {
 
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
-	@Autowired
 	private AdvocateClerkService advocateClerkService;
-
-	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 	@Autowired
-	public ClerkApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	public ClerkApiController(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory) {
+		this.advocateClerkService = advocateClerkService;
+		this.responseInfoFactory = responseInfoFactory;
 	}
 
 	@RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)

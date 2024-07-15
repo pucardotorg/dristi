@@ -5,16 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 
 class AdvocateQueryBuilderTest {
 
@@ -29,7 +25,6 @@ class AdvocateQueryBuilderTest {
     @Test
     void getAdvocateSearchQuery_NoCriteria() {
         // Arrange
-//        YourClass yourClass = new YourClass();
         AdvocateSearchCriteria criteria = null;
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -52,7 +47,6 @@ class AdvocateQueryBuilderTest {
     @Test
     void getAdvocateSearchQuery_WithCriteria() {
         // Arrange
-//        YourClass yourClass = new YourClass();
         AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
         criteria.setId("123");
         criteria.setBarRegistrationNumber("BAR123");
@@ -147,7 +141,6 @@ class AdvocateQueryBuilderTest {
         assertNotNull(query);
         assertTrue(query.contains("LOWER(adv.applicationnumber) LIKE LOWER(?)"));
         assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
-//        assertTrue(query.contains("ORDER BY createdtime DESC"));
         assertEquals(4, preparedStmtList.size());
         assertEquals("%123456%", preparedStmtList.get(0));
         assertEquals("%tenant1%", preparedStmtList.get(1));
@@ -221,5 +214,82 @@ class AdvocateQueryBuilderTest {
         assertThrows(CustomException.class, () -> {
             advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, tenantId, limit, offset);
         });
+    }
+    @Test
+    void testAddClauseIfRequired_FirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder();
+        boolean isFirstCriteria = true;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequired(query, isFirstCriteria);
+
+        // Assert
+        assertEquals(" WHERE ", query.toString());
+    }
+
+    @Test
+    void testAddClauseIfRequired_NotFirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder("InitialQuery ");
+        boolean isFirstCriteria = false;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequired(query, isFirstCriteria);
+
+        // Assert
+        assertEquals("InitialQuery  AND ", query.toString());
+    }
+
+    @Test
+    void testAddClauseIfRequiredForStatus_FirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder();
+        boolean isFirstCriteria = true;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequiredForStatus(query, isFirstCriteria);
+
+        // Assert
+        assertEquals(" WHERE ( ", query.toString());
+    }
+
+    @Test
+    void testAddClauseIfRequiredForStatus_NotFirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder("InitialQuery ");
+        boolean isFirstCriteria = false;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequiredForStatus(query, isFirstCriteria);
+
+        // Assert
+        assertEquals("InitialQuery  AND ", query.toString());
+    }
+
+    @Test
+    void testAddClauseIfRequiredForTenantId_FirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder();
+        boolean isFirstCriteria = true;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequiredForTenantId(query, isFirstCriteria);
+
+        // Assert
+        assertEquals(" WHERE ", query.toString());
+    }
+
+    @Test
+    void testAddClauseIfRequiredForTenantId_NotFirstCriteria() {
+        // Arrange
+        StringBuilder query = new StringBuilder("InitialQuery ");
+        boolean isFirstCriteria = false;
+
+        // Act
+        new AdvocateQueryBuilder().addClauseIfRequiredForTenantId(query, isFirstCriteria);
+
+        // Assert
+        assertEquals("InitialQuery  AND ", query.toString());
     }
 }

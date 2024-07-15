@@ -19,7 +19,6 @@ import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;

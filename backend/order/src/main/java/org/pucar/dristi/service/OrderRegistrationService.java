@@ -24,23 +24,27 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class OrderRegistrationService {
 
-    @Autowired
     private OrderRegistrationValidator validator;
 
-    @Autowired
     private OrderRegistrationEnrichment enrichmentUtil;
 
-    @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
     private WorkflowUtil workflowUtil;
 
-    @Autowired
     private Configuration config;
 
-    @Autowired
     private Producer producer;
+
+    @Autowired
+    public OrderRegistrationService(OrderRegistrationValidator validator, Producer producer, Configuration config, WorkflowUtil workflowUtil, OrderRepository orderRepository, OrderRegistrationEnrichment enrichmentUtil) {
+        this.validator = validator;
+        this.producer = producer;
+        this.config = config;
+        this.workflowUtil = workflowUtil;
+        this.orderRepository = orderRepository;
+        this.enrichmentUtil = enrichmentUtil;
+    }
 
     public Order createOrder(OrderRequest body) {
         try {

@@ -1,11 +1,9 @@
 package org.pucar.dristi.web.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.AdvocateService;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,21 +29,14 @@ import java.util.List;
 @Controller
 @RequestMapping("")
 public class AdvocateApiController {
-
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
+	private final AdvocateService advocateService;
+	private final ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
-	private AdvocateService advocateService;
-
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-
-	@Autowired
-	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	public AdvocateApiController(AdvocateService advocateService,
+								 ResponseInfoFactory responseInfoFactory) {
+		this.advocateService = advocateService;
+		this.responseInfoFactory = responseInfoFactory;
 	}
 
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)

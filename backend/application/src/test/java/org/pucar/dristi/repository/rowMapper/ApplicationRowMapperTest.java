@@ -30,8 +30,7 @@ public class ApplicationRowMapperTest {
     @Test
     public void testExtractData() throws SQLException {
         String issuedByJson = "{\"benchId\": \"benchId\", \"courtId\": \"courtId\", \"judgeId\": [\"e7f39394-5b04-4f25-a901-8f369e73c758\", \"85b10177-cce5-4db1-bbe5-875a03f8a24c\"]}";
-        // Mocking the ResultSet
-        ResultSet resultSet = Mockito.mock(ResultSet.class);
+
         when(resultSet.next()).thenReturn(true, true, false);
         when(resultSet.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440000", "123e4567-e89b-12d3-a456-556642440001");
         when(resultSet.getLong("lastmodifiedtime")).thenReturn(123456789L, 987654321L);

@@ -19,10 +19,14 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class AdvocateRegistrationEnrichment {
 
+    private final IdgenUtil idgenUtil;
+    private final Configuration configuration;
+
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration configuration;
+    public AdvocateRegistrationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
+        this.idgenUtil = idgenUtil;
+        this.configuration = configuration;
+    }
 
 
     /**

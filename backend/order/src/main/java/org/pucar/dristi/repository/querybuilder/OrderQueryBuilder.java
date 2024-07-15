@@ -75,7 +75,6 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.applicationNumber::text LIKE ?");
                 preparedStmtList.add("%" + applicationNumber + "%");
-                firstCriteria = false;
             }
 
             return query.toString();
@@ -146,7 +145,6 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.orderNumber = ?");
                 preparedStmtList.add(orderNumber);
-                firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME);
 
