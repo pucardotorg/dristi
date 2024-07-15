@@ -180,6 +180,13 @@ public class CaseService {
             joinCaseRequest.getRepresentative().setIsActive(false);
             producer.push(config.getUpdateRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
         }
+
+        if (joinCaseRequest.getRepresentative().getRepresenting() != null &&
+                joinCaseRequest.getRepresentative().getRepresenting().get(0).getId() != null) {
+            joinCaseRequest.getRepresentative().getRepresenting().get(0).setIsActive(false);
+            producer.push(config.getUpdateRepresentingJoinCaseTopic(), joinCaseRequest.getRepresentative().getRepresenting().get(0));
+        }
+
         log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 

@@ -441,11 +441,11 @@ serviceMaps:
       auditAttributeBasePath: $
       queryMaps:
         - query: UPDATE dristi_case_representing SET isActive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE case_id = ?;
-          basePath: .representing.*
+          basePath: $
           jsonMaps:
-            - jsonPath: $.representing.*.isActive
-            - jsonPath: $.representing.*.auditDetails.lastModifiedBy
-            - jsonPath: $.representing.*.auditDetails.lastModifiedTime
+            - jsonPath: $.isActive
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update case overall workflow in tables
