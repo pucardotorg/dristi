@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
@@ -189,7 +189,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
@@ -325,7 +325,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $
@@ -344,7 +344,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
@@ -374,7 +374,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
@@ -419,7 +419,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
@@ -436,7 +436,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
@@ -453,7 +453,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.filingNumber
+      objectIdJsonPath: $.filingNumber
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: caseOverallStatus
@@ -472,7 +472,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.caseFilingNumber
+      objectIdJsonPath: $.caseFilingNumber
       tenantIdJsonPath: $.RequestInfo.userInfo.uuid.tenantId
       transactionCodeJsonPath: $.caseFilingNumber
       auditAttributeBasePath: $
