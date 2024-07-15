@@ -22,7 +22,7 @@ import HearingPopup from "./HearingPopUp";
 import InsideHearing from "./InsideHearing";
 import ViewCase from "./ViewCase";
 import MonthlyCalendar from "./CalendarView";
-import { DataProvider } from "../../components/DataContext";
+import { HearingSelectionContextProvider } from "../../components/HearingSelectionContext";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -69,15 +69,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/view-witness-deposition`} component={() => <ViewWitnessDeposition></ViewWitnessDeposition>} />
         <PrivateRoute path={`${path}/view-pending-task`} component={() => <ViewPendingTask></ViewPendingTask>} />
         <PrivateRoute path={`${path}/submission`} component={() => <Submission></Submission>} />
-        <PrivateRoute
-          exact
-          path={`${path}/calendar`}
-          component={() => (
-            <DataProvider>
-              <MonthlyCalendar />
-            </DataProvider>
-          )}
-        />
+        <PrivateRoute exact path={`${path}/`} component={() => <MonthlyCalendar />} />
       </AppContainer>
     </Switch>
   );

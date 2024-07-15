@@ -2,12 +2,10 @@ import React, { useContext, useMemo, useState } from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { Button, CloseSvg, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { DataContext } from "./DataContext";
 import { preHearingConfig } from "../configs/PreHearingConfig";
 
-function PreHearingModal({ onCancel }) {
+function PreHearingModal({ onCancel, hearingData }) {
   const { t } = useTranslation();
-  const { hearingData } = useContext(DataContext);
   const [config, setConfig] = useState(preHearingConfig);
 
   const Heading = (props) => {
