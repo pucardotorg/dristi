@@ -73,7 +73,10 @@ public class CaseService {
 
             producer.push(config.getCaseCreateTopic(), body);
 
-            return body.getCases();
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(body.getCases(), "CaseDecryptSelf",CourtCase.class,body.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
@@ -93,7 +96,7 @@ public class CaseService {
                 List<CourtCase> decryptedCourtCases = new ArrayList<>();
                 caseCriteria.getResponseList().forEach(cases -> {
                     cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber())));
-                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,"CaseDecryptSelf",CourtCase.class,caseSearchRequests.getRequestInfo()));
+                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,null,CourtCase.class,caseSearchRequests.getRequestInfo()));
                 });
                 caseCriteria.setResponseList(decryptedCourtCases);
             });
@@ -259,7 +262,7 @@ public class CaseService {
         }
     }
 
-    private static @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
+    private @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
         if (existingApplications.isEmpty()) {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
@@ -267,8 +270,8 @@ public class CaseService {
         if (courtCaseList.isEmpty()) {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
-
-        CourtCase courtCase = courtCaseList.get(0);
+        
+        CourtCase courtCase = encryptionDecryptionUtil.decryptObject(courtCaseList.get(0),"CaseDecryptSelf", CourtCase.class,joinCaseRequest.getRequestInfo());
 
         if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
             throw new CustomException(VALIDATION_ERR, "Access code not generated");
