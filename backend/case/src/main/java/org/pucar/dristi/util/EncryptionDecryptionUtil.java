@@ -173,7 +173,6 @@ public class EncryptionDecryptionUtil {
         return User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
                 .type(userInfo.getType()).mobileNumber(userInfo.getMobileNumber()).emailId(userInfo.getEmailId())
                 .roles(newRoleList).tenantId(userInfo.getTenantId()).uuid(userInfo.getUuid()).build();
-
     }
 
 }

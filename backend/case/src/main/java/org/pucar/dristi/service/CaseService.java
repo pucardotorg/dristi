@@ -73,8 +73,11 @@ public class CaseService {
 
             producer.push(config.getCaseCreateTopic(), body);
 
-            return body.getCases();
-        } catch (CustomException e) {
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(body.getCases(), "CaseDecryptSelf",CourtCase.class,body.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating case :: {}", e.toString());
@@ -357,7 +360,7 @@ public class CaseService {
         }
     }
 
-    private static @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
+    private @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
         if (existingApplications.isEmpty()) {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
@@ -366,7 +369,7 @@ public class CaseService {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
 
-        CourtCase courtCase = courtCaseList.get(0);
+        CourtCase courtCase = encryptionDecryptionUtil.decryptObject(courtCaseList.get(0),"CaseDecryptSelf", CourtCase.class,joinCaseRequest.getRequestInfo());
 
         if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
             throw new CustomException(VALIDATION_ERR, "Access code not generated");
