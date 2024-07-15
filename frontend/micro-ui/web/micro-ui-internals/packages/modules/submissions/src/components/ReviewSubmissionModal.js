@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
 
@@ -23,11 +23,10 @@ function ReviewSubmissionModal({
   t,
   setShowsignatureModal,
   handleBack,
-  documents,
+  documents = [],
 }) {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
-
-  const [documentList, setDocumentList] = useState([]);
   return (
     <Modal
       headerBarMain={<Heading label={t("REVIEW_SUBMISSION_APPLICATION_HEADING")} />}
@@ -68,22 +67,23 @@ function ReviewSubmissionModal({
                 <h3>{t(sender)}</h3>
               </div>
             </div>
-            <div className="info-row">
-              <div className="info-key">
-                <h3>{t("ADDITIONAL_DETAILS")}</h3>
+            {additionalDetails && (
+              <div className="info-row">
+                <div className="info-key">
+                  <h3>{t("ADDITIONAL_DETAILS")}</h3>
+                </div>
+                <div className="info-value">
+                  <h3>{t(additionalDetails)}</h3>
+                </div>
               </div>
-              <div className="info-value">
-                <h3>{t(additionalDetails)}</h3>
-              </div>
-            </div>
+            )}
           </div>
           <div className="application-view">
-            {documentList.map((docs) => (
+            {documents?.map((docs) => (
               <DocViewerWrapper
-                key={docs.fileStoreId}
-                fileStoreId={docs.fileStoreId}
-                displayFilename={docs.fileName}
-                tenantId={docs.tenantId}
+                key={docs.fileStore}
+                fileStoreId={docs.fileStore}
+                tenantId={tenantId}
                 docWidth="100%"
                 docHeight="unset"
                 showDownloadOption={false}

@@ -69,7 +69,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
-        userUuid: documentSubmission.map((docSubmission) => docSubmission.details.sender),
+        userUuid: documentSubmission?.map((docSubmission) => docSubmission.details.sender),
       },
     },
     { tenantId, limit: 10, offset: 0 },
@@ -387,18 +387,20 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>N/A</h3>
                       </div>
                     </div>
-                    <div className="application-view">
-                      <DocViewerWrapper
-                        key={docSubmission.applicationContent.fileStoreId}
-                        fileStoreId={docSubmission.applicationContent.fileStoreId}
-                        displayFilename={docSubmission.applicationContent.fileName}
-                        tenantId={docSubmission.applicationContent.tenantId}
-                        docWidth="100%"
-                        docHeight="unset"
-                        showDownloadOption={false}
-                        documentName={docSubmission.applicationContent.fileName}
-                      />
-                    </div>
+                    {docSubmission.applicationContent && (
+                      <div className="application-view">
+                        <DocViewerWrapper
+                          key={docSubmission.applicationContent.fileStoreId}
+                          fileStoreId={docSubmission.applicationContent.fileStoreId}
+                          displayFilename={docSubmission.applicationContent.fileName}
+                          tenantId={docSubmission.applicationContent.tenantId}
+                          docWidth="100%"
+                          docHeight="unset"
+                          showDownloadOption={false}
+                          documentName={docSubmission.applicationContent.fileName}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

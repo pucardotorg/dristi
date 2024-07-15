@@ -194,7 +194,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
+          referenceId: orderId || null,
           createdDate: formatDate(new Date()),
           applicationType,
           status: caseDetails?.status,
@@ -221,8 +221,11 @@ const SubmissionsCreate = () => {
 
   const updateSubmission = async (action) => {
     const reqBody = {
-      ...applicationDetails,
-      workflow: { action },
+      application: {
+        ...applicationDetails,
+        workflow: { ...applicationDetails?.workflow, action },
+        tenantId,
+      },
       tenantId,
     };
     await submissionService.updateApplication(reqBody, { tenantId });
@@ -297,10 +300,9 @@ const SubmissionsCreate = () => {
       {showReviewModal && (
         <ReviewSubmissionModal
           t={t}
-          applicationType={formdata?.applicationType?.name}
-          submissionDate={formatDate(new Date())}
+          applicationType={applicationDetails?.applicationType}
+          submissionDate={applicationDetails?.createdDate}
           sender={caseDetails?.additionalDetails?.payerName}
-          additionalDetails={"additional-details"}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
