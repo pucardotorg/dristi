@@ -92,9 +92,6 @@ public class HearingServiceTest {
                 .tenantId("tenantId")
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
                 .build();
 
         User user = new User();
@@ -106,7 +103,7 @@ public class HearingServiceTest {
                 .build();
 
         // Arrange
-        when(hearingRepository.getHearings(any(HearingCriteria.class))).thenReturn(Collections.singletonList(new Hearing()));
+        when(hearingRepository.getHearings(any(HearingSearchRequest.class))).thenReturn(Collections.singletonList(new Hearing()));
 
         // Act
         List<Hearing> hearingList = hearingService.searchHearing(request);
@@ -125,9 +122,6 @@ public class HearingServiceTest {
                 .tenantId("tenantId")
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
                 .build();
 
         User user = new User();
@@ -138,7 +132,7 @@ public class HearingServiceTest {
                 .criteria(criteria)
                 .build();
         // Arrange
-        when(hearingRepository.getHearings(any(HearingCriteria.class)))
+        when(hearingRepository.getHearings(any(HearingSearchRequest.class)))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
 
         // Act & Assert

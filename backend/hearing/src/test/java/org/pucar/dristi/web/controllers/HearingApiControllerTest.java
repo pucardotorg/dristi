@@ -82,9 +82,6 @@ public class HearingApiControllerTest {
                 .tenantId("tenantId")
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
                 .build();
 
         User user = new User();
