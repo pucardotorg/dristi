@@ -143,7 +143,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter }) => {
             ))}
         </div>
       </Card>
-      {show && documentSubmission && (
+      {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
           show={show}

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
@@ -21,12 +21,16 @@ import SuccessModal from "../../components/SuccessModal";
 import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import isEqual from "lodash/isEqual";
 
 const fieldStyle = { marginRight: 0 };
 
 const SubmissionsCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
+  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const orderId = urlParams.get("orderId");
@@ -37,6 +41,8 @@ const SubmissionsCreate = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loader, setLoader] = useState(false);
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -68,16 +74,17 @@ const SubmissionsCreate = () => {
     return applicationConfigKeys?.[applicationType] || [];
   }, [applicationType]);
 
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const modifiedFormConfig = useMemo(() => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
   }, [submissionFormConfig, applicationFormConfig]);
 
-  const defaultFormValue = {
-    submissionType: {
-      code: "APPLICATION_TYPE",
-      name: "APPLICATION_TYPE",
-    },
-  };
   const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
@@ -92,6 +99,30 @@ const SubmissionsCreate = () => {
     applicationNumber,
     applicationNumber
   );
+
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
+  useEffect(() => {
+    if (applicationDetails) {
+      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN || true) {
+        setShowReviewModal(true);
+      }
+      if (applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT) {
+        setShowPaymentModal(true);
+      }
+    }
+  }, [applicationDetails]);
+
+  const defaultFormValue = useMemo(() => {
+    if (applicationDetails?.additionalDetails?.formdata) {
+      return applicationDetails?.additionalDetails?.formdata;
+    }
+    return {
+      submissionType: {
+        code: "APPLICATION_TYPE",
+        name: "APPLICATION_TYPE",
+      },
+    };
+  }, [applicationDetails?.additionalDetails?.formdata]);
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -112,15 +143,9 @@ const SubmissionsCreate = () => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
+    if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
-  };
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   const onDocumentUpload = async (fileData, filename) => {
@@ -173,7 +198,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
+          referenceId: orderId || null,
           createdDate: formatDate(new Date()),
           applicationType,
           status: caseDetails?.status,
@@ -183,27 +208,57 @@ const SubmissionsCreate = () => {
           documents,
           workflow: {
             id: "workflow123",
-            action: "CREATE",
+            action: CaseWorkflowAction.CREATE,
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
           },
         },
       };
-      await submissionService.createApplication(applicationReqBody, { tenantId });
+      const res = await submissionService.createApplication(applicationReqBody, { tenantId });
       setLoader(false);
-    } catch (error) {}
+      return res;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const updateSubmission = async (action) => {
+    try {
+      const reqBody = {
+        application: {
+          ...applicationDetails,
+          workflow: { ...applicationDetails?.workflow, action },
+          tenantId,
+        },
+        tenantId,
+      };
+      await submissionService.updateApplication(reqBody, { tenantId });
+      setShowSuccessModal(true);
+    } catch (error) {
+      setShowReviewModal(true);
+    }
+    setShowsignatureModal(false);
+    setLoader(false);
+  };
+
+  const handleOpenReview = async () => {
+    setLoader(true);
+    const res = await createSubmission();
+    const newapplicationNumber = res?.application?.applicationNumber;
+    if (newapplicationNumber) {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`);
+    }
   };
 
   const handleBack = () => {
-    setShowReviewModal(false);
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
-  const handleProceed = () => {
+  const handleAddSignature = () => {
     setLoader(true);
-    setShowsignatureModal(false);
-    setShowPaymentModal(true);
-    createSubmission();
+
+    updateSubmission(CaseWorkflowAction.ESIGN);
   };
 
   const handleCloseSignaturePopup = () => {
@@ -237,33 +292,35 @@ const SubmissionsCreate = () => {
     //
   };
 
-  if (loader) {
+  if (loader || isApplicationLoading || (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false)) {
     return <Loader />;
   }
   return (
     <div>
       <Header> {t("CREATE_SUBMISSION")}</Header>
       <FormComposerV2
-        label={t("SUBMIT_BUTTON")}
+        label={t("REVIEW_SUBMISSION")}
         config={modifiedFormConfig}
         defaultValues={defaultFormValue}
         onFormValueChange={onFormValueChange}
-        onSubmit={() => setShowReviewModal(true)}
+        onSubmit={handleOpenReview}
         fieldStyle={fieldStyle}
       />
       {showReviewModal && (
         <ReviewSubmissionModal
           t={t}
-          applicationType={formdata?.applicationType?.name}
-          submissionDate={formatDate(new Date())}
+          applicationType={applicationDetails?.applicationType}
+          submissionDate={applicationDetails?.createdDate}
           sender={caseDetails?.additionalDetails?.payerName}
-          additionalDetails={"additional-details"}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
+          documents={applicationDetails?.documents || []}
         />
       )}
-      {showsignatureModal && <SubmissionSignatureModal t={t} handleProceed={handleProceed} handleCloseSignaturePopup={handleCloseSignaturePopup} />}
+      {showsignatureModal && (
+        <SubmissionSignatureModal t={t} handleProceed={handleAddSignature} handleCloseSignaturePopup={handleCloseSignaturePopup} />
+      )}
       {showPaymentModal && (
         <PaymentModal
           t={t}
