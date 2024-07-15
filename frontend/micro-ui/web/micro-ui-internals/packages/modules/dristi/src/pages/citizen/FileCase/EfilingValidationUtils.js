@@ -1793,6 +1793,35 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+  const assignees =
+    Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0
+      ? caseDetails?.representatives
+          ?.reduce((res, curr) => {
+            if (curr && curr?.additionalDetails?.uuid) {
+              res.push(curr?.additionalDetails?.uuid);
+            }
+            if (curr && curr?.representing && Array.isArray(curr?.representing || []) && curr?.representing?.length > 0) {
+              const representingUuids = curr?.representing?.reduce((result, current) => {
+                if (current && current?.additionalDetails?.uuid) {
+                  result.push(current?.additionalDetails?.uuid);
+                }
+                return result;
+              }, []);
+              res.push(representingUuids);
+            }
+            return res;
+          }, [])
+          ?.flat()
+      : Array.isArray(caseDetails?.litigants || []) && caseDetails?.litigants?.length > 0
+      ? caseDetails?.litigants
+          ?.reduce((res, curr) => {
+            if (curr && curr?.additionalDetails?.uuid) {
+              res.push(curr?.additionalDetails?.uuid);
+            }
+            return res;
+          }, [])
+          ?.flat()
+      : null;
   return DRISTIService.caseUpdateService(
     {
       cases: {
@@ -1805,6 +1834,7 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          ...(action === "SUBMIT_CASE" && {}),
         },
       },
       tenantId,
