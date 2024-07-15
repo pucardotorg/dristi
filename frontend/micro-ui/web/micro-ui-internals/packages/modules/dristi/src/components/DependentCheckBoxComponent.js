@@ -23,14 +23,18 @@ function DependentFields({ t, option, selectedValues, handleInputChange }) {
         <span style={{ fontWeight: "700" }}>{t(option.dependentText)}</span>
       </span>
       <div style={{ display: "flex", flexDirection: "row", gap: "30px", maxHeight: "40px" }}>
-        {option?.dependentFields.map((field) => (
+        {option?.dependentFields?.map((field) => (
           <div key={field} style={{ display: "flex", flexDirection: "row", gap: "40px", justifyContent: "flex-start" }}>
             <label>
               <CheckBox
                 value={JSON.stringify(field)}
                 label={field.name}
                 name={"Checkbox"}
-                checked={selectedValues?.attendees?.map((attendee) => JSON.parse(attendee).individualId).includes(field.individualId) || false}
+                checked={
+                  (selectedValues?.attendees?.map((attendee) => JSON.parse(attendee).individualId).includes(field.individualId) &&
+                    selectedValues?.attendees?.map((attendee) => JSON.parse(attendee).name).includes(field.name)) ||
+                  false
+                }
                 onChange={(e) => handleInputChange(e, option?.name)}
                 styles={{ alignItems: "center", textAlign: "center" }}
               />
@@ -71,20 +75,25 @@ function DependentCheckBoxComponent({ t, options, onInputChange, selectedValues 
     <div className="select-checkbox-dependent">
       <div className="select-checkbox-dependent-child">
         <div className="select-between-compl-or-resp" style={{ display: "flex", flexDirection: "row", gap: "30px", maxHeight: "40px" }}>
-          {options?.checkBoxes?.map((option) => (
-            <div key={option?.name} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <CheckboxItem t={t} name={t(option?.name)} checked={!!selectedValues[option?.name]} onToggle={() => toggleCheckbox(option?.name)} />
-            </div>
-          ))}
+          {options?.checkBoxes
+            ?.filter((option) => option?.dependentFields?.length)
+            .map((option) => (
+              <div key={option?.name} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <CheckboxItem t={t} name={t(option?.name)} checked={!!selectedValues[option?.name]} onToggle={() => toggleCheckbox(option?.name)} />
+              </div>
+            ))}
         </div>
         <div className="compl-resp-combined-div">
-          {options?.checkBoxes?.map((option) => (
-            <Fragment>
-              {selectedValues[option?.name] && (
-                <DependentFields t={t} option={option} selectedValues={selectedValues[option?.name]} handleInputChange={handleInputChange} />
-              )}
-            </Fragment>
-          ))}
+          {options?.checkBoxes?.map(
+            (option) =>
+              option?.dependentFields && (
+                <Fragment>
+                  {selectedValues[option?.name] && (
+                    <DependentFields t={t} option={option} selectedValues={selectedValues[option?.name]} handleInputChange={handleInputChange} />
+                  )}
+                </Fragment>
+              )
+          )}
         </div>
       </div>
     </div>

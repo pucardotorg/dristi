@@ -9,6 +9,7 @@ import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
+import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
 
 const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const { t } = useTranslation();
@@ -23,6 +24,23 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
+  const advocateIds = caseData.case.representatives?.map((representative) => {
+    return {
+      id: representative.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
+  );
+
+  console.log(advocateDetails);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {
@@ -99,7 +117,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
     setShowScheduleHearingModal(true);
   };
 
-  if (isHearingsLoading || isOrdersLoading) {
+  if (isHearingsLoading || isOrdersLoading || isAdvocatesLoading) {
     return <Loader />;
   }
   return hearingRes?.HearingList?.length === 0 && ordersRes?.list?.length === 0 ? (
@@ -155,7 +173,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
               }}
             >
               <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
-              {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
+              {userRoles.includes("ORDER_CREATOR") && (
                 <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
               )}
               {showScheduleHearingModal && (
@@ -165,6 +183,13 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
                   tenantId={tenantId}
                   caseData={caseData}
                   setShowModal={setShowScheduleHearingModal}
+                  advocateDetails={advocateDetails.advocates.map((advocate) => {
+                    return {
+                      individualId: advocate.responseList[0].individualId,
+                      name: advocate.responseList[0].additionalDetails.username,
+                      type: "Advocate",
+                    };
+                  })}
                 />
               )}
             </div>
@@ -271,6 +296,24 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
           </div>
         </Card>
       )}
+      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
+
+      {showScheduleHearingModal && (
+        <ScheduleHearing
+          setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
+          tenantId={tenantId}
+          caseData={caseData}
+          setShowModal={setShowScheduleHearingModal}
+          advocateDetails={advocateDetails.advocates.map((advocate) => {
+            return {
+              individualId: advocate.responseList[0].individualId,
+              name: advocate.responseList[0].additionalDetails.username,
+              type: "Advocate",
+            };
+          })}
+        />
+      )} */}
       {showReviewModal && (
         <OrderReviewModal
           t={t}

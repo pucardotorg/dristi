@@ -2,18 +2,25 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { modalConfig, scheduleCaseSubmitConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import ScheduleAdmission from "../admission/ScheduleAdmission";
-import { CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
 import AdmissionActionModal from "../admission/AdmissionActionModal";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
 
-const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast }) => {
+const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails }) => {
   const { t } = useTranslation();
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
   const [scheduleHearingParams, setScheduleHearingParams] = useState({});
 
-  const updateCaseDetails = async (data = {}) => {
+  const partyTypes = {
+    "complainant.primary": "Complainant",
+    "complainant.additional": "Complainant",
+    "respondent.primary": "Respondent",
+    "respondent.additional": "Respondent",
+  };
+
+  const scheduleHearing = async (data = {}) => {
     return DRISTIService.createHearings(
       {
         hearing: {
@@ -21,9 +28,12 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           filingNumber: [caseData.filingNumber],
           hearingType: data.purpose,
           status: true,
-          attendees: Object.values(data.participant)
-            .map((val) => val.attendees.map((attendee) => JSON.parse(attendee)))
-            .flat(Infinity),
+          attendees: [
+            ...Object.values(data.participant)
+              .map((val) => val.attendees.map((attendee) => JSON.parse(attendee)))
+              .flat(Infinity),
+            ...advocateDetails,
+          ],
           startTime: Date.parse(
             `${data.date
               .split(" ")
@@ -83,7 +93,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
   };
 
   const handleScheduleCase = async (props) => {
-    await updateCaseDetails(props).then((res) => {
+    await scheduleHearing(props).then((res) => {
       setShowModal(false);
       res.responseInfo.status === "successful"
         ? showToast({
@@ -99,12 +109,17 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
     const litigantsNames = caseDetails.litigants.map((litigant) => {
-      return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId };
+      return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId, type: partyTypes[litigant.partyType] };
+    });
+    const witnessNames = caseDetails.additionalDetails.witnessDetails.formdata?.map((data) => {
+      return { name: `${data.data.firstName} ${data.data.lastName}`, type: "Witness" };
     });
 
     config.checkBoxes.forEach((checkbox) => {
-      if (checkbox.key === "Litigants") {
+      if (checkbox.key === "Litigants" && checkbox.dependentFields) {
         checkbox.dependentFields = litigantsNames;
+      } else if (checkbox.key === "Witness" && checkbox.dependentFields) {
+        checkbox.dependentFields = witnessNames;
       }
     });
 

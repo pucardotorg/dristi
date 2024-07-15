@@ -55,6 +55,12 @@ export const selectParticipantConfig = {
       dependentText: "CS_LITIGANT_SELECT",
       dependentFields: [],
     },
+    {
+      key: "Witness",
+      name: "CS_WITNESS",
+      dependentText: "CS_WITNESS_SELECT",
+      dependentFields: [],
+    },
   ],
 };
 
