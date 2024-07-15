@@ -11,9 +11,23 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     return formattedDate;
   };
 
+  const defaultObj = {
+    status: rowData?.status,
+    details: {
+      applicationType: rowData?.applicationType,
+      applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
+      sender: rowData?.createdBy,
+      additionalDetails: rowData?.additionalDetails,
+      applicationId: rowData?.id,
+      auditDetails: rowData?.auditDetails,
+    },
+    applicationContent: null,
+    comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+    applicationList: rowData,
+  };
   const docObj = rowData?.documents?.map((doc) => {
     return {
-      status: rowData?.workflow.action,
+      status: rowData?.status,
       details: {
         applicationType: rowData?.applicationType,
         applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
@@ -33,7 +47,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
       applicationList: rowData,
     };
-  });
+  }) || [defaultObj];
 
   return (
     <React.Fragment>
