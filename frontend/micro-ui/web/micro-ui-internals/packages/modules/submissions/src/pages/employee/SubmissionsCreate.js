@@ -23,6 +23,7 @@ import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import isEqual from "lodash/isEqual";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -40,6 +41,8 @@ const SubmissionsCreate = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loader, setLoader] = useState(false);
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -70,6 +73,13 @@ const SubmissionsCreate = () => {
     };
     return applicationConfigKeys?.[applicationType] || [];
   }, [applicationType]);
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const modifiedFormConfig = useMemo(() => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
@@ -133,15 +143,9 @@ const SubmissionsCreate = () => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
+    if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
-  };
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   const onDocumentUpload = async (fileData, filename) => {
@@ -220,16 +224,21 @@ const SubmissionsCreate = () => {
   };
 
   const updateSubmission = async (action) => {
-    const reqBody = {
-      application: {
-        ...applicationDetails,
-        workflow: { ...applicationDetails?.workflow, action },
+    try {
+      const reqBody = {
+        application: {
+          ...applicationDetails,
+          workflow: { ...applicationDetails?.workflow, action },
+          tenantId,
+        },
         tenantId,
-      },
-      tenantId,
-    };
-    await submissionService.updateApplication(reqBody, { tenantId });
-    setShowSuccessModal(true);
+      };
+      await submissionService.updateApplication(reqBody, { tenantId });
+      setShowSuccessModal(true);
+    } catch (error) {
+      setShowReviewModal(true);
+    }
+    setShowsignatureModal(false);
     setLoader(false);
   };
 
@@ -243,12 +252,12 @@ const SubmissionsCreate = () => {
   };
 
   const handleBack = () => {
-    history.push(`/digit-ui/employee/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
   const handleAddSignature = () => {
     setLoader(true);
-    setShowsignatureModal(false);
+
     updateSubmission(CaseWorkflowAction.ESIGN);
   };
 
@@ -283,7 +292,7 @@ const SubmissionsCreate = () => {
     //
   };
 
-  if (loader || isApplicationLoading) {
+  if (loader || isApplicationLoading || (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false)) {
     return <Loader />;
   }
   return (

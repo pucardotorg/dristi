@@ -93,7 +93,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
       if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN].includes(status) && isCitizen) {
-        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=F-C.1973.002-2024-000822&applicationNumber=${applicationNumber}`);
+        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
       } else {
         setDocumentSubmission(docObj);
         setShow(true);

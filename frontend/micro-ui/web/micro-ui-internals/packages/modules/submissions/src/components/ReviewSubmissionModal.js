@@ -30,7 +30,7 @@ function ReviewSubmissionModal({
   return (
     <Modal
       headerBarMain={<Heading label={t("REVIEW_SUBMISSION_APPLICATION_HEADING")} />}
-      headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
+      headerBarEnd={<CloseBtn onClick={handleBack} />}
       actionCancelLabel={t("CS_COMMON_BACK")}
       actionCancelOnSubmit={handleBack}
       actionSaveLabel={t("ADD_SIGNATURE")}

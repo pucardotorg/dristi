@@ -108,9 +108,6 @@ export const configs = [
         populators: {
           name: "datePartyAvailable",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -187,7 +184,7 @@ export const configsRescheduleRequest = [
         disable: true,
         isMandatory: true,
         key: "applicationDate",
-        type: "text",
+        type: "date",
         populators: { name: "applicationDate" },
       },
       {
@@ -235,9 +232,6 @@ export const configsRescheduleRequest = [
         type: "date",
         populators: {
           name: "initialHearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -272,9 +266,6 @@ export const configsRescheduleRequest = [
         type: "date",
         populators: {
           name: "changedHearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -338,7 +329,7 @@ export const configsCheckoutRequest = [
         disable: true,
         isMandatory: true,
         key: "applicationDate",
-        type: "text",
+        type: "date",
         populators: { name: "applicationDate" },
       },
       {
@@ -386,9 +377,6 @@ export const configsCheckoutRequest = [
         type: "date",
         populators: {
           name: "initialHearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -423,9 +411,6 @@ export const configsCheckoutRequest = [
         type: "date",
         populators: {
           name: "changedHearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -492,9 +477,6 @@ export const configsExtensionSubmissionDeadline = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -542,12 +524,21 @@ export const configsExtensionSubmissionDeadline = [
         key: "submissionType",
         populators: {
           name: "submissionType",
-          optionsKey: "type",
-          mdmsConfig: {
-            masterName: "ApplicationType",
-            moduleName: "Application",
-            localePrefix: "SUBMISSION_TYPE",
-          },
+          optionsKey: "name",
+          options: [
+            {
+              code: "DOCUMENT_TYPE_1",
+              name: "DOCUMENT_TYPE_1",
+            },
+            {
+              code: "DOCUMENT_TYPE_2",
+              name: "DOCUMENT_TYPE_2",
+            },
+            {
+              code: "DOCUMENT_TYPE_3",
+              name: "DOCUMENT_TYPE_3",
+            },
+          ],
         },
       },
       {
@@ -558,9 +549,6 @@ export const configsExtensionSubmissionDeadline = [
         type: "date",
         populators: {
           name: "initialSubmissionDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -571,9 +559,6 @@ export const configsExtensionSubmissionDeadline = [
         type: "date",
         populators: {
           name: "changedSubmissionDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -676,9 +661,6 @@ export const configsProductionOfDocuments = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -844,9 +826,6 @@ export const configsCaseWithdrawal = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -972,9 +951,6 @@ export const configsCaseTransfer = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1094,9 +1070,6 @@ export const configsSettlement = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1208,9 +1181,6 @@ export const configsBailBond = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1322,9 +1292,6 @@ export const configsSurety = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1436,9 +1403,6 @@ export const configsBail = [
         type: "date",
         populators: {
           name: "applicationDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
