@@ -103,11 +103,13 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN || true) {
+      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN) {
         setShowReviewModal(true);
+        return;
       }
       if (applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT) {
         setShowPaymentModal(true);
+        return;
       }
     }
   }, [applicationDetails]);
@@ -228,13 +230,15 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, action },
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action },
+
           tenantId,
         },
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
-      setShowSuccessModal(true);
+      applicationRefetch();
+      setShowPaymentModal(true);
     } catch (error) {
       setShowReviewModal(true);
     }
@@ -257,17 +261,12 @@ const SubmissionsCreate = () => {
 
   const handleAddSignature = () => {
     setLoader(true);
-
     updateSubmission(CaseWorkflowAction.ESIGN);
   };
 
   const handleCloseSignaturePopup = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
-  };
-
-  const handleClosePaymentModal = () => {
-    setShowPaymentModal(false);
   };
 
   const handleSkipPayment = () => {
@@ -281,15 +280,7 @@ const SubmissionsCreate = () => {
   };
 
   const handleDownloadSubmission = () => {
-    ///
-  };
-
-  const handleCloseSuccessModal = () => {
-    //
-  };
-
-  const handlePendingPayment = () => {
-    //
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
   if (loader || isApplicationLoading || (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false)) {
@@ -322,20 +313,17 @@ const SubmissionsCreate = () => {
         <SubmissionSignatureModal t={t} handleProceed={handleAddSignature} handleCloseSignaturePopup={handleCloseSignaturePopup} />
       )}
       {showPaymentModal && (
-        <PaymentModal
-          t={t}
-          handleClosePaymentModal={handleClosePaymentModal}
-          handleSkipPayment={handleSkipPayment}
-          handleMakePayment={handleMakePayment}
-        />
+        <PaymentModal t={t} handleClosePaymentModal={handleBack} handleSkipPayment={handleSkipPayment} handleMakePayment={handleMakePayment} />
       )}
       {showSuccessModal && (
         <SuccessModal
           t={t}
-          handleDownloadSubmission={handleDownloadSubmission}
-          // isPaymentDone={true}
-          handleCloseSuccessModal={handleCloseSuccessModal}
-          handlePendingPayment={handlePendingPayment}
+          isPaymentDone={applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT}
+          handleCloseSuccessModal={handleBack}
+          actionCancelLabel={"DOWNLOAD_SUBMISSION"}
+          actionCancelOnSubmit={handleDownloadSubmission}
+          applicationNumber={applicationNumber}
+          createdDate={applicationDetails?.createdDate}
         />
       )}
     </div>
