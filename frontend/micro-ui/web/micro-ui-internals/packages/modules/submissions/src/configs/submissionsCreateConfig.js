@@ -521,9 +521,9 @@ export const configsExtensionSubmissionDeadline = [
         label: "SUBMISSION_TYPE",
         isMandatory: true,
         type: "dropdown",
-        key: "submissionType",
+        key: "documentType",
         populators: {
-          name: "submissionType",
+          name: "documentType",
           optionsKey: "name",
           options: [
             {
