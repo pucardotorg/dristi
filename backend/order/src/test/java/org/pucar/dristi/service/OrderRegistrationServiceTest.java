@@ -98,14 +98,14 @@ import static org.mockito.Mockito.*;
         order.setStatuteSection(new StatuteSection());
         mockOrderList.add(order);
 
-        when(orderRepository.getOrders(any())).thenReturn(mockOrderList);
+        when(orderRepository.getOrders(any(),any())).thenReturn(mockOrderList);
 
         OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
         orderSearchRequest.setCriteria(new OrderCriteria());
         List<Order> result = orderRegistrationService.searchOrder(orderSearchRequest);
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria(),orderSearchRequest.getPagination());
     }
 
     @Test
@@ -166,7 +166,7 @@ import static org.mockito.Mockito.*;
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getOrders(any()))
+        when(orderRepository.getOrders(any(),any()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);
