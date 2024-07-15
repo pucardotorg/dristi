@@ -23,28 +23,33 @@ import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 @Slf4j
 @Repository
 public class ApplicationRepository {
-    @Autowired
-    private ApplicationQueryBuilder queryBuilder;
+    private final ApplicationQueryBuilder queryBuilder;
+    private final JdbcTemplate jdbcTemplate;
+    private final ApplicationRowMapper rowMapper;
+    private final DocumentRowMapper documentRowMapper;
+    private final StatuteSectionRowMapper statuteSectionRowMapper;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private ApplicationRowMapper rowMapper;
-
-    @Autowired
-    private DocumentRowMapper documentRowMapper;
-
-    @Autowired
-    private StatuteSectionRowMapper statuteSectionRowMapper;
+    public ApplicationRepository(
+            ApplicationQueryBuilder queryBuilder,
+            JdbcTemplate jdbcTemplate,
+            ApplicationRowMapper rowMapper,
+            DocumentRowMapper documentRowMapper,
+            StatuteSectionRowMapper statuteSectionRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.documentRowMapper = documentRowMapper;
+        this.statuteSectionRowMapper = statuteSectionRowMapper;
+    }
 
     public List<Application> getApplications(ApplicationSearchRequest applicationSearchRequest) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
-            List<Object> preparedStmtListSt = new ArrayList<>();
-            List<Object> preparedStmtListDoc = new ArrayList<>();
+            List<Object> preparedStmtListSt;
+            List<Object> preparedStmtListDoc;
 
             String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(),
                     applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(),

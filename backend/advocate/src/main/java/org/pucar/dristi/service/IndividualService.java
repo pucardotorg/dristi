@@ -10,7 +10,6 @@ import org.pucar.dristi.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_SERVICE_EXCEPTION;
@@ -18,10 +17,14 @@ import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_SERVICE_EXCEPT
 @Service
 @Slf4j
 public class IndividualService {
+    private final IndividualUtil individualUtils;
+    private final Configuration config;
+
     @Autowired
-    private  IndividualUtil individualUtils;
-    @Autowired
-    private  Configuration config;
+    public IndividualService(IndividualUtil individualUtils, Configuration config) {
+        this.individualUtils = individualUtils;
+        this.config = config;
+    }
 
     public Boolean searchIndividual(RequestInfo requestInfo , String individualId, Map<String, String> individualUserUUID ){
         try {

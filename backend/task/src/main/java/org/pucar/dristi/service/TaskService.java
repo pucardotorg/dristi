@@ -14,11 +14,8 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -67,6 +64,7 @@ public class TaskService {
             return body.getTask();
 
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while creating task :: {}",e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating task :: {}", e.toString());
@@ -78,12 +76,9 @@ public class TaskService {
 
         try {
             // Fetch tasks from database according to the given search criteria
-            List<Task> result = taskRepository.getApplications(request.getCriteria());
-            // If no task are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(result))
-                return new ArrayList<>();
-            return result;
+            return taskRepository.getApplications(request.getCriteria());
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while searching task :: {}",e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching task results :: {}", e.toString());
@@ -108,6 +103,7 @@ public class TaskService {
             return body.getTask();
 
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while updating task :: {}",e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating task :: {}", e.toString());
@@ -120,6 +116,7 @@ public class TaskService {
         try {
             return taskRepository.checkTaskExists(taskExistsRequest.getTask());
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while exist task check :: {}",e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to exist task :: {}", e.toString());

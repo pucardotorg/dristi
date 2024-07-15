@@ -1,7 +1,9 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -17,16 +19,10 @@ import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_UTILITY_EXCEPT
 @Slf4j
 public class IndividualUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-
-    @Autowired
-    public IndividualUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
-        this.mapper = mapper;
+    public IndividualUtil(ServiceRequestRepository serviceRequestRepository) {
         this.serviceRequestRepository = serviceRequestRepository;
     }
 

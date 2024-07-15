@@ -25,21 +25,25 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Component
 @Slf4j
 public class WorkflowService {
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository repository;
+    private final Configuration config;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private Configuration config;
+    public WorkflowService(
+            ObjectMapper mapper,
+            ServiceRequestRepository repository,
+            Configuration config) {
+        this.mapper = mapper;
+        this.repository = repository;
+        this.config = config;
+    }
 
 
     public void updateWorkflowStatus(ApplicationRequest applicationRequest) {
         Application application = applicationRequest.getApplication();
         try {
-                ProcessInstance processInstance = getProcessInstance(application, applicationRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(application);
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(applicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String state=callWorkFlow(workflowRequest).getState();
@@ -67,7 +71,7 @@ public class WorkflowService {
         }
     }
 
-    private ProcessInstance getProcessInstance(Application application, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstance(Application application) {
         try {
             Workflow workflow = application.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -112,30 +116,7 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
-    private BusinessService getBusinessService(Application courtCase, RequestInfo requestInfo) {
-        try {
-            String tenantId = courtCase.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
-        }
-    }
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessServices=").append(businessService);
-        return url;
-    }
+
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());

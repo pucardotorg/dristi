@@ -155,7 +155,6 @@ public class ApplicationValidatorTest {
 
     @Test
     public void testValidateApplicationExistence_WithMissingCase_ShouldThrowException() {
-        Application application = new Application();
         application.setCaseId("caseID");
         application.setId(UUID.randomUUID());
         application.setFilingNumber("file123");
@@ -163,24 +162,23 @@ public class ApplicationValidatorTest {
         when(caseUtil.fetchCaseDetails(any())).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("case does not exist", exception.getMessage());
     }
 
     @Test
     public void testValidateApplicationExistence_WithMissingCaseId_ShouldThrowException() {
-        Application application = new Application();
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnr123");
         application.setReferenceId(UUID.randomUUID());
+
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
         assertEquals("caseId is mandatory for updating application", exception.getMessage());
     }
     @Test
     public void testValidateApplicationExistence_WithMissingTenantId_ShouldThrowException() {
-        Application application = new Application();
         application.setId(UUID.randomUUID());
         application.setCaseId("caseId");
         application.setCnrNumber("cnr123");
@@ -188,7 +186,7 @@ public class ApplicationValidatorTest {
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("tenantId is mandatory for updating application", exception.getMessage());
     }
@@ -199,10 +197,11 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnr123");
         application.setTenantId("tID");
         application.setFilingNumber("file123");
+
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("applicationType is mandatory for updating application", exception.getMessage());
     }

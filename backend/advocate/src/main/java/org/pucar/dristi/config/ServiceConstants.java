@@ -66,4 +66,14 @@ public class ServiceConstants {
 	public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
 	public static final String TEST_EXCEPTION = "TEST_EXCEPTION";
+	public static final String FINAL_QUERY = "Final query :: {}";
+	public static final String FINAL_QUERY_DOCUMENT = "Final query Document :: {}";
+	public static final String FETCH_ADVOCATE_CLERK_EXCEPTION = "Error while fetching advocate clerk application list :: {}";
+	public static final String FETCH_ADVOCATE_EXCEPTION = "Error while fetching advocate application list :: {}";
+	public static final String ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION = "Error while building advocate clerk search query :: {}";
+	public static final String FETCH_SEARCH_RESULT_EXCEPTION = "Error while fetching to search results :: {}";
+	public static final String ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION = "Error while building advocate search query :: {}";
+	public static final String ADVOCATE_LIST_QUERY = "Final advocate list query :: {}";
+	public static final String DOCUMENT_LIST_QUERY = "Final document query :: {}";
+	public static final String AND = " AND ";
 }

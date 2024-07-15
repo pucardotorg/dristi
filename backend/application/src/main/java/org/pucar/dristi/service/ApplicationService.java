@@ -22,21 +22,28 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Service
 @Slf4j
 public class ApplicationService {
-    @Autowired
-    private ApplicationValidator validator;
+    private final ApplicationValidator validator;
+    private final ApplicationEnrichment enrichmentUtil;
+    private final ApplicationRepository applicationRepository;
+    private final WorkflowService workflowService;
+    private final Configuration config;
+    private final Producer producer;
 
     @Autowired
-    private ApplicationEnrichment enrichmentUtil;
-
-    @Autowired
-    private ApplicationRepository applicationRepository;
-
-    @Autowired
-    private WorkflowService workflowService;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private Producer producer;
+    public ApplicationService(
+            ApplicationValidator validator,
+            ApplicationEnrichment enrichmentUtil,
+            ApplicationRepository applicationRepository,
+            WorkflowService workflowService,
+            Configuration config,
+            Producer producer) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.applicationRepository = applicationRepository;
+        this.workflowService = workflowService;
+        this.config = config;
+        this.producer = producer;
+    }
 
     public Application createApplication(ApplicationRequest body) {
         try {

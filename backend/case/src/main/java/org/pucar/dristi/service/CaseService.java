@@ -50,7 +50,7 @@ public class CaseService {
                        Configuration config,
                        Producer producer,
                        BillingUtil billingUtil,
-                       EncryptionDecryptionUtil encryptionDecryptionUtil) {
+                       EncryptionDecryptionUtil encryptionDecryptionUtil) {      
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.caseRepository = caseRepository;

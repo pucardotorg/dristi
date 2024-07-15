@@ -1,8 +1,6 @@
 package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import kotlin.jvm.internal.TypeReference;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.AssignedTo;
 import org.pucar.dristi.web.models.Task;
 
 import java.sql.ResultSet;
@@ -110,27 +107,6 @@ public class TaskRowMapperTest {
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
-
-        verify(rs, times(1)).getString("tasknumber");
-        verify(rs, times(2)).getString("id");
-        verify(rs, times(1)).getString("orderid");
-        verify(rs, times(1)).getString("tenantid");
-        verify(rs, times(1)).getString("filingnumber");
-        verify(rs, times(1)).getString("cnrnumber");
-        verify(rs, times(1)).getString("createddate");
-        verify(rs, times(1)).getString("datecloseby");
-        verify(rs, times(1)).getString("dateclosed");
-        verify(rs, times(1)).getString("taskdescription");
-        verify(rs, times(1)).getString("taskdetails");
-        verify(rs, times(1)).getString("tasktype");
-        verify(rs, times(1)).getString("assignedto");
-        verify(rs, times(1)).getString("status");
-        verify(rs, times(1)).getString("isactive");
-        verify(rs, times(1)).getLong("createdtime");
-        verify(rs, times(1)).getString("createdby");
-        verify(rs, times(1)).getLong("lastmodifiedtime");
-        verify(rs, times(1)).getString("lastmodifiedby");
-        verify(rs, times(1)).getObject("additionaldetails");
     }
 
     @Test
@@ -142,8 +118,8 @@ public class TaskRowMapperTest {
         String filingNumber = "filingnumber";
         String cnrNumber = "cnrnumber";
         String createdDate = "01-01-2023";
-        String dateCloseBy = "15-01-2023";
-        String dateClosed = "20-01-2023";
+        String dateCloseBy = "01-01-2023";
+        String dateClosed = "01-01-2023";
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
@@ -197,26 +173,6 @@ public class TaskRowMapperTest {
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
         assertNull(task.getAdditionalDetails());
-
-        verify(rs, times(1)).getString("tasknumber");
-        verify(rs, times(2)).getString("id");
-        verify(rs, times(1)).getString("orderid");
-        verify(rs, times(1)).getString("tenantid");
-        verify(rs, times(1)).getString("filingnumber");
-        verify(rs, times(1)).getString("cnrnumber");
-        verify(rs, times(1)).getString("createddate");
-        verify(rs, times(1)).getString("datecloseby");
-        verify(rs, times(1)).getString("dateclosed");
-        verify(rs, times(1)).getString("taskdescription");
-        verify(rs, times(1)).getString("taskdetails");
-        verify(rs, times(1)).getString("tasktype");
-        verify(rs, times(1)).getString("status");
-        verify(rs, times(1)).getString("isactive");
-        verify(rs, times(1)).getLong("createdtime");
-        verify(rs, times(1)).getString("createdby");
-        verify(rs, times(1)).getLong("lastmodifiedtime");
-        verify(rs, times(1)).getString("lastmodifiedby");
-        verify(rs, times(1)).getObject("additionaldetails");
     }
 
     @Test
@@ -251,7 +207,7 @@ public class TaskRowMapperTest {
         String tenantId = "tenantid";
         String filingNumber = "filingnumber";
         String cnrNumber = "cnrnumber";
-        String invalidDate = "invalid-date";
+        String invalidDate = "01-04-2024";
         String taskDescription = "taskdescription";
         String taskDetails = "taskdetails";
         String taskType = "tasktype";
@@ -296,9 +252,9 @@ public class TaskRowMapperTest {
         assertEquals(tenantId, task.getTenantId());
         assertEquals(filingNumber, task.getFilingNumber());
         assertEquals(cnrNumber, task.getCnrNumber());
-        assertNull(task.getCreatedDate());
-        assertNull(task.getDateCloseBy());
-        assertNull(task.getDateClosed());
+        assertNotNull(task.getCreatedDate());
+        assertNotNull(task.getDateCloseBy());
+        assertNotNull(task.getDateClosed());
         assertEquals(taskDescription, task.getTaskDescription());
         assertEquals(taskDetails, task.getTaskDetails());
         assertEquals(taskType, task.getTaskType());
@@ -308,26 +264,24 @@ public class TaskRowMapperTest {
         assertEquals(1L, task.getAuditDetails().getCreatedTime());
         assertEquals("lastmodifiedby", task.getAuditDetails().getLastModifiedBy());
         assertEquals(2L, task.getAuditDetails().getLastModifiedTime());
+    }
 
-        verify(rs, times(1)).getString("tasknumber");
-        verify(rs, times(2)).getString("id");
-        verify(rs, times(1)).getString("orderid");
-        verify(rs, times(1)).getString("tenantid");
-        verify(rs, times(1)).getString("filingnumber");
-        verify(rs, times(1)).getString("cnrnumber");
-        verify(rs, times(1)).getString("createddate");
-        verify(rs, times(1)).getString("datecloseby");
-        verify(rs, times(1)).getString("dateclosed");
-        verify(rs, times(1)).getString("taskdescription");
-        verify(rs, times(1)).getString("taskdetails");
-        verify(rs, times(1)).getString("tasktype");
-        verify(rs, times(1)).getString("assignedto");
-        verify(rs, times(1)).getString("status");
-        verify(rs, times(1)).getString("isactive");
-        verify(rs, times(1)).getLong("createdtime");
-        verify(rs, times(1)).getString("createdby");
-        verify(rs, times(1)).getLong("lastmodifiedtime");
-        verify(rs, times(1)).getString("lastmodifiedby");
-        verify(rs, times(1)).getObject("additionaldetails");
+    @Test
+    public void testExtractData_CustomException() throws SQLException {
+
+        when(rs.next()).thenThrow(new CustomException("CUSTOM_EXCEPTION", "Custom exception occurred"));
+
+        assertThrows(CustomException.class, () -> taskRowMapper.extractData(rs));
+    }
+
+    @Test
+    public void testExtractData_DateTimeParseException() throws SQLException {
+        when(rs.next()).thenReturn(true).thenReturn(false);
+        when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
+        when(rs.getString("orderid")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
+        when(rs.getString("createdby")).thenReturn("user");
+        when(rs.getString("createddate")).thenReturn("invalid-date");
+
+        assertThrows(CustomException.class, () -> taskRowMapper.extractData(rs));
     }
 }

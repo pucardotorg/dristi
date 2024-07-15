@@ -49,9 +49,9 @@ class CaseRowMapperTest {
         when(rs.getString("judgeid")).thenReturn("judge1");
         when(rs.getString("stage")).thenReturn("stage1");
         when(rs.getString("substage")).thenReturn("substage1");
-        when(rs.getString("filingdate")).thenReturn("2024-01-01");
-        when(rs.getString("judgementdate")).thenReturn("2024-01-01");
-        when(rs.getString("registrationdate")).thenReturn("2024-01-02");
+        when(rs.getString("filingdate")).thenReturn("01-01-2024");
+        when(rs.getString("judgementdate")).thenReturn("01-01-2024");
+        when(rs.getString("registrationdate")).thenReturn("01-02-2024");
         when(rs.getString("casecategory")).thenReturn("category1");
         when(rs.getString("natureofpleading")).thenReturn("pleading");
         when(rs.getString("status")).thenReturn("status1");
