@@ -1285,38 +1285,38 @@ export const rolesToConfigMapping = [
 
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
-    actionFor: ["LITIGANT/ADVOCATE"],
+    actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Make Payment",
     redirectTo: "",
   },
   UNDER_SCRUTINY: {
-    actionFor: ["FSO"],
+    actorName: ["FSO"],
     actionName: "Case Filed and ready for FSO to review",
     redirectTo: "",
   },
   CASE_RE_ASSIGNED: {
-    actionFor: ["LITIGANT/ADVOCATE"],
+    actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Case Sent Back from Edit",
     redirectTo: "",
   },
   PENDING_ADMISSION: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Case Approved from Scrutiny",
     redirectTo: "",
   },
 
   SCHEDULE_ADMISSION_HEARING: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     redirectTo: "",
   },
   ADMISSION_HEARING_SCHEDULED: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Admission hearing scheduled",
     redirectTo: "",
   },
   CASE_ADMITTED: {
-    actionFor: ["JUDGE"],
+    actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     redirectTo: "",
   },

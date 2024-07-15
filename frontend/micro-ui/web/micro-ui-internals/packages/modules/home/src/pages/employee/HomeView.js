@@ -190,16 +190,48 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
-  if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
-    return <Loader />;
-  }
-
   const refreshInbox = () => {
     SetCallRefetch(true);
   };
 
+  const onRowClick = (row) => {
+    const searchParams = new URLSearchParams();
+    if (
+      onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
+        ? onRowClickData?.urlDependentValue.includes(row.original[onRowClickData?.urlDependentOn])
+        : row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
+    ) {
+      onRowClickData.params.forEach((item) => {
+        searchParams.set(item?.key, row.original[item?.value]);
+      });
+      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
+    } else if (onRowClickData?.url) {
+      onRowClickData.params.forEach((item) => {
+        searchParams.set(item?.key, row.original[item?.value]);
+      });
+      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
+    } else {
+      const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+      if (statusArray.includes(row?.original?.status)) {
+        if (row?.original?.status === "CASE_ADMITTED" || row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
+          );
+        } else {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaints`
+          );
+        }
+      }
+    }
+  };
+
+  if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
+    return <Loader />;
+  }
+
   if (isUserLoggedIn && !individualId && userInfoType === "citizen") {
-    history.push(`/${window?.contextPath}/${userInfoType}/dristi/home`);
+    history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
   }
 
   return (
@@ -247,43 +279,7 @@ const HomeView = () => {
                   onTabChange={onTabChange}
                   additionalConfig={{
                     resultsTable: {
-                      onClickRow: (row) => {
-                        const searchParams = new URLSearchParams();
-                        if (
-                          onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
-                            ? onRowClickData?.urlDependentValue.includes(row.original[onRowClickData?.urlDependentOn])
-                            : row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
-                        ) {
-                          onRowClickData.params.forEach((item) => {
-                            searchParams.set(item?.key, row.original[item?.value]);
-                          });
-                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
-                        } else if (onRowClickData?.url) {
-                          onRowClickData.params.forEach((item) => {
-                            searchParams.set(item?.key, row.original[item?.value]);
-                          });
-                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
-                        } else {
-                          const statusArray = [
-                            "CASE_ADMITTED",
-                            "ADMISSION_HEARING_SCHEDULED",
-                            "PAYMENT_PENDING",
-                            "UNDER_SCRUTINY",
-                            "PENDING_ADMISSION",
-                          ];
-                          if (statusArray.includes(row?.original?.status)) {
-                            if (row?.original?.status === "CASE_ADMITTED" || row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
-                              history.push(
-                                `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
-                              );
-                            } else {
-                              history.push(
-                                `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaints`
-                              );
-                            }
-                          }
-                        }
-                      },
+                      onClickRow: onRowClick,
                     },
                   }}
                 />
