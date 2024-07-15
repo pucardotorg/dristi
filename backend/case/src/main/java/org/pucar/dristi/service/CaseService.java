@@ -176,6 +176,10 @@ public class CaseService {
         if (!validator.canRepresentativeJoinCase(joinCaseRequest))
             throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
+        if (joinCaseRequest.getRepresentative().getId() != null) {
+            joinCaseRequest.getRepresentative().setIsActive(false);
+            producer.push(config.getUpdateRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+        }
         log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
