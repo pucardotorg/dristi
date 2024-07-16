@@ -9,6 +9,7 @@ import { FileDownloadIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import SelectCustomNote from "../../../components/SelectCustomNote";
+import _ from "lodash";
 
 const customNoteConfig = {
   populators: {
@@ -124,7 +125,14 @@ function CaseType({ t }) {
       return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
-    if (isLoading || isFetching || isSearchLoading) {
+    const { isLoading: mdmsLoading, data: statuteData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "Statute" }], {
+      select: (data) => {
+        const optionsData = _.get(data, `${"case"}.${"Statute"}`, []);
+        return optionsData.filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true)).map((opt) => ({ ...opt }));
+      },
+    });
+
+    if (isLoading || isFetching || isSearchLoading || mdmsLoading) {
       return <Loader />;
     }
     return (
@@ -155,7 +163,7 @@ function CaseType({ t }) {
                 statutesAndSections: [
                   {
                     tenantId,
-                    statute: "Statute",
+                    statute: statuteData?.name,
                     sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
