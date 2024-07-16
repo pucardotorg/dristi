@@ -129,6 +129,9 @@ components:
         application:
           type: string
           description: Application number with which this evidence is associated
+        filingNumber:
+          type: string
+          description: Filing number with which this evidence is associated
         hearing:
           type: string
           description: Reference to the hearing where evidence could've been introduced.
@@ -289,6 +292,8 @@ components:
         caseId:
           type: string
         applicationId:
+          type: string
+        filingNumber:
           type: string
         hearing:
           type: string
