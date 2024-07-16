@@ -518,7 +518,7 @@ export const configsExtensionSubmissionDeadline = [
       },
       {
         inline: true,
-        label: "SUBMISSION_TYPE",
+        label: "DOCUMENT_TYPE",
         isMandatory: true,
         disable: true,
         type: "dropdown",

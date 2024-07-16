@@ -118,7 +118,7 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN) {
+      if ([CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
         setShowReviewModal(true);
         return;
       }
@@ -172,7 +172,7 @@ const SubmissionsCreate = () => {
               isactive: true,
               name: "APPLICATION_TYPE_undefined",
             },
-            refOrderId: orderId,
+            refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
             documentType: orderDetails?.additionalDetails?.formdata?.documentType,
             initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
@@ -188,7 +188,7 @@ const SubmissionsCreate = () => {
               isactive: true,
               name: "APPLICATION_TYPE_undefined",
             },
-            refOrderId: orderId,
+            refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
           };
         }
@@ -208,14 +208,7 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [
-    applicationDetails?.additionalDetails?.formdata,
-    isExtension,
-    orderDetails?.additionalDetails?.formdata?.documentType,
-    orderDetails?.additionalDetails?.formdata?.submissionDeadline,
-    orderDetails?.orderType,
-    orderId,
-  ]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     formData.applicationDate = formatDate(new Date());
@@ -281,6 +274,8 @@ const SubmissionsCreate = () => {
           statuteSection: { tenantId },
           additionalDetails: { formdata },
           documents,
+          // onBehalfOf: "",
+          // partyType: "",
           workflow: {
             id: "workflow123",
             action: CaseWorkflowAction.CREATE,
@@ -359,7 +354,9 @@ const SubmissionsCreate = () => {
   const handleDownloadSubmission = () => {
     history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-
+  if ([CaseWorkflowState.PENDINGREVIEW, CaseWorkflowState.ABATED, CaseWorkflowState.COMPLETED].includes(applicationDetails?.status)) {
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+  }
   if (
     loader ||
     isOrdersLoading ||
