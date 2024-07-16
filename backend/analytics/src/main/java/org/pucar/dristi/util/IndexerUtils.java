@@ -1,8 +1,10 @@
 package org.pucar.dristi.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -51,10 +53,10 @@ public class IndexerUtils {
 
 	private final Producer producer;
 
-	private final Configuration configuration;
+	private final ObjectMapper mapper;
 
 	@Autowired
-    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, Configuration configuration) {
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
@@ -64,7 +66,7 @@ public class IndexerUtils {
         this.applicationUtil = applicationUtil;
         this.orderUtil = orderUtil;
         this.producer = producer;
-        this.configuration = configuration;
+        this.mapper = mapper;
     }
 
     public JSONObject createRequestInfo() {
@@ -144,6 +146,7 @@ public class IndexerUtils {
 	public String buildPayload(PendingTask pendingTask) {
 
 		String id = pendingTask.getId();
+		String name = pendingTask.getName();
 		String entityType = pendingTask.getEntityType();
 		String referenceId = pendingTask.getReferenceId();
 		String status = pendingTask.getStatus();
@@ -156,10 +159,18 @@ public class IndexerUtils {
 		Boolean isCompleted = pendingTask.getIsCompleted();
 		String cnrNumber = pendingTask.getCnrNumber();
 		String filingNumber = pendingTask.getFilingNumber();
+		String additionalDetails = "{}";
+		try {
+			additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
+		}catch (Exception e){
+			log.error("Error while building hearing search query");
+			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
+		}
+
 
 		return String.format(
 				ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-				config.getIndex(), referenceId, id, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla
+				config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
 		);
 	}
 
@@ -230,7 +241,7 @@ public class IndexerUtils {
 
 	private Map<String, String> processHearingEntity(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
 
 		List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
@@ -276,7 +287,7 @@ public class IndexerUtils {
 
 	private Map<String, String> processEvidenceEntity(JSONObject request, String referenceId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
 		String caseId = JsonPath.read(artifactObject.toString(), CASE_ID_PATH);
 		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
@@ -291,7 +302,7 @@ public class IndexerUtils {
 
 	private Map<String, String> processTaskEntity(JSONObject request, String referenceId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
 		String cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
 		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null, null);
@@ -305,7 +316,7 @@ public class IndexerUtils {
 
 	private Map<String, String> processApplicationEntity(JSONObject request, String referenceId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
 		String caseId = JsonPath.read(applicationObject.toString(), CASE_ID_PATH);
 		String cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
@@ -320,7 +331,7 @@ public class IndexerUtils {
 
 	private Map<String, String> processOrderEntity(JSONObject request, String referenceId, String status, String tenantId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
 		String cnrNumber = JsonPath.read(orderObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
@@ -411,6 +422,28 @@ public class IndexerUtils {
 			orchestrateListenerOnESHealth();
 		} catch (Exception e) {
 			log.error("Exception while trying to index the ES documents. Note: ES is not Down.", e);
+		}
+	}
+
+	public void esPostManual(String uri, String request) throws Exception {
+		try {
+			log.debug("Record being indexed: {}", request);
+
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.add("Authorization", getESEncodedCredentials());
+			final HttpEntity<String> entity = new HttpEntity<>(request, headers);
+
+			String response = restTemplate.postForObject(uri, entity, String.class);
+			if (uri.contains("_bulk") && JsonPath.read(response, ERRORS_PATH).equals(true)) {
+				log.info("Indexing FAILED!!!!");
+				log.info("Response from ES: {}", response);
+				throw new Exception("Error while updating index");
+			}
+		}
+		catch (Exception e) {
+			log.error("Exception while trying to index the ES documents. Note: ES is not Down.", e);
+			throw e;
 		}
 	}
 

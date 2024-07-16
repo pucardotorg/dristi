@@ -30,6 +30,10 @@ public class PendingTask {
     @Valid
     private String id = null;
 
+    @JsonProperty("name")
+    @Valid
+    private String name = null;
+
     @JsonProperty("referenceId")
     @NotNull
 
@@ -70,5 +74,8 @@ public class PendingTask {
     @JsonProperty("businessServiceSla")
     @Valid
     private Long businessServiceSla = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 }

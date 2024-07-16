@@ -30,14 +30,10 @@ public class PendingTaskService {
         try {
 
             log.info("Inside Pending Task service:: PendingTaskRequest: {}", pendingTaskRequest);
-            try {
-                String bulkRequest = indexerUtils.buildPayload(pendingTaskRequest.getPendingTask());
-                if (!bulkRequest.isEmpty()) {
-                    String uri = config.getEsHostUrl() + config.getBulkPath();
-                    indexerUtils.esPost(uri, bulkRequest);
-                }
-            } catch (Exception e) {
-                log.error("Error while processing Kafka JSON for indexing", e);
+            String bulkRequest = indexerUtils.buildPayload(pendingTaskRequest.getPendingTask());
+            if (!bulkRequest.isEmpty()) {
+                String uri = config.getEsHostUrl() + config.getBulkPath();
+                indexerUtils.esPostManual(uri, bulkRequest);
             }
             return pendingTaskRequest.getPendingTask();
         } catch (CustomException e) {
