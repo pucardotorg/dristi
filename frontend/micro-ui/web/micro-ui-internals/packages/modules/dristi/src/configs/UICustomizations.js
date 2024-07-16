@@ -200,7 +200,6 @@ export const UICustomizations = {
   },
   getAdvocateNameUsingBarRegistrationNumberJoinCase: {
     getNames: (props) => {
-      console.log("props", props);
       const removeOptions = props?.removeOptions ? props?.removeOptions : [];
       const removeOptionsKey = props?.removeOptionsKey || "";
       return {
@@ -583,6 +582,41 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      console.log(requestCriteria.state);
+      const filterList = Object.keys(requestCriteria.state.searchForm)
+        .map((key) => {
+          if (requestCriteria.state.searchForm[key]?.type) {
+            return { [key]: requestCriteria.state.searchForm[key]?.type };
+          } else if (requestCriteria.state.searchForm[key]?.value) {
+            return { [key]: requestCriteria.state.searchForm[key]?.value };
+          } else if (typeof requestCriteria.state.searchForm[key] === "string") {
+            return { [key]: requestCriteria.state.searchForm[key] };
+          }
+        })
+        .filter((filter) => filter)
+        .reduce(
+          (fieldObj, item) => ({
+            ...fieldObj,
+            ...item,
+          }),
+          {}
+        );
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria.body,
+          criteria: {
+            ...requestCriteria.body.criteria,
+            ...filterList,
+          },
+          pagination: {
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
+          },
+        },
+      };
+    },
     additionalCustomizations: (row, key, column, value, t) => {
       const showDocument =
         userRoles?.includes("APPLICATION_APPROVER") ||

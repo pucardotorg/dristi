@@ -38,8 +38,6 @@ function CaseFileAdmission({ t, path }) {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-  const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complainantDetails?.formdata || null, [caseDetails]);
-  const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
 
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
@@ -188,24 +186,13 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
-    const complainantNames = complainantFormData?.map((form) => {
-      const firstName = form?.data?.firstName || "";
-      const middleName = form?.data?.middleName || "";
-      const lastName = form?.data?.lastName || "";
-      return `${firstName} ${middleName} ${lastName}`.trim();
-    });
-
-    const respondentNames = respondentFormData?.map((form) => {
-      const firstName = form?.data?.respondentFirstName || "";
-      const lastName = form?.data?.respondentLastName || "";
-      return `${firstName} ${lastName}`.trim();
+    const litigantsNames = caseDetails.litigants.map((litigant) => {
+      return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId };
     });
 
     config.checkBoxes.forEach((checkbox) => {
-      if (checkbox.key === "Compliant") {
-        checkbox.dependentFields = complainantNames;
-      } else if (checkbox.key === "Respondent") {
-        checkbox.dependentFields = respondentNames;
+      if (checkbox.key === "Litigants") {
+        checkbox.dependentFields = litigantsNames;
       }
     });
 

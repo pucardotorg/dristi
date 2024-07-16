@@ -1,9 +1,5 @@
 // default values of search input component
-const defaultSearchValues = {
-  individualName: "",
-  mobileNumber: "",
-  IndividualID: "",
-};
+const defaultSearchValues = {};
 
 //config for tab search sceeen
 export const TabSearchconfig = {
@@ -131,7 +127,7 @@ export const TabSearchconfig = {
               },
               {
                 label: "Date Added",
-                jsonPath: "startTime",
+                jsonPath: "auditDetails.createdTime",
                 additionalCustomization: true,
               },
             ],
@@ -369,10 +365,10 @@ export const TabSearchconfig = {
               {
                 label: "Documents",
                 isMandatory: false,
-                key: "documents",
+                key: "documentName",
                 type: "text",
                 populators: {
-                  name: "documents",
+                  name: "documentName",
                 },
               },
             ],
@@ -383,14 +379,6 @@ export const TabSearchconfig = {
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
-            // customDefaultPagination: {
-            //   searchForm: {},
-            //   filterForm: {},
-            //   tableForm: {
-            //     limit: 10,
-            //     offset: 0,
-            //   },
-            // },
             columns: [
               {
                 label: "Submission Name",
@@ -458,9 +446,80 @@ export const TabSearchconfig = {
       },
       sections: {
         search: {
-          uiConfig: {},
+          uiConfig: {
+            formClassName: "custom-both-clear-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: defaultSearchValues, // Set default values for search fields
+            fields: [
+              {
+                label: "Type",
+                isMandatory: false,
+                key: "evidenceType",
+                type: "dropdown",
+                populators: {
+                  name: "evidenceType",
+                  optionsKey: "type",
+                  mdmsConfig: {
+                    masterName: "EvidenceType",
+                    moduleName: "Evidence",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Status",
+                isMandatory: false,
+                key: "status",
+                type: "dropdown",
+                populators: {
+                  name: "status",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Status",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Owner",
+                isMandatory: false,
+                key: "owner",
+                type: "dropdown",
+                populators: {
+                  name: "owner",
+                },
+              },
+              {
+                label: "Documents",
+                isMandatory: false,
+                key: "documentName",
+                type: "text",
+                populators: {
+                  name: "documentName",
+                },
+              },
+            ],
+          },
 
-          show: false,
+          show: true,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
@@ -515,6 +574,89 @@ export const TabSearchconfig = {
         },
       },
     },
+    // {
+    //   label: "History",
+    //   type: "search",
+    //   apiDetails: {
+    //     serviceName: "/casemanager/case/v1/_history",
+    //     requestParam: {
+    //       tenantId: Digit.ULBService.getCurrentTenantId(),
+    //     },
+    //     requestBody: {
+    //       apiOperation: "SEARCH",
+    //       Individual: {
+    //         tenantId: Digit.ULBService.getCurrentTenantId(),
+    //       },
+    //       criteria: {
+    //         tenantId: Digit.ULBService.getCurrentTenantId(),
+    //       },
+    //     },
+    //     masterName: "commonUiConfig",
+    //     moduleName: "SearchIndividualConfig",
+    //     minParametersForSearchForm: 0,
+    //     tableFormJsonPath: "requestParam",
+    //     filterFormJsonPath: "requestBody.Individual",
+    //     searchFormJsonPath: "requestBody.Individual",
+    //   },
+    //   sections: {
+    //     search: {
+    //       uiConfig: {},
+
+    //       show: false,
+    //     },
+    //     searchResult: {
+    //       tenantId: Digit.ULBService.getCurrentTenantId(),
+    //       uiConfig: {
+    //         // customDefaultPagination: {
+    //         //   searchForm: {},
+    //         //   filterForm: {},
+    //         //   tableForm: {
+    //         //     limit: 10,
+    //         //     offset: 0,
+    //         //   },
+    //         // },
+    //         columns: [
+    //           {
+    //             label: "Document Type",
+    //             jsonPath: "artifactType",
+    //             additionalCustomization: true,
+    //           },
+    //           {
+    //             label: "Document Id",
+    //             jsonPath: "id",
+    //           },
+    //           {
+    //             label: "Source",
+    //             jsonPath: "sourceType",
+    //           },
+    //           {
+    //             label: "Status",
+    //             jsonPath: "isEvidence",
+    //             additionalCustomization: true,
+    //           },
+    //           {
+    //             label: "Evidence Number",
+    //             jsonPath: "evidenceNumber",
+    //           },
+    //           {
+    //             label: "Date Added",
+    //             jsonPath: "auditdetails.createdTime",
+    //             additionalCustomization: true,
+    //           },
+    //           {
+    //             label: "File",
+    //             jsonPath: "file",
+    //             additionalCustomization: true,
+    //           },
+    //         ],
+
+    //         enableColumnSort: true,
+    //         resultsJsonPath: "artifacts",
+    //       },
+    //       show: true,
+    //     },
+    //   },
+    // },
     {
       label: "Parties",
       type: "search",
