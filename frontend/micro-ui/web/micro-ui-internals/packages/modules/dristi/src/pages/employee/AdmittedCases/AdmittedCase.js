@@ -2,7 +2,7 @@ import { Button as ActionButton } from "@egovernments/digit-ui-components";
 import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import ViewCaseFile from "../scrutiny/ViewCaseFile";
 import { TabSearchconfig } from "./AdmittedCasesConfig";
@@ -28,6 +28,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const activeTab = urlParams.get("tab");
+  const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
@@ -38,8 +39,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [toast, setToast] = useState(false);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
-  const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
-  const location = useLocation();
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -55,28 +54,39 @@ const AdmittedCases = ({ isJudge = true }) => {
     caseId,
     caseId
   );
+  const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
-  const filingNumber = urlParams.get("filingNumber");
-  const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
-  const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
-  const stage = caseData?.criteria[0]?.responseList[0]?.stage;
-  const status = caseData?.criteria[0]?.responseList[0]?.status;
-  const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
-    ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
-        ?.split(" ")
-        ?.map((splitString) => splitString.charAt(0))
-        ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
-    : "";
-  const caseNumber = caseData?.criteria[0]?.responseList[0]?.caseNumber;
-  const caseRelatedData = {
-    caseId: caseId,
-    filingNumber: filingNumber,
-    cnrNumber: cnrNumber,
-    title: title,
-    stage: stage,
-    case: caseData?.criteria[0].responseList[0],
-    statue: statue,
-  };
+  const statue = useMemo(
+    () =>
+      caseDetails?.statutesAndSections[0]?.sections[0]
+        ? `${caseDetails?.statutesAndSections[0]?.sections[0]
+            ?.split(" ")
+            ?.map((splitString) => splitString.charAt(0))
+            ?.join("")} ${caseDetails?.statutesAndSections[0]?.subsections[0]}`
+        : "",
+    [caseDetails?.statutesAndSections]
+  );
+
+  const caseRelatedData = useMemo(
+    () => ({
+      caseId,
+      filingNumber,
+      cnrNumber,
+      title: caseDetails?.caseTitle || "",
+      stage: caseDetails?.stage,
+      case: caseDetails,
+      statue: statue,
+    }),
+    [caseDetails, caseId, cnrNumber, filingNumber, statue]
+  );
+
+  const showMakeSubmission = useMemo(() => {
+    return (
+      userRoles.includes("APPLICATION_CREATOR") &&
+      [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
+    );
+  }, [userRoles, caseDetails]);
 
   const orderSetFunc = (order) => {
     setCurrentOrder(order);
@@ -271,12 +281,8 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
   const isTabDisabled = useMemo(() => {
-    return (
-      caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
-      caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-      config?.label !== "Complaint"
-    );
-  }, [caseData, config]);
+    return caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
+  }, [caseDetails?.status, config?.label]);
 
   useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
@@ -369,7 +375,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
+            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div
@@ -406,7 +412,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 color: "#77787B",
               }}
             >
-              {stage}
+              {caseDetails?.stage}
             </div>
             <div
               style={{
@@ -428,7 +434,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
-            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} disabled={status !== "CASE_ADMITTED"} />}
+            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>

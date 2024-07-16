@@ -53,17 +53,39 @@ const SubmissionsCreate = () => {
     const submissionConfigKeys = {
       APPLICATION_TYPE: applicationTypeConfig,
     };
-    if (orderId && Array.isArray(submissionConfigKeys[submissionType])) {
-      return submissionConfigKeys[submissionType]?.map((item) => {
-        return {
-          ...item,
-          body: item?.body?.map((input) => {
-            return { ...input, disable: true };
-          }),
-        };
-      });
+    if (Array.isArray(submissionConfigKeys[submissionType])) {
+      if (orderId) {
+        return submissionConfigKeys[submissionType]?.map((item) => {
+          return {
+            ...item,
+            body: item?.body?.map((input) => {
+              return { ...input, disable: true };
+            }),
+          };
+        });
+      } else {
+        return submissionConfigKeys[submissionType]?.map((item) => {
+          return {
+            ...item,
+            body: item?.body?.map((input) => {
+              console.debug(input);
+              return {
+                ...input,
+                populators: {
+                  ...input?.populators,
+                  mdmsConfig: {
+                    ...input?.populators?.mdmsConfig,
+                    select:
+                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                  },
+                },
+              };
+            }),
+          };
+        });
+      }
     }
-    return submissionConfigKeys[submissionType] || [];
+    return [];
   }, [orderId, submissionType]);
 
   const applicationType = useMemo(() => {
@@ -170,7 +192,7 @@ const SubmissionsCreate = () => {
             applicationType: {
               type: "EXTENSION_SUBMISSION_DEADLINE",
               isactive: true,
-              name: "APPLICATION_TYPE_undefined",
+              name: "APPLICATION_TYPE_EXTENSION_SUBMISSION_DEADLINE",
             },
             refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
@@ -186,7 +208,7 @@ const SubmissionsCreate = () => {
             applicationType: {
               type: "PRODUCTION_DOCUMENTS",
               isactive: true,
-              name: "APPLICATION_TYPE_undefined",
+              name: "APPLICATION_TYPE_PRODUCTION_DOCUMENTS",
             },
             refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
@@ -356,9 +378,7 @@ const SubmissionsCreate = () => {
   const handleDownloadSubmission = () => {
     history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-  if ([CaseWorkflowState.PENDINGREVIEW, CaseWorkflowState.ABATED, CaseWorkflowState.COMPLETED].includes(applicationDetails?.status)) {
-    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
-  }
+
   if (
     loader ||
     isOrdersLoading ||
