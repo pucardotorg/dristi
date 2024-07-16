@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.OrderCriteria;
+import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,8 +24,6 @@ public class OrderQueryBuilder {
 
     private static final String FROM_ORDERS_TABLE = " FROM dristi_orders orders";
 
-    private static final String ORDERBY_CREATEDTIME = " ORDER BY orders.createdtime DESC ";
-
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.order_id as order_id";
 
@@ -37,6 +36,15 @@ public class OrderQueryBuilder {
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
 
     private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders";
+
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY orders.createdtime DESC ";
+    private static final String ORDERBY_CLAUSE = " ORDER BY orders.{orderBy} {sortingOrder} ";
+    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
+
+
+    public String getTotalCountQuery(String baseQuery) {
+        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
+    }
 
     public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber, String applicationNumber , UUID orderId, List<Object> preparedStmtList) {
         try {
@@ -146,7 +154,6 @@ public class OrderQueryBuilder {
                 query.append("orders.orderNumber = ?");
                 preparedStmtList.add(orderNumber);
             }
-            query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
@@ -190,6 +197,21 @@ public class OrderQueryBuilder {
             log.error("Error while building statute search query :: {}",e.toString());
             throw new CustomException(STATUTE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
+    }
+
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+        preparedStatementList.add(pagination.getLimit());
+        preparedStatementList.add(pagination.getOffSet());
+        return query + " LIMIT ? OFFSET ?";
+    }
+
+    public String addOrderByQuery(String query, Pagination pagination) {
+        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+            return query + DEFAULT_ORDERBY_CLAUSE;
+        } else {
+            query = query + ORDERBY_CLAUSE;
+        }
+        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
