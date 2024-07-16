@@ -211,7 +211,9 @@ const SubmissionsCreate = () => {
   }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    formData.applicationDate = formatDate(new Date());
+    if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
+      setValue("applicationDate", formatDate(new Date()));
+    }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }

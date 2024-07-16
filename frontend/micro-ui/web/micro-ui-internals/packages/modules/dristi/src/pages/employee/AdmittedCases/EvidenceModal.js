@@ -375,7 +375,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>Sender</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{`${data.Individual[index].name.givenName} ${data.Individual[index].name.familyName}`}</h3>
+                        <h3>{`${data.Individual[index]?.name?.givenName} ${data.Individual[index]?.name?.familyName}`}</h3>
                       </div>
                     </div>
                     <div className="info-row">
