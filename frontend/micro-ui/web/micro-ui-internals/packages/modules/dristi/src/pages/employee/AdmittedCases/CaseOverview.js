@@ -95,7 +95,17 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: {},
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              id: 15,
+              type: "BAIL",
+              isactive: true,
+              code: "BAIL",
+              name: "ORDER_TYPE_BAIL",
+            },
+          },
+        },
       },
     };
     ordersService

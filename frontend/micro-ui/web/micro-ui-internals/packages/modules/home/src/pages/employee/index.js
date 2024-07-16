@@ -7,6 +7,8 @@ import InsideHearingMainPage from "./InsideHearingMainPage";
 import HomeView from "./HomeView";
 import ViewHearing from "./ViewHearing";
 import HomePopUp from "./HomePopUp";
+import EfilingPaymentBreakdown from "../../components/EfilingPaymentDropdown";
+import EFilingPaymentRes from "../../components/EfilingPaymentRes";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
 let userType = "employee";
@@ -17,7 +19,7 @@ const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/${userType}/home`,
+      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
       content: t("HOME"),
       show: true,
     },
@@ -36,7 +38,12 @@ const App = ({ path, stateCode, userType, tenants }) => {
       <AppContainer className="ground-container">
         <PrivateRoute path={`${path}/hearings-response`} component={() => <HearingsResponse></HearingsResponse>} />
         <PrivateRoute path={`${path}/inside-hearing`} component={() => <InsideHearingMainPage />} />
-        <PrivateRoute path={`${path}`} component={() => <HomeView></HomeView>} />
+        <PrivateRoute path={`${path}/e-filing-payment-response`} component={() => <EFilingPaymentRes></EFilingPaymentRes>} />
+        <PrivateRoute path={`${path}/home-pending-task`} component={() => <HomeView></HomeView>} />
+        <PrivateRoute
+          path={`${path}/home-pending-task/e-filing-payment-breakdown`}
+          component={() => <EfilingPaymentBreakdown></EfilingPaymentBreakdown>}
+        />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
       </AppContainer>

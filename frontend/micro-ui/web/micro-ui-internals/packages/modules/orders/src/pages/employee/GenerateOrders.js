@@ -86,7 +86,7 @@ const GenerateOrders = () => {
 
   useEffect(() => {
     if (!filingNumber) {
-      history.push("/employee/home");
+      history.push("/employee/home/home-pending-task");
     }
   }, []);
 

@@ -24,6 +24,7 @@ import { submissionService } from "../../hooks/services";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
+import { orderTypes } from "../../utils/orderTypes";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -35,6 +36,7 @@ const SubmissionsCreate = () => {
   const filingNumber = urlParams.get("filingNumber");
   const orderId = urlParams.get("orderId");
   const applicationNumber = urlParams.get("applicationNumber");
+  const isExtension = urlParams.get("isExtension");
   const [formdata, setFormdata] = useState({});
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(false);
@@ -51,8 +53,18 @@ const SubmissionsCreate = () => {
     const submissionConfigKeys = {
       APPLICATION_TYPE: applicationTypeConfig,
     };
+    if (orderId && Array.isArray(submissionConfigKeys[submissionType])) {
+      return submissionConfigKeys[submissionType]?.map((item) => {
+        return {
+          ...item,
+          body: item?.body?.map((input) => {
+            return { ...input, disable: true };
+          }),
+        };
+      });
+    }
     return submissionConfigKeys[submissionType] || [];
-  }, [submissionType]);
+  }, [orderId, submissionType]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type;
@@ -74,11 +86,14 @@ const SubmissionsCreate = () => {
     return applicationConfigKeys?.[applicationType] || [];
   }, [applicationType]);
 
-  const formatDate = (date) => {
+  const formatDate = (date, format) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    if (format === "DD-MM-YYYY") {
+      return `${day}-${month}-${year}`;
+    }
+    return `${year}-${month}-${day}`;
   };
 
   const modifiedFormConfig = useMemo(() => {
@@ -103,7 +118,7 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN) {
+      if ([CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
         setShowReviewModal(true);
         return;
       }
@@ -113,18 +128,6 @@ const SubmissionsCreate = () => {
       }
     }
   }, [applicationDetails]);
-
-  const defaultFormValue = useMemo(() => {
-    if (applicationDetails?.additionalDetails?.formdata) {
-      return applicationDetails?.additionalDetails?.formdata;
-    }
-    return {
-      submissionType: {
-        code: "APPLICATION_TYPE",
-        name: "APPLICATION_TYPE",
-      },
-    };
-  }, [applicationDetails?.additionalDetails?.formdata]);
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -144,12 +147,77 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+
+  const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, id: orderId } },
+    { tenantId },
+    filingNumber + caseDetails?.cnrNumber,
+    Boolean(filingNumber && caseDetails?.cnrNumber && orderId)
+  );
+  const orderDetails = useMemo(() => orderData?.list?.[0], [orderData]);
+
+  const defaultFormValue = useMemo(() => {
+    if (applicationDetails?.additionalDetails?.formdata) {
+      return applicationDetails?.additionalDetails?.formdata;
+    } else if (orderId) {
+      if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
+        if (isExtension) {
+          return {
+            submissionType: {
+              code: "APPLICATION_TYPE",
+              name: "APPLICATION_TYPE",
+            },
+            applicationType: {
+              type: "EXTENSION_SUBMISSION_DEADLINE",
+              isactive: true,
+              name: "APPLICATION_TYPE_undefined",
+            },
+            refOrderId: orderDetails?.orderNumber,
+            applicationDate: formatDate(new Date()),
+            documentType: orderDetails?.additionalDetails?.formdata?.documentType,
+            initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
+          };
+        } else {
+          return {
+            submissionType: {
+              code: "APPLICATION_TYPE",
+              name: "APPLICATION_TYPE",
+            },
+            applicationType: {
+              type: "PRODUCTION_DOCUMENTS",
+              isactive: true,
+              name: "APPLICATION_TYPE_undefined",
+            },
+            refOrderId: orderDetails?.orderNumber,
+            applicationDate: formatDate(new Date()),
+          };
+        }
+      } else {
+        return {
+          submissionType: {
+            code: "APPLICATION_TYPE",
+            name: "APPLICATION_TYPE",
+          },
+        };
+      }
+    } else {
+      return {
+        submissionType: {
+          code: "APPLICATION_TYPE",
+          name: "APPLICATION_TYPE",
+        },
+      };
+    }
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
+      setValue("applicationDate", formatDate(new Date()));
+    }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
   };
-
   const onDocumentUpload = async (fileData, filename) => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -201,13 +269,15 @@ const SubmissionsCreate = () => {
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
           referenceId: orderId || null,
-          createdDate: formatDate(new Date()),
+          createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
           isActive: true,
           statuteSection: { tenantId },
           additionalDetails: { formdata },
           documents,
+          // onBehalfOf: "",
+          // partyType: "",
           workflow: {
             id: "workflow123",
             action: CaseWorkflowAction.CREATE,
@@ -251,7 +321,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`);
+      history.push(
+        orderId
+          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`
+          : `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`
+      );
     }
   };
 
@@ -282,8 +356,16 @@ const SubmissionsCreate = () => {
   const handleDownloadSubmission = () => {
     history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-
-  if (loader || isApplicationLoading || (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false)) {
+  if ([CaseWorkflowState.PENDINGREVIEW, CaseWorkflowState.ABATED, CaseWorkflowState.COMPLETED].includes(applicationDetails?.status)) {
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+  }
+  if (
+    loader ||
+    isOrdersLoading ||
+    isApplicationLoading ||
+    (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
+    (orderId ? !orderDetails?.orderType : false)
+  ) {
     return <Loader />;
   }
   return (

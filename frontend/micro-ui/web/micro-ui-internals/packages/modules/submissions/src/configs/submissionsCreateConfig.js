@@ -34,12 +34,14 @@ export const applicationTypeConfig = [
         disable: false,
         populators: {
           name: "applicationType",
-          optionsKey: "type",
+          optionsKey: "name",
           error: "required ",
           mdmsConfig: {
             masterName: "ApplicationType",
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
+            select:
+              "(data) => {return data['Application'].ApplicationType?.map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
         },
       },
@@ -518,12 +520,13 @@ export const configsExtensionSubmissionDeadline = [
       },
       {
         inline: true,
-        label: "SUBMISSION_TYPE",
+        label: "DOCUMENT_TYPE",
         isMandatory: true,
+        disable: true,
         type: "dropdown",
-        key: "submissionType",
+        key: "documentType",
         populators: {
-          name: "submissionType",
+          name: "documentType",
           optionsKey: "name",
           options: [
             {
@@ -545,6 +548,7 @@ export const configsExtensionSubmissionDeadline = [
         inline: true,
         label: "SUBMISSION_DATE",
         isMandatory: true,
+        disable: true,
         key: "initialSubmissionDate",
         type: "date",
         populators: {

@@ -1288,29 +1288,22 @@ export const pendingTaskCaseActions = {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Make Payment",
     redirectDetails: {
-      url: "/dristi/home/file-case/case",
-      urlDependentOn: "status",
-      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
-      params: [{ key: "caseId", value: "id" }],
+      url: "/home/home-pending-task/e-filing-payment-breakdown",
     },
   },
   UNDER_SCRUTINY: {
     actorName: ["FSO"],
     actionName: "Case Filed and ready for FSO to review",
     redirectDetails: {
-      url: "/dristi/home/file-case/case",
-      urlDependentOn: "status",
-      urlDependentValue: ["UNDER_SCRUTINY"],
+      url: "/dristi/case",
       params: [{ key: "caseId", value: "id" }],
     },
   },
   CASE_RE_ASSIGNED: {
     actorName: ["LITIGANT/ADVOCATE"],
-    actionName: "Case Sent Back from Edit",
+    actionName: "Case Sent Back for Edit",
     redirectDetails: {
       url: "/dristi/home/file-case/case",
-      urlDependentOn: "status",
-      urlDependentValue: ["UNDER_SCRUTINY"],
       params: [{ key: "caseId", value: "id" }],
     },
   },
@@ -1318,9 +1311,7 @@ export const pendingTaskCaseActions = {
     actorName: ["JUDGE"],
     actionName: "Case Approved from Scrutiny",
     redirectDetails: {
-      dependentUrl: "/dristi/admission",
-      urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      url: "/dristi/admission",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -1330,17 +1321,26 @@ export const pendingTaskCaseActions = {
   SCHEDULE_ADMISSION_HEARING: {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
-    redirectDetails: "",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
   },
   ADMISSION_HEARING_SCHEDULED: {
     actorName: ["JUDGE"],
-    actionName: "Admission hearing scheduled",
-    redirectDetails: "",
+    actionName: "Admission hearing scheduled - Admit Case",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
   },
   CASE_ADMITTED: {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
-    redirectDetails: "",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
   },
 };
 

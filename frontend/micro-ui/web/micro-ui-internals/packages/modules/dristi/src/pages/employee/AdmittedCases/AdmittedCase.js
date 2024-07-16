@@ -93,11 +93,20 @@ const AdmittedCases = ({ isJudge = true }) => {
     const docSetFunc = (docObj) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
-      if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN].includes(status) && isCitizen) {
-        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+      if (isCitizen) {
+        if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+          /// if createdBy is same user as logged in
+          history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+        } else {
+          /// if user only has respondant then open the modal
+          setDocumentSubmission(docObj);
+          setShow(true);
+        }
       } else {
-        setDocumentSubmission(docObj);
-        setShow(true);
+        if (![CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+          setDocumentSubmission(docObj);
+          setShow(true);
+        }
       }
     };
 

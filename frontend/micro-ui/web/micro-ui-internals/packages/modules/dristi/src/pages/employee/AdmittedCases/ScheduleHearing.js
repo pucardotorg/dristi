@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { modalConfig, scheduleCaseSubmitConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
-import ScheduleAdmission from "../admission/ScheduleAdmission";
 import { CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
 import AdmissionActionModal from "../admission/AdmissionActionModal";
 import { formatDate } from "../../citizen/FileCase/CaseType";
