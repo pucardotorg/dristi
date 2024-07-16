@@ -89,6 +89,8 @@ const JoinHomeLocalisation = {
   ALREADY_JOINED_CASE: "ALREADY_JOINED_CASE",
   COURT_COMPLEX_TEXT: "COURT_COMPLEX_TEXT",
   CASE_NUMBER: "CASE_NUMBER",
+  ALREADY_REPRESENTING: "ALREADY_REPRESENTING",
+  CANT_REPRESENT_BOTH_PARTY: "CANT_REPRESENT_BOTH_PARTY",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -408,6 +410,37 @@ const JoinCaseHome = ({ refreshInbox }) => {
     }
   };
 
+  const searchLitigantInRepresentives = useCallback(() => {
+    const representative = caseDetails?.representatives?.find((data) =>
+      data?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId)
+    );
+    let representing;
+    if (representative) representing = representative?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId);
+
+    if (representative && representing) {
+      return { isFound: true, representative: representative, representing: representing };
+    } else return { isFound: false, representative: undefined, representing: undefined };
+  }, [caseDetails?.representatives, selectedParty?.individualId]);
+
+  const searchAdvocateInRepresentives = useCallback(
+    (advocateId) => {
+      const representative = caseDetails?.representatives?.find((data) => data.advocateId === advocateId);
+      if (representative) {
+        return {
+          isFound: true,
+          representative: representative,
+          partyType: representative?.representing?.[0]?.partyType.includes("complainant") ? "complainant" : "respondent",
+        };
+      } else
+        return {
+          isFound: false,
+          representative: undefined,
+          partyType: undefined,
+        };
+    },
+    [caseDetails?.representatives]
+  );
+
   useEffect(() => {
     if (step === 0 && !caseNumber) {
       setErrors({
@@ -420,11 +453,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
         if (selectedParty?.label) {
-          if (
-            (caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) !== undefined &&
-              roleOfNewAdvocate) ||
-            caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) === undefined
-          ) {
+          if ((searchLitigantInRepresentives().isFound && roleOfNewAdvocate) || !searchLitigantInRepresentives().isFound) {
             setIsDisabled(false);
           } else {
             setIsDisabled(true);
@@ -466,7 +495,20 @@ const JoinCaseHome = ({ refreshInbox }) => {
     if (step !== 8) {
       setSuccess(false);
     }
-  }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText, parties, advocateDetailForm]);
+  }, [
+    step,
+    userType,
+    selectedParty,
+    representingYourself,
+    roleOfNewAdvocate,
+    caseNumber,
+    barRegNumber,
+    affidavitText,
+    parties,
+    advocateDetailForm,
+    isSignedAdvocate,
+    isSignedParty,
+  ]);
 
   useEffect(() => {
     const getData = setTimeout(() => {
@@ -692,7 +734,40 @@ const JoinCaseHome = ({ refreshInbox }) => {
             </React.Fragment>
           )}
           {selectedParty?.label &&
-            caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) !== undefined &&
+            (() => {
+              const { isFound, representative } = searchLitigantInRepresentives(caseDetails);
+              if (isFound && representative.advocateId === advocateId) return true;
+              else return false;
+            })() &&
+            userType === "Advocate" && (
+              <React.Fragment>
+                <hr className="horizontal-line" />
+                <InfoCard
+                  variant={"warning"}
+                  label={t(JoinHomeLocalisation.WARNING)}
+                  additionalElements={[
+                    <p>
+                      {JoinHomeLocalisation.ALREADY_REPRESENTING} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
+                    </p>,
+                  ]}
+                  inline
+                  textStyle={{}}
+                  className={`custom-info-card warning`}
+                />
+              </React.Fragment>
+            )}
+          {selectedParty?.label &&
+            (() => {
+              const { isFound, representative } = searchLitigantInRepresentives(caseDetails);
+              const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
+              if (
+                isFound &&
+                representative.advocateId !== advocateId &&
+                ((advIsFound && selectedParty?.partyType?.includes(partyType)) || !advIsFound)
+              )
+                return true;
+              else return false;
+            })() &&
             userType === "Advocate" && (
               <React.Fragment>
                 <hr className="horizontal-line" />
@@ -721,6 +796,31 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     options={[t(JoinHomeLocalisation.PRIMARY_ADVOCATE), t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)]}
                   />
                 </LabelFieldPair>
+              </React.Fragment>
+            )}
+          {selectedParty?.label &&
+            (() => {
+              const { isFound, representative } = searchLitigantInRepresentives(caseDetails);
+              const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
+              if (isFound && representative.advocateId !== advocateId && advIsFound && !selectedParty?.partyType?.includes(partyType)) return true;
+              else return false;
+            })() &&
+            userType === "Advocate" && (
+              <React.Fragment>
+                <hr className="horizontal-line" />
+                <InfoCard
+                  variant={"warning"}
+                  label={t(JoinHomeLocalisation.WARNING)}
+                  additionalElements={[
+                    <p>
+                      {JoinHomeLocalisation.ALREADY_REPRESENTING} {selectedParty?.isComplainant ? "respondent" : "complainant"}
+                      {JoinHomeLocalisation.CANT_REPRESENT_BOTH_PARTY}
+                    </p>,
+                  ]}
+                  inline
+                  textStyle={{}}
+                  className={`custom-info-card warning`}
+                />
               </React.Fragment>
             )}
           {selectedParty?.label && userType === "Litigant" && selectedParty?.individualId && (
@@ -1235,10 +1335,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setComplainantList(
         caseDetails?.additionalDetails?.complainantDetails?.formdata?.map((data, index) => ({
           ...data?.data,
-          label: `${data?.data?.firstName} ${data?.data?.middleName && data?.data?.middleName + " "}${data?.data?.lastName} ${t(
+          label: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName} ${t(
             JoinHomeLocalisation.COMPLAINANT_BRACK
           )}`,
-          fullName: `${data?.data?.firstName} ${data?.data?.middleName && data?.data?.middleName + " "}${data?.data?.lastName}`,
+          fullName: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName}`,
           partyType: index === 0 ? "complainant.primary" : "complainant.additional",
           isComplainant: true,
           individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
@@ -1331,16 +1431,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setCaseDetails(searchCaseResult);
         setCaseNumber(searchCaseResult?.filingNumber);
       } else {
-        if (userType === "Advocate") {
-          const isFound = caseDetails?.representatives?.find((item) => item.advocateId === advocateId) !== undefined;
-          if (isFound) {
-            setStep(8);
-            setMessageHeader(t(JoinHomeLocalisation.ALREADY_PART_OF_CASE));
-            setSuccess(true);
-          } else {
-            setStep(step + 1);
-          }
-        } else if (userType === "Litigant") {
+        if (userType === "Litigant") {
           const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId) !== undefined;
           if (isFound) {
             setStep(8);
@@ -1368,14 +1459,17 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setParties([...parties, selectedParty]);
         setParty(selectedParty);
         if (roleOfNewAdvocate !== "I’m a supporting advocate") {
-          setStep(step + 1);
+          const { isFound, representative } = searchLitigantInRepresentives();
+          if (isFound && representative?.advocateId === advocateId) {
+            setStep(8);
+            setMessageHeader(t("You already representing the litigants."));
+            setSuccess(true);
+          } else setStep(step + 1);
         } else {
-          const replaceAdvocate = caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId);
-          console.log("replaceAdvocate", replaceAdvocate);
+          const { representative } = searchLitigantInRepresentives();
+          const replaceAdvocate = representative;
           const advocateFormdataCopy = structuredClone(caseDetails?.additionalDetails?.advocateDetails?.formdata);
-          console.log("advocateFormdataCopy", advocateFormdataCopy);
           const idx = advocateFormdataCopy?.findIndex((adv) => adv?.data?.advocateId === replaceAdvocate?.advocateId);
-          console.log("advocateFormdataCopy[idx]", advocateFormdataCopy[idx]);
           const advocateResponse = await DRISTIService.searchIndividualAdvocate(
             {
               criteria: [
@@ -1435,8 +1529,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       }
     } else if (step === 3) {
       setIsDisabled(true);
-      if (caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId) !== undefined)
-        setStep(step + 3);
+      if (searchLitigantInRepresentives().isFound) setStep(step + 3);
       else setStep(step + 4);
     } else if (step === 4) {
       setStep(step + 1);
@@ -1453,7 +1546,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setIsDisabled(true);
     } else if (step === 7 && validationCode.length === 6) {
       if (userType === "Advocate") {
-        const replaceAdvocate = caseDetails?.representatives?.find((data) => data?.representing?.[0]?.individualId === selectedParty?.individualId);
+        const { representative } = searchLitigantInRepresentives();
+        const replaceAdvocate = representative;
         if (replaceAdvocate !== undefined) {
           const nocDocument = await Promise.all(
             replaceAdvocateDocuments?.nocFileUpload?.document?.map(async (document) => {
@@ -1543,11 +1637,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
               tenantId: tenantId,
               advocateId: advocateId,
               id: replaceAdvocate?.id,
+              caseId: caseDetails?.id,
               representing: [
                 {
+                  caseId: caseDetails?.id,
                   tenantId: tenantId,
                   individualId: selectedParty?.individualId || null,
-                  partyType: selectedParty?.partyType,
+                  partyType: selectedParty?.isComplainant ? "complainant.primary" : "respondent.primary",
                 },
               ],
               additionalDetails: {
@@ -1892,8 +1988,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
     affidavitText,
     caseDetails?.additionalDetails,
     caseDetails?.caseNumber,
+    caseDetails?.id,
     caseDetails?.litigants,
-    caseDetails?.representatives,
     caseNumber,
     errors,
     individualAddress,
@@ -1909,6 +2005,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     representingYourself,
     roleOfNewAdvocate,
     searchCaseResult,
+    searchLitigantInRepresentives,
     selectedParty,
     step,
     t,
