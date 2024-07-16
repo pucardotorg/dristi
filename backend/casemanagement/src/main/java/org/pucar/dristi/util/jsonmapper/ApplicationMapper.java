@@ -1,7 +1,5 @@
 package org.pucar.dristi.util.jsonmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.mapper.Mapper;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Workflow;
 import org.json.JSONObject;
@@ -21,15 +19,16 @@ public class ApplicationMapper {
 	}
 
 	public Application getApplication(JSONObject jsonObject) {
-		JSONObject applicationDetails = jsonObject.optJSONObject("Data").optJSONObject("applicationDetails");
-		JSONObject auditDetails = jsonObject.optJSONObject("Data").optJSONObject("auditDetails");
-		JSONObject currentProcessInstance = jsonObject.optJSONObject("Data").optJSONObject("currentProcessInstance");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		Application application = jsonMapperUtil.map(applicationDetails, Application.class);
+		Application application = jsonMapperUtil.map(dataObject.optJSONObject("applicationDetails"), Application.class);
 
-		if(application != null) {
-			application.setWorkflow(jsonMapperUtil.map(currentProcessInstance, Workflow.class));
-			application.setAuditDetails(jsonMapperUtil.map(auditDetails, AuditDetails.class));
+		if (application != null) {
+			application.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
+			application.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("auditDetails"), AuditDetails.class));
 		}
 
 		return application;

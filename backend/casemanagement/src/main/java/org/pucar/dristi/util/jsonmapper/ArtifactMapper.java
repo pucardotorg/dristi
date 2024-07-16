@@ -18,16 +18,18 @@ public class ArtifactMapper {
 	}
 
 	public Artifact getArtifact(JSONObject jsonObject) {
-		JSONObject artifactDetails = jsonObject.optJSONObject("Data").optJSONObject("artifactDetails");
-		JSONObject auditDetails = jsonObject.optJSONObject("Data").optJSONObject("auditDetails");
-		JSONObject currentProcessInstance = jsonObject.optJSONObject("Data").optJSONObject("currentProcessInstance");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		Artifact artifact = jsonMapperUtil.map(artifactDetails, Artifact.class);
+		Artifact artifact = jsonMapperUtil.map(dataObject.optJSONObject("artifactDetails"), Artifact.class);
 
 		if (artifact != null) {
-			artifact.setWorkflow(jsonMapperUtil.map(currentProcessInstance, Workflow.class));
-			artifact.setAuditdetails(jsonMapperUtil.map(auditDetails, AuditDetails.class));
+			artifact.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
+			artifact.setAuditdetails(jsonMapperUtil.map(dataObject.optJSONObject("auditDetails"), AuditDetails.class));
 		}
+
 		return artifact;
 	}
 }

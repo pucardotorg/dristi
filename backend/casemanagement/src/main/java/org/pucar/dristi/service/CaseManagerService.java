@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,57 +53,77 @@ public class CaseManagerService {
 
 	public List<CaseFile> getCaseFiles(CaseRequest caseRequest) {
 		List<CaseFile> caseFileList = new ArrayList<>();
+		String filingNumber = caseRequest.getFilingNumber();
+
 		try {
-			List<CourtCase> courtCaseList = getCases(caseRequest.getFilingNumber());
+			List<CourtCase> courtCaseList = getCases(filingNumber);
+			if (courtCaseList == null || courtCaseList.isEmpty()) {
+				log.info("No court cases found for filing number: {}", filingNumber);
+				return caseFileList;
+			}
+
 			for (CourtCase courtCase : courtCaseList) {
-				CaseFile caseFile = CaseFile.builder()
-						.cases(courtCase)
-						.hearings(getHearings(caseRequest.getFilingNumber()))
-						.witnesses(getWitnesses(caseRequest.getFilingNumber()))
-						.orders(getOrderTasks(caseRequest.getFilingNumber()))
-						.applications(getApplications(caseRequest.getFilingNumber()))
-						.evidence(getArtifacts(caseRequest.getFilingNumber()))
-						.build();
+				CaseFile caseFile = new CaseFile();
+				caseFile.setCases(courtCase);
+
+				caseFile.setHearings(getHearings(filingNumber));
+				caseFile.setWitnesses(getWitnesses(filingNumber));
+				caseFile.setOrders(getOrderTasks(filingNumber));
+				caseFile.setApplications(getApplications(filingNumber));
+				caseFile.setEvidence(getArtifacts(filingNumber));
+
 				caseFileList.add(caseFile);
 			}
+		} catch (CustomException e) {
+			throw e;
 		} catch (Exception e) {
-			log.error("Error getting case files using filing number: {}", caseRequest.getFilingNumber(), e);
-			throw new RuntimeException(e);
+			log.error("Error building case files using filing number: {}", filingNumber, e);
+			throw new CustomException("CASE_FILE_ERROR", "Error building case files using filing number:" + e.getMessage());
 		}
 		return caseFileList;
 	}
 
-	private <T> List<T> retrieveDocuments(String searchKeyValue, String indexName, String searchKeyPath, String sortKeyPath, String sortOrder, Function<JSONObject, T> converter) throws Exception {
-		List<T> documentList = new ArrayList<>();
+	private <T> List<T> retrieveDocuments(String searchKeyValue, String indexName, String searchKeyPath, String sortKeyPath, String sortOrder, Function<JSONObject, T> converter, String errorCode) {
+		try {
+			List<T> documentList = new ArrayList<>();
 
-		String uri = config.getEsHostUrl() + indexName + config.getSearchPath();
-		String request = String.format(
-				ES_TERM_QUERY,
-				searchKeyPath, searchKeyValue, sortKeyPath, sortOrder
-		);
-		String response = esRepository.fetchDocuments(uri, request);
+			log.info("Retrieving documents from index: {} with search key: {}", indexName, searchKeyValue);
+			String uri = config.getEsHostUrl() + indexName + config.getSearchPath();
+			String request = String.format(
+					ES_TERM_QUERY,
+					searchKeyPath, searchKeyValue, sortKeyPath, sortOrder
+			);
+			log.debug("Elasticsearch request: {}", request);
+			String response = esRepository.fetchDocuments(uri, request);
+			log.debug("Elasticsearch response: {}", response);
 
-		JSONArray jsonArray = constructJsonArray(response, ES_HITS_PATH);
-		for (int i = 0; i < jsonArray.length(); i++) {
-			if (jsonArray.get(i) != null) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
-				T document = converter.apply(jsonObject);
-				documentList.add(document);
+			JSONArray jsonArray = constructJsonArray(response, ES_HITS_PATH);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				if (jsonArray.get(i) != null) {
+					JSONObject jsonObject = jsonArray.getJSONObject(i);
+					T document = converter.apply(jsonObject);
+					documentList.add(document);
+				}
 			}
+			return documentList;
+		} catch (CustomException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("Error retrieving documents using: {}", searchKeyValue, e);
+			throw new CustomException(errorCode, "Error retrieving documents:" + e.getMessage());
 		}
-		return documentList;
 	}
 
-	public List<CourtCase> getCases(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getCaseIndex(), CASE_BASE_PATH + FILING_NUMBER, CASE_BASE_PATH + CREATED_TIME, ORDER_ASC, courtCaseMapper::getCourtCase);
+	public List<CourtCase> getCases(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getCaseIndex(), CASE_BASE_PATH + FILING_NUMBER, CASE_BASE_PATH + CREATED_TIME, ORDER_ASC, courtCaseMapper::getCourtCase, "COURT_CASE_ERROR");
 	}
 
-	public List<Hearing> getHearings(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getHearingIndex(), HEARING_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, hearingMapper::getHearing);
+	public List<Hearing> getHearings(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getHearingIndex(), HEARING_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, hearingMapper::getHearing, "HEARING_ERROR");
 	}
 
-	public List<Witness> getWitnesses(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getWitnessIndex(), WITNESS_BASE_PATH + FILING_NUMBER, WITNESS_BASE_PATH + CREATED_TIME, ORDER_ASC, witnessMapper::getWitness);
+	public List<Witness> getWitnesses(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getWitnessIndex(), WITNESS_BASE_PATH + FILING_NUMBER, WITNESS_BASE_PATH + CREATED_TIME, ORDER_ASC, witnessMapper::getWitness, "WITNESS_ERROR");
 	}
 
 	public List<OrderTasks> getOrderTasks(String filingNumber) throws Exception {
@@ -114,26 +135,27 @@ public class CaseManagerService {
 			OrderTasks orderTasks = OrderTasks.builder().order(order).tasks(taskList).build();
 			orderTasksList.add(orderTasks);
 		}
+		log.info("Retrieved {} order tasks for filing number: {}", orderTasksList.size(), filingNumber);
 		return orderTasksList;
 	}
 
-	public List<Order> getOrders(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getOrderIndex(), ORDER_BASE_PATH + FILING_NUMBER, ORDER_BASE_PATH + CREATED_TIME, ORDER_ASC, orderMapper::getOrder);
+	public List<Order> getOrders(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getOrderIndex(), ORDER_BASE_PATH + FILING_NUMBER, ORDER_BASE_PATH + CREATED_TIME, ORDER_ASC, orderMapper::getOrder, "ORDER_ERROR");
 	}
 
-	public List<Task> getTasks(String orderId) throws Exception {
-		return retrieveDocuments(orderId, config.getTaskIndex(), TASK_BASE_PATH + ORDER_ID, TASK_BASE_PATH + CREATED_TIME, ORDER_ASC, taskMapper::getTask);
+	public List<Task> getTasks(String orderId) {
+		return retrieveDocuments(orderId, config.getTaskIndex(), TASK_BASE_PATH + ORDER_ID, TASK_BASE_PATH + CREATED_TIME, ORDER_ASC, taskMapper::getTask, "TASK_ERROR");
 	}
 
-	public List<Application> getApplications(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getApplicationIndex(), APPLICATION_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, applicationMapper::getApplication);
+	public List<Application> getApplications(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getApplicationIndex(), APPLICATION_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, applicationMapper::getApplication, "APPLICATION_ERROR");
 	}
 
-	public List<Artifact> getArtifacts(String filingNumber) throws Exception {
-		return retrieveDocuments(filingNumber, config.getArtifactIndex(), ARTIFACT_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, artifactMapper::getArtifact);
+	public List<Artifact> getArtifacts(String filingNumber) {
+		return retrieveDocuments(filingNumber, config.getArtifactIndex(), ARTIFACT_BASE_PATH + FILING_NUMBER, CREATED_TIME_ABSOLUTE, ORDER_ASC, artifactMapper::getArtifact, "ARTIFACT_ERROR");
 	}
 
-	public JSONArray constructJsonArray(String json, String jsonPath) throws Exception {
+	public JSONArray constructJsonArray(String json, String jsonPath) {
 		try {
 			Object result = JsonPath.read(json, jsonPath);
 			if (result instanceof List && ((List<?>) result).isEmpty()) {
@@ -142,14 +164,14 @@ public class CaseManagerService {
 			return new JSONArray(result.toString());
 		} catch (PathNotFoundException e) {
 			log.error("JSON path not found: {}", jsonPath, e);
-			return new JSONArray();
+			throw new CustomException("JSON_PATH_NOT_FOUND", e.getMessage());
 		} catch (JSONException e) {
 			log.error("Error parsing JSON: {}", json, e);
-			throw e;
+			throw new CustomException("JSON_PARSING_ERR", e.getMessage());
 		} catch (Exception e) {
 			log.error("Exception while constructing JSON array: ", e);
 			log.error("Object: {}", json);
-			throw e;
+			throw new CustomException("JSON_ARRAY_CONSTRUCTION_ERR", e.getMessage());
 		}
 	}
 }

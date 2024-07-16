@@ -21,14 +21,16 @@ public class CourtCaseMapper {
 	}
 
 	public CourtCase getCourtCase(JSONObject jsonObject) {
-		JSONObject caseDetails = jsonObject.optJSONObject("Data").optJSONObject("caseDetails");
-		JSONObject currentProcessInstance = jsonObject.optJSONObject("Data").optJSONObject("currentProcessInstance");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		CourtCase courtCase = jsonMapperUtil.map(caseDetails, CourtCase.class);
+		CourtCase courtCase = jsonMapperUtil.map(dataObject.optJSONObject("caseDetails"), CourtCase.class);
 
 		if (courtCase != null) {
-			courtCase.setWorkflow(jsonMapperUtil.map(currentProcessInstance, Workflow.class));
-			courtCase.setAuditdetails(jsonMapperUtil.map(caseDetails, AuditDetails.class));
+			courtCase.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
+			courtCase.setAuditdetails(jsonMapperUtil.map(dataObject.optJSONObject("caseDetails"), AuditDetails.class));
 		}
 
 		return courtCase;

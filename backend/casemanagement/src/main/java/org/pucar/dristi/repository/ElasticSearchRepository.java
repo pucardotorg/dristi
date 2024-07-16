@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -45,13 +46,16 @@ public class ElasticSearchRepository {
 			return restTemplate.postForEntity(uri, entity, String.class).getBody();
 		} catch (ResourceAccessException e) {
 			log.error("ES is DOWN: {}", e.getMessage(), e);
+			throw new CustomException("ES_DOWN", e.getMessage());
 		} catch (HttpClientErrorException e) {
 			log.error("Client error occurred while querying the ES documents: {}", e.getMessage(), e);
+			throw new CustomException("CLIENT_ERROR", e.getMessage());
 		} catch (HttpServerErrorException e) {
 			log.error("Server error occurred while querying the ES documents: {}", e.getMessage(), e);
+			throw new CustomException("SERVER_ERROR", e.getMessage());
 		} catch (Exception e) {
 			log.error("Unexpected exception occurred while querying the ES documents: {}", e.getMessage(), e);
+			throw new CustomException("QUERY_EXEC_ERROR", "Error while executing query: " + e.getMessage());
 		}
-		return null;
 	}
 }

@@ -17,12 +17,15 @@ public class WitnessMapper {
 	}
 
 	public Witness getWitness(JSONObject jsonObject) {
-		JSONObject witnessDetails = jsonObject.optJSONObject("Data").optJSONObject("witnessDetails");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		Witness witness = jsonMapperUtil.map(witnessDetails, Witness.class);
+		Witness witness = jsonMapperUtil.map(dataObject.optJSONObject("witnessDetails"), Witness.class);
 
 		if (witness != null) {
-			witness.setAuditDetails(jsonMapperUtil.map(witnessDetails, AuditDetails.class));
+			witness.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("witnessDetails"), AuditDetails.class));
 		}
 		return witness;
 	}

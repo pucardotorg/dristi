@@ -1,6 +1,8 @@
 package org.pucar.dristi;
 
 
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +20,7 @@ import java.security.cert.X509Certificate;
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
 @Configuration
+@Slf4j
 public class Main {
 	/**
 	 * ES8 cluster default configuration with security enabled forces the use of https for communication to the ES cluster.
@@ -49,7 +52,7 @@ public class Main {
 				}
 			});
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error("Error setting up SSL context", ex);
 		}
 	}
 
@@ -59,8 +62,12 @@ public class Main {
 
 	@Bean
 	public RestTemplate restTemplate() {
-		trustSelfSignedSSL();
 		return new RestTemplate();
+	}
+
+	@PostConstruct
+	public void init() {
+		trustSelfSignedSSL();
 	}
 
 }

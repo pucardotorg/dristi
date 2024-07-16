@@ -18,14 +18,16 @@ public class OrderMapper {
 	}
 
 	public Order getOrder(JSONObject jsonObject) {
-		JSONObject orderDetails = jsonObject.optJSONObject("Data").optJSONObject("orderDetails");
-		JSONObject currentProcessInstance = jsonObject.optJSONObject("Data").optJSONObject("currentProcessInstance");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		Order order = jsonMapperUtil.map(orderDetails, Order.class);
+		Order order = jsonMapperUtil.map(dataObject.optJSONObject("orderDetails"), Order.class);
 
 		if (order != null) {
-			order.setAuditDetails(jsonMapperUtil.map(orderDetails, AuditDetails.class));
-			order.setWorkflow(jsonMapperUtil.map(currentProcessInstance, Workflow.class));
+			order.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("orderDetails"), AuditDetails.class));
+			order.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
 		}
 		return order;
 	}

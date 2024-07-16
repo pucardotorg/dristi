@@ -16,8 +16,11 @@ public class HearingMapper {
 	}
 
 	public Hearing getHearing(JSONObject jsonObject) {
-		JSONObject hearingDetails = jsonObject.optJSONObject("Data").optJSONObject("hearing");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		return jsonMapperUtil.map(hearingDetails, Hearing.class);
+		return jsonMapperUtil.map(dataObject.optJSONObject("hearing"), Hearing.class);
 	}
 }

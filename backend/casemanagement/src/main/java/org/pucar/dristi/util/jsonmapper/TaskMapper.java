@@ -18,14 +18,16 @@ public class TaskMapper {
 	}
 
 	public Task getTask(JSONObject jsonObject) {
-		JSONObject taskDetails = jsonObject.optJSONObject("Data").optJSONObject("taskDetails");
-		JSONObject currentProcessInstance = jsonObject.optJSONObject("Data").optJSONObject("currentProcessInstance");
+		JSONObject dataObject = jsonObject.optJSONObject("Data");
+		if (dataObject == null) {
+			return null;
+		}
 
-		Task task = jsonMapperUtil.map(taskDetails, Task.class);
+		Task task = jsonMapperUtil.map(dataObject.optJSONObject("taskDetails"), Task.class);
 
 		if (task != null) {
-			task.setAuditDetails(jsonMapperUtil.map(taskDetails, AuditDetails.class));
-			task.setWorkflow(jsonMapperUtil.map(currentProcessInstance, Workflow.class));
+			task.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("taskDetails"), AuditDetails.class));
+			task.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
 		}
 		return task;
 	}

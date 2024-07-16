@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,7 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Application {
+public class Application   {
 	@JsonProperty("id")
 
 	@Valid
@@ -75,12 +76,11 @@ public class Application {
 
 	@JsonProperty("applicationNumber")
 
-	@Size(min = 24, max = 48)
-	private String applicationNumber = null;
+	@Size(min=24,max=48)         private String applicationNumber = null;
 
 	@JsonProperty("issuedBy")
 
-	private Object issuedBy = null;
+	private IssuedBy issuedBy = null;
 
 	@JsonProperty("status")
 	@NotNull
@@ -135,5 +135,13 @@ public class Application {
 		this.documents.add(documentsItem);
 		return this;
 	}
-
+	public boolean isResponseRequired() {
+		if (additionalDetails instanceof Map) {
+			Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
+			if (detailsMap.containsKey("isResponseRequired")) {
+				return (boolean) detailsMap.get("isResponseRequired");
+			}
+		}
+		return false;
+	}
 }

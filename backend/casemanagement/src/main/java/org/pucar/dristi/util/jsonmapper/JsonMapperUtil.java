@@ -3,6 +3,7 @@ package org.pucar.dristi.util.jsonmapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class JsonMapperUtil {
 			return mapper.readValue(jsonObject.toString(), clazz);
 		} catch (Exception e) {
 			log.error("Error mapping JSON to {}: {}", clazz.getSimpleName(), e.getMessage(), e);
-			return null;
+			throw new CustomException("JSON_MAPPING_ERROR", e.getMessage());
 		}
 	}
 }
