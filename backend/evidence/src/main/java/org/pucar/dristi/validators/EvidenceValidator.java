@@ -97,7 +97,7 @@ public class EvidenceValidator {
         // Return the first existing application
         return existingApplications.get(0);
     }
-    private EvidenceSearchCriteria createEvidenceSearchCriteria(EvidenceRequest evidenceRequest) {
+    EvidenceSearchCriteria createEvidenceSearchCriteria(EvidenceRequest evidenceRequest) {
         EvidenceSearchCriteria evidenceSearchCriteria = new EvidenceSearchCriteria();
         evidenceSearchCriteria.setId(String.valueOf(evidenceRequest.getArtifact().getId()));
         evidenceSearchCriteria.setCaseId(evidenceRequest.getArtifact().getCaseId());
