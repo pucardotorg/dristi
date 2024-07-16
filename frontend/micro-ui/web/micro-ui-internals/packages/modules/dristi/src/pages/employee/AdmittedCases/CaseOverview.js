@@ -23,21 +23,6 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
-  // const advocateIds = caseData.case.representatives?.map((representative) => {
-  //   return {
-  //     id: representative.advocateId,
-  //   };
-  // });
-
-  // const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
-  //   {
-  //     criteria: advocateIds,
-  //   },
-  //   { tenantId: tenantId },
-  //   "DRISTI",
-  //   cnrNumber + filingNumber,
-  //   true
-  // );
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
     {

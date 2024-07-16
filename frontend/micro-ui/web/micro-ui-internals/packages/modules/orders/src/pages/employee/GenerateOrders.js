@@ -34,6 +34,8 @@ import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow"
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
+import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
+import { DRISTIService } from "../../../../dristi/src/services";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -131,7 +133,11 @@ const GenerateOrders = () => {
     return caseDetails?.litigants
       ?.filter((item) => item?.partyType === "complainant.primary")
       .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "complainants", name: item?.additionalDetails?.fullName || "complainants" };
+        return {
+          code: item?.additionalDetails?.fullName || "complainants",
+          name: item?.additionalDetails?.fullName || "complainants",
+          individualId: item?.individualId,
+        };
       });
   }, [caseDetails]);
 
@@ -149,6 +155,22 @@ const GenerateOrders = () => {
     { tenantId },
     filingNumber,
     Boolean(filingNumber && cnrNumber)
+  );
+
+  const advocateIds = caseDetails.representatives?.map((representative) => {
+    return {
+      id: representative.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
   );
 
   useEffect(() => {
@@ -343,8 +365,12 @@ const GenerateOrders = () => {
   };
 
   const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
+    console.log(oldOrderData?.additionalDetails, formdata);
     const newAdditionalData =
-      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
+      action === CaseWorkflowAction.SAVE_DRAFT
+        ? { formdata: { ...oldOrderData?.additionalDetails.formdata, ...formdata } }
+        : { ...oldOrderData?.additionalDetails };
+    console.log(newAdditionalData);
     const updatedreqBody = {
       order: {
         ...oldOrderData,
@@ -429,6 +455,42 @@ const GenerateOrders = () => {
   };
 
   const handleIssueOrder = () => {
+    if (orderType?.code === "SCHEDULE_OF_HEARING_DATE") {
+      const advocateData = advocateDetails.advocates.map((advocate) => {
+        return {
+          individualId: advocate.responseList[0].individualId,
+          name: advocate.responseList[0].additionalDetails.username,
+          type: "Advocate",
+        };
+      });
+      DRISTIService.createHearings(
+        {
+          hearing: {
+            tenantId: tenantId,
+            filingNumber: [filingNumber],
+            hearingType: currentOrder?.additionalDetails?.formdata?.hearingPurpose,
+            status: true,
+            attendees: [
+              ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
+                return { name: attendee.name, individualId: attendee.individualId };
+              }),
+              ...advocateData,
+            ],
+            startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+            endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+            workflow: {
+              action: "CREATE",
+              assignes: [],
+              comments: "Create new Hearing",
+              documents: [{}],
+            },
+            documents: [],
+          },
+          tenantId,
+        },
+        { tenantId: tenantId }
+      );
+    }
     handleUpdateOrder({
       action: CaseWorkflowAction.ESIGN,
       oldOrderData: currentOrder,
