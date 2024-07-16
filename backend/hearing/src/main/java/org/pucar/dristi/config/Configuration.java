@@ -133,4 +133,7 @@ public class Configuration {
 
     @Value("${egov.application.path}")
     private String applicationExistsPath;
+
+    @Value("${verify.attendee.individual.id}")
+    private Boolean verifyAttendeeIndividualId;
 }

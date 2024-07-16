@@ -24,4 +24,7 @@ public class OrderSearchRequest {
     @Valid
     private OrderCriteria criteria = null;
 
+    @JsonProperty("pagination")
+    private Pagination pagination = null;
+
 }
