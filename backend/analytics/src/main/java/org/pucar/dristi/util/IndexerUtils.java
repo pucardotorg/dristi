@@ -2,6 +2,7 @@ package org.pucar.dristi.util;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -9,6 +10,7 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
 import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.pucar.dristi.web.models.CaseStageSubStage;
+import org.pucar.dristi.web.models.PendingTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -137,6 +139,28 @@ public class IndexerUtils {
 		byte[] credentialsBytes = credentials.getBytes();
 		byte[] base64CredentialsBytes = Base64.getEncoder().encode(credentialsBytes);
 		return "Basic " + new String(base64CredentialsBytes);
+	}
+
+	public String buildPayload(PendingTask pendingTask) {
+
+		String id = pendingTask.getId();
+		String entityType = pendingTask.getEntityType();
+		String referenceId = pendingTask.getReferenceId();
+		String status = pendingTask.getStatus();
+		Long stateSla = pendingTask.getStateSla();
+		Long businessServiceSla = pendingTask.getBusinessServiceSla();
+		List<User> assignedToList = pendingTask.getAssignedTo();
+		List<String> assignedRoleList = pendingTask.getAssignedRole();
+		String assignedTo = new JSONArray(assignedToList).toString();
+		String assignedRole = new JSONArray(assignedRoleList).toString();
+		Boolean isCompleted = pendingTask.getIsCompleted();
+		String cnrNumber = pendingTask.getCnrNumber();
+		String filingNumber = pendingTask.getFilingNumber();
+
+		return String.format(
+				ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
+				config.getIndex(), referenceId, id, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla
+		);
 	}
 
 	public String buildPayload(String jsonItem) {
@@ -361,7 +385,6 @@ public class IndexerUtils {
 			else{
 				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
 				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(caseOverallStatus);
-
 				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
 			}
 		} catch (Exception e) {

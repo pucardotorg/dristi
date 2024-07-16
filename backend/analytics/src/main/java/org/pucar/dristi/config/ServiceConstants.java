@@ -84,6 +84,7 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+	public static final String Pending_Task_Exception = "Pending Task Exception";
 
 
 }
