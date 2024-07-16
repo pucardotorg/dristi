@@ -45,6 +45,7 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const individualId = localStorage.getItem("individualId");
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -296,10 +297,13 @@ const SubmissionsCreate = () => {
           status: caseDetails?.status,
           isActive: true,
           statuteSection: { tenantId },
-          additionalDetails: { formdata },
+          additionalDetails: {
+            formdata,
+            ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
+            partyType: "complainant.primary",
+          },
           documents,
-          // onBehalfOf: "",
-          // partyType: "",
+          // onBehalfOf: { individualId },
           workflow: {
             id: "workflow123",
             action: CaseWorkflowAction.CREATE,
@@ -313,6 +317,7 @@ const SubmissionsCreate = () => {
       setLoader(false);
       return res;
     } catch (error) {
+      setLoader(false);
       return null;
     }
   };
