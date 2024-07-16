@@ -53,8 +53,18 @@ const SubmissionsCreate = () => {
     const submissionConfigKeys = {
       APPLICATION_TYPE: applicationTypeConfig,
     };
+    if (orderId && Array.isArray(submissionConfigKeys[submissionType])) {
+      return submissionConfigKeys[submissionType]?.map((item) => {
+        return {
+          ...item,
+          body: item?.body?.map((input) => {
+            return { ...input, disable: true };
+          }),
+        };
+      });
+    }
     return submissionConfigKeys[submissionType] || [];
-  }, [submissionType]);
+  }, [orderId, submissionType]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type;
@@ -108,7 +118,7 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN) {
+      if ([CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
         setShowReviewModal(true);
         return;
       }
@@ -162,10 +172,10 @@ const SubmissionsCreate = () => {
               isactive: true,
               name: "APPLICATION_TYPE_undefined",
             },
-            refOrderId: orderId,
+            refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
-            documentType: orderDetails?.additionalDetails?.formData?.documentType,
-            initialSubmissionDate: orderDetails?.additionalDetails?.formData?.submissionDeadline,
+            documentType: orderDetails?.additionalDetails?.formdata?.documentType,
+            initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
           };
         } else {
           return {
@@ -178,7 +188,7 @@ const SubmissionsCreate = () => {
               isactive: true,
               name: "APPLICATION_TYPE_undefined",
             },
-            refOrderId: orderId,
+            refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
           };
         }
@@ -198,9 +208,10 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails?.orderType, orderId]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    formData.applicationDate = formatDate(new Date());
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -263,6 +274,8 @@ const SubmissionsCreate = () => {
           statuteSection: { tenantId },
           additionalDetails: { formdata },
           documents,
+          // onBehalfOf: "",
+          // partyType: "",
           workflow: {
             id: "workflow123",
             action: CaseWorkflowAction.CREATE,
@@ -306,7 +319,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`);
+      history.push(
+        orderId
+          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`
+          : `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`
+      );
     }
   };
 
@@ -337,7 +354,9 @@ const SubmissionsCreate = () => {
   const handleDownloadSubmission = () => {
     history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-
+  if ([CaseWorkflowState.PENDINGREVIEW, CaseWorkflowState.ABATED, CaseWorkflowState.COMPLETED].includes(applicationDetails?.status)) {
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+  }
   if (
     loader ||
     isOrdersLoading ||
