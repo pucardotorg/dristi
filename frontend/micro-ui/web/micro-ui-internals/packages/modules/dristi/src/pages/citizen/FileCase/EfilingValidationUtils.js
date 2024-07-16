@@ -950,7 +950,7 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
 };
 
-const getAllAssignees = (caseDetails) => {
+export const getAllAssignees = (caseDetails) => {
   if (Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0) {
     return caseDetails?.representatives
       ?.reduce((res, curr) => {
