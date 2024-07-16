@@ -53,6 +53,7 @@ function AdmissionActionModal({
   disabled,
   filingNumber,
   isCaseAdmitted = false,
+  caseAdmittedSubmit = () => {},
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -199,6 +200,7 @@ function AdmissionActionModal({
             handleClickDate={handleClickDate}
             disabled={disabled}
             isCaseAdmitted={isCaseAdmitted}
+            caseAdmittedSubmit={caseAdmittedSubmit}
           />
         </Modal>
       )}

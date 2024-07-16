@@ -7,7 +7,7 @@ import AdmissionActionModal from "../admission/AdmissionActionModal";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
 
-const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails }) => {
+const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails, caseAdmittedSubmit }) => {
   const { t } = useTranslation();
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
@@ -157,6 +157,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           handleScheduleNextHearing={() => {}}
           disabled={false}
           isCaseAdmitted={true}
+          caseAdmittedSubmit={caseAdmittedSubmit}
         />
       </Modal>
     </React.Fragment>

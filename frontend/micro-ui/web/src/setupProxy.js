@@ -29,6 +29,7 @@ module.exports = function (app) {
     "/case",
     "/individual",
     "/evidence",
+    "/casemanagement",
     "/application",
     "/case",
     "/order",

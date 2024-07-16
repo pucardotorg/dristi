@@ -15,6 +15,7 @@ import { ordersService } from "../../../../../orders/src/hooks/services";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomThreeDots } from "../../../icons/svgIndex";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import ScheduleHearing from "./ScheduleHearing";
 
 const defaultSearchValues = {
   individualName: "",
@@ -260,6 +261,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [updateCounter, setUpdateCounter] = useState(0);
   const [toastDetails, setToastDetails] = useState({});
   const [showOtherMenu, setShowOtherMenu] = useState(false);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const isTabDisabled = useMemo(() => {
     return (
@@ -301,7 +303,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    console.log(option === t("SCHEDULE_HEARING"));
     let reqBody = {
       order: {
         createdDate: formatDate(new Date()),
@@ -327,15 +328,38 @@ const AdmittedCases = ({ isJudge = true }) => {
     };
     if (option === t("GENERATE_ORDER_HOME")) {
       reqBody.order.orderType = "Bail";
+      reqBody.order.additionalDetails = {
+        formdata: {
+          orderType: {
+            id: 15,
+            type: "BAIL",
+            isactive: true,
+            code: "BAIL",
+            name: "ORDER_TYPE_BAIL",
+          },
+        },
+      };
     } else if (option === t("SCHEDULE_HEARING")) {
-      reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
+      openHearingModule();
+      return;
     } else if (option === t("REFER_TO_ADR")) {
       reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
+      reqBody.order.additionalDetails = {
+        formdata: {
+          orderType: {
+            id: 4,
+            type: "REFERRAL_CASE_TO_ADR",
+            isactive: true,
+            code: "REFERRAL_CASE_TO_ADR",
+            name: "ORDER_TYPE_REFERRAL_CASE_TO_ADR",
+          },
+        },
+      };
     }
     ordersService
       .createOrder(reqBody, { tenantId })
       .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: activeTab });
       })
       .catch((err) => {});
   };
@@ -349,9 +373,55 @@ const AdmittedCases = ({ isJudge = true }) => {
     }, duration);
   };
 
-  // if (caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED") {
-  //   history.replace(`${path}?caseId=${caseId}&filingNumber=${filingNumber}&tab=Complaints`);
-  // }
+  const openHearingModule = () => {
+    setShowScheduleHearingModal(true);
+  };
+
+  const caseAdmittedSubmit = (data) => {
+    const dateArr = data.date.split(" ").map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date));
+    const date = new Date(dateArr.join(" "));
+    const reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "SCHEDULE_OF_HEARING_DATE",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {
+          formdata: {
+            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingPurpose: data.purpose,
+            orderType: {
+              id: 7,
+              code: "SCHEDULE_OF_HEARING_DATE",
+              type: "SCHEDULE_OF_HEARING_DATE",
+              isactive: true,
+              name: "ORDER_TYPE_SCHEDULE_OF_HEARING_DATE",
+            },
+          },
+        },
+      },
+    };
+    ordersService
+      .createOrder(reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: activeTab });
+      })
+      .catch((err) => {});
+  };
 
   return isLoading ? (
     <Loader />
@@ -529,7 +599,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
         <div>
-          <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
+          <CaseOverview caseData={caseRelatedData} openHearingModule={openHearingModule} />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
@@ -557,6 +627,17 @@ const AdmittedCases = ({ isJudge = true }) => {
           setShowsignatureModal={() => {}}
           handleSaveDraft={() => {}}
           showActions={false}
+        />
+      )}
+
+      {showScheduleHearingModal && (
+        <ScheduleHearing
+          setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
+          tenantId={tenantId}
+          caseData={caseRelatedData}
+          setShowModal={setShowScheduleHearingModal}
+          caseAdmittedSubmit={caseAdmittedSubmit}
         />
       )}
       {toast && toastDetails && (

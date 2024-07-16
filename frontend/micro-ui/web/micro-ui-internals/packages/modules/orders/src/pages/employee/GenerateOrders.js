@@ -151,6 +151,10 @@ const GenerateOrders = () => {
     Boolean(filingNumber && cnrNumber)
   );
 
+  useEffect(() => {
+    refetchOrdersData();
+  }, []);
+
   const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
