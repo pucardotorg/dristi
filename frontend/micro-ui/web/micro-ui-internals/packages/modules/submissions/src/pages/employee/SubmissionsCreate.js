@@ -53,8 +53,18 @@ const SubmissionsCreate = () => {
     const submissionConfigKeys = {
       APPLICATION_TYPE: applicationTypeConfig,
     };
+    if (orderId && Array.isArray(submissionConfigKeys[submissionType])) {
+      return submissionConfigKeys[submissionType]?.map((item) => {
+        return {
+          ...item,
+          body: item?.body?.map((input) => {
+            return { ...input, disable: true };
+          }),
+        };
+      });
+    }
     return submissionConfigKeys[submissionType] || [];
-  }, [submissionType]);
+  }, [orderId, submissionType]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type;
@@ -164,8 +174,8 @@ const SubmissionsCreate = () => {
             },
             refOrderId: orderId,
             applicationDate: formatDate(new Date()),
-            documentType: orderDetails?.additionalDetails?.formData?.documentType,
-            initialSubmissionDate: orderDetails?.additionalDetails?.formData?.submissionDeadline,
+            documentType: orderDetails?.additionalDetails?.formdata?.documentType,
+            initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
           };
         } else {
           return {
@@ -198,9 +208,17 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails?.orderType, orderId]);
+  }, [
+    applicationDetails?.additionalDetails?.formdata,
+    isExtension,
+    orderDetails?.additionalDetails?.formdata?.documentType,
+    orderDetails?.additionalDetails?.formdata?.submissionDeadline,
+    orderDetails?.orderType,
+    orderId,
+  ]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    formData.applicationDate = formatDate(new Date());
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -306,7 +324,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`);
+      history.push(
+        orderId
+          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`
+          : `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`
+      );
     }
   };
 

@@ -181,7 +181,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -326,7 +326,7 @@ export const configsCheckoutRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -471,7 +471,7 @@ export const configsExtensionSubmissionDeadline = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -520,6 +520,7 @@ export const configsExtensionSubmissionDeadline = [
         inline: true,
         label: "SUBMISSION_TYPE",
         isMandatory: true,
+        disable: true,
         type: "dropdown",
         key: "documentType",
         populators: {
@@ -545,6 +546,7 @@ export const configsExtensionSubmissionDeadline = [
         inline: true,
         label: "SUBMISSION_DATE",
         isMandatory: true,
+        disable: true,
         key: "initialSubmissionDate",
         type: "date",
         populators: {
@@ -655,7 +657,7 @@ export const configsProductionOfDocuments = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -820,7 +822,7 @@ export const configsCaseWithdrawal = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -945,7 +947,7 @@ export const configsCaseTransfer = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -1064,7 +1066,7 @@ export const configsSettlement = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -1175,7 +1177,7 @@ export const configsBailBond = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -1286,7 +1288,7 @@ export const configsSurety = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
@@ -1397,7 +1399,7 @@ export const configsBail = [
       {
         inline: true,
         label: "APPLICATION_DATE",
-        disable: true,
+        // disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",

@@ -1513,7 +1513,7 @@ export const updateCaseDetails = async ({
                 );
               }
             })
-          ).catch(console.debug);
+          ).catch();
           return {
             ...data,
             data: {
