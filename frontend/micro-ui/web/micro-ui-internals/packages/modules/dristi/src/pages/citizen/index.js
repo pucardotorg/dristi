@@ -47,6 +47,9 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  if (individualId && !localStorage.getItem(individualId)) {
+    localStorage.setItem("individualId", individualId);
+  }
 
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(

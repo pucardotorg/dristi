@@ -24,6 +24,7 @@ import { submissionService } from "../../hooks/services";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
+import { orderTypes } from "../../utils/orderTypes";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -35,6 +36,7 @@ const SubmissionsCreate = () => {
   const filingNumber = urlParams.get("filingNumber");
   const orderId = urlParams.get("orderId");
   const applicationNumber = urlParams.get("applicationNumber");
+  const isExtension = urlParams.get("isExtension");
   const [formdata, setFormdata] = useState({});
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(false);
@@ -43,6 +45,7 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const individualId = localStorage.getItem("individualId");
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -51,8 +54,40 @@ const SubmissionsCreate = () => {
     const submissionConfigKeys = {
       APPLICATION_TYPE: applicationTypeConfig,
     };
-    return submissionConfigKeys[submissionType] || [];
-  }, [submissionType]);
+    if (Array.isArray(submissionConfigKeys[submissionType])) {
+      if (orderId) {
+        return submissionConfigKeys[submissionType]?.map((item) => {
+          return {
+            ...item,
+            body: item?.body?.map((input) => {
+              return { ...input, disable: true };
+            }),
+          };
+        });
+      } else {
+        return submissionConfigKeys[submissionType]?.map((item) => {
+          return {
+            ...item,
+            body: item?.body?.map((input) => {
+              console.debug(input);
+              return {
+                ...input,
+                populators: {
+                  ...input?.populators,
+                  mdmsConfig: {
+                    ...input?.populators?.mdmsConfig,
+                    select:
+                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                  },
+                },
+              };
+            }),
+          };
+        });
+      }
+    }
+    return [];
+  }, [orderId, submissionType]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type;
@@ -74,11 +109,14 @@ const SubmissionsCreate = () => {
     return applicationConfigKeys?.[applicationType] || [];
   }, [applicationType]);
 
-  const formatDate = (date) => {
+  const formatDate = (date, format) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    if (format === "DD-MM-YYYY") {
+      return `${day}-${month}-${year}`;
+    }
+    return `${year}-${month}-${day}`;
   };
 
   const modifiedFormConfig = useMemo(() => {
@@ -103,26 +141,16 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGESIGN || true) {
+      if ([CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
         setShowReviewModal(true);
+        return;
       }
       if (applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT) {
         setShowPaymentModal(true);
+        return;
       }
     }
   }, [applicationDetails]);
-
-  const defaultFormValue = useMemo(() => {
-    if (applicationDetails?.additionalDetails?.formdata) {
-      return applicationDetails?.additionalDetails?.formdata;
-    }
-    return {
-      submissionType: {
-        code: "APPLICATION_TYPE",
-        name: "APPLICATION_TYPE",
-      },
-    };
-  }, [applicationDetails?.additionalDetails?.formdata]);
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -142,12 +170,77 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+
+  const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, id: orderId } },
+    { tenantId },
+    filingNumber + caseDetails?.cnrNumber,
+    Boolean(filingNumber && caseDetails?.cnrNumber && orderId)
+  );
+  const orderDetails = useMemo(() => orderData?.list?.[0], [orderData]);
+
+  const defaultFormValue = useMemo(() => {
+    if (applicationDetails?.additionalDetails?.formdata) {
+      return applicationDetails?.additionalDetails?.formdata;
+    } else if (orderId) {
+      if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
+        if (isExtension) {
+          return {
+            submissionType: {
+              code: "APPLICATION_TYPE",
+              name: "APPLICATION_TYPE",
+            },
+            applicationType: {
+              type: "EXTENSION_SUBMISSION_DEADLINE",
+              isactive: true,
+              name: "APPLICATION_TYPE_EXTENSION_SUBMISSION_DEADLINE",
+            },
+            refOrderId: orderDetails?.orderNumber,
+            applicationDate: formatDate(new Date()),
+            documentType: orderDetails?.additionalDetails?.formdata?.documentType,
+            initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
+          };
+        } else {
+          return {
+            submissionType: {
+              code: "APPLICATION_TYPE",
+              name: "APPLICATION_TYPE",
+            },
+            applicationType: {
+              type: "PRODUCTION_DOCUMENTS",
+              isactive: true,
+              name: "APPLICATION_TYPE_PRODUCTION_DOCUMENTS",
+            },
+            refOrderId: orderDetails?.orderNumber,
+            applicationDate: formatDate(new Date()),
+          };
+        }
+      } else {
+        return {
+          submissionType: {
+            code: "APPLICATION_TYPE",
+            name: "APPLICATION_TYPE",
+          },
+        };
+      }
+    } else {
+      return {
+        submissionType: {
+          code: "APPLICATION_TYPE",
+          name: "APPLICATION_TYPE",
+        },
+      };
+    }
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
+      setValue("applicationDate", formatDate(new Date()));
+    }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
   };
-
   const onDocumentUpload = async (fileData, filename) => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -199,13 +292,18 @@ const SubmissionsCreate = () => {
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
           referenceId: orderId || null,
-          createdDate: formatDate(new Date()),
+          createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
           isActive: true,
           statuteSection: { tenantId },
-          additionalDetails: { formdata },
+          additionalDetails: {
+            formdata,
+            ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
+            partyType: "complainant.primary",
+          },
           documents,
+          // onBehalfOf: { individualId },
           workflow: {
             id: "workflow123",
             action: CaseWorkflowAction.CREATE,
@@ -219,6 +317,7 @@ const SubmissionsCreate = () => {
       setLoader(false);
       return res;
     } catch (error) {
+      setLoader(false);
       return null;
     }
   };
@@ -228,13 +327,15 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, action },
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action },
+
           tenantId,
         },
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
-      setShowSuccessModal(true);
+      applicationRefetch();
+      setShowPaymentModal(true);
     } catch (error) {
       setShowReviewModal(true);
     }
@@ -247,7 +348,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`);
+      history.push(
+        orderId
+          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`
+          : `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`
+      );
     }
   };
 
@@ -257,17 +362,12 @@ const SubmissionsCreate = () => {
 
   const handleAddSignature = () => {
     setLoader(true);
-
     updateSubmission(CaseWorkflowAction.ESIGN);
   };
 
   const handleCloseSignaturePopup = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
-  };
-
-  const handleClosePaymentModal = () => {
-    setShowPaymentModal(false);
   };
 
   const handleSkipPayment = () => {
@@ -281,18 +381,16 @@ const SubmissionsCreate = () => {
   };
 
   const handleDownloadSubmission = () => {
-    ///
+    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
-  const handleCloseSuccessModal = () => {
-    //
-  };
-
-  const handlePendingPayment = () => {
-    //
-  };
-
-  if (loader || isApplicationLoading || (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false)) {
+  if (
+    loader ||
+    isOrdersLoading ||
+    isApplicationLoading ||
+    (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
+    (orderId ? !orderDetails?.orderType : false)
+  ) {
     return <Loader />;
   }
   return (
@@ -322,20 +420,17 @@ const SubmissionsCreate = () => {
         <SubmissionSignatureModal t={t} handleProceed={handleAddSignature} handleCloseSignaturePopup={handleCloseSignaturePopup} />
       )}
       {showPaymentModal && (
-        <PaymentModal
-          t={t}
-          handleClosePaymentModal={handleClosePaymentModal}
-          handleSkipPayment={handleSkipPayment}
-          handleMakePayment={handleMakePayment}
-        />
+        <PaymentModal t={t} handleClosePaymentModal={handleBack} handleSkipPayment={handleSkipPayment} handleMakePayment={handleMakePayment} />
       )}
       {showSuccessModal && (
         <SuccessModal
           t={t}
-          handleDownloadSubmission={handleDownloadSubmission}
-          // isPaymentDone={true}
-          handleCloseSuccessModal={handleCloseSuccessModal}
-          handlePendingPayment={handlePendingPayment}
+          isPaymentDone={applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT}
+          handleCloseSuccessModal={handleBack}
+          actionCancelLabel={"DOWNLOAD_SUBMISSION"}
+          actionCancelOnSubmit={handleDownloadSubmission}
+          applicationNumber={applicationNumber}
+          createdDate={applicationDetails?.createdDate}
         />
       )}
     </div>

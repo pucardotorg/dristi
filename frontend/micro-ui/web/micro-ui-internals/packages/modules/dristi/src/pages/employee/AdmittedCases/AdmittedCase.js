@@ -2,7 +2,7 @@ import { Button as ActionButton } from "@egovernments/digit-ui-components";
 import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomThreeDots } from "../../../icons/svgIndex";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
@@ -25,6 +25,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const activeTab = urlParams.get("tab") || "Overview";
+  const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
@@ -35,7 +36,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [toast, setToast] = useState(false);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
-  const showMakeSubmission = userRoles.includes("APPLICATION_CREATOR");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
@@ -54,28 +54,39 @@ const AdmittedCases = ({ isJudge = true }) => {
     caseId,
     caseId
   );
+  const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
-  const filingNumber = urlParams.get("filingNumber");
-  const cnrNumber = caseData?.criteria[0]?.responseList[0]?.cnrNumber;
-  const title = caseData?.criteria[0]?.responseList[0]?.caseTitle;
-  const stage = caseData?.criteria[0]?.responseList[0]?.stage;
-  const status = caseData?.criteria[0]?.responseList[0]?.status;
-  const statue = caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
-    ? `${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.sections[0]
-        ?.split(" ")
-        ?.map((splitString) => splitString.charAt(0))
-        ?.join("")} ${caseData?.criteria[0]?.responseList[0]?.statutesAndSections[0]?.subsections[0]}`
-    : "";
-  const caseNumber = caseData?.criteria[0]?.responseList[0]?.caseNumber;
-  const caseRelatedData = {
-    caseId: caseId,
-    filingNumber: filingNumber,
-    cnrNumber: cnrNumber,
-    title: title,
-    stage: stage,
-    case: caseData?.criteria[0].responseList[0],
-    statue: statue,
-  };
+  const statue = useMemo(
+    () =>
+      caseDetails?.statutesAndSections[0]?.sections[0]
+        ? `${caseDetails?.statutesAndSections[0]?.sections[0]
+            ?.split(" ")
+            ?.map((splitString) => splitString.charAt(0))
+            ?.join("")} ${caseDetails?.statutesAndSections[0]?.subsections[0]}`
+        : "",
+    [caseDetails?.statutesAndSections]
+  );
+
+  const caseRelatedData = useMemo(
+    () => ({
+      caseId,
+      filingNumber,
+      cnrNumber,
+      title: caseDetails?.caseTitle || "",
+      stage: caseDetails?.stage,
+      case: caseDetails,
+      statue: statue,
+    }),
+    [caseDetails, caseId, cnrNumber, filingNumber, statue]
+  );
+
+  const showMakeSubmission = useMemo(() => {
+    return (
+      userRoles.includes("APPLICATION_CREATOR") &&
+      [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
+    );
+  }, [userRoles, caseDetails]);
 
   const orderSetFunc = (order) => {
     setCurrentOrder(order);
@@ -91,11 +102,20 @@ const AdmittedCases = ({ isJudge = true }) => {
     const docSetFunc = (docObj) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
-      if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN].includes(status) && isCitizen) {
-        history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+      if (isCitizen) {
+        if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+          /// if createdBy is same user as logged in
+          history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+        } else {
+          /// if user only has respondant then open the modal
+          setDocumentSubmission(docObj);
+          setShow(true);
+        }
       } else {
-        setDocumentSubmission(docObj);
-        setShow(true);
+        if (![CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+          setDocumentSubmission(docObj);
+          setShow(true);
+        }
       }
     };
 
@@ -110,7 +130,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: [
                   {
                     filingNumber: filingNumber,
-                    pagination: { offSet: 0, limit: 1 },
                   },
                 ],
               },
@@ -126,7 +145,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
-                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -158,7 +176,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
-                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -173,7 +190,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   caseId: caseId,
                   tenantId: tenantId,
-                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -205,7 +221,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
-                  pagination: { offSet: 0, limit: 1 },
                 },
               },
             },
@@ -236,7 +251,6 @@ const AdmittedCases = ({ isJudge = true }) => {
                 filingNumber: filingNumber,
                 cnrNumber,
                 applicationNumber: "",
-                pagination: { offSet: 0, limit: 1 },
               },
             },
           };
@@ -267,12 +281,8 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showOtherMenu, setShowOtherMenu] = useState(false);
 
   const isTabDisabled = useMemo(() => {
-    return (
-      caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED" &&
-      caseData?.criteria[0]?.responseList[0]?.status !== "ADMISSION_HEARING_SCHEDULED" &&
-      config?.label !== "Complaint"
-    );
-  }, [caseData, config]);
+    return caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
+  }, [caseDetails?.status, config?.label]);
 
   useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
@@ -306,37 +316,43 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    if (option === t("GENERATE_ORDER_HOME")) {
-      const reqbody = {
-        order: {
-          createdDate: formatDate(new Date()),
+    console.log(option === t("SCHEDULE_HEARING"));
+    let reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
           tenantId,
-          cnrNumber,
-          filingNumber: filingNumber,
-          statuteSection: {
-            tenantId,
-          },
-          orderType: "Bail",
-          status: "",
-          isActive: true,
-          workflow: {
-            action: OrderWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          additionalDetails: {},
         },
-      };
-      ordersService
-        .createOrder(reqbody, { tenantId })
-        .then(() => {
-          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
-        })
-        .catch((err) => {});
+        orderType: "REFERRAL_CASE_TO_ADR",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+    if (option === t("GENERATE_ORDER_HOME")) {
+      reqBody.order.orderType = "Bail";
+    } else if (option === t("SCHEDULE_HEARING")) {
+      reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
+    } else if (option === t("REFER_TO_ADR")) {
+      reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
     }
+    ordersService
+      .createOrder(reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      })
+      .catch((err) => {});
   };
 
   const showToast = (details, duration = 5000) => {
@@ -359,7 +375,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{t(title)}</Header>
+            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div
@@ -369,7 +385,16 @@ const AdmittedCases = ({ isJudge = true }) => {
                     borderLeft: "2px solid #0000001a",
                   }}
                 ></div>
-                <div>{statue}</div>
+                <div
+                  style={{
+                    fontWeight: 400,
+                    lineHeight: "16.41px",
+                    fontSize: "14px",
+                    color: "#77787B",
+                  }}
+                >
+                  {statue}
+                </div>
               </div>
             )}
             <div
@@ -379,11 +404,37 @@ const AdmittedCases = ({ isJudge = true }) => {
                 borderLeft: "2px solid #0000001a",
               }}
             ></div>
-            <div>{stage}</div>
+            <div
+              style={{
+                fontWeight: 400,
+                lineHeight: "16.41px",
+                fontSize: "14px",
+                color: "#77787B",
+              }}
+            >
+              {caseDetails?.stage}
+            </div>
+            <div
+              style={{
+                width: "5px",
+                height: "32px",
+                borderLeft: "2px solid #0000001a",
+              }}
+            ></div>
+            <div
+              style={{
+                fontWeight: 400,
+                lineHeight: "16.41px",
+                fontSize: "14px",
+                color: "#77787B",
+              }}
+            >
+              Code: {caseData.criteria[0].responseList[0].accessCode}
+            </div>
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
-            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} disabled={status !== "CASE_ADMITTED"} />}
+            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
             <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
@@ -400,9 +451,9 @@ const AdmittedCases = ({ isJudge = true }) => {
                     {showMenu && (
                       <Menu
                         options={
-                          userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")
-                            ? [t("GENERATE_ORDER_HOME"), "Schedule Hearing", "Refer to ADR", "Abate Case"]
-                            : ["Schedule Hearing", "Refer to ADR", "Abate Case"]
+                          userRoles.includes("ORDER_CREATOR")
+                            ? [t("GENERATE_ORDER_HOME"), t("SCHEDULE_HEARING"), t("REFER_TO_ADR")]
+                            : [t("SCHEDULE_HEARING"), t("REFER_TO_ADR")]
                         }
                         onSelect={(option) => handleSelect(option)}
                       ></Menu>
@@ -454,7 +505,7 @@ const AdmittedCases = ({ isJudge = true }) => {
       {config?.label !== "Overview" && config?.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {!isCitizen && config?.label === "Orders" && (
+          {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
             <div
               onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
@@ -462,7 +513,7 @@ const AdmittedCases = ({ isJudge = true }) => {
               {t("GENERATE_ORDERS_LINK")}
             </div>
           )}
-          {!isCitizen && config?.label === "Submissions" && (
+          {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
             <div
               // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
               style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}

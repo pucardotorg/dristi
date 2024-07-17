@@ -950,6 +950,38 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
 };
 
+export const getAllAssignees = (caseDetails) => {
+  if (Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0) {
+    return caseDetails?.representatives
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        if (curr && curr?.representing && Array.isArray(curr?.representing || []) && curr?.representing?.length > 0) {
+          const representingUuids = curr?.representing?.reduce((result, current) => {
+            if (current && current?.additionalDetails?.uuid) {
+              result.push(current?.additionalDetails?.uuid);
+            }
+            return result;
+          }, []);
+          res.push(representingUuids);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  } else if (Array.isArray(caseDetails?.litigants || []) && caseDetails?.litigants?.length > 0) {
+    return caseDetails?.litigants
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  }
+  return null;
+};
+
 export const updateCaseDetails = async ({
   isCompleted,
   setIsDisabled,
@@ -1481,7 +1513,7 @@ export const updateCaseDetails = async ({
                 );
               }
             })
-          ).catch(console.debug);
+          ).catch();
           return {
             ...data,
             data: {
@@ -1778,7 +1810,7 @@ export const updateCaseDetails = async ({
       : caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
         `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
           caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-        } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
+        } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
           caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
         }`;
   setErrorCaseDetails({
@@ -1793,6 +1825,9 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+
+  const assignees = getAllAssignees(caseDetails);
+
   return DRISTIService.caseUpdateService(
     {
       cases: {
@@ -1805,6 +1840,9 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          ...(action === "SUBMIT_CASE" && {
+            assignees,
+          }),
         },
       },
       tenantId,

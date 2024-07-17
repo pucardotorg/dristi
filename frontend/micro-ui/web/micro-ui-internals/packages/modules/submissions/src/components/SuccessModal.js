@@ -18,25 +18,25 @@ const customNoteConfig = {
   },
 };
 
-function SuccessModal({ t, handleDownloadSubmission, isPaymentDone = false, handleCloseSuccessModal, handlePendingPayment }) {
+function SuccessModal({
+  t,
+  actionCancelLabel,
+  actionCancelOnSubmit,
+  isPaymentDone = false,
+  handleCloseSuccessModal,
+  applicationNumber,
+  createdDate,
+}) {
   const submissionData = [
-    { key: "SUBMISSION_DATE", value: "04/04/24", copyData: false },
-    { key: "SUBMISSION_ID", value: "KA454894943", copyData: true },
+    { key: "SUBMISSION_DATE", value: createdDate, copyData: false },
+    { key: "SUBMISSION_ID", value: applicationNumber, copyData: true },
   ];
   return (
     <Modal
-      actionCancelLabel={t("SKIP")}
-      actionCancelOnSubmit={() => handleDownloadSubmission()}
-      actionSaveLabel={t("CS_MAKE_PAYMENT")}
-      actionSaveOnSubmit={
-        isPaymentDone
-          ? () => {
-              handleCloseSuccessModal();
-            }
-          : () => {
-              handlePendingPayment();
-            }
-      }
+      actionCancelLabel={t(actionCancelLabel)}
+      actionCancelOnSubmit={actionCancelOnSubmit}
+      actionSaveLabel={t("CS_CLOSE")}
+      actionSaveOnSubmit={handleCloseSuccessModal}
       className={"submission-success-modal"}
     >
       <div className="submission-success-modal-body-main">

@@ -53,7 +53,7 @@ const HomeView = () => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
-  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData?.Individual]);
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
 
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
     individualData?.Individual,
@@ -287,7 +287,13 @@ const HomeView = () => {
             </div>
           </div>
           <div className="right-side">
-            <TasksComponent taskType={taskType} setTaskType={setTaskType} />
+            <TasksComponent
+              taskType={taskType}
+              setTaskType={setTaskType}
+              isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
+              uuid={userInfo?.uuid}
+              userInfoType={userInfoType}
+            />
           </div>
         </React.Fragment>
       )}

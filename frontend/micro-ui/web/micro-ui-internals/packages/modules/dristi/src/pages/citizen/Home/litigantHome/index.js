@@ -78,7 +78,7 @@ function Home() {
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
   } else {
-    history.push(`/${window?.contextPath}/citizen/home`);
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
   }
 
   const refreshInbox = () => {

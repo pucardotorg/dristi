@@ -1,5 +1,6 @@
 import { CustomArrowUpIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 // import { CustomArrowDownIcon, CustomArrowUpIcon } from "../icons/svgIndex";
 
 function PendingTaskAccordion({
@@ -15,16 +16,23 @@ function PendingTaskAccordion({
   isHighlighted = false,
   isAccordionOpen = false,
 }) {
+  const history = useHistory();
   const [isOpen, setIsOpen] = useState(isAccordionOpen);
+  const [check, setCheck] = useState(false);
   const handleAccordionClick = () => {
     setIsOpen(!isOpen);
+  };
+
+  const redirectPendingTaskUrl = (url) => {
+    history.push(url);
+    setCheck(!check);
   };
 
   return (
     <div key={accordionKey} className="accordion-wrapper" style={{ border: "1px solid #E8E8E8", padding: 16, borderRadius: 4 }}>
       <div
         className={`accordion-title ${isOpen ? "open" : ""}`}
-        style={{ cursor: "default", marginBottom: isOpen ? 16 : 0, transition: "margin-bottom 0.25s" }}
+        style={{ cursor: "default", marginBottom: isOpen && totalCount ? 16 : 0, transition: "margin-bottom 0.25s" }}
         onClick={handleAccordionClick}
       >
         <span
@@ -49,10 +57,18 @@ function PendingTaskAccordion({
         </div>
       </div>
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
-        <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
+        <div
+          className={`accordion-item ${!isOpen ? "collapsed" : ""}`}
+          style={{ overflowY: "auto", maxHeight: "40vh", paddingRight: "8px", "&::WebkitScrollbar": { width: 0 } }}
+        >
           {pendingTasks?.map((item) => (
-            <div className={`task-item ${item?.due === "Due today" && "due-today"}`} key={item?.filingNumber}>
-              <input type="checkbox" />
+            <div
+              className={`task-item ${item?.due === "Due today" && "due-today"}`}
+              key={item?.filingNumber}
+              style={{ cursor: "pointer" }}
+              onClick={() => redirectPendingTaskUrl(item?.redirectUrl)}
+            >
+              <input type="checkbox" value={check} />
               <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>
                 <span className="task-title">
                   {item?.actionName} : {item?.caseTitle}

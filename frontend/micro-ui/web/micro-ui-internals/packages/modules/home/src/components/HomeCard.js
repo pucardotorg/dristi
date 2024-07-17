@@ -12,7 +12,7 @@ const HomeCard = () => {
     links: [
       {
         label: t("Home"),
-        link: `/${window?.contextPath}/employee/home`,
+        link: `/${window?.contextPath}/employee/home/home-pending-task`,
       },
       {
         label: t("Inside Hearing"),

@@ -1,22 +1,40 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "@egovernments/digit-ui-components";
 import { CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { useGetPendingTask } from "../hooks/useGetPendingTask";
 import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
-const TasksComponent = ({ taskType, setTaskType }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+import { HomeService } from "../hooks/services";
+import { pendingTaskCaseActions, pendingTaskSubmissionActions } from "../configs/HomeConfig";
+import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+
+export const CaseWorkflowAction = {
+  SAVE_DRAFT: "SAVE_DRAFT",
+  ESIGN: "E-SIGN",
+  ABANDON: "ABANDON",
+};
+
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType }) => {
+  const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+  const [pendingTasks, setPendingTasks] = useState([]);
+  const history = useHistory();
   const { t } = useTranslation();
-  const { data: pendingTaskDetail, isLoading } = useGetPendingTask({
+  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
+  const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
+
+  const { data: pendingTaskDetails = [], isLoading } = useGetPendingTask({
     data: {
       SearchCriteria: {
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
+          ...(isLitigant && { assignedTo: [uuid] }),
+          ...(!isLitigant && { assignedRole: [...roles] }),
         },
-        limit: 10,
+        limit: 10000,
         offset: 0,
       },
     },
@@ -24,24 +42,108 @@ const TasksComponent = ({ taskType, setTaskType }) => {
     key: taskType?.code,
     config: { enable: Boolean(taskType.code && tenantId) },
   });
-  const pendingTaskData = useMemo(
-    () => [
-      {
-        actionName: "Reschedule hearing request",
-        caseTitle: "Aparna vs Sandesh",
-        caseType: "NIA S138",
-        filingNumber: "PB-PT-2023",
-        due: "Due today",
+
+  const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
+
+  const getCaseDetailByFilingNumber = useCallback(
+    async (payload) => {
+      const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+        tenantId,
+        ...payload,
+      });
+      return caseData || {};
+    },
+    [tenantId]
+  );
+  const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
+    let reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "REFERRAL_CASE_TO_ADR",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
       },
-      {
-        actionName: "Reschedule hearing request",
-        caseTitle: "Raj vs Anushka",
-        caseType: "NIA S138",
-        filingNumber: "PB-PT-2023",
-        due: "Hearing in 2 days",
-      },
-    ],
-    []
+    };
+
+    HomeService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      })
+      .catch((err) => {});
+  };
+  const fetchPendingTasks = useCallback(
+    async function () {
+      if (isLoading) return;
+      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
+        filingNumber: data?.fields?.find((field) => field.key === "referenceId")?.value || "",
+      }));
+      const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
+        criteria: listOfFilingNumber,
+      });
+      const pendingTaskToCaseDetailMap = new Map();
+      allPendingTaskCaseDetails?.criteria?.forEach((element) => {
+        pendingTaskToCaseDetailMap.set(element?.filingNumber, element?.responseList?.[0]);
+      });
+      const tasks = await Promise.all(
+        pendingTaskActionDetails?.map(async (data) => {
+          const filingNumber = data?.fields?.find((field) => field.key === "referenceId")?.value || "";
+          const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
+          const status = data?.fields?.find((field) => field.key === "status")?.value;
+          const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
+          const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
+          const pendingTaskActions =
+            taskTypeCode === "case" ? pendingTaskCaseActions : taskTypeCode === "hearing" ? pendingTaskSubmissionActions : pendingTaskCaseActions;
+          const searchParams = new URLSearchParams();
+          const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
+          pendingTaskActions?.[status]?.redirectDetails?.params.forEach((item) => {
+            searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
+          });
+          const redirectUrl = `/${window?.contextPath}/${userInfoType}${
+            pendingTaskActions?.[status]?.redirectDetails?.url
+          }?${searchParams.toString()}`;
+          return {
+            actionName: pendingTaskActions?.[status]?.actionName,
+            caseTitle: caseDetail?.caseTitle || "",
+            filingNumber: filingNumber,
+            caseType: "NIA S138",
+            due: dayCount > 1 ? `Due in ${dayCount} Days` : `Due today`,
+            dayCount,
+            isCompleted,
+            redirectUrl,
+          };
+        })
+      );
+      setPendingTasks(tasks);
+    },
+    [getCaseDetailByFilingNumber, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
+  );
+
+  useEffect(() => {
+    fetchPendingTasks();
+  }, [fetchPendingTasks]);
+
+  console.log("pendingTasks", pendingTasks, pendingTaskActionDetails);
+  const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
+    () => ({
+      pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
+      allOtherPendingTask: pendingTasks.filter((data) => data?.dayCount >= 7 && !data?.isCompleted).map((data) => data) || [],
+    }),
+    [pendingTasks]
   );
   if (isLoading) {
     return <Loader />;
@@ -78,16 +180,16 @@ const TasksComponent = ({ taskType, setTaskType }) => {
       </div>
       <div className="task-section">
         <PendingTaskAccordion
-          pendingTasks={pendingTaskData}
+          pendingTasks={pendingTaskDataInWeek}
           accordionHeader={"Complete this week"}
           t={t}
-          totalCount={pendingTaskData?.length}
+          totalCount={pendingTaskDataInWeek?.length}
           isHighlighted={true}
           isAccordionOpen={true}
         />
       </div>
       <div className="task-section">
-        <PendingTaskAccordion pendingTasks={pendingTaskData} accordionHeader={"All other tasks"} t={t} totalCount={pendingTaskData?.length} />
+        <PendingTaskAccordion pendingTasks={allOtherPendingTask} accordionHeader={"All other tasks"} t={t} totalCount={allOtherPendingTask?.length} />
       </div>
       <div className="task-section"></div>
     </div>
