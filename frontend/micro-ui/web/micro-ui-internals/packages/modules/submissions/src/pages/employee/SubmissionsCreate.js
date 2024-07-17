@@ -25,6 +25,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
+import { getAllAssignees } from "../../utils/caseUtils";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -310,7 +311,7 @@ const SubmissionsCreate = () => {
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
-            assignees: ["uuid of people filing the complaint"],
+            assignes: getAllAssignees(caseDetails),
           },
         },
       };
@@ -328,7 +329,7 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignees: ["uuid of people filing the complaint"] },
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignes: getAllAssignees(caseDetails) },
           tenantId,
         },
         tenantId,

@@ -10,7 +10,7 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
-import { OrderorkflowAction, OrderTypes } from "../../../Utils/orderWorkflow";
+import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 
 function CaseFileAdmission({ t, path }) {
@@ -197,7 +197,7 @@ function CaseFileAdmission({ t, path }) {
         status: "",
         isActive: true,
         workflow: {
-          action: OrderorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,
