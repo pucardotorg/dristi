@@ -63,7 +63,8 @@ public class HearingRegistrationValidator {
         baseValidations(requestInfo, hearing);
 
         // Validate individual ids
-        validateIndividualExistence(requestInfo, hearing);
+        if(config.getVerifyAttendeeIndividualId())
+            validateIndividualExistence(requestInfo, hearing);
 
         // Validating Hearing Type
         validateHearingType(requestInfo, hearing);
@@ -91,10 +92,10 @@ public class HearingRegistrationValidator {
         JSONArray hearingTypeList = mdmsUtil.fetchMdmsData(requestInfo,requestInfo.getUserInfo().getTenantId(),config.getMdmsHearingModuleName(),Collections.singletonList(config.getMdmsHearingTypeMasterName()))
                 .get(config.getMdmsHearingModuleName()).get(config.getMdmsHearingTypeMasterName());
 
-        Boolean validateHearingType = false;
-        for (int i = 0; i < hearingTypeList.size(); i++) {
-            HearingType hearingType = mapper.convertValue(hearingTypeList.get(i), HearingType.class);
-            if(hearingType.getType().equals(hearing.getHearingType())) validateHearingType = true;
+        boolean validateHearingType = false;
+        for (Object o : hearingTypeList) {
+            HearingType hearingType = mapper.convertValue(o, HearingType.class);
+            if (hearingType.getType().equals(hearing.getHearingType())) validateHearingType = true;
         }
         if (!validateHearingType)
             throw new CustomException(VALIDATION_EXCEPTION, "Could not validate Hearing Type!!!");

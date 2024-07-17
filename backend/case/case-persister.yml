@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
@@ -189,7 +189,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
@@ -325,7 +325,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $
@@ -344,7 +344,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
@@ -369,16 +369,16 @@ serviceMaps:
 
 
     - version: 1.0
-      description: Persists new representative for a case in dristi_case_representatives table
+      description: Persists new or update representative for a case in dristi_case_representatives table
       fromTopic: representative-join-case
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: INSERT INTO public.dristi_case_representatives(id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.dristi_case_representatives(id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, advocateid = EXCLUDED.advocateid, isactive = EXCLUDED.isactive, case_id = EXCLUDED.case_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
           basePath: $
           jsonMaps:
             - jsonPath: $.id
@@ -419,34 +419,24 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: UPDATE dristi_case_representatives SET advocateid = ?, isactive = ?, lastmodifiedtime = ?, lastmodifiedby = ?  WHERE case_id = ?;
+        - query: UPDATE dristi_case_representatives SET isactive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
           basePath: $
           jsonMaps:
-            - jsonPath: $.advocateId
             - jsonPath: $.isActive
             - jsonPath: $.auditDetails.lastModifiedBy
             - jsonPath: $.auditDetails.lastModifiedTime
-
-    - version: 1.0
-      description: Update representing for a case in dristi_case_representing table
-      fromTopic: update-representing-join-case
-      isTransaction: true
-      isAuditEnabled: true
-      module: CASE
-      objecIdJsonPath: $.id
-      tenantIdJsonPath: $.tenantId
-      auditAttributeBasePath: $
-      queryMaps:
-        - query: UPDATE dristi_case_representing SET isActive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE case_id = ?;
+            - jsonPath: $.id
+        - query: UPDATE dristi_case_representing SET isactive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
           basePath: .representing.*
           jsonMaps:
             - jsonPath: $.representing.*.isActive
             - jsonPath: $.representing.*.auditDetails.lastModifiedBy
             - jsonPath: $.representing.*.auditDetails.lastModifiedTime
+            - jsonPath: $.representing.*.id
 
     - version: 1.0
       description: Update case overall workflow in tables
@@ -454,7 +444,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.filingNumber
+      objectIdJsonPath: $.filingNumber
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: caseOverallStatus
@@ -473,7 +463,7 @@ serviceMaps:
       isTransaction: true
       isAuditEnabled: true
       module: CASE
-      objecIdJsonPath: $.caseFilingNumber
+      objectIdJsonPath: $.caseFilingNumber
       tenantIdJsonPath: $.RequestInfo.userInfo.uuid.tenantId
       transactionCodeJsonPath: $.caseFilingNumber
       auditAttributeBasePath: $

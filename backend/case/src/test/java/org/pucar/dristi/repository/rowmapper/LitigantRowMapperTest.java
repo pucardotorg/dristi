@@ -50,7 +50,7 @@ class LitigantRowMapperTest {
         when(rs.getLong("createdtime")).thenReturn(1000000L);
         when(rs.getString("lastmodifiedby")).thenReturn("modifier");
         when(rs.getLong("lastmodifiedtime")).thenReturn(1000001L);
-        when(rs.getString("isactive")).thenReturn("true");
+        when(rs.getBoolean("isactive")).thenReturn(true);
 
         PGobject pgObject = mock(PGobject.class);
         when(pgObject.getValue()).thenReturn("{\"key\":\"value\"}");

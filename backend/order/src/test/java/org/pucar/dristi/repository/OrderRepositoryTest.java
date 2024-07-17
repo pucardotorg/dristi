@@ -64,9 +64,16 @@ public class OrderRepositoryTest {
         when(jdbcTemplate.query(anyString(),any(Object[].class), any(OrderRowMapper.class)))
                 .thenReturn(orderList);
 
+        String countQuery = "SELECT COUNT(*) FROM orders";
+
         String statuteAndSectionQuery = "statuteAndSectionQuery";
         when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList())).thenReturn(statuteAndSectionQuery);
         Map<UUID, StatuteSection> statuteSectionsMap = new HashMap<>();
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(orderQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(orderQuery);
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
+        when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class))).thenReturn(1);
+
         statuteSectionsMap.put(orderList.get(0).getId(), new StatuteSection());
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(StatuteSectionRowMapper.class)))
                 .thenReturn(Collections.singletonMap(orderList.get(0).getId(), new StatuteSection()));
@@ -77,7 +84,7 @@ public class OrderRepositoryTest {
         documentMap.put(orderList.get(0).getId(), new ArrayList<>());
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(DocumentRowMapper.class))).thenReturn(Collections.singletonMap(orderList.get(0).getId(), new ArrayList<>()));
 
-        List<Order> result = orderRepository.getOrders(criteria);
+        List<Order> result = orderRepository.getOrders(criteria, new Pagination());
         assertEquals(orderList, result);
         assertEquals(statuteSectionsMap.get(orderList.get(0).getId()), orderList.get(0).getStatuteSection());
         assertEquals(documentMap.get(orderList.get(0).getId()), orderList.get(0).getDocuments());
@@ -86,14 +93,18 @@ public class OrderRepositoryTest {
     @Test
     void testGetOrders_CustomException() {
         when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new CustomException("ERROR", "Custom exception"));
-        assertThrows(CustomException.class, () -> orderRepository.getOrders(criteria));
+        assertThrows(CustomException.class, this::invokeGetOrders);
     }
 
     @Test
     void testGetOrders_Exception() {
         when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new RuntimeException("Runtime exception"));
-        CustomException exception = assertThrows(CustomException.class, () -> orderRepository.getOrders(criteria));
+        CustomException exception = assertThrows(CustomException.class, this::invokeGetOrders);
         assertEquals("Error while fetching order list: Runtime exception", exception.getMessage());
+    }
+
+    private void invokeGetOrders() {
+        orderRepository.getOrders(criteria, new Pagination());
     }
 
     @Test
