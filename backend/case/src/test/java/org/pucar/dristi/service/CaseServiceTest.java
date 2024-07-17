@@ -96,6 +96,7 @@ public class CaseServiceTest {
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any());
         doNothing().when(workflowService).updateWorkflowStatus(any());
         when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(caseRequest.getCases());
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),any(),any())).thenReturn(caseRequest.getCases());
         doNothing().when(producer).push(any(), any()); // Stubbing to accept any arguments
 
         // Call the method under test
@@ -508,7 +509,7 @@ public class CaseServiceTest {
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
         when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(cases);
-
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),any(),any())).thenReturn(cases);
         CourtCase result = caseService.createCase(caseRequest);
 
         assertNotNull(result);
