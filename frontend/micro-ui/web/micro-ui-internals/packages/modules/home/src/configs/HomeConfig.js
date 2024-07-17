@@ -1283,6 +1283,13 @@ export const rolesToConfigMapping = [
   },
 ];
 
+export const taskTypes = [
+  { code: "case", name: "Case" },
+  { code: "hearing", name: "Hearing" },
+  { code: "order", name: "Order" },
+  { code: "order-judgement", name: "Order of Judgement" },
+  { code: "application", name: "Application" },
+];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
     actorName: ["LITIGANT/ADVOCATE"],

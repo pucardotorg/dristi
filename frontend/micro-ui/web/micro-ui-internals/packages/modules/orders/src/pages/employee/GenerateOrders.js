@@ -31,10 +31,10 @@ import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import { ordersService } from "../../hooks/services";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
+import { OrderWorkflowAction } from "../../utils/orderWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -158,7 +158,7 @@ const GenerateOrders = () => {
     refetchOrdersData();
   }, []);
 
-  const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
+  const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === OrderWorkflowAction.DRAFT_IN_PROGRESS), [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
@@ -361,7 +361,7 @@ const GenerateOrders = () => {
 
   const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
     const newAdditionalData =
-      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
+      action === OrderWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
     const updatedreqBody = {
       order: {
         ...oldOrderData,
@@ -386,7 +386,7 @@ const GenerateOrders = () => {
         if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
           setShowErrorToast(true);
         }
-        if (action === CaseWorkflowAction.ESIGN) {
+        if (action === OrderWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
         if (modal === "reviewModal") {
@@ -416,9 +416,9 @@ const GenerateOrders = () => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
-          assignes: null,
+          assignes: ["judge uuid"],
           rating: null,
           documents: [{}],
         },
@@ -438,7 +438,7 @@ const GenerateOrders = () => {
 
   const handleSaveDraft = ({ modal }) => {
     handleUpdateOrder({
-      action: CaseWorkflowAction.SAVE_DRAFT,
+      action: OrderWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
       modal,
@@ -447,7 +447,7 @@ const GenerateOrders = () => {
 
   const handleIssueOrder = () => {
     handleUpdateOrder({
-      action: CaseWorkflowAction.ESIGN,
+      action: OrderWorkflowAction.ESIGN,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
       modal: "issueModal",
@@ -456,7 +456,7 @@ const GenerateOrders = () => {
 
   const handleDeleteOrder = () => {
     handleUpdateOrder({
-      action: CaseWorkflowAction.ABANDON,
+      action: OrderWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
       orderType: orderList[deleteOrderIndex].orderType,
       modal: "deleteModal",
@@ -492,7 +492,12 @@ const GenerateOrders = () => {
         <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={handleOrderChange}>
+              <div
+                className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}
+                onClick={() => {
+                  handleOrderChange(index);
+                }}
+              >
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "@egovernments/digit-ui-components";
-import { CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { useGetPendingTask } from "../hooks/useGetPendingTask";
 import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService } from "../hooks/services";
-import { pendingTaskCaseActions, pendingTaskSubmissionActions } from "../configs/HomeConfig";
+import { pendingTaskCaseActions, pendingTaskSubmissionActions, taskTypes } from "../configs/HomeConfig";
 import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -165,10 +165,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         <LabelFieldPair>
           <Dropdown
             style={{ width: "16rem" }}
-            option={[
-              { code: "case", name: "Case" },
-              { code: "hearing", name: "Hearing" },
-            ]}
+            option={taskTypes}
             optionKey={"name"}
             selected={taskType}
             select={(value) => {

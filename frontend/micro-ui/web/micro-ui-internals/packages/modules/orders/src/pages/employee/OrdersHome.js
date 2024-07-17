@@ -4,9 +4,7 @@ import { useHistory } from "react-router-dom";
 import { Header, InboxSearchComposer, Button } from "@egovernments/digit-ui-react-components";
 import { TabSearchconfig } from "../../../../orders/src/configs/OrdersHomeConfig";
 import { ordersService } from "../../hooks/services";
-import { CaseWorkflowAction } from "../../utils/caseWorkflow";
-
-const fieldStyle = { marginRight: 0 };
+import { OrderWorkflowAction } from "../../utils/orderWorkflow";
 
 const defaultSearchValues = {
   individualName: "",
@@ -57,7 +55,7 @@ const OrdersHome = () => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,
