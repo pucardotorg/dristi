@@ -53,10 +53,6 @@
   
       .qr-image-container {
         max-width: 350px;
-  
-        .qr-image {
-          /* border: 2px solid #ccc; */
-        }
       }
   
       .document-details-title {

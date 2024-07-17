@@ -10,7 +10,7 @@ function StyledButton(props: StyledButtonProps) {
     return (
         <Button
             {...props}
-            style={{
+            sx={{
                 background: `${props.fill ? '#007E7E' : '#FFFFFF'} 0% 0% no-repeat padding-box`,
                 border: '2px solid #007E7E',
                 borderRadius: '9999px',

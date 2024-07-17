@@ -27,8 +27,8 @@ const steps: VerificationStep[] = [
 
 const InjiStepper = () => {
     const isDesktop = useMediaQuery('@media (min-width:768px)');
-    const {getActiveStep} = useActiveStepContext();
-    const activeStep = getActiveStep();
+    
+    const { activeStep } = useActiveStepContext();
 
     return (
         <Box style={{marginTop: '30px'}}>

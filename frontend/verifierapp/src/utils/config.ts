@@ -13,6 +13,7 @@ export const VerificationSteps = {
 }
 
 export const ScanStatusResult = {
+    Default: "default",
     Failed: "try_Again",
     Loading: "loading",
     CertificateValid: "certificate_valid",

@@ -3,9 +3,9 @@ import {Box} from "@mui/material";
 import injiLogo from '../assets/inji-logo.svg';
 import SomethingWentWrong from "../components/SomethingWentWrong";
 
-function Offline(props: any) {
+function Offline(_props: any) {
     return (
-        <Box style={{
+        <Box sx={{
             padding: '46px 80px',
             background: '#FAFBFD 0% 0% no-repeat padding-box',
             height: '100%'

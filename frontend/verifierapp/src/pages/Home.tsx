@@ -3,44 +3,37 @@ import { Grid, Container, Box, CssBaseline } from "@mui/material";
 import { VerificationSteps } from "../utils/config";
 import { AlertInfo } from "../types/data-types";
 import AlertMessage from "../components/commons/AlertMessage";
-import DisplayActiveStep from "../components/Home/VerificationSection/DisplayActiveStep";
+import VerificationSection from "../components/Home/VerificationSection";
 
+// Step useContext
 let activeStep: number = 0;
-const setActiveStep = (newValue: number) => {
-  activeStep = newValue;
-};
-const getActiveStep = () => activeStep;
-const ActiveStepContext = createContext({ getActiveStep, setActiveStep });
+const setActiveStep: React.Dispatch<React.SetStateAction<number>> = (value) => {};
+const ActiveStepContext = createContext({ activeStep, setActiveStep });
 export const useActiveStepContext = () => useContext(ActiveStepContext);
 
+// Alert Box useContext
 let alert: AlertInfo = { open: false };
-let setAlertInfo: React.Dispatch<React.SetStateAction<AlertInfo>> = (
-  value
-) => {};
-
+let setAlertInfo: React.Dispatch<React.SetStateAction<AlertInfo>> = (value) => {};
 const AlertsContext = createContext({ alertInfo: alert, setAlertInfo });
 export const useAlertMessages = () => useContext(AlertsContext);
 
 function Home(_props: any) {
-  const [activeStep, setActiveStep] = useState(
-    VerificationSteps.ScanQrCodePrompt
-  );
-  const [alertInfo, setAlertInfo] = useState({
+
+  const [activeStep, setActiveStep] = useState<number>(VerificationSteps.ScanQrCodePrompt);
+  const [alertInfo, setAlertInfo] = useState<AlertInfo>({
     open: false,
     severity: "success",
     message: "",
-  } as AlertInfo);
-
-  const getActiveStep = () => activeStep;
+  });
 
   return (
     <AlertsContext.Provider value={{ alertInfo, setAlertInfo }}>
-      <ActiveStepContext.Provider value={{ getActiveStep, setActiveStep }}>
+      <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
         <CssBaseline />
         <Container maxWidth="lg" className="home-container">
           <Grid container spacing={4} justifyContent="center">
             <Grid item xs={12} md={6} className="tracker-container">
-              <DisplayActiveStep />
+              <VerificationSection />
             </Grid>
           </Grid>
 

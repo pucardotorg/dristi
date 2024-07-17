@@ -25,12 +25,9 @@ export const scanFilesForQr = async (selectedFile) => {
 export const decodeQrData = async (qrData) => {
     if (qrData) {
         const zip = new JSZip();
-        console.log("decodeQrData", qrData);
         return await zip.loadAsync(qrData).then((contents) => {
             return contents.files[CERTIFICATE_FILE].async("text")
         }).then(function (contents) {
-            // setResult(contents)
-            console.log("decodeQrData loadAsync", contents);
             return contents
         }).catch(err => {
             console.error("decodeQrData error", err)

@@ -35,8 +35,13 @@ export type AlertInfo = {
     open?: boolean
 }
 
-
-export type ConstituteElementCaseDataType = {
-    id: String,
-    item: String
-}
+export type Vc = {
+    credentialSubject: {
+      [key: string]: any;
+      caseName?: string;
+      caseTypes?: string;
+      issuedBy?: string;
+      filingDate?: string;
+      caseNumber?: string;
+    };
+  } | undefined

@@ -45,11 +45,12 @@ export const UploadQrCode = ({setScanResult, displayMessage, setScanStatus}:
                     height: 0
                 }}
                 onChange={e => {
-                    const file = e?.target?.files && e?.target?.files[0];
+                    const file = e?.target?.files?.[0];
                     if (!file) return;
+                    
                     scanFilesForQr(file)
                         .then(scanResult => {
-                            setScanStatus(!!scanResult.data ? "Success" : "Failed")
+                            setScanStatus(scanResult.data ? "Success" : "Failed")
                             setScanResult(scanResult);
                         });
                 }}

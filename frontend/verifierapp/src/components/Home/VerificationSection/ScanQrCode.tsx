@@ -3,7 +3,7 @@ import { Box, Grid, Typography, Button } from "@mui/material";
 import qr from "../../../assets/drishti.svg";
 import Content from "../../../assets/drishti_content.svg";
 import BtnQr from "../../../assets/btnqr.svg";
-import { useActiveStepContext, useAlertMessages } from "../../../pages/Home";
+import { useActiveStepContext } from "../../../pages/Home";
 import { VerificationSteps } from "../../../utils/config";
 import './ScanQrCode.css';
 

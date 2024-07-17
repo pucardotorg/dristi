@@ -7,8 +7,9 @@ import { VcDisplay, VcProperty, VcPropertyKey, VcPropertyValue, VcVerificationFa
 import { convertToTitleCase, getDisplayValue } from '../../../../utils/misc';
 import './vcDisplayCard.css';
 import BtnQr from '../../../../../src/assets/btnqr.svg';
+import { Vc } from '../../../../types/data-types';
 
-const VcDisplayCard = ({ vc, setActiveStep }: { vc: any, setActiveStep: SetActiveStepFunction }) => {
+const VcDisplayCard = ({ vc, setActiveStep }: { vc: Vc, setActiveStep: SetActiveStepFunction }) => {
   return (
     <Box className="vc-display-card">
       <Grid container spacing={2} className="vc-display">

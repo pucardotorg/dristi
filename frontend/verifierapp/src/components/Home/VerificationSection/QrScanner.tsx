@@ -1,14 +1,17 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {memo, useEffect, useRef, useState} from 'react';
 import {Scanner} from '@yudiel/react-qr-scanner';
 import CameraAccessDenied from "./CameraAccessDenied";
-import { VerificationSteps} from "../../../utils/config";
+import { ScanStatusResult, VerificationSteps} from "../../../utils/config";
+import { useActiveStepContext } from '../../../pages/Home';
 
 let timer: NodeJS.Timeout;
 
-function QrScanner({setActiveStep, setQrData}: {
-    setQrData: (data: string) => void, setActiveStep: (activeStep: number) => void
-}) {
+const QrScanner = memo(({  setQrData }: {
+    setQrData: (data: string) => void
+}) => {
     const [isCameraBlocked, setIsCameraBlocked] = useState(false);
+
+    const { setActiveStep } = useActiveStepContext();
 
     const scannerRef = useRef<HTMLDivElement>(null);
 
@@ -26,12 +29,11 @@ function QrScanner({setActiveStep, setQrData}: {
         <div ref={scannerRef}>
             <Scanner
                 onResult={(text, result) => {
-                    console.log("Scanner text", text)
-                    setActiveStep(VerificationSteps.Verifying);
                     setQrData(text);
                 }}
                 onError={(error) => {
-                    setQrData("invalid");
+                    setQrData(ScanStatusResult.CertificateInValid);
+                    console.error("QR Scanner error:", error);
                     clearTimeout(timer);
                     setIsCameraBlocked(true);
                 }}
@@ -49,7 +51,7 @@ function QrScanner({setActiveStep, setQrData}: {
                         },
                         facingMode: "environment"
                     },
-                    delayBetweenScanSuccess: 100000 // Scan once
+                    delayBetweenScanSuccess: 10000 // Scan once
                 }}
                 styles={{
                     container: {
@@ -70,6 +72,6 @@ function QrScanner({setActiveStep, setQrData}: {
             }}/>
         </div>
     );
-}
+})
 
 export default QrScanner;

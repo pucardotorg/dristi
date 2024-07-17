@@ -6,12 +6,12 @@ This repository contains source code for web implementation of the verifier app
 Clone the project
 
 ```bash
-  git clone https://github.com/pucardotorg/dristi/tree/develop/frontend.git
+  git clone https://github.com/pucardotorg/dristi.git
 ```
 
 Go to the Sub directory to run UI
 ```bash
-    cd into verifierapp
+    cd frontend/verifierapp
 ```
 
 Install dependencies

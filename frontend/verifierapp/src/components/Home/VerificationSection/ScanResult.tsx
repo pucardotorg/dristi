@@ -10,8 +10,11 @@ import {
 } from '@mui/icons-material';
 
 import './ScanResult.css'
+import { useActiveStepContext } from '../../../pages/Home';
 
-const ScanResult = memo(({ status, setActiveStep }: { status: string, setActiveStep: (activeStep: number) => void }) => {
+const ScanResult = memo(({ status }: { status: string }) => {
+
+    const { setActiveStep } = useActiveStepContext();
 
     switch (status) {
         case ScanStatusResult.Loading:

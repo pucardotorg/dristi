@@ -1,24 +1,20 @@
 import styled from "@emotion/styled";
 import {Box, Grid, Typography} from "@mui/material";
 
-export const ResultsSummaryContainer = styled(Box)(({success}: { success: boolean }) => (
+export const ResultsSummaryContainer = styled(Box)(() => (
     {
         height: "340px",
-        // backgroundColor: success ? "#007E7E" : "#CB4242",
-        // color: "white"
     }
 ));
 
 export const VcDisplayCardContainer = styled(Box)(({cardPositioning}: {
-        cardPositioning: { top?: number, right?: number ,left?:number}
+        cardPositioning: { top?: number, right?: number, left?:number}
     }) => (
         {
             margin: "auto",
             top: cardPositioning.top ?? 0,
             right: cardPositioning.right ?? 6,
             left:cardPositioning.left ?? 6
-            
-            // position: "absolute"
         }
     )
 );
