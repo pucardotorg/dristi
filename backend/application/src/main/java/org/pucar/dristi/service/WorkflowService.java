@@ -148,7 +148,8 @@ public class WorkflowService {
         if (!CollectionUtils.isEmpty(uuids)) {
             UserSearchRequest userSearchRequest = new UserSearchRequest();
             userSearchRequest.setUuid(uuids);
-            UserDetailResponse userDetailResponse = userUtil.userCall(userSearchRequest, new StringBuilder(config.getUserSearchEndpoint()));
+            StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+            UserDetailResponse userDetailResponse = userUtil.userCall(userSearchRequest, uri);
             if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 users = userDetailResponse.getUser().stream().map(user -> User.builder().uuid(user.getUuid()).roles(user.getRoles()).build()).toList();
             }

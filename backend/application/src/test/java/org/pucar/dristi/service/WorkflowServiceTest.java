@@ -210,7 +210,8 @@ public class WorkflowServiceTest {
         User user1 = User.builder().uuid("uuid1").build();
         User user2 = User.builder().uuid("uuid2").build();
         UserDetailResponse userDetailResponse = new UserDetailResponse(ResponseInfo.builder().build(),List.of(user1, user2));
-        when(config.getUserSearchEndpoint()).thenReturn("http://localhost:8080/user/search");
+        when(config.getUserSearchEndpoint()).thenReturn("search");
+        when(config.getUserHost()).thenReturn("http://localhost:8080/user/");
         when(userUtil.userCall(any(UserSearchRequest.class), any(StringBuilder.class))).thenReturn(userDetailResponse);
 
         // When
@@ -250,7 +251,8 @@ public class WorkflowServiceTest {
     void getUserListFromUserUuid_withInvalidUuids_returnsEmptyList() {
         // Given
         List<String> uuids = List.of("invalidUuid");
-        when(config.getUserSearchEndpoint()).thenReturn("http://localhost:8080/user/search");
+        when(config.getUserSearchEndpoint()).thenReturn("search");
+        when(config.getUserHost()).thenReturn("http://localhost:8080/user/");
         when(userUtil.userCall(any(UserSearchRequest.class), any(StringBuilder.class))).thenReturn(null);
 
         // When
