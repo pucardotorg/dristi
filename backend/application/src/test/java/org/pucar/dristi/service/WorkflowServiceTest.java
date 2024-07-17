@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.UserSearchRequest;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
@@ -210,7 +211,7 @@ public class WorkflowServiceTest {
         User user2 = User.builder().uuid("uuid2").build();
         UserDetailResponse userDetailResponse = new UserDetailResponse(ResponseInfo.builder().build(),List.of(user1, user2));
         when(config.getUserSearchEndpoint()).thenReturn("http://localhost:8080/user/search");
-        when(userUtil.userCall(eq(uuids), any(StringBuilder.class))).thenReturn(userDetailResponse);
+        when(userUtil.userCall(any(UserSearchRequest.class), any(StringBuilder.class))).thenReturn(userDetailResponse);
 
         // When
         List<User> result = workflowService.getUserListFromUserUuid(uuids);
@@ -250,7 +251,7 @@ public class WorkflowServiceTest {
         // Given
         List<String> uuids = List.of("invalidUuid");
         when(config.getUserSearchEndpoint()).thenReturn("http://localhost:8080/user/search");
-        when(userUtil.userCall(eq(uuids), any(StringBuilder.class))).thenReturn(null);
+        when(userUtil.userCall(any(UserSearchRequest.class), any(StringBuilder.class))).thenReturn(null);
 
         // When
         List<User> result = workflowService.getUserListFromUserUuid(uuids);

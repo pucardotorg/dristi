@@ -6,6 +6,7 @@ import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.UserSearchRequest;
 import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -145,7 +146,9 @@ public class WorkflowService {
     public List<User> getUserListFromUserUuid(List<String> uuids) {
         List<User> users = new ArrayList<>();
         if (!CollectionUtils.isEmpty(uuids)) {
-            UserDetailResponse userDetailResponse = userUtil.userCall(uuids, new StringBuilder(config.getUserSearchEndpoint()));
+            UserSearchRequest userSearchRequest = new UserSearchRequest();
+            userSearchRequest.setUuid(uuids);
+            UserDetailResponse userDetailResponse = userUtil.userCall(userSearchRequest, new StringBuilder(config.getUserSearchEndpoint()));
             if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 users = userDetailResponse.getUser().stream().map(user -> User.builder().uuid(user.getUuid()).roles(user.getRoles()).build()).toList();
             }
