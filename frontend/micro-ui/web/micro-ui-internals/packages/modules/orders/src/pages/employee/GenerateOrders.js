@@ -34,7 +34,7 @@ import { ordersService } from "../../hooks/services";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import { OrderWorkflowAction } from "../../utils/orderWorkflow";
+import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -148,7 +148,11 @@ const GenerateOrders = () => {
     isLoading: isOrdersLoading,
     isFetching: isOrdersFetching,
   } = Digit.Hooks.orders.useSearchOrdersService(
-    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
+    {
+      tenantId,
+      criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS },
+      pagination: { limit: 1000, offset: 0 },
+    },
     { tenantId },
     filingNumber,
     Boolean(filingNumber && cnrNumber)
@@ -158,10 +162,9 @@ const GenerateOrders = () => {
     refetchOrdersData();
   }, []);
 
-  const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === OrderWorkflowAction.DRAFT_IN_PROGRESS), [ordersData]);
+  const orderList = useMemo(() => ordersData?.list, [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
-
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
       SECTION_202_CRPC: configsOrderSection202CRPC,

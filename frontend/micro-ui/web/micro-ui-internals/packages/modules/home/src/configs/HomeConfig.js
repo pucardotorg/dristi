@@ -1288,7 +1288,9 @@ export const taskTypes = [
   { code: "hearing", name: "Hearing" },
   { code: "order", name: "Order" },
   { code: "order-judgement", name: "Order of Judgement" },
-  { code: "application", name: "Application" },
+  { code: "async-voluntary-submission-services", name: "Voluntary Submission" },
+  { code: "asynsubmissionwithresponse", name: "Submission With Response" },
+  { code: "asyncsubmissionwithoutresponse", name: "Submission Without Response" },
 ];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {

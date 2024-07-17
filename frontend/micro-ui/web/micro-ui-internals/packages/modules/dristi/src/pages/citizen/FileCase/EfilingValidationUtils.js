@@ -1773,6 +1773,7 @@ export const updateCaseDetails = async ({
                         partyCategory: data?.partyCategory,
                         individualId: data?.individualId,
                         partyType: data?.partyType,
+                        additionalDetails: data?.additionalDetails
                       }))
                     : []),
                 ]
