@@ -106,7 +106,7 @@ public class EncryptionDecryptionUtil {
     }
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
-        List<Party> usersToDecrypt = null;
+        List<Party> usersToDecrypt = new ArrayList<>();
         if (objectToDecrypt instanceof List list) {
             if (list.isEmpty())
                 return false;
