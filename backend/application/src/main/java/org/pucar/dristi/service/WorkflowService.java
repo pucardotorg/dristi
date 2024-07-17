@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.UserSearchRequest;
 import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 import org.pucar.dristi.web.models.RequestInfoWrapper;
@@ -28,15 +31,18 @@ public class WorkflowService {
     private final ObjectMapper mapper;
     private final ServiceRequestRepository repository;
     private final Configuration config;
+    private final UserUtil userUtil;
 
     @Autowired
     public WorkflowService(
             ObjectMapper mapper,
             ServiceRequestRepository repository,
-            Configuration config) {
+            Configuration config,
+            UserUtil userUtil) {
         this.mapper = mapper;
         this.repository = repository;
         this.config = config;
+        this.userUtil = userUtil;
     }
 
 
@@ -83,12 +89,7 @@ public class WorkflowService {
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
-                List<User> users = new ArrayList<>();
-                workflow.getAssignes().forEach(uuid -> {
-                    User user = new User();
-                    user.setUuid(uuid);
-                    users.add(user);
-                });
+                List<User> users = getUserListFromUserUuid(workflow.getAssignes());
                 processInstance.setAssignes(users);
             }
             return processInstance;
@@ -141,5 +142,17 @@ public class WorkflowService {
             return null;
         }
         return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
+    }
+    public List<User> getUserListFromUserUuid(List<String> uuids) {
+        List<User> users = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(uuids)) {
+            UserSearchRequest userSearchRequest = new UserSearchRequest();
+            userSearchRequest.setUuid(uuids);
+            UserDetailResponse userDetailResponse = userUtil.userCall(userSearchRequest, new StringBuilder(config.getUserSearchEndpoint()));
+            if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+                users = userDetailResponse.getUser().stream().map(user -> User.builder().uuid(user.getUuid()).roles(user.getRoles()).build()).toList();
+            }
+        }
+        return users;
     }
 }
