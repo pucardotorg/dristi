@@ -93,14 +93,18 @@ public class OrderRepositoryTest {
     @Test
     void testGetOrders_CustomException() {
         when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new CustomException("ERROR", "Custom exception"));
-        assertThrows(CustomException.class, () -> orderRepository.getOrders(criteria, new Pagination()));
+        assertThrows(CustomException.class, this::invokeGetOrders);
     }
 
     @Test
     void testGetOrders_Exception() {
         when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new RuntimeException("Runtime exception"));
-        CustomException exception = assertThrows(CustomException.class, () -> orderRepository.getOrders(criteria, new Pagination()));
+        CustomException exception = assertThrows(CustomException.class, this::invokeGetOrders);
         assertEquals("Error while fetching order list: Runtime exception", exception.getMessage());
+    }
+
+    private void invokeGetOrders() {
+        orderRepository.getOrders(criteria, new Pagination());
     }
 
     @Test

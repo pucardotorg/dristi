@@ -136,7 +136,7 @@ public class OrderRegistrationService {
         String status ;
         if (orderType.equalsIgnoreCase(JUDGEMENT)) {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
-                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderBusinessName());
+                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
         } else {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
                     workflow, config.getOrderBusinessName());

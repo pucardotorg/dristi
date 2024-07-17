@@ -105,6 +105,7 @@ class OrderApiControllerTest {
         OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
         orderSearchRequest.setCriteria(new OrderCriteria());
         orderSearchRequest.setRequestInfo(new RequestInfo());
+        orderSearchRequest.setPagination(new Pagination());
 
         // Mock OrderService response
         List<Order> expectedOrders = Collections.singletonList(new Order());
@@ -211,6 +212,7 @@ class OrderApiControllerTest {
         OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
         orderSearchRequest.setCriteria(new OrderCriteria());
         orderSearchRequest.setRequestInfo(new RequestInfo());
+        orderSearchRequest.setPagination(new Pagination());
 
         // Mock service to return empty list
         List<Order> emptyList = Collections.emptyList();

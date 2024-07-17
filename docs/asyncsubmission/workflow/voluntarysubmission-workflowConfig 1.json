@@ -2,74 +2,99 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "hearing",
-      "business": "hearing-services",
+      "businessService": "async-voluntary-submission-services",
+      "business": "async-voluntary-submission-services",
       "businessServiceSla": 30,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "SCHEDULED",
+              "nextState": "PENDINGESIGN",
               "roles": [
-                "HEARING_SCHEDULER"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
         },
         {
           "sla": null,
-          "state": "SCHEDULED",
+          "state": "PENDINGESIGN",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "RESCHEDULE",
-              "nextState": "OPTOUT",
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
               "roles": [
-                "HEARING_DATE_REQUESTOR"
-              ]
-            },
-            {
-              "action": "START",
-              "nextState": "INPROGRESS",
-              "roles": [
-                "HEARING_START"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
+                "SUBMISSION_RESPONDER"
               ]
             }
           ]
         },
         {
-          "sla": 5,
-          "state": "OPTOUT",
+          "sla": null,
+          "state": "PENDINGPAYMENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
-          "isStartState": false,
+          "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SETDATE",
-              "nextState": "SCHEDULED",
+              "action": "PAY",
+              "nextState": "PENDINGREVIEW",
               "roles": [
-                "HEARING_APPROVER"
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDINGREVIEW",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "AUTOESCALATE",
+              "nextState": "PENDINGAPPROVAL",
+              "roles": [
+                "WORKFLOW_AUTOAPPROVE"
+              ]
+            },
+            {
+              "action": "APPROVE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "RESPOND",
+              "nextState": "PENDINGAPPROVAL",
+              "roles": [
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
@@ -83,7 +108,7 @@
         },
         {
           "sla": 10,
-          "state": "INPROGRESS",
+          "state": "PENDINGAPPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -91,10 +116,17 @@
           "isStateUpdatable": false,
           "actions": [
             {
-              "action": "CLOSE",
+              "action": "APPROVE",
               "nextState": "COMPLETED",
               "roles": [
-                "HEARING_CLOSER"
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "SUBMISSION_APPROVER"
               ]
             },
             {
@@ -110,6 +142,15 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
