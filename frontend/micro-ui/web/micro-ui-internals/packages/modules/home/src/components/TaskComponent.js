@@ -7,9 +7,19 @@ import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService } from "../hooks/services";
 import { pendingTaskCaseActions, pendingTaskSubmissionActions } from "../configs/HomeConfig";
+import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+
+export const CaseWorkflowAction = {
+  SAVE_DRAFT: "SAVE_DRAFT",
+  ESIGN: "E-SIGN",
+  ABANDON: "ABANDON",
+};
+
 const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
+  const history = useHistory();
   const { t } = useTranslation();
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
@@ -45,7 +55,37 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
     },
     [tenantId]
   );
+  const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
+    let reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "REFERRAL_CASE_TO_ADR",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
 
+    HomeService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      })
+      .catch((err) => {});
+  };
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
