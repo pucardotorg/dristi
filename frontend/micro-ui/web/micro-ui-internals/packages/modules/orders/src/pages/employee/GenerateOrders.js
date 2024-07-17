@@ -30,14 +30,11 @@ import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
-import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { ordersService } from "../../hooks/services";
-import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -59,7 +56,7 @@ const GenerateOrders = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
-  const applicationNumber = urlParams.get("applicationNumber") || "APPLICATION-NO-2024-07-16-000142";
+  const applicationNumber = urlParams.get("applicationNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -70,7 +67,7 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-
+  const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
     setFormdata(null);
@@ -81,18 +78,13 @@ const GenerateOrders = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [closeToast]);
-
-  useEffect(() => {
-    if (!filingNumber) {
-      history.push("/employee/home/home-pending-task");
+    if (showErrorToast) {
+      const timer = setTimeout(() => {
+        setShowErrorToast(false);
+      }, 2000);
+      clearTimeout(timer);
     }
-  }, []);
+  }, [showErrorToast]);
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -109,28 +101,21 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const {
-    data: applicationData,
-    isLoading: isApplicationDetailsLoading,
-    isFetching: isApplicationDetailsFetching,
-  } = Digit.Hooks.submissions.useSearchSubmissionService(
+  const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
         filingNumber: filingNumber,
         tenantId: tenantId,
-        // applicationNumber: applicationNumber || ,
+        applicationNumber: applicationNumber,
       },
       tenantId,
     },
     {},
     "dristi",
-    filingNumber,
-    filingNumber
+    applicationNumber,
+    applicationNumber
   );
-
-  const relatedApplication = useMemo(() => {
-    return applicationData?.applicationList.filter((item) => item?.applicationNumber === applicationNumber);
-  }, [applicationData]);
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -155,7 +140,7 @@ const GenerateOrders = () => {
     //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
     //   });
     return [{ code: "Respondent", name: "Respondent" }];
-  }, [caseDetails]);
+  }, []);
 
   const {
     data: ordersData,
@@ -168,6 +153,10 @@ const GenerateOrders = () => {
     filingNumber,
     Boolean(filingNumber && cnrNumber)
   );
+
+  useEffect(() => {
+    refetchOrdersData();
+  }, []);
 
   const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
@@ -314,21 +303,21 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, orderType?.code, respondants]);
+  }, [complainants, orderType?.code, respondants, t]);
 
   const defaultValue = useMemo(() => {
     let returnValue = {};
     if (formdata && currentOrder?.additionalDetails?.formdata?.orderType?.code !== formdata?.orderType?.code) {
       let updatedFormdata = structuredClone(formdata);
-      if (relatedApplication.length !== 0 && relatedApplication?.[0]?.referenceId) {
-        updatedFormdata.refApplicationId = relatedApplication?.[0]?.referenceId;
+      if (applicationDetails?.referenceId) {
+        updatedFormdata.refApplicationId = applicationDetails?.referenceId;
       }
       if (formdata?.orderType?.code === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
-        if (relatedApplication.length !== 0 && relatedApplication?.[0]?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
-          updatedFormdata.documentName = relatedApplication?.[0]?.additionalDetails?.formdata?.documentType?.name;
-          updatedFormdata.originalDeadline = relatedApplication?.[0]?.additionalDetails?.formdata?.initialSubmissionDate;
-          updatedFormdata.proposedSubmissionDate = relatedApplication?.[0]?.additionalDetails?.formdata?.changedSubmissionDate;
-          // updatedFormdata.originalSubmissionOrderDate = relatedApplication?.[0]?.additionalDetails?.formdata?.;  // TODO: fill this.
+        if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
+          updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.name;
+          updatedFormdata.originalDeadline = applicationDetails.additionalDetails?.formdata?.initialSubmissionDate;
+          updatedFormdata.proposedSubmissionDate = applicationDetails.additionalDetails?.formdata?.changedSubmissionDate;
+          updatedFormdata.originalSubmissionOrderDate = applicationDetails.additionalDetails?.orderDate;
         }
       }
       returnValue = updatedFormdata;
@@ -346,10 +335,9 @@ const GenerateOrders = () => {
     } else {
       returnValue = {};
     }
-    // merge returnValue with system filled;
 
     return returnValue;
-  }, [currentOrder, applicationNumber, orderType.code]);
+  }, [formdata, currentOrder, applicationNumber, applicationDetails]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (formdata?.orderType?.code && formdata?.orderType?.code !== formData?.orderType?.code) {
@@ -483,7 +471,17 @@ const GenerateOrders = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
   };
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
+  const handleOrderChange = (index) => {
+    // save draft if you want to retain the orderData
+    // handleSaveDraft()
+    setSelectedOrder(index);
+  };
+
+  if (!filingNumber) {
+    history.push("/employee/home/home-pending-task");
+  }
+
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
     return <Loader />;
   }
 
@@ -494,7 +492,7 @@ const GenerateOrders = () => {
         <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={handleOrderChange}>
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span
