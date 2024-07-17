@@ -215,6 +215,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [messageHeader, setMessageHeader] = useState(t(JoinHomeLocalisation.JOIN_CASE_SUCCESS));
 
   const [advocateId, setAdvocateId] = useState("");
+  const [userUUID, setUserUUID] = useState("");
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
   const [individualId, setIndividualId] = useState("");
   const [individualAddress, setIndividualAddress] = useState({});
@@ -441,6 +442,18 @@ const JoinCaseHome = ({ refreshInbox }) => {
     [caseDetails?.representatives]
   );
 
+  const getUserUUID = async (individualId) => {
+    const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          individualId: individualId,
+        },
+      },
+      { tenantId, limit: 1000, offset: 0 }
+    );
+    setUserUUID(individualData?.Individual?.[0]?.userUuid);
+  };
+
   useEffect(() => {
     if (step === 0 && !caseNumber) {
       setErrors({
@@ -453,6 +466,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
         if (selectedParty?.label) {
+          getUserUUID(selectedParty?.individualId);
           if ((searchLitigantInRepresentives().isFound && roleOfNewAdvocate) || !searchLitigantInRepresentives().isFound) {
             setIsDisabled(false);
           } else {
@@ -465,6 +479,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     } else if (step === 2) {
       if (userType === "Litigant" && representingYourself !== "Yes") {
         if (advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber && advocateDetailForm?.vakalatnamaFileUpload) {
+          getUserUUID(advocateDetailForm?.data?.individualId);
           setIsDisabled(false);
         } else {
           setIsDisabled(true);
@@ -528,6 +543,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       "",
       userInfo?.uuid && isUserLoggedIn
     );
+
     setIndividualId(individualData?.Individual?.[0]?.individualId);
     setName(individualData?.Individual?.[0]?.name);
     const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
@@ -1640,6 +1656,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
               caseId: caseDetails?.id,
               representing: [
                 {
+                  additionalDetails: {
+                    uuid: userUUID,
+                    firstName: name?.givenName,
+                    middleName: name?.otherNames,
+                    lastName: name?.familyName,
+                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  },
                   caseId: caseDetails?.id,
                   tenantId: tenantId,
                   individualId: selectedParty?.individualId || null,
@@ -1647,6 +1670,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 },
               ],
               additionalDetails: {
+                advocateName: advocateDetailForm?.additionalDetails?.username,
+                uuid: userInfo?.uuid,
                 document: {
                   vakalatnamaFileUpload: vakalatnamaDocument?.length > 0 && vakalatnamaDocument,
                   nocFileUpload: nocDocument?.length > 0 && nocDocument,
@@ -1721,11 +1746,22 @@ const JoinCaseHome = ({ refreshInbox }) => {
               advocateId: advocateId,
               representing: [
                 {
+                  additionalDetails: {
+                    uuid: userUUID,
+                    firstName: name?.givenName,
+                    middleName: name?.otherNames,
+                    lastName: name?.familyName,
+                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  },
                   tenantId: tenantId,
                   individualId: selectedParty?.individualId || null,
                   partyType: selectedParty?.partyType,
                 },
               ],
+              additionalDetails: {
+                advocateName: advocateDetailForm?.additionalDetails?.username,
+                uuid: userInfo?.uuid,
+              },
             },
           });
           if (res) {
@@ -1791,6 +1827,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   lastName: name?.familyName,
                   fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
                   affidavitText,
+                  uuid: userInfo?.uuid,
                 },
                 tenantId: tenantId,
                 individualId: individualId,
@@ -1927,7 +1964,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   middleName: name?.otherNames,
                   lastName: name?.familyName,
                   fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
-                  affidavitText,
+                  uuid: userInfo?.uuid,
                 },
                 tenantId: tenantId,
                 individualId: individualId,
@@ -1938,7 +1975,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 representative: {
                   tenantId: tenantId,
                   advocateId: advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.advocateId,
-                  // id: "9567f3c2-8b49-4936-b849-a81cb83f43c4",
                   representing: [
                     {
                       additionalDetails: {
@@ -1947,6 +1983,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         lastName: name?.familyName,
                         fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
                         document: newDocument,
+                        uuid: userInfo?.uuid,
                       },
                       tenantId: tenantId,
                       individualId: individualId,
@@ -1954,6 +1991,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                       partyType: selectedParty?.partyType,
                     },
                   ],
+                  additionalDetails: {
+                    advocateName: advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                    uuid: userUUID,
+                  },
                 },
               }),
             },
@@ -2012,6 +2053,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     tenantId,
     userInfo?.uuid,
     userType,
+    userUUID,
     validationCode,
   ]);
 
