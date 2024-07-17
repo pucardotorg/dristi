@@ -126,10 +126,15 @@ export const TabSearchconfig = {
                 jsonPath: "status",
               },
               {
-                label: "Date Added",
-                jsonPath: "auditDetails.createdTime",
+                label: "Date",
+                jsonPath: "startTime",
                 additionalCustomization: true,
               },
+              // {
+              //   label: "Date Added",
+              //   jsonPath: "auditDetails.createdTime",
+              //   additionalCustomization: true,
+              // },
             ],
             enableColumnSort: true,
             resultsJsonPath: "HearingList",

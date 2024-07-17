@@ -37,7 +37,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return (
       <div className="evidence-title">
         <h1 className="heading-m">{props.label}</h1>
-        <h3 className="status">{props?.status}</h3>
+        <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>
       </div>
     );
   };
@@ -346,7 +346,19 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             setShowConfirmationModal({ type: "reject" });
           }}
           formId="modal-action"
-          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission?.[0]?.status} />}
+          headerBarMain={
+            <Heading
+              label={t("Document Submission")}
+              status={
+                modalType === "Documents"
+                  ? documentSubmission?.[0]?.artifactList?.isEvidence
+                    ? "Accepeted"
+                    : "Action Pending"
+                  : documentSubmission?.[0]?.status
+              }
+              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
+            />
+          }
           className="evidence-modal"
         >
           <div className="evidence-modal-main">

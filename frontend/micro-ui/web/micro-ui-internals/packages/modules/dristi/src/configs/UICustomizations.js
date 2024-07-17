@@ -630,6 +630,7 @@ export const UICustomizations = {
         case "File":
           return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
+        case "Date":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
