@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "application",
-      "business": "application-services",
+      "business": "application",
+      "businessService": "application-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
