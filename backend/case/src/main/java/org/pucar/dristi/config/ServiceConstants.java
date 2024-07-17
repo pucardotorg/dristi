@@ -39,7 +39,8 @@ public class ServiceConstants {
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
-	public static final String PRIMARY = "primary";
+	public static final String RESPONDENT_PRIMARY = "respondent.primary";
+	public static final String COMPLAINANT_PRIMARY = "complainant.primary";
 
     public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
 

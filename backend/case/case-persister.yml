@@ -369,7 +369,7 @@ serviceMaps:
 
 
     - version: 1.0
-      description: Persists new representative for a case in dristi_case_representatives table
+      description: Persists new or update representative for a case in dristi_case_representatives table
       fromTopic: representative-join-case
       isTransaction: true
       isAuditEnabled: true
@@ -378,7 +378,7 @@ serviceMaps:
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: INSERT INTO public.dristi_case_representatives(id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.dristi_case_representatives(id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, advocateid = EXCLUDED.advocateid, isactive = EXCLUDED.isactive, case_id = EXCLUDED.case_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
           basePath: $
           jsonMaps:
             - jsonPath: $.id
@@ -423,14 +423,20 @@ serviceMaps:
       tenantIdJsonPath: $.tenantId
       auditAttributeBasePath: $
       queryMaps:
-        - query: UPDATE dristi_case_representatives SET isactive = ? WHERE case_id = ?;
+        - query: UPDATE dristi_case_representatives SET isactive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
           basePath: $
           jsonMaps:
             - jsonPath: $.isActive
-        - query: UPDATE dristi_case_representing SET isactive = ? WHERE case_id = ?;
-          basePath: $.representing.*.isActive
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.id
+        - query: UPDATE dristi_case_representing SET isactive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
+          basePath: .representing.*
           jsonMaps:
-            - jsonPath: $.isActive
+            - jsonPath: $.representing.*.isActive
+            - jsonPath: $.representing.*.auditDetails.lastModifiedBy
+            - jsonPath: $.representing.*.auditDetails.lastModifiedTime
+            - jsonPath: $.representing.*.id
 
     - version: 1.0
       description: Update case overall workflow in tables

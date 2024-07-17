@@ -154,22 +154,6 @@ class CaseQueryBuilderTest {
         assertEquals(expectedQuery, query);
     }
 
-//    @Test
-//    void checkCaseExistQuery_Exception() {
-//        // Arrange
-//        String courtCaseNumber = null;
-//        String cnrNumber = null;
-//        String filingNumber = "123";
-//
-//        Logger mockedLogger = mock(Logger.class);
-//        doThrow(new RuntimeException()).when(mockedLogger).error(any(String.class));
-//
-//        // Assert
-//        assertThrows(Exception.class, () -> {
-//            queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
-//        });
-//    }
-
     @Test
     void testGetCasesSearchQuery_SingleCriteria() {
         CaseCriteria criteria = new CaseCriteria();
@@ -434,7 +418,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getLitigantSearchQuery(ids, preparedStmtList);
 
         // Assert
-        String expectedQuery = " SELECT ltg.id as id, ltg.tenantid as tenantid, ltg.partycategory as partycategory, ltg.case_id as case_id, ltg.individualid as individualid,  ltg.organisationid as organisationid, ltg.partytype as partytype, ltg.isactive as isactive, ltg.additionaldetails as additionaldetails, ltg.createdby as createdby, ltg.lastmodifiedby as lastmodifiedby, ltg.createdtime as createdtime, ltg.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_litigants ltg WHERE ltg.case_id IN (?,?,?)";
+        String expectedQuery = " SELECT ltg.id as id, ltg.tenantid as tenantid, ltg.partycategory as partycategory, ltg.case_id as case_id, ltg.individualid as individualid,  ltg.organisationid as organisationid, ltg.partytype as partytype, ltg.isactive as isactive, ltg.additionaldetails as additionaldetails, ltg.createdby as createdby, ltg.lastmodifiedby as lastmodifiedby, ltg.createdtime as createdtime, ltg.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_litigants ltg WHERE ltg.case_id IN (?,?,?) AND ltg.isactive = true";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
@@ -492,7 +476,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getRepresentativesSearchQuery(ids, preparedStmtList);
 
         // Assert
-        String expectedQuery = " SELECT rep.id as id, rep.tenantid as tenantid, rep.advocateid as advocateid, rep.case_id as case_id,  rep.isactive as isactive, rep.additionaldetails as additionaldetails, rep.createdby as createdby, rep.lastmodifiedby as lastmodifiedby, rep.createdtime as createdtime, rep.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representatives rep WHERE rep.case_id IN (?,?,?)";
+        String expectedQuery = " SELECT rep.id as id, rep.tenantid as tenantid, rep.advocateid as advocateid, rep.case_id as case_id,  rep.isactive as isactive, rep.additionaldetails as additionaldetails, rep.createdby as createdby, rep.lastmodifiedby as lastmodifiedby, rep.createdtime as createdtime, rep.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representatives rep WHERE rep.case_id IN (?,?,?) AND rep.isactive = true";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
@@ -521,7 +505,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getRepresentingSearchQuery(ids, preparedStmtList);
 
         // Assert
-        String expectedQuery = " SELECT rpst.id as id, rpst.tenantid as tenantid, rpst.partycategory as partycategory, rpst.representative_id as representative_id, rpst.individualid as individualid, rpst.case_id as case_id,  rpst.organisationid as organisationid, rpst.partytype as partytype, rpst.isactive as isactive, rpst.additionaldetails as additionaldetails, rpst.createdby as createdby, rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representing rpst WHERE rpst.representative_id IN (?,?,?)";
+        String expectedQuery = " SELECT rpst.id as id, rpst.tenantid as tenantid, rpst.partycategory as partycategory, rpst.representative_id as representative_id, rpst.individualid as individualid, rpst.case_id as case_id,  rpst.organisationid as organisationid, rpst.partytype as partytype, rpst.isactive as isactive, rpst.additionaldetails as additionaldetails, rpst.createdby as createdby, rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representing rpst WHERE rpst.representative_id IN (?,?,?) AND rpst.isactive = = true";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
