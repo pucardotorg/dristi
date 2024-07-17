@@ -86,8 +86,10 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
         const pendingTasksData = pendingTaskDetail ? pendingTaskDetail.data.length : 0;
 
         return {
+          caseId: caseData.id,
           filingNumber,
           caseName: caseData?.caseTitle || "",
+          cnrNumber: caseData.cnrNumber,
           stage: caseData?.stage || "",
           caseType: caseData?.caseType || "",
           pendingTasks: pendingTasksData || "-",

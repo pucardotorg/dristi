@@ -6,7 +6,7 @@ import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderRevi
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
+import { OrderWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
 
 const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
@@ -72,7 +72,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,
