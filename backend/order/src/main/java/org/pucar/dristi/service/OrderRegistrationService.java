@@ -70,7 +70,7 @@ public class OrderRegistrationService {
     public List<Order> searchOrder(OrderSearchRequest request) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getOrders(request.getCriteria());
+            List<Order> orderList = orderRepository.getOrders(request.getCriteria(), request.getPagination());
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
