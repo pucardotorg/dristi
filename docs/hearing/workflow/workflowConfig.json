@@ -48,13 +48,6 @@
               ]
             },
             {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "HEARING_DELETE"
-              ]
-            },
-            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -117,15 +110,6 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": 5,
-          "state": "DELETED",
-          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
