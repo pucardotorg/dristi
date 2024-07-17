@@ -17,6 +17,7 @@ import { AdvocateIcon, RightArrow, SearchIcon } from "../../../../dristi/src/ico
 import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const CloseBtn = (props) => {
   return (
@@ -91,6 +92,7 @@ const JoinHomeLocalisation = {
   CASE_NUMBER: "CASE_NUMBER",
   ALREADY_REPRESENTING: "ALREADY_REPRESENTING",
   CANT_REPRESENT_BOTH_PARTY: "CANT_REPRESENT_BOTH_PARTY",
+  VIEW_CASE_DETAILS: "VIEW_CASE_DETAILS",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -178,6 +180,7 @@ const advocateVakalatnamaConfig = [
 
 const JoinCaseHome = ({ refreshInbox }) => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CustomCaseInfoDiv");
@@ -895,7 +898,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     {
       modalMain: (
         <div className="general-details-vek">
-          {roleOfNewAdvocate === "I’m a supporting advocate" ? (
+          {roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE) ? (
             <React.Fragment>
               <InfoCard
                 variant={"default"}
@@ -1301,7 +1304,19 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     refreshInbox();
                   }}
                 />
-                <Button className={"selector-button-primary"} label={t(JoinHomeLocalisation.CONFIRM_ATTENDANCE)}>
+                <Button
+                  className={"selector-button-primary"}
+                  label={
+                    roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)
+                      ? t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
+                      : t(JoinHomeLocalisation.CONFIRM_ATTENDANCE)
+                  }
+                  onButtonClick={() => {
+                    if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
+                      history.push(`?caseId=${caseDetails?.caseId}`);
+                    }
+                  }}
+                >
                   <RightArrow />
                 </Button>
               </div>
@@ -1474,7 +1489,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       } else if (userType && userType === "Advocate" && selectedParty?.label) {
         setParties([...parties, selectedParty]);
         setParty(selectedParty);
-        if (roleOfNewAdvocate !== "I’m a supporting advocate") {
+        if (roleOfNewAdvocate !== t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)) {
           const { isFound, representative } = searchLitigantInRepresentives();
           if (isFound && representative?.advocateId === advocateId) {
             setStep(8);
@@ -1526,7 +1541,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         }
       }
     } else if (step === 2) {
-      if (roleOfNewAdvocate === "I’m a supporting advocate") {
+      if (roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)) {
         closeModal();
         return;
       }
@@ -2109,7 +2124,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             setIsDisabled(false);
           }}
           actionSaveLabel={
-            step === 2 && roleOfNewAdvocate === "I’m a supporting advocate"
+            step === 2 && roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)
               ? t("GOT_IT_TEXT")
               : // : step === 3
               // ? "E-Sign"
