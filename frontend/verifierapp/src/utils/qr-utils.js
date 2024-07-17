@@ -30,8 +30,8 @@ export const decodeQrData = async (qrData) => {
         }).then(function (contents) {
             return contents
         }).catch(err => {
-            console.error("decodeQrData error", err)
-            return  null
+            console.error("decodeQrData error", err);
+            return  { error: "Failed to decode QR data", details: err.message };
           }
         );
     }

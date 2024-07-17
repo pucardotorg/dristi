@@ -8,7 +8,7 @@ import VerificationSection from "../components/Home/VerificationSection";
 // Step useContext
 let activeStep: number = 0;
 const setActiveStep: React.Dispatch<React.SetStateAction<number>> = (value) => {};
-const ActiveStepContext = createContext({ activeStep, setActiveStep });
+export const ActiveStepContext = createContext({ activeStep, setActiveStep });
 export const useActiveStepContext = () => useContext(ActiveStepContext);
 
 // Alert Box useContext

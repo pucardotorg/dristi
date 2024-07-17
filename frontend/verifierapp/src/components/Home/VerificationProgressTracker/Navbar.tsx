@@ -4,7 +4,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-// import injiLogo from "../../../assets/inji-logo.svg";
 import { NavbarContainer } from "./styles";
 
 function Navbar(props: any) {

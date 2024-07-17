@@ -14,12 +14,12 @@ const root = ReactDOM.createRoot(
 const inputGlobalStyles = <GlobalStyles styles={{ fontFamily: 'Inter'}} />;
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ThemeProvider theme={DrishtiTheme}>
         {inputGlobalStyles}
         <App />
     </ThemeProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,5 +1,5 @@
 
-This repository contains source code for web implementation of the verifier app
+This repository contains source code for the web implementation of the verifier app
 
 ## Run Locally
 
