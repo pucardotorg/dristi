@@ -6,10 +6,13 @@ import { Header, FormComposerV2, Toast } from "@egovernments/digit-ui-react-comp
 import {
   applicationTypeConfig,
   configRejectSubmission,
+  configsAssignDateToRescheduledHearing,
+  configsAssignNewHearingDate,
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
   configsCaseWithdrawal,
+  configsInitiateRescheduleHearingDate,
   configsIssueOfWarrants,
   configsIssueSummons,
   configsJudgement,
@@ -33,6 +36,7 @@ import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchC
 import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
+import { applicationTypes } from "../../utils/applicationTypes";
 import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
 
 const OutlinedInfoIcon = () => (
@@ -55,7 +59,7 @@ const GenerateOrders = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
-  const applicationNumber = urlParams.get("applicationNumber");
+  const applicationNumber = urlParams.get("applicationNumber") || "APPLICATION-NO-2024-07-16-000142";
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -90,7 +94,7 @@ const GenerateOrders = () => {
     }
   }, []);
 
-  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -105,11 +109,16 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const { data: applicationData, isLoading: isApplicationDetailsLoading } = useSearchSubmissionService(
+  const {
+    data: applicationData,
+    isLoading: isApplicationDetailsLoading,
+    isFetching: isApplicationDetailsFetching,
+  } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
-        filingNumber: "F-C.1973.002-2024-000505",
+        filingNumber: filingNumber,
         tenantId: tenantId,
+        // applicationNumber: applicationNumber || ,
       },
       tenantId,
     },
@@ -118,6 +127,10 @@ const GenerateOrders = () => {
     filingNumber,
     filingNumber
   );
+
+  const relatedApplication = useMemo(() => {
+    return applicationData?.applicationList.filter((item) => item?.applicationNumber === applicationNumber);
+  }, [applicationData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -144,7 +157,12 @@ const GenerateOrders = () => {
     return [{ code: "Respondent", name: "Respondent" }];
   }, [caseDetails]);
 
-  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const {
+    data: ordersData,
+    refetch: refetchOrdersData,
+    isLoading: isOrdersLoading,
+    isFetching: isOrdersFetching,
+  } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
     filingNumber,
@@ -165,6 +183,9 @@ const GenerateOrders = () => {
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
       APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
+      INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
+      ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
+      ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
       CASE_TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
@@ -298,7 +319,19 @@ const GenerateOrders = () => {
   const defaultValue = useMemo(() => {
     let returnValue = {};
     if (formdata && currentOrder?.additionalDetails?.formdata?.orderType?.code !== formdata?.orderType?.code) {
-      returnValue = formdata;
+      let updatedFormdata = structuredClone(formdata);
+      if (relatedApplication.length !== 0 && relatedApplication?.[0]?.referenceId) {
+        updatedFormdata.refApplicationId = relatedApplication?.[0]?.referenceId;
+      }
+      if (formdata?.orderType?.code === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
+        if (relatedApplication.length !== 0 && relatedApplication?.[0]?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
+          updatedFormdata.documentName = relatedApplication?.[0]?.additionalDetails?.formdata?.documentType?.name;
+          updatedFormdata.originalDeadline = relatedApplication?.[0]?.additionalDetails?.formdata?.initialSubmissionDate;
+          updatedFormdata.proposedSubmissionDate = relatedApplication?.[0]?.additionalDetails?.formdata?.changedSubmissionDate;
+          // updatedFormdata.originalSubmissionOrderDate = relatedApplication?.[0]?.additionalDetails?.formdata?.;  // TODO: fill this.
+        }
+      }
+      returnValue = updatedFormdata;
     } else if (currentOrder?.additionalDetails?.formdata) {
       returnValue = structuredClone(currentOrder?.additionalDetails?.formdata);
     } else if (currentOrder?.orderType && applicationNumber) {
