@@ -59,7 +59,7 @@ public class OrderApiController {
     public ResponseEntity<OrderListResponse> orderV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody OrderSearchRequest request) {
             List<Order> orders = orderService.searchOrder(request);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
-            OrderListResponse orderListResponse = OrderListResponse.builder().list(orders).totalCount(orders.size()).responseInfo(responseInfo).build();
+            OrderListResponse orderListResponse = OrderListResponse.builder().list(orders).totalCount((request.getPagination().getTotalCount()!=null)? request.getPagination().getTotalCount().intValue():0).pagination(request.getPagination()).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
     }
 
