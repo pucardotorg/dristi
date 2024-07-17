@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "hearing",
-      "business": "hearing-services",
+      "business": "hearing",
+      "businessService": "hearing-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
@@ -34,15 +34,8 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "PROPOSEDATE",
-              "nextState": "NEWDATE",
-              "roles": [
-                "HEARING_DATE_REQUESTOR"
-              ]
-            },
-            {
-              "action": "CHECKOUT",
-              "nextState": "CHECKOUTREQUESTED",
+              "action": "RESCHEDULE",
+              "nextState": "OPTOUT",
               "roles": [
                 "HEARING_DATE_REQUESTOR"
               ]
@@ -55,35 +48,10 @@
               ]
             },
             {
-              "action": "ABANDON",
-              "nextState": "ABATED",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 5,
-          "state": "NEWDATE",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "APPROVE",
-              "nextState": "SCHEDULED",
-              "roles": [
-                "HEARING_APPROVER"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "SCHEDULED",
-              "roles": [
-                "HEARING_APPROVER"
+                "HEARING_DELETE"
               ]
             },
             {
@@ -97,7 +65,7 @@
         },
         {
           "sla": 5,
-          "state": "CHECKOUTREQUESTED",
+          "state": "OPTOUT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -105,17 +73,10 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SETNEWDATE",
+              "action": "SETDATE",
               "nextState": "SCHEDULED",
               "roles": [
-                "HEARING_ACCEPTOR"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "SCHEDULED",
-              "roles": [
-                "HEARING_ACCEPTOR"
+                "HEARING_APPROVER"
               ]
             },
             {
@@ -156,6 +117,15 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
