@@ -6,10 +6,13 @@ import { Header, FormComposerV2, Toast } from "@egovernments/digit-ui-react-comp
 import {
   applicationTypeConfig,
   configRejectSubmission,
+  configsAssignDateToRescheduledHearing,
+  configsAssignNewHearingDate,
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
   configsCaseWithdrawal,
+  configsInitiateRescheduleHearingDate,
   configsIssueOfWarrants,
   configsIssueSummons,
   configsJudgement,
@@ -27,13 +30,11 @@ import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
-import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { ordersService } from "../../hooks/services";
-import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
-import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
+import { applicationTypes } from "../../utils/applicationTypes";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -66,7 +67,7 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-
+  const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
     setFormdata(null);
@@ -77,20 +78,15 @@ const GenerateOrders = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [closeToast]);
-
-  useEffect(() => {
-    if (!filingNumber) {
-      history.push("/employee/home/home-pending-task");
+    if (showErrorToast) {
+      const timer = setTimeout(() => {
+        setShowErrorToast(false);
+      }, 2000);
+      clearTimeout(timer);
     }
-  }, []);
+  }, [showErrorToast]);
 
-  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -105,19 +101,21 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const { data: applicationData, isLoading: isApplicationDetailsLoading } = useSearchSubmissionService(
+  const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
-        filingNumber: "F-C.1973.002-2024-000505",
+        filingNumber: filingNumber,
         tenantId: tenantId,
+        applicationNumber: applicationNumber,
       },
       tenantId,
     },
     {},
     "dristi",
-    filingNumber,
-    filingNumber
+    applicationNumber,
+    applicationNumber
   );
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -142,14 +140,23 @@ const GenerateOrders = () => {
     //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
     //   });
     return [{ code: "Respondent", name: "Respondent" }];
-  }, [caseDetails]);
+  }, []);
 
-  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const {
+    data: ordersData,
+    refetch: refetchOrdersData,
+    isLoading: isOrdersLoading,
+    isFetching: isOrdersFetching,
+  } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
     { tenantId },
     filingNumber,
     Boolean(filingNumber && cnrNumber)
   );
+
+  useEffect(() => {
+    refetchOrdersData();
+  }, []);
 
   const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
@@ -165,6 +172,9 @@ const GenerateOrders = () => {
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
       APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
+      INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
+      ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
+      ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
       CASE_TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
@@ -293,12 +303,24 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, orderType?.code, respondants]);
+  }, [complainants, orderType?.code, respondants, t]);
 
   const defaultValue = useMemo(() => {
     let returnValue = {};
     if (formdata && currentOrder?.additionalDetails?.formdata?.orderType?.code !== formdata?.orderType?.code) {
-      returnValue = formdata;
+      let updatedFormdata = structuredClone(formdata);
+      if (applicationDetails?.referenceId) {
+        updatedFormdata.refApplicationId = applicationDetails?.referenceId;
+      }
+      if (formdata?.orderType?.code === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
+        if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
+          updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.name;
+          updatedFormdata.originalDeadline = applicationDetails.additionalDetails?.formdata?.initialSubmissionDate;
+          updatedFormdata.proposedSubmissionDate = applicationDetails.additionalDetails?.formdata?.changedSubmissionDate;
+          updatedFormdata.originalSubmissionOrderDate = applicationDetails.additionalDetails?.orderDate;
+        }
+      }
+      returnValue = updatedFormdata;
     } else if (currentOrder?.additionalDetails?.formdata) {
       returnValue = structuredClone(currentOrder?.additionalDetails?.formdata);
     } else if (currentOrder?.orderType && applicationNumber) {
@@ -313,10 +335,9 @@ const GenerateOrders = () => {
     } else {
       returnValue = {};
     }
-    // merge returnValue with system filled;
 
     return returnValue;
-  }, [currentOrder, applicationNumber, orderType.code]);
+  }, [formdata, currentOrder, applicationNumber, applicationDetails]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
     if (formdata?.orderType?.code && formdata?.orderType?.code !== formData?.orderType?.code) {
@@ -450,7 +471,17 @@ const GenerateOrders = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
   };
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
+  const handleOrderChange = (index) => {
+    // save draft if you want to retain the orderData
+    // handleSaveDraft()
+    setSelectedOrder(index);
+  };
+
+  if (!filingNumber) {
+    history.push("/employee/home/home-pending-task");
+  }
+
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
     return <Loader />;
   }
 
@@ -461,7 +492,7 @@ const GenerateOrders = () => {
         <React.Fragment>
           {orderList?.map((order, index) => {
             return (
-              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={handleOrderChange}>
                 <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
                 {orderList?.length > 1 && (
                   <span

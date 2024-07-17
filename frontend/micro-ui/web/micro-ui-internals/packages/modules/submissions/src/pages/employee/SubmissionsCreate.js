@@ -21,10 +21,10 @@ import SuccessModal from "../../components/SuccessModal";
 import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -141,11 +141,11 @@ const SubmissionsCreate = () => {
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
-      if ([CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
+      if ([SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
         setShowReviewModal(true);
         return;
       }
-      if (applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT) {
+      if (applicationDetails?.status === SubmissionWorkflowState.PENDINGPAYMENT) {
         setShowPaymentModal(true);
         return;
       }
@@ -247,7 +247,7 @@ const SubmissionsCreate = () => {
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
-  const createSubmission = async (data) => {
+  const createSubmission = async () => {
     try {
       let documentsList = [];
       if (formdata?.listOfProducedDocuments?.documents?.length > 0) {
@@ -306,10 +306,11 @@ const SubmissionsCreate = () => {
           // onBehalfOf: { individualId },
           workflow: {
             id: "workflow123",
-            action: CaseWorkflowAction.CREATE,
+            action: SubmissionWorkflowAction.CREATE,
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
+            assignees: ["uuid of people filing the complaint"],
           },
         },
       };
@@ -327,8 +328,7 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, documents: [{}], action },
-
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignees: ["uuid of people filing the complaint"] },
           tenantId,
         },
         tenantId,
@@ -362,7 +362,7 @@ const SubmissionsCreate = () => {
 
   const handleAddSignature = () => {
     setLoader(true);
-    updateSubmission(CaseWorkflowAction.ESIGN);
+    updateSubmission(SubmissionWorkflowAction.ESIGN);
   };
 
   const handleCloseSignaturePopup = () => {
@@ -425,7 +425,7 @@ const SubmissionsCreate = () => {
       {showSuccessModal && (
         <SuccessModal
           t={t}
-          isPaymentDone={applicationDetails?.status === CaseWorkflowState.PENDINGPAYMENT}
+          isPaymentDone={applicationDetails?.status === SubmissionWorkflowState.PENDINGPAYMENT}
           handleCloseSuccessModal={handleBack}
           actionCancelLabel={"DOWNLOAD_SUBMISSION"}
           actionCancelOnSubmit={handleDownloadSubmission}
