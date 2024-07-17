@@ -167,7 +167,7 @@ const HomeView = () => {
           tenantId,
           criteria: [
             {
-              litigantId: individualId,
+              ...(advocateId ? { advocateId } : { litigantId: individualId }),
 
               pagination: { offSet: 0, limit: 1 },
             },
@@ -177,7 +177,7 @@ const HomeView = () => {
         setIsFetchCaseLoading(false);
       }
     })();
-  }, [individualId, tenantId, userType]);
+  }, [advocateId, individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false })));
