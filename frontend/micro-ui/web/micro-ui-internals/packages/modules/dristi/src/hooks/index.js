@@ -1,6 +1,5 @@
 import useGetAdvocateClerk from "./dristi/useGetAdvocateClerk";
 import useGetAdvocateClientServices from "./dristi/useGetAdvocateClientServices";
-import useGetHearings from "./dristi/useGetHearings.js";
 import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import useIndividualService from "./dristi/useIndividualService";
@@ -46,7 +45,6 @@ const dristi = {
   useGetIndividualUser,
   useInboxCustomHook,
   useSearchCaseService,
-  useGetHearings,
   useCreateHearings,
   useGetEvidence,
   useGetOrders,

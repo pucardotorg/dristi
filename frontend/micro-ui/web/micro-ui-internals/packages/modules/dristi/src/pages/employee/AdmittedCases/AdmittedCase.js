@@ -2,19 +2,16 @@ import { Button as ActionButton } from "@egovernments/digit-ui-components";
 import { Button, Header, InboxSearchComposer, Loader, Menu, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomThreeDots } from "../../../icons/svgIndex";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import ViewCaseFile from "../scrutiny/ViewCaseFile";
 import { TabSearchconfig } from "./AdmittedCasesConfig";
 import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
 import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
-import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
-import { ordersService } from "../../../../../orders/src/hooks/services";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomThreeDots } from "../../../icons/svgIndex";
-import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
 
 const defaultSearchValues = {
@@ -28,7 +25,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const { path } = useRouteMatch();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
-  const activeTab = urlParams.get("tab");
+  const activeTab = urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -40,6 +37,9 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [toast, setToast] = useState(false);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+  const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -331,7 +331,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,
@@ -408,7 +408,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,

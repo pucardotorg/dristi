@@ -30,7 +30,7 @@ import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { ordersService } from "../../hooks/services";
 import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
+import { CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
@@ -68,6 +68,7 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
 
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -367,7 +368,7 @@ const GenerateOrders = () => {
   const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
     console.log(oldOrderData?.additionalDetails, formdata);
     const newAdditionalData =
-      action === CaseWorkflowAction.SAVE_DRAFT
+      action === OrderWorkflowAction.SAVE_DRAFT
         ? { formdata: { ...oldOrderData?.additionalDetails.formdata, ...formdata } }
         : { ...oldOrderData?.additionalDetails };
     console.log(newAdditionalData);
@@ -395,7 +396,7 @@ const GenerateOrders = () => {
         if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
           setShowErrorToast(true);
         }
-        if (action === CaseWorkflowAction.ESIGN) {
+        if (action === OrderWorkflowAction.ESIGN) {
           setShowSuccessModal(true);
         }
         if (modal === "reviewModal") {
@@ -425,7 +426,7 @@ const GenerateOrders = () => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,
@@ -447,7 +448,7 @@ const GenerateOrders = () => {
 
   const handleSaveDraft = ({ modal }) => {
     handleUpdateOrder({
-      action: CaseWorkflowAction.SAVE_DRAFT,
+      action: OrderWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
       modal,
@@ -492,7 +493,7 @@ const GenerateOrders = () => {
       );
     }
     handleUpdateOrder({
-      action: CaseWorkflowAction.ESIGN,
+      action: OrderWorkflowAction.ESIGN,
       oldOrderData: currentOrder,
       orderType: orderType?.code,
       modal: "issueModal",
@@ -501,7 +502,7 @@ const GenerateOrders = () => {
 
   const handleDeleteOrder = () => {
     handleUpdateOrder({
-      action: CaseWorkflowAction.ABANDON,
+      action: OrderWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
       orderType: orderList[deleteOrderIndex].orderType,
       modal: "deleteModal",
