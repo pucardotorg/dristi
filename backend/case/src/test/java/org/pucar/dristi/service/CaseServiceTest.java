@@ -8,12 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
 import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
 
@@ -23,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -71,6 +67,11 @@ public class CaseServiceTest {
     private RequestInfo requestInfo;
     private User userInfo;
 
+    private JoinCaseRequest joinCaseRequest;
+    private CourtCase courtCase;
+    private CourtCase caseObj;
+    private AuditDetails auditDetails;
+
     private CaseSearchRequest caseSearchRequest;
 
     private CaseExistsRequest caseExistsRequest;
@@ -85,6 +86,17 @@ public class CaseServiceTest {
         userInfo = new User();
         userInfo.setUuid("user-uuid");
         requestInfo.setUserInfo(userInfo);
+
+        // Initialize mocks and create necessary objects for the tests
+        joinCaseRequest = new JoinCaseRequest();
+        courtCase = new CourtCase();
+        caseObj = new CourtCase();
+        auditDetails = AuditDetails.builder()
+                .createdBy("user-uuid")
+                .createdTime(System.currentTimeMillis())
+                .lastModifiedBy("user-uuid")
+                .lastModifiedTime(System.currentTimeMillis())
+                .build();
     }
     @Test
     void testCreateCase() {
@@ -228,6 +240,44 @@ public class CaseServiceTest {
         assertEquals(litigant, response.getJoinCaseRequest().getLitigant());
         assertEquals(advocate, response.getJoinCaseRequest().getRepresentative());
     }
+
+    @Test
+    public void testVerifyRepresentativesAndJoinCase_throwsException() {
+        // Given
+        String filingNumber = "123";
+        joinCaseRequest.setCaseFilingNumber(filingNumber);
+        joinCaseRequest.setAccessCode("validAccessCode");
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setUuid("user-uuid");
+        requestInfo.setUserInfo(user);
+        joinCaseRequest.setRequestInfo(requestInfo);
+
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setAccessCode("validAccessCode");
+        List<CaseCriteria> existingApplications = List.of(CaseCriteria.builder().responseList(List.of(courtCase)).build());
+
+        when(caseRepository.getApplications(anyList(), any())).thenReturn(existingApplications);
+
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setAdvocateId("advocate-1");
+        Party party = new Party();
+        party.setIndividualId("individual-1");
+        representative.setRepresenting(Collections.singletonList(party));
+        joinCaseRequest.setRepresentative(representative);
+
+        AdvocateMapping advocateMapping = new AdvocateMapping();
+        advocateMapping.setAdvocateId("ed14dc62-6162-4e29-8b4b-51e8cd25646c");
+        Party party1 = new Party();
+        party.setIndividualId("111");
+        advocateMapping.setRepresenting(Collections.singletonList(party1));
+        courtCase.setRepresentatives(Collections.singletonList(advocateMapping));
+
+        // When
+       CustomException exception = assertThrows(CustomException.class, ()->caseService.verifyJoinCaseRequest(joinCaseRequest));
+       assertEquals("Invalid request for joining a case",exception.getMessage());
+    }
+
 
     @Test
     void testSearchCases() {
