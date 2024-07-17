@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "order",
-      "business": "order-services",
+      "business": "order",
+      "businessService": "order-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
