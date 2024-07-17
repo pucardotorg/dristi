@@ -277,6 +277,24 @@ export const TabLitigantSearchConfig = {
                 populators: {},
               },
               {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
                 label: "Case ID",
                 type: "text",
                 isMandatory: false,
@@ -355,6 +373,24 @@ export const TabLitigantSearchConfig = {
             minReqFields: 0,
             defaultValues: defaultSearchValues,
             fields: [
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
               {
                 label: "Case ID",
                 type: "text",
