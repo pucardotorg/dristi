@@ -215,7 +215,19 @@ components:
           type: string
         exists:
           type: boolean
-
+    AssignedTo:
+      type: object
+      description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
+      properties:
+        individualId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: ID of the person if the person is in the system, in which case the name field can be left blank
+        name:
+          type: string
+          description: name of the person if not in the system
     Task:
       description: A task is created as part of an Order. It will always be linked to an order
       required: [tenantId, orderId, taskType, createdDate, status]
@@ -237,6 +249,8 @@ components:
           minLength: 36
           maxLength: 36
           description: the associated order
+        taskNumber:
+          type: string
         filingNumber:
           type: string
           description: the associated case
@@ -274,18 +288,7 @@ components:
           type: string
           description: workflow status
         assignedTo:
-          type: object
-          description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
-          properties:
-            individualId:
-              type: string
-              format: uuid
-              minLength: 36
-              maxLength: 36
-              description: ID of the person if the person is in the system, in which case the name field can be left blank
-            name:
-              type: string
-              description: name of the person if not in the system
+         $ref: '#/components/schemas/AssignedTo'
         isActive:
           type: boolean
           description: to handle soft delete
@@ -295,7 +298,7 @@ components:
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
-          type: string
+          type: object
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
@@ -322,7 +325,7 @@ components:
           type: string
           description: reference number for the payment made like GRN number from Treasury
         additionalDetails:
-          type: string
+          type: object
           description: any extra information like bank reference number for the payment
         status:
           type: string
