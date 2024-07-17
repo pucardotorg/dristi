@@ -12,6 +12,7 @@ import { selectParticipantConfig } from "../../citizen/FileCase/Config/admission
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -79,6 +80,7 @@ function CaseFileAdmission({ t, path }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === "SEND_BACK" && { assignes: getAllAssignees(caseDetails) || [] }),
           },
         },
         tenantId,

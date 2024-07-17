@@ -12,7 +12,7 @@ import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 function ViewCaseFile({ t, inViewCase = false }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -218,6 +218,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: getAllAssignees(caseDetails) }),
           },
         },
         tenantId,

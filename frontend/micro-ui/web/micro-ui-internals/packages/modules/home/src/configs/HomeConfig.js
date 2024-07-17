@@ -1351,4 +1351,24 @@ export const pendingTaskCaseActions = {
   },
 };
 
-export const pendingTaskSubmissionActions = {};
+export const pendingTaskHearingActions = {};
+
+export const pendingTaskOrderActions = {};
+
+export const pendingTaskOrderOfJudgementActions = {};
+
+export const pendingTaskVoluntarySubmissionActions = {};
+
+export const pendingTaskSubmissionWithResponseActions = {};
+
+export const pendingTaskSubmissionWithoutResponseActions = {};
+
+export const selectTaskType = {
+  case: pendingTaskCaseActions,
+  hearing: pendingTaskHearingActions,
+  order: pendingTaskOrderActions,
+  "order-judgement": pendingTaskOrderOfJudgementActions,
+  "async-voluntary-submission-services": pendingTaskVoluntarySubmissionActions,
+  asynsubmissionwithresponse: pendingTaskSubmissionWithResponseActions,
+  asyncsubmissionwithoutresponse: pendingTaskSubmissionWithoutResponseActions,
+};

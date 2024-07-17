@@ -26,6 +26,7 @@ import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 import { getAllAssignees } from "../../utils/caseUtils";
+import { Urls } from "../../hooks/services/Urls";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -346,7 +347,26 @@ const SubmissionsCreate = () => {
 
   const handleOpenReview = async () => {
     setLoader(true);
-    const res = await createSubmission();
+    debugger;
+    const res = await createSubmission().then((res) => {
+      if (applicationType === "RE_SCHEDULE") {
+        submissionService.customApiService(Urls.application.pendingTask, {
+          pendingTask: {
+            name: "Initiate Reschedule Hearing",
+            entityType: "async-voluntary-submission-services",
+            referenceId: res?.application?.applicationNumber,
+            status: "INITIATE_RESCHEDULE_HEARING",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: "null",
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: false,
+            stateSla: null,
+            additionalDetails: {},
+          },
+        });
+      }
+    });
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
       history.push(

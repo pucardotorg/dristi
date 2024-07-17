@@ -6,7 +6,7 @@ import { useGetPendingTask } from "../hooks/useGetPendingTask";
 import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService } from "../hooks/services";
-import { pendingTaskCaseActions, pendingTaskSubmissionActions, taskTypes } from "../configs/HomeConfig";
+import { selectTaskType, taskTypes } from "../configs/HomeConfig";
 import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -24,7 +24,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
 
-  const { data: pendingTaskDetails = [], isLoading } = useGetPendingTask({
+  const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
         tenantId,
@@ -42,6 +42,10 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
     key: taskType?.code,
     config: { enable: Boolean(taskType.code && tenantId) },
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
 
@@ -86,11 +90,12 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
       })
       .catch((err) => {});
   };
+
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
       const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
-        filingNumber: data?.fields?.find((field) => field.key === "referenceId")?.value || "",
+        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
       }));
       const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
         criteria: listOfFilingNumber,
@@ -101,13 +106,12 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
       });
       const tasks = await Promise.all(
         pendingTaskActionDetails?.map(async (data) => {
-          const filingNumber = data?.fields?.find((field) => field.key === "referenceId")?.value || "";
+          const filingNumber = data?.fields?.find((field) => field.key === "filingNumber")?.value || "";
           const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
           const status = data?.fields?.find((field) => field.key === "status")?.value;
           const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
-          const pendingTaskActions =
-            taskTypeCode === "case" ? pendingTaskCaseActions : taskTypeCode === "hearing" ? pendingTaskSubmissionActions : pendingTaskCaseActions;
+          const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const searchParams = new URLSearchParams();
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
           pendingTaskActions?.[status]?.redirectDetails?.params.forEach((item) => {
