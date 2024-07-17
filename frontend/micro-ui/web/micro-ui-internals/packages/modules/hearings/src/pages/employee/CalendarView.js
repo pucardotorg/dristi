@@ -1,47 +1,43 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
-import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import React, { useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom/";
+import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/services/useGetHearingSlotMetaData";
-import PreHearingModal from "../../components/PreHearingModal";
-import { DataContext } from "../../components/DataContext";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
-  const { updateHearingData } = useContext(DataContext);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [showModal, setShowModal] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState(null);
+  const history = useHistory();
+
+  const [dateRange, setDateRange] = useState({});
+
+  const search = window.location.search;
+  const { fromDate, toDate, slot } = useMemo(() => {
+    const searchParams = new URLSearchParams(search);
+    const fromDate = searchParams.get("from-date") || null;
+    const toDate = searchParams.get("to-date") || null;
+    const slot = searchParams.get("slot") || null;
+    return { fromDate, toDate, slot };
+  }, [search]);
 
   const reqBody = {
-    hearing: { tenantId },
-    criteria: {},
+    criteria: { tenantId, fromDate: dateRange.start?.toISOString().split("T")[0], toDate: dateRange.end?.toISOString().split("T")[0] },
   };
 
-  const { data: hearingResponse, refetch: refetch } = useGetHearings(reqBody, { applicationNumber: "", cnrNumber: "", tenantId }, "dristi", true);
+  const { data: hearingResponse, refetch: refetch } = useGetHearings(
+    reqBody,
+    { applicationNumber: "", cnrNumber: "", tenantId },
+    `${dateRange.start?.toISOString()}-${dateRange.end?.toISOString()}`,
+    dateRange.start && dateRange.end
+  );
   const { data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
 
   const events = useMemo(() => AdvocateSlotsResponse || [], [AdvocateSlotsResponse]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await refetch();
-      } catch (error) {
-        console.error("Error refetching Hearings data:", error);
-      }
-      try {
-        await refetchGetHearingSlotMetaData();
-      } catch (error) {
-        console.error("Error refetching Advocate Slots data:", error);
-      }
-    };
-
-    fetchData();
-  }, [currentMonth, refetch]);
 
   function epochToDateTimeObject(epochTime) {
     if (!epochTime || typeof epochTime !== "number") {
@@ -101,17 +97,24 @@ const MonthlyCalendar = () => {
   }, [hearingDetails, events.slots]);
 
   const handleEventClick = (arg) => {
-    setCurrentEvent(arg.event);
-    updateHearingData({
-      hearingDate: arg.event.extendedProps.date.toISOString().split("T")[0],
-      hearingSlot: arg.event.extendedProps.slot,
-    });
-    setShowModal(true);
+    const fromDate = new Date(arg.event.extendedProps.date);
+    const toDate = new Date(fromDate);
+    toDate.setDate(fromDate.getDate() + 1);
+
+    const searchParams = new URLSearchParams(search);
+    searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
+    searchParams.set("to-date", toDate.toISOString().split("T")[0]);
+    searchParams.set("slot", arg.event.extendedProps.slot);
+
+    history.replace({ search: searchParams.toString() });
   };
 
   const closeModal = () => {
-    setShowModal(false);
-    setCurrentEvent(null);
+    const searchParams = new URLSearchParams(search);
+    searchParams.delete("from-date");
+    searchParams.delete("to-date");
+    searchParams.delete("slot");
+    history.replace({ search: searchParams.toString() });
   };
 
   const Close = () => (
@@ -121,18 +124,6 @@ const MonthlyCalendar = () => {
       </g>
     </svg>
   );
-
-  const CloseBtn = (props) => {
-    return (
-      <div style={{ padding: "10px" }} onClick={props.onClick}>
-        <Close />
-      </div>
-    );
-  };
-
-  const Heading = (props) => {
-    return <h1 className="heading-m">{props.label}</h1>;
-  };
 
   return (
     <div>
@@ -150,9 +141,12 @@ const MonthlyCalendar = () => {
           return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
         }}
         eventClick={handleEventClick}
+        datesSet={(dateInfo) => {
+          setDateRange({ start: dateInfo.start, end: dateInfo.end });
+        }}
       />
 
-      {showModal && <PreHearingModal onCancel={closeModal} />}
+      {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
     </div>
   );
 };

@@ -1,72 +1,87 @@
+const defaultSearchValues = {
+  stage: "",
+  type: "",
+  caseNameOrId: "",
+};
+
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
-  type: "inbox",
+  type: "search",
   customHookName: "hearings.usePreHearingModalData",
   apiDetails: {
-    serviceName: "/case/case/v1/_search",
-    requestParam: {},
-    requestBody: {
+    serviceName: "/hearing/v1/search",
+    requestParam: {
       tenantId: Digit.ULBService.getCurrentTenantId(),
-      criteria: [
-        {
-          status: "CASE_ADMITTED",
-          pagination: { limit: 5, offSet: 0 },
-        },
-      ],
-      inbox: {
-        moduleSearchCriteria: {},
-        limit: 5,
-        offset: 0,
-      },
+    },
+    requestBody: {
+      criteria: {},
     },
     minParametersForSearchForm: 0,
     masterName: "commonUiConfig",
     moduleName: "PreHearingsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-    filterFormJsonPath: "requestBody.Criteria",
-    tableFormJsonPath: "requestParam",
+    searchFormJsonPath: "requestBody.criteria",
+    filterFormJsonPath: "requestBody.criteria",
+    tableFormJsonPath: "requestBody.criteria",
   },
   sections: {
-    filter: {
+    search: {
       uiConfig: {
+        formClassName: "inbox-filter",
+        primaryLabel: "ES_COMMON_SEARCH",
+        secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+        minReqFields: 0,
+        defaultValues: defaultSearchValues,
+        searchWrapperStyles: {
+          marginLeft: "auto",
+        },
         fields: [
           {
-            type: "locationdropdown",
+            label: "Type",
             isMandatory: false,
-            disable: false,
+            key: "type",
+            type: "dropdown",
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
-              defaultText: "Type",
-              selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
+              styles: { width: "150px" },
+              name: "type",
+              error: "Required",
+              optionsKey: "type",
+              options: [
+                {
+                  type: "NIA S138",
+                },
+                {
+                  type: "CIA S138",
+                },
+              ],
             },
           },
           {
-            type: "locationdropdown",
+            label: "Stage",
             isMandatory: false,
-            disable: false,
+            key: "stage",
+            type: "dropdown",
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
-              defaultText: "Stage",
-              selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
+              styles: { width: "150px" },
+              name: "stage",
+              error: "Required",
+              optionsKey: "stage",
+              options: [
+                {
+                  stage: "Pre-Trial",
+                },
+                {
+                  stage: "Inquiry",
+                },
+              ],
             },
           },
           {
+            label: "Search Case Name or ID",
+            isMandatory: false,
+            key: "caseNameOrId",
             type: "text",
-            isMandatory: false,
-            disable: false,
             populators: {
-              name: "ward",
-              type: "ward",
-              optionsKey: "i18nKey",
-              defaultText: "Stage",
-              selectedText: "COMMON_SELECTED",
-              allowMultiSelect: true,
+              name: "caseNameOrId",
             },
           },
         ],
@@ -75,12 +90,11 @@ export const preHearingConfig = {
     },
     searchResult: {
       tenantId: Digit.ULBService.getCurrentTenantId(),
-      label: "",
       uiConfig: {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "caseTitle",
+            jsonPath: "caseName",
           },
           {
             label: "Stage",
@@ -96,12 +110,12 @@ export const preHearingConfig = {
           },
           {
             label: "Actions",
-            jsonPath: "caseDescription",
+            jsonPath: "",
             additionalCustomization: true,
           },
         ],
         enableColumnSort: true,
-        resultsJsonPath: "caseResponse.criteria[0].responseList",
+        resultsJsonPath: "items",
       },
       show: true,
     },
