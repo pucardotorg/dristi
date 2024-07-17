@@ -50,6 +50,13 @@ public class EvidenceValidator {
         if (!caseUtil.fetchCaseDetails(caseExistsRequest)) {
             throw new CustomException(CASE_EXCEPTION, "case does not exist");
         }
+        // Validate filingNumber
+        if(evidenceRequest.getArtifact().getFilingNumber() != null) {
+            CaseExistsRequest filingNumberExistsRequest = createFilingNumberExistsRequest(evidenceRequest.getRequestInfo(), evidenceRequest.getArtifact());
+            if (!caseUtil.fetchCaseDetails(filingNumberExistsRequest)) {
+                throw new CustomException(CASE_EXCEPTION, "filing number does not exist");
+            }
+        }
         // Validate applicationNumbers
         if(evidenceRequest.getArtifact().getApplication() != null) {
             ApplicationExistsRequest applicationExistsRequest = createApplicationExistRequest(evidenceRequest.getRequestInfo(), evidenceRequest.getArtifact());
@@ -113,6 +120,16 @@ public class EvidenceValidator {
         CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
         CaseExists caseExists = new CaseExists();
         caseExists.setCaseId(artifact.getCaseId());
+        List<CaseExists> criteriaList = new ArrayList<>();
+        criteriaList.add(caseExists);
+        caseExistsRequest.setRequestInfo(requestInfo);
+        caseExistsRequest.setCriteria(criteriaList);
+        return caseExistsRequest;
+    }
+    public CaseExistsRequest createFilingNumberExistsRequest(RequestInfo requestInfo, Artifact artifact) {
+        CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
+        CaseExists caseExists = new CaseExists();
+        caseExists.setFilingNumber(artifact.getFilingNumber());
         List<CaseExists> criteriaList = new ArrayList<>();
         criteriaList.add(caseExists);
         caseExistsRequest.setRequestInfo(requestInfo);

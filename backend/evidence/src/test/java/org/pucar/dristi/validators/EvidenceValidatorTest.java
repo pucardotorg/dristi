@@ -74,7 +74,29 @@ class EvidenceValidatorTest {
         // Execute and verify
         assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
     }
+    @Test
+    public void testCreateFilingNumberExistsRequest() {
+        // Given
+        RequestInfo requestInfo = new RequestInfo();
+        Artifact artifact = new Artifact();
+        String filingNumber = "123456789";
+        artifact.setFilingNumber(filingNumber);
 
+        // When
+        CaseExistsRequest caseExistsRequest = evidenceValidator.createFilingNumberExistsRequest(requestInfo, artifact);
+
+        // Then
+        assertNotNull(caseExistsRequest);
+        assertEquals(requestInfo, caseExistsRequest.getRequestInfo());
+
+        List<CaseExists> criteriaList = caseExistsRequest.getCriteria();
+        assertNotNull(criteriaList);
+        assertEquals(1, criteriaList.size());
+
+        CaseExists caseExists = criteriaList.get(0);
+        assertNotNull(caseExists);
+        assertEquals(filingNumber, caseExists.getFilingNumber());
+    }
     @Test
     public void testValidateEvidenceRegistration_HearingDoesNotExist() {
         EvidenceRequest evidenceRequest = new EvidenceRequest();
@@ -87,6 +109,35 @@ class EvidenceValidatorTest {
 
         // Execute and verify
         assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
+    }
+
+    @Test
+    public void testValidateEvidenceRegistration_FilingNumberNotExists() {
+        EvidenceRequest evidenceRequest = createEvidenceRequest();
+
+        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
+        });
+
+        assert exception.getMessage().contains("filing number does not exist");
+    }
+
+    private EvidenceRequest createEvidenceRequest() {
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        requestInfo.setUserInfo(user);
+
+        Artifact artifact = new Artifact();
+        artifact.setTenantId("tenantId");
+        artifact.setCaseId("caseId");
+        artifact.setFilingNumber("filingNumber");
+
+        return EvidenceRequest.builder()
+                .requestInfo(requestInfo)
+                .artifact(artifact)
+                .build();
     }
     @Test
     public void testValidateEvidenceExistence_Success() {
