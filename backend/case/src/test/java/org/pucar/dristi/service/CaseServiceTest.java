@@ -130,6 +130,10 @@ public class CaseServiceTest {
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setLitigants(Collections.singletonList(litigant));
+
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
@@ -161,6 +165,9 @@ public class CaseServiceTest {
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setRepresentatives(Collections.singletonList(representative));
+
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
@@ -202,6 +209,9 @@ public class CaseServiceTest {
         joinCaseRequest.setRepresentative(advocate);
         when(validator.validateLitigantJoinCase(joinCaseRequest)).thenReturn(true);
         when(validator.validateRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
         assertEquals("validAccessCode", response.getAccessCode());

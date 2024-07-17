@@ -92,10 +92,13 @@ public class CaseRegistrationValidator {
         List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build()), requestInfo);
 
-        courtCase.setAccessCode(existingApplications.get(0).getResponseList().get(0).getAccessCode());
 
         if (existingApplications.isEmpty())
             return false;
+
+        if (!ObjectUtils.isEmpty(existingApplications.get(0).getResponseList())){
+            courtCase.setAccessCode(existingApplications.get(0).getResponseList().get(0).getAccessCode());
+        }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), config.getCaseBusinessServiceName(), createMasterDetails());
 
         if (mdmsData.get(config.getCaseBusinessServiceName()) == null)
