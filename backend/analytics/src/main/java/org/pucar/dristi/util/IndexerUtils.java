@@ -163,7 +163,7 @@ public class IndexerUtils {
 		try {
 			additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
 		}catch (Exception e){
-			log.error("Error while building hearing search query");
+			log.error("Error while building API payload");
 			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
 		}
 
@@ -177,6 +177,7 @@ public class IndexerUtils {
 	public String buildPayload(String jsonItem) {
 
 		String id = JsonPath.read(jsonItem, ID_PATH);
+		String name = "";
 		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
 		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
 		String status = JsonPath.read(jsonItem, STATE_PATH);
@@ -191,17 +192,26 @@ public class IndexerUtils {
 		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
 		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
 		String action = JsonPath.read(jsonItem, ACTION_PATH);
+		String additionalDetails;
 
         log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}", entityType, referenceId);
 		Map<String, String> details = processEntity(entityType, referenceId,status,action,tenantId);
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
-
-		return String.format(
-				ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-				config.getIndex(), referenceId, id, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla
-		);
-	}
+		try {
+			additionalDetails = mapper.writeValueAsString(new HashMap<String,Object>());
+		}catch (Exception e){
+			log.error("Error while building listener payload");
+			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
+		}
+        if (filingNumber != null && !filingNumber.isEmpty()) {
+            return String.format(
+                    ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
+                    config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
+            );
+        }
+        return null;
+    }
 
 	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, String tenantId) {
 		Map<String, String> caseDetails = new HashMap<>();
@@ -218,7 +228,9 @@ public class IndexerUtils {
 			case "evidence":
 				caseDetails = processEvidenceEntity(request, referenceId);
 				break;
-			case "application":
+			case "async-voluntary-submission-services":
+			case "asynsubmissionwithresponse":
+			case "asyncsubmissionwithoutresponse":
 				caseDetails = processApplicationEntity(request, referenceId);
 				break;
 			default:

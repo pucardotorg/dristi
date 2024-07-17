@@ -61,7 +61,8 @@ public class IndexerService {
 		try {
 			String stringifiedObject = indexerUtils.buildString(jsonObject);
 			String payload = indexerUtils.buildPayload(stringifiedObject);
-			bulkRequest.append(payload);
+			if(payload!=null && !payload.isEmpty())
+				bulkRequest.append(payload);
 		} catch (Exception e) {
 			log.error("Error while processing JSON object: {}", jsonObject, e);
 		}
