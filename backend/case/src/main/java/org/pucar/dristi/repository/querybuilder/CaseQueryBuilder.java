@@ -310,7 +310,7 @@ public class CaseQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")")
                         .append(AND)
-                        .append("rpst.isactive = = true");
+                        .append("rpst.isactive = true");
                 preparedStmtList.addAll(ids);
             }
 

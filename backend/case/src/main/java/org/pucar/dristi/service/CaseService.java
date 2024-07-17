@@ -160,8 +160,8 @@ public class CaseService {
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-         if (!validator.canRepresentativeJoinCase(joinCaseRequest))
-           throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+           if (!validator.canRepresentativeJoinCase(joinCaseRequest))
+            throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
         log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
@@ -206,9 +206,9 @@ public class CaseService {
     }
 
     private void verifyRepresentativesAndJoinCase(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
+        //for representative to join a case
         if (joinCaseRequest.getRepresentative() != null) {
 
-            //for representative to join a case
             // Stream over the representatives to create a list of advocateIds
             List<String> advocateIds = Optional.ofNullable(courtCase.getRepresentatives())
                     .orElse(Collections.emptyList())
@@ -218,6 +218,11 @@ public class CaseService {
 
             //Setting representative ID as null to resolve later as per need
             joinCaseRequest.getRepresentative().setId(null);
+
+            //when advocate is part of the case
+            //Scenario 1 -> If advocate is already representing the individual throw error
+            //Scenario 2 -> If individual exists and advocate don't represent the individual then add the representing to the advocate and disable from existing one when relation is primary
+            //Scenario 3 -> If individual doesn't exist then add him to the respective advocate
 
             if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null &&
                     advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
@@ -234,46 +239,50 @@ public class CaseService {
                         .map(Party::getIndividualId)
                         .toList();
 
-                if (joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
-                        individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())) {
+                String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
+
+                if (joinCasePartyIndividualID != null &&
+                        individualIds.contains(joinCasePartyIndividualID)) {
                     throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
                 } else {
-                    List<String> existingIndividualId = new ArrayList<>();
-                    courtCase.getRepresentatives().forEach(representative -> representative.getRepresenting().forEach(representing -> existingIndividualId.add(representing.getIndividualId())));
-
-                    if (!existingIndividualId.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId()))
-                        joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
+                    disableExistingRepresenting(courtCase, joinCasePartyIndividualID,auditDetails);
+                    joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
                 }
             }
 
-            //When trying to update existing advocate
-            if (!advocateIds.isEmpty()) {
+            //when advocate is not the part of the case
+            //Scenario 1 -> If individual exist then replace other advocate when relation is primary
+            //Scenario 2 -> If individual doesn't exist then add advocate
 
-                List<AdvocateMapping> existingRepresentatives = courtCase.getRepresentatives();
+            if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null && !advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
                 String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
-
-                existingRepresentatives.forEach(representative ->
-                        representative.getRepresenting().forEach(existingParty -> {
-                            //For getting the representing of the representative by the individualID for whom representative is primary
-                            if (existingParty.getIndividualId().equals(joinCasePartyIndividualID) && (COMPLAINANT_PRIMARY.equalsIgnoreCase(existingParty.getPartyType()) || RESPONDENT_PRIMARY.equalsIgnoreCase(existingParty.getPartyType()))) {
-                                existingParty.setIsActive(false);
-                                existingParty.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
-                                existingParty.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
-
-                                if (representative.getRepresenting().size() == 1) {
-                                    representative.setIsActive(false);
-                                    representative.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
-                                    representative.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
-                                }
-                                producer.push(config.getUpdateRepresentativeJoinCaseTopic(), representative);
-                            }
-                        })
-                );
+                disableExistingRepresenting(courtCase, joinCasePartyIndividualID,auditDetails);
             }
 
             caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
             verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
         }
+    }
+
+    private void disableExistingRepresenting(CourtCase courtCase, String joinCasePartyIndividualID, AuditDetails auditDetails) {
+        courtCase.getRepresentatives().forEach(representative ->
+                representative.getRepresenting().forEach(party -> {
+
+                    //For getting the representing of the representative by the individualID for whom representative is primary
+                    if (party.getIndividualId().equals(joinCasePartyIndividualID) && (COMPLAINANT_PRIMARY.equalsIgnoreCase(party.getPartyType()) || RESPONDENT_PRIMARY.equalsIgnoreCase(party.getPartyType()))) {
+                        party.setIsActive(false);
+                        party.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
+                        party.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
+
+                        if (representative.getRepresenting().size() == 1) {
+                            representative.setIsActive(false);
+                            representative.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
+                            representative.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
+                        }
+                        producer.push(config.getUpdateRepresentativeJoinCaseTopic(), representative);
+                    }
+                })
+        );
     }
 
     private void verifyLitigantsAndJoinCase(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
@@ -308,7 +317,7 @@ public class CaseService {
         String caseAccessCode = courtCase.getAccessCode();
 
         if (!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
-             throw new CustomException(VALIDATION_ERR, "Invalid access code");
+              throw new CustomException(VALIDATION_ERR, "Invalid access code");
         }
         return courtCase;
     }
