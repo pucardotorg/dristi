@@ -114,7 +114,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const searchParams = new URLSearchParams();
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
-          pendingTaskActions?.[status]?.redirectDetails?.params.forEach((item) => {
+          pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
             searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
           });
           const redirectUrl = `/${window?.contextPath}/${userInfoType}${

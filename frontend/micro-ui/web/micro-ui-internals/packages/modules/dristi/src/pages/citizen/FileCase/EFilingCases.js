@@ -1574,6 +1574,7 @@ function EFilingCases({ path }) {
           isCompleted: false,
           stateSla: null,
           additionalDetails: {},
+          tenantId,
         },
       });
     });
