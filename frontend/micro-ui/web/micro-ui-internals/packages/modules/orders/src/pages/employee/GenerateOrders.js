@@ -58,6 +58,7 @@ const GenerateOrders = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const applicationNumber = urlParams.get("applicationNumber");
+  const orderNumber = urlParams.get("orderNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -150,6 +151,9 @@ const GenerateOrders = () => {
     filingNumber,
     Boolean(filingNumber && cnrNumber)
   );
+  const defaultIndex = useMemo(() => {
+    return ordersData?.list?.findIndex((order) => order.orderNumber === orderNumber);
+  }, [ordersData, orderNumber]);
 
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -202,6 +206,11 @@ const GenerateOrders = () => {
       clearTimeout(timer);
     }
   }, [showErrorToast]);
+  useEffect(() => {
+    if (defaultIndex && defaultIndex !== -1 && defaultIndex !== selectedOrder) {
+      setSelectedOrder(defaultIndex);
+    }
+  }, [defaultIndex, selectedOrder]);
 
   const currentOrder = useMemo(() => newformdata?.[selectedOrder], [newformdata, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
@@ -405,7 +414,10 @@ const GenerateOrders = () => {
     setNewFormdata((prev) => {
       return [...prev, defaultOrderData];
     });
-    setSelectedOrder(newformdata.length);
+    if (orderNumber) {
+      history.push(`?filingNumber=${filingNumber}`);
+    }
+    setSelectedOrder(newformdata?.length);
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
@@ -452,6 +464,9 @@ const GenerateOrders = () => {
       } else {
         setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       }
+      if (orderNumber) {
+        history.push(`?filingNumber=${filingNumber}`);
+      }
       setSelectedOrder((prev) => {
         return deleteOrderIndex < prev ? prev - 1 : prev;
       });
@@ -467,6 +482,9 @@ const GenerateOrders = () => {
     setShowReviewModal(true);
   };
   const handleOrderChange = (index) => {
+    if (orderNumber) {
+      history.push(`?filingNumber=${filingNumber}`);
+    }
     setSelectedOrder(index);
   };
 
