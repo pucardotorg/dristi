@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "order-judgement",
-      "business": "order-judgement-services",
+      "business": "order-judgement",
+      "businessService": "order-judgement-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
@@ -41,6 +41,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
               "action": "E-SIGN",
               "nextState": "PENDINGSTAMPING",
               "roles": [
@@ -73,6 +80,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -85,6 +99,15 @@
           "sla": 5,
           "state": "PUBLISHED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

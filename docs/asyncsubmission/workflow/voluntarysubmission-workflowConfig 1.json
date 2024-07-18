@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "async-voluntary-submission-services",
-      "business": "async-voluntary-submission-services",
+      "business": "async-voluntary-submission",
+      "businessService": "async-voluntary-submission-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
@@ -39,6 +39,13 @@
               "roles": [
                 "SUBMISSION_RESPONDER"
               ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
             }
           ]
         },
@@ -56,6 +63,13 @@
               "nextState": "PENDINGREVIEW",
               "roles": [
                 "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             }
           ]
@@ -81,6 +95,13 @@
               "nextState": "COMPLETED",
               "roles": [
                 "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             },
             {
@@ -123,6 +144,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
+            },
+            {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
@@ -142,6 +170,15 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
