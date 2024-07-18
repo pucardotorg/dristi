@@ -284,8 +284,9 @@ public class IndexerUtils {
 		return caseDetails;
 	}
 
-	private Map<String, String> processCaseEntity(JSONObject request, String referenceId, String action, String tenantId) {
+	private Map<String, String> processCaseEntity(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
         Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, referenceId, null);
 		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 
