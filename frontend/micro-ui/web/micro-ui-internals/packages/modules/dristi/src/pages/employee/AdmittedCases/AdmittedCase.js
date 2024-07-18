@@ -332,43 +332,43 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    console.log(option === t("SCHEDULE_HEARING"));
-    let reqBody = {
-      order: {
-        createdDate: formatDate(new Date()),
-        tenantId,
-        cnrNumber,
-        filingNumber: filingNumber,
-        statuteSection: {
-          tenantId,
-        },
-        orderType: "REFERRAL_CASE_TO_ADR",
-        status: "",
-        isActive: true,
-        workflow: {
-          action: OrderWorkflowAction.SAVE_DRAFT,
-          comments: "Creating order",
-          assignes: null,
-          rating: null,
-          documents: [{}],
-        },
-        documents: [],
-        additionalDetails: {},
-      },
-    };
-    if (option === t("GENERATE_ORDER_HOME")) {
-      reqBody.order.orderType = "Bail";
-    } else if (option === t("SCHEDULE_HEARING")) {
-      reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
-    } else if (option === t("REFER_TO_ADR")) {
-      reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
-    }
-    ordersService
-      .createOrder(reqBody, { tenantId })
-      .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
-      })
-      .catch((err) => {});
+    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+    // let reqBody = {
+    //   order: {
+    //     createdDate: formatDate(new Date()),
+    //     tenantId,
+    //     cnrNumber,
+    //     filingNumber: filingNumber,
+    //     statuteSection: {
+    //       tenantId,
+    //     },
+    //     orderType: "REFERRAL_CASE_TO_ADR",
+    //     status: "",
+    //     isActive: true,
+    //     workflow: {
+    //       action: OrderWorkflowAction.SAVE_DRAFT,
+    //       comments: "Creating order",
+    //       assignes: null,
+    //       rating: null,
+    //       documents: [{}],
+    //     },
+    //     documents: [],
+    //     additionalDetails: {},
+    //   },
+    // };
+    // if (option === t("GENERATE_ORDER_HOME")) {
+    //   reqBody.order.orderType = "Bail";
+    // } else if (option === t("SCHEDULE_HEARING")) {
+    //   reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
+    // } else if (option === t("REFER_TO_ADR")) {
+    //   reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
+    // }
+    // ordersService
+    //   .createOrder(reqBody, { tenantId })
+    //   .then(() => {
+    //     history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+    //   })
+    //   .catch((err) => {});
   };
 
   const showToast = (details, duration = 5000) => {

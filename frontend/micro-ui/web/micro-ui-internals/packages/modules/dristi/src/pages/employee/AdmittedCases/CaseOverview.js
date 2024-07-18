@@ -23,9 +23,9 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
-  const advocateIds = caseData.case.representatives?.map((representative) => {
+  const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
-      id: representative.advocateId,
+      id: representative?.advocateId,
     };
   });
 
