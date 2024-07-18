@@ -71,7 +71,6 @@ const SubmissionsCreate = () => {
           return {
             ...item,
             body: item?.body?.map((input) => {
-              console.debug(input);
               return {
                 ...input,
                 populators: {
