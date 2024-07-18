@@ -74,7 +74,6 @@ class EvidenceValidatorTest {
         // Execute and verify
         assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
     }
-
     @Test
     public void testValidateEvidenceRegistration_HearingDoesNotExist() {
         EvidenceRequest evidenceRequest = new EvidenceRequest();

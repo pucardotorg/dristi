@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO dristi_evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application, hearing, orders, mediaType, artifactType,sourceType ,sourceId, sourceName, createdDate, isActive,isEvidence, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?);
+        - query: INSERT INTO dristi_evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application,filingNumber, hearing, orders, mediaType, artifactType,sourceType ,sourceId, sourceName, createdDate, isActive,isEvidence, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?);
           basePath: artifact
           jsonMaps:
             - jsonPath: $.artifact.id
@@ -17,6 +17,7 @@ serviceMaps:
             - jsonPath: $.artifact.externalRefNumber
             - jsonPath: $.artifact.caseId
             - jsonPath: $.artifact.application
+            - jsonPath: $.artifact.filingNumber
             - jsonPath: $.artifact.hearing
             - jsonPath: $.artifact.order
             - jsonPath: $.artifact.mediaType
@@ -74,7 +75,7 @@ serviceMaps:
       fromTopic: update-artifact-withoutworkflow-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO dristi_evidence_artifact (id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application, hearing, orders, mediaType, artifactType, sourceType, sourceId, sourceName, createdDate, isActive, isEvidence,status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, artifactNumber = EXCLUDED.artifactNumber, evidenceNumber = EXCLUDED.evidenceNumber, externalRefNumber = EXCLUDED.externalRefNumber, caseId = EXCLUDED.caseId, application = EXCLUDED.application, hearing = EXCLUDED.hearing, orders = EXCLUDED.orders, mediaType = EXCLUDED.mediaType, artifactType = EXCLUDED.artifactType,sourceType=EXCLUDED.sourceType, sourceID = EXCLUDED.sourceID, sourceName = EXCLUDED.sourceName, createdDate = EXCLUDED.createdDate, isActive = EXCLUDED.isActive, isEvidence=EXCLUDED.isEvidence ,status = EXCLUDED.status, description = EXCLUDED.description, artifactDetails = EXCLUDED.artifactDetails, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
+        - query: INSERT INTO dristi_evidence_artifact (id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application,filingNumber, hearing, orders, mediaType, artifactType, sourceType, sourceId, sourceName, createdDate, isActive, isEvidence,status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?,?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, artifactNumber = EXCLUDED.artifactNumber, evidenceNumber = EXCLUDED.evidenceNumber, externalRefNumber = EXCLUDED.externalRefNumber, caseId = EXCLUDED.caseId, application = EXCLUDED.application,filingNumber = EXCLUDED.filingNumber, hearing = EXCLUDED.hearing, orders = EXCLUDED.orders, mediaType = EXCLUDED.mediaType, artifactType = EXCLUDED.artifactType,sourceType=EXCLUDED.sourceType, sourceID = EXCLUDED.sourceID, sourceName = EXCLUDED.sourceName, createdDate = EXCLUDED.createdDate, isActive = EXCLUDED.isActive, isEvidence=EXCLUDED.isEvidence ,status = EXCLUDED.status, description = EXCLUDED.description, artifactDetails = EXCLUDED.artifactDetails, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
           basePath: artifact
           jsonMaps:
             - jsonPath: $.artifact.id
@@ -84,6 +85,7 @@ serviceMaps:
             - jsonPath: $.artifact.externalRefNumber
             - jsonPath: $.artifact.caseId
             - jsonPath: $.artifact.application
+            - jsonPath: $.artifact.filingNumber
             - jsonPath: $.artifact.hearing
             - jsonPath: $.artifact.order
             - jsonPath: $.artifact.mediaType
