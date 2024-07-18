@@ -145,7 +145,11 @@ components:
         artifactType:
           type: string
           description: Represents the legal classification of the artifact, such as sworn statement, affidavit, testimony, etc.
-          example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc.. 
+          example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc..
+        sourceType:
+          type: string
+          description: Represents the legal classification of the source, such as COMPLAINANT, ACCUSED, COURT.
+          example: COMPLAINANT, ACCUSED, COURT.
         sourceID:
           type: string
           description: The individual ID of the person who provided this artifact. In case of Person A providing an affidavit, this will be the individual ID of Person A.
