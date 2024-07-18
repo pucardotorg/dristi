@@ -453,7 +453,7 @@ const GenerateOrders = () => {
         setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       }
       setSelectedOrder((prev) => {
-        return deleteOrderIndex >= prev ? prev - 1 : prev;
+        return deleteOrderIndex < prev ? prev - 1 : prev;
       });
     } catch (error) {
       //show toast of API failed
@@ -483,20 +483,23 @@ const GenerateOrders = () => {
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
-          {newformdata?.map((order, index) => {
+          {newformdata?.map((_, index) => {
             return (
-              <div
-                className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}
-                onClick={() => {
-                  handleOrderChange(index);
-                }}
-              >
-                <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>
+                <h1
+                  onClick={() => {
+                    handleOrderChange(index);
+                  }}
+                  style={{ cursor: "pointer", flex: 1 }}
+                >
+                  {t(newformdata[index]?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
+                </h1>
                 {newformdata?.length > 1 && (
                   <span
                     onClick={() => {
                       setDeleteOrderIndex(index);
                     }}
+                    style={{ cursor: "pointer" }}
                   >
                     <CustomDeleteIcon />
                   </span>

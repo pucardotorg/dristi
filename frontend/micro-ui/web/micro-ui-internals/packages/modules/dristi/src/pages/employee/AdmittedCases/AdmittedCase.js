@@ -445,7 +445,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 color: "#77787B",
               }}
             >
-              Code: {caseData.criteria[0].responseList[0].accessCode}
+              Code: {caseDetails?.accessCode || ""}
             </div>
           </div>
           <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
