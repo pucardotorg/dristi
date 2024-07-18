@@ -31,7 +31,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
-          ...(isLitigant && { assignedTo: [uuid] }),
+          isCompleted: false,
+          ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
         },
         limit: 10000,

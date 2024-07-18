@@ -547,11 +547,6 @@ export const TabSearchconfig = {
                 jsonPath: "sourceType",
               },
               {
-                label: "Status",
-                jsonPath: "isEvidence",
-                additionalCustomization: true,
-              },
-              {
                 label: "Evidence Number",
                 jsonPath: "evidenceNumber",
               },
