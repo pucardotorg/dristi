@@ -11,7 +11,7 @@ const ScanQrCode = () => {
     const { setActiveStep } = useActiveStepContext();
 
     return (
-        <Grid container spacing={2} alignItems="center" justifyContent="center" className="scan-qr-container">
+        <Grid container alignItems="center" justifyContent="center" className="scan-qr-container">
             <Grid item xs={12}>
                 <Typography variant="h5" className="header-title" style={{fontWeight:"bolder"}}>
                     DRISHTI
@@ -23,7 +23,7 @@ const ScanQrCode = () => {
                     <img src={qr} className="qr-image" alt="QR Code" />
                 </Box>
             </Grid>
-            <Grid item xs={12} textAlign="center">
+            <Grid item xs={12} textAlign="center"  sx={{marginBottom: 2}}>
                 <Typography variant="h5" className="description-text">
                     Dispute resolution made <span style={{color:"#007E7E", fontStyle:"italic"}}> simple</span>
                 </Typography>

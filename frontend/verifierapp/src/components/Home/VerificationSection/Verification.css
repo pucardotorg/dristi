@@ -4,6 +4,10 @@
     .verification-text {
       font: normal normal 600 20px/24px Inter;
       margin-bottom: 44px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
   
       h5 {
         font-weight: 600;
