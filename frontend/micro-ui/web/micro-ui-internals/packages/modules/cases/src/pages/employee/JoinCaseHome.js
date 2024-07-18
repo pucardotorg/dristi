@@ -772,7 +772,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   label={t(JoinHomeLocalisation.WARNING)}
                   additionalElements={[
                     <p>
-                      {JoinHomeLocalisation.ALREADY_REPRESENTING} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
+                      {t(JoinHomeLocalisation.ALREADY_REPRESENTING)} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
                     </p>,
                   ]}
                   inline
@@ -829,7 +829,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
               if (
                 (isFound && advIsFound && !selectedParty?.partyType?.includes(partyType)) ||
-                (!isFound && !selectedParty?.partyType?.includes(partyType))
+                (!isFound && advIsFound && !selectedParty?.partyType?.includes(partyType))
               )
                 return true;
               else return false;
@@ -842,8 +842,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   label={t(JoinHomeLocalisation.WARNING)}
                   additionalElements={[
                     <p>
-                      {JoinHomeLocalisation.ALREADY_REPRESENTING} {selectedParty?.isComplainant ? "respondent" : "complainant"}
-                      {JoinHomeLocalisation.CANT_REPRESENT_BOTH_PARTY}
+                      {t(JoinHomeLocalisation.ALREADY_REPRESENTING)} {selectedParty?.isComplainant ? "respondent" : "complainant"}
+                      {t(JoinHomeLocalisation.CANT_REPRESENT_BOTH_PARTY)}
                     </p>,
                   ]}
                   inline
@@ -1683,10 +1683,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 {
                   additionalDetails: {
                     uuid: userUUID,
-                    firstName: name?.givenName,
-                    middleName: name?.otherNames,
-                    lastName: name?.familyName,
-                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                    firstName: selectedParty?.isComplainant ? selectedParty?.firstName : selectedParty?.respondentFirstName,
+                    middleName: selectedParty?.isComplainant ? selectedParty?.middleName : selectedParty?.respondentMiddleName,
+                    lastName: selectedParty?.isComplainant ? selectedParty?.lastName : selectedParty?.respondentLastName,
+                    fullName: selectedParty?.fullName,
                   },
                   caseId: caseDetails?.id,
                   tenantId: tenantId,
@@ -1774,10 +1774,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 {
                   additionalDetails: {
                     uuid: userUUID,
-                    firstName: name?.givenName,
-                    middleName: name?.otherNames,
-                    lastName: name?.familyName,
-                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                    firstName: selectedParty?.isComplainant ? selectedParty?.firstName : selectedParty?.respondentFirstName,
+                    middleName: selectedParty?.isComplainant ? selectedParty?.middleName : selectedParty?.respondentMiddleName,
+                    lastName: selectedParty?.isComplainant ? selectedParty?.lastName : selectedParty?.respondentLastName,
+                    fullName: selectedParty?.fullName,
                   },
                   caseId: caseDetails?.id,
                   tenantId: tenantId,
