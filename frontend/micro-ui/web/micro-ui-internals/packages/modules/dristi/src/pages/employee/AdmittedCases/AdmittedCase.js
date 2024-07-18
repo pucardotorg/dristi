@@ -181,6 +181,18 @@ const AdmittedCases = ({ isJudge = true }) => {
               },
             },
           }
+        : tabConfig.label === "History"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                filingNumber: filingNumber,
+                tenantId: tenantId,
+              },
+            },
+          }
         : tabConfig.label === "Documents"
         ? {
             ...tabConfig,
