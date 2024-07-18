@@ -36,6 +36,8 @@ const InsideHearingMainPage = () => {
   const [attendees, setAttendees] = useState([]);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+  const [fillingNumber, setFillingNumber] = useState("");
+  const [caseDetails, setCaseDetails] = useState({});
 
   const onCancel = () => {
     setAddPartyModal(false);
@@ -60,7 +62,7 @@ const InsideHearingMainPage = () => {
   };
 
   const reqBody = {
-    hearing: { tenantId, hearing },
+    hearing: { tenantId },
     criteria: {
       tenantID: tenantId,
       hearingId: hearingId,
@@ -104,28 +106,46 @@ const InsideHearingMainPage = () => {
     !checkUserApproval("CASE_VIEWER")
   );
 
+  const { data: caseDataResponse } = Digit.Hooks.dristi.useSearchCaseService(
+    {
+      criteria: [
+        {
+          filingNumber: fillingNumber,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    fillingNumber,
+    fillingNumber
+  );
+
   useEffect(() => {
     if (latestText) {
       const hearingData = latestText?.HearingList?.[0];
       // hearing data with particular id will always give array of one object
       if (hearingData) {
         setHearing(hearingData);
-        const additionalDetails = hearingData?.additionalDetails || {};
-        const processedAdditionalDetails = {
-          ...additionalDetails,
-          witnesses: additionalDetails.witnesses || [],
-        };
-        setAdditionalDetails(processedAdditionalDetails);
-        setOptions(processedAdditionalDetails.witnesses.map((witness) => ({ label: witness.partyName, value: witness.partyName })));
         setImmediateText(hearingData?.transcript[0]);
         setDelayedText(hearingData?.transcript[0]);
-        setSelectedWitness(processedAdditionalDetails.witnesses[0] || {});
-        setWitnessDepositionText(processedAdditionalDetails.witnesses[0]?.deposition || "");
         setAttendees(hearingData.attendees || []);
+        setFillingNumber(hearingData?.filingNumber[0]);
       }
       getCaseDetails();
     }
   }, [latestText]);
+
+  useEffect(() => {
+    if (caseDataResponse) {
+      setCaseDetails(caseDataResponse?.criteria?.[0]);
+      const responseList = caseDataResponse?.criteria?.[0]?.responseList?.[0];
+      setAdditionalDetails(responseList?.additionalDetails);
+      setOptions(responseList?.additionalDetails?.witnessDetails?.formdata?.map((data) => ({ label: data?.data?.name, value: data?.data?.name })));
+      setSelectedWitness(responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {});
+      setWitnessDepositionText(responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data?.deposition || "");
+    }
+  }, [caseDataResponse]);
 
   const handleModal = () => {
     setIsOpen(!isOpen);
@@ -141,10 +161,15 @@ const InsideHearingMainPage = () => {
 
         const updatedHearing = { ...prevHearing };
         if (activeTab === "Witness Deposition") {
-          const witnessIndex = updatedHearing.additionalDetails.witnesses.findIndex((w) => w.name === selectedWitness);
-          if (witnessIndex >= 0) {
-            updatedHearing.additionalDetails.witnesses[witnessIndex].deposition = newText;
+          if (!updatedHearing?.additionalDetails?.witnesses) {
+            updatedHearing.additionalDetails.witnesses = [];
           }
+          const newWitness = {
+            uuid: selectedWitness?.data?.uuid,
+            name: selectedWitness?.data?.name,
+            depositionText: newText,
+          };
+          updatedHearing.additionalDetails.witnesses.push(newWitness);
         } else {
           updatedHearing.transcript[0] = newText;
         }
@@ -171,9 +196,9 @@ const InsideHearingMainPage = () => {
 
   const handleDropdownChange = (event) => {
     const selectedName = event.target.value;
-    const selectedWitness = additionalDetails.witnesses.find((w) => w.name === selectedName);
+    const selectedWitness = additionalDetails?.witnessDetails?.formdata?.find((w) => w.data.name === selectedName);
     setSelectedWitness(selectedWitness);
-    setWitnessDepositionText(selectedWitness?.deposition || "");
+    setWitnessDepositionText(selectedWitness?.data?.deposition || "");
   };
 
   const handleEndHearingModal = () => {
