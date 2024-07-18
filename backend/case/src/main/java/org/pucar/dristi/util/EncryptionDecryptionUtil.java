@@ -113,9 +113,12 @@ public class EncryptionDecryptionUtil {
             if (list.size() > 1)
                 return false;
             usersToDecrypt = ((CourtCase) list.get(0)).getLitigants();
+            if (usersToDecrypt == null)
+                return false;
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of Object");
         }
+
         List<UUID> userIDs = usersToDecrypt
                 .stream()
                 .map(Party::getId)
