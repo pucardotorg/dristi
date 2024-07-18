@@ -347,26 +347,7 @@ const SubmissionsCreate = () => {
 
   const handleOpenReview = async () => {
     setLoader(true);
-    debugger;
-    const res = await createSubmission().then((res) => {
-      if (applicationType === "RE_SCHEDULE") {
-        submissionService.customApiService(Urls.application.pendingTask, {
-          pendingTask: {
-            name: "Initiate Reschedule Hearing",
-            entityType: "async-voluntary-submission-services",
-            referenceId: res?.application?.applicationNumber,
-            status: "INITIATE_RESCHEDULE_HEARING",
-            assignedTo: [],
-            assignedRole: ["JUDGE_ROLE"],
-            cnrNumber: "null",
-            filingNumber: caseDetails?.filingNumber,
-            isCompleted: false,
-            stateSla: null,
-            additionalDetails: {},
-          },
-        });
-      }
-    });
+    const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
       history.push(
