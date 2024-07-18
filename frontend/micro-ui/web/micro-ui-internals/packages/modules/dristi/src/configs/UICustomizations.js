@@ -583,7 +583,6 @@ export const UICustomizations = {
   },
   SearchIndividualConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria.state);
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
@@ -613,6 +612,17 @@ export const UICustomizations = {
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,
+          },
+        },
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            if (requestCriteria.url.split("/".includes("order"))) {
+              if (userRoles.includes("CITIZEN")) {
+                return { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") };
+              }
+            }
+            return data;
           },
         },
       };
