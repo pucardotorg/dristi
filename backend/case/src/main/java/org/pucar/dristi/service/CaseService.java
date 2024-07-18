@@ -96,7 +96,7 @@ public class CaseService {
                 List<CourtCase> decryptedCourtCases = new ArrayList<>();
                 caseCriteria.getResponseList().forEach(cases -> {
                     cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber())));
-                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,null,CourtCase.class,caseSearchRequests.getRequestInfo()));
+                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,"CaseDecryptOther",CourtCase.class,caseSearchRequests.getRequestInfo()));
                 });
                 caseCriteria.setResponseList(decryptedCourtCases);
             });
