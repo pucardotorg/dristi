@@ -95,7 +95,7 @@ paths:
 components:
   schemas:
     Artifact:
-      required: [tenantId, caseId,filingNumber]
+      required: [tenantId, caseId, filingNumber]
       type: object
       properties:
         id:
