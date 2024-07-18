@@ -10,6 +10,9 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
+import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -77,6 +80,7 @@ function CaseFileAdmission({ t, path }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === "SEND_BACK" && { assignes: getAllAssignees(caseDetails) || [] }),
           },
         },
         tenantId,
@@ -182,7 +186,37 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const handleScheduleNextHearing = () => {
-    history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`);
+    const reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: caseDetails?.filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+    DRISTIService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+      .then(() => {
+        history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
+          caseId: caseId,
+          tab: "Orders",
+        });
+      })
+      .catch();
   };
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
@@ -207,14 +241,13 @@ function CaseFileAdmission({ t, path }) {
     additionalDetails: "CS_ADDITIONAL_DETAILS",
   };
 
-  if (!caseId) {
-    return <Redirect to="admission" />;
+  if (!caseId || (caseDetails && caseDetails?.status === CaseWorkflowState.CASE_ADMITTED)) {
+    return <Redirect to="/" />;
   }
 
   if (isLoading) {
     return <Loader />;
   }
-
   return (
     <div className={"case-and-admission"}>
       <div className="view-case-file">
@@ -254,11 +287,11 @@ function CaseFileAdmission({ t, path }) {
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-                showSecondaryLabel={true}
-                // actionClassName="admission-action-buttons"
+                showSecondaryLabel={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 actionClassName="case-file-admission-action-bar"
-                showSkip={true}
+                showSkip={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 onSkip={onSendBack}
+                skiplabel={t("SEND_BACK_FOR_CORRECTION")}
                 noBreakLine
                 submitIcon={<RightArrow />}
                 skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}

@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
+import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);

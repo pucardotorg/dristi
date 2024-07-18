@@ -167,7 +167,7 @@ const HomeView = () => {
           tenantId,
           criteria: [
             {
-              litigantId: individualId,
+              ...(advocateId ? { advocateId } : { litigantId: individualId }),
 
               pagination: { offSet: 0, limit: 1 },
             },
@@ -177,7 +177,7 @@ const HomeView = () => {
         setIsFetchCaseLoading(false);
       }
     })();
-  }, [individualId, tenantId, userType]);
+  }, [advocateId, individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false })));
@@ -213,9 +213,13 @@ const HomeView = () => {
     } else {
       const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
       if (statusArray.includes(row?.original?.status)) {
-        if (row?.original?.status === "CASE_ADMITTED" || row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
+        if (row?.original?.status === "CASE_ADMITTED") {
           history.push(
             `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
+          );
+        } else if (row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/admission?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}`
           );
         } else {
           history.push(

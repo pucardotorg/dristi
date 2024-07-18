@@ -33,7 +33,7 @@ const SelectOtp = ({
 
   const handleKeyDown = (e) => {
     e.stopPropagation();
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && otp?.length === 6 && canSubmit) {
       onSelect();
     }
   };
