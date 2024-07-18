@@ -1,16 +1,16 @@
-import { CloseSvg, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Modal from "../../../components/Modal";
-import DocViewerWrapper from "../docViewerWrapper";
-import { RightArrow } from "../../../icons/svgIndex";
-import CommentComponent from "../../../components/CommentComponent";
-import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import CommentComponent from "../../../components/CommentComponent";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
+import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
+import Modal from "../../../components/Modal";
+import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import { RightArrow } from "../../../icons/svgIndex";
 import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import DocViewerWrapper from "../docViewerWrapper";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
