@@ -108,6 +108,8 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
       .catch((err) => {});
   };
 
+  const orderList = userRoles.includes("CITIZEN") ? ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") : ordersRes?.list;
+
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
   };
@@ -271,7 +273,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
             </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-            {ordersRes?.list
+            {orderList
               ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
               .slice(0, 5)
               .map((order) => (
