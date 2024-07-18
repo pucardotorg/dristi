@@ -469,12 +469,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
         if (selectedParty?.label) {
-          getUserUUID(selectedParty?.individualId);
           if ((searchLitigantInRepresentives().isFound && roleOfNewAdvocate) || !searchLitigantInRepresentives().isFound) {
             setIsDisabled(false);
           } else {
             setIsDisabled(true);
           }
+          getUserUUID(selectedParty?.individualId);
         }
       } else {
         setIsDisabled(true);
@@ -1493,7 +1493,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           const { isFound, representative } = searchLitigantInRepresentives();
           if (isFound && representative?.advocateId === advocateId) {
             setStep(8);
-            setMessageHeader(t("You already representing the litigants."));
+            setMessageHeader(t(""));
             setSuccess(true);
           } else setStep(step + 1);
         } else {
@@ -1759,6 +1759,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             representative: {
               tenantId: tenantId,
               advocateId: advocateId,
+              caseId: caseDetails?.id,
               representing: [
                 {
                   additionalDetails: {
@@ -1768,9 +1769,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     lastName: name?.familyName,
                     fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
                   },
+                  caseId: caseDetails?.id,
                   tenantId: tenantId,
                   individualId: selectedParty?.individualId || null,
-                  partyType: selectedParty?.partyType,
+                  partyType: selectedParty?.isComplainant ? "complainant.primary" : "respondent.primary",
                 },
               ],
               additionalDetails: {
@@ -1835,6 +1837,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               caseFilingNumber: caseNumber,
               tenantId: tenantId,
               accessCode: validationCode,
+              caseId: caseDetails?.id,
               litigant: {
                 additionalDetails: {
                   firstName: name?.givenName,
@@ -1844,6 +1847,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   affidavitText,
                   uuid: userInfo?.uuid,
                 },
+                caseId: caseDetails?.id,
                 tenantId: tenantId,
                 individualId: individualId,
                 partyCategory: "INDIVIDUAL",
@@ -1973,6 +1977,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               caseFilingNumber: caseNumber,
               tenantId: tenantId,
               accessCode: validationCode,
+              caseId: caseDetails?.id,
               litigant: {
                 additionalDetails: {
                   firstName: name?.givenName,
@@ -2000,10 +2005,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         document: newDocument,
                         uuid: userInfo?.uuid,
                       },
+                      caseId: caseDetails?.id,
                       tenantId: tenantId,
                       individualId: individualId,
                       partyCategory: "INDIVIDUAL",
-                      partyType: selectedParty?.partyType,
+                      partyType: selectedParty?.isComplainant ? "complainant.primary" : "respondent.primary",
                     },
                   ],
                   additionalDetails: {

@@ -1772,7 +1772,7 @@ export const updateCaseDetails = async ({
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,
                         individualId: data?.individualId,
-                        partyType: data?.partyType,
+                        partyType: data?.partyType.includes("complainant") ? "complainant.primary" : "respondent.primary",
                       }))
                     : []),
                 ]
