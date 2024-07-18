@@ -15,7 +15,7 @@ public class EvidenceQueryBuilder {
 
     private static final String BASE_ARTIFACT_QUERY = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
             "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
-            "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
+            "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
             "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
             "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
             "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
@@ -34,7 +34,7 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList,String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList,String id, String caseId, String application,String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
@@ -43,6 +43,7 @@ public class EvidenceQueryBuilder {
             firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
             firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
             firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria =addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?");
             firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
             firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
             firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
