@@ -469,11 +469,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
       if (userType && userType === "Litigant" && selectedParty?.label && !selectedParty?.individualId && representingYourself) {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
-        const { partyType } = searchAdvocateInRepresentives(advocateId);
+        const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
         if (selectedParty?.label) {
           if (
             (searchLitigantInRepresentives().isFound && roleOfNewAdvocate) ||
-            (!searchLitigantInRepresentives().isFound && !selectedParty?.partyType?.includes(partyType))
+            (!searchLitigantInRepresentives().isFound && selectedParty?.partyType?.includes(partyType)) ||
+            !advIsFound
           ) {
             setIsDisabled(false);
           } else {
@@ -2148,7 +2149,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
               ? "Done"
               : step === 5
               ? "Make Payment"
-              : userType === "Litigant" && step === 0 && caseInfo.length === 0
+              : userType === "Litigant" && step === 0 && !caseDetails.filingNumber
               ? "Search"
               : t("PROCEED_TEXT")
           }
