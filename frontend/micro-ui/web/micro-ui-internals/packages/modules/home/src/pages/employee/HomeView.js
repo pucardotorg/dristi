@@ -249,8 +249,8 @@ const HomeView = () => {
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
-                <div className="button-field" style={{ width: "50%" }}>
-                  {individualId && userType && userInfoType === "citizen" && (
+                {individualId && userType && userInfoType === "citizen" && (
+                  <div className="button-field" style={{ width: "50%" }}>
                     <React.Fragment>
                       <JoinCaseHome refreshInbox={refreshInbox} t={t} />
                       <Button
@@ -262,8 +262,8 @@ const HomeView = () => {
                         }}
                       />
                     </React.Fragment>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="inbox-search-wrapper pucar-home home-view">
                 <InboxSearchComposer

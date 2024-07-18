@@ -63,7 +63,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   return (
     <Switch>
       <React.Fragment>
-        <div className="ground-container">
+        <div className="ground-container dristi-employee-main">
           {!location.pathname.endsWith("/registration-requests") &&
             !location.pathname.includes("/pending-payment-inbox") &&
             !location.pathname.includes("/case") &&

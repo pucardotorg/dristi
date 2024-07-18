@@ -213,7 +213,6 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
         <Card
           style={{
             width: "70%",
-            marginTop: "10px",
           }}
         >
           <div
