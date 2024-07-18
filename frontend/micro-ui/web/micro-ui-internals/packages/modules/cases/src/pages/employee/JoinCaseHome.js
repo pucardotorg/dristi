@@ -114,7 +114,7 @@ const advocateVakalatnamaAndNocConfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -140,7 +140,7 @@ const advocateVakalatnamaAndNocConfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -168,7 +168,7 @@ const advocateVakalatnamaConfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -351,7 +351,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   uploadGuidelines: "UPLOAD_DOC_50",
                   maxFileSize: 50,
                   maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-                  fileTypes: ["JPG", "PNG", "PDF"],
+                  fileTypes: ["JPG", "PDF"],
                   isMultipleUpload: false,
                   downloadTemplateText: "VAKALATNAMA_TEMPLATE_TEXT",
                   downloadTemplateLink: "https://www.jsscacs.edu.in/sites/default/files/Department%20Files/Number%20System%20.pdf",
@@ -416,10 +416,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
 
   const searchLitigantInRepresentives = useCallback(() => {
     const representative = caseDetails?.representatives?.find((data) =>
-      data?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId)
+      data?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId && rep?.isActive === true)
     );
     let representing;
-    if (representative) representing = representative?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId);
+    if (representative)
+      representing = representative?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId && rep?.isActive === true);
 
     if (representative && representing) {
       return { isFound: true, representative: representative, representing: representing };
@@ -468,8 +469,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
       if (userType && userType === "Litigant" && selectedParty?.label && !selectedParty?.individualId && representingYourself) {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate") {
+        const { partyType } = searchAdvocateInRepresentives(advocateId);
         if (selectedParty?.label) {
-          if ((searchLitigantInRepresentives().isFound && roleOfNewAdvocate) || !searchLitigantInRepresentives().isFound) {
+          if (
+            (searchLitigantInRepresentives().isFound && roleOfNewAdvocate) ||
+            (!searchLitigantInRepresentives().isFound && !selectedParty?.partyType?.includes(partyType))
+          ) {
             setIsDisabled(false);
           } else {
             setIsDisabled(true);
@@ -681,7 +686,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
                         <span>
                           {caseDetails?.additionalDetails?.complainantDetails?.formdata
                             ?.map(
-                              (data) => `${data?.data?.firstName}${data?.data?.middleName && " " + data?.data?.middleName} ${data?.data?.lastName}`
+                              (data) =>
+                                `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "} ${data?.data?.lastName}`
                             )
                             .join(", ")}
                         </span>
@@ -819,9 +825,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
             )}
           {selectedParty?.label &&
             (() => {
-              const { isFound, representative } = searchLitigantInRepresentives(caseDetails);
+              const { isFound } = searchLitigantInRepresentives(caseDetails);
               const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
-              if (isFound && representative.advocateId !== advocateId && advIsFound && !selectedParty?.partyType?.includes(partyType)) return true;
+              if (
+                (isFound && advIsFound && !selectedParty?.partyType?.includes(partyType)) ||
+                (!isFound && !selectedParty?.partyType?.includes(partyType))
+              )
+                return true;
               else return false;
             })() &&
             userType === "Advocate" && (
