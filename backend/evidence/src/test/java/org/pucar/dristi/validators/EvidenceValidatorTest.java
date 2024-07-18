@@ -51,6 +51,7 @@ class EvidenceValidatorTest {
         Artifact artifact = new Artifact();
         artifact.setTenantId("");
         artifact.setCaseId("");
+        artifact.setFilingNumber("");
         evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(new RequestInfo());
 
@@ -59,7 +60,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals(ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE, exception.getCode());
-        assertEquals("tenantId and caseId are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
     @Test
     public void testValidateEvidenceRegistration_OrderDoesNotExist() {
@@ -93,6 +94,7 @@ class EvidenceValidatorTest {
         Artifact artifact = new Artifact();
         artifact.setTenantId("pg");
         artifact.setCaseId("47631e51-0eab-4037-a5b0-b823628b23ee");
+        artifact.setFilingNumber("47631e51-0eab-4037-a5b0-b823628b23ee");
         artifact.setOrder( "47631e51-0eab-4037-a5b0-b823628b23ee");
         evidenceRequest.setArtifact(artifact);
         RequestInfo requestInfo=new RequestInfo();
@@ -130,6 +132,7 @@ class EvidenceValidatorTest {
         Artifact artifact = new Artifact();
         artifact.setTenantId("pg");
         artifact.setCaseId("47631e51-0eab-4037-a5b0-b823628b23ee");
+        artifact.setFilingNumber("47631e51-0eab-4037-a5b0-b823628b23ee");
         artifact.setOrder( "47631e51-0eab-4037-a5b0-b823628b23ee");
         evidenceRequest.setArtifact(artifact);
         RequestInfo requestInfo=new RequestInfo();
@@ -176,6 +179,7 @@ class EvidenceValidatorTest {
         Artifact artifact = new Artifact();
         artifact.setTenantId("tenant");
         artifact.setCaseId("caseId");
+        artifact.setFilingNumber("47631e51-0eab-4037-a5b0-b823628b23ee");
         evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(new RequestInfo());
 
@@ -196,8 +200,8 @@ class EvidenceValidatorTest {
             evidenceValidator.validateEvidenceRegistration(evidenceRequest);
         });
 
-        assertEquals(ServiceConstants.CASE_EXCEPTION, exception.getCode());
-        assertEquals("case does not exist", exception.getMessage());
+        assertEquals("IllegalArgumentException", exception.getCode());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     @Test
@@ -211,8 +215,8 @@ class EvidenceValidatorTest {
             evidenceValidator.validateEvidenceRegistration(evidenceRequest);
         });
 
-        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
-        assertEquals("application does not exist", exception.getMessage());
+        assertEquals("IllegalArgumentException", exception.getCode());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     @Test
@@ -226,8 +230,8 @@ class EvidenceValidatorTest {
             evidenceValidator.validateEvidenceRegistration(evidenceRequest);
         });
 
-        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
-        assertEquals("application does not exist", exception.getMessage());
+        assertEquals("IllegalArgumentException", exception.getCode());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     @Test
@@ -241,8 +245,8 @@ class EvidenceValidatorTest {
             evidenceValidator.validateEvidenceRegistration(evidenceRequest);
         });
 
-        assertEquals(ServiceConstants.APPLICATION_EXCEPTION, exception.getCode());
-        assertEquals("application does not exist", exception.getMessage());
+        assertEquals("IllegalArgumentException", exception.getCode());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     @Test
@@ -251,6 +255,7 @@ class EvidenceValidatorTest {
         evidenceRequest.getArtifact().setApplication("applicationId");
         evidenceRequest.getArtifact().setOrder("8c11c5ca-03bd-11e7-93ae-92361f002671");
         evidenceRequest.getArtifact().setHearing("hearingId");
+        evidenceRequest.getArtifact().setFilingNumber("8c11c5ca-03bd-11e7-93ae-92361f002671");
 
         when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
         when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(true);
@@ -272,7 +277,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
-        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: case does not exist", exception.getMessage());
+        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     private EvidenceRequest createValidEvidenceRequest() {
