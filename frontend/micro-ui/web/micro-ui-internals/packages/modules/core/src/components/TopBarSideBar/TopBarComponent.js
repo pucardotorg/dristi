@@ -27,7 +27,8 @@ const TopBarComponent = ({
 }) => {
   const { pathname } = useLocation();
   const history = useHistory();
-
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   // const showHaburgerorBackButton = () => {
   //   if (pathname === "/digit-ui/citizen" || pathname === "/digit-ui/citizen/" || pathname === "/digit-ui/citizen/select-language") {
   //     return <Hamburger handleClick={toggleSidebar} />;
@@ -44,7 +45,7 @@ const TopBarComponent = ({
           <div
             style={{ display: "flex", gap: "16px", cursor: "pointer" }}
             onClick={() => {
-              const pathUnwind = pathname.split("/").slice(0, 5).join("/");
+              const pathUnwind = pathname.split("/").slice(0, 3).join("/") + (isUserLoggedIn ? "/home/home-pending-task" : "/dristi");
               history.push(pathUnwind);
             }}
           >

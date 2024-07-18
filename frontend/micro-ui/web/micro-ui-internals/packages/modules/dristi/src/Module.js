@@ -44,6 +44,10 @@ import Modal from "./components/Modal";
 import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 import CustomSortComponent from "./components/CustomSortComponent";
+import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import Button from "./components/Button";
+import MultiUploadWrapper from "./components/MultiUploadWrapper";
+import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -107,10 +111,16 @@ const componentsToRegister = {
   ScrutinyInfo,
   AdvocateNameDetails,
   CustomRadioInfoComponent,
-  MODAL: Modal,
-  CUSTOMCASEINFODIV: CustomCaseInfoDiv,
-  DOCVIEWERWRAPPER: DocViewerWrapper,
+  Modal,
+  CustomCaseInfoDiv,
+  CustomErrorTooltip,
   CustomSortComponent,
+  CustomButton: Button,
+  DocViewerWrapper,
+  MultiUploadWrapper,
+  Button,
+  CustomCopyTextDiv,
+  SelectCustomNote,
 };
 
 const overrideHooks = () => {

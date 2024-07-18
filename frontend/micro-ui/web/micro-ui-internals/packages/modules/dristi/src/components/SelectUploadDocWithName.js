@@ -8,9 +8,12 @@ import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import { CustomAddIcon } from "../icons/svgIndex";
 import Button from "./Button";
 import { CaseWorkflowState } from "../Utils/caseWorkflow";
+import { DRISTIService } from "../services";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { caseId } = window?.Digit.Hooks.useQueryParams();
 
   const inputs = useMemo(
     () =>
@@ -87,8 +90,22 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
     onSelect(config.key, documentDataCopy);
   };
 
-  const handleDeleteDocument = (index) => {
+  const handleDeleteDocument = async (index) => {
     let currentDocumentDataCopy = structuredClone(documentData);
+    if (currentDocumentDataCopy?.[index].document?.[0]?.artifactId)
+      await DRISTIService.createEvidence({
+        artifact: {
+          artifactType: "DOCUMENTARY",
+          sourceType: "COMPLAINANT",
+          caseId: caseId,
+          tenantId,
+          artifactId: currentDocumentDataCopy?.[index].document?.[0]?.artifactId,
+          comments: [],
+          workflow: {
+            action: "ABANDON",
+          },
+        },
+      });
     currentDocumentDataCopy.splice(index, 1);
     setDocumentData(currentDocumentDataCopy);
     onSelect(config.key, currentDocumentDataCopy);

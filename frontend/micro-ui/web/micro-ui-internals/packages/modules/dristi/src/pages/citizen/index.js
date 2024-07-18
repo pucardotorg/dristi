@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Switch, useRouteMatch } from "react-router-dom";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { useToast } from "../../components/Toast/useToast";
+import AdmittedCases from "../employee/AdmittedCases/AdmittedCase";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
@@ -46,6 +47,9 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  if (individualId && !localStorage.getItem(individualId)) {
+    localStorage.setItem("individualId", individualId);
+  }
 
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
@@ -142,6 +146,8 @@ const App = ({ stateCode, tenantId }) => {
               <FileCase t={t}></FileCase>
             </PrivateRoute>
           </div>
+
+          <PrivateRoute exact path={`${path}/home/view-case`} component={(props) => <AdmittedCases isJudge={false} />} />
           <div
             className={
               location.pathname.includes("/response") ||

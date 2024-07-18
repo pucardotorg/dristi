@@ -118,7 +118,6 @@ return {
             
           },
           {
-            columnId:"actions",
             label: "Actions",
             jsonPath: "tenantId",
             additionalCustomization: true,

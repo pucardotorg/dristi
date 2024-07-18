@@ -50,15 +50,17 @@ function AdmissionActionModal({
   tenantId,
   // hearingDetails,
   handleScheduleNextHearing,
+  disabled,
   filingNumber,
+  isCaseAdmitted = false,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [label, setLabel] = useState(false);
 
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
-  }, []);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,6 +87,7 @@ function AdmissionActionModal({
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
       setLabel("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS");
+      return;
     }
     if (words?.length >= wordLimit) {
       setShowErrorToast(true);
@@ -111,7 +114,7 @@ function AdmissionActionModal({
   const [selectedChip, setSelectedChip] = React.useState(null);
 
   const setPurposeValue = (value, input) => {
-    setScheduleHearingParam({ ...scheduleHearingParams, purpose: value });
+    setScheduleHearingParam({ ...scheduleHearingParams, purpose: value.code });
   };
 
   const showCustomDateModal = () => {
@@ -194,6 +197,8 @@ function AdmissionActionModal({
             setScheduleHearingParam={setScheduleHearingParam}
             submitModalInfo={submitModalInfo}
             handleClickDate={handleClickDate}
+            disabled={disabled}
+            isCaseAdmitted={isCaseAdmitted}
           />
         </Modal>
       )}
@@ -253,7 +258,13 @@ function AdmissionActionModal({
           actionCancelOnSubmit={() => {
             history.push(`/employee`);
           }}
-          actionSaveOnSubmit={handleScheduleNextHearing}
+          actionSaveOnSubmit={() => {
+            if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
+              handleScheduleNextHearing();
+            } else {
+              history.push(`/employee`);
+            }
+          }}
           className="case-types"
           formId="modal-action"
         >

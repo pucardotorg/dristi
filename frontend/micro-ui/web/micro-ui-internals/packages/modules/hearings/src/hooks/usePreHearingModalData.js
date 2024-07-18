@@ -27,7 +27,13 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
       ...response,
     }));
 
-    const filingNumbers = hearingListResponse.HearingList.map((hearing) => hearing.filingNumber).flat();
+    const filingNumbers = [];
+    const filingNumberToHearingId = new Map();
+    for (const hearing of hearingListResponse.HearingList) {
+      const filingNumber = hearing.filingNumber[0];
+      filingNumbers.push(filingNumber);
+      filingNumberToHearingId.set(filingNumber, hearing.hearingId);
+    }
 
     const caseBody = {
       tenantId: "pg",
@@ -80,11 +86,14 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
         const pendingTasksData = pendingTaskDetail ? pendingTaskDetail.data.length : 0;
 
         return {
+          caseId: caseData.id,
           filingNumber,
           caseName: caseData?.caseTitle || "",
+          cnrNumber: caseData.cnrNumber,
           stage: caseData?.stage || "",
           caseType: caseData?.caseType || "",
           pendingTasks: pendingTasksData || "-",
+          hearingId: filingNumberToHearingId.get(filingNumber),
         };
       });
 
