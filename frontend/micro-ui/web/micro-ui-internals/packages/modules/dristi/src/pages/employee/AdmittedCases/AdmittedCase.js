@@ -12,6 +12,8 @@ import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
 import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
+import { SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 
 const defaultSearchValues = {
   individualName: "",
@@ -30,7 +32,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showOrderReviewModal, setShowOrderReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
@@ -88,11 +90,6 @@ const AdmittedCases = ({ isJudge = true }) => {
     );
   }, [userRoles, caseDetails]);
 
-  const orderSetFunc = (order) => {
-    setCurrentOrder(order);
-    setShowReviewModal(true);
-  };
-
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
     setShowOtherMenu(false);
@@ -103,7 +100,9 @@ const AdmittedCases = ({ isJudge = true }) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
       if (isCitizen) {
-        if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+        if (
+          [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
+        ) {
           /// if createdBy is same user as logged in
           history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
         } else {
@@ -112,9 +111,26 @@ const AdmittedCases = ({ isJudge = true }) => {
           setShow(true);
         }
       } else {
-        if (![CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+        if (
+          ![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
+        ) {
           setDocumentSubmission(docObj);
           setShow(true);
+        }
+      }
+    };
+
+    const orderSetFunc = (order) => {
+      if (isCitizen) {
+        // for citizen, only those orders should be visible which are published
+        setCurrentOrder(order);
+        setShowOrderReviewModal(true);
+      } else {
+        if (order?.status === OrderWorkflowState.DRAFT_IN_PROGRESS) {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order?.orderNumber}`);
+        } else {
+          setCurrentOrder(order);
+          setShowOrderReviewModal(true);
         }
       }
     };
@@ -564,11 +580,11 @@ const AdmittedCases = ({ isJudge = true }) => {
           caseData={caseRelatedData}
         />
       )}
-      {showReviewModal && (
+      {showOrderReviewModal && (
         <OrderReviewModal
           t={t}
           order={currentOrder}
-          setShowReviewModal={setShowReviewModal}
+          setShowReviewModal={setShowOrderReviewModal}
           setShowsignatureModal={() => {}}
           handleSaveDraft={() => {}}
           showActions={false}

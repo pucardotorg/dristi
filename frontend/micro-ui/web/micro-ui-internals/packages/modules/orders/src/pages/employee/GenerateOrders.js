@@ -64,9 +64,12 @@ const GenerateOrders = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState(null);
+  const [newformdata, setNewFormdata] = useState([]);
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const userInfo = Digit.UserService.getUser()?.info || {};
+  const uuid = userInfo?.uuid;
   const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -421,7 +424,7 @@ const GenerateOrders = () => {
         workflow: {
           action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
-          assignes: ["judge uuid"],
+          assignes: [uuid],
           rating: null,
           documents: [{}],
         },
