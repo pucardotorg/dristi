@@ -102,13 +102,13 @@ public class WorkflowService {
     }
     String getBusinessServiceFromAppplication(Application application) {
         if(application.getReferenceId() == null){
-            return ASYNC_VOLUNTARY_SUBMISSION_SERVICES;
+            return config.getAsyncVoluntarySubBusinessServiceName();
         }
         else if(application.isResponseRequired()){
-            return ASYNSUBMISSIONWITHRESPONSE;
+            return config.getAsyncOrderSubWithResponseBusinessServiceName();
         }
         else {
-            return ASYNCSUBMISSIONWITHOUTRESPONSE;
+            return config.getAsyncOrderSubBusinessServiceName();
         }
     }
 

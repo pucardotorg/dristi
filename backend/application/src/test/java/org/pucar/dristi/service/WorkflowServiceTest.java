@@ -115,7 +115,7 @@ public class WorkflowServiceTest {
         String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
-        assertEquals(ASYNC_VOLUNTARY_SUBMISSION_SERVICES, result);
+        assertEquals(config.getAsyncVoluntarySubBusinessServiceName(), result);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class WorkflowServiceTest {
         String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
-        assertEquals(ASYNSUBMISSIONWITHRESPONSE, result);
+        assertEquals(config.getAsyncOrderSubWithResponseBusinessServiceName(), result);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class WorkflowServiceTest {
         String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
 
         // Assert
-        assertEquals(ASYNCSUBMISSIONWITHOUTRESPONSE, result);
+        assertEquals(config.getAsyncOrderSubBusinessServiceName(), result);
     }
     @Test
     void updateWorkflowStatus_Exception() {
