@@ -277,6 +277,24 @@ export const TabLitigantSearchConfig = {
                 populators: {},
               },
               {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
                 label: "Case ID",
                 type: "text",
                 isMandatory: false,
@@ -355,6 +373,24 @@ export const TabLitigantSearchConfig = {
             minReqFields: 0,
             defaultValues: defaultSearchValues,
             fields: [
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
               {
                 label: "Case ID",
                 type: "text",
@@ -1283,6 +1319,15 @@ export const rolesToConfigMapping = [
   },
 ];
 
+export const taskTypes = [
+  { code: "case", name: "Case" },
+  { code: "hearing", name: "Hearing" },
+  { code: "order", name: "Order" },
+  { code: "order-judgement", name: "Order of Judgement" },
+  { code: "async-voluntary-submission-services", name: "Voluntary Submission" },
+  { code: "asynsubmissionwithresponse", name: "Submission With Response" },
+  { code: "asyncsubmissionwithoutresponse", name: "Submission Without Response" },
+];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
     actorName: ["LITIGANT/ADVOCATE"],
@@ -1342,4 +1387,24 @@ export const pendingTaskCaseActions = {
   },
 };
 
-export const pendingTaskSubmissionActions = {};
+export const pendingTaskHearingActions = {};
+
+export const pendingTaskOrderActions = {};
+
+export const pendingTaskOrderOfJudgementActions = {};
+
+export const pendingTaskVoluntarySubmissionActions = {};
+
+export const pendingTaskSubmissionWithResponseActions = {};
+
+export const pendingTaskSubmissionWithoutResponseActions = {};
+
+export const selectTaskType = {
+  case: pendingTaskCaseActions,
+  hearing: pendingTaskHearingActions,
+  order: pendingTaskOrderActions,
+  "order-judgement": pendingTaskOrderOfJudgementActions,
+  "async-voluntary-submission-services": pendingTaskVoluntarySubmissionActions,
+  asynsubmissionwithresponse: pendingTaskSubmissionWithResponseActions,
+  asyncsubmissionwithoutresponse: pendingTaskSubmissionWithoutResponseActions,
+};

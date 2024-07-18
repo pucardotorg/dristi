@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Button } from "@egovernments/digit-ui-components";
+import { Link } from "react-router-dom";
 
 const UpcomingHearings = (props) => {
   const userName = Digit.SessionStorage.get("User");
+
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
 
   // Get the current date
   const today = new Date();
@@ -33,16 +37,13 @@ const UpcomingHearings = (props) => {
           </div>
           <div>
             <div className="timeText">{time}</div>
-            <div className="hearingType">
+            <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
               {hearingType} ({hearingCount})
-            </div>
+            </Link>
           </div>
         </div>
         <Button label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
       </div>
-      {/* <div className="pendingTasks">
-        You have <strong>{pendingTasks} pending tasks</strong> for {upcomingHearings} upcoming hearings.
-      </div> */}
     </div>
   );
 };

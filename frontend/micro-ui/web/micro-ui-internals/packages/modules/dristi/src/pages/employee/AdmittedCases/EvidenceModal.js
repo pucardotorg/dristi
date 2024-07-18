@@ -8,9 +8,9 @@ import CommentComponent from "../../../components/CommentComponent";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
+import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -300,7 +300,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             status: "",
             isActive: true,
             workflow: {
-              action: CaseWorkflowAction.SAVE_DRAFT,
+              action: OrderWorkflowAction.SAVE_DRAFT,
               comments: "Creating order",
               assignes: null,
               rating: null,

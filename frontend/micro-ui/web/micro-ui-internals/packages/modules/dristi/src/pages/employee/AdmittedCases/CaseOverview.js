@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-import { CaseWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
+import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 
 const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const { t } = useTranslation();
@@ -42,7 +41,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
 
   console.log(advocateDetails);
 
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
+  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -91,7 +90,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
         status: "",
         isActive: true,
         workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
+          action: OrderWorkflowAction.SAVE_DRAFT,
           comments: "Creating order",
           assignes: null,
           rating: null,

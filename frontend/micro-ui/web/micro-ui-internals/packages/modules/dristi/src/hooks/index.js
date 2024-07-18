@@ -1,6 +1,5 @@
 import useGetAdvocateClerk from "./dristi/useGetAdvocateClerk";
 import useGetAdvocateClientServices from "./dristi/useGetAdvocateClientServices";
-import useGetHearings from "./dristi/useGetHearings.js";
 import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import useIndividualService from "./dristi/useIndividualService";
@@ -34,6 +33,7 @@ export const Urls = {
     ordersSearch: "/order/order/v1/search",
     submissionsSearch: "/application/application/v1/search",
     submissionsUpdate: "/application/application/v1/update",
+    pendingTask: "/analytics/pending_task/v1/create",
   },
   FileFetchById: "/filestore/v1/files/id",
 };
@@ -46,7 +46,6 @@ const dristi = {
   useGetIndividualUser,
   useInboxCustomHook,
   useSearchCaseService,
-  useGetHearings,
   useCreateHearings,
   useGetEvidence,
   useGetOrders,
