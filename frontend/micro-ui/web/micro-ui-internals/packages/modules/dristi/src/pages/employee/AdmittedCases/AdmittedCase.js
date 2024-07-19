@@ -15,6 +15,8 @@ import "./tabs.css";
 import { SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
+import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
+import PublishedOrderModal from "./PublishedOrderModal";
 
 const defaultSearchValues = {
   individualName: "",
@@ -37,6 +39,8 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
+  const [orderDraftModal, setOrderDraftModal] = useState(false);
+  const [draftOrderList, setDraftOrderList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -90,6 +94,11 @@ const AdmittedCases = ({ isJudge = true }) => {
       [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
     );
   }, [userRoles, caseDetails]);
+
+  const openDraftModal = (orderList) => {
+    setDraftOrderList(orderList);
+    setOrderDraftModal(true);
+  };
 
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
@@ -406,6 +415,16 @@ const AdmittedCases = ({ isJudge = true }) => {
     }, duration);
   };
 
+  const handleDownload = () => {
+    setShowOrderReviewModal(false);
+  };
+  const handleRequestLabel = () => {
+    setShowOrderReviewModal(false);
+  };
+  const handleSubmitDocument = () => {
+    setShowOrderReviewModal(false);
+  };
+
   const openHearingModule = () => {
     setShowScheduleHearingModal(true);
   };
@@ -461,14 +480,11 @@ const AdmittedCases = ({ isJudge = true }) => {
   }
 
   return (
-    <div className="admitted-case" style={{ position: "absolute", width: "100%" }}>
-      <div
-        className="admitted-case-header"
-        style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}
-      >
-        <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Header>{caseDetails?.caseTitle || ""}</Header>
+    <div style={{ position: "absolute", width: "100%" }}>
+      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
               <React.Fragment>
                 <hr className="vertical-line" />
@@ -485,13 +501,13 @@ const AdmittedCases = ({ isJudge = true }) => {
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
-            <div className="judge-action-block">
+            <div className="judge-action-block" style={{ display: "flex" }}>
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
                     <ActionButton
                       variation={"primary"}
-                      label={"Take Action"}
+                      label={t("TAKE_ACTION_LABEL")}
                       icon={showMenu ? "ExpandLess" : "ExpandMore"}
                       isSuffix={true}
                       onClick={handleTakeAction}
@@ -535,20 +551,22 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
         </div>
         <div className="search-tabs-container">
-          {tabData?.map((i, num) => (
-            <button
-              className={i?.active === true ? "case-search-tab-head-selected" : "case-search-tab-head"}
-              onClick={() => {
-                onTabChange(num);
-              }}
-              disabled={isTabDisabled}
-            >
-              {t(i?.label)}
-            </button>
-          ))}
+          <div>
+            {tabData?.map((i, num) => (
+              <button
+                className={i?.active === true ? "search-tab-head-selected" : "search-tab-head"}
+                onClick={() => {
+                  onTabChange(num);
+                }}
+                disabled={isTabDisabled}
+              >
+                {t(i?.label)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
+      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
       {config?.label !== "Overview" && config?.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
@@ -591,7 +609,14 @@ const AdmittedCases = ({ isJudge = true }) => {
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
         <div className="case-overview-wrapper">
-          <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
+          <CaseOverview
+            handleDownload={handleDownload}
+            handleRequestLabel={handleRequestLabel}
+            handleSubmitDocument={handleSubmitDocument}
+            caseData={caseRelatedData}
+            setUpdateCounter={setUpdateCounter}
+            showToast={showToast}
+          />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
@@ -612,13 +637,13 @@ const AdmittedCases = ({ isJudge = true }) => {
         />
       )}
       {showOrderReviewModal && (
-        <OrderReviewModal
+        <PublishedOrderModal
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowOrderReviewModal}
-          setShowsignatureModal={() => {}}
-          handleSaveDraft={() => {}}
-          showActions={false}
+          handleDownload={handleDownload}
+          handleRequestLabel={handleRequestLabel}
+          handleSubmitDocument={handleSubmitDocument}
         />
       )}
 
@@ -632,6 +657,18 @@ const AdmittedCases = ({ isJudge = true }) => {
           caseAdmittedSubmit={caseAdmittedSubmit}
         />
       )}
+
+      {showScheduleHearingModal && (
+        <ScheduleHearing
+          setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
+          tenantId={tenantId}
+          caseData={caseRelatedData}
+          setShowModal={setShowScheduleHearingModal}
+          caseAdmittedSubmit={caseAdmittedSubmit}
+        />
+      )}
+      {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
       {toast && toastDetails && (
         <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}
