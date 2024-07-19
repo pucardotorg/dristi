@@ -6,6 +6,7 @@ import OrdersResponse from "./OrdersResponse";
 import OrdersCreate from "./OrdersCreate";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
+import PaymentStatus from "../../components/PaymentStatus";
 // import MakeSubmission from "./MakeSubmission";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -41,6 +42,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/orders-create`} component={() => <OrdersCreate />} />
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
+        <PrivateRoute path={`${path}/payment-screen`} component={() => <PaymentStatus />} />
         {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
       </AppContainer>
     </Switch>
