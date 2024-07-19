@@ -8,6 +8,7 @@ import { overrideHooks, updateCustomConfigs } from "./utils";
 import { OrderWorkflowAction, OrderWorkflowState } from "./utils/orderWorkflow";
 import { ordersService } from "./hooks/services";
 import OrderReviewModal from "./pageComponents/OrderReviewModal";
+import SummonsOrderComponent from "./components/SummonsOrderComponent";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -29,6 +30,7 @@ const componentsToRegister = {
   OrdersModule,
   OrdersCard,
   DeliveryChannels,
+  SummonsOrderComponent,
   OrderWorkflowActionEnum: OrderWorkflowAction,
   OrderWorkflowStateEnum: OrderWorkflowState,
   OrdersService: ordersService,

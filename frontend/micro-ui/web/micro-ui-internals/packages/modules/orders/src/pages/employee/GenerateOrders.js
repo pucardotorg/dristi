@@ -22,6 +22,7 @@ import {
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
   configsVoluntarySubmissionStatus,
+  configsCreateOrderWarrant,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
@@ -53,6 +54,7 @@ const OutlinedInfoIcon = () => (
 
 const GenerateOrders = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const applicationNumber = urlParams.get("applicationNumber");
@@ -61,12 +63,15 @@ const GenerateOrders = () => {
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [formdata, setFormdata] = useState(null);
-  const [prevOrder, setPrevOrder] = useState();
+  const [formdata, setFormdata] = useState({});
+  const [stepper, setStepper] = useState("-1");
+  const [isBailable, setIsBailable] = useState();
+  const [isSurety, setIsSurety] = useState();
+  const [isCash, setIsCash] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
     setFormdata(null);
@@ -169,13 +174,139 @@ const GenerateOrders = () => {
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
       BAIL: configsBail,
-      WARRANT: configsIssueOfWarrants,
+      // WARRANT: configsIssueOfWarrants,
+      WARRANT: configsCreateOrderWarrant,
       WITHDRAWAL: configsCaseWithdrawal,
       OTHERS: configsOthers,
       APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
       REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
       JUDGEMENT: configsJudgement,
     };
+    if (!orderType?.code) {
+      return applicationTypeConfig;
+    }
+    let config = configKeys[orderType?.code]
+      ? structuredClone(applicationTypeConfig).concat(configKeys[orderType?.code])
+      : structuredClone(applicationTypeConfig);
+    if (orderType?.code === "WARRANT" && isBailable) {
+      config = config.map((item) => {
+        if (item.defaultValues?.orderType?.code === "WARRANT") {
+          item.body.push(
+            {
+              isMandatory: true,
+              type: "radio",
+              key: "numberOfSureties",
+              label: "No. Of Sureties",
+              populators: {
+                name: "numberOfSurety",
+                label: "numberOfSuretyButton",
+                type: "radioButton",
+                optionsKey: "name",
+                error: "Error!",
+                required: false,
+                isMandatory: true,
+                isDependent: true,
+                options: [
+                  {
+                    code: "1",
+                    name: "1",
+                  },
+                  {
+                    code: "2",
+                    name: "2",
+                  },
+                ],
+              },
+            },
+            {
+              key: "bailAmount",
+              type: "number",
+              label: "Amount (in Rupees) by each surety in sum of",
+              isMandatory: true,
+              populators: { name: "money", error: "Required", validation: { min: 0, max: 9999999999 } },
+            }
+          );
+        }
+        return item;
+      });
+    } else if (orderType?.code === "WARRANT" && !isBailable) {
+      config = config.map((item) => {
+        if (item.defaultValues?.orderType?.code === "WARRANT") {
+          item.body = item.body.filter((field) => field.key !== "numberOfSureties" && field.key !== "bailAmount");
+        }
+        return item;
+      });
+    }
+
+    if (orderType?.code === "BAIL" && isSurety && !isCash) {
+      config.map((item) => {
+        if (item.defaultValues?.orderType?.code === "BAIL") {
+          item.body = item.body.filter((field) => field.key !== "bailAmount" && field.key !== "dueDate");
+          item.body.push(
+            {
+              inline: true,
+              label: "Conditions",
+              type: "textarea",
+              key: "conditions",
+              populators: {
+                name: "conditions",
+              },
+            },
+            {
+              label: "Additional Details",
+              type: "textarea",
+              key: "additionalDetails",
+              populators: {
+                name: "additionalDetails",
+              },
+            },
+            {
+              label: "Attachment",
+              type: "multiupload",
+              key: "bailDocuments",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
+              populators: {
+                name: "bailDocuments",
+              },
+            }
+          );
+        }
+        return item;
+      });
+    } else if (orderType?.code === "BAIL" && !isSurety && isCash) {
+      config.map((item) => {
+        if (item.defaultValues?.orderType?.code === "BAIL") {
+          item.body = item.body.filter((field) => field.key !== "conditions" && field.key !== "additionalDetails" && field.key != "bailDocuments");
+          item.body.push(
+            {
+              inline: true,
+              label: "BAIL_AMOUNT",
+              isMandatory: false,
+              key: "bailAmount",
+              type: "text",
+              populators: { name: "bailAmount" },
+            },
+            {
+              type: "date",
+              label: "Due Date",
+              key: "dueDate",
+              isMandatory: true,
+              populators: {
+                name: "dueDate",
+                validation: {
+                  max: new Date().toISOString().split("T")[0],
+                },
+              },
+            }
+          );
+        }
+        return item;
+      });
+    }
 
     let newConfig = structuredClone(applicationTypeConfig);
     if (orderType?.code && configKeys.hasOwnProperty(orderType?.code)) {
@@ -257,7 +388,7 @@ const GenerateOrders = () => {
       }
       newConfig = [...newConfig, ...orderTypeForm];
     }
-    const updatedConfig = newConfig.map((config) => {
+     config = newConfig.map((config) => {
       return {
         ...config,
         body: config?.body.map((body) => {
@@ -292,8 +423,9 @@ const GenerateOrders = () => {
         }),
       };
     });
-    return updatedConfig;
-  }, [complainants, orderType?.code, respondants]);
+    return config;
+  }, [complainants, orderType?.code, respondants, isBailable, isSurety, isCash]);
+
 
   const defaultValue = useMemo(() => {
     let returnValue = {};
@@ -329,7 +461,30 @@ const GenerateOrders = () => {
     } else {
       setIsSubmitDisabled(false);
     }
+    const bailableField = formData?.bailable;
+
+    if (bailableField && bailableField.code === "Yes") {
+      setIsBailable(true);
+    } else {
+      setIsBailable(false);
+    }
+
+    const bailType = formData?.bailType;
+    if (bailType && bailType.code === "SURETY") {
+      setIsSurety(true);
+      setIsCash(false);
+    } else if (bailType && bailType.code === "CASH") {
+      setIsSurety(false);
+      setIsCash(true);
+    }
   };
+
+  useEffect(() => {
+    if (orderType == null || orderType?.code === "SUMMONS") {
+      if (formdata["date"] == null || formdata["SummonsOrder"] == null || formdata["SummonsOrder"]?.["selectedChannels"] == null) setIsSubmitDisabled(true);
+      else setIsSubmitDisabled(false);
+    }
+  }, [modifiedFormConfig, formdata]);
 
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -360,13 +515,13 @@ const GenerateOrders = () => {
     ordersService
       .updateOrder(updatedreqBody, { tenantId })
       .then(() => {
-        setPrevOrder(currentOrder);
         refetchOrdersData();
         if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
           setShowErrorToast(true);
         }
         if (action === CaseWorkflowAction.ESIGN) {
-          setShowSuccessModal(true);
+          setStepper(3);
+          // setShowSuccessModal(true);
         }
         if (modal === "reviewModal") {
           setShowReviewModal(true);
@@ -376,8 +531,6 @@ const GenerateOrders = () => {
       })
       .catch(() => {
         refetchOrdersData();
-        setShowsignatureModal(false);
-        setDeleteOrderIndex(null);
       });
   };
 
@@ -434,6 +587,7 @@ const GenerateOrders = () => {
   };
 
   const handleDeleteOrder = () => {
+    setDeleteOrderIndex(null);
     handleUpdateOrder({
       action: CaseWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
@@ -443,7 +597,6 @@ const GenerateOrders = () => {
     setSelectedOrder((prev) => {
       return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
-    setDeleteOrderIndex(null);
   };
 
   const handleGoBackSignatureModal = () => {
@@ -453,6 +606,14 @@ const GenerateOrders = () => {
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
+
+  const handleStepper = (val) => {
+    setStepper(parseInt(stepper) + parseInt(val));
+  };
+
+  const closeModal = () => {
+    setStepper("-1");
+  };
 
   return (
     <div className="generate-orders">
@@ -511,7 +672,7 @@ const GenerateOrders = () => {
           />
         </div>
       )}
-      {showReviewModal && (
+     {showReviewModal && (
         <OrderReviewModal
           t={t}
           order={currentOrder}

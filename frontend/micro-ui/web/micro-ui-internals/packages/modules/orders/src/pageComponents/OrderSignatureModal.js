@@ -27,7 +27,10 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
       actionSaveLabel={t("ISSUE_ORDER")}
       isDisabled={!isSigned}
       actionSaveOnSubmit={() => {
+        debugger;
+        if(stepper ===2)
         handleIssueOrder();
+        handleStepper(1);
       }}
       className={"add-signature-modal"}
     >

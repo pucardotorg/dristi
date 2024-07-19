@@ -1809,11 +1809,44 @@ export const configsIssueSummons = [
   {
     body: [
       {
-        label: "REF_APPLICATION_ID",
-        isMandatory: false, // Change this to mandatory after system filled is implememnted
-        key: "refApplicationId",
-        type: "text",
-        populators: { name: "refApplicationId" },
+        type: "date",
+        label: "Date for Hearing",
+        labelChildren: "OutlinedInfoIcon",
+        isMandatory: true,
+        populators: {
+          name: "date",
+          validation: {
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        type: "component",
+        component: "SummonsOrderComponent",
+        key: "SummonsOrder",
+        label: "Party to Summon",
+        populators: {
+          inputs: [
+            {
+              name: "select party",
+              type: "dropdown",
+            },
+            {
+              name : "select deleivery channels",
+              type : "checkbox"
+            }
+          ],
+        },
+        // label: "REF_APPLICATION_ID",
+        // isMandatory: false, // Change this to mandatory after system filled is implememnted
+        // key: "refApplicationId",
+        // type: "text",
+        // populators: { name: "refApplicationId" },
       },
       {
         label: "COURT_NAME",
@@ -1859,33 +1892,33 @@ export const configsIssueSummons = [
       },
     ],
   },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomTextArea",
-        key: "comments",
-        isMandatory: false,
-        populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaSubHeader: "COMMENTS",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              isOptional: true,
-              type: "TextAreaComponent",
-            },
-          ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
+  // {
+  //   body: [
+  //     {
+  //       type: "component",
+  //       component: "SelectCustomTextArea",
+  //       key: "comments",
+  //       isMandatory: false,
+  //       populators: {
+  //         inputs: [
+  //           {
+  //             name: "text",
+  //             textAreaSubHeader: "COMMENTS",
+  //             placeholder: "TYPE_HERE_PLACEHOLDER",
+  //             isOptional: true,
+  //             type: "TextAreaComponent",
+  //           },
+  //         ],
+  //         validation: {
+  //           customValidationFn: {
+  //             moduleName: "dristiOrders",
+  //             masterName: "alphaNumericValidation",
+  //           },
+  //         },
+  //       },
+  //     },
+  //   ],
+  // },
   {
     body: [
       {
@@ -2143,114 +2176,109 @@ export const configsOthers = [
 
 export const configsBail = [
   {
+    defaultValues: {
+      orderType: {
+        id: 9,
+        type: "BAIL",
+        isactive: true,
+        code: "BAIL",
+      },
+    },
     body: [
       {
+        inline: true,
         label: "REF_APPLICATION_ID",
-        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        isMandatory: false,
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
       },
       {
+        inline: true,
         label: "COURT_NAME",
-        isMandatory: true,
+        isMandatory: false,
         key: "courtName",
         type: "text",
         populators: { name: "courtName", hideInForm: true },
       },
       {
+        inline: true,
         label: "CASE_NAME",
-        isMandatory: true,
+        isMandatory: false,
         key: "caseName",
         type: "text",
         populators: { name: "caseName", hideInForm: true },
       },
       {
+        inline: true,
         label: "CNR_NUMBER",
-        isMandatory: true,
+        isMandatory: false,
         key: "cnrNumber",
         type: "text",
         populators: { name: "cnrNumber", hideInForm: true },
       },
       {
+        inline: true,
         label: "DATE_OF_ORDER",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateOfOrder",
         type: "date",
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
+        inline: true,
         label: "BAIL_OF",
-        isMandatory: true,
+        isMandatory: false,
         key: "bailOf",
-        type: "dropdown",
-        populators: {
-          name: "bailOf",
-          optionsKey: "name",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          options: [
-            {
-              code: "NAME_OF_PARTY",
-              name: "Name of Party",
-            },
-          ],
-        },
+        type: "text",
+        populators: { name: "bailOf" },
       },
       {
+        inline: true,
         label: "SUMMARY",
-        isMandatory: true,
+        isMandatory: false,
         key: "summary",
         type: "textarea",
         populators: { name: "summary", hideInForm: true },
       },
       {
+        inline: true,
         label: "ATTACHED_DOCUMENTS",
-        isMandatory: true,
+        isMandatory: false,
         key: "attachedDocuments",
         type: "textarea",
         populators: { name: "attachedDocuments", hideInForm: true },
       },
       {
+        inline: true,
         label: "BAIL_TYPE",
-        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        isMandatory: false,
         key: "bailType",
         type: "dropdown",
         populators: {
           name: "bailType",
-          optionsKey: "type",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          mdmsConfig: {
-            masterName: "BailType",
-            moduleName: "Order",
-            localePrefix: "BAIL_TYPE"
-          },
+          optionsKey: "name",
+          error: "Error!",
+          required: false,
+          options: [
+            {
+              code: "SURETY",
+              name: "SURETY",
+            },
+            {
+              code: "CASH",
+              name: "CASH",
+            },
+          ],
         },
       },
       {
-        label: "BAIL_AMOUNT",
-        isMandatory: true,
-        key: "bailAmount",
-        type: "number",
-        populators: { name: "bailAmount" },
-      },
-      {
-        label: "OTHER_CONDITIONS",
-        isMandatory: true,
-        key: "otherConditions",
-        type: "text",
-        populators: {
-          name: "otherConditions",
-          error: "CS_ALPHANUMERIC_ALLOWED",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericInputTextValidation",
-            },
-          },
+        inline : true,
+        label: "Brief Summary",
+        type: "textarea",
+        key:"briefSummary",
+        populators:{
+          name:"briefSummary"
         },
       },
     ],
@@ -2428,12 +2456,15 @@ export const configsCreateOrderWarrant = [
         type: "radio",
         key: "bailable",
         label: "Is this a bailable warrant?",
-        disable: false,
         populators: {
           name: "bailable",
+          label: "bailableRadioButton",
+          type: "radioButton",
           optionsKey: "name",
           error: "Error!",
           required: false,
+          isMandatory: true,
+          isDependent: true,
           options: [
             {
               code: "Yes",
@@ -2489,7 +2520,7 @@ export const configsCreateOrderWarrant = [
       //   disable: false,
       //   populators: { name: "dob", error: "Required"},
       // },
-
+ 
       //   {
       //     label: "Additional notes",
       //     isMandatory: true,
