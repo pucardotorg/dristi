@@ -146,7 +146,7 @@ public class CaseService {
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), addWitnessRequest.getRequestInfo());
 
             if(existingApplications.get(0).getResponseList().isEmpty())
-                throw new CustomException("INVALID_CASE","No case found for given filling Number");
+                throw new CustomException(INVALID_CASE,"No case found for the given filling Number");
 
             if (addWitnessRequest.getAdditionalDetails() != null) {
                 RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
@@ -164,7 +164,7 @@ public class CaseService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while adding witness to the case :: {}", e.toString());
-            throw new CustomException(ADD_WITNESS_CASE_ERR, "Exception occurred while adding witness to case: " + e.getMessage());
+            throw new CustomException(ADD_WITNESS_TO_CASE_ERR, "Exception occurred while adding witness to case: " + e.getMessage());
         }
 
     }
