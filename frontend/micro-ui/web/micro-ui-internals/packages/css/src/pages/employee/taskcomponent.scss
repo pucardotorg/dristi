@@ -1,10 +1,9 @@
 .tasks-component {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  box-shadow: none;
-  border: 1px solid #e0e0e0;
+  padding: 24px 48px;
+  border-left: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   h2 {
     font-size: 20px;
     margin-bottom: 20px;
@@ -13,15 +12,9 @@
     font-weight: 700;
     line-height: 37.5px;
     text-align: left;
+    margin: 0px;
   }
-  .filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    .filter-select {
-      width: 50%;
-    }
-  }
+
   .task-section {
     margin-bottom: 20px;
     .task-header {
@@ -70,6 +63,20 @@
       &:hover {
         background-color: #e64a19;
       }
+    }
+  }
+}
+.task-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  .filter-select {
+    width: 50%;
+  }
+  .label-field-pair {
+    width: 50%;
+    .digit-dropdown-employee-select-wrap {
+      margin-bottom: 0px;
     }
   }
 }
