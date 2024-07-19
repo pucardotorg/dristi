@@ -15,6 +15,8 @@ import "./tabs.css";
 import { SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
+import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
+import PublishedOrderModal from "./PublishedOrderModal";
 
 const defaultSearchValues = {
   individualName: "",
@@ -37,6 +39,8 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
+  const [orderDraftModal, setOrderDraftModal] = useState(false);
+  const [draftOrderList, setDraftOrderList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -90,6 +94,11 @@ const AdmittedCases = ({ isJudge = true }) => {
       [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
     );
   }, [userRoles, caseDetails]);
+
+  const openDraftModal = (orderList) => {
+    setDraftOrderList(orderList);
+    setOrderDraftModal(true);
+  };
 
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
@@ -406,6 +415,16 @@ const AdmittedCases = ({ isJudge = true }) => {
     }, duration);
   };
 
+  const handleDownload = () => {
+    setShowOrderReviewModal(false);
+  };
+  const handleRequestLabel = () => {
+    setShowOrderReviewModal(false);
+  };
+  const handleSubmitDocument = () => {
+    setShowOrderReviewModal(false);
+  };
+
   const openHearingModule = () => {
     setShowScheduleHearingModal(true);
   };
@@ -591,7 +610,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
         </div>
       </div>
-      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
+      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
       {config?.label !== "Overview" && config?.label !== "Complaints" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
@@ -655,13 +674,13 @@ const AdmittedCases = ({ isJudge = true }) => {
         />
       )}
       {showOrderReviewModal && (
-        <OrderReviewModal
+        <PublishedOrderModal
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowOrderReviewModal}
-          setShowsignatureModal={() => {}}
-          handleSaveDraft={() => {}}
-          showActions={false}
+          handleDownload={handleDownload}
+          handleRequestLabel={handleRequestLabel}
+          handleSubmitDocument={handleSubmitDocument}
         />
       )}
 
@@ -675,6 +694,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           caseAdmittedSubmit={caseAdmittedSubmit}
         />
       )}
+      {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
       {toast && toastDetails && (
         <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}
