@@ -470,10 +470,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
         setIsDisabled(false);
       } else if (userType && userType === "Advocate" && selectedParty?.label) {
         const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
+        const { isFound } = searchLitigantInRepresentives();
         if (
-          (searchLitigantInRepresentives().isFound && roleOfNewAdvocate) ||
-          (!searchLitigantInRepresentives().isFound && selectedParty?.partyType?.includes(partyType)) ||
-          !advIsFound
+          (isFound && roleOfNewAdvocate) ||
+          (!isFound && selectedParty?.partyType?.includes(partyType)) ||
+          (!advIsFound && ((isFound && roleOfNewAdvocate) || !isFound))
         ) {
           setIsDisabled(false);
         } else {
