@@ -217,7 +217,7 @@ public class IndexerUtils {
 		Map<String, String> caseDetails = new HashMap<>();
 		JSONObject request = new JSONObject();
 		request.put("RequestInfo", createRequestInfo());
-		if(!action.contains("SAVE_DRAFT")) try {
+		try {
 		switch (entityType.toLowerCase()) {
 			case "hearing":
 				caseDetails = processHearingEntity(request, referenceId, action, tenantId);
@@ -364,6 +364,7 @@ public class IndexerUtils {
 			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
             case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
             case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
+			case "save_draft" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Draft");
             default -> null;
         };
 	}
