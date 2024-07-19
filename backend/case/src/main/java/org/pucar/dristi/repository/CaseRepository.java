@@ -112,10 +112,6 @@ public class CaseRepository {
                 }
 
                 List<String> ids = new ArrayList<>();
-                List<String> idsLinkedCases = new ArrayList<>();
-                List<String> idsLitigant = new ArrayList<>();
-                List<String> idsRepresentative = new ArrayList<>();
-                List<String> idsRepresenting = new ArrayList<>();
 
                 for (CourtCase courtCase : caseCriteria.getResponseList()) {
                     ids.add(courtCase.getId().toString());
@@ -124,40 +120,7 @@ public class CaseRepository {
                     caseCriteria.setResponseList(new ArrayList<>());
                     continue;
                 }
-
-                setLinkedCases(caseCriteria, ids);
-
-                extractLinkedCasesIds(caseCriteria, idsLinkedCases);
-
-                setLitigants(caseCriteria, ids);
-
-                extractLitigantIds(caseCriteria, idsLitigant);
-
-                setRepresentatives(caseCriteria, ids);
-
-                extractRepresentativeIds(caseCriteria, idsRepresentative);
-
-                if (!idsRepresentative.isEmpty())
-                    setRepresenting(caseCriteria, idsRepresentative, preparedStmtListDoc);
-
-                extractRepresentingIds(caseCriteria, idsRepresenting);
-
-                setStatuteAndSections(caseCriteria, ids);
-
-                setCaseDocuments(caseCriteria, ids);
-                String casesDocumentQuery;
-
-                if (!idsLitigant.isEmpty())
-                    setLitigantDocuments(caseCriteria, idsLitigant);
-
-                if (!idsLinkedCases.isEmpty())
-                    setLinkedCaseDocuments(caseCriteria, idsLinkedCases);
-
-                if (!idsRepresentative.isEmpty())
-                    setRepresentativeDocuments(caseCriteria, idsRepresentative);
-
-                if (!idsRepresenting.isEmpty())
-                    setRepresentingDocuments(caseCriteria, idsRepresenting);
+                enrichCaseCriteria(caseCriteria,ids,preparedStmtListDoc);
             }
             return searchCriteria;
         } catch (CustomException e) {
@@ -166,6 +129,46 @@ public class CaseRepository {
             log.error("Error while fetching case application list :: {}", e.toString());
             throw new CustomException(SEARCH_CASE_ERR, "Exception while fetching case application list: " + e.getMessage());
         }
+    }
+
+    private void enrichCaseCriteria(CaseCriteria caseCriteria, List<String> ids, List<Object> preparedStmtListDoc){
+        List<String> idsLinkedCases = new ArrayList<>();
+        List<String> idsLitigant = new ArrayList<>();
+        List<String> idsRepresentative = new ArrayList<>();
+        List<String> idsRepresenting = new ArrayList<>();
+
+        setLinkedCases(caseCriteria, ids);
+
+        extractLinkedCasesIds(caseCriteria, idsLinkedCases);
+
+        setLitigants(caseCriteria, ids);
+
+        extractLitigantIds(caseCriteria, idsLitigant);
+
+        setRepresentatives(caseCriteria, ids);
+
+        extractRepresentativeIds(caseCriteria, idsRepresentative);
+
+        if (!idsRepresentative.isEmpty())
+            setRepresenting(caseCriteria, idsRepresentative, preparedStmtListDoc);
+
+        extractRepresentingIds(caseCriteria, idsRepresenting);
+
+        setStatuteAndSections(caseCriteria, ids);
+
+        setCaseDocuments(caseCriteria, ids);
+
+        if (!idsLitigant.isEmpty())
+            setLitigantDocuments(caseCriteria, idsLitigant);
+
+        if (!idsLinkedCases.isEmpty())
+            setLinkedCaseDocuments(caseCriteria, idsLinkedCases);
+
+        if (!idsRepresentative.isEmpty())
+            setRepresentativeDocuments(caseCriteria, idsRepresentative);
+
+        if (!idsRepresenting.isEmpty())
+            setRepresentingDocuments(caseCriteria, idsRepresenting);
     }
 
     private void setRepresentingDocuments(CaseCriteria caseCriteria, List<String> idsRepresenting) {

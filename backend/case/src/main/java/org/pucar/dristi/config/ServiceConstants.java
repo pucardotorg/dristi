@@ -106,4 +106,7 @@ public class ServiceConstants {
 	public static final String INVALID_COMPLAINANT_DETAILS = "Invalid complainant details";
 	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
+
+	public static final String EMPLOYEE = "EMPLOYEE";
+
 }

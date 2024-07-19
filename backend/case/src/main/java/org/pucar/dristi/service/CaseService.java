@@ -5,6 +5,8 @@ import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitig
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
@@ -147,35 +149,41 @@ public class CaseService {
     }
 
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-        if (!validator.canLitigantJoinCase(joinCaseRequest))
-            throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
-
         log.info("enriching litigants");
         enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
+        log.info("Pushing join case litigant details :: {}",joinCaseRequest.getLitigant());
         producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
-
-        if (joinCaseRequest.getAdditionalDetails() != null)
-            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+        pushAdditionalDetails(joinCaseRequest);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-           if (!validator.canRepresentativeJoinCase(joinCaseRequest))
-            throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
-
         log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
+        log.info("Pushing join case representative details :: {}",joinCaseRequest.getRepresentative());
         producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+        pushAdditionalDetails(joinCaseRequest);
+    }
 
-        if (joinCaseRequest.getAdditionalDetails() != null)
-            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+    private void pushAdditionalDetails(JoinCaseRequest joinCaseRequest){
+        if (joinCaseRequest.getAdditionalDetails() != null){
+            RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
+            User userInfo = requestInfo.getUserInfo();
+            String userType = userInfo.getType();
+
+            if (EMPLOYEE.equalsIgnoreCase(userType) && userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty()){
+                log.info("Pushing additional details :: {}",joinCaseRequest.getAdditionalDetails());
+                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+            }
+        }
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
+            log.info("Existing application list :: {}",existingApplications.size());
             CourtCase courtCase = validateAccessCodeAndReturnCourtCase(joinCaseRequest, existingApplications);
             UUID caseId = courtCase.getId();
 
@@ -209,6 +217,9 @@ public class CaseService {
         //for representative to join a case
         if (joinCaseRequest.getRepresentative() != null) {
 
+            if (!validator.canRepresentativeJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+
             // Stream over the representatives to create a list of advocateIds
             List<String> advocateIds = Optional.ofNullable(courtCase.getRepresentatives())
                     .orElse(Collections.emptyList())
@@ -239,13 +250,16 @@ public class CaseService {
                         .map(Party::getIndividualId)
                         .toList();
 
+                log.info("Advocate is part of the case :: {}",existingRepresentative);
                 String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
 
                 if (joinCasePartyIndividualID != null &&
                         individualIds.contains(joinCasePartyIndividualID)) {
+                    log.info("Advocate is already representing the individual");
                     throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
                 } else {
-                    disableExistingRepresenting(courtCase, joinCasePartyIndividualID,auditDetails);
+                    log.info("Advocate is not representing the individual");
+                    disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
                     joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
                 }
             }
@@ -256,7 +270,7 @@ public class CaseService {
 
             if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null && !advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
                 String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
-                disableExistingRepresenting(courtCase, joinCasePartyIndividualID,auditDetails);
+                disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
             }
 
             caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
@@ -270,11 +284,13 @@ public class CaseService {
 
                     //For getting the representing of the representative by the individualID for whom representative is primary
                     if (party.getIndividualId().equals(joinCasePartyIndividualID) && (COMPLAINANT_PRIMARY.equalsIgnoreCase(party.getPartyType()) || RESPONDENT_PRIMARY.equalsIgnoreCase(party.getPartyType()))) {
+                        log.info("Setting isActive false for the existing individual :: {}", party);
                         party.setIsActive(false);
                         party.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
                         party.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
 
                         if (representative.getRepresenting().size() == 1) {
+                            log.info("Setting isActive false for the representative if he is only representing the above party :: {}", representative);
                             representative.setIsActive(false);
                             representative.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
                             representative.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
@@ -288,6 +304,9 @@ public class CaseService {
     private void verifyLitigantsAndJoinCase(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
         if (joinCaseRequest.getLitigant() != null) { //for litigant to join a case
             // Stream over the litigants to create a list of individualIds
+            if (!validator.canLitigantJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+
             List<String> individualIds = courtCase.getLitigants().stream()
                     .map(Party::getIndividualId)
                     .toList();
@@ -312,12 +331,12 @@ public class CaseService {
         CourtCase courtCase = courtCaseList.get(0);
 
         if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
-              throw new CustomException(VALIDATION_ERR, "Access code not generated");
+            throw new CustomException(VALIDATION_ERR, "Access code not generated");
         }
         String caseAccessCode = courtCase.getAccessCode();
 
         if (!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
-              throw new CustomException(VALIDATION_ERR, "Invalid access code");
+            throw new CustomException(VALIDATION_ERR, "Invalid access code");
         }
         return courtCase;
     }
