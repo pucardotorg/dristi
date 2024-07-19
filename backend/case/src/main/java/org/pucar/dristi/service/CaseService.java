@@ -153,6 +153,8 @@ public class CaseService {
                 User userInfo = requestInfo.getUserInfo();
                 String userType = userInfo.getType();
                 if (EMPLOYEE.equalsIgnoreCase(userType) && userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty()) {
+                    addWitnessRequest.getAuditDetails().setLastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid());
+                    addWitnessRequest.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                     producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
                 }
             }
