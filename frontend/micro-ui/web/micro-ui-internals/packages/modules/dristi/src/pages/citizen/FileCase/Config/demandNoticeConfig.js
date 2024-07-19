@@ -373,3 +373,137 @@ export const demandNoticeConfig = {
     proofOfReplyFileUpload: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
   },
 };
+
+export const demandNoticeDetailsFormDataToSchemaMapping = {
+  modeOfDispatchType: {
+    key: "dispatchMode",
+    type: "enum",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    enumMapping: { POST: "post", IN_PERSON: "in-person" },
+  },
+  dateOfIssuance: { key: "issueDate", type: "string", formDataType: "string" },
+  dateOfDispatch: { key: "dispatchDate", type: "string", formDataType: "string" },
+  proofOfService: {
+    key: "isServiceProof",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+  },
+  proofOfReply: {
+    key: "isReplyProof",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+  },
+  delayApplicationType: {
+    key: "isPaidAfterNotice",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+  },
+  dateOfService: { key: "serviceDate", type: "string", formDataType: "string" },
+  dateOfReply: { key: "replyDate", type: "string", formDataType: "string" },
+  dateOfAccrual: { key: "accrualDate", type: "string", formDataType: "string" },
+  legalDemandNoticeFileUpload: { key: "noticeDoc", type: "string", formDataType: "document" },
+  proofOfDispatchFileUpload: { key: "dispatchProofDoc", type: "string", formDataType: "document" },
+  proofOfAcknowledgmentFileUpload: { key: "serviceProofDoc", type: "string", formDataType: "document" },
+  proofOfReplyFileUpload: { key: "replyProofDoc", type: "string", formDataType: "document" },
+};
+
+export const demandNoticeDetailsSchemaToFormDataMapping = {
+  dispatchMode: {
+    key: "modeOfDispatchType",
+    type: "enum",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    enumMapping: { post: "POST", "in-person": "IN_PERSON" },
+    options: [
+      {
+        code: "POST",
+        name: "POST",
+        isEnabled: true,
+      },
+      {
+        code: "IN_PERSON",
+        name: "IN PERSON",
+        isEnabled: true,
+      },
+    ],
+  },
+  issueDate: { key: "dateOfIssuance", type: "string", formDataType: "string" },
+  dispatchDate: { key: "dateOfDispatch", type: "string", formDataType: "string" },
+  isServiceProof: {
+    key: "proofOfService",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    options: [
+      {
+        code: "YES",
+        name: "YES",
+        showProofOfAcknowledgment: true,
+        isEnabled: true,
+      },
+      {
+        code: "NO",
+        name: "NO",
+        showProofOfAcknowledgment: false,
+        isVerified: true,
+        hasBarRegistrationNo: true,
+        isEnabled: true,
+      },
+    ],
+  },
+  isReplyProof: {
+    key: "proofOfReply",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    options: [
+      {
+        code: "YES",
+        name: "YES",
+        showProofOfReply: true,
+        isEnabled: true,
+      },
+      {
+        code: "NO",
+        name: "NO",
+        showProofOfReply: false,
+        isVerified: true,
+        hasBarRegistrationNo: true,
+        isEnabled: true,
+      },
+    ],
+  },
+  isPaidAfterNotice: {
+    key: "delayApplicationType",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    options: [
+      {
+        code: "YES",
+        name: "YES",
+        showForm: false,
+        isEnabled: true,
+      },
+      {
+        code: "NO",
+        name: "NO",
+        showForm: true,
+        isVerified: true,
+        hasBarRegistrationNo: true,
+        isEnabled: true,
+      },
+    ],
+  },
+  serviceDate: { key: "dateOfService", type: "string", formDataType: "string" },
+  replyDate: { key: "dateOfReply", type: "string", formDataType: "string" },
+  accrualDate: { key: "dateOfAccrual", type: "string", formDataType: "string" },
+  noticeDoc: { key: "legalDemandNoticeFileUpload", type: "string", formDataType: "document" },
+  dispatchProofDoc: { key: "proofOfDispatchFileUpload", type: "string", formDataType: "document" },
+  serviceProofDoc: { key: "proofOfAcknowledgmentFileUpload", type: "string", formDataType: "document" },
+  replyProofDoc: { key: "proofOfReplyFileUpload", type: "string", formDataType: "document" },
+};

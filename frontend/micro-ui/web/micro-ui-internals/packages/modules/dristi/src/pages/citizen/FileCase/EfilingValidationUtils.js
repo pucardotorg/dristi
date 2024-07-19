@@ -3,6 +3,9 @@ import { getUserDetails } from "../../../hooks/useGetAccessToken";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
+import { chequeDetailsFormDataToSchemaMapping } from "./Config/chequedetailsConfig";
+import { debtLiabilityDetailsFormDataToSchemaMapping } from "./Config/debtLiabilityConfig";
+import _ from "lodash";
 
 export const showDemandNoticeModal = ({
   selected,
@@ -1075,6 +1078,54 @@ const fetchBasicUserInfo = async (caseDetails, tenantId) => {
   return individualData?.Individual?.[0]?.individualId;
 };
 
+export const modifiedFormToSchemaData = (data, FormDataToSchemaJson = {}) => {
+  return _.reduce(
+    data,
+    (result, value, key) => {
+      const config = FormDataToSchemaJson[key];
+      if (!config || _.isNil(value)) return result;
+
+      const { type, formDataType, key: resultKey, textKey, dropdownKey, enumMapping } = config;
+
+      switch (type) {
+        case "string":
+          switch (formDataType) {
+            case "string":
+              result[resultKey] = value;
+              break;
+            case "text":
+              result[resultKey] = textKey ? _.get(value, textKey) : _.get(value, "text");
+              break;
+            case "document":
+              result[resultKey] = _.get(value, "document[0].fileStore");
+              break;
+            case "dropdown":
+              result[resultKey] = _.get(value, dropdownKey);
+              break;
+            default:
+              result[resultKey] = value;
+          }
+          break;
+        case "boolean":
+          if (formDataType === "dropdown") {
+            result[resultKey] = _.toLower(_.get(value, dropdownKey)) === "yes";
+          }
+          break;
+        case "enum":
+          if (formDataType === "dropdown") {
+            result[resultKey] = _.get(enumMapping, _.get(value, dropdownKey));
+          }
+          break;
+        default:
+          result[resultKey] = value;
+      }
+
+      return result;
+    },
+    {}
+  );
+};
+
 export const updateCaseDetails = async ({
   isCompleted,
   setIsDisabled,
@@ -1521,6 +1572,10 @@ export const updateCaseDetails = async ({
           };
         })
     );
+    const chequeData = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, chequeDetailsFormDataToSchemaMapping);
+    });
+    console.log("chequeData", chequeData);
     data.caseDetails = {
       ...caseDetails.caseDetails,
       chequeDetails: {
@@ -1565,6 +1620,11 @@ export const updateCaseDetails = async ({
           };
         })
     );
+
+    const debtLiabilityDetails = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, debtLiabilityDetailsFormDataToSchemaMapping);
+    });
+    console.log("debtLiabilityDetails", debtLiabilityDetails);
     data.caseDetails = {
       ...caseDetails.caseDetails,
       debtLiabilityDetails: {
@@ -1639,6 +1699,12 @@ export const updateCaseDetails = async ({
           };
         })
     );
+
+    const demandNoticeDetails = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, debtLiabilityDetailsFormDataToSchemaMapping);
+    });
+    console.log("demandNoticeDetails", demandNoticeDetails);
+
     data.caseDetails = {
       ...caseDetails.caseDetails,
       demandNoticeDetails: {

@@ -176,3 +176,78 @@ export const debtliabilityconfig = {
     debtLiabilityFileUpload: "CS_PROOF_DEBT",
   },
 };
+
+export const debtLiabilityDetailsFormDataToSchemaMapping = {
+  liabilityNature: { key: "nature", type: "string", formDataType: "dropdown", dropdownKey: "code" },
+  liabilityType: {
+    key: "liability",
+    type: "enum",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    enumMapping: { FULL_LIABILITY: "full", PARTIAL_LIABILITY: "partial" },
+  },
+  totalAmount: { key: "amount", type: "string", formDataType: "string" },
+  additionalDebtLiabilityDetails: { key: "comments", type: "string", formDataType: "text" },
+  debtLiabilityFileUpload: { key: "docProof", type: "string", formDataType: "document" },
+};
+
+export const debtLiabilityDetailsSchemaToFormDataMapping = {
+  nature: {
+    key: "liabilityNature",
+    type: "string",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    options: [
+      {
+        code: "LOAN",
+        name: "Loan",
+        isEnabled: true,
+        showAmountCovered: false,
+      },
+      {
+        code: "SALES",
+        name: "Sales Agreement",
+        isEnabled: true,
+        apiDetails: {
+          requestKey: "advocates",
+          serviceName: "/advocate/advocate/v1/_create",
+          AdditionalFields: ["barRegistrationNumber"],
+        },
+        isVerified: true,
+        showAmountCovered: true,
+        hasBarRegistrationNo: true,
+      },
+    ],
+  },
+  liability: {
+    key: "liabilityType",
+    type: "enum",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    enumMapping: { full: "FULL_LIABILITY", partial: "PARTIAL_LIABILITY" },
+    options: [
+      {
+        code: "FULL_LIABILITY",
+        name: "Full Liability",
+        isEnabled: true,
+        showAmountCovered: false,
+      },
+      {
+        code: "PARTIAL_LIABILITY",
+        name: "Partial Liability",
+        isEnabled: true,
+        apiDetails: {
+          requestKey: "advocates",
+          serviceName: "/advocate/advocate/v1/_create",
+          AdditionalFields: ["barRegistrationNumber"],
+        },
+        isVerified: true,
+        showAmountCovered: true,
+        hasBarRegistrationNo: true,
+      },
+    ],
+  },
+  amount: { key: "totalAmount", type: "string", formDataType: "string" },
+  comments: { key: "additionalDebtLiabilityDetails", type: "string", formDataType: "text" },
+  docProof: { key: "debtLiabilityFileUpload", type: "string", formDataType: "document" },
+};
