@@ -36,7 +36,7 @@ const SubmissionsCreate = () => {
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
-  const orderId = urlParams.get("orderId");
+  const orderNumber = urlParams.get("orderNumber");
   const applicationNumber = urlParams.get("applicationNumber");
   const isExtension = urlParams.get("isExtension");
   const [formdata, setFormdata] = useState({});
@@ -57,7 +57,7 @@ const SubmissionsCreate = () => {
       APPLICATION_TYPE: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
-      if (orderId) {
+      if (orderNumber) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
@@ -88,7 +88,7 @@ const SubmissionsCreate = () => {
       }
     }
     return [];
-  }, [orderId, submissionType]);
+  }, [orderNumber, submissionType]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type;
@@ -173,17 +173,17 @@ const SubmissionsCreate = () => {
   }, [caseData]);
 
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
-    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, id: orderId } },
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
     filingNumber + caseDetails?.cnrNumber,
-    Boolean(filingNumber && caseDetails?.cnrNumber && orderId)
+    Boolean(filingNumber && caseDetails?.cnrNumber && orderNumber)
   );
   const orderDetails = useMemo(() => orderData?.list?.[0], [orderData]);
 
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
       return applicationDetails?.additionalDetails?.formdata;
-    } else if (orderId) {
+    } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
         if (isExtension) {
           return {
@@ -232,7 +232,7 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderId]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
@@ -292,7 +292,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: orderId || null,
+          referenceId: orderDetails?.orderId || null,
           createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
@@ -350,8 +350,8 @@ const SubmissionsCreate = () => {
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
       history.push(
-        orderId
-          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderId=${orderId}`
+        orderNumber
+          ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderNumber=${orderNumber}`
           : `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}`
       );
     }
@@ -390,7 +390,7 @@ const SubmissionsCreate = () => {
     isOrdersLoading ||
     isApplicationLoading ||
     (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
-    (orderId ? !orderDetails?.orderType : false)
+    (orderNumber ? !orderDetails?.orderType : false)
   ) {
     return <Loader />;
   }
