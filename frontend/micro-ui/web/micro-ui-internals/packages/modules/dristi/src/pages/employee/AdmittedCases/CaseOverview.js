@@ -205,7 +205,6 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
         <Card
           style={{
             width: "70%",
-            marginTop: "10px",
           }}
         >
           <div

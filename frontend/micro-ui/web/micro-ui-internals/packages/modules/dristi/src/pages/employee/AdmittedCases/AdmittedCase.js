@@ -461,73 +461,31 @@ const AdmittedCases = ({ isJudge = true }) => {
   }
 
   return (
-    <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
+    <div className="admitted-case" style={{ position: "absolute", width: "100%" }}>
+      <div
+        className="admitted-case-header"
+        style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}
+      >
+        <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Header>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div
-                  style={{
-                    width: "5px",
-                    height: "32px",
-                    borderLeft: "2px solid #0000001a",
-                  }}
-                ></div>
-                <div
-                  style={{
-                    fontWeight: 400,
-                    lineHeight: "16.41px",
-                    fontSize: "14px",
-                    color: "#77787B",
-                  }}
-                >
-                  {statue}
-                </div>
-              </div>
+              <React.Fragment>
+                <hr className="vertical-line" />
+                <div className="sub-details-text">{statue}</div>
+              </React.Fragment>
             )}
-            <div
-              style={{
-                width: "5px",
-                height: "32px",
-                borderLeft: "2px solid #0000001a",
-              }}
-            ></div>
-            <div
-              style={{
-                fontWeight: 400,
-                lineHeight: "16.41px",
-                fontSize: "14px",
-                color: "#77787B",
-              }}
-            >
-              {caseDetails?.stage}
-            </div>
-            <div
-              style={{
-                width: "5px",
-                height: "32px",
-                borderLeft: "2px solid #0000001a",
-              }}
-            ></div>
-            <div
-              style={{
-                fontWeight: 400,
-                lineHeight: "16.41px",
-                fontSize: "14px",
-                color: "#77787B",
-              }}
-            >
-              Code: {caseDetails?.accessCode || ""}
-            </div>
+            <hr className="vertical-line" />
+            <div className="sub-details-text">{caseDetails?.stage}</div>
+            <hr className="vertical-line" />
+            <div className="sub-details-text">Code: {caseData.criteria[0].responseList[0].accessCode}</div>
           </div>
-          <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
+          <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
-            <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
+            <div className="judge-action-block">
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
@@ -537,6 +495,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                       icon={showMenu ? "ExpandLess" : "ExpandMore"}
                       isSuffix={true}
                       onClick={handleTakeAction}
+                      className={"take-action-btn-class"}
                     ></ActionButton>
                     {showMenu && (
                       <Menu
@@ -555,7 +514,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions">
                     <div
-                      style={{ cursor: "pointer" }}
+                      className="custom-icon-wrapper"
                       onClick={() => {
                         setShowOtherMenu((prev) => !prev);
                         setShowMenu(false);
@@ -576,19 +535,17 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
         </div>
         <div className="search-tabs-container">
-          <div>
-            {tabData?.map((i, num) => (
-              <button
-                className={i?.active === true ? "search-tab-head-selected" : "search-tab-head"}
-                onClick={() => {
-                  onTabChange(num);
-                }}
-                disabled={isTabDisabled}
-              >
-                {t(i?.label)}
-              </button>
-            ))}
-          </div>
+          {tabData?.map((i, num) => (
+            <button
+              className={i?.active === true ? "case-search-tab-head-selected" : "case-search-tab-head"}
+              onClick={() => {
+                onTabChange(num);
+              }}
+              disabled={isTabDisabled}
+            >
+              {t(i?.label)}
+            </button>
+          ))}
         </div>
       </div>
       <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
@@ -633,12 +590,12 @@ const AdmittedCases = ({ isJudge = true }) => {
         ></InboxSearchComposer>
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
-        <div>
-          <CaseOverview caseData={caseRelatedData} openHearingModule={openHearingModule} />
+        <div className="case-overview-wrapper">
+          <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
-        <div>
+        <div className="view-case-file-wrapper">
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}

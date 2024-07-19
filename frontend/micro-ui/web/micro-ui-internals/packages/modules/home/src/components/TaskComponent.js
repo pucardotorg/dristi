@@ -154,12 +154,11 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
     return <Loader />;
   }
   return (
-    <div className="tasks-component" style={{ boxShadow: "none", border: "1px solid #e0e0e0" }}>
-      <h2 style={{ fontFamily: "Roboto", fontSize: "32px", fontWeight: "700", lineHeight: "37.5px", textAlign: "left" }}>Your Tasks</h2>
-      <div className="filters">
+    <div className="tasks-component">
+      <h2>Your Tasks</h2>
+      <div className="task-filters">
         <LabelFieldPair>
           <Dropdown
-            style={{ width: "16rem" }}
             option={[{ name: "NIA S138", code: "NIA S138" }]}
             selected={{ name: "NIA S138", code: "NIA S138" }}
             optionKey={"code"}
@@ -169,7 +168,6 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         </LabelFieldPair>
         <LabelFieldPair>
           <Dropdown
-            style={{ width: "16rem" }}
             option={taskTypes}
             optionKey={"name"}
             selected={taskType}
