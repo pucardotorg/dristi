@@ -1567,13 +1567,14 @@ function EFilingCases({ path }) {
           entityType: "case",
           referenceId: caseDetails?.filingNumber,
           status: "PAYMENT_PENDING",
-          assignedTo: [...assignees],
+          assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
           assignedRole: ["CASE_CREATOR"],
-          cnrNumber: "null",
+          cnrNumber: null,
           filingNumber: caseDetails?.filingNumber,
           isCompleted: false,
           stateSla: null,
           additionalDetails: {},
+          tenantId,
         },
       });
     });

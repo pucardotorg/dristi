@@ -31,7 +31,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
-          ...(isLitigant && { assignedTo: [uuid] }),
+          isCompleted: false,
+          ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
         },
         limit: 10000,
@@ -114,7 +115,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const searchParams = new URLSearchParams();
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
-          pendingTaskActions?.[status]?.redirectDetails?.params.forEach((item) => {
+          pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
             searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
           });
           const redirectUrl = `/${window?.contextPath}/${userInfoType}${
@@ -153,12 +154,11 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
     return <Loader />;
   }
   return (
-    <div className="tasks-component" style={{ boxShadow: "none", border: "1px solid #e0e0e0" }}>
-      <h2 style={{ fontFamily: "Roboto", fontSize: "32px", fontWeight: "700", lineHeight: "37.5px", textAlign: "left" }}>Your Tasks</h2>
-      <div className="filters">
+    <div className="tasks-component">
+      <h2>Your Tasks</h2>
+      <div className="task-filters">
         <LabelFieldPair>
           <Dropdown
-            style={{ width: "16rem" }}
             option={[{ name: "NIA S138", code: "NIA S138" }]}
             selected={{ name: "NIA S138", code: "NIA S138" }}
             optionKey={"code"}
@@ -168,7 +168,6 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         </LabelFieldPair>
         <LabelFieldPair>
           <Dropdown
-            style={{ width: "16rem" }}
             option={taskTypes}
             optionKey={"name"}
             selected={taskType}

@@ -4,7 +4,8 @@ import { useHistory } from "react-router-dom";
 import { Header, InboxSearchComposer, Button } from "@egovernments/digit-ui-react-components";
 import { TabSearchconfig } from "../../../../orders/src/configs/OrdersHomeConfig";
 import { ordersService } from "../../hooks/services";
-import { OrderWorkflowAction } from "../../utils/orderWorkflow";
+
+const fieldStyle = { marginRight: 0 };
 
 const defaultSearchValues = {
   individualName: "",
@@ -28,6 +29,7 @@ const OrdersHome = () => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
   }, []);
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
 
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false }))); //setting tab enable which is being clicked

@@ -12,6 +12,9 @@ import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
 import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
+import { SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
+import ScheduleHearing from "./ScheduleHearing";
 
 const defaultSearchValues = {
   individualName: "",
@@ -30,7 +33,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showOrderReviewModal, setShowOrderReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
@@ -88,11 +91,6 @@ const AdmittedCases = ({ isJudge = true }) => {
     );
   }, [userRoles, caseDetails]);
 
-  const orderSetFunc = (order) => {
-    setCurrentOrder(order);
-    setShowReviewModal(true);
-  };
-
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
     setShowOtherMenu(false);
@@ -103,7 +101,9 @@ const AdmittedCases = ({ isJudge = true }) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
       if (isCitizen) {
-        if ([CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+        if (
+          [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
+        ) {
           /// if createdBy is same user as logged in
           history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
         } else {
@@ -112,9 +112,26 @@ const AdmittedCases = ({ isJudge = true }) => {
           setShow(true);
         }
       } else {
-        if (![CaseWorkflowState.PENDINGPAYMENT, CaseWorkflowState.PENDINGESIGN, CaseWorkflowState.PENDINGSUBMISSION].includes(status)) {
+        if (
+          ![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
+        ) {
           setDocumentSubmission(docObj);
           setShow(true);
+        }
+      }
+    };
+
+    const orderSetFunc = (order) => {
+      if (isCitizen) {
+        // for citizen, only those orders should be visible which are published
+        setCurrentOrder(order);
+        setShowOrderReviewModal(true);
+      } else {
+        if (order?.status === OrderWorkflowState.DRAFT_IN_PROGRESS) {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order?.orderNumber}`);
+        } else {
+          setCurrentOrder(order);
+          setShowOrderReviewModal(true);
         }
       }
     };
@@ -177,6 +194,18 @@ const AdmittedCases = ({ isJudge = true }) => {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
                 },
+              },
+            },
+          }
+        : tabConfig.label === "History"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                filingNumber: filingNumber,
+                tenantId: tenantId,
               },
             },
           }
@@ -279,6 +308,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [updateCounter, setUpdateCounter] = useState(0);
   const [toastDetails, setToastDetails] = useState({});
   const [showOtherMenu, setShowOtherMenu] = useState(false);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const isTabDisabled = useMemo(() => {
     return caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
@@ -316,8 +346,74 @@ const AdmittedCases = ({ isJudge = true }) => {
   };
 
   const handleSelect = (option) => {
-    console.log(option === t("SCHEDULE_HEARING"));
-    let reqBody = {
+    if (option === t("SCHEDULE_HEARING")) {
+      openHearingModule();
+      return;
+    } else if (option === t("REFER_TO_ADR")) {
+      const reqBody = {
+        order: {
+          createdDate: formatDate(new Date()),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "REFERRAL_CASE_TO_ADR",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                id: 4,
+                type: "REFERRAL_CASE_TO_ADR",
+                isactive: true,
+                code: "REFERRAL_CASE_TO_ADR",
+                name: "ORDER_TYPE_REFERRAL_CASE_TO_ADR",
+              },
+            },
+          },
+        },
+      };
+      ordersService
+        .createOrder(reqBody, { tenantId })
+        .then((res) => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
+            caseId: caseId,
+            tab: activeTab,
+          });
+        })
+        .catch((err) => {});
+      return;
+    }
+    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+  };
+
+  const showToast = (details, duration = 5000) => {
+    setToast(true);
+    setToastDetails(details);
+    setTimeout(() => {
+      setToast(false);
+      // history.replace(history.location.pathname + history.location.search, { from: "" });
+    }, duration);
+  };
+
+  const openHearingModule = () => {
+    setShowScheduleHearingModal(true);
+  };
+
+  const caseAdmittedSubmit = (data) => {
+    const dateArr = data.date.split(" ").map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date));
+    const date = new Date(dateArr.join(" "));
+    const reqBody = {
       order: {
         createdDate: formatDate(new Date()),
         tenantId,
@@ -326,7 +422,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         statuteSection: {
           tenantId,
         },
-        orderType: "REFERRAL_CASE_TO_ADR",
+        orderType: "SCHEDULE_OF_HEARING_DATE",
         status: "",
         isActive: true,
         workflow: {
@@ -337,107 +433,59 @@ const AdmittedCases = ({ isJudge = true }) => {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: {},
+        additionalDetails: {
+          formdata: {
+            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingPurpose: data.purpose,
+            orderType: {
+              id: 7,
+              code: "SCHEDULE_OF_HEARING_DATE",
+              type: "SCHEDULE_OF_HEARING_DATE",
+              isactive: true,
+              name: "ORDER_TYPE_SCHEDULE_OF_HEARING_DATE",
+            },
+          },
+        },
       },
     };
-    if (option === t("GENERATE_ORDER_HOME")) {
-      reqBody.order.orderType = "Bail";
-    } else if (option === t("SCHEDULE_HEARING")) {
-      reqBody.order.orderType = "SCHEDULE_OF_HEARING_DATE";
-    } else if (option === t("REFER_TO_ADR")) {
-      reqBody.order.orderType = "REFERRAL_CASE_TO_ADR";
-    }
     ordersService
       .createOrder(reqBody, { tenantId })
-      .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      .then((res) => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
       })
       .catch((err) => {});
   };
 
-  const showToast = (details, duration = 5000) => {
-    setToast(true);
-    setToastDetails(details);
-    setTimeout(() => {
-      setToast(false);
-      history.replace(history.location.pathname + history.location.search, { from: "" });
-    }, duration);
-  };
+  if (isLoading) {
+    return <Loader />;
+  }
 
-  // if (caseData?.criteria[0]?.responseList[0]?.status !== "CASE_ADMITTED") {
-  //   history.replace(`${path}?caseId=${caseId}&filingNumber=${filingNumber}&tab=Complaints`);
-  // }
-
-  return isLoading ? (
-    <Loader />
-  ) : (
-    <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
+  return (
+    <div className="admitted-case" style={{ position: "absolute", width: "100%" }}>
+      <div
+        className="admitted-case-header"
+        style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}
+      >
+        <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Header>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div
-                  style={{
-                    width: "5px",
-                    height: "32px",
-                    borderLeft: "2px solid #0000001a",
-                  }}
-                ></div>
-                <div
-                  style={{
-                    fontWeight: 400,
-                    lineHeight: "16.41px",
-                    fontSize: "14px",
-                    color: "#77787B",
-                  }}
-                >
-                  {statue}
-                </div>
-              </div>
+              <React.Fragment>
+                <hr className="vertical-line" />
+                <div className="sub-details-text">{statue}</div>
+              </React.Fragment>
             )}
-            <div
-              style={{
-                width: "5px",
-                height: "32px",
-                borderLeft: "2px solid #0000001a",
-              }}
-            ></div>
-            <div
-              style={{
-                fontWeight: 400,
-                lineHeight: "16.41px",
-                fontSize: "14px",
-                color: "#77787B",
-              }}
-            >
-              {caseDetails?.stage}
-            </div>
-            <div
-              style={{
-                width: "5px",
-                height: "32px",
-                borderLeft: "2px solid #0000001a",
-              }}
-            ></div>
-            <div
-              style={{
-                fontWeight: 400,
-                lineHeight: "16.41px",
-                fontSize: "14px",
-                color: "#77787B",
-              }}
-            >
-              Code: {caseData.criteria[0].responseList[0].accessCode}
-            </div>
+            <hr className="vertical-line" />
+            <div className="sub-details-text">{caseDetails?.stage}</div>
+            <hr className="vertical-line" />
+            <div className="sub-details-text">Code: {caseData.criteria[0].responseList[0].accessCode}</div>
           </div>
-          <div style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
+          <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
           {isJudge && (
-            <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
+            <div className="judge-action-block">
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
@@ -447,6 +495,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                       icon={showMenu ? "ExpandLess" : "ExpandMore"}
                       isSuffix={true}
                       onClick={handleTakeAction}
+                      className={"take-action-btn-class"}
                     ></ActionButton>
                     {showMenu && (
                       <Menu
@@ -465,7 +514,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions">
                     <div
-                      style={{ cursor: "pointer" }}
+                      className="custom-icon-wrapper"
                       onClick={() => {
                         setShowOtherMenu((prev) => !prev);
                         setShowMenu(false);
@@ -486,19 +535,17 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
         </div>
         <div className="search-tabs-container">
-          <div>
-            {tabData?.map((i, num) => (
-              <button
-                className={i?.active === true ? "search-tab-head-selected" : "search-tab-head"}
-                onClick={() => {
-                  onTabChange(num);
-                }}
-                disabled={isTabDisabled}
-              >
-                {t(i?.label)}
-              </button>
-            ))}
-          </div>
+          {tabData?.map((i, num) => (
+            <button
+              className={i?.active === true ? "case-search-tab-head-selected" : "case-search-tab-head"}
+              onClick={() => {
+                onTabChange(num);
+              }}
+              disabled={isTabDisabled}
+            >
+              {t(i?.label)}
+            </button>
+          ))}
         </div>
       </div>
       <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} />
@@ -543,12 +590,12 @@ const AdmittedCases = ({ isJudge = true }) => {
         ></InboxSearchComposer>
       </div>
       {tabData.filter((tab) => tab.label === "Overview")[0].active && (
-        <div>
+        <div className="case-overview-wrapper">
           <CaseOverview caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} showToast={showToast} />
         </div>
       )}
       {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
-        <div>
+        <div className="view-case-file-wrapper">
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
@@ -564,14 +611,25 @@ const AdmittedCases = ({ isJudge = true }) => {
           caseData={caseRelatedData}
         />
       )}
-      {showReviewModal && (
+      {showOrderReviewModal && (
         <OrderReviewModal
           t={t}
           order={currentOrder}
-          setShowReviewModal={setShowReviewModal}
+          setShowReviewModal={setShowOrderReviewModal}
           setShowsignatureModal={() => {}}
           handleSaveDraft={() => {}}
           showActions={false}
+        />
+      )}
+
+      {showScheduleHearingModal && (
+        <ScheduleHearing
+          setUpdateCounter={setUpdateCounter}
+          showToast={showToast}
+          tenantId={tenantId}
+          caseData={caseRelatedData}
+          setShowModal={setShowScheduleHearingModal}
+          caseAdmittedSubmit={caseAdmittedSubmit}
         />
       )}
       {toast && toastDetails && (

@@ -6,7 +6,6 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
-  const MultiUploadWrapper = Digit?.ComponentRegistryService?.getComponent("MultiUploadWrapper");
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -20,12 +19,12 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     );
   };
 
-  const onDocumentUpload = async (fileData, filename) => {
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
-  };
-
   useEffect(() => {
+    const onDocumentUpload = async (fileData, filename) => {
+      const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+      return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+    };
+
     if (order?.filesData) {
       const numberOfFiles = order?.filesData.length;
       let finalDocumentData = [];
@@ -45,7 +44,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
         });
       }
     }
-  }, [order]);
+  }, [order, tenantId]);
 
   const showDocument = useMemo(() => {
     return (
@@ -74,7 +73,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
         )}
       </div>
     );
-  }, [fileStoreId]);
+  }, [fileName, fileStoreId, t, tenantId]);
 
   return (
     <Modal

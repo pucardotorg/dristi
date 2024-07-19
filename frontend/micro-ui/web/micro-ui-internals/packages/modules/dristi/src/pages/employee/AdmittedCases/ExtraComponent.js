@@ -4,12 +4,13 @@ import OrderDrafts from "./OrderDrafts";
 import SubmissionReview from "./SubmissionsReview";
 
 const ExtraComponent = ({ tab, setUpdateCounter, caseData }) => {
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   switch (tab) {
     case "Hearings":
     case "Overview":
       return <NextHearingCard caseData={caseData} width={tab === "Overview" ? "70%" : "100%"} />;
     case "Orders":
-      return <OrderDrafts caseData={caseData} />;
+      return !userRoles.includes("CITIZEN") && <OrderDrafts caseData={caseData} />;
     case "Submissions":
       return <SubmissionReview caseData={caseData} setUpdateCounter={setUpdateCounter} />;
     default:
