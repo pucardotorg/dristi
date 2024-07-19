@@ -15,16 +15,7 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseExists;
-import org.pucar.dristi.web.models.CaseExistsRequest;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.JoinCaseRequest;
-import org.pucar.dristi.web.models.JoinCaseResponse;
-import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -148,34 +139,57 @@ public class CaseService {
         }
     }
 
+    public AddWitnessResponse addWitness(AddWitnessRequest addWitnessRequest) {
+
+        try {
+            String filingNumber = addWitnessRequest.getCaseFilingNumber();
+            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), addWitnessRequest.getRequestInfo());
+
+            if(existingApplications.get(0).getResponseList().isEmpty())
+                throw new CustomException("INVALID_CASE","No case found for given filling Number");
+
+            if (addWitnessRequest.getAdditionalDetails() != null) {
+                RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
+                User userInfo = requestInfo.getUserInfo();
+                String userType = userInfo.getType();
+                if (EMPLOYEE.equalsIgnoreCase(userType) && userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty()) {
+                    producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
+                }
+            }
+            return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
+
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while adding witness to the case :: {}", e.toString());
+            throw new CustomException(ADD_WITNESS_CASE_ERR, "Exception occurred while adding witness to case: " + e.getMessage());
+        }
+
+    }
+
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
         log.info("enriching litigants");
         enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
-        log.info("Pushing join case litigant details :: {}",joinCaseRequest.getLitigant());
+        log.info("Pushing join case litigant details :: {}", joinCaseRequest.getLitigant());
         producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
-        pushAdditionalDetails(joinCaseRequest);
+
+        if (joinCaseRequest.getAdditionalDetails() != null) {
+            log.info("Pushing additional details for litigant:: {}", joinCaseRequest.getAdditionalDetails());
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+        }
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
         log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
-        log.info("Pushing join case representative details :: {}",joinCaseRequest.getRepresentative());
+        log.info("Pushing join case representative details :: {}", joinCaseRequest.getRepresentative());
         producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
-        pushAdditionalDetails(joinCaseRequest);
-    }
 
-    private void pushAdditionalDetails(JoinCaseRequest joinCaseRequest){
-        if (joinCaseRequest.getAdditionalDetails() != null){
-            RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
-            User userInfo = requestInfo.getUserInfo();
-            String userType = userInfo.getType();
-
-            if (EMPLOYEE.equalsIgnoreCase(userType) && userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty()){
-                log.info("Pushing additional details :: {}",joinCaseRequest.getAdditionalDetails());
-                producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
-            }
+        if (joinCaseRequest.getAdditionalDetails() != null) {
+            log.info("Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
+            producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
         }
     }
 
@@ -183,7 +197,7 @@ public class CaseService {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
-            log.info("Existing application list :: {}",existingApplications.size());
+            log.info("Existing application list :: {}", existingApplications.size());
             CourtCase courtCase = validateAccessCodeAndReturnCourtCase(joinCaseRequest, existingApplications);
             UUID caseId = courtCase.getId();
 
@@ -250,7 +264,7 @@ public class CaseService {
                         .map(Party::getIndividualId)
                         .toList();
 
-                log.info("Advocate is part of the case :: {}",existingRepresentative);
+                log.info("Advocate is part of the case :: {}", existingRepresentative);
                 String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
 
                 if (joinCasePartyIndividualID != null &&
