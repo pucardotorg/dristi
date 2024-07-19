@@ -81,7 +81,7 @@ public class FileDownloadService {
                 String responseString = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
                 inputStream.close();
                 // Parse the JSON response using JsonPath to get the S3 URL
-                System.out.println("s3 url response"+ responseString);
+                log.info("s3 url response"+ responseString);
                 s3Url = JsonPath.parse(responseString).read("$.fileStoreIds[0].url", String.class);
 
 
