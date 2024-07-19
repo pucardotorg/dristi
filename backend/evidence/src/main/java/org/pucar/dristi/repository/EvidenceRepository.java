@@ -51,6 +51,7 @@
                         evidenceSearchCriteria.getId(),
                         evidenceSearchCriteria.getCaseId(),
                         evidenceSearchCriteria.getApplicationNumber(),
+                        evidenceSearchCriteria.getFilingNumber(),
                         evidenceSearchCriteria.getHearing(),
                         evidenceSearchCriteria.getOrder(),
                         evidenceSearchCriteria.getSourceId(),

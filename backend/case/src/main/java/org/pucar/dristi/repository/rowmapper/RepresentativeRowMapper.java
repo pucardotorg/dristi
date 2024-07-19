@@ -43,6 +43,7 @@ public class RepresentativeRowMapper implements ResultSetExtractor<Map<UUID, Lis
                         .advocateId(rs.getString("advocateid"))
                         .tenantId(rs.getString("tenantid"))
                         .isActive(rs.getBoolean("isactive"))
+                        .caseId(rs.getString("case_id"))
                         .auditDetails(auditdetails)
                         .build();
 

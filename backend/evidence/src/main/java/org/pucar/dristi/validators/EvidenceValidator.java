@@ -38,8 +38,8 @@ public class EvidenceValidator {
 
     public void validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
 
-        if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId and caseId are mandatory for creating advocate");
+        if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getFilingNumber())) {
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId, caseId and filing number are mandatory for creating advocate");
         }
         if (evidenceRequest.getRequestInfo().getUserInfo() == null) {
             throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
@@ -102,6 +102,7 @@ public class EvidenceValidator {
         evidenceSearchCriteria.setId(String.valueOf(evidenceRequest.getArtifact().getId()));
         evidenceSearchCriteria.setCaseId(evidenceRequest.getArtifact().getCaseId());
         evidenceSearchCriteria.setApplicationNumber(evidenceRequest.getArtifact().getApplication());
+        evidenceSearchCriteria.setFilingNumber(evidenceRequest.getArtifact().getFilingNumber());
         evidenceSearchCriteria.setHearing(evidenceRequest.getArtifact().getHearing());
         evidenceSearchCriteria.setOrder(evidenceRequest.getArtifact().getOrder());
         evidenceSearchCriteria.setSourceId(evidenceRequest.getArtifact().getSourceID());
@@ -112,6 +113,7 @@ public class EvidenceValidator {
         CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
         CaseExists caseExists = new CaseExists();
         caseExists.setCaseId(artifact.getCaseId());
+        caseExists.setFilingNumber(artifact.getFilingNumber());
         List<CaseExists> criteriaList = new ArrayList<>();
         criteriaList.add(caseExists);
         caseExistsRequest.setRequestInfo(requestInfo);

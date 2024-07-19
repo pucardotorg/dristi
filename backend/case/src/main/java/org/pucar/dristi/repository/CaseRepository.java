@@ -125,34 +125,39 @@ public class CaseRepository {
                     continue;
                 }
 
-                extractLinkedCasesIds(caseCriteria, idsLinkedCases);
-
-                extractLitigantIds(caseCriteria, idsLitigant);
-
-                extractRepresentativeIds(caseCriteria, idsRepresentative);
-
-                extractRepresentingIds(caseCriteria, idsRepresenting);
-
                 setLinkedCases(caseCriteria, ids);
+
+                extractLinkedCasesIds(caseCriteria, idsLinkedCases);
 
                 setLitigants(caseCriteria, ids);
 
-                setStatuteAndSections(caseCriteria, ids);
+                extractLitigantIds(caseCriteria, idsLitigant);
 
                 setRepresentatives(caseCriteria, ids);
 
-                setRepresenting(caseCriteria, idsRepresentative, preparedStmtListDoc);
+                extractRepresentativeIds(caseCriteria, idsRepresentative);
+
+                if (!idsRepresentative.isEmpty())
+                    setRepresenting(caseCriteria, idsRepresentative, preparedStmtListDoc);
+
+                extractRepresentingIds(caseCriteria, idsRepresenting);
+
+                setStatuteAndSections(caseCriteria, ids);
 
                 setCaseDocuments(caseCriteria, ids);
                 String casesDocumentQuery;
 
-                setLitigantDocuments(caseCriteria, idsLitigant);
+                if (!idsLitigant.isEmpty())
+                    setLitigantDocuments(caseCriteria, idsLitigant);
 
-                setLinkedCaseDocuments(caseCriteria, idsLinkedCases);
+                if (!idsLinkedCases.isEmpty())
+                    setLinkedCaseDocuments(caseCriteria, idsLinkedCases);
 
-                setRepresentativeDocuments(caseCriteria, idsRepresentative);
+                if (!idsRepresentative.isEmpty())
+                    setRepresentativeDocuments(caseCriteria, idsRepresentative);
 
-                setRepresentingDocuments(caseCriteria, idsRepresenting);
+                if (!idsRepresenting.isEmpty())
+                    setRepresentingDocuments(caseCriteria, idsRepresenting);
             }
             return searchCriteria;
         } catch (CustomException e) {

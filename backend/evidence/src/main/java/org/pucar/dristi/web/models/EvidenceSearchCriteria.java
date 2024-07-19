@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class EvidenceSearchCriteria {
     private String sourceName;
     private String status;
     private String artifactNumber;
-
+    private String filingNumber;
 
     // Getters and setters
 
@@ -48,7 +49,13 @@ public class EvidenceSearchCriteria {
     public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
+    public String getFilingNumber() {
+        return filingNumber;
+    }
 
+    public void setFilingNumber(String filingNumber) {
+        this.filingNumber = filingNumber;
+    }
     public String getHearing() {
         return hearing;
     }

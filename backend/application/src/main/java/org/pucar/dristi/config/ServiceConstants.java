@@ -65,9 +65,5 @@ public class ServiceConstants {
     public static final String JSON_PARSE_ERROR = "JSON_PARSE_ERROR";
     public static final String ERROR_WHILE_FETCHING_FROM_ORDER = "ERROR_WHILE_FETCHING_FROM_ORDER_SERVICE";
     public static final String ORDER_EXCEPTION = "ORDER_EXCEPTION";
-    public static final String ASYNC_VOLUNTARY_SUBMISSION_SERVICES = "async-voluntary-submission-services";
-    public static final String ASYNSUBMISSIONWITHRESPONSE = "asynsubmissionwithresponse";
-    public static final String ASYNCSUBMISSIONWITHOUTRESPONSE = "asyncsubmissionwithoutresponse";
-
 
 }
