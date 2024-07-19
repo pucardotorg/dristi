@@ -143,9 +143,10 @@ public class CaseService {
 
         try {
             String filingNumber = addWitnessRequest.getCaseFilingNumber();
-            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), addWitnessRequest.getRequestInfo());
+            CaseExists caseExists = CaseExists.builder().filingNumber(filingNumber).build();
+            List<CaseExists> caseExistsList = caseRepository.checkCaseExists(Collections.singletonList(caseExists));
 
-            if (existingApplications.get(0).getResponseList().isEmpty())
+            if (!caseExistsList.get(0).getExists())
                 throw new CustomException(INVALID_CASE, "No case found for the given filling Number");
 
             if (addWitnessRequest.getAdditionalDetails() == null)
@@ -157,8 +158,8 @@ public class CaseService {
             if (!EMPLOYEE.equalsIgnoreCase(userType) || userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty())
                 throw new CustomException(VALIDATION_ERR, "Not a valid user to add witness details");
 
-            addWitnessRequest.getAuditDetails().setLastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid());
-            addWitnessRequest.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            AuditDetails auditDetails = AuditDetails.builder().lastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            addWitnessRequest.setAuditDetails(auditDetails);
             producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
 
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
