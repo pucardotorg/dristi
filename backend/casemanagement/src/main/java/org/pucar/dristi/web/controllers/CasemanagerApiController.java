@@ -3,11 +3,10 @@ package org.pucar.dristi.web.controllers;
 
 import java.io.IOException;
 
-import org.pucar.dristi.web.models.CaseFileResponse;
-import org.pucar.dristi.web.models.CaseGroupRequest;
-import org.pucar.dristi.web.models.CaseGroupResponse;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSummaryResponse;
+import org.pucar.dristi.service.FileDownloadService;
+import org.pucar.dristi.service.ServiceUrlMapperVCService;
+import org.pucar.dristi.service.ServiceUrlMappingPdfService;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +30,15 @@ import jakarta.validation.Valid;
         private final ObjectMapper objectMapper;
 
         private final HttpServletRequest request;
+
+    @Autowired
+    private FileDownloadService fileDownloadService;
+
+    @Autowired
+    private ServiceUrlMappingPdfService serviceUrlMappingPdfService;
+
+    @Autowired
+    private ServiceUrlMapperVCService serviceUrlMapperVCService;
 
         @Autowired
         public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -92,6 +100,19 @@ import jakarta.validation.Valid;
                             }
 
                         return new ResponseEntity<CaseGroupResponse>(HttpStatus.NOT_IMPLEMENTED);
+                }
+
+
+                @RequestMapping(value = "/credentials/v1/_generate", method = RequestMethod.POST)
+                public ResponseEntity<VcCredentialRequest> processFile(@Valid @RequestBody VcCredentialRequest vcCredentialRequest ) {
+                    VcCredentialRequest response= serviceUrlMapperVCService.generateVc(vcCredentialRequest);
+                    return new ResponseEntity<VcCredentialRequest>(response, HttpStatus.OK);
+                }
+
+                @RequestMapping(value = "/pdf/v1/_get", method = RequestMethod.POST)
+                public ResponseEntity<Object>getPdf(@Valid @RequestBody PdfRequest pdfRequestobject) {
+                    Object pdfResponse= serviceUrlMappingPdfService.getSVcUrlMappingPdf(pdfRequestobject);
+                    return new ResponseEntity<Object>(pdfResponse, HttpStatus.OK);
                 }
 
         }
