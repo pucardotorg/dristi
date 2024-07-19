@@ -12,7 +12,7 @@ export const OrderName = ({ rowData, colData, value = "" }) => {
       }}
       onClick={() => colData?.clickFunc(rowData)}
     >
-      {t(`ORDER_TYPE_${value}`)}
+      {t(`ORDER_TYPE_${value.toUpperCase()}`)}
     </div>
   );
 };

@@ -45,10 +45,10 @@ function CaseFileAdmission({ t, path }) {
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
-      ...reviewCaseFileFormConfig.map((form) => {
+      ...reviewCaseFileFormConfig?.map((form) => {
         return {
           ...form,
-          body: form.body.map((section) => {
+          body: form.body?.map((section) => {
             return {
               ...section,
               populators: {
@@ -220,7 +220,7 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
-    const litigantsNames = caseDetails.litigants.map((litigant) => {
+    const litigantsNames = caseDetails.litigants?.map((litigant) => {
       return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId };
     });
 
@@ -254,7 +254,7 @@ function CaseFileAdmission({ t, path }) {
         <div className="file-case">
           <div className="file-case-side-stepper">
             <div className="file-case-select-form-section">
-              {sidebar.map((key, index) => (
+              {sidebar?.map((key, index) => (
                 <div className="accordion-wrapper">
                   <div key={index} className="accordion-title">
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>

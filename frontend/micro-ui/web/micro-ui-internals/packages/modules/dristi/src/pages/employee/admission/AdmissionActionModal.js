@@ -115,7 +115,7 @@ function AdmissionActionModal({
   const [selectedChip, setSelectedChip] = React.useState(null);
 
   const setPurposeValue = (value, input) => {
-    setScheduleHearingParam({ ...scheduleHearingParams, purpose: value.code });
+    setScheduleHearingParam({ ...scheduleHearingParams, purpose: isCaseAdmitted ? value : value.code });
   };
 
   const showCustomDateModal = () => {

@@ -21,8 +21,8 @@ const OrderDrafts = ({ caseData }) => {
       },
     },
     {},
-    cnr + filingNumber,
-    true
+    filingNumber,
+    filingNumber
   );
 
   return ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS").length ? (
@@ -70,7 +70,7 @@ const OrderDrafts = ({ caseData }) => {
                       color: "#101828",
                     }}
                   >
-                    {t(`ORDER_TYPE_${order?.orderType}`)}
+                    {t(`ORDER_TYPE_${order?.orderType?.toUpperCase()}`)}
                   </div>
                   <CustomArrowOut />
                 </div>

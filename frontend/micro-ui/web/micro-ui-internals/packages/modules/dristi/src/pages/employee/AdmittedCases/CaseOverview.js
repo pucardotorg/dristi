@@ -6,6 +6,7 @@ import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderRevi
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
+import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
 
 const CaseOverview = ({ caseData, openHearingModule }) => {
   const { t } = useTranslation();
@@ -18,8 +19,27 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+
+  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
+  const advocateIds = caseData?.case?.representatives?.map((representative) => {
+    return {
+      id: representative?.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
+  );
+
+  console.log(advocateDetails);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -97,6 +117,8 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
       })
       .catch((err) => {});
   };
+
+  const orderList = userRoles.includes("CITIZEN") ? ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") : ordersRes?.list;
 
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
@@ -241,7 +263,7 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
             </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-            {ordersRes?.list
+            {orderList
               ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
               .slice(0, 5)
               .map((order) => (
