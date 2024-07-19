@@ -371,7 +371,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   };
 
   const searchCase = async (caseNumber) => {
-    if (caseNumber) {
+    if (caseNumber && !caseDetails?.filingNumber) {
       const response = await DRISTIService.searchCaseService(
         {
           criteria: [
@@ -468,20 +468,18 @@ const JoinCaseHome = ({ refreshInbox }) => {
     if (step === 1) {
       if (userType && userType === "Litigant" && selectedParty?.label && !selectedParty?.individualId && representingYourself) {
         setIsDisabled(false);
-      } else if (userType && userType === "Advocate") {
+      } else if (userType && userType === "Advocate" && selectedParty?.label) {
         const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
-        if (selectedParty?.label) {
-          if (
-            (searchLitigantInRepresentives().isFound && roleOfNewAdvocate) ||
-            (!searchLitigantInRepresentives().isFound && selectedParty?.partyType?.includes(partyType)) ||
-            !advIsFound
-          ) {
-            setIsDisabled(false);
-          } else {
-            setIsDisabled(true);
-          }
-          getUserUUID(selectedParty?.individualId);
+        if (
+          (searchLitigantInRepresentives().isFound && roleOfNewAdvocate) ||
+          (!searchLitigantInRepresentives().isFound && selectedParty?.partyType?.includes(partyType)) ||
+          !advIsFound
+        ) {
+          setIsDisabled(false);
+        } else {
+          setIsDisabled(true);
         }
+        getUserUUID(selectedParty?.individualId);
       } else {
         setIsDisabled(true);
       }

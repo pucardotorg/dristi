@@ -21,8 +21,8 @@ const OrderDrafts = ({ caseData }) => {
       },
     },
     {},
-    cnr + filingNumber,
-    true
+    filingNumber,
+    filingNumber
   );
 
   return ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS").length ? (

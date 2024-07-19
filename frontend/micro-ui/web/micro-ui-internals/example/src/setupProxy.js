@@ -94,6 +94,7 @@ module.exports = function (app) {
     "/evidence",
     "/project-factory/v1/data/_autoGenerateBoundaryCode",
     "/application",
+    "/casemanagement",
     "/case",
     "/order",
     "/hearing",

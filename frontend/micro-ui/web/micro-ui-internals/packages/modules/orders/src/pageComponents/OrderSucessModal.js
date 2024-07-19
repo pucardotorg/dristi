@@ -5,8 +5,7 @@ import CustomCopyTextDiv from "../../../dristi/src/components/CustomCopyTextDiv"
 import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-function OrderSucessModal({ order, t, setShowSuccessModal, caseId }) {
-  const history = useHistory();
+function OrderSucessModal({ order, t, handleDownloadOrders, handleClose }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -29,16 +28,6 @@ function OrderSucessModal({ order, t, setShowSuccessModal, caseId }) {
         copyData: true,
       },
     ],
-  };
-
-  const handleDownloadOrders = () => {
-    // setShowSuccessModal(false);
-    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
-  };
-
-  const handleClose = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tabs=${"Orders"}&caseId=${caseId}`, { from: "orderSuccessModal" });
-    setShowSuccessModal(false);
   };
 
   return (

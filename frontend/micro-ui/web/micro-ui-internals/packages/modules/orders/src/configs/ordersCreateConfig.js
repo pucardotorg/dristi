@@ -977,25 +977,16 @@ export const configsScheduleHearingDate = [
         type: "dropdown",
         populators: {
           name: "hearingPurpose",
-          optionsKey: "name",
+          optionsKey: "code",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
-          hideInForm: true,
-          options: [
-            {
-              code: "HEARING_PURPOSE_1",
-              name: "HEARING_PURPOSE_1",
-            },
-            {
-              code: "HEARING_PURPOSE_2",
-              name: "HEARING_PURPOSE_2",
-            },
-            {
-              code: "HEARING_PURPOSE_3",
-              name: "HEARING_PURPOSE_3",
-            },
-          ],
+          hideInForm: false,
+          mdmsConfig: {
+            masterName: "HearingType",
+            moduleName: "Hearing",
+            localePrefix: "HEARING_PURPOSE",
+          },
         },
       },
       {

@@ -31,11 +31,16 @@ import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import { ordersService } from "../../hooks/services";
+import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
+import { CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
+import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
+import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
+import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
+import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -120,11 +125,13 @@ const GenerateOrders = () => {
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
   const complainants = useMemo(() => {
-    return caseDetails?.litigants
-      ?.filter((item) => item?.partyType === "complainant.primary")
-      .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "complainants", name: item?.additionalDetails?.fullName || "complainants" };
-      });
+    return caseDetails?.litigants?.map((item) => {
+      return {
+        code: item?.additionalDetails?.fullName,
+        name: item?.additionalDetails?.fullName,
+        individualId: item?.individualId,
+      };
+    });
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
@@ -150,6 +157,22 @@ const GenerateOrders = () => {
     { tenantId },
     filingNumber,
     Boolean(filingNumber && cnrNumber)
+  );
+
+  const advocateIds = caseDetails.representatives?.map((representative) => {
+    return {
+      id: representative.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
   );
   const defaultIndex = useMemo(() => {
     return ordersData?.list?.findIndex((order) => order.orderNumber === orderNumber);
@@ -397,6 +420,8 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
+    console.debug(order);
+    console.debug({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } });
     try {
       return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
     } catch (error) {
@@ -448,7 +473,43 @@ const GenerateOrders = () => {
   const handleIssueOrder = async () => {
     try {
       setPrevOrder(currentOrder);
-      await updateOrder({ order: { ...currentOrder } }, OrderWorkflowAction.ESIGN);
+      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
+      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+        const advocateData = advocateDetails.advocates.map((advocate) => {
+          return {
+            individualId: advocate.responseList[0].individualId,
+            name: advocate.responseList[0].additionalDetails.username,
+            type: "Advocate",
+          };
+        });
+        DRISTIService.createHearings(
+          {
+            hearing: {
+              tenantId: tenantId,
+              filingNumber: [filingNumber],
+              hearingType: currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type,
+              status: true,
+              attendees: [
+                ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
+                  return { name: attendee.name, individualId: attendee.individualId };
+                }),
+                ...advocateData,
+              ],
+              startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+              endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+              workflow: {
+                action: "CREATE",
+                assignes: [],
+                comments: "Create new Hearing",
+                documents: [{}],
+              },
+              documents: [],
+            },
+            tenantId,
+          },
+          { tenantId: tenantId }
+        );
+      }
       setShowSuccessModal(true);
     } catch (error) {
       //show toast of API failed
@@ -486,6 +547,17 @@ const GenerateOrders = () => {
       history.push(`?filingNumber=${filingNumber}`);
     }
     setSelectedOrder(index);
+  };
+  const handleDownloadOrders = () => {
+    setShowSuccessModal(false);
+    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
+  };
+
+  const handleClose = () => {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tabs=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
+    setShowSuccessModal(false);
   };
 
   if (!filingNumber) {
@@ -571,7 +643,7 @@ const GenerateOrders = () => {
       {showsignatureModal && (
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
-      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} caseId={caseDetails?.id} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
       {showErrorToast && (
         <Toast
           style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}
