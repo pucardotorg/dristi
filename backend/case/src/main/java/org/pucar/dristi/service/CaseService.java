@@ -145,19 +145,22 @@ public class CaseService {
             String filingNumber = addWitnessRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), addWitnessRequest.getRequestInfo());
 
-            if(existingApplications.get(0).getResponseList().isEmpty())
-                throw new CustomException(INVALID_CASE,"No case found for the given filling Number");
+            if (existingApplications.get(0).getResponseList().isEmpty())
+                throw new CustomException(INVALID_CASE, "No case found for the given filling Number");
 
-            if (addWitnessRequest.getAdditionalDetails() != null) {
-                RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
-                User userInfo = requestInfo.getUserInfo();
-                String userType = userInfo.getType();
-                if (EMPLOYEE.equalsIgnoreCase(userType) && userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty()) {
-                    addWitnessRequest.getAuditDetails().setLastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid());
-                    addWitnessRequest.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                    producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
-                }
-            }
+            if (addWitnessRequest.getAdditionalDetails() == null)
+                throw new CustomException(VALIDATION_ERR, "Additional details are required");
+
+            RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
+            User userInfo = requestInfo.getUserInfo();
+            String userType = userInfo.getType();
+            if (!EMPLOYEE.equalsIgnoreCase(userType) || userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty())
+                throw new CustomException(VALIDATION_ERR, "Not a valid user to add witness details");
+
+            addWitnessRequest.getAuditDetails().setLastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid());
+            addWitnessRequest.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
+
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
 
         } catch (CustomException e) {
