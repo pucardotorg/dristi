@@ -1,7 +1,6 @@
 package org.pucar.dristi.util.jsonmapper;
 
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Workflow;
 import org.json.JSONObject;
 import org.pucar.dristi.web.models.Application;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ public class ApplicationMapper {
 		Application application = jsonMapperUtil.map(dataObject.optJSONObject("applicationDetails"), Application.class);
 
 		if (application != null) {
-			application.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
 			application.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("auditDetails"), AuditDetails.class));
 		}
 

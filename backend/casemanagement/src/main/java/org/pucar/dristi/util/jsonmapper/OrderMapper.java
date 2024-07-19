@@ -1,7 +1,6 @@
 package org.pucar.dristi.util.jsonmapper;
 
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Workflow;
 import org.json.JSONObject;
 import org.pucar.dristi.web.models.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ public class OrderMapper {
 
 		if (order != null) {
 			order.setAuditDetails(jsonMapperUtil.map(dataObject.optJSONObject("orderDetails"), AuditDetails.class));
-			order.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
 		}
 		return order;
 	}

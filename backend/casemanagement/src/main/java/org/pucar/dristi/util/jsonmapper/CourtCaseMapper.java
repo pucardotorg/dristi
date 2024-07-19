@@ -3,7 +3,6 @@ package org.pucar.dristi.util.jsonmapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Workflow;
 import org.json.JSONObject;
 import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class CourtCaseMapper {
 		CourtCase courtCase = jsonMapperUtil.map(dataObject.optJSONObject("caseDetails"), CourtCase.class);
 
 		if (courtCase != null) {
-			courtCase.setWorkflow(jsonMapperUtil.map(dataObject.optJSONObject("currentProcessInstance"), Workflow.class));
 			courtCase.setAuditdetails(jsonMapperUtil.map(dataObject.optJSONObject("caseDetails"), AuditDetails.class));
 		}
 
