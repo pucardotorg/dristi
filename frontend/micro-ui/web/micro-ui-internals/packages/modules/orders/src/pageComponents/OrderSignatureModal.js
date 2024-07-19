@@ -1,8 +1,10 @@
-import { Button, CloseSvg } from "@egovernments/digit-ui-components";
+import { CloseSvg, InfoCard } from "@egovernments/digit-ui-components";
 import React, { useState } from "react";
 import Modal from "../../../dristi/src/components/Modal";
+import { Button } from "@egovernments/digit-ui-react-components";
+import { FileUploadIcon } from "../../../dristi/src/icons/svgIndex";
 
-function OrderSignatureModal({ t, order, handleIssueOrder }) {
+function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignatureModal }) {
   const [isSigned, setIsSigned] = useState(false);
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -15,12 +17,13 @@ function OrderSignatureModal({ t, order, handleIssueOrder }) {
       </div>
     );
   };
+
   return (
     <Modal
       headerBarMain={<Heading label={t("ADD_SIGNATURE")} />}
-      headerBarEnd={<CloseBtn onClick={() => handleCloseSignaturePopup()} />}
-      actionCancelLabel={t("BACK")}
-      actionCancelOnSubmit={() => handleCloseSignaturePopup()}
+      headerBarEnd={<CloseBtn onClick={handleGoBackSignatureModal} />}
+      actionCancelLabel={t("CS_COMMON_BACK")}
+      actionCancelOnSubmit={handleGoBackSignatureModal}
       actionSaveLabel={t("ISSUE_ORDER")}
       isDisabled={!isSigned}
       actionSaveOnSubmit={() => {
@@ -29,36 +32,44 @@ function OrderSignatureModal({ t, order, handleIssueOrder }) {
       className={"add-signature-modal"}
     >
       <div className="add-signature-main-div">
-        <div className="note-div">
-          <div className="icon-div">
-            {/* <SmallInfoIcon></SmallInfoIcon> */}
-            <span>{t("PLEASE_NOTE")}</span>
-          </div>
-          <h2>{t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")}</h2> <span style={{ fontWeight: "bold" }}>{order?.orderType}</span>
-        </div>
+        <InfoCard
+          variant={"default"}
+          label={t("PLEASE_NOTE")}
+          additionalElements={[
+            <p>
+              {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")} <span style={{ fontWeight: "bold" }}>{t(order?.orderType)}</span>
+            </p>,
+          ]}
+          inline
+          textStyle={{}}
+          className={`custom-info-card`}
+        />
+
         {!isSigned ? (
           <div className="not-signed">
             <h1>{t("YOUR_SIGNATURE")}</h1>
-            <Button
-              // icon={<FileUploadIcon />}
-              label={t("CS_UPLOAD_ESIGNATURE")}
-              onClick={() => {
-                // setOpenUploadSignatureModal(true);
-                setIsSigned(true);
-              }}
-              className={"upload-signature"}
-              labelClassName={"upload-signature-label"}
-            ></Button>
-            <Button
-              label={t("CS_ESIGN_AADHAR")}
-              onClick={() => {
-                // setOpenAadharModal(true);
-                setIsSigned(true);
-              }}
-              className={"aadhar-sign-in"}
-              labelClassName={"aadhar-sign-in"}
-            ></Button>
-            <div>
+            <div className="sign-button-wrap">
+              <Button
+                label={t("CS_ESIGN")}
+                onButtonClick={() => {
+                  // setOpenAadharModal(true);
+                  setIsSigned(true);
+                }}
+                className={"aadhar-sign-in"}
+                labelClassName={"aadhar-sign-in"}
+              />
+              <Button
+                icon={<FileUploadIcon />}
+                label={t("UPLOAD_DIGITAL_SIGN_CERTI")}
+                onButtonClick={() => {
+                  // setOpenUploadSignatureModal(true);
+                  setIsSigned(true);
+                }}
+                className={"upload-signature"}
+                labelClassName={"upload-signature-label"}
+              />
+            </div>
+            <div className="donwload-submission">
               <h2>{t("WANT_TO_DOWNLOAD")}</h2>
               <span>
                 <a href="">{t("CLICK_HERE")}</a>
@@ -68,7 +79,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder }) {
         ) : (
           <div className="signed">
             <h1>{t("YOUR_SIGNATURE")}</h1>
-            <span>{t("SIGNED")}</span>
+            <h2>{t("SIGNED")}</h2>
           </div>
         )}
       </div>

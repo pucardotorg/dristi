@@ -24,7 +24,7 @@ function SelectCustomNote({ t, config, onClick = () => {} }) {
         </div>
         <div className="custom-note-info-div">{<p>{t(input?.infoText)}</p>}</div>
         {input?.linkText && (
-          <span style={{ color: "#007E7E", cursor: "pointer" }} onClick={onClick}>
+          <span style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }} onClick={onClick}>
             {String(t(input?.linkText))}
           </span>
         )}

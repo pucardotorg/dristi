@@ -9,7 +9,7 @@ export const judgeInboxConfig = {
       criteria: [
         {
           defaultValues: true,
-          status: "PENDING_ADMISSION",
+          status: "",
           filingNumber: "",
         },
       ],
@@ -64,6 +64,7 @@ export const judgeInboxConfig = {
           {
             label: "Stage",
             jsonPath: "status",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",

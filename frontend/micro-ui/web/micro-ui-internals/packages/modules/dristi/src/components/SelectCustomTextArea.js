@@ -1,5 +1,6 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { isEmptyObject } from "../Utils";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
@@ -14,24 +15,45 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
     [config?.populators?.inputs]
   );
 
+  const [formdata, setFormData] = useState(formData);
+
   function setValue(value, input) {
+    let updatedValue = {
+      ...formData[config.key],
+    };
+
     if (Array.isArray(input)) {
-      onSelect(
-        config.key,
-        {
-          ...formData[config.key],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        },
-        { shouldValidate: true }
-      );
-    } else onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+      updatedValue = {
+        ...updatedValue,
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      };
+    } else {
+      updatedValue[input] = value;
+    }
+
+    if (!value) {
+      updatedValue = null;
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [config.key]: {
+        ...prevData[config.key],
+        [input]: value,
+      },
+    }));
+
+    onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {
-    const newText = event.target.value;
+    let newText = event.target.value;
+    if (typeof config?.populators?.validation?.pattern === "object") {
+      newText = newText.replace(config?.populators?.validation?.pattern, "").trimStart().replace(/ +/g, " ");
+    }
     setValue(newText, input?.name);
   };
 
@@ -44,17 +66,17 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
               {t(input?.textAreaHeader)}
             </h1>
           )}
-          {
+          {!config?.disableScrutinyHeader && (
             <span>
               <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
               </p>
             </span>
-          }
+          )}
         </div>
         <textarea
-          value={formData?.[config.key]?.[input.name]}
+          value={formdata?.[config.key]?.[input.name]}
           onChange={(data) => {
             handleChange(data, input);
           }}

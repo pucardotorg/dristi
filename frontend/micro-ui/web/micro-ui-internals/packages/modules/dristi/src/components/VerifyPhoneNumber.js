@@ -80,6 +80,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     setState((prev) => ({
       ...prev,
       showModal: false,
+      errorMsg: "",
     }));
     onSelect(config?.key, { ...formData?.[config.key], otpNumber: "" });
   };
@@ -90,6 +91,10 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       tenantId: stateCode,
       userType: getUserType(),
     };
+    setState((prev) => ({
+      ...prev,
+      errorMsg: "",
+    }));
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     setTimeLeft(10);
     if (!err) {
@@ -205,6 +210,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
@@ -224,10 +230,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
           showModal: false,
+          errorMsg: "",
         }));
       }
     } catch (err) {
@@ -334,6 +342,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             else selectOtp(input);
           }}
           formId="modal-action"
+          isDisabled={formData?.[config.key]?.[input.name]?.length !== 6 || errorMsg}
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={"verify-mobile-modal"}
@@ -370,7 +379,18 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      onSelect(config?.key, { ...formData?.[config.key], [input?.name]: e.target.value });
+                      const { value } = e.target;
+                      let updatedValue = value;
+                      updatedValue = value?.replace(/[^0-9]/g, "");
+                      if (errorMsg) {
+                        setState((prev) => {
+                          return {
+                            ...prev,
+                            errorMsg: "",
+                          };
+                        });
+                      }
+                      onSelect(config?.key, { ...formData?.[config.key], [input?.name]: updatedValue });
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}

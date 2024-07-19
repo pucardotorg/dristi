@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
 import { DRISTIService } from "../../services";
 
-function useGetHearings(data, params, keys, enabled) {
-  const { isLoading, data: hearingResponse, isFetching, refetch, error } = useQuery(
-    `GET_HEARING_${keys}`,
-    () => DRISTIService.searchHearings(data, params),
+function useGetOrders(data, params, keys, enabled) {
+  const { isLoading, data: ordersResponse, isFetching, refetch, error } = useQuery(
+    `GET_ORDERS_${keys}`,
+    () => DRISTIService.searchOrders(data, params),
     {
       cacheTime: 0,
       enabled: Boolean(enabled),
@@ -13,16 +13,16 @@ function useGetHearings(data, params, keys, enabled) {
   );
 
   if (error) {
-    console.error("Error fetching hearings:", error);
+    console.error("Error fetching ORDERS:", error);
   }
 
   return {
     isLoading,
     isFetching,
-    data: hearingResponse,
+    data: ordersResponse,
     refetch,
     error,
   };
 }
 
-export default useGetHearings;
+export default useGetOrders;

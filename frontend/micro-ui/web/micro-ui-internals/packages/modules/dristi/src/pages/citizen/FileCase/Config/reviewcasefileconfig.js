@@ -6,6 +6,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
+        number: 1,
         withoutLabel: true,
         textAreaMaxLength: "255",
         populators: {
@@ -30,7 +31,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "image",
                   label: "CS_ID_PROOF",
-                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                  value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
                 },
                 {
                   type: "address",
@@ -80,23 +81,23 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "address",
                   label: "ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "INDIVIDUAL",
                   value: "addressDetails",
                 },
                 {
                   type: "text",
                   label: "company_Name",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
                   value: "companyName",
                 },
                 {
                   type: "address",
                   label: "COMPANY_ADDRESS",
-                  dependentOn: "complainantType.code",
+                  dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "addressCompanyDetails",
+                  value: "addressDetails",
                 },
                 {
                   type: "image",
@@ -114,6 +115,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "caseSpecificDetails",
         label: "CS_CASE_SPECIFIC_DETAILS",
+        number: 2,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -137,11 +139,6 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_CHEQUE_ISSUED_TO",
                   value: "name",
-                },
-                {
-                  type: "text",
-                  label: "CS_PAYER_BANK",
-                  value: "payerbank",
                 },
                 {
                   type: "text",
@@ -200,6 +197,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_CHEQUE_RECIEVED_FOR",
                   value: "liabilityType.name",
+                },
+                {
+                  type: "amount",
+                  label: "CS_PARIAL_AMOUNT",
+                  value: "totalAmount",
                 },
                 {
                   type: "text",
@@ -290,6 +292,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "additionalDetails",
         label: "CS_ADDITIONAL_DETAILS",
+        number: 3,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -344,17 +347,33 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+                  textDependentOn: "memorandumOfComplaint.document",
+                  textDependentValue: "Document Attached",
                   value: "memorandumOfComplaint.text",
                 },
                 {
                   type: "text",
                   label: "CS_PRAYER_FOR_RELIEF_HEADER",
+                  textDependentOn: "prayerForRelief.document",
+                  textDependentValue: "Document Attached",
                   value: "prayerForRelief.text",
+                },
+                {
+                  type: "text",
+                  label: "CS_SWORN_STATEMENT_HEADER",
+                  textDependentOn: "swornStatement.document",
+                  textDependentValue: "Document Attached",
+                  value: "swornStatement.text",
                 },
                 {
                   type: "text",
                   label: "CS_ADDITIONAL_DETAILS",
                   value: "additionalDetails.text",
+                },
+                {
+                  type: "text",
+                  label: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
+                  value: "additionalActsSections.text",
                 },
                 {
                   type: "image",

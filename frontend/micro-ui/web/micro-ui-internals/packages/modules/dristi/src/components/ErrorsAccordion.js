@@ -18,8 +18,12 @@ function ErrorsAccordion({ handlePageChange, pages, t, showConfirmModal, totalEr
     }
   };
   const handleGoToPrev = () => {
-    if (resultIndex > 1) {
-      handleGoToPage(pages[resultIndex - 2]?.key);
+    if (selected === pages[resultIndex - 1]?.key) {
+      if (resultIndex > 1) {
+        handleGoToPage(pages[resultIndex - 2]?.key);
+      }
+    } else {
+      handleGoToPage(pages[resultIndex - 1]?.key);
     }
   };
 

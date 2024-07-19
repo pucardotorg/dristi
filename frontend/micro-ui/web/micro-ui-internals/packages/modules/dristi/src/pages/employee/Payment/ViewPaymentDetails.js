@@ -1,4 +1,4 @@
-import { Loader, SubmitBar, ActionBar, CustomDropdown, CardLabel, LabelFieldPair, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, SubmitBar, ActionBar, CustomDropdown, CardLabel, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -52,7 +52,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const [modeOfPayment, setModeOfPayment] = useState(null);
   const [additionDetails, setAdditionalDetails] = useState("");
   const toast = useToast();
-
+  const [isDisabled, setIsDisabled] = useState(false);
   const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
@@ -95,6 +95,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
+    setIsDisabled(true);
     if (!Object.keys(bill || {}).length) {
       toast.error(t("CS_BILL_NOT_AVAILABLE"));
       history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
@@ -117,7 +118,6 @@ const ViewPaymentDetails = ({ location, match }) => {
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
           totalAmountPaid: 2000,
-          ...(additionDetails && { transactionNumber: additionDetails }),
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
         },
@@ -149,8 +149,10 @@ const ViewPaymentDetails = ({ location, match }) => {
           },
         },
       });
+      setIsDisabled(false);
     } catch (err) {
       history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, { state: { success: false } });
+      setIsDisabled(false);
     }
   };
 
@@ -251,7 +253,8 @@ const ViewPaymentDetails = ({ location, match }) => {
             label={t("CS_GENERATE_RECEIPT")}
             disabled={
               Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0 ||
-              (["CHEQUE", "DD"].includes(modeOfPayment?.code) ? additionDetails.length !== 6 : false)
+              (["CHEQUE", "DD"].includes(modeOfPayment?.code) ? additionDetails.length !== 6 : false) ||
+              isDisabled
             }
             onSubmit={() => {
               onSubmitCase();

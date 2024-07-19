@@ -1,0 +1,3 @@
+export const applicationTypes = {
+  EXTENSION_SUBMISSION_DEADLINE: "EXTENSION_SUBMISSION_DEADLINE",
+};

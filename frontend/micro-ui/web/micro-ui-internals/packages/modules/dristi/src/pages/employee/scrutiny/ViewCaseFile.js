@@ -1,29 +1,19 @@
-import {
-  BackButton,
-  CheckSvg,
-  CloseButton,
-  CloseSvg,
-  EditIcon,
-  FormComposerV2,
-  Header,
-  Loader,
-  TextInput,
-  Toast,
-} from "@egovernments/digit-ui-react-components";
+import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { useLocation, Redirect, useHistory } from "react-router-dom";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBackModal from "../../../components/SendCaseBackModal";
-import SuccessModal from "../../../components/SuccessModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
-import { DRISTIService } from "../../../services";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
-
-function ViewCaseFile({ t }) {
+import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+function ViewCaseFile({ t, inViewCase = false }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
@@ -37,6 +27,7 @@ function ViewCaseFile({ t }) {
   const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
   const [newCaseName, setNewCaseName] = useState("");
   const [modalCaseName, setModalCaseName] = useState("");
+  const [highlightChecklist, setHighlightChecklist] = useState(false);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -188,7 +179,6 @@ function ViewCaseFile({ t }) {
                     ...input,
                     data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
                     prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
-                    vaiubhav: "Vaibhav",
                   };
                 }),
               },
@@ -228,6 +218,7 @@ function ViewCaseFile({ t }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: getAllAssignees(caseDetails) }),
           },
         },
         tenantId,
@@ -276,6 +267,10 @@ function ViewCaseFile({ t }) {
   };
   const handleCloseModal = () => {
     setActionModal(false);
+    setHighlightChecklist(true);
+    setTimeout(() => {
+      setHighlightChecklist(false);
+    }, 2000);
   };
 
   if (!caseId) {
@@ -331,6 +326,11 @@ function ViewCaseFile({ t }) {
     return <h1 className="heading-m">{props.label}</h1>;
   };
 
+  const scrollToHeading = (heading) => {
+    const scroller = Array.from(document.querySelectorAll(".label-field-pair .accordion-title")).find((el) => el.textContent === heading);
+    scroller.scrollIntoView({ block: "center", behavior: "smooth" });
+  };
+
   return (
     <div className={"case-and-admission"}>
       <div className="view-case-file">
@@ -339,9 +339,9 @@ function ViewCaseFile({ t }) {
             <div className="file-case-select-form-section">
               {sidebar.map((key, index) => (
                 <div className="accordion-wrapper">
-                  <div key={index} className="accordion-title">
+                  <div key={index} className="accordion-title" onClick={() => scrollToHeading(`${index + 1}. ${t(labels[key])}`)}>
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>
-                    <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
+                    {!inViewCase && <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>}
                   </div>
                 </div>
               ))}
@@ -349,30 +349,42 @@ function ViewCaseFile({ t }) {
           </div>
           <div className="file-case-form-section">
             <div className="employee-card-wrapper">
-              <div className="back-button-home">
-                <BackButton />
-              </div>
-              <div className="header-content">
-                <div className="header-details">
-                  <div className="header-title-icon">
-                    <Header>
-                      {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
-                    </Header>
-                    <div
-                      className="case-edit-icon"
-                      onClick={() => {
-                        setShowEditCaseNameModal(true);
-                      }}
-                    >
-                      <EditIcon />
-                    </div>
+              {!inViewCase && (
+                <div>
+                  <div className="back-button-home">
+                    <BackButton />
                   </div>
-                  <div className="header-icon" onClick={() => {}}>
-                    <CustomArrowDownIcon />
+                  <div className="header-content">
+                    <div className="header-details">
+                      <div className="header-title-icon">
+                        <Header>
+                          {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                        </Header>
+                        <div
+                          className="case-edit-icon"
+                          onClick={() => {
+                            setShowEditCaseNameModal(true);
+                          }}
+                        >
+                          <React.Fragment>
+                            <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                              {" "}
+                              <EditIcon />
+                            </span>
+                            <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                              {t("CS_CLICK_TO_EDIT")}
+                            </ReactTooltip>
+                          </React.Fragment>
+                        </div>
+                      </div>
+                      <div className="header-icon" onClick={() => {}}>
+                        <CustomArrowDownIcon />
+                      </div>
+                    </div>
+                    <CustomCaseInfoDiv data={caseInfo} t={t} />
                   </div>
                 </div>
-                <CustomCaseInfoDiv data={caseInfo} t={t} />
-              </div>
+              )}
               <FormComposerV2
                 label={primaryButtonLabel}
                 config={formConfig}
@@ -388,35 +400,39 @@ function ViewCaseFile({ t }) {
                 actionClassName="e-filing-action-bar"
               />
 
-              <div className="error-flag-class">
-                <FlagIcon isError={totalErrors?.total > 0} />
-                <h3>
-                  {totalErrors.total
-                    ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
-                    : t("CS_NO_ERRORS")}
-                </h3>
-              </div>
+              {!inViewCase && (
+                <div className="error-flag-class">
+                  <FlagIcon isError={totalErrors?.total > 0} />
+                  <h3>
+                    {totalErrors.total
+                      ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
+                      : t("CS_NO_ERRORS")}
+                  </h3>
+                </div>
+              )}
 
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
               )}
             </div>
           </div>
-          <div className="file-case-checklist">
-            <div className="checklist-main">
-              <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-              {checkList.map((item, index) => {
-                return (
-                  <div className="checklist-item" key={index}>
-                    <div className="item-logo">
-                      <CheckSvg />
+          {!inViewCase && (
+            <div className={highlightChecklist ? "file-case-checklist-highlight" : "file-case-checklist"}>
+              <div className="checklist-main">
+                <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+                {checkList.map((item, index) => {
+                  return (
+                    <div className="checklist-item" key={index}>
+                      <div className="item-logo">
+                        <CheckSvg />
+                      </div>
+                      <h3 className="item-text">{t(item)}</h3>
                     </div>
-                    <h3 className="item-text">{t(item)}</h3>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {showEditCaseNameModal && (
             <Modal
@@ -435,7 +451,7 @@ function ViewCaseFile({ t }) {
                 setShowEditCaseNameModal(false);
               }}
               formId="modal-action"
-              headerBarMain={<Heading label={t("CS_Change_Case_Name")} />}
+              headerBarMain={<Heading label={t("CS_CHANGE_CASE_NAME")} />}
               className="edit-case-name-modal"
             >
               <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
@@ -511,21 +527,6 @@ function ViewCaseFile({ t }) {
             />
           )}
         </div>
-        <div className="file-case-checklist">
-          <div className="checklist-main">
-            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-            {checkList.map((item, index) => {
-              return (
-                <div className="checklist-item" key={index}>
-                  <div className="item-logo">
-                    <CheckSvg />
-                  </div>
-                  <h3 className="item-text">{t(item)}</h3>
-                </div>
-              );
-            })}
-          </div>
-        </div>
         {actionModal == "sendCaseBack" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_COMMON_BACK"}
@@ -538,19 +539,6 @@ function ViewCaseFile({ t }) {
             type="sendCaseBack"
           />
         )}
-        {actionModal == "registerCase" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleRegisterCase}
-            heading={"CS_REGISTER_CASE"}
-            type="registerCase"
-          />
-        )}
-
         {actionModal == "sendCaseBackPotential" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_NO_REGISTER_CASE"}

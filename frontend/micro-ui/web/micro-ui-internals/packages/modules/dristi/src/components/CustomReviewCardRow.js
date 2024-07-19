@@ -3,6 +3,7 @@ import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useMemo } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import ReactTooltip from "react-tooltip";
 
 const LocationIcon = () => (
   <svg width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,6 +35,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 
 const CustomReviewCardRow = ({
   isScrutiny,
+  isJudge,
   data,
   handleOpenPopup,
   titleIndex,
@@ -51,11 +53,11 @@ const CustomReviewCardRow = ({
   isCaseReAssigned,
   disableScrutiny,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
+  const { type = null, label = null, value = null, badgeType = null, textDependentOn = null, textDependentValue = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const extractValue = (data, key) => {
-    if (!key.includes(".")) {
+    if (!key?.includes(".")) {
       return data[key];
     }
     const keyParts = key.split(".");
@@ -72,7 +74,7 @@ const CustomReviewCardRow = ({
   const handleImageClick = useCallback(
     (configKey, name, dataIndex, fieldName, data, inputlist, dataError) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError, disableScrutiny);
       }
       return null;
     },
@@ -129,7 +131,19 @@ const CustomReviewCardRow = ({
                   key={dataIndex}
                 >
                   {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
-                  {titleError ? <EditPencilIcon /> : <FlagIcon />}
+                  {titleError ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -148,6 +162,7 @@ const CustomReviewCardRow = ({
         );
       case "text":
         const textValue = extractValue(data, value);
+        const dependentOnValue = extractValue(data, textDependentOn);
         return (
           <div className={`text-main ${bgclassname}`}>
             <div className="text">
@@ -157,7 +172,7 @@ const CustomReviewCardRow = ({
                   ? textValue.length > 0
                     ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
                     : t("CS_NOT_AVAILABLE")
-                  : textValue || t("CS_NOT_AVAILABLE")}
+                  : textValue || dependentOnValue && textDependentValue || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -167,7 +182,19 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -193,7 +220,7 @@ const CustomReviewCardRow = ({
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
-                label={t(data?.[value]?.header)}
+                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader || data?.[value]?.header : data?.[value]?.header)}
                 additionalElements={[
                   <React.Fragment>
                     {Array.isArray(data?.[value]?.data) && (
@@ -215,11 +242,13 @@ const CustomReviewCardRow = ({
         );
 
       case "amount":
+        let amountValue = extractValue(data, value);
+        amountValue = amountValue ? `₹${amountValue}` : t("CS_NOT_AVAILABLE");
         return (
           <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
               <div className="label">{t(label)}</div>
-              <div className="value"> {`₹${extractValue(data, value)}`} </div>
+              <div className="value"> {amountValue} </div>
               {showFlagIcon && (
                 <div
                   className="flag"
@@ -228,7 +257,19 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -267,7 +308,19 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -285,6 +338,7 @@ const CustomReviewCardRow = ({
         );
       case "image":
         let FSOErrors = [];
+        let valuesAvailable = [];
         if (typeof dataError === "object") {
           value?.forEach((val) => {
             if (dataError?.[val]?.FSOError) {
@@ -298,6 +352,12 @@ const CustomReviewCardRow = ({
         if (isPrevScrutiny && !disableScrutiny) {
           showFlagIcon = prevDataError?.[type]?.FSOError;
         }
+        value?.forEach((val) => {
+          const getFile = extractValue(data, val);
+          if (getFile && getFile?.length > 0) {
+            valuesAvailable.push(val);
+          }
+        });
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -413,11 +473,24 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...valuesAvailable, type]);
                   }}
                   key={dataIndex}
                 >
-                  {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
+                  {isScrutiny &&
+                    (FSOErrors?.length > 0 ? (
+                      <React.Fragment>
+                        <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                          {" "}
+                          <EditPencilIcon />
+                        </span>
+                        <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                          {t("CS_CLICK_TO_EDIT")}
+                        </ReactTooltip>
+                      </React.Fragment>
+                    ) : (
+                      <FlagIcon />
+                    ))}
                 </div>
               )}
             </div>
@@ -431,7 +504,7 @@ const CustomReviewCardRow = ({
                     ) : (
                       <FlagIcon isError={true} />
                     )}
-                    {`${t(error.fileName) || ""} : ${error.FSOError}`}
+                    {`${error.fileName ? t(error.fileName) + " : " : ""}${error.FSOError}`}
                   </div>
                 );
               })}
@@ -483,7 +556,19 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -517,7 +602,19 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
@@ -542,6 +639,7 @@ const CustomReviewCardRow = ({
     handleOpenPopup,
     isPrevScrutiny,
     isScrutiny,
+    isJudge,
     label,
     name,
     prevDataError,
@@ -552,6 +650,8 @@ const CustomReviewCardRow = ({
     titleIndex,
     type,
     value,
+    disableScrutiny,
+    isCaseReAssigned,
   ]);
 
   return renderCard;

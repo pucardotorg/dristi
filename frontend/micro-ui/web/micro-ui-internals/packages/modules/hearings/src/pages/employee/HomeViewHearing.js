@@ -25,11 +25,11 @@ const HomeViewHearing = () => {
   }, []);
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false }))); //setting tab enable which is being clicked
-    setConfig(TabSearchconfig?.TabSearchconfig?.[n]);// as per tab number filtering the config
+    setConfig(TabSearchconfig?.TabSearchconfig?.[n]); // as per tab number filtering the config
   };
   const handleNavigate = () => {
-    const contextPath = window?.contextPath || ''; // Adjust as per your context path logic
-    history.push(`/${contextPath}/employee/hearings/view-hearing`);
+    const contextPath = window?.contextPath || ""; // Adjust as per your context path logic
+    history.push(`/${contextPath}/employee/hearings/calendar`);
   };
   return (
     <div className="home-view-hearing-container">
@@ -38,13 +38,7 @@ const HomeViewHearing = () => {
         <div className="content-wrapper">
           <Header styles={{ fontSize: "32px", paddingTop: "16px" }}>{t(config?.label)}</Header>
           <div className="inbox-search-wrapper pucar-hearing-home">
-            <InboxSearchComposer
-              configs={config}
-              defaultValues={defaultValues}
-              showTab={true}
-              tabData={tabData}
-              onTabChange={onTabChange}
-            />
+            <InboxSearchComposer configs={config} defaultValues={defaultValues} showTab={true} tabData={tabData} onTabChange={onTabChange} />
           </div>
         </div>
       </div>

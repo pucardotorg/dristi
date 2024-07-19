@@ -96,18 +96,11 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
             required: false,
             isMandatory: true,
             clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-            options: [
-              {
-                code: "Kerala High Court",
-                name: "Kerala High Court",
-                isEnabled: true,
-              },
-              {
-                code: "Kerala Local Court",
-                name: "Kerala Local Court",
-                isEnabled: true,
-              },
-            ],
+            mdmsConfig: {
+              moduleName: "common-masters",
+              masterName: "Court_Rooms",
+              localePrefix: "COMMON_MASTERS_COURT_R00M",
+            },
           },
         },
       ],

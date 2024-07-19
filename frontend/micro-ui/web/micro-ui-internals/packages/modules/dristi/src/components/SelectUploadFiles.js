@@ -52,7 +52,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
+function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setError }) {
   const checkIfTextPresent = () => {
     if (!formData) {
       return true;
@@ -117,17 +117,26 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    const maxFileSize = input?.maxFileSize * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: false });
+      setError(config.key, { message: t(input?.maxFileErrorMessage) });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    }
   };
 
   const handleDeleteFile = (input, index) => {
-    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    const dataCopy = structuredClone(formData[config.key]);
+    let currentValue = (dataCopy && dataCopy?.["document"]) || [];
     currentValue.splice(index, 1);
+    let data = { document: currentValue };
     if (currentValue.length === 0) {
       setShowTextArea(true);
       setIsFileAdded(false);
+      data = { text: "" };
     }
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    onSelect(config.key, data, { shouldValidate: true });
   };
 
   const dragDropJSX = (
@@ -141,7 +150,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
 
   const openModal = () => {
     setShowModal(true);
-    onSelect(config.key, { ...formData[config.key], document: [] }, { shouldValidate: true });
+    onSelect(config.key, { ...formData[config.key], document: [] });
   };
 
   const handleCloseModal = () => {
@@ -166,7 +175,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
     if (numberOfFiles > 0) {
       setIsAddButtonDisabled(false);
     }
-    onSelect(config.key, { ...formData[config.key], [input.name]: numberOfFiles > 0 ? fileArray : [] }, { shouldValidate: true });
+    onSelect(config.key, { ...formData[config.key], [input.name]: numberOfFiles > 0 ? fileArray : [] });
   }
 
   const handleTextChange = (data, input) => {

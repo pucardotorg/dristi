@@ -1,4 +1,5 @@
 import { useToast } from "../../../components/Toast/useToast";
+import { getUserDetails } from "../../../hooks/useGetAccessToken";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
@@ -39,8 +40,10 @@ export const showDemandNoticeModal = ({
               const month = String(date.getMonth() + 1).padStart(2, "0");
               const day = String(date.getDate()).padStart(2, "0");
               formattedDate = `${year}-${month}-${day}`;
+              setValue("dateOfAccrual", formattedDate, { shouldValidate: true });
+            } else {
+              setValue("dateOfAccrual", formattedDate);
             }
-            setValue("dateOfAccrual", formattedDate);
           }
           break;
 
@@ -613,33 +616,26 @@ export const respondentValidation = ({
     toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
     setFormErrors("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
     return true;
-  }
-  // else if (
-  //   formData &&
-  //   formData?.phonenumbers?.textfieldValue &&
-  //   formData?.phonenumbers?.textfieldValue?.length === 10 &&
-  //   formData?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue)
-  // ) {
-  //   toast.error("DUPLICATE_MOBILE_NUMBER");
-  //   // setFormErrors("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
-  //   return true;
-  // }
-  else {
+  } else {
     clearFormDataErrors("phonenumbers");
     return false;
   }
 };
 
-export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
+export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors, setReceiptDemandNoticeModal }) => {
   if (selected === "demandNoticeDetails") {
     for (const key of ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"]) {
-      if (!(key in formData) || formData[key].document?.length === 0) {
+      if (!(key in formData) || formData[key]?.document?.length === 0) {
         setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
         return true;
       }
     }
 
+    if (formData?.delayApplicationType?.code === "NO") {
+      setReceiptDemandNoticeModal(true);
+      return true;
+    }
     if (formData?.proofOfService?.code === "YES" && formData?.["proofOfAcknowledgmentFileUpload"]?.document.length === 0) {
       setFormErrors("proofOfAcknowledgmentFileUpload", { type: "required" });
       setShowErrorToast(true);
@@ -792,12 +788,13 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
   }
 };
 
-export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
     if (
       formData?.delayCondonationType?.code === "NO" &&
       (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
     ) {
+      setFormErrors("condonationFileUpload", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
@@ -811,7 +808,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
     let hasError = false;
     if (
       !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
-      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
       (!("document" in formData?.memorandumOfComplaint) &&
         "text" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.text.length > 0) ||
@@ -824,6 +820,7 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
       hasError = true;
     }
     if (
+      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
       (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
       (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
     ) {
@@ -831,6 +828,7 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
       setFormErrors("prayerForRelief", { type: "required" });
       hasError = true;
     }
+
     if ("SelectUploadDocWithName" in formData && Array.isArray(formData?.SelectUploadDocWithName)) {
       let index = 0;
       for (const key of formData?.SelectUploadDocWithName) {
@@ -843,8 +841,9 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         }
         index = index++;
       }
-      return hasError;
     }
+
+    return hasError;
   } else {
     return false;
   }
@@ -880,7 +879,19 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             name: "Citizen",
             tenantId: tenantId,
           },
-          ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"]?.map((role) => ({
+          ...[
+            "CASE_CREATOR",
+            "CASE_EDITOR",
+            "CASE_VIEWER",
+            "DEPOSITION_CREATOR",
+            "DEPOSITION_VIEWER",
+            "APPLICATION_CREATOR",
+            "APPLICATION_VIEWER",
+            "HEARING_VIEWER",
+            "ORDER_VIEWER",
+            "SUBMISSION_CREATOR",
+            "SUBMISSION_RESPONDER",
+          ]?.map((role) => ({
             code: role,
             name: role,
             tenantId: tenantId,
@@ -925,6 +936,11 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
     },
   };
   const response = await window?.Digit.DRISTIService.postIndividualService(Individual, tenantId);
+  const refreshToken = window.localStorage.getItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  window.localStorage.removeItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  if (refreshToken) {
+    await getUserDetails(refreshToken, data?.complainantVerification?.userDetails?.mobileNumber);
+  }
   return response;
 };
 
@@ -932,6 +948,38 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   if (fileData?.fileStore) return fileData;
   const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+};
+
+export const getAllAssignees = (caseDetails) => {
+  if (Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0) {
+    return caseDetails?.representatives
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        if (curr && curr?.representing && Array.isArray(curr?.representing || []) && curr?.representing?.length > 0) {
+          const representingUuids = curr?.representing?.reduce((result, current) => {
+            if (current && current?.additionalDetails?.uuid) {
+              result.push(current?.additionalDetails?.uuid);
+            }
+            return result;
+          }, []);
+          res.push(representingUuids);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  } else if (Array.isArray(caseDetails?.litigants || []) && caseDetails?.litigants?.length > 0) {
+    return caseDetails?.litigants
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  }
+  return null;
 };
 
 export const updateCaseDetails = async ({
@@ -957,12 +1005,25 @@ export const updateCaseDetails = async ({
           .filter((item) => item.isenabled)
           .map(async (data, index) => {
             if (data?.data?.complainantVerification?.individualDetails) {
+              const Individual = await DRISTIService.searchIndividualUser(
+                {
+                  Individual: {
+                    individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+                  },
+                },
+                { tenantId, limit: 1, offset: 0 }
+              );
+              const userUuid = Individual?.Individual?.[0]?.userUuid || "";
               return {
                 tenantId,
                 caseId: caseDetails?.id,
                 partyCategory: data?.data?.complainantType?.code,
                 individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
                 partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                additionalDetails: {
+                  fullName: `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${data?.data?.lastName}`,
+                  uuid: userUuid ? userUuid : null,
+                },
               };
             } else {
               if (data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.isUserVerified) {
@@ -975,11 +1036,17 @@ export const updateCaseDetails = async ({
                   !!setFormDataValue &&
                     setFormDataValue("complainantVerification", {
                       individualDetails: {
-                        document: [documentData],
+                        document: [
+                          {
+                            documentType: documentData.fileType || documentData?.documentType,
+                            fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                            documentName: documentData.filename || documentData?.documentName,
+                            fileName: "ID Proof",
+                          },
+                        ],
                       },
                     });
                   const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -989,12 +1056,23 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+                  const firstName = Individual?.Individual?.name?.givenName;
+                  const lastName = Individual?.Individual?.name?.familyName;
+                  const middleName = Individual?.Individual?.name?.otherNames;
+                  const userUuid = Individual?.Individual?.userUuid;
 
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
                   complainantVerification[index] = {
                     individualDetails: {
-                      document: [documentData],
+                      document: [
+                        {
+                          documentType: documentData.fileType || documentData?.documentType,
+                          fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                          documentName: documentData.filename || documentData?.documentName,
+                          fileName: "ID Proof",
+                        },
+                      ],
                       individualId: Individual?.Individual?.individualId,
                       "addressDetails-select": {
                         pincode: pincode,
@@ -1023,10 +1101,13 @@ export const updateCaseDetails = async ({
                     partyCategory: data?.data?.complainantType?.code,
                     individualId: Individual?.Individual?.individualId,
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                    additionalDetails: {
+                      fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
+                    },
                   };
                 } else {
                   const Individual = await createIndividualUser({ data: data?.data, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -1036,7 +1117,10 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-
+                  const firstName = Individual?.Individual?.name?.givenName || "";
+                  const lastName = Individual?.Individual?.name?.familyName || "";
+                  const middleName = Individual?.Individual?.name?.otherNames || "";
+                  const userUuid = Individual?.Individual?.userUuid;
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
                   complainantVerification[index] = {
                     individualDetails: {
@@ -1069,6 +1153,10 @@ export const updateCaseDetails = async ({
                     partyCategory: data?.data?.complainantType?.code,
                     individualId: Individual?.Individual?.individualId,
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                    additionalDetails: {
+                      fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
+                    },
                   };
                 }
               }
@@ -1082,7 +1170,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data, index) => {
-          let documentData = [];
+          let documentData = {
+            companyDetailsUpload: null,
+          };
           const idProof = {
             complainantId: { complainantId: { complainantId: {} } },
           };
@@ -1111,7 +1201,8 @@ export const updateCaseDetails = async ({
             individualDetails.document = [uploadedData];
           }
           if (data?.data?.companyDetailsUpload?.document) {
-            documentData = await Promise.all(
+            documentData.companyDetailsUpload = {};
+            documentData.companyDetailsUpload.document = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1129,10 +1220,7 @@ export const updateCaseDetails = async ({
             ...data,
             data: {
               ...data.data,
-              companyDetailsUpload: {
-                ...data?.data?.companyDetailsUpload,
-                document: documentData,
-              },
+              ...documentData,
               complainantVerification: {
                 ...data?.data?.complainantVerification,
                 ...complainantVerification[index],
@@ -1145,10 +1233,15 @@ export const updateCaseDetails = async ({
     );
     const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
       ?.filter((representative) => representative?.advocateId)
-      .map((representative) => ({
+      .map((representative, idx) => ({
         ...representative,
         caseId: caseDetails?.id,
-        representing: representative?.advocateId ? [...litigants] : [],
+        representing: representative?.advocateId
+          ? [...litigants].map((item, index) => ({
+              ...(caseDetails.representatives?.[idx]?.representing?.[index] ? caseDetails.representatives?.[idx]?.representing?.[index] : {}),
+              ...item,
+            }))
+          : [],
       }));
     data.litigants = [...litigants].map((item, index) => ({
       ...(caseDetails.litigants?.[index] ? caseDetails.litigants?.[index] : {}),
@@ -1169,15 +1262,16 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const documentData = {
-            inquiryAffidavitFileUpload: [],
-            companyDetailsUpload: [],
+            inquiryAffidavitFileUpload: null,
+            companyDetailsUpload: null,
           };
           if (
             data?.data?.inquiryAffidavitFileUpload?.document &&
             Array.isArray(data?.data?.inquiryAffidavitFileUpload?.document) &&
             data?.data?.inquiryAffidavitFileUpload?.document.length > 0
           ) {
-            documentData.inquiryAffidavitFileUpload = await Promise.all(
+            documentData.inquiryAffidavitFileUpload = {};
+            documentData.inquiryAffidavitFileUpload.document = await Promise.all(
               data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1196,7 +1290,8 @@ export const updateCaseDetails = async ({
             Array.isArray(data?.data?.companyDetailsUpload?.document) &&
             data?.data?.companyDetailsUpload?.document.length > 0
           ) {
-            documentData.companyDetailsUpload = await Promise.all(
+            documentData.companyDetailsUpload = {};
+            documentData.companyDetailsUpload.document = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -1214,14 +1309,7 @@ export const updateCaseDetails = async ({
             ...data,
             data: {
               ...data.data,
-              inquiryAffidavitFileUpload: {
-                ...data?.data?.inquiryAffidavitFileUpload,
-                document: documentData.inquiryAffidavitFileUpload,
-              },
-              companyDetailsUpload: {
-                ...data?.data?.companyDetailsUpload,
-                document: documentData.companyDetailsUpload,
-              },
+              ...documentData,
             },
           };
         })
@@ -1245,17 +1333,22 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "chequeDetails") {
-    const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
+    const infoBoxData = {
+      header: "CS_YOU_HAVE_CONFIRMED",
+      scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED",
+      data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"],
+    };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const documentData = {
-            bouncedChequeFileUpload: {},
-            depositChequeFileUpload: {},
-            returnMemoFileUpload: {},
+            bouncedChequeFileUpload: null,
+            depositChequeFileUpload: null,
+            returnMemoFileUpload: null,
           };
           if (data?.data?.bouncedChequeFileUpload?.document) {
+            documentData.bouncedChequeFileUpload = {};
             documentData.bouncedChequeFileUpload.document = await Promise.all(
               data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1271,6 +1364,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.depositChequeFileUpload?.document) {
+            documentData.depositChequeFileUpload = {};
             documentData.depositChequeFileUpload.document = await Promise.all(
               data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1286,6 +1380,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.returnMemoFileUpload?.document) {
+            documentData.returnMemoFileUpload = {};
             documentData.returnMemoFileUpload.document = await Promise.all(
               data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1332,8 +1427,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const debtDocumentData = { debtLiabilityFileUpload: {} };
+          const debtDocumentData = { debtLiabilityFileUpload: null };
           if (data?.data?.debtLiabilityFileUpload?.document) {
+            debtDocumentData.debtLiabilityFileUpload = {};
             debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
               data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1390,10 +1486,10 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const demandNoticeDocumentData = {
-            legalDemandNoticeFileUpload: {},
-            proofOfDispatchFileUpload: {},
-            proofOfAcknowledgmentFileUpload: {},
-            proofOfReplyFileUpload: {},
+            legalDemandNoticeFileUpload: null,
+            proofOfDispatchFileUpload: null,
+            proofOfAcknowledgmentFileUpload: null,
+            proofOfReplyFileUpload: null,
           };
 
           const fileUploadKeys = Object.keys(demandNoticeDocumentData).filter((key) => data?.data?.[key]?.document);
@@ -1401,6 +1497,7 @@ export const updateCaseDetails = async ({
           await Promise.all(
             fileUploadKeys.map(async (key) => {
               if (data?.data?.[key]?.document) {
+                demandNoticeDocumentData[key] = demandNoticeDocumentData[key] || {};
                 demandNoticeDocumentData[key].document = await Promise.all(
                   data?.data?.[key]?.document?.map(async (document) => {
                     if (document) {
@@ -1416,7 +1513,7 @@ export const updateCaseDetails = async ({
                 );
               }
             })
-          ).catch(console.debug);
+          ).catch();
           return {
             ...data,
             data: {
@@ -1434,14 +1531,14 @@ export const updateCaseDetails = async ({
       },
     };
   }
-
   if (selected === "delayApplications") {
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const condonationDocumentData = { condonationFileUpload: {} };
+          const condonationDocumentData = { condonationFileUpload: null };
           if (data?.data?.condonationFileUpload?.document) {
+            condonationDocumentData.condonationFileUpload = {};
             condonationDocumentData.condonationFileUpload.document = await Promise.all(
               data?.data?.condonationFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1479,7 +1576,7 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {}, swornStatement: {} };
+          const documentData = { SelectUploadDocWithName: null, prayerForRelief: null, memorandumOfComplaint: null, swornStatement: null };
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
@@ -1488,7 +1585,8 @@ export const updateCaseDetails = async ({
                     async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
-                          artifactType: "complainant",
+                          artifactType: "DOCUMENTARY",
+                          sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
                           tenantId,
                           comments: [],
@@ -1533,6 +1631,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.swornStatement?.document) {
+            documentData.swornStatement = documentData.swornStatement || {};
             documentData.swornStatement.document = await Promise.all(
               data?.data?.swornStatement?.document?.map(async (document) => {
                 if (document) {
@@ -1548,6 +1647,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
+            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
             documentData.memorandumOfComplaint.document = await Promise.all(
               data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
                 if (document) {
@@ -1562,9 +1662,11 @@ export const updateCaseDetails = async ({
               })
             );
           } else if (data?.data?.memorandumOfComplaint?.text) {
+            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
             documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
           }
           if (data?.data?.prayerForRelief?.document && data?.data?.prayerForRelief?.document.length > 0) {
+            documentData.prayerForRelief = documentData.prayerForRelief || {};
             documentData.prayerForRelief.document = await Promise.all(
               data?.data?.prayerForRelief?.document?.map(async (document) => {
                 if (document) {
@@ -1579,7 +1681,8 @@ export const updateCaseDetails = async ({
               })
             );
           } else if (data?.data?.prayerForRelief?.text) {
-            documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
+            documentData.prayerForRelief = documentData.prayerForRelief || {};
+            documentData.prayerForRelief.text = data.data.prayerForRelief.text;
           }
 
           if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
@@ -1611,8 +1714,9 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
+          const vakalatnamaDocumentData = { vakalatnamaFileUpload: null };
           if (data?.data?.vakalatnamaFileUpload?.document) {
+            vakalatnamaDocumentData.vakalatnamaFileUpload = {};
             vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
               data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1668,12 +1772,16 @@ export const updateCaseDetails = async ({
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,
                         individualId: data?.individualId,
-                        partyType: data?.partyType,
+                        partyType: data?.partyType.includes("complainant") ? "complainant.primary" : "respondent.primary",
                       }))
                     : []),
                 ]
               : [],
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+            additionalDetails: {
+              advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+              uuid: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateUuid,
+            },
             tenantId,
           };
         });
@@ -1697,14 +1805,14 @@ export const updateCaseDetails = async ({
     };
   }
   const caseTitle =
-    caseDetails?.caseTitle ||
-    (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
-      `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
-        caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-      } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
-        caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
-      }`);
+    caseDetails?.status !== "DRAFT_IN_PROGRESS"
+      ? caseDetails?.caseTitle
+      : caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+        `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+          caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+        } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
+          caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+        }`;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
@@ -1717,6 +1825,9 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+
+  const assignees = getAllAssignees(caseDetails);
+
   return DRISTIService.caseUpdateService(
     {
       cases: {
@@ -1729,6 +1840,9 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          ...(action === "SUBMIT_CASE" && {
+            assignees,
+          }),
         },
       },
       tenantId,

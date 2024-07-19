@@ -30,6 +30,21 @@ const SelectOtp = ({
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(25);
+
+  const handleKeyDown = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter" && otp?.length === 6 && canSubmit) {
+      onSelect();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [otp]);
+
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
@@ -91,23 +106,9 @@ const SelectOtp = ({
     );
   }
 
-  const handleKeyDown = (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter") {
-      onSelect();
-    }
-  };
-
   const onModalSubmit = () => {
     onSelect();
   };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [otp]);
 
   return (
     <Modal
