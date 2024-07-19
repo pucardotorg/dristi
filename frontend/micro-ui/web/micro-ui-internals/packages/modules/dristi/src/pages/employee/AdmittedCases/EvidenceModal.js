@@ -279,15 +279,24 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleApplicationAction = async (generateOrder) => {
     try {
-      if (showConfirmationModal.type === "reject") {
-        await handleRejectApplication();
-      }
-      if (showConfirmationModal.type === "accept" || showConfirmationModal.type === "documents-confirmation") {
-        await handleAcceptApplication();
-      }
-      if (!generateOrder) {
-        setShowConfirmationModal(null);
-      }
+      const formdata =
+        showConfirmationModal?.type === "reject"
+          ? {
+              orderType: {
+                code: "REJECT_VOLUNTARY_SUBMISSIONS",
+                type: "REJECT_VOLUNTARY_SUBMISSIONS",
+                name: "ORDER_TYPE_REJECT_VOLUNTARY_SUBMISSIONS",
+              },
+              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            }
+          : {
+              orderType: {
+                code: "APPROVE_VOLUNTARY_SUBMISSIONS",
+                type: "APPROVE_VOLUNTARY_SUBMISSIONS",
+                name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
+              },
+              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            };
       if (generateOrder) {
         const reqbody = {
           order: {
@@ -309,17 +318,25 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               documents: [{}],
             },
             documents: [],
-            additionalDetails: {},
+            additionalDetails: { formdata },
           },
         };
-        ordersService
-          .createOrder(reqbody, { tenantId })
-          .then(() => {
-            history.push(
-              `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}`
-            );
-          })
-          .catch((err) => {});
+        try {
+          const res = await ordersService.createOrder(reqbody, { tenantId });
+          history.push(
+            `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
+          );
+        } catch (error) {}
+      } else {
+        if (showConfirmationModal.type === "reject") {
+          await handleRejectApplication();
+          // create a pending task to create Order with applicationNumber as reference ID
+        }
+        if (showConfirmationModal.type === "accept") {
+          await handleAcceptApplication();
+          // create a pending task to create Order with applicationNumber as reference ID
+        }
+        setShowConfirmationModal(null);
       }
     } catch (error) {}
   };
@@ -466,25 +483,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Submissions" && (
         <ConfirmSubmissionAction
-          t={t}
-          setShowConfirmationModal={setShowConfirmationModal}
-          type={showConfirmationModal.type}
-          setShow={setShow}
-          handleAction={handleApplicationAction}
-        />
-      )}
-      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
-        <ConfirmEvidenceAction
-          t={t}
-          setShowConfirmationModal={setShowConfirmationModal}
-          type={showConfirmationModal.type}
-          setShow={setShow}
-          handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission?.[0].artifactList.isEvidence}
-        />
-      )}
-      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
-        <ConfirmEvidenceAction
           t={t}
           setShowConfirmationModal={setShowConfirmationModal}
           type={showConfirmationModal.type}

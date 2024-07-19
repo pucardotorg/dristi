@@ -96,11 +96,20 @@ function PublishedOrderModal({ setShowReviewModal, t, order, handleDownload, han
         <div style={{ display: "flex", width: "50%", gap: "20px", justifyContent: "end" }}>
           <Button
             variation="secondary"
-            onButtonClick={handleRequestLabel}
+            onButtonClick={() => {
+              handleRequestLabel(order.orderNumber);
+            }}
             className="primary-label-btn"
             label={t("EXTENSION_REQUEST_LABEL")}
           ></Button>
-          <SubmitBar variation="primary" onSubmit={handleSubmitDocument} className="primary-label-btn" label={t("SUBMIT_DOCUMENT_LABEL")}></SubmitBar>
+          <SubmitBar
+            variation="primary"
+            onSubmit={() => {
+              handleSubmitDocument(order.orderNumber);
+            }}
+            className="primary-label-btn"
+            label={t("SUBMIT_DOCUMENT_LABEL")}
+          ></SubmitBar>
         </div>
       </div>
     </Modal>
