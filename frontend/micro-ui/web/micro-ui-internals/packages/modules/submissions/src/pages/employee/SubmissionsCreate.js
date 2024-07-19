@@ -329,7 +329,7 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignes: getAllAssignees(caseDetails) },
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignes: null },
           tenantId,
         },
         tenantId,
