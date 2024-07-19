@@ -74,11 +74,13 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
         }
         return new ArrayList<>(advocateMap.values());
     }
-    private UUID toUUID(String toUuid) {
+    UUID toUUID(String toUuid) {
         if(toUuid == null) {
             return null;
         }
         return UUID.fromString(toUuid);
     }
+
+
 
 }

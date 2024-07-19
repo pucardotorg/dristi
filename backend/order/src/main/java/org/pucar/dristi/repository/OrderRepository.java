@@ -5,10 +5,7 @@ import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.OrderQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
-import org.pucar.dristi.web.models.Order;
-import org.pucar.dristi.web.models.OrderCriteria;
-import org.pucar.dristi.web.models.OrderExists;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -26,22 +23,26 @@ import static org.pucar.dristi.config.ServiceConstants.ORDER_SEARCH_EXCEPTION;
 @Repository
 public class OrderRepository {
 
-    @Autowired
     private OrderQueryBuilder queryBuilder;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     private OrderRowMapper rowMapper;
 
-    @Autowired
     private DocumentRowMapper documentRowMapper;
 
-    @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getOrders(OrderCriteria criteria) {
+    @Autowired
+    public OrderRepository(OrderQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, OrderRowMapper rowMapper, DocumentRowMapper documentRowMapper, StatuteSectionRowMapper statuteSectionRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.documentRowMapper = documentRowMapper;
+        this.statuteSectionRowMapper = statuteSectionRowMapper;
+    }
+
+    public List<Order> getOrders(OrderCriteria criteria, Pagination pagination) {
 
         try {
             List<Order> orderList = new ArrayList<>();
@@ -50,7 +51,17 @@ public class OrderRepository {
             List<Object> preparedStmtListDoc;
             String orderQuery = "";
             orderQuery = queryBuilder.getOrderSearchQuery(criteria,preparedStmtList);
+
+            orderQuery = queryBuilder.addOrderByQuery(orderQuery, pagination);
             log.info("Final order query :: {}", orderQuery);
+
+            if(pagination !=  null) {
+                Integer totalRecords = getTotalCountOrders(orderQuery, preparedStmtList);
+                log.info("Total count without pagination :: {}", totalRecords);
+                pagination.setTotalCount(Double.valueOf(totalRecords));
+                orderQuery = queryBuilder.addPaginationQuery(orderQuery, pagination, preparedStmtList);
+            }
+
             List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB order list :: {}", list);
             if (list != null) {
@@ -120,6 +131,12 @@ public class OrderRepository {
             log.error("Error while checking order exist :: {}",e.toString());
             throw new CustomException(ORDER_EXISTS_EXCEPTION, "Custom exception while checking order exist : " + e.getMessage());
         }
+    }
+
+    public Integer getTotalCountOrders(String baseQuery, List<Object> preparedStmtList) {
+        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+        log.info("Final count query :: {}", countQuery);
+        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
     }
 
 }

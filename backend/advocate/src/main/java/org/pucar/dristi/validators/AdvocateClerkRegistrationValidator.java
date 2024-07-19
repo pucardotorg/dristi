@@ -12,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
 import static org.pucar.dristi.config.ServiceConstants.VALIDATION_EXCEPTION;
@@ -24,11 +22,14 @@ import static org.pucar.dristi.config.ServiceConstants.VALIDATION_EXCEPTION;
 @Component
 @Slf4j
 public class AdvocateClerkRegistrationValidator {
-    @Autowired
-    private IndividualService individualService;
+    private final IndividualService individualService;
+    private final AdvocateClerkRepository repository;
 
     @Autowired
-    private AdvocateClerkRepository repository;
+    public AdvocateClerkRegistrationValidator(IndividualService individualService, AdvocateClerkRepository repository) {
+        this.individualService = individualService;
+        this.repository = repository;
+    }
 
     /**
      * @param advocateClerkRequest  advocate clerk application request
@@ -53,7 +54,7 @@ public class AdvocateClerkRegistrationValidator {
      */
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
         //checking if application exist or not
-        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new String(), 1,0);
+        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), advocateClerk.getTenantId(), 1,0);
         log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);

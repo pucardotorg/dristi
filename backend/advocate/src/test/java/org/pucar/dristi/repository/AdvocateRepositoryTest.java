@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pucar.dristi.repository.AdvocateRepository;
 import org.pucar.dristi.repository.querybuilder.AdvocateQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.AdvocateDocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.AdvocateRowMapper;
@@ -18,18 +17,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-public class AdvocateRepositoryTest {
+ class AdvocateRepositoryTest {
 
     @Mock
     private AdvocateQueryBuilder queryBuilder;
@@ -50,40 +43,6 @@ public class AdvocateRepositoryTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
-
-//    @Test
-//    void getApplications_EmptySuccess() {
-//        // Arrange
-//        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-//        // Populate searchCriteria with test data
-//        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
-//        advocateSearchCriteria.setId("id");
-//        advocateSearchCriteria.setApplicationNumber("appNumber");
-//        advocateSearchCriteria.setIndividualId("individualID");
-//        searchCriteria.add(advocateSearchCriteria);
-//
-//
-//        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
-//        String tenantId = "testTenantId";
-//        Integer limit = 10;
-//        Integer offset = 0;
-//
-//        // Mock queryBuilder methods
-//        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any(), any())).thenReturn("testAdvocateQuery");
-//        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
-//
-//        // Mock jdbcTemplate methods
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
-//
-//        // Act
-//        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
-//
-//        // Assert
-//        assertNotNull(result);
-//        assertTrue(result.isEmpty()); // Since we're returning an empty list from jdbcTemplate
-//    }
-
     @Test
     void getApplications_Success() {
         // Arrange
@@ -316,7 +275,7 @@ public class AdvocateRepositoryTest {
     }
 
     @Test
-    public void testGetListApplicationsByApplicationNumber_WhenNoAdvocatesFound() {
+     void testGetListApplicationsByApplicationNumber_WhenNoAdvocatesFound() {
         // Arrange
         String applicationNumber = "APP12345";
         String tenantId = "tenantId";
@@ -324,8 +283,7 @@ public class AdvocateRepositoryTest {
         Integer offset = 0;
 
         when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("SELECT * FROM advocates WHERE application_number = ? AND tenant_id = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(null);
-
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(Collections.emptyList());
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset);
 

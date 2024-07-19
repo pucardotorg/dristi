@@ -1,11 +1,9 @@
 package org.pucar.dristi.web.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.HearingService;
@@ -24,20 +22,13 @@ import java.util.List;
 @RequestMapping("")
 public class HearingApiController {
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
-    @Autowired
     private HearingService hearingService;
-
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public HearingApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public HearingApiController(HearingService hearingService, ResponseInfoFactory responseInfoFactory) {
+        this.hearingService = hearingService;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     @RequestMapping(value = "/hearing/v1/create", method = RequestMethod.POST)
@@ -63,7 +54,14 @@ public class HearingApiController {
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody HearingSearchRequest request)
     {
         List<Hearing> hearingList = hearingService.searchHearing(request);
-        HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(hearingList.size()).build();
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        int totalCount;
+        if(request.getPagination() != null){
+            totalCount = request.getPagination().getTotalCount().intValue();
+        }else{
+            totalCount = hearingList.size();
+        }
+        HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(totalCount).responseInfo(responseInfo).build();
         return new ResponseEntity<>(hearingListResponse, HttpStatus.OK);
     }
 

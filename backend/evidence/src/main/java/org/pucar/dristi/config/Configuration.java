@@ -1,23 +1,15 @@
 package org.pucar.dristi.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.util.TimeZone;
 
 @Component
-@Data
 @Import({ TracerConfiguration.class })
-@NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
 public class Configuration {
@@ -102,4 +94,32 @@ public class Configuration {
 
 	@Value("${egov.workflow.businessservice.name}")
 	private String businessServiceName;
+
+	// Case Config
+	@Value("${egov.case.host}")
+	private String caseHost;
+
+	@Value("${egov.case.path}")
+	private String caseExistsPath;
+
+	// Application Config
+	@Value("${egov.application.host}")
+	private String applicationHost;
+
+	@Value("${egov.application.path}")
+	private String applicationExistsPath;
+
+	// Order Config
+	@Value("${egov.order.host}")
+	private String orderHost;
+
+	@Value("${egov.order.path}")
+	private String orderExistsPath;
+
+	// Hearing Config
+	@Value("${egov.hearing.host}")
+	private String hearingHost;
+
+	@Value("${egov.hearing.path}")
+	private String hearingExistsPath;
 }

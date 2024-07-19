@@ -1,5 +1,17 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
+
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,14 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CourtCase;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRowMapperTest {
@@ -49,9 +53,9 @@ class CaseRowMapperTest {
         when(rs.getString("judgeid")).thenReturn("judge1");
         when(rs.getString("stage")).thenReturn("stage1");
         when(rs.getString("substage")).thenReturn("substage1");
-        when(rs.getString("filingdate")).thenReturn("2024-01-01");
-        when(rs.getString("judgementdate")).thenReturn("2024-01-01");
-        when(rs.getString("registrationdate")).thenReturn("2024-01-02");
+        when(rs.getString("filingdate")).thenReturn("01-01-2024");
+        when(rs.getString("judgementdate")).thenReturn("01-01-2024");
+        when(rs.getString("registrationdate")).thenReturn("01-02-2024");
         when(rs.getString("casecategory")).thenReturn("category1");
         when(rs.getString("natureofpleading")).thenReturn("pleading");
         when(rs.getString("status")).thenReturn("status1");

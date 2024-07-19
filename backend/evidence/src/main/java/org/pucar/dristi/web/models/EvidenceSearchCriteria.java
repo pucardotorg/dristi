@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +16,14 @@ import org.springframework.validation.annotation.Validated;
 public class EvidenceSearchCriteria {
     private String id;
     private String caseId;
-    private String applicationId;
+    private String applicationNumber;
     private String hearing;
     private String order;
     private String sourceId;
     private String sourceName;
     private String status;
     private String artifactNumber;
-
+    private String filingNumber;
 
     // Getters and setters
 
@@ -41,14 +42,20 @@ public class EvidenceSearchCriteria {
         this.caseId = caseId;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getApplicationNumber() {
+        return applicationNumber;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+    public String getFilingNumber() {
+        return filingNumber;
     }
 
+    public void setFilingNumber(String filingNumber) {
+        this.filingNumber = filingNumber;
+    }
     public String getHearing() {
         return hearing;
     }

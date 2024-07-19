@@ -62,9 +62,7 @@ public class ServiceRequestRepositoryTest {
         when(restTemplate.postForObject(anyString(), any(), eq(Map.class))).thenThrow(exception);
 
         // Act & Assert
-        ServiceCallException thrown = assertThrows(ServiceCallException.class, () -> {
-            serviceRequestRepository.fetchResult(uri, request);
-        });
+        assertThrows(ServiceCallException.class, () -> serviceRequestRepository.fetchResult(uri, request));
 
         verify(restTemplate, times(1)).postForObject(anyString(), any(), eq(Map.class));
     }

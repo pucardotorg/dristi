@@ -16,14 +16,13 @@ import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AdvocateClerkRepositoryTest {
+ class AdvocateClerkRepositoryTest {
 
     @InjectMocks
     private AdvocateClerkRepository advocateClerkRepository;
@@ -44,8 +43,6 @@ public class AdvocateClerkRepositoryTest {
     private AdvocateClerkSearchCriteria searchCriteria;
     private List<AdvocateClerk> advocateClerkList;
     private Map<UUID, List<Document>> documentMap;
-    private AtomicReference<Boolean> isIndividualLoggedInUser;
-
     @BeforeEach
     public void setUp() {
         searchCriteria = new AdvocateClerkSearchCriteria();
@@ -62,7 +59,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplications() {
+     void testGetApplications() {
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -84,7 +81,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsEmpty() {
+     void testGetApplicationsEmpty() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
@@ -99,7 +96,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByStatus() {
+     void testGetApplicationsByStatus() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -121,7 +118,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByStatusWithEmptySuccess() {
+     void testGetApplicationsByStatusWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
@@ -136,7 +133,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByAppNumber() {
+     void testGetApplicationsByAppNumber() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -158,7 +155,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByAppNumberWithEmptySuccess() {
+     void testGetApplicationsByAppNumberWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
@@ -173,7 +170,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_Exception() {
+     void testGetApplications_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
@@ -191,7 +188,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByStatus_CustomException() {
+     void testGetApplicationsByStatus_CustomException() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
@@ -200,7 +197,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByStatus_Exception() {
+     void testGetApplicationsByStatus_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
@@ -209,7 +206,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByAppNumber_CustomException() {
+     void testGetApplicationsByAppNumber_CustomException() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
@@ -218,7 +215,7 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
-    public void testGetApplicationsByAppNumber_Exception() {
+     void testGetApplicationsByAppNumber_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 

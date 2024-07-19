@@ -1,4 +1,4 @@
-package org.pucar.dristi;
+package org.pucar;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

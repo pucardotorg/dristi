@@ -94,6 +94,7 @@ class HearingRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), anyString(), anyMap())).thenReturn(true);
         when(caseUtil.fetchCaseDetails(any())).thenReturn(caseExistsResponse);
         when(applicationUtil.fetchApplicationDetails(any())).thenReturn(applicationExistsResponse);
+        when(config.getVerifyAttendeeIndividualId()).thenReturn(true);
 
         // Act
         assertDoesNotThrow(() -> validator.validateHearingRegistration(hearingRequest));
@@ -146,6 +147,7 @@ class HearingRegistrationValidatorTest {
         hearingRequest.setHearing(hearing);
 
         when(individualService.searchIndividual(any(), anyString(), anyMap())).thenReturn(false);
+        when(config.getVerifyAttendeeIndividualId()).thenReturn(true);
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
@@ -269,7 +271,7 @@ class HearingRegistrationValidatorTest {
         RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.singletonList(hearing);
 
-        when(repository.getHearings(any())).thenReturn(existingHearings);
+        when(repository.checkHearingsExist(any())).thenReturn(existingHearings);
 
         // Act
         Hearing result = validator.validateHearingExistence(requestInfo,hearing);

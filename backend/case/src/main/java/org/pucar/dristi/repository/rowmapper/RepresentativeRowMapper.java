@@ -1,18 +1,22 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -38,7 +42,8 @@ public class RepresentativeRowMapper implements ResultSetExtractor<Map<UUID, Lis
                         .id(rs.getString("id"))
                         .advocateId(rs.getString("advocateid"))
                         .tenantId(rs.getString("tenantid"))
-                        .isActive(Boolean.getBoolean(rs.getString("isactive")))
+                        .isActive(rs.getBoolean("isactive"))
+                        .caseId(rs.getString("case_id"))
                         .auditDetails(auditdetails)
                         .build();
 

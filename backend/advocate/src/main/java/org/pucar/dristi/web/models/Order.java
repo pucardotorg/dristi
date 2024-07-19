@@ -1,17 +1,7 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
-import io.swagger.v3.oas.annotations.media.Schema;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Sorting order
@@ -31,13 +21,5 @@ public enum Order {
 		return String.valueOf(value);
 	}
 
-	@JsonCreator
-	public static Order fromValue(String text) {
-		for (Order b : Order.values()) {
-			if (String.valueOf(b.value).equals(text)) {
-				return b;
-			}
-		}
-		return null;
-	}
+
 }

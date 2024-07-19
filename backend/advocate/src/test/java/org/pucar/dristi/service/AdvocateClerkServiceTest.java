@@ -1,4 +1,5 @@
 package org.pucar.dristi.service;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -18,17 +19,16 @@ import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class AdvocateClerkServiceTest {
+ class AdvocateClerkServiceTest {
 
     @InjectMocks
     private AdvocateClerkService advocateClerkService;
@@ -60,7 +60,7 @@ public class AdvocateClerkServiceTest {
     }
 
     @Test
-    public void testRegisterAdvocateClerkRequest_Success() {
+     void testRegisterAdvocateClerkRequest_Success() {
         // Mock data
         AdvocateClerkRequest request = new AdvocateClerkRequest();
         // Setup mocks
@@ -116,11 +116,9 @@ public class AdvocateClerkServiceTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         individualUserUUID.put("userUuid", userInfo.getUuid());
 
-//        when(individualService.searchIndividual(any(), any(), any())).thenReturn(true);
 
         // Act
         advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
@@ -189,7 +187,6 @@ public class AdvocateClerkServiceTest {
         Integer limit = null;
         Integer offset = null;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         individualUserUUID.put("userUuid", userInfo.getUuid());
 

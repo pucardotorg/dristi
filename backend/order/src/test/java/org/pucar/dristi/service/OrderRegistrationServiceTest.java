@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-public class OrderRegistrationServiceTest {
+ class OrderRegistrationServiceTest {
 
     @InjectMocks
     private OrderRegistrationService orderRegistrationService;
@@ -47,12 +47,12 @@ public class OrderRegistrationServiceTest {
     private Producer producer;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCreateOrder_success() {
+     void testCreateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setOrderType("other");
@@ -71,7 +71,7 @@ public class OrderRegistrationServiceTest {
     }
 
     @Test
-    public void testCreateOrder_customException() {
+     void testCreateOrder_customException() {
         OrderRequest orderRequest = new OrderRequest();
 
         doThrow(new CustomException("TEST_EXCEPTION", "Test exception"))
@@ -85,7 +85,7 @@ public class OrderRegistrationServiceTest {
     }
 
     @Test
-    public void testSearchOrder_success() {
+     void testSearchOrder_success() {
         List<Order> mockOrderList = new ArrayList<>();
         Order order = new Order();
         order.setTenantId("tenantId");
@@ -98,18 +98,24 @@ public class OrderRegistrationServiceTest {
         order.setStatuteSection(new StatuteSection());
         mockOrderList.add(order);
 
-        when(orderRepository.getOrders(any())).thenReturn(mockOrderList);
+        when(orderRepository.getOrders(any(),any())).thenReturn(mockOrderList);
 
         OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
         orderSearchRequest.setCriteria(new OrderCriteria());
         List<Order> result = orderRegistrationService.searchOrder(orderSearchRequest);
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria(),orderSearchRequest.getPagination());
     }
 
     @Test
-    public void testUpdateOrder_success() {
+     void testSearchOrder_Exception() {
+        assertThrows(CustomException.class, () ->
+                orderRegistrationService.searchOrder(null));
+    }
+
+    @Test
+     void testUpdateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setWorkflow(new Workflow());
@@ -131,7 +137,17 @@ public class OrderRegistrationServiceTest {
     }
 
     @Test
-    public void testExistsOrder_success() {
+     void testUpdateOrder_customException() {
+        OrderRequest orderRequest = new OrderRequest();
+
+        when(validator.validateApplicationExistence(any(OrderRequest.class))).thenReturn(true);
+
+       assertThrows(CustomException.class, () ->
+                orderRegistrationService.updateOrder(orderRequest));
+    }
+
+    @Test
+     void testExistsOrder_success() {
         OrderExistsRequest orderExistsRequest = new OrderExistsRequest();
         OrderExists orderExists = new OrderExists();
         orderExists.setApplicationNumber("appNum");
@@ -150,11 +166,18 @@ public class OrderRegistrationServiceTest {
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getOrders(any()))
+        when(orderRepository.getOrders(any(),any()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);
 
         assertNotNull(result);
+    }
+
+    @Test
+     void testExistOrder_customException() {
+
+       assertThrows(CustomException.class, () ->
+                orderRegistrationService.existsOrder(null));
     }
 }

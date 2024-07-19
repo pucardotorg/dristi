@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
@@ -59,8 +60,12 @@ public class CommentRowMapperTest {
         assertEquals("user2", auditDetails.getLastModifiedBy());
         assertEquals(1627389202000L, auditDetails.getLastModifiedTime());
 
-        assertEquals("{\"key\":\"value\"}", comment.getAdditionalDetails());
+        // Assuming getAdditionalDetails() returns a JsonNode or similar JSON object
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode additionalDetailsJson = objectMapper.readTree(comment.getAdditionalDetails().toString());
+        assertEquals("value", additionalDetailsJson.get("key").asText());
     }
+
 
     @Test
     void testExtractDataWithException() throws Exception {

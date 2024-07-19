@@ -37,9 +37,6 @@ public class HearingServiceTest {
     private WorkflowService workflowService;
 
     @Mock
-    private IndividualService individualService;
-
-    @Mock
     private HearingRepository hearingRepository;
 
     @Mock
@@ -95,9 +92,6 @@ public class HearingServiceTest {
                 .tenantId("tenantId")
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
                 .build();
 
         User user = new User();
@@ -109,8 +103,7 @@ public class HearingServiceTest {
                 .build();
 
         // Arrange
-        when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
-                .thenReturn(Collections.singletonList(new Hearing()));
+        when(hearingRepository.getHearings(any(HearingSearchRequest.class))).thenReturn(Collections.singletonList(new Hearing()));
 
         // Act
         List<Hearing> hearingList = hearingService.searchHearing(request);
@@ -129,9 +122,6 @@ public class HearingServiceTest {
                 .tenantId("tenantId")
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
-                .limit(10)
-                .offset(0)
-                .sortBy("ASC")
                 .build();
 
         User user = new User();
@@ -142,7 +132,7 @@ public class HearingServiceTest {
                 .criteria(criteria)
                 .build();
         // Arrange
-        when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
+        when(hearingRepository.getHearings(any(HearingSearchRequest.class)))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
 
         // Act & Assert
@@ -196,7 +186,7 @@ public class HearingServiceTest {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(userInfo);
         hearingExistsRequest.setRequestInfo(requestInfo);
-        when(hearingRepository.getHearings(any(), any(), any(), any(), any(), isNull(), isNull(), any(), any(), any()))
+        when(hearingRepository.getHearings(any()))
                 .thenReturn(Collections.singletonList(new Hearing()));
 
         // Act
@@ -219,7 +209,7 @@ public class HearingServiceTest {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(userInfo);
         hearingExistsRequest.setRequestInfo(requestInfo);
-        when(hearingRepository.getHearings(any(), any(), any(), any(), any(), isNull(), isNull(), any(), any(), any()))
+        when(hearingRepository.getHearings(any()))
                 .thenReturn(Collections.emptyList());
 
         // Act

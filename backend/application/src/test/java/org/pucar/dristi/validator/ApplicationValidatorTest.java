@@ -8,19 +8,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationExists;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.OrderExistsRequest;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.ORDER_EXCEPTION;
 
 @ExtendWith(MockitoExtension.class)
 public class ApplicationValidatorTest {
@@ -29,7 +32,8 @@ public class ApplicationValidatorTest {
     private ApplicationRepository repository;
     @Mock
     private CaseUtil caseUtil;
-
+    @Mock
+    private OrderUtil orderUtil;
     @InjectMocks
     private ApplicationValidator validator;
 
@@ -155,7 +159,6 @@ public class ApplicationValidatorTest {
 
     @Test
     public void testValidateApplicationExistence_WithMissingCase_ShouldThrowException() {
-        Application application = new Application();
         application.setCaseId("caseID");
         application.setId(UUID.randomUUID());
         application.setFilingNumber("file123");
@@ -163,24 +166,23 @@ public class ApplicationValidatorTest {
         when(caseUtil.fetchCaseDetails(any())).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("case does not exist", exception.getMessage());
     }
 
     @Test
     public void testValidateApplicationExistence_WithMissingCaseId_ShouldThrowException() {
-        Application application = new Application();
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnr123");
         application.setReferenceId(UUID.randomUUID());
+
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
         assertEquals("caseId is mandatory for updating application", exception.getMessage());
     }
     @Test
     public void testValidateApplicationExistence_WithMissingTenantId_ShouldThrowException() {
-        Application application = new Application();
         application.setId(UUID.randomUUID());
         application.setCaseId("caseId");
         application.setCnrNumber("cnr123");
@@ -188,7 +190,7 @@ public class ApplicationValidatorTest {
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("tenantId is mandatory for updating application", exception.getMessage());
     }
@@ -199,11 +201,72 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnr123");
         application.setTenantId("tID");
         application.setFilingNumber("file123");
+
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+                () -> validator.validateApplicationExistence(requestInfo, application));
 
         assertEquals("applicationType is mandatory for updating application", exception.getMessage());
+    }
+    @Test
+    void testCreateOrderExistRequest() {
+        // Arrange
+        application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
+
+        // Act
+        OrderExistsRequest result = validator.createOrderExistRequest(requestInfo, application);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(requestInfo, result.getRequestInfo());
+        assertNotNull(result.getOrder());
+        assertEquals(1, result.getOrder().size());
+        assertEquals(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"), result.getOrder().get(0).getOrderId());
+    }
+
+    @Test
+    void testValidateOrderDetails_OrderExists() {
+        // Arrange
+        application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
+
+        applicationRequest.setRequestInfo(requestInfo);
+        applicationRequest.setApplication(application);
+
+        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(true);
+
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validateOrderDetails(applicationRequest));
+
+    }
+
+    @Test
+    void testValidateOrderDetails_OrderDoesNotExist() {
+        // Arrange
+        application.setReferenceId(UUID.fromString("f35961ed-c3eb-452d-85e8-cde5f33221ce"));
+
+        applicationRequest.setRequestInfo(requestInfo);
+        applicationRequest.setApplication(application);
+
+        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(false);
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateOrderDetails(applicationRequest));
+        assertEquals(ORDER_EXCEPTION, exception.getCode());
+        assertEquals("Order does not exist", exception.getMessage());
+
+    }
+
+    @Test
+    void testValidateOrderDetails_NoReferenceId() {
+        // Arrange
+        application.setReferenceId(null);
+
+        applicationRequest.setRequestInfo(requestInfo);
+        applicationRequest.setApplication(application);
+
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validateOrderDetails(applicationRequest));
+
     }
 }

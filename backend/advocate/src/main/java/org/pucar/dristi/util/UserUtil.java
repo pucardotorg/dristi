@@ -1,14 +1,12 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.pucar.dristi.config.Configuration;
-import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
-import org.egov.common.contract.user.enums.UserType;
-import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,22 +14,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Component
 public class UserUtil {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final Configuration configs;
 
 	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private Configuration configs;
-
-	@Autowired
-	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
+		this.configs = configs;
 	}
 
 	/**

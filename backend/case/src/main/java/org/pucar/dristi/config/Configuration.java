@@ -1,17 +1,15 @@
 package org.pucar.dristi.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.util.TimeZone;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Component
 @Data
@@ -161,5 +159,11 @@ public class Configuration {
 
 	@Value("${egov.representative.join.case.kafka.topic}")
 	private String representativeJoinCaseTopic;
+
+	@Value("${egov.update.representative.join.case.kafka.topic}")
+	private String updateRepresentativeJoinCaseTopic;
+
+	@Value("${egov.additional.join.case.kafka.topic}")
+	private String additionalJoinCaseTopic;
 
 }

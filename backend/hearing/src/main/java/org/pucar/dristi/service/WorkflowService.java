@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -133,68 +132,12 @@ public class WorkflowService {
         }
     }
 
-    BusinessService getBusinessService(Hearing hearing, RequestInfo requestInfo) {
-        try {
-            String tenantId = hearing.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
-        }
-    }
-
-    StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessServices=").append(businessService);
-        return url;
-    }
-
     StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());
         url.append("?tenantId=").append(tenantId);
         url.append("&businessIds=").append(businessService);
         return url;
-    }
-
-    public ProcessInstanceRequest getProcessInstanceForHearingRegistrationPayment(HearingRequest updateRequest) {
-        try {
-            Hearing application = updateRequest.getHearing();
-            ProcessInstance process = ProcessInstance.builder()
-                    .businessService("ADV")
-                    .businessId(application.getId().toString())
-                    .comment("Payment for hearing registration processed")
-                    .moduleName("hearing-services")
-                    .tenantId(application.getTenantId())
-                    .action("PAY")
-                    .build();
-            return ProcessInstanceRequest.builder()
-                    .requestInfo(updateRequest.getRequestInfo())
-                    .processInstances(Arrays.asList(process))
-                    .build();
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting process instance for hearing registration payment: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
-        }
-    }
-
-    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
-        if (processInstance == null) {
-            return null;
-        }
-        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).documents(processInstance.getDocuments()).build();
     }
 }
  

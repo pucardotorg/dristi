@@ -1,22 +1,27 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Advocate;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-public class AdvocateRowMapperTest {
+ class AdvocateRowMapperTest {
 
     @Mock
     private ResultSet rs;
@@ -70,6 +75,78 @@ public class AdvocateRowMapperTest {
 
         // Execution & Verification
         assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
-//        assertTrue(exception.getMessage().contains("Error occurred while processing document ResultSet: Database error"));
+    }
+
+    @Test
+     void testExtractData_withLastModifiedTimeNull() throws SQLException {
+        // Mock ResultSet
+        ResultSet resultSetMock = Mockito.mock(ResultSet.class);
+        when(resultSetMock.next()).thenReturn(true, false); // simulate one row
+        when(resultSetMock.getString("applicationnumber")).thenReturn("sample_uuid");
+        when(resultSetMock.getString("createdby")).thenReturn("user");
+        when(resultSetMock.getLong("createdtime")).thenReturn(123456789L);
+        when(resultSetMock.getString("lastmodifiedby")).thenReturn("admin");
+        when(resultSetMock.getLong("lastmodifiedtime")).thenReturn(0L); // simulate wasNull condition
+        when(resultSetMock.getString("id")).thenReturn(UUID.randomUUID().toString());
+        when(resultSetMock.getString("tenantid")).thenReturn("tenant");
+        when(resultSetMock.getString("barregistrationnumber")).thenReturn("bar123");
+        when(resultSetMock.getString("organisationid")).thenReturn(UUID.randomUUID().toString());
+        when(resultSetMock.getString("individualid")).thenReturn("individual123");
+        when(resultSetMock.getBoolean("isactive")).thenReturn(true);
+        when(resultSetMock.getString("advocatetype")).thenReturn("type");
+        when(resultSetMock.getString("status")).thenReturn("active");
+        when(resultSetMock.getObject("additionalDetails")).thenReturn(null); // simulate additionalDetails as null
+
+
+        // Call extractData method
+        List<Advocate> advocates = rowMapper.extractData(resultSetMock);
+
+        // Assertions
+        assertEquals(1, advocates.size());
+        assertEquals(0, advocates.get(0).getAuditDetails().getLastModifiedTime()); // Verify lastModifiedTime is null
+    }
+
+    @Test
+    void testExtractData_withAdditionalDetails() throws SQLException {
+        // Mock ResultSet
+        ResultSet resultSetMock = Mockito.mock(ResultSet.class);
+        when(resultSetMock.next()).thenReturn(true, false); // simulate one row
+        when(resultSetMock.getString("applicationnumber")).thenReturn("sample_uuid");
+        when(resultSetMock.getString("createdby")).thenReturn("user");
+        when(resultSetMock.getLong("createdtime")).thenReturn(123456789L);
+        when(resultSetMock.getString("lastmodifiedby")).thenReturn("admin");
+        when(resultSetMock.getLong("lastmodifiedtime")).thenReturn(123456789L);
+        when(resultSetMock.getString("id")).thenReturn(UUID.randomUUID().toString());
+        when(resultSetMock.getString("tenantid")).thenReturn("tenant");
+        when(resultSetMock.getString("barregistrationnumber")).thenReturn("bar123");
+        when(resultSetMock.getString("organisationid")).thenReturn(UUID.randomUUID().toString());
+        when(resultSetMock.getString("individualid")).thenReturn("individual123");
+        when(resultSetMock.getBoolean("isactive")).thenReturn(true);
+        when(resultSetMock.getString("advocatetype")).thenReturn("type");
+        when(resultSetMock.getString("status")).thenReturn("active");
+
+        // Mock PGObject
+        PGobject pgObjectMock = Mockito.mock(PGobject.class);
+        when(pgObjectMock.getValue()).thenReturn("{}"); // JSON string
+        when(resultSetMock.getObject("additionalDetails")).thenReturn(pgObjectMock);
+
+
+        // Call extractData method
+        List<Advocate> advocates = rowMapper.extractData(resultSetMock);
+
+        // Assertions
+        assertEquals(1, advocates.size());
+        JsonNode additionalDetails = (JsonNode) advocates.get(0).getAdditionalDetails();
+        assertEquals("{}", additionalDetails.toString()); // Verify additionalDetails is set correctly
+    }
+
+    @Test
+    void testToUUID_withNullInput() {
+
+        // Call toUUID method
+        UUID result = rowMapper.toUUID(null);
+
+        // Assertion
+        assertEquals(null, result); // Verify result is null
     }
 }

@@ -19,10 +19,14 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class AdvocateRegistrationEnrichment {
 
+    private final IdgenUtil idgenUtil;
+    private final Configuration configuration;
+
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration configuration;
+    public AdvocateRegistrationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
+        this.idgenUtil = idgenUtil;
+        this.configuration = configuration;
+    }
 
 
     /**
@@ -43,9 +47,7 @@ public class AdvocateRegistrationEnrichment {
             //setting generated application number
             advocate.setApplicationNumber(advocateApplicationNumbers.get(0));
             if (advocate.getDocuments() != null) {
-                advocate.getDocuments().forEach(document -> {
-                    document.setId(String.valueOf(UUID.randomUUID()));
-                });
+                advocate.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));
             }
         } catch(CustomException e){
             throw e;

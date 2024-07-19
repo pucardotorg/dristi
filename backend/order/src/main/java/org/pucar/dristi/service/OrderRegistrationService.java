@@ -24,23 +24,27 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class OrderRegistrationService {
 
-    @Autowired
     private OrderRegistrationValidator validator;
 
-    @Autowired
     private OrderRegistrationEnrichment enrichmentUtil;
 
-    @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
     private WorkflowUtil workflowUtil;
 
-    @Autowired
     private Configuration config;
 
-    @Autowired
     private Producer producer;
+
+    @Autowired
+    public OrderRegistrationService(OrderRegistrationValidator validator, Producer producer, Configuration config, WorkflowUtil workflowUtil, OrderRepository orderRepository, OrderRegistrationEnrichment enrichmentUtil) {
+        this.validator = validator;
+        this.producer = producer;
+        this.config = config;
+        this.workflowUtil = workflowUtil;
+        this.orderRepository = orderRepository;
+        this.enrichmentUtil = enrichmentUtil;
+    }
 
     public Order createOrder(OrderRequest body) {
         try {
@@ -66,7 +70,7 @@ public class OrderRegistrationService {
     public List<Order> searchOrder(OrderSearchRequest request) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getOrders(request.getCriteria());
+            List<Order> orderList = orderRepository.getOrders(request.getCriteria(), request.getPagination());
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
@@ -132,7 +136,7 @@ public class OrderRegistrationService {
         String status ;
         if (orderType.equalsIgnoreCase(JUDGEMENT)) {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
-                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderBusinessName());
+                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
         } else {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
                     workflow, config.getOrderBusinessName());
