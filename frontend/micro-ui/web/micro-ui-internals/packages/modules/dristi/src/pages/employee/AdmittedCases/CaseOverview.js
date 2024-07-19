@@ -7,8 +7,10 @@ import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
+import PublishedOrderModal from "./PublishedOrderModal";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 
-const CaseOverview = ({ caseData, openHearingModule }) => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -282,11 +284,17 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
                     alignItems: "center",
                   }}
                   onClick={() => {
-                    setShowReviewModal(true);
-                    setCurrentOrder(order);
+                    if (order?.status === OrderWorkflowState.DRAFT_IN_PROGRESS) {
+                      history.push(
+                        `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order?.orderNumber}`
+                      );
+                    } else {
+                      setShowReviewModal(true);
+                      setCurrentOrder(order);
+                    }
                   }}
                 >
-                  {t(order?.orderType)}
+                  {t(`ORDER_TYPE_${order?.orderType.toUpperCase()}`)}
                 </div>
               ))}
           </div>
@@ -295,13 +303,13 @@ const CaseOverview = ({ caseData, openHearingModule }) => {
       {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} /> */}
 
       {showReviewModal && (
-        <OrderReviewModal
+        <PublishedOrderModal
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
-          setShowsignatureModal={() => {}}
-          handleSaveDraft={() => {}}
-          showActions={false}
+          handleDownload={handleDownload}
+          handleRequestLabel={handleRequestLabel}
+          handleSubmitDocument={handleSubmitDocument}
         />
       )}
     </React.Fragment>

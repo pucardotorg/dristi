@@ -216,7 +216,7 @@
     }
   }
   .judge-action-block {
-    display: flex;
+    display: flex !important;
     gap: 16px;
     align-items: end;
     .evidence-header-wrapper {

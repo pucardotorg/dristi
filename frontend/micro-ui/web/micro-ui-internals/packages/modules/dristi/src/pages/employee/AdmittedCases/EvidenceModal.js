@@ -135,7 +135,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "REQUESTFILERESPONSE",
+      action: "APPROVE",
     },
   };
 
@@ -214,6 +214,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             artifact: {
               ...documentSubmission?.[0].artifactList,
               isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              filingNumber: filingNumber,
             },
           },
           config: {
