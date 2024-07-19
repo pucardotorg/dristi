@@ -62,11 +62,9 @@ const SubmissionReview = ({ caseData, setUpdateCounter }) => {
       },
     },
     {},
-    cnr + filingNumber,
-    true
+    filingNumber,
+    filingNumber
   );
-
-  console.log(applicationRes);
 
   return (
     <React.Fragment>
