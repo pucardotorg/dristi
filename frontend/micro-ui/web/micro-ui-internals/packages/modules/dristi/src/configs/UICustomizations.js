@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Evidence } from "../components/Evidence";
 import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
+import { RenderInstance } from "../components/RenderInstance";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -640,6 +641,7 @@ export const UICustomizations = {
         case "File":
           return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
+        case "Date":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
@@ -661,6 +663,74 @@ export const UICustomizations = {
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Status":
           return value ? "Marked as Evidence" : "Action Pending";
+        default:
+          break;
+      }
+    },
+  },
+  HistoryConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            console.log(data);
+            const applicationHistory = data.caseFiles[0].applications.map((application) => {
+              return {
+                instance: `APPLICATION_TYPE_${application.applicationType}`,
+                stage: "",
+                date: application.auditDetails.createdTime,
+                status: application.status,
+              };
+            });
+            const evidenceHistory = data.caseFiles[0].evidence.map((evidence) => {
+              return {
+                instance: `ARTIFACT_TYPE_${evidence.artifactType}`,
+                stage: "",
+                date: evidence.auditDetails.createdTime,
+                status: evidence.status,
+              };
+            });
+            const hearingHistory = data.caseFiles[0].hearings.map((hearing) => {
+              return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
+            });
+            const orderHistory = userRoles.includes("CITIZEN")
+              ? data.caseFiles[0].orders
+                  .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                  .map((order) => {
+                    return {
+                      instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                      stage: "",
+                      date: order.order.auditDetails.createdTime,
+                      status: order.order.status,
+                    };
+                  })
+              : data.caseFiles[0].orders.map((order) => {
+                  return {
+                    instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                    stage: "",
+                    date: order.order.auditDetails.createdTime,
+                    status: order.order.status,
+                  };
+                });
+            const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
+            return { ...data, history: historyList };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Instance":
+          return <RenderInstance value={value} t={t} />;
+        case "Date":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
         default:
           break;
       }

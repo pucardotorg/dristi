@@ -1,13 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { modalConfig, scheduleCaseSubmitConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
-import ScheduleAdmission from "../admission/ScheduleAdmission";
-import { CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
+import { modalConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
+import { CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
 import AdmissionActionModal from "../admission/AdmissionActionModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
 
-const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails }) => {
+const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails, caseAdmittedSubmit }) => {
   const { t } = useTranslation();
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
@@ -157,6 +155,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           handleScheduleNextHearing={() => {}}
           disabled={false}
           isCaseAdmitted={true}
+          caseAdmittedSubmit={caseAdmittedSubmit}
         />
       </Modal>
     </React.Fragment>
