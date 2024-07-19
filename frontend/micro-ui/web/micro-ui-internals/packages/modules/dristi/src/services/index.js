@@ -109,6 +109,15 @@ export const DRISTIService = {
       params,
     });
   },
+  createHearings: (data, params) => {
+    return Request({
+      url: Urls.dristi.createHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
   searchOrders: (data, params) => {
     return Request({
       url: Urls.dristi.ordersSearch,
@@ -141,6 +150,14 @@ export const DRISTIService = {
       url: Urls.dristi.demandCreate,
       useCache: false,
       userService: false,
+      data,
+      params,
+    }),
+  customApiService: (url, data, params, useCache = false, userService = true) =>
+    Request({
+      url: url,
+      useCache: useCache,
+      userService: true,
       data,
       params,
     }),

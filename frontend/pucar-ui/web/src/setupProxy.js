@@ -27,6 +27,7 @@ module.exports = function (app) {
     "/muster-roll",
     "/order",
     "/application",
+    "/analytics",
   ].forEach((location) =>
     app.use(location, createProxy)
   );

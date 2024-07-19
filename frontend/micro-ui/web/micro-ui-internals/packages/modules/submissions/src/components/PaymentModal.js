@@ -31,7 +31,7 @@ function PaymentModal({ t, handleClosePaymentModal, handleSkipPayment, handleMak
   return (
     <Modal
       headerBarMain={<Heading label={t("SUBMISSION_APPLICATION_PAYMENT")} />}
-      headerBarEnd={<CloseBtn onClick={() => handleClosePaymentModal()} />}
+      headerBarEnd={<CloseBtn onClick={handleClosePaymentModal} />}
       actionCancelLabel={t("SKIP")}
       actionCancelOnSubmit={() => handleSkipPayment()}
       actionSaveLabel={t("CS_MAKE_PAYMENT")}

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Evidence } from "../components/Evidence";
 import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
+import { RenderInstance } from "../components/RenderInstance";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -15,12 +16,19 @@ const inboxModuleNameMap = {
 
 const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
 
+const partyTypes = {
+  "complainant.primary": "Complainant",
+  "complainant.additional": "Complainant",
+  "respondent.primary": "Respondent",
+  "respondent.additional": "Respondent",
+};
+
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -31,7 +39,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -56,7 +64,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -81,7 +89,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -95,7 +103,7 @@ export const UICustomizations = {
     }
     if (businessService === businessServiceMap?.["works.purchase"]) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -106,7 +114,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -127,7 +135,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit: (businessService, action, setModalSubmit, data) => {
-    if (businessService === businessServiceMap?.["muster roll"] && action.action === "APPROVE") {
+    if (businessService === businessServiceMap?.["muster roll"] && action?.action === "APPROVE") {
       setModalSubmit(data?.acceptTerms);
     }
   },
@@ -183,9 +191,45 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
-                data: adv,
+                advocateUuid: adv?.auditDetails?.createdBy,
               };
             });
+          },
+        },
+      };
+    },
+  },
+  getAdvocateNameUsingBarRegistrationNumberJoinCase: {
+    getNames: (props) => {
+      const removeOptions = props?.removeOptions ? props?.removeOptions : [];
+      const removeOptionsKey = props?.removeOptionsKey || "";
+      return {
+        url: "/advocate/advocate/v1/status/_search",
+        params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
+        body: {
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+        config: {
+          select: (data) => {
+            return data.advocates
+              .filter((adv) => !removeOptions?.includes(adv?.[removeOptionsKey]))
+              .map((adv) => {
+                return {
+                  icon: (
+                    <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span className="icon">{adv?.barRegistrationNumber}</span>
+                      <span className="icon" style={{ justifyContent: "end" }}>
+                        {adv?.additionalDetails?.username}
+                      </span>
+                    </span>
+                  ),
+                  barRegistrationNumber: `${adv?.barRegistrationNumber}`,
+                  advocateName: adv?.additionalDetails?.username,
+                  advocateId: adv?.id,
+                  barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                  data: adv,
+                };
+              });
           },
         },
       };
@@ -539,30 +583,65 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    // preProcess: (requestCriteria, additionalDetails) => {
-
-    //   return {
-    //     ...requestCriteria,
-    //     config: {
-    //       select: (data) => {
-    //         return { ...data };
-    //       },
-    //     },
-    //   };
-    // },
+    preProcess: (requestCriteria, additionalDetails) => {
+      const filterList = Object.keys(requestCriteria.state.searchForm)
+        .map((key) => {
+          if (requestCriteria.state.searchForm[key]?.type) {
+            return { [key]: requestCriteria.state.searchForm[key]?.type };
+          } else if (requestCriteria.state.searchForm[key]?.value) {
+            return { [key]: requestCriteria.state.searchForm[key]?.value };
+          } else if (typeof requestCriteria.state.searchForm[key] === "string") {
+            return { [key]: requestCriteria.state.searchForm[key] };
+          }
+        })
+        .filter((filter) => filter)
+        .reduce(
+          (fieldObj, item) => ({
+            ...fieldObj,
+            ...item,
+          }),
+          {}
+        );
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria.body,
+          criteria: {
+            ...requestCriteria.body.criteria,
+            ...filterList,
+          },
+          pagination: {
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
+          },
+        },
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            if (requestCriteria.url.split("/".includes("order"))) {
+              if (userRoles.includes("CITIZEN")) {
+                return { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") };
+              }
+            }
+            return data;
+          },
+        },
+      };
+    },
     additionalCustomizations: (row, key, column, value, t) => {
       const showDocument =
         userRoles?.includes("APPLICATION_APPROVER") ||
         userRoles?.includes("DEPOSITION_CREATOR") ||
         userRoles?.includes("DEPOSITION_ESIGN") ||
         userRoles?.includes("DEPOSITION_PUBLISHER") ||
-        row.workflow.action !== "PENDINGREVIEW";
+        row.workflow?.action !== "PENDINGREVIEW";
       switch (key) {
         case "Document":
           return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
         case "File":
           return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
+        case "Date":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
@@ -582,6 +661,76 @@ export const UICustomizations = {
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Status":
+          return value ? "Marked as Evidence" : "Action Pending";
+        default:
+          break;
+      }
+    },
+  },
+  HistoryConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            console.log(data);
+            const applicationHistory = data.caseFiles[0].applications.map((application) => {
+              return {
+                instance: `APPLICATION_TYPE_${application.applicationType}`,
+                stage: "",
+                date: application.auditDetails.createdTime,
+                status: application.status,
+              };
+            });
+            const evidenceHistory = data.caseFiles[0].evidence.map((evidence) => {
+              return {
+                instance: `ARTIFACT_TYPE_${evidence.artifactType}`,
+                stage: "",
+                date: evidence.auditDetails.createdTime,
+                status: evidence.status,
+              };
+            });
+            const hearingHistory = data.caseFiles[0].hearings.map((hearing) => {
+              return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
+            });
+            const orderHistory = userRoles.includes("CITIZEN")
+              ? data.caseFiles[0].orders
+                  .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                  .map((order) => {
+                    return {
+                      instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                      stage: "",
+                      date: order.order.auditDetails.createdTime,
+                      status: order.order.status,
+                    };
+                  })
+              : data.caseFiles[0].orders.map((order) => {
+                  return {
+                    instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                    stage: "",
+                    date: order.order.auditDetails.createdTime,
+                    status: order.order.status,
+                  };
+                });
+            const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
+            return { ...data, history: historyList };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Instance":
+          return <RenderInstance value={value} t={t} />;
+        case "Date":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
         default:
           break;
       }
@@ -634,6 +783,8 @@ export const UICustomizations = {
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
+        case "Party Type":
+          return partyTypes[value] ? partyTypes[value] : value;
         default:
           break;
       }
@@ -659,22 +810,4 @@ export const UICustomizations = {
         return;
     }
   },
-};
-
-const CommentComponent = ({ key, comment }) => {
-  return (
-    <div className="comment-body" key={key}>
-      <div className="name-logo">
-        <div className="comment-avatar">
-          <span>{comment?.author[0]}</span>
-        </div>
-      </div>
-      <div className="comment-details">
-        <h3 className="comment-header">
-          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
-        </h3>
-        <p className="comment-text">{comment?.text}</p>
-      </div>
-    </div>
-  );
 };

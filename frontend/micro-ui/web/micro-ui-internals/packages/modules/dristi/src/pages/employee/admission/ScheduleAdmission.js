@@ -1,6 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import CustomChooseDate from "../../../components/CustomChooseDate";
-import { Button, CardLabel, CardText, DateRange, EventCalendar, SubmitBar, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import {
+  Button,
+  CardLabel,
+  CardText,
+  CustomDropdown,
+  DateRange,
+  EventCalendar,
+  SubmitBar,
+  TextInput,
+  Toast,
+} from "@egovernments/digit-ui-react-components";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { formatDateInMonth } from "../../../Utils";
 
@@ -17,10 +27,12 @@ function ScheduleAdmission({
   scheduleHearingParams,
   submitModalInfo,
   handleClickDate,
+  disabled = true,
+  isCaseAdmitted = false,
+  caseAdmittedSubmit = () => {},
 }) {
   const getNextNDates = (n) => {
     const today = new Date();
-
     const datesArray = [];
 
     for (let i = 1; i <= n; i++) {
@@ -49,23 +61,115 @@ function ScheduleAdmission({
     if (!scheduleHearingParams?.date && !modalInfo?.showCustomDate) {
       setShowErrorToast(true);
     } else {
-      setModalInfo({ ...modalInfo, page: 1 });
+      isCaseAdmitted ? caseAdmittedSubmit(scheduleHearingParams) : setModalInfo({ ...modalInfo, page: 1 });
     }
   };
+
+  const hearingTypeOptions = [
+    {
+      id: 1,
+      type: "EVIDENCE",
+      isactive: true,
+      code: "EVIDENCE",
+    },
+    {
+      id: 2,
+      type: "ADMIN",
+      isactive: true,
+      code: "ADMIN",
+    },
+    {
+      id: 3,
+      type: "82_83_HEARING",
+      isactive: true,
+      code: "82_83_HEARING",
+    },
+    {
+      id: 4,
+      type: "NBW_HEARING",
+      isactive: true,
+      code: "NBW_HEARING",
+    },
+    {
+      id: 5,
+      type: "ADMISSION",
+      isactive: true,
+      code: "ADMISSION",
+    },
+    {
+      id: 6,
+      type: "PLEA",
+      isactive: true,
+      code: "PLEA",
+    },
+    {
+      id: 7,
+      type: "ARGUMENTS",
+      isactive: true,
+      code: "ARGUMENTS",
+    },
+    {
+      id: 8,
+      type: "JUDGEMENT",
+      isactive: true,
+      code: "JUDGEMENT",
+    },
+    {
+      id: 9,
+      type: "SENTENCE",
+      isactive: true,
+      code: "SENTENCE",
+    },
+    {
+      id: 10,
+      type: "BAIL",
+      isactive: true,
+      code: "BAIL",
+    },
+    {
+      id: 11,
+      type: "OTHERS",
+      isactive: true,
+      code: "OTHERS",
+    },
+  ];
+
+  const dropdownConfig = {
+    label: "HEARING_TYPE",
+    type: "dropdown",
+    name: "hearingType",
+    optionsKey: "type",
+    isMandatory: true,
+    options: hearingTypeOptions,
+  };
+
   return (
     <div className="schedule-admission-main">
       {selectedChip && <CustomCaseInfoDiv t={t} data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
 
       <CardText className="card-label-smaller">{t(config.label)}</CardText>
-      <TextInput
-        value={scheduleHearingParams?.purpose}
-        className="field desktop-w-full"
-        name={`${config.name}`}
-        onChange={(e) => {
-          setPurposeValue(e.target.value, config.name);
-        }}
-        disabled={true}
-      />
+      {!isCaseAdmitted ? (
+        <TextInput
+          value={scheduleHearingParams?.purpose}
+          className="field desktop-w-full"
+          name={`${config.name}`}
+          onChange={(e) => {
+            setPurposeValue(e.target.value, config.name);
+          }}
+          disabled={disabled}
+        />
+      ) : (
+        <CustomDropdown
+          t={t}
+          defaulValue={hearingTypeOptions[4]}
+          onChange={(e) => {
+            setPurposeValue(e, config.name);
+            console.log(e);
+          }}
+          // value={userType}
+          config={dropdownConfig}
+        ></CustomDropdown>
+      )}
       {!modalInfo?.showCustomDate && (
         <div>
           <CardText>{t("CS_SELECT_DATE")}</CardText>
@@ -107,7 +211,7 @@ function ScheduleAdmission({
           variation="primary"
           onSubmit={handleSubmit}
           className="primary-label-btn select-participant-submit"
-          label={selectedChip ? t("CS_COMMON_CONTINUE") : t("CS_SELECT_PARTICIPANT")}
+          label={isCaseAdmitted ? t("GENERATE_ORDERS_LINK") : selectedChip ? t("CS_COMMON_CONTINUE") : t("CS_SELECT_PARTICIPANT")}
         ></SubmitBar>
       </div>
 

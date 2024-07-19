@@ -11,29 +11,43 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     return formattedDate;
   };
 
-  const docObj = rowData.documents.map((doc) => {
+  const defaultObj = {
+    status: rowData?.status,
+    details: {
+      applicationType: rowData?.applicationType,
+      applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
+      sender: rowData?.createdBy,
+      additionalDetails: rowData?.additionalDetails,
+      applicationId: rowData?.id,
+      auditDetails: rowData?.auditDetails,
+    },
+    applicationContent: null,
+    comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+    applicationList: rowData,
+  };
+  const docObj = rowData?.documents?.map((doc) => {
     return {
-      status: rowData.workflow.action,
+      status: rowData?.status,
       details: {
-        applicationType: rowData.applicationType,
-        applicationSentOn: getDate(parseInt(rowData.auditDetails.createdTime)),
-        sender: rowData.createdBy,
-        additionalDetails: rowData.additionalDetails,
-        applicationId: rowData.id,
-        auditDetails: rowData.auditDetails,
+        applicationType: rowData?.applicationType,
+        applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
+        sender: rowData?.createdBy,
+        additionalDetails: rowData?.additionalDetails,
+        applicationId: rowData?.id,
+        auditDetails: rowData?.auditDetails,
       },
       applicationContent: {
-        tenantId: rowData.tenantId,
+        tenantId: rowData?.tenantId,
         fileStoreId: doc.fileStore,
         id: doc.id,
         documentType: doc.documentType,
         documentUid: doc.documentUid,
         additionalDetails: doc.additionalDetails,
       },
-      comments: [],
+      comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
       applicationList: rowData,
     };
-  });
+  }) || [defaultObj];
 
   return (
     <React.Fragment>

@@ -1,35 +1,57 @@
-import { Button, Card } from "@egovernments/digit-ui-react-components";
+import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
+import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { ordersService } from "../../../../../orders/src/hooks/services";
+import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
+import PublishedOrderModal from "./PublishedOrderModal";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 
-const CaseOverview = () => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
   const { t } = useTranslation();
-  const searchParams = new URLSearchParams(location.search);
-  const filingNumber = searchParams.get("filingNumber");
+  const filingNumber = caseData.filingNumber;
   const history = useHistory();
-  const cnr = searchParams.get("cnrNumber");
-  const title = searchParams.get("title");
-  const caseId = searchParams.get("caseId");
+  const cnrNumber = caseData.cnrNumber;
+  const caseId = caseData.caseId;
+  const { path } = useRouteMatch();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
 
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = useGetHearings(
+  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
+  const advocateIds = caseData?.case?.representatives?.map((representative) => {
+    return {
+      id: representative?.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
+  );
+
+  console.log(advocateDetails);
+
+  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
-        cnrNumber: cnr,
         tenantId: tenantId,
       },
     },
     {},
-    cnr + filingNumber,
+    cnrNumber + filingNumber,
     true
   );
 
@@ -41,7 +63,7 @@ const CaseOverview = () => {
       },
     },
     {},
-    cnr + filingNumber,
+    cnrNumber + filingNumber,
     true
   );
 
@@ -49,12 +71,64 @@ const CaseOverview = () => {
     (hearing1, hearing2) => hearing2.endTime - hearing1.endTime
   )[0];
 
-  const navigateOrdersGenerate = () => {
-    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
-  console.log(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+  const navigateOrdersGenerate = () => {
+    const reqbody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "Bail",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              id: 15,
+              type: "BAIL",
+              isactive: true,
+              code: "BAIL",
+              name: "ORDER_TYPE_BAIL",
+            },
+          },
+        },
+      },
+    };
+    ordersService
+      .createOrder(reqbody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+      })
+      .catch((err) => {});
+  };
 
+  const orderList = userRoles.includes("CITIZEN") ? ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") : ordersRes?.list;
+
+  const handleMakeSubmission = () => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+  };
+
+  if (isHearingsLoading || isOrdersLoading) {
+    return <Loader />;
+  }
   return hearingRes?.HearingList?.length === 0 && ordersRes?.list?.length === 0 ? (
     <div
       style={{
@@ -98,19 +172,32 @@ const CaseOverview = () => {
           >
             A summary of this case's proceedings, hearings, orders and other activities will be visible here. Take your first action on the case
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              width: "100%",
-              marginTop: "16px",
-            }}
-          >
-            <Button variation={"outlined"} label={"Schedule Hearing"} />
-            {(userRoles.includes("ORDER_CREATOR") || userRoles.includes("SUPERUSER") || userRoles.includes("EMPLOYEE")) && (
-              <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
-            )}
-          </div>
+          {!userRoles.includes("CITIZEN") ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                width: "100%",
+                marginTop: "16px",
+              }}
+            >
+              <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
+              {userRoles.includes("ORDER_CREATOR") && (
+                <Button variation={"outlined"} label={t("GENERATE_ORDERS_LINK")} onButtonClick={() => navigateOrdersGenerate()} />
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                width: "100%",
+                marginTop: "16px",
+              }}
+            >
+              <Button variation={"outlined"} label={"Raise Application"} onClick={handleMakeSubmission} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -120,7 +207,6 @@ const CaseOverview = () => {
         <Card
           style={{
             width: "70%",
-            marginTop: "10px",
           }}
         >
           <div
@@ -158,49 +244,72 @@ const CaseOverview = () => {
             marginTop: "10px",
           }}
         >
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "16px",
-              lineHeight: "18.75px",
-              color: "#231F20",
-            }}
-          >
-            Recent Orders
+          <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "16px",
+                lineHeight: "18.75px",
+                color: "#231F20",
+                width: "40%",
+              }}
+            >
+              {t("RECENT_ORDERS")}
+            </div>
+            <div
+              style={{ color: "#007E7E", cursor: "pointer", fontWeight: 700, fontSize: "16px", lineHeight: "18.75px" }}
+              onClick={() => history.replace(`${path}?caseId=${caseId}&tab=Orders`)}
+            >
+              {t("ALL_ORDERS_LINK")}
+            </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-            {ordersRes?.list
+            {orderList
               ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
               .slice(0, 5)
               .map((order) => (
                 <div
                   style={{
                     padding: "12px 16px",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    lineHeight: "18.75px",
                     border: "1px solid #BBBBBD",
-                    color: "#BBBBBD",
+                    color: "#505A5F",
                     borderRadius: "4px",
                     width: "300px",
                     cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                   onClick={() => {
-                    setShowReviewModal(true);
-                    setCurrentOrder(order);
+                    if (order?.status === OrderWorkflowState.DRAFT_IN_PROGRESS) {
+                      history.push(
+                        `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order?.orderNumber}`
+                      );
+                    } else {
+                      setShowReviewModal(true);
+                      setCurrentOrder(order);
+                    }
                   }}
                 >
-                  {order?.orderType}
+                  {t(`ORDER_TYPE_${order?.orderType.toUpperCase()}`)}
                 </div>
               ))}
           </div>
         </Card>
       )}
+      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} /> */}
+
       {showReviewModal && (
-        <OrderReviewModal
+        <PublishedOrderModal
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
-          setShowsignatureModal={() => {}}
-          handleSaveDraft={() => {}}
-          showActions={false}
+          handleDownload={handleDownload}
+          handleRequestLabel={handleRequestLabel}
+          handleSubmitDocument={handleSubmitDocument}
         />
       )}
     </React.Fragment>

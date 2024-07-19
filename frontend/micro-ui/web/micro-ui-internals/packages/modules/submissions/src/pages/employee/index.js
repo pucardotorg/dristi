@@ -5,12 +5,17 @@ import { Switch } from "react-router-dom";
 import SubmissionsResponse from "./SubmissionsResponse";
 import SubmissionsCreate from "./SubmissionsCreate";
 import SubmissionsSearch from "./SubmissionsSearch";
-const bredCrumbStyle={ maxWidth: "min-content" };
+const bredCrumbStyle = { maxWidth: "min-content" };
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
       content: t("HOME"),
       show: true,
     },
@@ -28,7 +33,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
     <Switch>
       <AppContainer className="ground-container">
         <React.Fragment>
-          <ProjectBreadCrumb location={location} />
+          <ProjectBreadCrumb location={window.location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/submissions-response`} component={() => <SubmissionsResponse></SubmissionsResponse>} />
         <PrivateRoute path={`${path}/submissions-create`} component={() => <SubmissionsCreate />} />

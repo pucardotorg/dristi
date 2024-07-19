@@ -10,14 +10,15 @@ const DRISTICard = () => {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
+  const isCourtOfficer = useMemo(() => roles.some((role) => role.code === "HEARING_CREATOR"), [roles]);
   const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
     if (!res) return res;
     res = roles.some((role) => role.code === curr);
     return res;
   }, true);
 
-  if (isScrutiny && !isNyayMitra && !isJudge) {
-    history.push("/digit-ui/employee/dristi/cases");
+  if (isScrutiny || isJudge || isCourtOfficer) {
+    history.push("/digit-ui/employee/home/home-pending-task");
   }
 
   let roleType = isJudge ? "isJudge" : "default";

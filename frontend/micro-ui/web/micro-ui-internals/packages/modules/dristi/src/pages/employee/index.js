@@ -30,6 +30,12 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
       isLast: false,
     },
     {
+      path: `${path}/view-case`,
+      content: t("VIEW_CASE"),
+      show: location.pathname.includes("/view-case"),
+      isLast: true,
+    },
+    {
       path: `${path}/registration-requests`,
       content: t("ES_REGISTRATION_REQUESTS"),
       show: location.pathname.includes("/registration-requests"),
@@ -57,12 +63,13 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   return (
     <Switch>
       <React.Fragment>
-        <div className="ground-container">
+        <div className="ground-container dristi-employee-main">
           {!location.pathname.endsWith("/registration-requests") &&
             !location.pathname.includes("/pending-payment-inbox") &&
             !location.pathname.includes("/case") &&
             location.search.includes("?caseId") &&
-            !location.pathname.includes("/employee/dristi/admission") && (
+            !location.pathname.includes("/employee/dristi/admission") &&
+            !location.pathname.includes("/view-case") && (
               <div className="back-button-home">
                 <BackButton />
                 {!isJudge && (
@@ -73,7 +80,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
                 )}
               </div>
             )}
-          {location.pathname.includes("/pending-payment-inbox") && (
+          {(location.pathname.includes("/pending-payment-inbox") || location.pathname.includes("/view-case")) && (
             <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
           )}
           <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
@@ -84,7 +91,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}></div>
           <PrivateRoute exact path={`${path}/cases`} component={Home} />
           <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
-          <PrivateRoute exact path={`${path}/admitted-case`} component={(props) => <AdmittedCases />} />
+          <PrivateRoute exact path={`${path}/home/view-case`} component={(props) => <AdmittedCases />} />
           <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
         </div>
         {toastMessage && (

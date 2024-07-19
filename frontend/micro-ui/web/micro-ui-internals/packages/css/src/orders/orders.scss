@@ -1,18 +1,22 @@
 .review-order-modal {
   &.popup-module {
     width: 80%;
+
     .popup-module-main {
       .review-order-body-main {
         height: 70vh;
         display: flex;
         gap: 3%;
+
         .review-order-modal-list-div {
           width: 30%;
           padding: 24px;
           border-right: 1px #e8e8e8 solid;
+
           .review-order-type-side-stepper {
             padding: 14px 14px 10px 6px;
             background-color: #e8e8e8;
+
             h1 {
               font-family: Lato;
               font-size: 14px;
@@ -25,12 +29,15 @@
             }
           }
         }
+
         .review-order-modal-document-div {
           width: 65%;
           padding: 24px;
+
           .docviewer-wrapper {
             margin-top: auto;
             margin-bottom: auto;
+
             .employeeCard {
               margin-bottom: 16px !important;
               margin-right: 5px;
@@ -40,16 +47,19 @@
           }
         }
       }
+
       .popup-module-action-bar {
         padding-top: 16px;
         border-top: 1px #e8e8e8 solid;
         padding-right: 16px;
         margin: 0px 0px 16px 0px;
+
         .selector-button-border {
           width: 125px !important;
           height: 40px !important;
           padding: 8px 24px 8px 24px !important;
           border: solid 1px #007e7e !important;
+
           h2 {
             font-family: Roboto !important;
             font-size: 16px !important;
@@ -59,10 +69,12 @@
             color: #007e7e !important;
           }
         }
+
         .selector-button-primary {
           width: 151px;
           height: 40px;
           padding: 8px 24px 8px 24px;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -85,10 +97,12 @@
         flex-direction: column;
         gap: 24px;
       }
+
       .not-signed {
         display: flex;
         flex-direction: column;
         gap: 16px;
+
         h1 {
           margin: 0px;
           font-family: Roboto;
@@ -99,13 +113,16 @@
           color: #3d3c3c;
         }
       }
+
       .sign-button-wrap {
         display: flex;
+
         .aadhar-sign-in {
           width: 96px;
           background: none;
           color: #007e7e;
           box-shadow: none;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -114,11 +131,13 @@
             text-align: center;
           }
         }
+
         .upload-signature {
           background: none;
           color: #007e7e;
           border: none;
           box-shadow: none;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -128,21 +147,26 @@
           }
         }
       }
+
       .donwload-submission {
         display: flex;
         gap: 8px;
+
         h2 {
           margin: 0px;
         }
+
         span {
           a {
             color: #007e7e;
           }
         }
       }
+
       .signed {
         display: flex;
         gap: 16px;
+
         h1 {
           margin: 0px;
           font-family: Roboto;
@@ -152,6 +176,7 @@
           text-align: left;
           color: #3d3c3c;
         }
+
         h2 {
           margin: 0px;
           font-family: Roboto;
@@ -165,12 +190,14 @@
           border-radius: 999px;
         }
       }
+
       .popup-module-action-bar {
         .selector-button-border {
           width: 84px;
           height: 40px;
           padding: 8px 24px 8px 24px;
           border: 1px solid #007e7e !important;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -180,10 +207,12 @@
             color: #007e7e !important;
           }
         }
+
         .selector-button-primary {
           width: fit-content !important;
           height: 40px;
           padding: 8px 24px 8px 24px;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -192,10 +221,12 @@
             text-align: center;
           }
         }
+
         .selector-button-primary-disabled {
           width: fit-content !important;
           height: 40px !important;
           padding: 8px 24px 8px 24px !important;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -214,53 +245,37 @@
     width: 40vw;
 
     .popup-module-main {
-    }
-  }
-}
-
-.order-submission {
-  .bread-crumb {
-    margin: 0px;
-    padding: 12px 40px;
-    gap: 8px;
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-    text-align: left;
-    border-top: 1px #e8e8e8 solid;
-    border-bottom: 0.5px #edeeef solid;
-    .li.bread-crumb--item {
-      margin-left: 0px;
-      a {
-        margin-right: 8px;
-      }
-    }
-  }
-  .generate-orders {
-    display: flex;
-    gap: 40px;
-    .delete-order-warning-modal {
       .popup-module-action-bar {
         .selector-button-border {
-          width: fit-content !important;
-          height: 40px !important;
-          padding: 8px 24px 8px 24px !important;
-          border: solid 1px #007e7e !important;
-          background: white !important;
+          border: 1px solid #007e7e !important;
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: center;
+          align-items: center;
+          height: 40px;
+          width: 276px;
+          padding: 8px 24px;
+
           h2 {
-            font-family: Roboto !important;
-            font-size: 16px !important;
-            font-weight: 700 !important;
-            line-height: 18.75px !important;
-            text-align: center !important;
+            width: 65% !important;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
             color: #007e7e !important;
           }
+
+          svg path {
+            fill: #007e7e;
+          }
         }
+
         .selector-button-primary {
-          width: fit-content !important;
           height: 40px;
-          padding: 8px 24px 8px 24px;
+          width: 276px;
+          padding: 8px 24px;
+
           h2 {
             font-family: Roboto;
             font-size: 16px;
@@ -272,6 +287,72 @@
       }
     }
   }
+}
+
+.bread-crumb {
+  margin: 0px;
+  padding: 12px 40px;
+  gap: 8px;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+  border-top: 1px #e8e8e8 solid;
+  border-bottom: 0.5px #edeeef solid;
+  .li.bread-crumb--item {
+    margin-left: 0px;
+    a {
+      margin-right: 8px;
+    }
+  }
+}
+.order-submission {
+  .generate-orders {
+    display: flex;
+    gap: 40px;
+
+    .delete-order-warning-modal {
+      .header-wrap {
+        padding-left: 8px !important;
+      }
+
+      .popup-module-action-bar {
+        .selector-button-border {
+          width: fit-content !important;
+          height: 40px !important;
+          padding: 8px 24px 8px 24px !important;
+          border: solid 1px #007e7e !important;
+          background: white !important;
+
+          h2 {
+            font-family: Roboto !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            line-height: 18.75px !important;
+            text-align: center !important;
+            color: #007e7e !important;
+          }
+        }
+
+        .selector-button-primary {
+          width: fit-content !important;
+          height: 40px;
+          padding: 8px 24px 8px 24px;
+          background-color: #bb2c2f !important;
+
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
   .orders-list-main {
     width: 25%;
     padding: 24px 24px;
@@ -279,6 +360,7 @@
     flex-direction: column;
     align-items: start;
     gap: 10px;
+
     .add-order-button {
       font-family: Roboto;
       font-size: 16px;
@@ -289,6 +371,12 @@
       width: 100%;
     }
   }
+
+  .toast-success {
+    bottom: 90px !important;
+    right: 25vw !important;
+  }
+
   .order-item-main {
     width: 100%;
     padding: 12px 8px;
@@ -297,11 +385,12 @@
     border-radius: 8px;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
+
     &:hover,
     &.selected-order {
       background-color: #e8e8e8;
     }
+
     h1 {
       margin: 0px;
       font-family: Roboto;
@@ -311,13 +400,16 @@
       text-align: left;
       color: #3d3c3c;
     }
+
     span {
       height: 16px;
     }
   }
+
   .view-order {
     padding: 24px;
     width: 60%;
+
     .order-header {
       font-family: Roboto;
       font-size: 40px;
@@ -327,20 +419,30 @@
       color: #0a0a0a;
       margin-bottom: 32px;
     }
+
     .employeeCard {
       margin-bottom: 74px !important;
     }
+
     .order-type-form-composer {
       width: 100%;
       box-shadow: none;
       margin: 0px;
       padding: 0px;
+
       .label-field-pair {
         display: flex;
         flex-direction: column;
         gap: 8px;
         align-items: start;
         margin-bottom: 24px;
+
+        h2 {
+          span {
+            position: sticky !important;
+          }
+        }
+
         .card-label {
           width: 100%;
           margin: 0px !important;
@@ -351,19 +453,24 @@
           text-align: left;
           color: #0a0a0a;
         }
+
         .field {
           width: 100%;
+
           .employee-select-wrap {
             margin-bottom: 0px;
+
             #jk-dropdown-unique {
               margin-top: 40px !important;
               max-height: 275px !important;
             }
           }
+
           .cell-text,
           .custom-checkbox-emp {
             margin: 0px;
           }
+
           .checkbox-wrap,
           textarea,
           input {
@@ -371,10 +478,28 @@
           }
         }
       }
+
       .card-label-error {
         margin-left: 0px !important;
       }
+
+      .submit-bar-disabled {
+        width: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .header {
+          font-family: Roboto;
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          line-height: 18.75px !important;
+          text-align: center !important;
+          color: #ffffff;
+        }
+      }
     }
+
     .order-type-action {
       display: flex;
       flex-direction: row-reverse;
@@ -382,11 +507,13 @@
       box-shadow: none;
       border-top: 1px #bbbbbd solid;
       padding: 16px 24px;
+
       .submit-bar {
         width: 164px;
         height: 40px;
         padding: 8px 24px 8px 24px;
         box-shadow: none !important;
+
         header {
           font-family: Roboto;
           font-size: 16px;
@@ -396,11 +523,13 @@
           color: #ffffff;
         }
       }
+
       .previous-button {
         padding: 8px 24px;
         height: 40px;
         padding: 8px 24px 8px 24px;
         border: solid 1px #007e7e !important;
+
         h2 {
           font-family: Roboto;
           font-size: 16px;
@@ -411,5 +540,9 @@
         }
       }
     }
+  }
+
+  .employee-card-input.employee-card-input-error {
+    margin-bottom: 24px !important;
   }
 }

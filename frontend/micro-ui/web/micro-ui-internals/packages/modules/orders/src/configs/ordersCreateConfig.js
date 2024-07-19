@@ -89,9 +89,6 @@ export const configs = [
             masterName: "DeadlineForSubmission",
             localePrefix: "",
           },
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
     ],
@@ -110,6 +107,12 @@ export const configs = [
               isOptional: true,
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
           mdmsConfig: {
             moduleName: "Order",
             masterName: "", // TO DO: ADD CONFIG IN MDMS
@@ -186,9 +189,6 @@ export const configs = [
             masterName: "", // TO DO: ADD MDMS CONFIG
             localePrefix: "",
           },
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
     ],
@@ -200,7 +200,7 @@ export const configsOrderSection202CRPC = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -262,8 +262,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "applicationFilledBy",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "COMPLAINANT_1",
@@ -288,8 +289,9 @@ export const configsOrderSection202CRPC = [
         populators: {
           name: "detailsSeekedOf",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "RESPONDANT_1",
@@ -306,22 +308,50 @@ export const configsOrderSection202CRPC = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "LAW_SECTIONS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "lawSections",
-        type: "textarea",
-        populators: { name: "lawSections" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "LAW_SECTIONS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "RESPONSE_REQUIRED_BY",
         isMandatory: true,
         key: "responseRequiredBy",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseRequiredBy",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
       },
@@ -330,11 +360,16 @@ export const configsOrderSection202CRPC = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
           },
         },
       },
@@ -344,6 +379,33 @@ export const configsOrderSection202CRPC = [
         key: "judgeName",
         type: "text",
         populators: { name: "judgeName", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -392,11 +454,16 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
           hideInForm: true,
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
           },
         },
       },
@@ -408,8 +475,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "documentType",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "DOCUMENT_TYPE_1",
@@ -441,8 +509,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "submissionParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -464,26 +533,72 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "submissionDeadline",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "submissionDeadline",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "ADDITIONAL_COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "additionalComments",
-        type: "textarea",
-        populators: { name: "additionalComments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "IS_RESPONSE_REQUIRED",
         isMandatory: true,
         key: "isResponseRequired",
-        type: "checkbox",
-        populators: { name: "isResponseRequired", title: "" },
+        type: "radio",
+        populators: {
+          name: "isResponseRequired",
+          optionsKey: "name",
+          title: "",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "Yes",
+              name: "ES_COMMON_YES",
+            },
+            {
+              code: "No",
+              name: "ES_COMMON_NO",
+            },
+          ],
+        },
       },
       {
         label: "RESPONDING_PARTY",
@@ -493,8 +608,9 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "respondingParty",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "PARTY_1",
@@ -516,10 +632,15 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "responseDeadline",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseDeadline",
           validation: {
-            min: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
       },
@@ -539,8 +660,9 @@ export const configsOrderSubmissionExtension = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
+        disable: true,
         type: "text",
         populators: { name: "refApplicationId" },
       },
@@ -587,9 +709,10 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "dateOfOrder", hideInForm: true },
       },
       {
-        label: "DOCUMENT_NAME",
-        isMandatory: true,
+        label: "EXTENSION_DOCUMENT_NAME",
+        isMandatory: false,
         key: "documentName",
+        disable: true,
         type: "text",
         populators: { name: "documentName" },
       },
@@ -611,36 +734,30 @@ export const configsOrderSubmissionExtension = [
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
         isMandatory: true,
         key: "originalSubmissionOrderDate",
+        disable: true,
         type: "date",
         populators: {
           name: "originalSubmissionOrderDate",
-          validation: {
-            min: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
         label: "ORIGINAL_DEADLINE",
         isMandatory: true,
         key: "originalDeadline",
+        disable: true,
         type: "date",
         populators: {
           name: "originalDeadline",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
         label: "PROPOSED_SUBMISSION_DATE",
         isMandatory: true,
         key: "proposedSubmissionDate",
+        disable: true,
         type: "date",
         populators: {
           name: "proposedSubmissionDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -648,10 +765,15 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "newSubmissionDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newSubmissionDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
       },
@@ -664,6 +786,33 @@ export const configsOrderSubmissionExtension = [
       },
     ],
   },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
 ];
 
 export const configsOrderTranferToADR = [
@@ -671,7 +820,7 @@ export const configsOrderTranferToADR = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -726,8 +875,9 @@ export const configsOrderTranferToADR = [
         populators: {
           name: "ADRMode",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "MODE_1",
@@ -753,6 +903,33 @@ export const configsOrderTranferToADR = [
       },
     ],
   },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
 ];
 
 export const configsScheduleHearingDate = [
@@ -760,7 +937,7 @@ export const configsScheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -785,13 +962,6 @@ export const configsScheduleHearingDate = [
         key: "cnrNumber",
         type: "text",
         populators: { name: "cnrNumber", hideInForm: true },
-      },
-      {
-        label: "JUDGE_NAME",
-        isMandatory: true,
-        key: "judgeName",
-        type: "text",
-        populators: { name: "judgeName", hideInForm: true },
       },
       {
         label: "DATE_OF_ORDER",
@@ -807,24 +977,16 @@ export const configsScheduleHearingDate = [
         type: "dropdown",
         populators: {
           name: "hearingPurpose",
-          optionsKey: "name",
-          error: "Error!",
+          optionsKey: "code",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
-          hideInForm: true,
-          options: [
-            {
-              code: "HEARING_PURPOSE_1",
-              name: "HEARING_PURPOSE_1",
-            },
-            {
-              code: "HEARING_PURPOSE_2",
-              name: "HEARING_PURPOSE_2",
-            },
-            {
-              code: "HEARING_PURPOSE_3",
-              name: "HEARING_PURPOSE_3",
-            },
-          ],
+          isMandatory: true,
+          hideInForm: false,
+          mdmsConfig: {
+            masterName: "HearingType",
+            moduleName: "Hearing",
+            localePrefix: "HEARING_PURPOSE",
+          },
         },
       },
       {
@@ -832,12 +994,24 @@ export const configsScheduleHearingDate = [
         isMandatory: true,
         key: "hearingDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "hearingDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
+      },
+      {
+        label: "JUDGE_NAME",
+        isMandatory: true,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
       },
       {
         label: "JUDGE_DESIGNATION",
@@ -845,6 +1019,103 @@ export const configsScheduleHearingDate = [
         key: "judgeDesignation",
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
+      },
+      {
+        label: "NAMES_OF_PARTIES_REQUIRED",
+        isMandatory: true,
+        key: "namesOfPartiesRequired",
+        type: "dropdown",
+        populators: {
+          name: "namesOfPartiesRequired",
+          allowMultiSelect: true,
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "PARTY_1",
+              name: "PARTY_1",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+];
+
+export const configsRejectRescheduleHeadingDate = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "ORIGINAL_HEARING_DATE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "originalHearingDate",
+        type: "date",
+        populators: {
+          name: "originalHearingDate",
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -855,7 +1126,7 @@ export const configsRescheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -886,7 +1157,10 @@ export const configsRescheduleHearingDate = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
-        populators: { name: "dateOfOrder", hideInForm: true },
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+        },
       },
       {
         label: "APPLICANT_NAME",
@@ -912,14 +1186,11 @@ export const configsRescheduleHearingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "originalHearingDate",
         type: "date",
         populators: {
           name: "originalHearingDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -927,10 +1198,15 @@ export const configsRescheduleHearingDate = [
         isMandatory: true,
         key: "newHearingDate",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newHearingDate",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
           },
         },
       },
@@ -950,14 +1226,429 @@ export const configsRescheduleHearingDate = [
       },
     ],
   },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
 ];
 
+export const configsInitiateRescheduleHearingDate = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: true,
+        key: "dateOfOrder",
+        type: "date",
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+        },
+      },
+      {
+        label: "RESCHEDULING_REASON",
+        isMandatory: true,
+        key: "reschedulingReason",
+        type: "text",
+        populators: { name: "reschedulingReason", hideInForm: true },
+      },
+      {
+        label: "ORIGINAL_HEARING_DATE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "originalHearingDate",
+        type: "date",
+        populators: {
+          name: "originalHearingDate",
+        },
+      },
+      {
+        label: "JUDGE_NAME",
+        isMandatory: true,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        label: "JUDGE_DESIGNATION",
+        isMandatory: true,
+        key: "judgeDesignation",
+        type: "text",
+        populators: { name: "judgeDesignation", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+];
+
+export const configsAssignDateToRescheduledHearing = [
+  {
+    body: [
+      {
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: true,
+        key: "dateOfOrder",
+        type: "date",
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+        },
+      },
+      {
+        label: "NEW_HEARING_DATE",
+        isMandatory: true,
+        key: "newHearingDate",
+        type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
+        populators: {
+          name: "newHearingDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
+        },
+      },
+      {
+        label: "JUDGE_NAME",
+        isMandatory: true,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        label: "JUDGE_DESIGNATION",
+        isMandatory: true,
+        key: "judgeDesignation",
+        type: "text",
+        populators: { name: "judgeDesignation", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+];
+
+export const configsAssignNewHearingDate = [
+  {
+    body: [
+      {
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: true,
+        key: "dateOfOrder",
+        type: "date",
+        populators: {
+          name: "dateOfOrder",
+          hideInForm: true,
+        },
+      },
+      {
+        label: "NEW_HEARING_DATE",
+        isMandatory: true,
+        key: "newHearingDate",
+        type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
+        populators: {
+          name: "newHearingDate",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "minTodayDateValidation",
+            },
+          },
+        },
+      },
+      {
+        label: "JUDGE_NAME",
+        isMandatory: true,
+        key: "judgeName",
+        type: "text",
+        populators: { name: "judgeName", hideInForm: true },
+      },
+      {
+        label: "JUDGE_DESIGNATION",
+        isMandatory: true,
+        key: "judgeDesignation",
+        type: "text",
+        populators: { name: "judgeDesignation", hideInForm: true },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+];
+
+export const configsAcceptSubmission = [
+  {
+    body: [
+      {
+        label: "SUBMISSION_ID",
+        isMandatory: true,
+        key: "submissionId",
+        type: "dropdown",
+        populators: {
+          name: "settlementMechanism",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "0001",
+              name: "0001",
+            },
+            {
+              code: "0002",
+              name: "0002",
+            },
+            {
+              code: "0003",
+              name: "0003",
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const configRejectSubmission = [
+  {
+    body: [
+      {
+        label: "SUBMISSION_ID",
+        isMandatory: true,
+        key: "submissionId",
+        type: "dropdown",
+        populators: {
+          name: "submissionId",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "0001",
+              name: "0001",
+            },
+            {
+              code: "0002",
+              name: "0002",
+            },
+            {
+              code: "0003",
+              name: "0003",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "comments",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "REASON_FOR_REJECTION_SUBMISSION",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+];
 export const configsVoluntarySubmissionStatus = [
   {
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1026,13 +1717,37 @@ export const configsVoluntarySubmissionStatus = [
         disable: true,
         populators: { name: "approvalStatus" },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1056,7 +1771,7 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1108,15 +1823,47 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "transferSeekedTo",
         type: "text",
-        populators: { name: "transferSeekedTo" },
+        populators: {
+          name: "transferSeekedTo",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "GROUNDS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "grounds",
-        type: "textarea",
-        populators: { name: "grounds" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "GROUNDS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "APPROVAL_STATUS",
         isMandatory: false,
@@ -1130,15 +1877,48 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "caseTransferredTo",
         type: "text",
-        populators: { name: "caseTransferredTo" },
+        populators: {
+          name: "caseTransferredTo",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1162,7 +1942,7 @@ export const configsCaseSettlement = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1193,11 +1973,17 @@ export const configsCaseSettlement = [
         isMandatory: true,
         key: "dateOfOrder",
         type: "date",
+        labelChildren: "OutlinedInfoIcon",
+        tooltipValue: "ONLY_CURRENT_AND_PAST_DATES_ARE_ALLOWED",
         populators: {
           name: "dateOfOrder",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "maxTodayDateValidation",
+            },
           },
+          hideInForm: true,
         },
       },
       {
@@ -1207,9 +1993,6 @@ export const configsCaseSettlement = [
         type: "date",
         populators: {
           name: "settlementAgreementDate",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1220,8 +2003,9 @@ export const configsCaseSettlement = [
         populators: {
           name: "settlementMechanism",
           optionsKey: "name",
-          error: "Error!",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
+          isMandatory: true,
           options: [
             {
               code: "MECHANISM_1",
@@ -1242,16 +2026,57 @@ export const configsCaseSettlement = [
         label: "SETTLEMENT_IMPLEMETED",
         isMandatory: true,
         key: "settlementImplemented",
-        type: "checkbox",
-        populators: { name: "settlementImplemented", title: "" },
+        type: "radio",
+        populators: {
+          name: "settlementImplemented",
+          optionsKey: "name",
+          title: "",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "Yes",
+              name: "ES_COMMON_YES",
+            },
+            {
+              code: "No",
+              name: "ES_COMMON_NO",
+            },
+          ],
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1275,7 +2100,7 @@ export const configsIssueSummons = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1322,13 +2147,37 @@ export const configsIssueSummons = [
         type: "date",
         populators: { name: "hearingDate", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1352,7 +2201,7 @@ export const configsIssueOfWarrants = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1397,7 +2246,16 @@ export const configsIssueOfWarrants = [
         isMandatory: true,
         key: "reasonForWarrant",
         type: "text",
-        populators: { name: "reasonForWarrant" },
+        populators: {
+          name: "reasonForWarrant",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
       {
         label: "HEARING_DATE",
@@ -1406,13 +2264,37 @@ export const configsIssueOfWarrants = [
         type: "date",
         populators: { name: "hearingDate", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments", hideInForm: true },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         label: "JUDGE_NAME",
         isMandatory: true,
@@ -1430,6 +2312,75 @@ export const configsIssueOfWarrants = [
     ],
   },
 ];
+export const configsCaseWithdrawal = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        label: "COURT_NAME",
+        isMandatory: true,
+        key: "courtName",
+        type: "text",
+        populators: { name: "courtName", hideInForm: true },
+      },
+      {
+        label: "CASE_NAME",
+        isMandatory: true,
+        key: "caseName",
+        type: "text",
+        populators: { name: "caseName", hideInForm: true },
+      },
+      {
+        label: "CNR_NUMBER",
+        isMandatory: true,
+        key: "cnrNumber",
+        type: "text",
+        populators: { name: "cnrNumber", hideInForm: true },
+      },
+      {
+        label: "DATE_OF_ORDER",
+        isMandatory: true,
+        key: "dateOfOrder",
+        type: "date",
+        populators: { name: "dateOfOrder", hideInForm: true },
+      },
+      {
+        label: "APPLICATION_ON_BEHALF_OF",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "applicationOnBehalfOf",
+        type: "text",
+        populators: { name: "applicationOnBehalfOf" },
+      },
+      {
+        label: "PARTY_TYPE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "partyType",
+        type: "text",
+        populators: { name: "partyType" },
+      },
+      {
+        label: "REASON_FOR_WITHDRAWAL",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "reasonForWarrant",
+        type: "text",
+        populators: { name: "reasonForWithdrawal" },
+      },
+      {
+        label: "APPLICATION_STATUS",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "applicationStatus",
+        type: "text",
+        populators: { name: "applicationStatus" },
+      },
+    ],
+  },
+];
 
 export const configsOthers = [
   {
@@ -1439,14 +2390,42 @@ export const configsOthers = [
         isMandatory: true,
         key: "orderTitle",
         type: "text",
-        populators: { name: "orderTitle" },
+        populators: {
+          name: "orderTitle",
+          error: "MAX_15_WORDS_ARE_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "orderTitleValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "DETAILS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "otherDetails",
-        type: "textarea",
-        populators: { name: "otherDetails" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "CS_DETAILS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1457,7 +2436,7 @@ export const configsBail = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1494,8 +2473,20 @@ export const configsBail = [
         label: "BAIL_OF",
         isMandatory: true,
         key: "bailOf",
-        type: "text",
-        populators: { name: "bailOf" },
+        type: "dropdown",
+        populators: {
+          name: "bailOf",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "NAME_OF_PARTY",
+              name: "Name of Party",
+            },
+          ],
+        },
       },
       {
         label: "SUMMARY",
@@ -1513,28 +2504,20 @@ export const configsBail = [
       },
       {
         label: "BAIL_TYPE",
-        isMandatory: true,
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
         key: "bailType",
         type: "dropdown",
         populators: {
           name: "bailType",
-          optionsKey: "name",
-          error: "Error!",
+          optionsKey: "type",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
-          options: [
-            {
-              code: "SURETY",
-              name: "SURETY",
-            },
-            {
-              code: "BAIL_BOND",
-              name: "BAIL_BOND",
-            },
-            {
-              code: "CASH",
-              name: "CASH",
-            },
-          ],
+          isMandatory: true,
+          mdmsConfig: {
+            masterName: "BailType",
+            moduleName: "Order",
+            localePrefix: "BAIL_TYPE",
+          },
         },
       },
       {
@@ -1549,7 +2532,16 @@ export const configsBail = [
         isMandatory: true,
         key: "otherConditions",
         type: "text",
-        populators: { name: "otherConditions" },
+        populators: {
+          name: "otherConditions",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1626,9 +2618,6 @@ export const configsCreateOrderSchedule = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1688,9 +2677,6 @@ export const configsCreateOrderWarrant = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1843,9 +2829,6 @@ export const configsCreateOrderSummon = [
         populators: {
           name: "doh",
           error: "Required",
-          validation: {
-            max: new Date().toISOString().split("T")[0],
-          },
         },
       },
       {
@@ -1954,6 +2937,221 @@ export const configsCreateOrderReIssueSummon = [
       //     disable: false,
       //     populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
       //   },
+    ],
+  },
+];
+
+export const configsJudgement = [
+  {
+    body: [
+      {
+        label: "CASE_NUMBER",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "caseNumber",
+        type: "text",
+        populators: { name: "caseNumber" },
+      },
+      {
+        label: "DATE_OF_JUDGEMENT",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateOfJudgement",
+        type: "date",
+        populators: { name: "dateOfJudgement" },
+      },
+      {
+        label: "NAME_OF_JUDGE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "nameOfJudge",
+        type: "text",
+        populators: { name: "nameOfJudge" },
+      },
+      {
+        label: "NAME_OF_COURT",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "nameOfCourt",
+        type: "text",
+        populators: { name: "nameOfCourt" },
+      },
+      {
+        label: "DESCRIPTION_OF_ACCUSED",
+        isMandatory: false,
+        key: "nameofRespondant",
+        type: "text",
+        populators: {
+          name: "nameofRespondent",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
+      },
+      {
+        label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "addressRespondant",
+        type: "text",
+        populators: { name: "addressRespondant" },
+      },
+      {
+        label: "DATE_OF_OCCURENCE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateChequeReturnMemo",
+        type: "date",
+        populators: { name: "dateChequeReturnMemo" },
+      },
+      {
+        label: "DATE_COMPLAINT",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateFiling",
+        type: "date",
+        populators: { name: "dateFiling" },
+      },
+      {
+        label: "DATE_OF_APPREHENSION",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateApprehension",
+        type: "date",
+        populators: { name: "dateApprehension" },
+      },
+      {
+        label: "DATE_OF_RELEASE_ON_BAIL",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateofReleaseOnBail",
+        type: "date",
+        populators: { name: "dateofReleaseOnBail" },
+      },
+      {
+        label: "DATE_OF_COMMENCEMENT_TRIAL",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateofCommencementTrial",
+        type: "date",
+        populators: { name: "dateofCommencementTrial" },
+      },
+      {
+        label: "DATE_OF_CLOSE_TRIAL",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateofCloseTrial",
+        type: "date",
+        populators: { name: "dateofCloseTrial" },
+      },
+      {
+        label: "DATE_OF_SENTENCE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "dateofSentence",
+        type: "date",
+        populators: { name: "dateofSentence" },
+      },
+      {
+        label: "NAME_COMPLAINANT",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "nameofComplainant",
+        type: "text",
+        populators: { name: "nameofComplainant" },
+      },
+      {
+        label: "NAME_COMPLAINANT_ADVOCATE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "nameofComplainantAdvocate",
+        type: "text",
+        populators: { name: "nameofComplainantAdvocate" },
+      },
+      {
+        label: "NAME_RESPONDANT_ADVOCATE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "nameofRespondantAdvocate",
+        type: "text",
+        populators: { name: "nameofRespondantAdvocate" },
+      },
+      {
+        label: "OFFENSE",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "offense",
+        type: "text",
+        populators: { name: "offense" },
+      },
+      {
+        type: "radio",
+        key: "plea",
+        label: "PLEA",
+        isMandatory: true,
+        populators: {
+          label: "PLEA",
+          type: "radioButton",
+          name: "plea",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "GUILTY",
+              name: "GUILTY",
+              isEnabled: true,
+            },
+            {
+              code: "NOTGUILTY",
+              name: "NOTGUILTY",
+              isEnabled: true,
+            },
+          ],
+        },
+      },
+      {
+        type: "dropdown",
+        key: "findings",
+        label: "FINDING",
+        isMandatory: true,
+        populators: {
+          label: "PLEA",
+          type: "radioButton",
+          name: "findings",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          options: [
+            {
+              code: "GUILTY",
+              name: "GUILTY",
+              isEnabled: true,
+            },
+            {
+              code: "NOTGUILTY",
+              name: "NOTGUILTY",
+              isEnabled: true,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "sentence",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "SENTENCE",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
     ],
   },
 ];

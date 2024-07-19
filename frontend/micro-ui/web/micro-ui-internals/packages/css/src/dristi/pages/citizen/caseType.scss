@@ -7,6 +7,7 @@
 .popup-module.edit-case-name-modal,
 .popup-module.join-a-case-modal,
 .popup-module.evidence-modal,
+.popup-module.review-submission-appl-modal,
 .popup-module.review-order-modal,
 .popup-module.add-signature-modal,
 .popup-module.orders-success-modal,
@@ -144,10 +145,10 @@
     }
     .selector-button-border {
       background-color: white;
-      border: 1px #007e7e solid;
+      border: 1px #007e7e solid !important;
       box-shadow: none;
       h2 {
-        color: #007e7e;
+        color: #007e7e !important;
         font-family: Roboto;
         font-size: 16px;
         font-weight: 700;
@@ -314,6 +315,7 @@
   }
 }
 
+.popup-module.review-submission-appl-modal,
 .popup-module.evidence-modal {
   max-width: 80% !important;
   width: 80% !important;
@@ -332,12 +334,19 @@
         h1 {
           padding-top: 0px !important;
         }
-        h3 {
+        .status {
           margin: 0px;
           background-color: #e4f2e4;
           border-radius: 999px;
           padding: 6px;
           color: #00703c;
+        }
+        .status-false {
+          margin: 0px;
+          background-color: #e4f2e4;
+          border-radius: 999px;
+          padding: 6px;
+          color: #701800;
         }
       }
     }
@@ -360,12 +369,37 @@
   }
 }
 
+.review-submission-appl-body-main,
 .evidence-modal-main {
   display: flex;
   height: calc(100% - 65px);
   .application-details {
     padding: 24px 12px 0px 24px;
     width: 66.66%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    .application-view {
+      .docviewer-wrapper {
+        margin-top: 0px !important;
+        .employeeCard {
+          padding: 0px !important;
+          margin-bottom: 0px !important;
+          box-shadow: none;
+          border: 1px #bbbbbd solid;
+          border-radius: 4px;
+          #pdf-page-info {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .evidence-details {
+    padding: 24px 12px 0px 24px;
+    width: 100%;
     overflow-y: auto;
     display: flex;
     flex-direction: column;

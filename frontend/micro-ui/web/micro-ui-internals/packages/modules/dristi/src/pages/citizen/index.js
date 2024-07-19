@@ -47,6 +47,9 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  if (individualId && !localStorage.getItem(individualId)) {
+    localStorage.setItem("individualId", individualId);
+  }
 
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
@@ -144,7 +147,7 @@ const App = ({ stateCode, tenantId }) => {
             </PrivateRoute>
           </div>
 
-          <PrivateRoute exact path={`${path}/home/admitted-case`} component={(props) => <AdmittedCases isJudge={false} />} />
+          <PrivateRoute exact path={`${path}/home/view-case`} component={(props) => <AdmittedCases isJudge={false} />} />
           <div
             className={
               location.pathname.includes("/response") ||
