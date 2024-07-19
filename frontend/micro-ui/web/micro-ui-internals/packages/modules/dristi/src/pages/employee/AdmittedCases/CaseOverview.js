@@ -294,7 +294,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
                     }
                   }}
                 >
-                  {t(order?.orderType)}
+                  {t(`ORDER_TYPE_${order?.orderType.toUpperCase()}`)}
                 </div>
               ))}
           </div>
