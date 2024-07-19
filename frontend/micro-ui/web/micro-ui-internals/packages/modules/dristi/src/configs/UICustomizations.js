@@ -618,7 +618,7 @@ export const UICustomizations = {
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            if (requestCriteria.url.split("/".includes("order"))) {
+            if (requestCriteria.url.split("/").includes("order")) {
               if (userRoles.includes("CITIZEN")) {
                 return { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") };
               }
