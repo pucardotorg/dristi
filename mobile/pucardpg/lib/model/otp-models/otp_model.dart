@@ -24,7 +24,7 @@ class Otp with _$Otp {
 
   const factory Otp({
     @JsonKey(name: 'mobileNumber') required String mobileNumber,
-    @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
+    @JsonKey(name: 'tenantId') required String tenantId,
     @JsonKey(name: 'userType') @Default("citizen") String userType,
     @JsonKey(name: 'type') required String type
   }) = _Otp;

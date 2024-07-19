@@ -10,7 +10,7 @@ _$LoginModelImpl _$$LoginModelImplFromJson(Map<String, dynamic> json) =>
     _$LoginModelImpl(
       username: json['username'] as String?,
       password: json['password'] as String? ?? "123456",
-      tenantId: json['tenantId'] as String? ?? "pg",
+      tenantId: json['tenantId'] as String?,
       userType: json['userType'] as String? ?? "citizen",
       scope: json['scope'] as String? ?? "read",
       refreshToken: json['refresh_token'] as String?,

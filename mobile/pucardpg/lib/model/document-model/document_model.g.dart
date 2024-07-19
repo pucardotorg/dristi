@@ -11,7 +11,7 @@ _$DocumentImpl _$$DocumentImplFromJson(Map<String, dynamic> json) =>
       documentType: json['documentType'] as String?,
       fileStore: json['fileStore'] as String?,
       documentUid: json['documentUid'] as String?,
-      additionalDetails: json['additionalDetails'],
+      additionalDetails: json['additionalDetails'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$DocumentImplToJson(_$DocumentImpl instance) =>

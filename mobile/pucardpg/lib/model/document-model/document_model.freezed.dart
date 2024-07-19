@@ -27,7 +27,8 @@ mixin _$Document {
   @JsonKey(name: 'documentUid')
   String? get documentUid => throw _privateConstructorUsedError;
   @JsonKey(name: 'additionalDetails')
-  Object? get additionalDetails => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get additionalDetails =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,7 +45,8 @@ abstract class $DocumentCopyWith<$Res> {
       {@JsonKey(name: 'documentType') String? documentType,
       @JsonKey(name: 'fileStore') String? fileStore,
       @JsonKey(name: 'documentUid') String? documentUid,
-      @JsonKey(name: 'additionalDetails') Object? additionalDetails});
+      @JsonKey(name: 'additionalDetails')
+      Map<String, dynamic>? additionalDetails});
 }
 
 /// @nodoc
@@ -80,7 +82,8 @@ class _$DocumentCopyWithImpl<$Res, $Val extends Document>
               as String?,
       additionalDetails: freezed == additionalDetails
           ? _value.additionalDetails
-          : additionalDetails,
+          : additionalDetails // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -97,7 +100,8 @@ abstract class _$$DocumentImplCopyWith<$Res>
       {@JsonKey(name: 'documentType') String? documentType,
       @JsonKey(name: 'fileStore') String? fileStore,
       @JsonKey(name: 'documentUid') String? documentUid,
-      @JsonKey(name: 'additionalDetails') Object? additionalDetails});
+      @JsonKey(name: 'additionalDetails')
+      Map<String, dynamic>? additionalDetails});
 }
 
 /// @nodoc
@@ -130,8 +134,9 @@ class __$$DocumentImplCopyWithImpl<$Res>
           : documentUid // ignore: cast_nullable_to_non_nullable
               as String?,
       additionalDetails: freezed == additionalDetails
-          ? _value.additionalDetails
-          : additionalDetails,
+          ? _value._additionalDetails
+          : additionalDetails // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -143,7 +148,9 @@ class _$DocumentImpl implements _Document {
       {@JsonKey(name: 'documentType') this.documentType,
       @JsonKey(name: 'fileStore') this.fileStore,
       @JsonKey(name: 'documentUid') this.documentUid,
-      @JsonKey(name: 'additionalDetails') this.additionalDetails});
+      @JsonKey(name: 'additionalDetails')
+      final Map<String, dynamic>? additionalDetails})
+      : _additionalDetails = additionalDetails;
 
   factory _$DocumentImpl.fromJson(Map<String, dynamic> json) =>
       _$$DocumentImplFromJson(json);
@@ -157,9 +164,17 @@ class _$DocumentImpl implements _Document {
   @override
   @JsonKey(name: 'documentUid')
   final String? documentUid;
+  final Map<String, dynamic>? _additionalDetails;
   @override
   @JsonKey(name: 'additionalDetails')
-  final Object? additionalDetails;
+  Map<String, dynamic>? get additionalDetails {
+    final value = _additionalDetails;
+    if (value == null) return null;
+    if (_additionalDetails is EqualUnmodifiableMapView)
+      return _additionalDetails;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
@@ -178,13 +193,13 @@ class _$DocumentImpl implements _Document {
             (identical(other.documentUid, documentUid) ||
                 other.documentUid == documentUid) &&
             const DeepCollectionEquality()
-                .equals(other.additionalDetails, additionalDetails));
+                .equals(other._additionalDetails, _additionalDetails));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, documentType, fileStore,
-      documentUid, const DeepCollectionEquality().hash(additionalDetails));
+      documentUid, const DeepCollectionEquality().hash(_additionalDetails));
 
   @JsonKey(ignore: true)
   @override
@@ -206,7 +221,7 @@ abstract class _Document implements Document {
       @JsonKey(name: 'fileStore') final String? fileStore,
       @JsonKey(name: 'documentUid') final String? documentUid,
       @JsonKey(name: 'additionalDetails')
-      final Object? additionalDetails}) = _$DocumentImpl;
+      final Map<String, dynamic>? additionalDetails}) = _$DocumentImpl;
 
   factory _Document.fromJson(Map<String, dynamic> json) =
       _$DocumentImpl.fromJson;
@@ -222,7 +237,7 @@ abstract class _Document implements Document {
   String? get documentUid;
   @override
   @JsonKey(name: 'additionalDetails')
-  Object? get additionalDetails;
+  Map<String, dynamic>? get additionalDetails;
   @override
   @JsonKey(ignore: true)
   _$$DocumentImplCopyWith<_$DocumentImpl> get copyWith =>

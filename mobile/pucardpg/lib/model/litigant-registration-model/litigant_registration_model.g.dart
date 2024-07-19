@@ -19,7 +19,7 @@ Map<String, dynamic> _$$NameImplToJson(_$NameImpl instance) =>
 
 _$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>
     _$AddressImpl(
-      tenantId: json['tenantId'] as String? ?? "pg",
+      tenantId: json['tenantId'] as String,
       type: json['type'] as String? ?? "PERMANENT",
       addressLine1: json['addressLine1'] as String?,
       addressLine2: json['addressLine2'] as String?,
@@ -103,7 +103,7 @@ Map<String, dynamic> _$$UserDetailsImplToJson(_$UserDetailsImpl instance) =>
 
 _$IndividualImpl _$$IndividualImplFromJson(Map<String, dynamic> json) =>
     _$IndividualImpl(
-      tenantId: json['tenantId'] as String? ?? "pg",
+      tenantId: json['tenantId'] as String,
       individualId: json['individualId'] as String?,
       name: Name.fromJson(json['name'] as Map<String, dynamic>),
       userDetails:

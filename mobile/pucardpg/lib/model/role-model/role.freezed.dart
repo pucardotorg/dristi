@@ -130,7 +130,7 @@ class _$RoleImpl implements _Role {
       {required this.name,
       required this.code,
       this.description = null,
-      this.tenantId = "pg"});
+      required this.tenantId});
 
   factory _$RoleImpl.fromJson(Map<String, dynamic> json) =>
       _$$RoleImplFromJson(json);
@@ -143,7 +143,6 @@ class _$RoleImpl implements _Role {
   @JsonKey()
   final String? description;
   @override
-  @JsonKey()
   final String tenantId;
 
   @override
@@ -188,7 +187,7 @@ abstract class _Role implements Role {
       {required final String? name,
       required final String? code,
       final String? description,
-      final String tenantId}) = _$RoleImpl;
+      required final String tenantId}) = _$RoleImpl;
 
   factory _Role.fromJson(Map<String, dynamic> json) = _$RoleImpl.fromJson;
 

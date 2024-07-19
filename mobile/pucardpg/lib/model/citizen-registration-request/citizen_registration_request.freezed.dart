@@ -347,7 +347,7 @@ class _$UserInfoImpl implements _UserInfo {
       {@JsonKey(name: 'name') this.name = "dristi",
       @JsonKey(name: 'username') required this.username,
       @JsonKey(name: 'otpReference') required this.otpReference,
-      @JsonKey(name: 'tenantId') this.tenantId = "pg"});
+      @JsonKey(name: 'tenantId') required this.tenantId});
 
   factory _$UserInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserInfoImplFromJson(json);
@@ -405,10 +405,11 @@ class _$UserInfoImpl implements _UserInfo {
 
 abstract class _UserInfo implements UserInfo {
   const factory _UserInfo(
-      {@JsonKey(name: 'name') final String name,
-      @JsonKey(name: 'username') required final String username,
-      @JsonKey(name: 'otpReference') required final String otpReference,
-      @JsonKey(name: 'tenantId') final String tenantId}) = _$UserInfoImpl;
+          {@JsonKey(name: 'name') final String name,
+          @JsonKey(name: 'username') required final String username,
+          @JsonKey(name: 'otpReference') required final String otpReference,
+          @JsonKey(name: 'tenantId') required final String tenantId}) =
+      _$UserInfoImpl;
 
   factory _UserInfo.fromJson(Map<String, dynamic> json) =
       _$UserInfoImpl.fromJson;

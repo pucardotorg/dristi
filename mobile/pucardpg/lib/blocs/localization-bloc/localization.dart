@@ -7,6 +7,7 @@ import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/data/app_shared_preferences.dart';
 import 'package:pucardpg/data/nosql/localization.dart';
 import 'package:pucardpg/repositories/localizationRepo.dart';
+import 'package:pucardpg/utils/i18_key_constants.dart';
 import '../../model/appconfig/mdmsResponse.dart';
 
 part 'localization.freezed.dart';
@@ -45,7 +46,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
       final Map<String, String> queryParam = {
         'locale': event.locale.toString(),
         'module': moduleNameList.join(','),
-        'tenantId': 'pg'
+        'tenantId': appConstants.tenantId
         // TODO Need to read this from env file
       };
 

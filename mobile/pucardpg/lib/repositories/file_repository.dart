@@ -21,7 +21,7 @@ class FileRepository {
           filename: fileName);
       request.files.add(multipartFile);
 
-      request.fields['tenantId'] = 'pg';
+      request.fields['tenantId'] = appConstants.tenantId;
       request.fields['module'] = 'module';
       var httpResponse = await request.send();
       Map? respStr = json.decode(await httpResponse.stream.bytesToString());

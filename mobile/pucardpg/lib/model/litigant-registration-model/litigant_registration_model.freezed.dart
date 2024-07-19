@@ -404,7 +404,7 @@ class __$$AddressImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AddressImpl implements _Address {
   const _$AddressImpl(
-      {@JsonKey(name: 'tenantId') this.tenantId = "pg",
+      {@JsonKey(name: 'tenantId') required this.tenantId,
       @JsonKey(name: 'type') this.type = "PERMANENT",
       @JsonKey(name: 'addressLine1') required this.addressLine1,
       @JsonKey(name: 'addressLine2') required this.addressLine2,
@@ -514,7 +514,7 @@ class _$AddressImpl implements _Address {
 
 abstract class _Address implements Address {
   const factory _Address(
-          {@JsonKey(name: 'tenantId') final String tenantId,
+          {@JsonKey(name: 'tenantId') required final String tenantId,
           @JsonKey(name: 'type') final String type,
           @JsonKey(name: 'addressLine1') required final String? addressLine1,
           @JsonKey(name: 'addressLine2') required final String? addressLine2,
@@ -1583,7 +1583,7 @@ class __$$IndividualImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$IndividualImpl implements _Individual {
   const _$IndividualImpl(
-      {@JsonKey(name: 'tenantId') this.tenantId = "pg",
+      {@JsonKey(name: 'tenantId') required this.tenantId,
       @JsonKey(name: 'individualId') this.individualId,
       @JsonKey(name: 'name') required this.name,
       @JsonKey(name: 'userDetails') required this.userDetails,
@@ -1739,7 +1739,7 @@ class _$IndividualImpl implements _Individual {
 
 abstract class _Individual implements Individual {
   const factory _Individual(
-      {@JsonKey(name: 'tenantId') final String tenantId,
+      {@JsonKey(name: 'tenantId') required final String tenantId,
       @JsonKey(name: 'individualId') final String? individualId,
       @JsonKey(name: 'name') required final Name name,
       @JsonKey(name: 'userDetails') required final UserDetails userDetails,

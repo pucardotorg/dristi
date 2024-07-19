@@ -9,7 +9,7 @@ class Role with _$Role {
     required String? name,
     required String? code,
     @Default(null) String? description,
-    @Default("pg") String tenantId,
+    required String tenantId,
   }) = _Role;
 
   factory Role.fromJson(Map<String, dynamic> json) => _$RoleFromJson(json);

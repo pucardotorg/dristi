@@ -159,7 +159,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     DigitToast.show(
                       context,
                       options: DigitToastOptions(
-                        "Failed",
+                        error,
                         true,
                         widget.theme.theme(),
                       ),

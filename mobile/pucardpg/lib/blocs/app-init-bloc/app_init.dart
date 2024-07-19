@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:pucardpg/model/appconfig/mdmsRequest.dart';
 import 'package:pucardpg/model/appconfig/mdmsResponse.dart';
 import 'package:pucardpg/repositories/app_init_Repo.dart';
+import 'package:pucardpg/utils/i18_key_constants.dart';
 import 'package:recase/recase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -23,13 +24,13 @@ class AppInitialization extends Bloc<InitEvent, InitState> {
     final appInitRepo = AppInitRepo();
     try {
       final appConfig =
-          await appInitRepo.searchAppConfiguration(const MdmsRequestModel(
+          await appInitRepo.searchAppConfiguration(MdmsRequestModel(
         //send the request in MdmsRequestModel format
         //take the response in ResponseModel format
         mdmsCriteria: MdmsCriteriaModel(
-          tenantId: 'pg',
+          tenantId: appConstants.tenantId,
           moduleDetails: [
-            MdmsModuleDetailsModel(
+            const MdmsModuleDetailsModel(
               moduleName: 'common-masters',
               masterDetails: [
                 MdmsMasterDetailsModel('Department'),
@@ -39,14 +40,14 @@ class AppInitialization extends Bloc<InitEvent, InitState> {
                 MdmsMasterDetailsModel('uiHomePage'),
               ],
             ),
-            MdmsModuleDetailsModel(
+            const MdmsModuleDetailsModel(
               moduleName: 'tenant',
               masterDetails: [
                 MdmsMasterDetailsModel('tenants'),
                 MdmsMasterDetailsModel('tenants'),
               ],
             ),
-            MdmsModuleDetailsModel(
+            const MdmsModuleDetailsModel(
               moduleName: 'DIGIT-UI',
               masterDetails: [
                 MdmsMasterDetailsModel('ApiCachingSettings'),

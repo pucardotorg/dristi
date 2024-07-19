@@ -31,7 +31,6 @@ import 'package:pucardpg/utils/i18_key_constants.dart';
 part 'authbloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-
   late String accesstoken;
   late UserRequest _userRequest;
   late String _refreshtoken;
@@ -67,8 +66,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userRequest: _userRequest));
   }
 
-  FutureOr<void> _onLogin(_SubmitLoginOtpEvent event,
-      Emitter<AuthState> emit) async {
+  FutureOr<void> _onLogin(
+      _SubmitLoginOtpEvent event, Emitter<AuthState> emit) async {
     final secureStore = SecureStore();
 
     AuthResponse response;
@@ -79,9 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           LoginModel(
               username: event.username,
               password: event.password,
-              grantType: 'password'
-          )
-      );
+              tenantId: appConstants.tenantId,
+              grantType: 'password'));
 
       _authResponse = response;
 
@@ -93,38 +91,49 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       secureStore.setRefreshToken(_refreshtoken);
 
       IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
-          individual: IndividualSearch(userUuid: [response.userRequest?.uuid ?? ""]));
+          individual:
+              IndividualSearch(userUuid: [response.userRequest?.uuid ?? ""]));
 
-      final responseSearchIndividual = await authRepository.searchIndividual('/individual/v1/_search?limit=${appConstants.limit}&offset=${appConstants.offset}&tenantId=${appConstants.tenantId}', individualSearchRequest);
-      userModel = UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
+      final responseSearchIndividual = await authRepository.searchIndividual(
+          '/individual/v1/_search?limit=${appConstants.limit}&offset=${appConstants.offset}&tenantId=${appConstants.tenantId}',
+          individualSearchRequest);
+      userModel =
+          UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
       userModel.authToken = response.accessToken;
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
       userModel.username = response.userRequest?.userName;
       if (responseSearchIndividual.individual.isEmpty) {
-        emit(AuthState.individualSearchSuccessState(individualSearchResponse: responseSearchIndividual));
+        emit(AuthState.individualSearchSuccessState(
+            individualSearchResponse: responseSearchIndividual));
       } else {
         Individual individual = responseSearchIndividual.individual[0];
         final userTypeField = individual.additionalFields.fields.firstWhere(
-              (field) => field.key == "userType",
+          (field) => field.key == "userType",
           orElse: () => const Fields(key: "", value: ""),
         );
-        final idVerificationTypeField = individual.additionalFields.fields.firstWhere(
-              (field) => field.key == "idVerificationType",
+        final idVerificationTypeField =
+            individual.additionalFields.fields.firstWhere(
+          (field) => field.key == "idVerificationType",
           orElse: () => const Fields(key: "", value: ""),
         );
         final identifierType = individual.identifiers[0].identifierType;
-        final detailField = individual.additionalFields.fields.firstWhere(
+        final detailField = individual.additionalFields.fields
+            .firstWhere(
               (field) => field.key == "identifierIdDetails",
-          orElse: () => const Fields(key: "", value: ""),
-        ).value;
+              orElse: () => const Fields(key: "", value: ""),
+            )
+            .value;
         userModel.idVerificationType = idVerificationTypeField.value;
         if (detailField != "") {
           final identifierIdDetails = jsonDecode(detailField);
           if (userModel.idVerificationType != 'AADHAR') {
             userModel.idFilename = identifierIdDetails['filename'];
             userModel.idFileStore = identifierIdDetails['fileStoreId'];
-            var fileResponse = await fileRepository.getFileData('/filestore/v1/files/id', appConstants.tenantId, identifierIdDetails['fileStoreId']);
+            var fileResponse = await fileRepository.getFileData(
+                '/filestore/v1/files/id',
+                appConstants.tenantId,
+                identifierIdDetails['fileStoreId']);
             userModel.idBytes = fileResponse.bytes;
             userModel.idDocumentType = fileResponse.documentType;
           }
@@ -147,38 +156,51 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userModel.addressModel.longitude = address.longitude;
 
         if (userModel.userType == 'LITIGANT') {
-          emit(AuthState.individualSearchSuccessState(individualSearchResponse: responseSearchIndividual));
+          emit(AuthState.individualSearchSuccessState(
+              individualSearchResponse: responseSearchIndividual));
         }
         if (userModel.userType == 'ADVOCATE') {
           AdvocateSearchRequest advocateSearchRequest = AdvocateSearchRequest(
-              criteria: [SearchCriteria(individualId: userModel.individualId)],
-              tenantId: appConstants.tenantId,
+            criteria: [SearchCriteria(individualId: userModel.individualId)],
+            tenantId: appConstants.tenantId,
           );
-          final responseSearchAdvocate = await authRepository.searchAdvocate('/advocate/advocate/v1/_search', advocateSearchRequest);
+          final responseSearchAdvocate = await authRepository.searchAdvocate(
+              '/advocate/advocate/v1/_search', advocateSearchRequest);
           if (responseSearchAdvocate.advocates[0].responseList.isNotEmpty) {
-            ResponseList advocate = responseSearchAdvocate.advocates[0].responseList[0];
-            userModel.documentFilename = advocate.additionalDetails?['filename'];
+            ResponseList advocate =
+                responseSearchAdvocate.advocates[0].responseList[0];
             userModel.barRegistrationNumber = advocate.barRegistrationNumber;
             userModel.fileStore = advocate.documents?[0].fileStore;
-            var fileResponse = await fileRepository.getFileData('/filestore/v1/files/id', appConstants.tenantId, advocate.documents![0].fileStore!);
+            var fileResponse = await fileRepository.getFileData(
+                '/filestore/v1/files/id',
+                appConstants.tenantId,
+                advocate.documents![0].fileStore!);
             userModel.documentBytes = fileResponse.bytes;
             userModel.documentType = fileResponse.documentType;
             // userModel.documentType = advocate.documents?[0].documentType;
-            userModel.documentFilename = advocate.additionalDetails?['filename'];
+            userModel.documentFilename =
+                advocate.documents?[0].additionalDetails?['filename'];
           }
-          emit(AuthState.advocateSearchSuccessState(advocateSearchResponse: responseSearchAdvocate));
+          emit(AuthState.advocateSearchSuccessState(
+              advocateSearchResponse: responseSearchAdvocate));
         }
         if (userModel.userType == 'ADVOCATE_CLERK') {
-          AdvocateClerkSearchRequest advocateClerkSearchRequest = AdvocateClerkSearchRequest(
-              criteria: [SearchCriteria(individualId: userModel.individualId)],
-              tenantId: appConstants.tenantId,
+          AdvocateClerkSearchRequest advocateClerkSearchRequest =
+              AdvocateClerkSearchRequest(
+            criteria: [SearchCriteria(individualId: userModel.individualId)],
+            tenantId: appConstants.tenantId,
           );
-          final responseSearchAdvocateClerk = await authRepository.searchAdvocateClerk('/advocate/clerk/v1/_search', advocateClerkSearchRequest);
-          emit(AuthState.advocateClerkSearchSuccessState(advocateClerkSearchResponse: responseSearchAdvocateClerk));
+          final responseSearchAdvocateClerk =
+              await authRepository.searchAdvocateClerk(
+                  '/advocate/clerk/v1/_search', advocateClerkSearchRequest);
+          emit(AuthState.advocateClerkSearchSuccessState(
+              advocateClerkSearchResponse: responseSearchAdvocateClerk));
         }
       }
     } catch (err) {
-      emit(const AuthState.requestFailed(errorMsg: "Login Failed",));
+      emit(const AuthState.requestFailed(
+        errorMsg: "Login Failed",
+      ));
       rethrow;
     }
   }
@@ -190,22 +212,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthState.initial());
       final secureStore = SecureStore();
 
-      CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
+      CitizenRegistrationRequest citizenRegistrationRequest =
+          CitizenRegistrationRequest(
         userInfo: UserInfo(
             username: event.username,
-            otpReference: event.otp
-        ),
+            otpReference: event.otp,
+            tenantId: appConstants.tenantId),
       );
 
       response = await authRepository.createCitizen(
-          "/user/citizen/_create",
-          citizenRegistrationRequest
-      );
+          "/user/citizen/_create", citizenRegistrationRequest);
 
       accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
-      userModel = UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
+      userModel =
+          UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
       userModel.authToken = response.accessToken;
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
@@ -213,21 +235,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       secureStore.setUserRequest(response.userRequest!);
       secureStore.setAccessToken(accesstoken);
       secureStore.setRefreshToken(_refreshtoken);
-      emit(AuthState.otpCorrect(
-          authResponse: response));
-
+      emit(AuthState.otpCorrect(authResponse: response));
     } catch (err) {
-      emit(const AuthState.requestFailed(errorMsg: "Registration Failed",));
+      emit(const AuthState.requestFailed(
+        errorMsg: "Registration Failed",
+      ));
       rethrow;
     }
   }
 
-  FutureOr<void> _onLogout(_AuthLogoutEvent event, Emitter<AuthState> emit) async {
+  FutureOr<void> _onLogout(
+      _AuthLogoutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthState.initial());
     try {
       final secureStore = SecureStore();
 
-      final response = await authRepository.logout("/user/_logout", await secureStore.getAccessToken());
+      final response = await authRepository.logout(
+          "/user/_logout", await secureStore.getAccessToken());
       if (response.status == "Logout successfully") {
         secureStore.deleteAccessToken();
         secureStore.deleteAccessInfo();
@@ -243,7 +267,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<FutureOr<void>> _onLoad(
       _AuthLoadEvent event, Emitter<AuthState> emit) async {
-
     emit(const AuthState.initial());
     final secureStore = SecureStore();
 
@@ -266,59 +289,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  FutureOr<void> _requestOtpEvent(_RequestOtpEvent event,
-      Emitter<AuthState> emit) async {
-
+  FutureOr<void> _requestOtpEvent(
+      _RequestOtpEvent event, Emitter<AuthState> emit) async {
     emit(const AuthState.initial());
 
     OtpRequest otpRequest = OtpRequest(
         otp: Otp(
             mobileNumber: event.mobileNumber,
-            type: event.type
-        )
-    );
+            type: event.type,
+            tenantId: appConstants.tenantId));
 
-    try{
-      final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequest);
+    try {
+      final registerResponse = await authRepository.requestOtp(
+          "/user-otp/v1/_send?tenantId=${appConstants.tenantId}&_=1712987382117",
+          otpRequest);
       emit(AuthState.otpGenerationSucceed(type: event.type));
-    }
-    catch(e1){
+    } catch (e1) {
       if (event.type == 'login') {
         emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
       }
       if (event.type == 'register') {
-        emit(const AuthState.registrationRequestOtpFailed(errorMsg: 'Request Otp Failed'));
+        emit(const AuthState.registrationRequestOtpFailed(
+            errorMsg: 'Request Otp Failed'));
       }
     }
-
   }
 
-  FutureOr<void> resendOtpEvent(_ResendOtpEvent event,
-      Emitter<AuthState> emit) async {
-
+  FutureOr<void> resendOtpEvent(
+      _ResendOtpEvent event, Emitter<AuthState> emit) async {
     emit(const AuthState.initial());
 
     OtpRequest otpRequest = OtpRequest(
         otp: Otp(
             mobileNumber: event.mobileNumber,
-            type: event.type
-        )
-    );
+            type: event.type,
+            tenantId: appConstants.tenantId));
 
-    try{
-      final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequest);
+    try {
+      final registerResponse = await authRepository.requestOtp(
+          "/user-otp/v1/_send?tenantId=${appConstants.tenantId}&_=1712987382117",
+          otpRequest);
       emit(const AuthState.resendOtpGenerationSucceed(type: "register"));
-    }
-    catch(e1) {
+    } catch (e1) {
       if (event.type == 'login') {
         emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
       }
       if (event.type == 'register') {
-        emit(const AuthState.registrationRequestOtpFailed(errorMsg: 'Request Otp Failed'));
-      }    }
+        emit(const AuthState.registrationRequestOtpFailed(
+            errorMsg: 'Request Otp Failed'));
+      }
+    }
   }
 
-  FutureOr<void> _onRefreshToken(_AuthRefreshTokenEvent event, Emitter<AuthState> emit) async {
+  FutureOr<void> _onRefreshToken(
+      _AuthRefreshTokenEvent event, Emitter<AuthState> emit) async {
     emit(const AuthState.initial());
 
     AuthResponse response;
@@ -326,11 +350,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     response = await authRepository.validateLogin(
         "/user/oauth/token",
         LoginModel(
-          username: _userRequest.userName,
-          refreshToken: await secureStore.getRefreshToken(),
-          grantType: 'refresh_token'
-        )
-    );
+            username: _userRequest.userName,
+            refreshToken: await secureStore.getRefreshToken(),
+            tenantId: appConstants.tenantId,
+            grantType: 'refresh_token'));
 
     accesstoken = response.accessToken!;
     _refreshtoken = response.refreshToken!;
@@ -350,14 +373,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthState.error(event.requestOptions, event.handler));
   }
 
-  FutureOr<void> submitIndividualProfile(_SubmitProfileEvent event,
-      Emitter<AuthState> emit) async {
-
-    try{
+  FutureOr<void> submitIndividualProfile(
+      _SubmitProfileEvent event, Emitter<AuthState> emit) async {
+    try {
       emit(const AuthState.initial());
 
       String? identifierType;
-      if (userModel.identifierType == null || userModel.identifierType!.isEmpty) {
+      if (userModel.identifierType == null ||
+          userModel.identifierType!.isEmpty) {
         identifierType = 'AADHAR';
       } else {
         identifierType = userModel.identifierType;
@@ -370,107 +393,118 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       Individual individual = Individual(
         name: Name(
-            givenName: userModel.firstName!,
-            familyName: userModel.lastName!
-        ),
+            givenName: userModel.firstName!, familyName: userModel.lastName!),
+        tenantId: appConstants.tenantId,
         userDetails: UserDetails(
           username: userModel.username!,
-          roles: [appConstants.getCitizenRole,
+          roles: [
+            appConstants.getCitizenRole,
             appConstants.getCaseCreatorRole,
             appConstants.getCaseEditorRole,
-            appConstants.getCaseViewerRole],
+            appConstants.getCaseViewerRole,
+            appConstants.getDepositionCreatorRole,
+            appConstants.getDepositionViewerRole,
+            appConstants.getApplicationCreatorRole,
+            appConstants.getApplicationViewerRole,
+            appConstants.getHearingViewerRole,
+            appConstants.getOrderViewerRole
+          ],
         ),
         userUuid: userModel.uuid!,
         userId: userModel.id!.toString(),
         mobileNumber: userModel.mobileNumber!,
-        address: [Address(
-            doorNo: userModel.addressModel.doorNo ?? "",
-            latitude: userModel.addressModel.latitude ?? 0.0,
-            longitude: userModel.addressModel.longitude ?? 0.0,
-            city: userModel.addressModel.city ?? "",
-            addressLine1: userModel.addressModel.state ?? "",
-            addressLine2: userModel.addressModel.district ?? "",
-            street: userModel.addressModel.street ?? "",
-            pincode: userModel.addressModel.pincode ?? "",
-            buildingName: userModel.addressModel.buildingName ?? ""
-        )],
-        identifiers: userModel.identifierId == null ? [] :
-        [Identifier(
-          identifierType: identifierType ?? 'AADHAR',
-          identifierId: identifierId ?? '448022345455',
-        )],
+        address: [
+          Address(
+              tenantId: appConstants.tenantId,
+              doorNo: userModel.addressModel.doorNo ?? "",
+              latitude: userModel.addressModel.latitude ?? 0.0,
+              longitude: userModel.addressModel.longitude ?? 0.0,
+              city: userModel.addressModel.city ?? "",
+              addressLine1: userModel.addressModel.state ?? "",
+              addressLine2: userModel.addressModel.district ?? "",
+              street: userModel.addressModel.street ?? "",
+              pincode: userModel.addressModel.pincode ?? "",
+              buildingName: userModel.addressModel.buildingName ?? "")
+        ],
+        identifiers: userModel.identifierId == null
+            ? []
+            : [
+                Identifier(
+                  identifierType: identifierType ?? 'AADHAR',
+                  identifierId: identifierId ?? '448022345455',
+                )
+              ],
         additionalFields: AdditionalFields(
-          fields: [Fields(
-            key: 'userType',
-            value: userModel.userType!,
-          ),
+          fields: [
+            Fields(
+              key: 'userType',
+              value: userModel.userType!,
+            ),
             Fields(
               key: 'idVerificationType',
               value: userModel.idVerificationType!,
             ),
             Fields(
                 key: 'identifierIdDetails',
-                value: userModel.idVerificationType != 'AADHAR' ? jsonEncode({'fileStoreId' : userModel.identifierId, 'filename': userModel.idFilename})
-                    : jsonEncode({})
-            )
+                value: userModel.idVerificationType != 'AADHAR'
+                    ? jsonEncode({
+                        'fileStoreId': userModel.identifierId,
+                        'filename': userModel.idFilename
+                      })
+                    : jsonEncode({}))
           ],
         ),
       );
 
-      RequestInfo requestInfo = RequestInfo(
-          authToken: userModel.authToken!
-      );
+      RequestInfo requestInfo = RequestInfo(authToken: userModel.authToken!);
 
       LitigantNetworkModel litigantNetworkModel = LitigantNetworkModel(
         requestInfo: requestInfo,
         individual: individual,
       );
-      final registerResponse = await authRepository.registerLitigant("/individual/v1/_create", litigantNetworkModel);
+      final registerResponse = await authRepository.registerLitigant(
+          "/individual/v1/_create", litigantNetworkModel);
       userModel.individualId = registerResponse.individualInfo.individualId;
       if (userModel.userType == 'ADVOCATE') {
-        AdvocateRegistrationRequest advocateRegistrationRequest = AdvocateRegistrationRequest(
-            advocate:
-              ResponseList(
-                  tenantId: appConstants.tenantId,
-                  barRegistrationNumber: userModel.barRegistrationNumber,
-                  individualId: userModel.individualId,
-                  workflow: Workflow(
-                      action: "REGISTER",
-                      documents: [
-                        Document(fileStore: userModel.fileStore)
-                      ]
-                  ),
-                  documents: [
-                    Document(
-                        fileStore: userModel.fileStore,
-                        documentType: userModel.documentType
-                    )
-                  ],
-                  additionalDetails: {
-                    "username" : userModel.firstName! + userModel.lastName!,
-                    "filename" : userModel.documentFilename
-                  }
-              )
-        );
-        await authRepository.registerAdvocate('/advocate/advocate/v1/_create', advocateRegistrationRequest);
+        AdvocateRegistrationRequest advocateRegistrationRequest =
+            AdvocateRegistrationRequest(
+                advocate: ResponseList(
+                    tenantId: appConstants.tenantId,
+                    barRegistrationNumber: userModel.barRegistrationNumber,
+                    individualId: userModel.individualId,
+                    workflow: Workflow(action: "REGISTER", documents: [
+                      Document(
+                          fileStore: userModel.fileStore,
+                          documentType: userModel.documentType,
+                          additionalDetails: {
+                            "filename": userModel.documentFilename
+                          })
+                    ]),
+                    documents: [
+              Document(
+                  fileStore: userModel.fileStore,
+                  documentType: userModel.documentType,
+                  additionalDetails: {"filename": userModel.documentFilename})
+            ],
+                    additionalDetails: {
+              "username": userModel.firstName! + userModel.lastName!,
+            }));
+        await authRepository.registerAdvocate(
+            '/advocate/advocate/v1/_create', advocateRegistrationRequest);
       } else if (userModel.userType == 'ADVOCATE_CLERK') {
-        AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest = AdvocateClerkRegistrationRequest(
-            clerk:
-              ResponseListClerk(
-                  tenantId: appConstants.tenantId,
-                  stateRegnNumber: userModel.stateRegnNumber,
-                  individualId: userModel.individualId,
-                  workflow: const Workflow(
-                      action: "REGISTER",
-                      documents: [
-                      ]
-                  ),
-                  documents: [
-                  ],
-                  additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
-              )
-        );
-        await authRepository.registerAdvocateClerk('/advocate/clerk/v1/_create', advocateClerkRegistrationRequest);
+        AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest =
+            AdvocateClerkRegistrationRequest(
+                clerk: ResponseListClerk(
+                    tenantId: appConstants.tenantId,
+                    stateRegnNumber: userModel.stateRegnNumber,
+                    individualId: userModel.individualId,
+                    workflow: const Workflow(action: "REGISTER", documents: []),
+                    documents: [],
+                    additionalDetails: {
+              "username": userModel.firstName! + userModel.lastName!
+            }));
+        await authRepository.registerAdvocateClerk(
+            '/advocate/clerk/v1/_create', advocateClerkRegistrationRequest);
       } else if (userModel.userType == 'LITIGANT') {
         final secureStore = SecureStore();
         secureStore.setAccessToken(accesstoken);
@@ -478,8 +512,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         secureStore.setAccessInfo(_authResponse);
       }
       emit(const AuthState.profileSuccessState());
-    }
-    catch(e1) {
+    } catch (e1) {
       emit(const AuthState.profileFailedState(errorMsg: 'Registering Failed'));
     }
   }
@@ -490,28 +523,30 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.login() = _AuthLoginEvent;
   const factory AuthEvent.logout() = _AuthLogoutEvent;
   const factory AuthEvent.attemptLoad() = _AuthLoadEvent;
-  const factory AuthEvent.requestOtp(String mobileNumber, String type) = _RequestOtpEvent;
+  const factory AuthEvent.requestOtp(String mobileNumber, String type) =
+      _RequestOtpEvent;
   const factory AuthEvent.resendOtp(
       final String mobileNumber, final String type) = _ResendOtpEvent;
 
   const factory AuthEvent.submitRegistrationOtp(
-      final String username, final String otp, UserModel userModel) = _SubmitRegistrationOtpEvent;
+          final String username, final String otp, UserModel userModel) =
+      _SubmitRegistrationOtpEvent;
   const factory AuthEvent.submitLoginOtpEvent(
-      final String username, final String password, UserModel userModel) = _SubmitLoginOtpEvent;
-  const factory AuthEvent.submitLogoutUser(
-      final String authToken) = _SubmitLogoutUserEvent;
+          final String username, final String password, UserModel userModel) =
+      _SubmitLoginOtpEvent;
+  const factory AuthEvent.submitLogoutUser(final String authToken) =
+      _SubmitLogoutUserEvent;
   const factory AuthEvent.refreshToken(
-      RequestOptions requestOptions,
-      ErrorInterceptorHandler handler) = _AuthRefreshTokenEvent;
+          RequestOptions requestOptions, ErrorInterceptorHandler handler) =
+      _AuthRefreshTokenEvent;
   const factory AuthEvent.submitProfile() = _SubmitProfileEvent;
 }
 
 @freezed
 class AuthState with _$AuthState {
-
   const factory AuthState.error(
-      RequestOptions requestOptions,
-      ErrorInterceptorHandler handler) = _ErrorState;
+          RequestOptions requestOptions, ErrorInterceptorHandler handler) =
+      _ErrorState;
   const factory AuthState.initial() = _InitialState;
   const factory AuthState.unauthenticated() = _UnauthenticatedState;
   const factory AuthState.authenticated({
@@ -531,30 +566,27 @@ class AuthState with _$AuthState {
   const factory AuthState.otpCorrect({
     required AuthResponse authResponse,
   }) = _OtpCorrectState;
-  const factory AuthState.requestOtpFailed({
-    required String errorMsg
-  }) = _RequestOtpFailedState;
+  const factory AuthState.requestOtpFailed({required String errorMsg}) =
+      _RequestOtpFailedState;
   const factory AuthState.registrationRequestOtpFailed({
     required String errorMsg,
   }) = _RegistrationRequestOtpFailedState;
-  const factory AuthState.logoutFailedState({
-    required String errorMsg
-  }) = _LogoutFailedState;
+  const factory AuthState.logoutFailedState({required String errorMsg}) =
+      _LogoutFailedState;
 
   const factory AuthState.profileSuccessState() = _ProfileSuccessState;
-  const factory AuthState.profileFailedState({
-    required String errorMsg
-  }) = _ProfileFailedState;
+  const factory AuthState.profileFailedState({required String errorMsg}) =
+      _ProfileFailedState;
 
-  const factory AuthState.individualSearchSuccessState({
-    required IndividualSearchResponse individualSearchResponse
-  }) = _IndividualSearchSuccessState;
+  const factory AuthState.individualSearchSuccessState(
+          {required IndividualSearchResponse individualSearchResponse}) =
+      _IndividualSearchSuccessState;
 
-  const factory AuthState.advocateSearchSuccessState({
-    required AdvocateSearchResponse advocateSearchResponse
-  }) = _AdvocateSearchSuccessState;
+  const factory AuthState.advocateSearchSuccessState(
+          {required AdvocateSearchResponse advocateSearchResponse}) =
+      _AdvocateSearchSuccessState;
 
-  const factory AuthState.advocateClerkSearchSuccessState({
-    required AdvocateClerkSearchResponse advocateClerkSearchResponse
-  }) = _AdvocateClerkSearchSuccessState;
+  const factory AuthState.advocateClerkSearchSuccessState(
+          {required AdvocateClerkSearchResponse advocateClerkSearchResponse}) =
+      _AdvocateClerkSearchSuccessState;
 }

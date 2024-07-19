@@ -9,7 +9,7 @@ class Document with _$Document {
     @JsonKey(name: 'documentType') String? documentType,
     @JsonKey(name: 'fileStore') String? fileStore,
     @JsonKey(name: 'documentUid') String? documentUid,
-    @JsonKey(name: 'additionalDetails') Object? additionalDetails,
+    @JsonKey(name: 'additionalDetails') Map<String, dynamic>? additionalDetails,
   }) = _Document;
 
   factory Document.fromJson(Map<String, dynamic> json) =>

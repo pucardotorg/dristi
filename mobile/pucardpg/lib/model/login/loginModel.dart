@@ -9,7 +9,7 @@ class LoginModel with _$LoginModel {
   const factory LoginModel({
     required String? username,
     @Default("123456") String? password,
-    @Default("pg") String? tenantId,
+    required String? tenantId,
     @Default("citizen") String? userType,
     @Default("read") String? scope,
     @JsonKey(name: "refresh_token") String? refreshToken,

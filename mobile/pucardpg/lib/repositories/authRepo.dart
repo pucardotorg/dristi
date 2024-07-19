@@ -105,7 +105,6 @@ class AuthRepository {
   }
 
   Future<ResponseInfoSearch> logout(String url, String? accessToken) async {
-
     _client.options.baseUrl = appConstants.apiBaseURL;
 
     final headers = <String, String>{
@@ -120,7 +119,8 @@ class AuthRepository {
             "tenantId": appConstants.tenantId,
             "_": appConstants.timeStamp
           },
-          data: {'access_token': accessToken}, options: Options(headers: headers));
+          data: {'access_token': accessToken},
+          options: Options(headers: headers));
       final responseBody = ResponseInfoSearch.fromJson(response.data);
 
       return responseBody;
@@ -129,7 +129,8 @@ class AuthRepository {
     }
   }
 
-  Future<AuthResponse> createCitizen(String url, CitizenRegistrationRequest citizenRegistrationRequest) async {
+  Future<AuthResponse> createCitizen(
+      String url, CitizenRegistrationRequest citizenRegistrationRequest) async {
     final formData = citizenRegistrationRequest.toJson();
 
     //make a custom Dio client which will not send the request with the interceptor
@@ -157,7 +158,8 @@ class AuthRepository {
     }
   }
 
-  Future<LitigantResponseModel> registerLitigant(String url, LitigantNetworkModel litigantNetworkModel) async {
+  Future<LitigantResponseModel> registerLitigant(
+      String url, LitigantNetworkModel litigantNetworkModel) async {
     try {
       final formData = litigantNetworkModel.toJson();
 
@@ -178,12 +180,13 @@ class AuthRepository {
       // authClient.close();
 
       return responseBody;
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
 
-  Future<AdvocateRegistrationResponse> registerAdvocate(String url, AdvocateRegistrationRequest advocateRegistrationRequest) async {
+  Future<AdvocateRegistrationResponse> registerAdvocate(String url,
+      AdvocateRegistrationRequest advocateRegistrationRequest) async {
     try {
       final formData = advocateRegistrationRequest.toJson();
 
@@ -204,13 +207,14 @@ class AuthRepository {
       // authClient.close();
 
       return responseBody;
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<AdvocateClerkRegistrationResponse> registerAdvocateClerk(String url, AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest) async {
+  Future<AdvocateClerkRegistrationResponse> registerAdvocateClerk(String url,
+      AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest) async {
     try {
       final formData = advocateClerkRegistrationRequest.toJson();
 
@@ -225,18 +229,20 @@ class AuthRepository {
 
       final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
-      final responseBody = AdvocateClerkRegistrationResponse.fromJson(response.data);
+      final responseBody =
+          AdvocateClerkRegistrationResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
       // authClient.close();
 
       return responseBody;
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
 
-  Future<IndividualSearchResponse> searchIndividual(String url, IndividualSearchRequest individualSearchRequest) async {
+  Future<IndividualSearchResponse> searchIndividual(
+      String url, IndividualSearchRequest individualSearchRequest) async {
     try {
       final formData = individualSearchRequest.toJson();
 
@@ -257,13 +263,14 @@ class AuthRepository {
       // authClient.close();
 
       return responseBody;
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<AdvocateSearchResponse> searchAdvocate(String url, AdvocateSearchRequest advocateSearchRequest) async {
+  Future<AdvocateSearchResponse> searchAdvocate(
+      String url, AdvocateSearchRequest advocateSearchRequest) async {
     try {
       final formData = advocateSearchRequest.toJson();
 
@@ -284,14 +291,14 @@ class AuthRepository {
       // authClient.close();
 
       return responseBody;
-
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<AdvocateClerkSearchResponse> searchAdvocateClerk(String url, AdvocateClerkSearchRequest advocateClerkSearchRequest) async {
+  Future<AdvocateClerkSearchResponse> searchAdvocateClerk(
+      String url, AdvocateClerkSearchRequest advocateClerkSearchRequest) async {
     try {
       final formData = advocateClerkSearchRequest.toJson();
 
@@ -312,7 +319,6 @@ class AuthRepository {
       // authClient.close();
 
       return responseBody;
-
     } catch (err) {
       rethrow;
     }
@@ -323,7 +329,7 @@ class AuthRepository {
   ) async {
     String url = envConfig.variables.actionMapApiPath;
     final client = DioClient().dio;
-    
+
     try {
       final Response response = await client.post(url, data: body);
       return RoleActionsWrapperModel.fromJson(json.decode(response.toString()));

@@ -40,50 +40,60 @@ class AppConstants {
   String get individualId => "IND-2024-04-18-000063";
   String get module => "DRISTI";
 
-  Role get  userRegisterRole => const Role(
-      name: "USER_REGISTER",
-      code: "USER_REGISTER"
-  );
+  Role get userRegisterRole =>
+      Role(name: "USER_REGISTER", code: "USER_REGISTER", tenantId: tenantId);
 
-  Role get getCitizenRole => const Role(
-      name: "Citizen",
-      code: "CITIZEN"
-  );
+  Role get getCitizenRole =>
+      Role(name: "Citizen", code: "CITIZEN", tenantId: tenantId);
 
-  Role get getCaseCreatorRole => const Role(
-      name: "CASE_CREATOR",
-      code: "CASE_CREATOR"
-  );
+  Role get getCaseCreatorRole =>
+      Role(name: "CASE_CREATOR", code: "CASE_CREATOR", tenantId: tenantId);
 
-  Role get getCaseEditorRole => const Role(
-      name: "CASE_EDITOR",
-      code: "CASE_EDITOR"
-  );
+  Role get getCaseEditorRole =>
+      Role(name: "CASE_EDITOR", code: "CASE_EDITOR", tenantId: tenantId);
 
-  Role get getCaseViewerRole => const Role(
-      name: "CASE_VIEWER",
-      code: "CASE_VIEWER"
-  );
+  Role get getCaseViewerRole =>
+      Role(name: "CASE_VIEWER", code: "CASE_VIEWER", tenantId: tenantId);
+
+  Role get getAdvocateRole =>
+      Role(name: "ADVOCATE_ROLE", code: "ADVOCATE_ROLE", tenantId: tenantId);
+
+  Role get getDepositionCreatorRole =>
+      Role(name: "DEPOSITION_CREATOR", code: "DEPOSITION_CREATOR", tenantId: tenantId);
+
+  Role get getDepositionViewerRole =>
+      Role(name: "DEPOSITION_VIEWER", code: "DEPOSITION_VIEWER", tenantId: tenantId);
+
+  Role get getApplicationCreatorRole =>
+      Role(name: "APPLICATION_CREATOR", code: "APPLICATION_CREATOR", tenantId: tenantId);
+
+  Role get getApplicationViewerRole =>
+      Role(name: "APPLICATION_VIEWER", code: "APPLICATION_VIEWER", tenantId: tenantId);
+
+  Role get getHearingViewerRole =>
+      Role(name: "HEARING_VIEWER", code: "HEARING_VIEWER", tenantId: tenantId);
+
+  Role get getOrderViewerRole =>
+      Role(name: "ORDER_VIEWER", code: "ORDER_VIEWER", tenantId: tenantId);
 
   Fields get litigant => const Fields(
-    key: 'userType',
-    value: "LITIGANT",
-  );
+        key: 'userType',
+        value: "LITIGANT",
+      );
 
   Fields get advocate => const Fields(
-    key: 'userType',
-    value: "ADVOCATE",
-  );
+        key: 'userType',
+        value: "ADVOCATE",
+      );
 
   Fields get clerk => const Fields(
-    key: 'userType',
-    value: "ADVOCATE_CLERK",
-  );
+        key: 'userType',
+        value: "ADVOCATE_CLERK",
+      );
 
   String get approvalSvg => 'assets/icons/svg/approval.svg';
   String get digitSvg => 'assets/icons/svg/DIGIT.png';
   String get yetToRegister => 'assets/icons/svg/yet_to_register.svg';
-
 }
 
 class Common {
@@ -113,7 +123,7 @@ class Login {
   String get csWelcome => 'CS_WELCOME';
   String get coreCommonPhoneNumber => 'CORE_COMMON_PHONE_NUMBER';
   String get csSignInNext => 'CS_SIGNIN_NEXT';
-  String get csRegisterAccount=> 'CS_REGISTER_ACCOUNT';
+  String get csRegisterAccount => 'CS_REGISTER_ACCOUNT';
   String get csRegisterLink => 'CS_REGISTER_LINK';
 }
 
@@ -214,7 +224,8 @@ class ApplicationDetails {
 
 class TermsAndConditionsText {
   const TermsAndConditionsText();
-  String get esCommonUserTermsAndConditions => 'ES_COMMON_USER_TERMS_AND_CONDITIONS';
+  String get esCommonUserTermsAndConditions =>
+      'ES_COMMON_USER_TERMS_AND_CONDITIONS';
   String get firstTermsAndConditions => 'FIRST_TERMS_AND_CONDITIONS';
   String get secondTermsAndConditions => 'SECOND_TERMS_AND_CONDITIONS';
   String get thirdTermsAndConditions => 'THIRD_TERMS_AND_CONDITIONS';
@@ -224,5 +235,6 @@ class TermsAndConditionsText {
 class ErrorMessages {
   const ErrorMessages();
   String get esUserNotPermitted => 'ES_ERROR_USER_NOT_PERMITTED';
-  String get mobileNumberAlreadyRegistered => 'MOBILE_NUMBER_ALREADY_REGISTERED';
+  String get mobileNumberAlreadyRegistered =>
+      'MOBILE_NUMBER_ALREADY_REGISTERED';
 }

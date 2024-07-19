@@ -21,7 +21,7 @@ class UserInfo with _$UserInfo {
     @JsonKey(name: 'name') @Default("dristi") String name,
     @JsonKey(name: 'username') required String username,
     @JsonKey(name: 'otpReference') required String otpReference,
-    @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
+    @JsonKey(name: 'tenantId') required String tenantId,
   }) = _UserInfo;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);

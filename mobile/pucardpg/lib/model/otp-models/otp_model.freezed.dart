@@ -329,7 +329,7 @@ class __$$OtpImplCopyWithImpl<$Res> extends _$OtpCopyWithImpl<$Res, _$OtpImpl>
 class _$OtpImpl implements _Otp {
   const _$OtpImpl(
       {@JsonKey(name: 'mobileNumber') required this.mobileNumber,
-      @JsonKey(name: 'tenantId') this.tenantId = "pg",
+      @JsonKey(name: 'tenantId') required this.tenantId,
       @JsonKey(name: 'userType') this.userType = "citizen",
       @JsonKey(name: 'type') required this.type});
 
@@ -390,7 +390,7 @@ class _$OtpImpl implements _Otp {
 abstract class _Otp implements Otp {
   const factory _Otp(
       {@JsonKey(name: 'mobileNumber') required final String mobileNumber,
-      @JsonKey(name: 'tenantId') final String tenantId,
+      @JsonKey(name: 'tenantId') required final String tenantId,
       @JsonKey(name: 'userType') final String userType,
       @JsonKey(name: 'type') required final String type}) = _$OtpImpl;
 

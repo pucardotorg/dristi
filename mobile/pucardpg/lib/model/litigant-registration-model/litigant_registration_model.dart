@@ -21,7 +21,7 @@ class Name with _$Name {
 @freezed
 class Address with _$Address {
   const factory Address({
-    @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
+    @JsonKey(name: 'tenantId') required String tenantId,
     @JsonKey(name: 'type') @Default("PERMANENT") String type,
     @JsonKey(name: 'addressLine1') required String? addressLine1,
     @JsonKey(name: 'addressLine2') required String? addressLine2,
@@ -82,7 +82,7 @@ class UserDetails with _$UserDetails {
 @freezed
 class Individual with _$Individual {
   const factory Individual({
-    @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
+    @JsonKey(name: 'tenantId') required String tenantId,
     @JsonKey(name: 'individualId') String? individualId,
     @JsonKey(name: 'name') required Name name,
     @JsonKey(name: 'userDetails') required UserDetails userDetails, // Use "{{individualDateOfBirth}}" for replacement
@@ -171,91 +171,4 @@ class LitigantResponseModel with _$LitigantResponseModel {
 
   factory LitigantResponseModel.fromJson(Map<String, dynamic> json) => _$LitigantResponseModelFromJson(json);
 }
-
-// {
-// "Individual": {
-// "tenantId": "pg",
-// "name": {
-// "givenName": "asdfasdf",
-// "familyName": "asdfasdf"
-// },
-// "userDetails": {
-// "username": "9999977777",
-// "roles": [
-// {
-// "code": "USER_REGISTER",
-// "name": "USER_REGISTER",
-// "description": "USER_REGISTER",
-// "tenantId": "pg"
-// },
-// {
-// "code": "CITIZEN",
-// "name": "Citizen",
-// "tenantId": "pg"
-// }
-// ],
-// "type": "CITIZEN"
-// },
-// "userUuid": "e45e0e00-1d88-4e94-8c21-e78911291f71",
-// "userId": 133,
-// "mobileNumber": "9999977777",
-// "address": [
-// {
-// "tenantId": "pg",
-// "type": "PERMANENT",
-// "doorNo": "asdf",
-// "latitude": 17.3838707,
-// "longitude": 78.40859209999999,
-// "city": "Hyderabad",
-// "pincode": "500008",
-// "district": "Hyderabad"
-// }
-// ],
-// "identifiers": [],
-// "isSystemUser": true,
-// "skills": [],
-// "additionalFields": {
-// "fields": [
-// {
-// "key": "userType",
-// "value": "LITIGANT"
-// }
-// ]
-// },
-// "clientAuditDetails": {},
-// "auditDetails": {}
-// },
-// "RequestInfo": {
-// "apiId": "Rainmaker",
-// "authToken": "3948ba6f-d2d7-49dd-8965-b7a50c8bde11",
-// "msgId": "1713445982802|en_IN",
-// "plainAccessRequest": {}
-// }
-// }
-
-// @freezed
-// class Locality with _$Locality {
-//   const factory Locality({
-//     @JsonKey(name: 'code') @Default("test_9b31746b933d") String code,
-//     @JsonKey(name: 'name') @Default("test_58630a388978") String name,
-//     @JsonKey(name: 'label') @Default("test_7b7f928dcab8") String label,
-//     @JsonKey(name: 'latitude') @Default("test_15d4a90d15a6") String latitude,
-//     @JsonKey(name: 'longitude') @Default("test_e8854daed039") String longitude,
-//     @JsonKey(name: 'children') @Default([]) List<dynamic> children, // Can be any type depending on the data
-//   }) = _Locality ;
-//
-//   factory Locality.fromJson(Map<String, dynamic> json) => _$LocalityFromJson(json);
-// }
-//
-// @freezed
-// class UserInfo with _$UserInfo {
-//   const factory UserInfo({
-//     @JsonKey(name: 'id') @Default(324783744763) int id,
-//     @JsonKey(name: 'uuid') required String uuid,
-//     // Use "{{authToken}}" for replacement
-//   }) = _UserInfo;
-//
-//   factory UserInfo.fromJson(Map<String, dynamic> json) =>
-//       _$UserInfoFromJson(json);
-// }
 

@@ -196,7 +196,7 @@ class _$LoginModelImpl implements _LoginModel {
   const _$LoginModelImpl(
       {required this.username,
       this.password = "123456",
-      this.tenantId = "pg",
+      required this.tenantId,
       this.userType = "citizen",
       this.scope = "read",
       @JsonKey(name: "refresh_token") this.refreshToken,
@@ -212,7 +212,6 @@ class _$LoginModelImpl implements _LoginModel {
   @JsonKey()
   final String? password;
   @override
-  @JsonKey()
   final String? tenantId;
   @override
   @JsonKey()
@@ -280,7 +279,7 @@ abstract class _LoginModel implements LoginModel {
   const factory _LoginModel(
       {required final String? username,
       final String? password,
-      final String? tenantId,
+      required final String? tenantId,
       final String? userType,
       final String? scope,
       @JsonKey(name: "refresh_token") final String? refreshToken,

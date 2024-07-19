@@ -27,7 +27,7 @@ _$UserInfoImpl _$$UserInfoImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String? ?? "dristi",
       username: json['username'] as String,
       otpReference: json['otpReference'] as String,
-      tenantId: json['tenantId'] as String? ?? "pg",
+      tenantId: json['tenantId'] as String,
     );
 
 Map<String, dynamic> _$$UserInfoImplToJson(_$UserInfoImpl instance) =>

@@ -22,7 +22,7 @@ Map<String, dynamic> _$$OtpRequestImplToJson(_$OtpRequestImpl instance) =>
 
 _$OtpImpl _$$OtpImplFromJson(Map<String, dynamic> json) => _$OtpImpl(
       mobileNumber: json['mobileNumber'] as String,
-      tenantId: json['tenantId'] as String? ?? "pg",
+      tenantId: json['tenantId'] as String,
       userType: json['userType'] as String? ?? "citizen",
       type: json['type'] as String,
     );
