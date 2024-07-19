@@ -20,7 +20,8 @@ public class ApplicationCriteria {
 
     @JsonProperty("filingNumber")
     private String filingNumber = null;
-
+    @JsonProperty("applicationType")
+    private String applicationType = null;
     @JsonProperty("tenantId")
     @NotNull
     private String tenantId = null;

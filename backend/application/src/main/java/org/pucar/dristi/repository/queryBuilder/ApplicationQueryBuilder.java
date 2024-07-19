@@ -59,7 +59,7 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber,List<Object> preparedStmtList) {
+    public String getApplicationSearchQuery(String applicationType ,String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber,List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
@@ -67,6 +67,7 @@ public class ApplicationQueryBuilder {
             boolean firstCriteria = true; // To check if it's the first criteria
             firstCriteria = addCriteria(id, query, firstCriteria, "app.id = ?", preparedStmtList);
             firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationType, query, firstCriteria, "app.applicationType = ?", preparedStmtList);
             firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
             firstCriteria = addCriteria(tenantId, query, firstCriteria, "app.tenantId = ?", preparedStmtList);
             firstCriteria = addCriteria(status, query, firstCriteria, "app.status = ?", preparedStmtList);

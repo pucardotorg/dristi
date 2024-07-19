@@ -51,7 +51,7 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ?";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(2, preparedStmtList.size());
@@ -107,6 +107,7 @@ class ApplicationQueryBuilderTest {
     }
     @Test
     public void testGetApplicationSearchQuery_exception() {
+        String applicationType = "testtype";
         String id = "testId";
         String filingNumber = "testFilingNumber";
         String cnrNumber = "testCnrNumber";
@@ -121,7 +122,7 @@ class ApplicationQueryBuilderTest {
 
         // Execute the method and assert that the CustomException is thrown
         CustomException exception = assertThrows(CustomException.class, () -> {
-            spyQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+            spyQueryBuilder.getApplicationSearchQuery(applicationType,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -145,7 +146,7 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(0, preparedStmtList.size());
@@ -175,7 +176,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.applicationNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -195,7 +196,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.applicationNumber ="));
         assertEquals(0, preparedStmtList.size());
@@ -216,7 +217,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.filingNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -236,7 +237,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.filingNumber ="));
         assertEquals(0, preparedStmtList.size());
@@ -258,7 +259,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.cnrNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -278,7 +279,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.cnrNumber ="));
         assertFalse(query.contains("app.status ="));
@@ -298,7 +299,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.cnrNumber ="));
         assertEquals(0, preparedStmtList.size());
@@ -320,7 +321,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.status = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -340,7 +341,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(null,id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.status ="));
         assertEquals(0, preparedStmtList.size());
@@ -530,7 +531,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null,null, null, null, null, null, null, null);
         } catch (Exception e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getMessage());
         }
@@ -539,7 +540,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryCustomException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null,null, null, null, null, null, null, null);
         } catch (CustomException e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getCode());
         }

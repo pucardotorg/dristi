@@ -17,6 +17,8 @@ public class EvidenceSearchCriteria {
     private String id;
     private String caseId;
     private String applicationNumber;
+    private String artifactType;
+    private Boolean evidenceStatus;
     private String hearing;
     private String order;
     private String sourceId;
