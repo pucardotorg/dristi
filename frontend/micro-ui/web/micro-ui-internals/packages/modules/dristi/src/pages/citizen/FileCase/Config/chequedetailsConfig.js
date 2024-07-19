@@ -86,8 +86,8 @@ export const chequeDetailsFormConfig = [
         populators: {
           name: "issuanceDate",
           validation: {
-            max: new Date().toISOString().split('T')[0],
-          }
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -146,8 +146,8 @@ export const chequeDetailsFormConfig = [
         populators: {
           name: "depositDate",
           validation: {
-            max: new Date().toISOString().split('T')[0],
-          }
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -235,4 +235,32 @@ export const chequeDetailsConfig = {
     depositChequeFileUpload: "CS_PROOF_DEPOSIT_CHEQUE",
     returnMemoFileUpload: "CS_CHEQUE_RETURN_MEMO",
   },
+};
+
+export const chequeDetailsFormDataToSchemaMapping = {
+  chequeSignatoryName: { key: "chequeSignatoryName", type: "string", formDataType: "string" },
+  name: { key: "payeeName", type: "string", formDataType: "string" },
+  chequeNumber: { key: "number", type: "string", formDataType: "string" },
+  issuanceDate: { key: "issueDate", type: "string", formDataType: "string" },
+  bankName: { key: "payerBank", type: "string", formDataType: "string" },
+  ifsc: { key: "payerBankIFSC", type: "string", formDataType: "string" },
+  chequeAmount: { key: "amount", type: "string", formDataType: "string" },
+  depositDate: { key: "depositDate", type: "string", formDataType: "string" },
+  bouncedChequeFileUpload: { key: "cheque", type: "string", formDataType: "document" },
+  depositChequeFileUpload: { key: "deposit", type: "string", formDataType: "document" },
+  returnMemoFileUpload: { key: "returnMemo", type: "string", formDataType: "document" },
+};
+
+export const chequeDetailsSchemaToFormDataMapping = {
+  chequeSignatoryName: { key: "chequeSignatoryName", type: "string", formDataType: "string" },
+  payeeName: { key: "name", type: "string", formDataType: "string" },
+  number: { key: "chequeNumber", type: "string", formDataType: "string" },
+  issueDate: { key: "issuanceDate", type: "string", formDataType: "string" },
+  payerBank: { key: "bankName", type: "string", formDataType: "string" },
+  payerBankIFSC: { key: "ifsc", type: "string", formDataType: "string" },
+  amount: { key: "chequeAmount", type: "string", formDataType: "string" },
+  depositDate: { key: "depositDate", type: "string", formDataType: "string" },
+  cheque: { key: "bouncedChequeFileUpload", type: "string", formDataType: "document" },
+  deposit: { key: "depositChequeFileUpload", type: "string", formDataType: "document" },
+  returnMemo: { key: "returnMemoFileUpload", type: "string", formDataType: "document" },
 };

@@ -3,6 +3,8 @@ import { getUserDetails } from "../../../hooks/useGetAccessToken";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
+import { chequeDetailsFormDataToSchemaMapping } from "./Config/chequedetailsConfig";
+import { debtLiabilityDetailsFormDataToSchemaMapping } from "./Config/debtLiabilityConfig";
 
 export const showDemandNoticeModal = ({
   selected,
@@ -982,6 +984,49 @@ export const getAllAssignees = (caseDetails) => {
   return null;
 };
 
+export const modifiedFormToSchemaData = (data, FormDataToSchemaJson = {}) => {
+  return Object.keys(data).reduce((result, current) => {
+    const currentValue = FormDataToSchemaJson?.[current];
+    if (!currentValue) {
+      return result;
+    }
+    if (!data[current]) {
+      return result;
+    }
+
+    const type = currentValue.type;
+    const formDataType = currentValue.formDataType;
+    const key = currentValue.key;
+
+    if (type === "string" && formDataType === "string") {
+      result[key] = data[current];
+      return result;
+    } else if (type === "string" && formDataType === "text") {
+      const textKey = currentValue.textKey;
+      result[key] = textKey ? data[current][textKey] : data[current].text;
+      return result;
+    } else if (type === "string" && formDataType === "document") {
+      result[key] = data[current].document[0].fileStore;
+      return result;
+    } else if (type === "string" && formDataType === "dropdown") {
+      const dropdownKey = currentValue.dropdownKey;
+      result[key] = data[current][dropdownKey];
+      return result;
+    } else if (type === "boolean" && formDataType === "dropdown") {
+      const dropdownKey = currentValue.dropdownKey;
+      result[key] = data[current][dropdownKey].toLowerCase() === "YES".toLowerCase() ? true : false;
+      return result;
+    } else if (type === "enum" && formDataType === "dropdown") {
+      const dropdownKey = currentValue.dropdownKey;
+      const enumMapping = currentValue.enumMapping;
+      result[key] = enumMapping[data[current][dropdownKey]];
+      return result;
+    } else {
+      return result;
+    }
+  }, {});
+};
+
 export const updateCaseDetails = async ({
   isCompleted,
   setIsDisabled,
@@ -1414,6 +1459,10 @@ export const updateCaseDetails = async ({
           };
         })
     );
+    const chequeData = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, chequeDetailsFormDataToSchemaMapping);
+    });
+    console.log("chequeData", chequeData);
     data.caseDetails = {
       ...caseDetails.caseDetails,
       chequeDetails: {
@@ -1453,6 +1502,11 @@ export const updateCaseDetails = async ({
           };
         })
     );
+
+    const debtLiabilityDetails = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, debtLiabilityDetailsFormDataToSchemaMapping);
+    });
+    console.log("debtLiabilityDetails", debtLiabilityDetails);
     data.caseDetails = {
       ...caseDetails.caseDetails,
       debtLiabilityDetails: {
@@ -1523,6 +1577,12 @@ export const updateCaseDetails = async ({
           };
         })
     );
+
+    const demandNoticeDetails = newFormData.map((data) => {
+      return modifiedFormToSchemaData(data?.data, debtLiabilityDetailsFormDataToSchemaMapping);
+    });
+    console.log("demandNoticeDetails", demandNoticeDetails);
+
     data.caseDetails = {
       ...caseDetails.caseDetails,
       demandNoticeDetails: {

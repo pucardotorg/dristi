@@ -113,3 +113,41 @@ export const delayApplicationConfig = {
     condonationFileUpload: "CS_DELAY_CONDONATION_APPLICATION",
   },
 };
+
+export const demandNoticeDetailsFormDataToSchemaMapping = {
+  delayCondonationType: {
+    key: "isDelayed",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+  },
+  delayApplicationReason: { key: "reason", type: "string", formDataType: "text", textKey: "reasonForDelay" },
+  condonationFileUpload: { key: "document", type: "string", formDataType: "document" },
+};
+
+export const demandNoticeDetailsSchemaToFormDataMapping = {
+  isDelayed: {
+    key: "delayCondonationType",
+    type: "boolean",
+    formDataType: "dropdown",
+    dropdownKey: "code",
+    options: [
+      {
+        code: "YES",
+        name: "YES",
+        showForm: false,
+        isEnabled: true,
+      },
+      {
+        code: "NO",
+        name: "NO",
+        showForm: true,
+        isVerified: true,
+        hasBarRegistrationNo: true,
+        isEnabled: true,
+      },
+    ],
+  },
+  reason: { key: "delayApplicationReason", type: "string", formDataType: "text", textKey: "reasonForDelay" },
+  document: { key: "condonationFileUpload", type: "string", formDataType: "document" },
+};
