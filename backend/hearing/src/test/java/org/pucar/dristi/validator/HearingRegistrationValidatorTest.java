@@ -296,7 +296,7 @@ class HearingRegistrationValidatorTest {
     }
 
     @Test
-    public void testCreateCaseExistsRequest_EmptyCriteria() {
+    void testCreateCaseExistsRequest_EmptyCriteria() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         Hearing hearing = new Hearing();
@@ -310,7 +310,7 @@ class HearingRegistrationValidatorTest {
     }
 
     @Test
-    public void testCreateApplicationExistsRequest_EmptyCriteria() {
+    void testCreateApplicationExistsRequest_EmptyCriteria() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();
         Hearing hearing = new Hearing();

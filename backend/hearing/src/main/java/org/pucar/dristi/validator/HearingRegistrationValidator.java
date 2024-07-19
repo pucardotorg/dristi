@@ -75,8 +75,6 @@ public class HearingRegistrationValidator {
         // Validate applicationNumbers
         validateApplicationExistence(requestInfo, hearing);
 
-        // TODO validate presided by judge.
-
     }
 
     private void baseValidations(RequestInfo requestInfo, Hearing hearing){

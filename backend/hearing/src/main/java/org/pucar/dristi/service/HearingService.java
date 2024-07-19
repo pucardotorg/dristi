@@ -90,7 +90,6 @@ public class HearingService {
             Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
 
             // Updating Hearing request
-            // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
             hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
             hearing.setStartTime(hearingRequest.getHearing().getStartTime());
             hearing.setEndTime(hearingRequest.getHearing().getEndTime());
