@@ -1,12 +1,12 @@
 package org.pucar.dristi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.SummonsOrderPdfUtil;
+import org.pucar.dristi.web.models.PdfRequest;
 import org.pucar.dristi.web.models.PdfSummonsRequest;
-import org.pucar.dristi.web.models.QrCodeRequest;
-import org.pucar.dristi.web.models.SummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,16 +27,18 @@ public class ServiceUrlMappingPdfService {
     @Autowired
     private PdfSummonsOrderRequestService pdfSummonsOrderRequestService;
 
-    public ResponseEntity<InputStreamResource> getSVcUrlMapping(String referenceId, String refCode) throws IOException {
-        String urlMapping = null;
-        ResponseEntity<InputStreamResource> pdfresponse = null;
+    public Object getSVcUrlMappingPdf(PdfRequest pdfRequestobject) {
+        String referenceId=pdfRequestobject.getReferenceId();
+        String refCode= pdfRequestobject.getReferenceCode();
+        String tenantId= pdfRequestobject.getTenantId();
+        RequestInfo requestInfo= pdfRequestobject.getRequestInfo();
+        Object pdfresponse = null;
         switch (refCode) {
-            case "summon":
-                urlMapping = "https://dristi-dev.pucar.org/task/v1/search";
-                String qrCodeImage = qrCodeImageService.getQrCodeImage(referenceId);
-                ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId);
-                PdfSummonsRequest pdfSummonsRequest = summonsOrderPdfUtil.fetchSummonsPdfObjectData(qrCodeImage, taskSearchResponse);
-                pdfresponse = pdfSummonsOrderRequestService.createNoSave(pdfSummonsRequest);
+            case "summons-order":
+                String qrCodeImage = qrCodeImageService.getQrCodeImage(pdfRequestobject);
+                ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId,tenantId,requestInfo);
+                PdfSummonsRequest pdfSummonsRequest = summonsOrderPdfUtil.fetchSummonsPdfObjectData(qrCodeImage, taskSearchResponse, requestInfo);
+                pdfresponse = pdfSummonsOrderRequestService.createPdf(pdfSummonsRequest,pdfRequestobject);
         }
         return pdfresponse;
     }

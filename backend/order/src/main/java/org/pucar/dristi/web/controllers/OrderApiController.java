@@ -8,20 +8,16 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.*;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,7 +37,10 @@ public class OrderApiController {
     private FileDownloadService fileDownloadService;
 
     @Autowired
-    private PDFSummonsOrderService pdfSummonsOrderService;
+    private ServiceUrlMappingPdfService serviceUrlMappingPdfService;
+
+    @Autowired
+    private ServiceUrlMapperVCService serviceUrlMapperVCService;
 
 
     @Autowired
@@ -91,15 +90,16 @@ public class OrderApiController {
     }
 
 
-    @PostMapping("/process-file")
-    public ResponseEntity<String> processFile() throws Exception {
-            String response = fileDownloadService.downloadAndExtractSignature();
-        return new ResponseEntity<String>(response, HttpStatus.OK);
+    @RequestMapping(value = "/credentials/v1/_generate", method = RequestMethod.POST)
+    public ResponseEntity<VcCredentialRequest> processFile(@Valid @RequestBody VcCredentialRequest vcCredentialRequest ) {
+            VcCredentialRequest response= serviceUrlMapperVCService.generateVc(vcCredentialRequest);
+        return new ResponseEntity<VcCredentialRequest>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getpdf", method = RequestMethod.POST)
-    public ResponseEntity<InputStreamResource>getPdf() throws IOException {
-        return pdfSummonsOrderService.getPdfService("33ed5611-6c08-4d43-a78f-4eb7ad486a7f","summon");
+    @RequestMapping(value = "/pdf/v1/_get", method = RequestMethod.POST)
+    public ResponseEntity<Object>getPdf(@Valid @RequestBody PdfRequest pdfRequestobject) {
+        Object pdfResponse= serviceUrlMappingPdfService.getSVcUrlMappingPdf(pdfRequestobject);
+        return new ResponseEntity<Object>(pdfResponse, HttpStatus.OK);
     }
 }
 

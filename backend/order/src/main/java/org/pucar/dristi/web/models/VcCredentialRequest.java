@@ -1,6 +1,8 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +15,26 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class QrCodeRequest {
+public class VcCredentialRequest {
 
     @JsonProperty("RequestInfo")
+    @Valid
     private RequestInfo requestInfo;
 
-    @JsonProperty("code")
-    private String code;
+    @JsonProperty("fileStoreId")
+    @Valid
+    private String fileStoreId;
 
-    @JsonProperty("uuid")
-    private String uuid;
+    @JsonProperty("referenceId")
+    @Valid
+    private String referenceId;
+
+    @JsonProperty("referenceCode")
+    @Valid
+    private String referenceCode;
+
+    @JsonProperty("tenantId")
+    @Valid
+    private String tenantId;
+
 }

@@ -1,11 +1,11 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.DecimalMax;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -13,14 +13,12 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class QrCodeRequest {
+public class VcOrderSearchPagination {
+    @JsonProperty("limit")
 
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+    @DecimalMax("100")
+    private Double limit = 10d;
 
-    @JsonProperty("code")
-    private String code;
-
-    @JsonProperty("uuid")
-    private String uuid;
+    @JsonProperty("offSet")
+    private Double offSet = 0d;
 }

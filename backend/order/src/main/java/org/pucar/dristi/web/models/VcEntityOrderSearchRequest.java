@@ -16,16 +16,16 @@ import org.springframework.validation.annotation.Validated;
 public class VcEntityOrderSearchRequest {
 
     @JsonProperty("RequestInfo")
-    @Valid
     private RequestInfo requestInfo;
 
     @JsonProperty("criteria")
-    @Valid
     private VcEntityCriteria criteria;
 
 
     @JsonProperty("tenantId")
-    @Valid
     private String tenantId;
+
+    @JsonProperty("pagination")
+    private VcOrderSearchPagination pagination;
 
 }

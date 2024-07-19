@@ -48,6 +48,6 @@ public class CredentialRequest {
 
     @JsonProperty("orderPdfSignature")
     @Valid
-    private Calendar orderPdfSignature;
+    private String orderPdfSignature;
 
 }
