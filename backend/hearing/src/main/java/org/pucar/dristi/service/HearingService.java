@@ -148,6 +148,7 @@ public class HearingService {
             hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
             hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
             hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
             return hearing;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while verifying hearing");
