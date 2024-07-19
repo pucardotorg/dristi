@@ -65,7 +65,8 @@ const GenerateOrders = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [formdata, setFormdata] = useState({});
+  const [formdata, setFormdata] = useState(null);
+  const [prevOrder, setPrevOrder] = useState();
   const [stepper, setStepper] = useState("-1");
   const [isBailable, setIsBailable] = useState();
   const [isSurety, setIsSurety] = useState();
@@ -515,13 +516,13 @@ const GenerateOrders = () => {
     ordersService
       .updateOrder(updatedreqBody, { tenantId })
       .then(() => {
+        setPrevOrder(currentOrder);
         refetchOrdersData();
         if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
           setShowErrorToast(true);
         }
         if (action === CaseWorkflowAction.ESIGN) {
-          setStepper(3);
-          // setShowSuccessModal(true);
+          setShowSuccessModal(true);
         }
         if (modal === "reviewModal") {
           setShowReviewModal(true);
@@ -531,6 +532,8 @@ const GenerateOrders = () => {
       })
       .catch(() => {
         refetchOrdersData();
+        setShowsignatureModal(false);
+        setDeleteOrderIndex(null);
       });
   };
 
