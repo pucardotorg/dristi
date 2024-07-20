@@ -51,9 +51,7 @@ public class ApplicationRepository {
             List<Object> preparedStmtListSt;
             List<Object> preparedStmtListDoc;
 
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getApplicationType(),applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(),
-                    applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(),
-                    applicationSearchRequest.getCriteria().getApplicationNumber(), preparedStmtList);
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList);
             applicationQuery = queryBuilder.addOrderByQuery(applicationQuery, applicationSearchRequest.getPagination());
             log.info("Final application search query: {}", applicationQuery);
             if(applicationSearchRequest.getPagination() !=  null) {

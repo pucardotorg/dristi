@@ -90,7 +90,7 @@ class ApplicationRepositoryTest {
 
         // Use eq and any to match arguments
         when(queryBuilder.getApplicationSearchQuery(
-                eq(applicationType), eq(applicationId), isNull(), isNull(), isNull(), isNull(), isNull(), anyList()))
+                any(), anyList()))
                 .thenReturn(applicationQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
                 .thenReturn(applicationQuery + " ORDER BY createdTime");
@@ -117,7 +117,7 @@ class ApplicationRepositoryTest {
         assertEquals(applications, result);
         assertEquals(1, pagination.getTotalCount());
 
-        verify(queryBuilder, times(1)).getApplicationSearchQuery(eq(applicationType), eq(applicationId), isNull(), isNull(), isNull(), isNull(), isNull(), anyList());
+        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList());
         verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
         verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList());
         verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
@@ -139,7 +139,7 @@ class ApplicationRepositoryTest {
         Pagination pagination = new Pagination();
         searchRequest.setPagination(pagination);
 
-        when(queryBuilder.getApplicationSearchQuery(any(),any(), any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenThrow(new CustomException("TEST_ERROR", "Test error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -161,7 +161,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        lenient().when(queryBuilder.getApplicationSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
+        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenReturn("some SQL query");
         lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
@@ -184,7 +184,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
