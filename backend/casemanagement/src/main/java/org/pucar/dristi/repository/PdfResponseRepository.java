@@ -20,21 +20,21 @@ public class PdfResponseRepository {
         this.jdbcTemplate=jdbcTemplate;
     }
 
-    private final static String tableQuery = "SELECT referenceId, jsonResponse FROM referenceid_filestore_mapper";
-    private final static String selectQuery = "SELECT jsonResponse FROM referenceid_filestore_mapper WHERE referenceId = ?";
-    private final static String insertQuery = "INSERT INTO referenceid_filestore_mapper (referenceId, jsonResponse) VALUES (?, ?::jsonb) " +
+    private static final String TABLE_QUERY = "SELECT referenceId, jsonResponse FROM referenceid_filestore_mapper";
+    private static final String SELECT_QUERY = "SELECT jsonResponse FROM referenceid_filestore_mapper WHERE referenceId = ?";
+    private static final String INSERT_QUERY = "INSERT INTO referenceid_filestore_mapper (referenceId, jsonResponse) VALUES (?, ?::jsonb) " +
             "ON CONFLICT (referenceId) DO UPDATE SET jsonResponse = EXCLUDED.jsonResponse";
 
     public List<Map<String, Object>> findAll() {
-        return jdbcTemplate.queryForList(tableQuery);
+        return jdbcTemplate.queryForList(TABLE_QUERY);
     }
 
     public Optional<String> findJsonResponseByReferenceId(String referenceId) {
         try {
-            List<String> results = jdbcTemplate.query(selectQuery, (rs, rowNum) -> {
+            List<String> results = jdbcTemplate.query(SELECT_QUERY, (rs, rowNum) -> {
                 PGobject pgObject = (PGobject) rs.getObject("jsonResponse");
                 return pgObject.getValue();
-            }, new Object[]{referenceId});
+            }, referenceId);
 
             if (results.isEmpty()) {
                 return Optional.empty();
@@ -47,7 +47,7 @@ public class PdfResponseRepository {
     }
 
     public void saveJsonResponse(String referenceId, String jsonResponse) {
-        jdbcTemplate.update(insertQuery, referenceId, jsonResponse);
+        jdbcTemplate.update(INSERT_QUERY, referenceId, jsonResponse);
     }
 }
 

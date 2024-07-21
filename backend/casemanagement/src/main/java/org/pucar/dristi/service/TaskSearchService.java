@@ -20,12 +20,10 @@ import org.springframework.web.client.RestTemplate;
 public class TaskSearchService {
 
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
     @Autowired
-    public TaskSearchService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public TaskSearchService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
     }
 
     @Value("${dristi.dev.task.search.host}")

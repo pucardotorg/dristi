@@ -22,12 +22,10 @@ import org.jsoup.nodes.Element;
 public class QrCodeImageService {
 
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
     @Autowired
-    public QrCodeImageService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public QrCodeImageService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
     }
 
     @Value("${egov.credential.host}")

@@ -49,7 +49,7 @@ public class PdfSummonsOrderRequestService {
     @Value("${egov.pdf.host}")
     private String generatePdfHost;
 
-    private static final String fileStoreMapperKey="referenceid_filestore_mapper";
+    private static final String FILE_STORE_MAPPER_KEY="referenceid_filestore_mapper";
     private static final String JSON_PARSING_ERR = "JSON_PARSING_ERR";
     @PostConstruct
     public void loadCache() {
@@ -60,7 +60,7 @@ public class PdfSummonsOrderRequestService {
                 String referenceId = (String) row.get("referenceId");
                 PGobject pgObject = (PGobject) row.get("jsonResponse");
                 String jsonResponse = pgObject.getValue();
-                stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, jsonResponse);
+                stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
             } catch (Exception e) {
                 log.error("Error loading data into cache for referenceId: {}", row.get("referenceId"), e);
                 throw new CustomException("CACHE_LOADING_ERROR","error loading data into cache");
@@ -73,7 +73,7 @@ public class PdfSummonsOrderRequestService {
         String refCode=pdfRequestobject.getReferenceCode();
         String tenantId= pdfRequestobject.getTenantId();
         // Step 1: Check the cache
-        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get(fileStoreMapperKey, referenceId);
+        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get(FILE_STORE_MAPPER_KEY, referenceId);
         if (cachedJsonResponse != null) {
             log.info("Cache hit for referenceId: {}", referenceId);
             try{
@@ -89,7 +89,7 @@ public class PdfSummonsOrderRequestService {
         if (dbJsonResponse.isPresent()) {
             log.info("Database hit for referenceId: {}", referenceId);
             // Update cache
-            stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, dbJsonResponse.get());
+            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, dbJsonResponse.get());
             try{
                 return objectMapper.readValue(dbJsonResponse.get(), Object.class);
             }
@@ -122,7 +122,7 @@ public class PdfSummonsOrderRequestService {
         log.info("Storing JSON response in database and updating cache for referenceId: {}", referenceId);
         if(jsonResponse!=null){
             referenceIdMapperRepository.saveJsonResponse(referenceId, jsonResponse);
-            stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, jsonResponse);
+            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
         }
 
         return pdfResponse;

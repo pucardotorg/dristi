@@ -23,25 +23,16 @@ import java.util.Calendar;
 @Slf4j
 public class ServiceUrlEntityRequestService {
 
-    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final OrderSearchService orderSearchService;
-    private final Producer producer;
-    private final QrCodeImageService qrCodeImageService;
     private final TaskSearchService taskSearchService;
 
     @Autowired
-    public ServiceUrlEntityRequestService(RestTemplate restTemplate,
-                     ObjectMapper objectMapper,
+    public ServiceUrlEntityRequestService(ObjectMapper objectMapper,
                      OrderSearchService orderSearchService,
-                     Producer producer,
-                     QrCodeImageService qrCodeImageService,
                      TaskSearchService taskSearchService) {
-        this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.orderSearchService = orderSearchService;
-        this.producer = producer;
-        this.qrCodeImageService = qrCodeImageService;
         this.taskSearchService = taskSearchService;
     }
 

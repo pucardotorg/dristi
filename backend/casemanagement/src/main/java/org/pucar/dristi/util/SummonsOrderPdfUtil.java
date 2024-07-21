@@ -23,9 +23,9 @@ import java.util.List;
 @Component
 public class SummonsOrderPdfUtil {
 
-    private final static String caseDetails="caseDetails";
-    private final static String respondentDetails="respondentDetails";
-    private final static String summonDetails="summonDetails";
+    private static final String CASE_DETAILS="caseDetails";
+    private static final String RESPONDENT_DETAILS="respondentDetails";
+    private static final String SUMMON_DETAILS="summonDetails";
 
     private final ObjectMapper objectMapper;
 
@@ -50,14 +50,14 @@ public class SummonsOrderPdfUtil {
             // Parse the taskDetails string as JSON
             JsonNode taskDetailsJson = objectMapper.readTree(taskDetailsString);
             // Extract specific fields from taskDetails JSON
-            courtName = taskDetailsJson.path(caseDetails).path("courtName").asText();
-            summonId = taskDetailsJson.path(summonDetails).path("summonId").asText();
-            respondentName = taskDetailsJson.path(respondentDetails).path("name").asText();
-            summonIssueDate = taskDetailsJson.path(summonDetails).path("issueDate").asText();
-            address = taskDetailsJson.path(respondentDetails).path("address").asText();
-            caseCharge = taskDetailsJson.path(caseDetails).path("caseCharge").asText();
-            judgeName = taskDetailsJson.path(caseDetails).path("judgeName").asText();
-            hearingDate = taskDetailsJson.path(caseDetails).path("hearingDate").asText();
+            courtName = taskDetailsJson.path(CASE_DETAILS).path("courtName").asText();
+            summonId = taskDetailsJson.path(SUMMON_DETAILS).path("summonId").asText();
+            respondentName = taskDetailsJson.path(RESPONDENT_DETAILS).path("name").asText();
+            summonIssueDate = taskDetailsJson.path(SUMMON_DETAILS).path("issueDate").asText();
+            address = taskDetailsJson.path(RESPONDENT_DETAILS).path("address").asText();
+            caseCharge = taskDetailsJson.path(CASE_DETAILS).path("caseCharge").asText();
+            judgeName = taskDetailsJson.path(CASE_DETAILS).path("judgeName").asText();
+            hearingDate = taskDetailsJson.path(CASE_DETAILS).path("hearingDate").asText();
         }
         catch(Exception e){
             throw new CustomException("JSON_PARSING_ERROR","error while parsing the task response to create pdf object");
