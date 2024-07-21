@@ -97,7 +97,7 @@ public class FileDownloadService {
 
     private File downloadFileFromS3(String s3Url) {
         File tempFile= null;
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpClient httpClient;
         CloseableHttpResponse closeableHttpResponse = null;
         try{
             httpClient = HttpClients.createDefault();
@@ -126,7 +126,7 @@ public class FileDownloadService {
                     closeableHttpResponse.close();
                 }
                 catch (Exception e){
-                    throw new CustomException("FILE_CLOSING_FAILED","failed to close the closeable http response"+e.getMessage());
+                    log.info("failed to close closeable http connection"+ e.getMessage());
                 }
             }
         }
