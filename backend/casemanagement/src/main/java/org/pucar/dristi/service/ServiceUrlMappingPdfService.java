@@ -1,6 +1,5 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.SummonsOrderPdfUtil;
@@ -9,8 +8,6 @@ import org.pucar.dristi.web.models.PdfSummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class ServiceUrlMappingPdfService {

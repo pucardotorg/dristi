@@ -7,7 +7,6 @@ import org.pucar.dristi.web.models.VcCredentialRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
 
 @Service
 public class ServiceUrlMapperVCService {

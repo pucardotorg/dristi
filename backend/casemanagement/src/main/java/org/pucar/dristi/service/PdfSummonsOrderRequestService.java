@@ -1,6 +1,5 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,20 +21,17 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class PdfSummonsOrderRequestService {
-
-    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final ServiceRequestRepository serviceRequestRepository;
     private final PdfResponseRepository referenceIdMapperRepository;
     private final StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    public PdfSummonsOrderRequestService(RestTemplate restTemplate,
+    public PdfSummonsOrderRequestService(
                      ObjectMapper objectMapper,
                      ServiceRequestRepository serviceRequestRepository,
                      PdfResponseRepository referenceIdMapperRepository,
                      StringRedisTemplate stringRedisTemplate) {
-        this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.serviceRequestRepository = serviceRequestRepository;
         this.referenceIdMapperRepository = referenceIdMapperRepository;

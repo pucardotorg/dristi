@@ -34,19 +34,15 @@ public class CasemanagerApiController {
     private final HttpServletRequest request;
 
 
-    private final FileDownloadService fileDownloadService;
-
-
     private final ServiceUrlMappingPdfService serviceUrlMappingPdfService;
 
 
     private final ServiceUrlMapperVCService serviceUrlMapperVCService;
 
     @Autowired
-    public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request, FileDownloadService fileDownloadService, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService) {
+    public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService) {
         this.objectMapper = objectMapper;
         this.request = request;
-        this.fileDownloadService = fileDownloadService;
         this.serviceUrlMapperVCService = serviceUrlMapperVCService;
         this.serviceUrlMappingPdfService = serviceUrlMappingPdfService;
     }

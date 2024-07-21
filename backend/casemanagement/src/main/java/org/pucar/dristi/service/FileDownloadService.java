@@ -16,9 +16,7 @@ import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.commons.codec.binary.Hex;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.VcCredentialRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.connection.convert.StringToDataTypeConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
@@ -29,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Calendar;
 import java.util.List;
 
 @Service

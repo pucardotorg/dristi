@@ -1,10 +1,7 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.PdfRequest;
 import org.pucar.dristi.web.models.TaskSearchRequest;
 import org.pucar.dristi.web.models.VcEntityCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
