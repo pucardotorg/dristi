@@ -3,7 +3,6 @@ package org.pucar.dristi.web.controllers;
 
 import java.io.IOException;
 
-import org.pucar.dristi.service.FileDownloadService;
 import org.pucar.dristi.service.ServiceUrlMapperVCService;
 import org.pucar.dristi.service.ServiceUrlMappingPdfService;
 import org.pucar.dristi.web.models.*;
