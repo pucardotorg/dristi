@@ -24,27 +24,33 @@ import java.util.Optional;
 @Slf4j
 public class PdfSummonsOrderRequestService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final PdfResponseRepository referenceIdMapperRepository;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    @Value("${egov.pdf.host}")
-    private String generatePdfHost;
-
     @Autowired
-    private ObjectMapper objectMapper;
+    public PdfSummonsOrderRequestService(RestTemplate restTemplate,
+                     ObjectMapper objectMapper,
+                     ServiceRequestRepository serviceRequestRepository,
+                     PdfResponseRepository referenceIdMapperRepository,
+                     StringRedisTemplate stringRedisTemplate) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.referenceIdMapperRepository = referenceIdMapperRepository;
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
 
     @Value("${egov.pdf.create}")
     private String generatePdfUrl;
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    @Value("${egov.pdf.host}")
+    private String generatePdfHost;
 
-    @Autowired
-    private PdfResponseRepository referenceIdMapperRepository;
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
+    private static final String fileStoreMapperKey="referenceid_filestore_mapper";
+    private static final String JSON_PARSING_ERR = "JSON_PARSING_ERR";
     @PostConstruct
     public void loadCache() {
         log.info("Loading data into cache from database");
@@ -54,7 +60,7 @@ public class PdfSummonsOrderRequestService {
                 String referenceId = (String) row.get("referenceId");
                 PGobject pgObject = (PGobject) row.get("jsonResponse");
                 String jsonResponse = pgObject.getValue();
-                stringRedisTemplate.opsForHash().put("referenceid_filestore_mapper", referenceId, jsonResponse);
+                stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, jsonResponse);
             } catch (Exception e) {
                 log.error("Error loading data into cache for referenceId: {}", row.get("referenceId"), e);
                 throw new CustomException("CACHE_LOADING_ERROR","error loading data into cache");
@@ -67,14 +73,14 @@ public class PdfSummonsOrderRequestService {
         String refCode=pdfRequestobject.getReferenceCode();
         String tenantId= pdfRequestobject.getTenantId();
         // Step 1: Check the cache
-        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get("referenceid_filestore_mapper", referenceId);
+        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get(fileStoreMapperKey, referenceId);
         if (cachedJsonResponse != null) {
             log.info("Cache hit for referenceId: {}", referenceId);
             try{
                 return objectMapper.readValue(cachedJsonResponse, Object.class);
             }
             catch (Exception e){
-                throw new CustomException("JSON_PARSING_ERR","error while serializing cache data");
+                throw new CustomException(JSON_PARSING_ERR,"error while serializing cache data");
             }
         }
 
@@ -83,12 +89,12 @@ public class PdfSummonsOrderRequestService {
         if (dbJsonResponse.isPresent()) {
             log.info("Database hit for referenceId: {}", referenceId);
             // Update cache
-            stringRedisTemplate.opsForHash().put("referenceid_filestore_mapper", referenceId, dbJsonResponse.get());
+            stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, dbJsonResponse.get());
             try{
                 return objectMapper.readValue(dbJsonResponse.get(), Object.class);
             }
             catch (Exception e){
-                throw new CustomException("JSON_PARSING_ERR","error while serializing cache data");
+                throw new CustomException(JSON_PARSING_ERR,"error while serializing cache data");
             }
         }
 
@@ -110,13 +116,15 @@ public class PdfSummonsOrderRequestService {
             jsonResponse = objectMapper.writeValueAsString(pdfResponse);
         }
         catch (Exception e){
-            throw new CustomException("JSON_PARSING_ERR","error parsing the json response");
+            throw new CustomException(JSON_PARSING_ERR,"error parsing the json response");
         }
-
         // Step 4: Store JSON in database and cache on success
         log.info("Storing JSON response in database and updating cache for referenceId: {}", referenceId);
-        referenceIdMapperRepository.saveJsonResponse(referenceId, jsonResponse);
-        stringRedisTemplate.opsForHash().put("referenceid_filestore_mapper", referenceId, jsonResponse);
+        if(jsonResponse!=null){
+            referenceIdMapperRepository.saveJsonResponse(referenceId, jsonResponse);
+            stringRedisTemplate.opsForHash().put(fileStoreMapperKey, referenceId, jsonResponse);
+        }
+
         return pdfResponse;
     }
 }

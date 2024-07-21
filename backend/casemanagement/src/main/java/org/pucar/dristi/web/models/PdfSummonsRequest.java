@@ -20,6 +20,6 @@ public class PdfSummonsRequest {
     private Object requestInfo;
 
     @JsonProperty("TaskSummon")
-    private List<SummonsRequest> TaskSummon;
+    private List<SummonsRequest> taskSummon;
 
 }

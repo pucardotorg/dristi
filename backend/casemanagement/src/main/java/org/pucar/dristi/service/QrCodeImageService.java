@@ -21,8 +21,14 @@ import org.jsoup.nodes.Element;
 @Service
 public class QrCodeImageService {
 
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    private RestTemplate restTemplate;
+    public QrCodeImageService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     @Value("${egov.credential.host}")
     private String credentialHost;
@@ -30,8 +36,7 @@ public class QrCodeImageService {
     private String credentialUrl;
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+
     public String getQrCodeImage(PdfRequest pdfRequestObject) {
         String referenceId= pdfRequestObject.getReferenceId();
         RequestInfo requestInfo= pdfRequestObject.getRequestInfo();
@@ -62,8 +67,8 @@ public class QrCodeImageService {
         try{
             Document doc = Jsoup.parse(qrResponse);
             Element img = doc.select("img").first();
-            String src = img.attr("src");
-            return src;
+            return img.attr("src");
+
         }
         catch(Exception e){
             throw new CustomException("ERROR_PARSING_QRCODE_RESPONSE","there was error fetching image from the qr response");

@@ -15,6 +15,7 @@ import org.pucar.dristi.web.models.SummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -22,11 +23,18 @@ import java.util.List;
 @Component
 public class SummonsOrderPdfUtil {
 
+    private final static String caseDetails="caseDetails";
+    private final static String respondentDetails="respondentDetails";
+    private final static String summonDetails="summonDetails";
+
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    private ObjectMapper objectMapper;
+    public SummonsOrderPdfUtil(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public PdfSummonsRequest fetchSummonsPdfObjectData(String qrCodeImage, ResponseEntity<Object> taskSearchResponseObject, RequestInfo requestInfo) {
-        String orderId=null;
         String courtName=null;
         String summonId=null;
         String respondentName=null;
@@ -39,19 +47,17 @@ public class SummonsOrderPdfUtil {
             String responseBodyString = objectMapper.writeValueAsString(taskSearchResponseObject.getBody());
             log.info("Response from the task search: " + responseBodyString);
             String taskDetailsString = JsonPath.parse(responseBodyString).read("$.list[0].taskDetails", String.class);
-            orderId = JsonPath.parse(responseBodyString).read("$.list[0].orderId", String.class);
-
             // Parse the taskDetails string as JSON
             JsonNode taskDetailsJson = objectMapper.readTree(taskDetailsString);
             // Extract specific fields from taskDetails JSON
-            courtName = taskDetailsJson.path("caseDetails").path("courtName").asText();
-            summonId = taskDetailsJson.path("summonDetails").path("summonId").asText();
-            respondentName = taskDetailsJson.path("respondentDetails").path("name").asText();
-            summonIssueDate = taskDetailsJson.path("summonDetails").path("issueDate").asText();
-            address = taskDetailsJson.path("respondentDetails").path("address").asText();
-            caseCharge = taskDetailsJson.path("caseDetails").path("caseCharge").asText();
-            judgeName = taskDetailsJson.path("caseDetails").path("judgeName").asText();
-            hearingDate = taskDetailsJson.path("caseDetails").path("hearingDate").asText();
+            courtName = taskDetailsJson.path(caseDetails).path("courtName").asText();
+            summonId = taskDetailsJson.path(summonDetails).path("summonId").asText();
+            respondentName = taskDetailsJson.path(respondentDetails).path("name").asText();
+            summonIssueDate = taskDetailsJson.path(summonDetails).path("issueDate").asText();
+            address = taskDetailsJson.path(respondentDetails).path("address").asText();
+            caseCharge = taskDetailsJson.path(caseDetails).path("caseCharge").asText();
+            judgeName = taskDetailsJson.path(caseDetails).path("judgeName").asText();
+            hearingDate = taskDetailsJson.path(caseDetails).path("hearingDate").asText();
         }
         catch(Exception e){
             throw new CustomException("JSON_PARSING_ERROR","error while parsing the task response to create pdf object");
@@ -70,11 +76,9 @@ public class SummonsOrderPdfUtil {
                 .embeddedUrl(qrCodeImage)
                 .build();
 
-        PdfSummonsRequest pdfSummonsRequest= PdfSummonsRequest.builder()
+        return PdfSummonsRequest.builder()
                 .requestInfo(requestInfo)
-                .TaskSummon(List.of(summonsRequest))
+                .taskSummon(List.of(summonsRequest))
                 .build();
-
-        return pdfSummonsRequest;
     }
 }

@@ -15,31 +15,38 @@ import java.io.IOException;
 @Service
 public class ServiceUrlMappingPdfService {
 
-    @Autowired
-    private TaskSearchService taskSearchService;
+    private final TaskSearchService taskSearchService;
+    private final SummonsOrderPdfUtil summonsOrderPdfUtil;
+    private final QrCodeImageService qrCodeImageService;
+    private final PdfSummonsOrderRequestService pdfSummonsOrderRequestService;
 
     @Autowired
-    private SummonsOrderPdfUtil summonsOrderPdfUtil;
-
-    @Autowired
-    private QrCodeImageService qrCodeImageService;
-
-    @Autowired
-    private PdfSummonsOrderRequestService pdfSummonsOrderRequestService;
+    public ServiceUrlMappingPdfService(TaskSearchService taskSearchService,
+                     SummonsOrderPdfUtil summonsOrderPdfUtil,
+                     QrCodeImageService qrCodeImageService,
+                     PdfSummonsOrderRequestService pdfSummonsOrderRequestService) {
+        this.taskSearchService = taskSearchService;
+        this.summonsOrderPdfUtil = summonsOrderPdfUtil;
+        this.qrCodeImageService = qrCodeImageService;
+        this.pdfSummonsOrderRequestService = pdfSummonsOrderRequestService;
+    }
 
     public Object getSVcUrlMappingPdf(PdfRequest pdfRequestobject) {
-        String referenceId=pdfRequestobject.getReferenceId();
-        String refCode= pdfRequestobject.getReferenceCode();
-        String tenantId= pdfRequestobject.getTenantId();
-        RequestInfo requestInfo= pdfRequestobject.getRequestInfo();
+        String referenceId = pdfRequestobject.getReferenceId();
+        String refCode = pdfRequestobject.getReferenceCode();
+        String tenantId = pdfRequestobject.getTenantId();
+        RequestInfo requestInfo = pdfRequestobject.getRequestInfo();
         Object pdfresponse = null;
-        switch (refCode) {
-            case "summons-order":
-                String qrCodeImage = qrCodeImageService.getQrCodeImage(pdfRequestobject);
-                ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId,tenantId,requestInfo);
-                PdfSummonsRequest pdfSummonsRequest = summonsOrderPdfUtil.fetchSummonsPdfObjectData(qrCodeImage, taskSearchResponse, requestInfo);
-                pdfresponse = pdfSummonsOrderRequestService.createPdf(pdfSummonsRequest,pdfRequestobject);
+
+        if ("summons-order".equals(refCode)) {
+            String qrCodeImage = qrCodeImageService.getQrCodeImage(pdfRequestobject);
+            ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId, tenantId, requestInfo);
+            PdfSummonsRequest pdfSummonsRequest = summonsOrderPdfUtil.fetchSummonsPdfObjectData(qrCodeImage, taskSearchResponse, requestInfo);
+            pdfresponse = pdfSummonsOrderRequestService.createPdf(pdfSummonsRequest, pdfRequestobject);
+        } else {
+            throw new CustomException("INVALID_REFERENCE_CODE", "The reference code " + refCode + " is not recognized.");
         }
+
         return pdfresponse;
     }
 }

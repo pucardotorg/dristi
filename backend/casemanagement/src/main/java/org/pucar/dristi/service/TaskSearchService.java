@@ -19,11 +19,14 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class TaskSearchService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private RestTemplate restTemplate;
+    public TaskSearchService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     @Value("${dristi.dev.task.search.host}")
     private String taskSearchHost;
@@ -40,15 +43,6 @@ public class TaskSearchService {
         headers.set("Content-Type", "application/json;charset=UTF-8");
         headers.set("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
         headers.set("Connection", "keep-alive");
-       /* headers.set("Origin", "http://localhost:3000");
-        headers.set("Referer", "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true");
-        headers.set("Sec-Fetch-Dest", "empty");
-        headers.set("Sec-Fetch-Mode", "cors");
-        headers.set("Sec-Fetch-Site", "same-origin");
-        headers.set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
-        headers.set("sec-ch-ua", "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\"");
-        headers.set("sec-ch-ua-mobile", "?0");
-        headers.set("sec-ch-ua-platform", "\"Linux\"");*/
 
         requestInfo.setAuthToken(requestInfo.getAuthToken());
         VcEntityCriteria criteria= VcEntityCriteria.builder()

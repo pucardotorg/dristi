@@ -23,11 +23,14 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class OrderSearchService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    public OrderSearchService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     @Value("${dristi.dev.order.search.host}")
     private String orderSearchHost;
@@ -37,7 +40,6 @@ public class OrderSearchService {
 
 
     public String searchOrder(String referenceId, String tenantId, RequestInfo requestInfo)  {
-       // String url = "https://dristi-dev.pucar.org/order/order/v1/search";
         StringBuilder orderSearchurl=new StringBuilder();
         orderSearchurl.append(orderSearchHost).append(orderSearchPath);
 

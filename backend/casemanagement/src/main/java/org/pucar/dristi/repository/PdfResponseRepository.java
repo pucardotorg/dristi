@@ -12,12 +12,17 @@ import java.util.Optional;
 @Repository
 public class PdfResponseRepository {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
-    private final String tableQuery = "SELECT referenceId, jsonResponse FROM referenceid_filestore_mapper";
-    private final String selectQuery = "SELECT jsonResponse FROM referenceid_filestore_mapper WHERE referenceId = ?";
-    private final String insertQuery = "INSERT INTO referenceid_filestore_mapper (referenceId, jsonResponse) VALUES (?, ?::jsonb) " +
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public PdfResponseRepository(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate=jdbcTemplate;
+    }
+
+    private final static String tableQuery = "SELECT referenceId, jsonResponse FROM referenceid_filestore_mapper";
+    private final static String selectQuery = "SELECT jsonResponse FROM referenceid_filestore_mapper WHERE referenceId = ?";
+    private final static String insertQuery = "INSERT INTO referenceid_filestore_mapper (referenceId, jsonResponse) VALUES (?, ?::jsonb) " +
             "ON CONFLICT (referenceId) DO UPDATE SET jsonResponse = EXCLUDED.jsonResponse";
 
     public List<Map<String, Object>> findAll() {
@@ -26,10 +31,16 @@ public class PdfResponseRepository {
 
     public Optional<String> findJsonResponseByReferenceId(String referenceId) {
         try {
-            return jdbcTemplate.queryForObject(selectQuery, new Object[]{referenceId}, (rs, rowNum) -> {
+            List<String> results = jdbcTemplate.query(selectQuery, (rs, rowNum) -> {
                 PGobject pgObject = (PGobject) rs.getObject("jsonResponse");
-                return Optional.ofNullable(pgObject.getValue());
-            });
+                return pgObject.getValue();
+            }, new Object[]{referenceId});
+
+            if (results.isEmpty()) {
+                return Optional.empty();
+            } else {
+                return Optional.ofNullable(results.get(0));
+            }
         } catch (Exception e) {
             return Optional.empty();
         }

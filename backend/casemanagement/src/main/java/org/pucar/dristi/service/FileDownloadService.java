@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,11 +45,10 @@ public class FileDownloadService {
     public String downloadAndExtractSignature(VcCredentialRequest vcCredentialRequest)  {
         String tenantId= vcCredentialRequest.getTenantId();
         String fileStoreId= vcCredentialRequest.getFileStoreId();
-        //String url = "https://unified-dev.digit.org/filestore/v1/files/url?fileStoreIds=" + fileStoreId + "&tenantId=" + tenantId;
         StringBuilder fileStoreSearch = new StringBuilder();
         fileStoreSearch.append(fileStoreHost).append(fileStorePath);
         String fileStoreSearchUrl= fileStoreSearch.toString()+"?fileStoreIds=" + fileStoreId + "&tenantId=" + tenantId;
-        String authToken = "a95c008e-bc36-4620-bb05-6cf50b36414d";
+        String authToken = vcCredentialRequest.getRequestInfo().getAuthToken();
         // Step 1: Call the API to get the S3 URL
         String s3Url = getS3Url(fileStoreSearchUrl, authToken, tenantId);
 
@@ -58,8 +59,14 @@ public class FileDownloadService {
         String signedHashValue=extractSignature(downloadedFile);
 
         // Step 4: Delete the temporary file
-        if (downloadedFile.exists()) {
-            downloadedFile.delete();
+        Path path = Paths.get(downloadedFile.getAbsolutePath());
+        if (Files.exists(path)) {
+            try {
+                Files.delete(path);
+            } catch (Exception e) {
+                // Log the exception or handle it accordingly
+                throw new CustomException("FILE_DELETE_FAILED","Failed to delete file: " + e.getMessage());
+            }
         }
 
         return signedHashValue;
@@ -83,8 +90,6 @@ public class FileDownloadService {
                 // Parse the JSON response using JsonPath to get the S3 URL
                 log.info("s3 url response"+ responseString);
                 s3Url = JsonPath.parse(responseString).read("$.fileStoreIds[0].url", String.class);
-
-
             }
         }
         catch (Exception e){
@@ -95,38 +100,43 @@ public class FileDownloadService {
 
     private File downloadFileFromS3(String s3Url) {
         File tempFile= null;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse closeableHttpResponse = null;
         try{
-            CloseableHttpClient httpClient = HttpClients.createDefault();
+            httpClient = HttpClients.createDefault();
             HttpGet request = new HttpGet(s3Url);
-
-            CloseableHttpResponse response = httpClient.execute(request);
-            HttpEntity entity = response.getEntity();
-
+            closeableHttpResponse = httpClient.execute(request);
+            HttpEntity entity = closeableHttpResponse.getEntity();
             if (entity != null) {
                 InputStream inputStream = entity.getContent();
                 tempFile = Files.createTempFile("downloaded", ".pdf").toFile();
                 FileOutputStream outputStream = new FileOutputStream(tempFile);
-
                 int read;
                 byte[] buffer = new byte[1024];
                 while ((read = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, read);
                 }
-
                 outputStream.close();
                 inputStream.close();
-
             }
-
         }
         catch(Exception e){
             throw new CustomException("FILE_DOWNLOAD_FAILED","Failed to download file from S3 URL");
+        }
+        finally{
+            if(closeableHttpResponse!=null){
+                try{
+                    closeableHttpResponse.close();
+                }
+                catch (Exception e){
+                    throw new CustomException("FILE_CLOSING_FAILED","failed to close the closeable http response"+e.getMessage());
+                }
+            }
         }
         return tempFile;
     }
 
     private String extractSignature(File pdfFile) {
-        byte[] hashValue=null;
         String signedHashValue=null;
         try (PDDocument document = PDDocument.load(pdfFile)) {
             List<PDSignature> signatureDictionaries = document.getSignatureDictionaries();
@@ -141,11 +151,10 @@ public class FileDownloadService {
                 // Convert the first 32 bytes to hexadecimal string
                 signedHashValue = Hex.encodeHexString(first32Bytes);
 
-
             }
         }
         catch (Exception e){
-            throw new CustomException("SIGNATURE_EXTRACTION_FAILED","extracting digital signature from the pdf failed");
+            throw new CustomException("SIGNATURE_EXTRACTION_FAILED","extracting digital signature from the pdf failed:"+e.getMessage());
         }
         return signedHashValue;
     }

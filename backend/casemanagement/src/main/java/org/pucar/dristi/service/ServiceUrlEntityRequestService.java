@@ -23,23 +23,27 @@ import java.util.Calendar;
 @Slf4j
 public class ServiceUrlEntityRequestService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+    private final OrderSearchService orderSearchService;
+    private final Producer producer;
+    private final QrCodeImageService qrCodeImageService;
+    private final TaskSearchService taskSearchService;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private OrderSearchService orderSearchService;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private QrCodeImageService qrCodeImageService;
-
-    @Autowired
-    private TaskSearchService taskSearchService;
+    public ServiceUrlEntityRequestService(RestTemplate restTemplate,
+                     ObjectMapper objectMapper,
+                     OrderSearchService orderSearchService,
+                     Producer producer,
+                     QrCodeImageService qrCodeImageService,
+                     TaskSearchService taskSearchService) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+        this.orderSearchService = orderSearchService;
+        this.producer = producer;
+        this.qrCodeImageService = qrCodeImageService;
+        this.taskSearchService = taskSearchService;
+    }
 
     public CredentialRequest getEntityDetails(String signDate, VcCredentialRequest vcCredentialRequest) {
         String referenceId= vcCredentialRequest.getReferenceId();
@@ -73,7 +77,7 @@ public class ServiceUrlEntityRequestService {
         String cnrNumber = orderSearchService.searchOrder(orderId,tenantId,requestInfo);
 
 
-        CredentialRequest credentialRequest= CredentialRequest.builder()
+        return CredentialRequest.builder()
                 .cnrNumber(cnrNumber)
                 .courtName(courtName)
                 .summonsIssueDate(summonIssueDate)
@@ -83,9 +87,6 @@ public class ServiceUrlEntityRequestService {
                 .id(referenceId)
                 .module("Pucar.SummonsOrder1")
                 .build();
-
-
-        return credentialRequest;
 
     }
 }
