@@ -1,16 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { FormComposerV2, Modal, Button } from "@egovernments/digit-ui-react-components";
+import { Button, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { DRISTIService } from "../../../../dristi/src/services/index.js";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
-import { hearingService } from "../../hooks/services/index.js";
-import _ from "lodash";
 
-const AddParty = ({ onCancel, onDismiss, hearing, tenantId, hearingId }) => {
+const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
   const { t } = useTranslation();
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
-  const [partyHearing, setPartyHearing] = useState(() => _.cloneDeep(hearing));
-
   const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
       <path d="M0 0h24v24H0V0z" fill="none" />
@@ -66,9 +63,8 @@ const AddParty = ({ onCancel, onDismiss, hearing, tenantId, hearingId }) => {
             newData[newKey] = data[key];
           }
         });
-        newData.deposition = "";
         newData.isSigned = false;
-
+        newData.uuid = generateUUID();
         const errors = validateFormData(newData);
         if (Object.keys(errors).length > 0) {
           console.log("Validation errors:", errors);
@@ -79,26 +75,47 @@ const AddParty = ({ onCancel, onDismiss, hearing, tenantId, hearingId }) => {
       .filter(Boolean);
 
     if (cleanedData.length === aFormData.length) {
-      console.log(cleanedData, "dfddfd");
       onAdd(cleanedData);
       onDismiss();
     }
   };
-
+  const generateUUID = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
   const onAdd = (cleanedData) => {
-    const updatedHearing = { ...partyHearing };
-    const updatedAdditionalDetails = { ...partyHearing.additionalDetails };
-
-    if (updatedAdditionalDetails.witnesses) {
-      updatedAdditionalDetails.witnesses = [...updatedAdditionalDetails.witnesses, ...cleanedData];
-    } else {
-      updatedAdditionalDetails.witnesses = cleanedData;
-    }
-
-    updatedHearing.additionalDetails = updatedAdditionalDetails;
-    hearingService.updateHearing(
-      { tenantId, hearing: updatedHearing, status: hearing.status, hearingType: hearing.hearingType },
-      { applicationNumber: "", cnrNumber: "", hearingId }
+    const caseDetails = {
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    };
+    const witnessDetails = caseDetails.additionalDetails?.witnessDetails
+      ? [...caseDetails.additionalDetails?.witnessDetails?.formdata, ...cleanedData]
+      : [...cleanedData];
+    const newcasedetails = {
+      ...caseDetails,
+      additionalDetails: {
+        ...caseDetails.additionalDetails,
+        witnessDetails: {
+          ...caseDetails?.additionalDetails?.witnessDetails,
+          formdata: witnessDetails,
+        },
+      },
+    };
+    return DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...newcasedetails,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+          workflow: {
+            ...caseDetails?.workflow,
+          },
+          tenantId: tenantId,
+          litigants: newcasedetails?.litigants || [],
+        },
+      },
+      tenantId
     );
   };
 
