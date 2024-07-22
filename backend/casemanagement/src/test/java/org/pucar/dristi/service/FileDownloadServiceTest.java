@@ -1,18 +1,30 @@
 package org.pucar.dristi.service;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.VcCredentialRequest;
+import org.springframework.util.StreamUtils;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class FileDownloadServiceTest {
 
     @Mock
@@ -21,11 +33,6 @@ class FileDownloadServiceTest {
     @InjectMocks
     @Spy
     private FileDownloadService fileDownloadService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
 
     @Test
@@ -53,7 +60,7 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    void testExtractSignature_Failure() throws IOException {
+    void testExtractSignature_Failure() {
         File pdfFile = mock(File.class);
 
         assertThrows(
