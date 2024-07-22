@@ -91,6 +91,7 @@ public class ApplicationService {
                 List<Application> applicationList = applicationRepository.getApplications(request);
                 log.info("Application list fetched with size :: {}", applicationList.size());
                 // If no applications are found, return an empty list
+                //TODO: Why would we enrich workflow for an empty list of applications?
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
                 applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));

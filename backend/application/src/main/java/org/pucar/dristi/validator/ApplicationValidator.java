@@ -32,6 +32,7 @@ public class ApplicationValidator {
         RequestInfo requestInfo = applicationRequest.getRequestInfo();
         Application application = applicationRequest.getApplication();
 
+        //TODO: This is validated in the POJO itself as mandatory. Redundant code.
         if(ObjectUtils.isEmpty(application.getCaseId())) {
             throw new CustomException(VALIDATION_ERR, "caseId is mandatory for creating application");
         }
@@ -41,9 +42,13 @@ public class ApplicationValidator {
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
             }
+        
+        //TODO: This is getting validated via annotations in the POJO. Redundant type
         if(ObjectUtils.isEmpty(application.getTenantId())) {
                 throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for creating application");
             }
+        
+        //TODO: ApplicationType should be validated against master data. 
         if(ObjectUtils.isEmpty(application.getApplicationType())){
             throw new CustomException(VALIDATION_ERR, "applicationType is mandatory for creating application");
         }

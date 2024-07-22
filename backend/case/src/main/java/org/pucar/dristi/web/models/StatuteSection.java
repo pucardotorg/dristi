@@ -41,10 +41,10 @@ public class StatuteSection {
 	private String tenantId = null;
 
 	@JsonProperty("statute")
-	private String statute = null;
+	private String statuteId = null;
 
 	@JsonProperty("sections")
-	private List<String> sections = null;
+	private List<String> sectionIds = null;
 
 	@JsonProperty("subsections")
 	private List<String> subsections = null;

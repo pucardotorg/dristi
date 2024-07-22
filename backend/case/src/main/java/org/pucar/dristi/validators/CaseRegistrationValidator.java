@@ -36,11 +36,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import net.minidev.json.JSONArray;
 
 @Component
-public class CaseRegistrationValidator {
+public class CaseRegistrationValidator implements Validator{
 
 	private IndividualService individualService;
 
@@ -75,7 +77,8 @@ public class CaseRegistrationValidator {
 
 	public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException {
 		CourtCase courtCase = caseRequest.getCases();
-
+		//TODO: Where are the validations against MDMS?
+		//TODO: Where are the validations of mandatory fields in the caseDetails attribute against MDMS schema?
 		if (ObjectUtils.isEmpty(courtCase.getTenantId()))
 			throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for creating case");
 		if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
@@ -216,6 +219,7 @@ public class CaseRegistrationValidator {
 		return true;
 	}
 
+	//TODO: What does this method do?
 	private List<String> createMasterDetails() {
 		List<String> masterList = new ArrayList<>();
 		masterList.add("ComplainantType");
@@ -224,6 +228,18 @@ public class CaseRegistrationValidator {
 		masterList.add("ResolutionMechanism");
 
 		return masterList;
+	}
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
