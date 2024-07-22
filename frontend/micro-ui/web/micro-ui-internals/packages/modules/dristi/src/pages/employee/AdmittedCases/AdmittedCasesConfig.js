@@ -283,7 +283,7 @@ export const TabSearchconfig = {
     {
       label: "Submissions",
       type: "search",
-      customHookName: "dristi.useGetSubmissions",
+      // customHookName: "dristi.useGetSubmissions",
       apiDetails: {
         serviceName: "/application/application/v1/search",
         requestParam: {
