@@ -283,6 +283,7 @@ export const TabSearchconfig = {
     {
       label: "Submissions",
       type: "search",
+      customHookName: "dristi.useGetSubmissions",
       apiDetails: {
         serviceName: "/application/application/v1/search",
         requestParam: {
@@ -404,7 +405,8 @@ export const TabSearchconfig = {
               },
               {
                 label: "Owner",
-                jsonPath: "",
+                jsonPath: "auditDetails.createdBy",
+                additionalCustomization: true,
               },
               {
                 label: "Date Added",
@@ -633,8 +635,7 @@ export const TabSearchconfig = {
               },
             ],
           },
-
-          show: true,
+          show: false,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),

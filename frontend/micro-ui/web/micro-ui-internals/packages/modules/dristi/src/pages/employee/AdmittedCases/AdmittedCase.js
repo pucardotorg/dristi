@@ -70,6 +70,21 @@ const AdmittedCases = ({ isJudge = true }) => {
         : "",
     [caseDetails?.statutesAndSections]
   );
+  const litigants = caseDetails?.litigants?.length > 0 ? caseDetails?.litigants : [];
+  const finalLitigantsData = litigants.map((litigant) => {
+    return {
+      ...litigant,
+      name: litigant.additionalDetails?.fullName,
+    };
+  });
+  const reps = caseDetails?.representatives?.length > 0 ? caseDetails?.representatives : [];
+  const finalRepresentativesData = reps.map((rep) => {
+    return {
+      ...rep,
+      name: rep.additionalDetails?.advocateName,
+      partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
+    };
+  });
 
   const caseRelatedData = useMemo(
     () => ({
@@ -78,11 +93,14 @@ const AdmittedCases = ({ isJudge = true }) => {
       cnrNumber,
       title: caseDetails?.caseTitle || "",
       stage: caseDetails?.stage,
+      parties: [...finalLitigantsData, ...finalRepresentativesData],
       case: caseDetails,
       statue: statue,
     }),
     [caseDetails, caseId, cnrNumber, filingNumber, statue]
   );
+
+  console.log(caseRelatedData);
 
   const showMakeSubmission = useMemo(() => {
     return (
@@ -269,6 +287,11 @@ const AdmittedCases = ({ isJudge = true }) => {
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
+                        }
+                      : column.label === "Owner"
+                      ? {
+                          ...column,
+                          parties: caseRelatedData.parties,
                         }
                       : column;
                   }),
@@ -563,7 +586,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         </div>
       </div>
       <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
-      {config?.label !== "Overview" && config?.label !== "Complaints" && (
+      {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
