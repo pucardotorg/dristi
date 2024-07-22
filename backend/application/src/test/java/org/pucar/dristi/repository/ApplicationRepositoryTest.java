@@ -70,11 +70,15 @@ class ApplicationRepositoryTest {
     void testGetApplicationsSuccess() {
         ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
         ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setId(UUID.randomUUID().toString());
+        String applicationId = UUID.randomUUID().toString();
+        criteria.setId(applicationId);
+
+        String applicationType = "type1"; // Set an example application type
+        criteria.setApplicationType(applicationType); // Ensure the application type is set in the criteria
+
         searchRequest.setCriteria(criteria);
         Pagination pagination = new Pagination();
         searchRequest.setPagination(pagination);
-
 
         String applicationQuery = "SELECT * FROM applications";
         String documentQuery = "SELECT * FROM documents WHERE applicationId IN (?)";
@@ -84,7 +88,9 @@ class ApplicationRepositoryTest {
         List<Application> applications = Arrays.asList(new Application());
         applications.get(0).setId(UUID.randomUUID());
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), any(), any(), any(), any(), any(), any()))
+        // Use eq and any to match arguments
+        when(queryBuilder.getApplicationSearchQuery(
+                any(), anyList()))
                 .thenReturn(applicationQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
                 .thenReturn(applicationQuery + " ORDER BY createdTime");
@@ -111,7 +117,7 @@ class ApplicationRepositoryTest {
         assertEquals(applications, result);
         assertEquals(1, pagination.getTotalCount());
 
-        verify(queryBuilder, times(1)).getApplicationSearchQuery(anyString(), any(), any(), any(), any(), any(), any());
+        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList());
         verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
         verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList());
         verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
@@ -122,6 +128,9 @@ class ApplicationRepositoryTest {
         verify(jdbcTemplate, times(1)).query(eq(statuteQuery), any(Object[].class), eq(statuteSectionRowMapper));
     }
 
+
+
+
     @Test
     public void testGetApplicationsThrowsCustomException() {
         ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
@@ -130,7 +139,7 @@ class ApplicationRepositoryTest {
         Pagination pagination = new Pagination();
         searchRequest.setPagination(pagination);
 
-        when(queryBuilder.getApplicationSearchQuery(any(), any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenThrow(new CustomException("TEST_ERROR", "Test error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -152,7 +161,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        lenient().when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
+        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenReturn("some SQL query");
         lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
@@ -175,7 +184,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->

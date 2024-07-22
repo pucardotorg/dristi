@@ -299,6 +299,10 @@ components:
           type: string
         filingNumber:
           type: string
+        artifactType:
+          type: string
+        evidenceStatus:
+          type: string  
         hearing:
           type: string
         order:

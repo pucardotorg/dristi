@@ -31,6 +31,8 @@ public class EvidenceQueryBuilderTest {
         String id = "1";
         String caseId = "testCaseId";
         String application = "testApplication";
+        Boolean evidenceStatus = true;
+        String artifactType = "testArtifactType";
         String filingNumber = "testFilingNumber";
         String hearing = "testHearing";
         String order = "testOrder";
@@ -47,14 +49,14 @@ public class EvidenceQueryBuilderTest {
                 "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.filingNumber = ? " +
+                " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.artifactType = ? AND art.isEvidence = ? AND art.filingNumber = ? " +
                 "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
                 "AND art.sourceName = ? " +
                 "AND art.artifactNumber = ?";
         List<Object> preparedStmtList=new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,artifactType,evidenceStatus,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -84,17 +86,36 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art";
         List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,null,null,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
     }
+    @Test
+    void testAddArtifactCriteriaWithBoolean() {
+        // Initialize the variables
+        Boolean criteria = true;
+        StringBuilder query = new StringBuilder("SELECT * FROM artifacts");
+        List<Object> preparedStmtList = new ArrayList<>();
+        boolean firstCriteria = true;
+        String criteriaClause = "art.isEvidence = ?";
 
+        // Call the method under test
+        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria, criteriaClause);
+
+        // Verify the results
+        assertFalse(result); // firstCriteria should be false after adding the first criteria
+        assertEquals("SELECT * FROM artifacts WHERE art.isEvidence = ?", query.toString()); // query should have the criteria appended
+        assertEquals(1, preparedStmtList.size()); // preparedStmtList should have one element
+        assertEquals(criteria, preparedStmtList.get(0)); // the criteria should be added to the preparedStmtList
+    }
     @Test
     public void testGetArtifactSearchQuery_exception() {
         List<Object> preparedStmtList = new ArrayList<>();
         String id = "testId";
         String caseId = "testCaseId";
+        Boolean evidenceStatus = true;
+        String artifactType = "testArtifactType";
         String application = "testApplication";
         String filingNumber = "testFilingNumber";
         String hearing = "testHearing";
@@ -109,7 +130,7 @@ public class EvidenceQueryBuilderTest {
 
         // Execute the method and assert that the CustomException is thrown
         CustomException exception = assertThrows(CustomException.class, () -> {
-            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,artifactType,evidenceStatus, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -152,11 +173,11 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
 
         // Stubbing the method call to return the expected query
-        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null, null, null, null,null, null, null, null,null))
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null,true,null, null, null, null,null, null, null, null,null))
                 .thenReturn(expectedQuery);
 
         // Calling the method under test
-        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null, null, null,null, null, null, null, null,null);
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null,true,null, null, null,null, null, null, null, null,null);
 
         // Assertions
         assertEquals(expectedQuery, actualQuery);

@@ -193,6 +193,8 @@ components:
           type: string
         orderNumber:
           type: string
+        orderType:
+          type: string  
         applicationNumber:
           type: string
         status:

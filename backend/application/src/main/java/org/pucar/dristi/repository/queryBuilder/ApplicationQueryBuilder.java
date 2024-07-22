@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.queryBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.ApplicationCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
@@ -59,18 +60,19 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber,List<Object> preparedStmtList) {
+    public String getApplicationSearchQuery(ApplicationCriteria applicationCriteria, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
 
             boolean firstCriteria = true; // To check if it's the first criteria
-            firstCriteria = addCriteria(id, query, firstCriteria, "app.id = ?", preparedStmtList);
-            firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(tenantId, query, firstCriteria, "app.tenantId = ?", preparedStmtList);
-            firstCriteria = addCriteria(status, query, firstCriteria, "app.status = ?", preparedStmtList);
-            addCriteria(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getId(), query, firstCriteria, "app.id = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getFilingNumber(), query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
+            addCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
 
             return query.toString();
         }
