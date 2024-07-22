@@ -12,7 +12,7 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
       queryMaps:
-        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber, accesscode, isactive, courtid, benchid, judgeid, stage, substage, filingdate,judgementdate, registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber, accesscode, isactive, courtid, benchid, judgeid, filingdate,judgementdate, registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: cases
           jsonMaps:
             - jsonPath: $.cases.id
@@ -29,8 +29,6 @@ serviceMaps:
             - jsonPath: $.cases.courtId
             - jsonPath: $.cases.benchId
             - jsonPath: $.cases.judgeId
-            - jsonPath: $.cases.stage
-            - jsonPath: $.cases.substage
             - jsonPath: $.cases.filingDate
             - jsonPath: $.cases.judgementDate
             - jsonPath: $.cases.registrationDate
@@ -194,7 +192,7 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: cases
       queryMaps:
-        - query: INSERT INTO dristi_cases (id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber, cnrnumber, courtcasenumber, accesscode, isactive, courtid, benchid, judgeid, stage, substage, filingdate, judgementdate,registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, resolutionmechanism = EXCLUDED.resolutionmechanism, casetitle = EXCLUDED.casetitle, casedescription = EXCLUDED.casedescription, filingnumber = EXCLUDED.filingnumber, casenumber = EXCLUDED.casenumber, cnrnumber = EXCLUDED.cnrnumber, courtcasenumber = EXCLUDED.courtcasenumber, accesscode = EXCLUDED.accesscode, courtid = EXCLUDED.courtid, benchid = EXCLUDED.benchid, judgeid = EXCLUDED.judgeid, stage = EXCLUDED.stage, substage = EXCLUDED.substage, filingdate = EXCLUDED.filingdate, judgementdate = EXCLUDED.judgementdate, registrationdate = EXCLUDED.registrationdate, casecategory = EXCLUDED.casecategory, natureofpleading = EXCLUDED.natureofpleading, status = EXCLUDED.status, remarks = EXCLUDED.remarks, isactive = EXCLUDED.isactive, casedetails = EXCLUDED.casedetails, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+        - query: INSERT INTO dristi_cases (id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber, cnrnumber, courtcasenumber, accesscode, isactive, courtid, benchid, judgeid, filingdate, judgementdate,registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, resolutionmechanism = EXCLUDED.resolutionmechanism, casetitle = EXCLUDED.casetitle, casedescription = EXCLUDED.casedescription, filingnumber = EXCLUDED.filingnumber, casenumber = EXCLUDED.casenumber, cnrnumber = EXCLUDED.cnrnumber, courtcasenumber = EXCLUDED.courtcasenumber, accesscode = EXCLUDED.accesscode, courtid = EXCLUDED.courtid, benchid = EXCLUDED.benchid, judgeid = EXCLUDED.judgeid, filingdate = EXCLUDED.filingdate, judgementdate = EXCLUDED.judgementdate, registrationdate = EXCLUDED.registrationdate, casecategory = EXCLUDED.casecategory, natureofpleading = EXCLUDED.natureofpleading, status = EXCLUDED.status, remarks = EXCLUDED.remarks, isactive = EXCLUDED.isactive, casedetails = EXCLUDED.casedetails, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
           basePath: cases
           jsonMaps:
             - jsonPath: $.cases.id
@@ -211,8 +209,6 @@ serviceMaps:
             - jsonPath: $.cases.courtId
             - jsonPath: $.cases.benchId
             - jsonPath: $.cases.judgeId
-            - jsonPath: $.cases.stage
-            - jsonPath: $.cases.substage
             - jsonPath: $.cases.filingDate
             - jsonPath: $.cases.judgementDate
             - jsonPath: $.cases.registrationDate
