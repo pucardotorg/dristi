@@ -118,7 +118,7 @@ public class EncryptionDecryptionUtil {
 
         for (Role role:userInfo.getRoles()){
             String code = role.getCode();
-            if (code.equalsIgnoreCase(JUDGE_ROLE) || code.equalsIgnoreCase(FSO_ROLE) || code.equalsIgnoreCase(BENCH_CLERK_ROLE)){
+            if (userInfo.getType().equalsIgnoreCase(EMPLOYEE) && (code.equalsIgnoreCase(JUDGE_ROLE) || code.equalsIgnoreCase(FSO_ROLE) || code.equalsIgnoreCase(BENCH_CLERK_ROLE))){
                 return true;
             }
         }
@@ -129,7 +129,6 @@ public class EncryptionDecryptionUtil {
 
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, RequestInfo requestInfo) {
-        boolean isUserAdvocate = requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> role.getCode().equalsIgnoreCase(ADVOCATE_ROLE));
 
         if (objectToDecrypt instanceof List list) {
             if (list.isEmpty())
@@ -139,6 +138,8 @@ public class EncryptionDecryptionUtil {
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of Object");
         }
+        boolean isUserAdvocate = requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> role.getCode().equalsIgnoreCase(ADVOCATE_ROLE));
+
         CourtCase courtCase = (CourtCase) list.get(0);
 
         String individualId = individualService.getIndividualId(requestInfo);
@@ -146,14 +147,9 @@ public class EncryptionDecryptionUtil {
         List<AdvocateMapping> advocates = courtCase.getRepresentatives();
 
         if (isUserAdvocate && advocates != null) {
-            List<Advocate> advocateResponse = new ArrayList<>();
+            List<Advocate> advocateResponse = advocateUtil.fetchAdvocatesByIndividualId(requestInfo,individualId);
 
-
-            for (AdvocateMapping advocate: courtCase.getRepresentatives()) {
-                advocateResponse.addAll(advocateUtil.fetchAdvocates(requestInfo,advocate.getAdvocateId()));
-            }
-
-            return advocateResponse.stream().anyMatch(advocate -> advocate.getIndividualId().equalsIgnoreCase(individualId));
+            return advocates.stream().anyMatch(advocateMapping -> advocateMapping.getAdvocateId().equalsIgnoreCase(advocateResponse.get(0).getId().toString()));
         }
 
         List<Party> litigants = courtCase.getLitigants();

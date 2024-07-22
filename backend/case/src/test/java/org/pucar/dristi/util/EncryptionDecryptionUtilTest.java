@@ -214,8 +214,8 @@ class EncryptionDecryptionUtilTest {
 
         when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
         Advocate advocate = new Advocate();
-        advocate.setIndividualId(userUUID.toString());
-        when(advocateUtil.fetchAdvocates(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
+        advocate.setId(userUUID);
+        when(advocateUtil.fetchAdvocatesByIndividualId(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
         Role roles = requestInfo.getUserInfo().getRoles().get(0);
         roles.setCode("ADVOCATE_ROLE");
         boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
@@ -232,8 +232,8 @@ class EncryptionDecryptionUtilTest {
 
         when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
         Advocate advocate = new Advocate();
-        advocate.setIndividualId(advocateUUID.toString());
-        when(advocateUtil.fetchAdvocates(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
+        advocate.setId(userUUID);
+        when(advocateUtil.fetchAdvocatesByIndividualId(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
         Role roles = requestInfo.getUserInfo().getRoles().get(0);
         roles.setCode("ADVOCATE_ROLE");
         boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);

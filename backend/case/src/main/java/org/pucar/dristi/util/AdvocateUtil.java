@@ -40,14 +40,13 @@ public class AdvocateUtil {
 		this.configs = configs;
 	}
 	
-	public List<Advocate> fetchAdvocates(RequestInfo requestInfo, String advocateId) {
+	public List<Advocate> fetchAdvocates(RequestInfo requestInfo, AdvocateSearchCriteria advocateSearchCriteria) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
 
 		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
 		advocateSearchRequest.setRequestInfo(requestInfo);
-		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
-		advocateSearchCriteria.setId(advocateId);
+
 		List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
 		criteriaList.add(advocateSearchCriteria);
 		advocateSearchRequest.setCriteria(criteriaList);
@@ -67,10 +66,29 @@ public class AdvocateUtil {
 
 	}
 
+	public List<Advocate> fetchAdvocatesById(RequestInfo requestInfo, String advocateId) {
+
+		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+		advocateSearchCriteria.setId(advocateId);
+
+		return fetchAdvocates(requestInfo,advocateSearchCriteria);
+
+	}
+
+	public List<Advocate> fetchAdvocatesByIndividualId(RequestInfo requestInfo, String individualId) {
+
+		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+		advocateSearchCriteria.setIndividualId(individualId);
+
+		return fetchAdvocates(requestInfo,advocateSearchCriteria);
+
+	}
+
 	public Boolean doesAdvocateExist(RequestInfo requestInfo, String advocateId) {
 
-		List<Advocate> list = fetchAdvocates(requestInfo,advocateId);
+		List<Advocate> list = fetchAdvocatesById(requestInfo,advocateId);
 
 		return !list.isEmpty();
 	}
+
 }
