@@ -1,5 +1,6 @@
 package org.pucar.dristi.util;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -10,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.service.IndividualService;
-import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -243,6 +241,9 @@ class EncryptionDecryptionUtilTest {
 
     private CourtCase createCourtCase() {
         CourtCase courtCase = new CourtCase();
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(UUID.randomUUID().toString());
+        courtCase.setAuditdetails(auditDetails);
         courtCase.setLitigants(new ArrayList<>());
         courtCase.setRepresentatives(new ArrayList<>());
         return courtCase;

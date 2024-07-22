@@ -138,9 +138,16 @@ public class EncryptionDecryptionUtil {
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of Object");
         }
+
         boolean isUserAdvocate = requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> role.getCode().equalsIgnoreCase(ADVOCATE_ROLE));
 
         CourtCase courtCase = (CourtCase) list.get(0);
+
+        boolean isUserCaseCreator =  courtCase.getAuditdetails().getCreatedBy().equalsIgnoreCase(requestInfo.getUserInfo().getUuid());
+
+        if (isUserCaseCreator){
+            return true;
+        }
 
         String individualId = individualService.getIndividualId(requestInfo);
 
