@@ -41,6 +41,9 @@ public class FileDownloadService {
     @Value("${dristi.dev.file.search.path}")
     private String fileStorePath;
 
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
+
+
     public String downloadAndExtractSignature(VcCredentialRequest vcCredentialRequest)  {
         String tenantId= vcCredentialRequest.getTenantId();
         String fileStoreId= vcCredentialRequest.getFileStoreId();
@@ -96,48 +99,6 @@ public class FileDownloadService {
         }
         return s3Url;
     }
-
-  /*  private File downloadFileFromS3(String s3Url) {
-        File tempFile= null;
-        CloseableHttpClient httpClient;
-        CloseableHttpResponse closeableHttpResponse = null;
-        try{
-            httpClient = HttpClients.createDefault();
-            HttpGet request = new HttpGet(s3Url);
-            closeableHttpResponse = httpClient.execute(request);
-            HttpEntity entity = closeableHttpResponse.getEntity();
-            if (entity != null) {
-                InputStream inputStream = entity.getContent();
-                tempFile = Files.createTempFile("downloaded", ".pdf").toFile();
-                FileOutputStream outputStream = new FileOutputStream(tempFile);
-                int read;
-                byte[] buffer = new byte[1024];
-                while ((read = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, read);
-                }
-                outputStream.close();
-                inputStream.close();
-            }
-        }
-        catch(Exception e){
-            throw new CustomException("FILE_DOWNLOAD_FAILED","Failed to download file from S3 URL");
-        }
-        finally{
-            if(closeableHttpResponse!=null){
-                try{
-                    closeableHttpResponse.close();
-                }
-                catch (Exception e){
-                    log.info("failed to close closeable http connection"+ e.getMessage());
-                }
-            }
-        }
-        return tempFile;
-    } */
-
-
-
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
 
     private void createSecureTempDir() throws IOException {
         Path tempDirPath = Paths.get(TEMP_DIR);
