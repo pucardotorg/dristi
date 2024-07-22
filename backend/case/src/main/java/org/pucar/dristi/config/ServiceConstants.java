@@ -109,6 +109,12 @@ public class ServiceConstants {
 	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
 
+	// Roles required for decryption
+	public static final String JUDGE_ROLE = "JUDGE_ROLE";
+	public static final String FSO_ROLE = "FSO_ROLE";
+	public static final String BENCH_CLERK_ROLE = "BENCHCLERK_ROLE";
+	public static final String ADVOCATE_ROLE = "ADVOCATE_ROLE";
+
 	public static final String EMPLOYEE = "EMPLOYEE";
 
 	public static final String ENCRYPTION_SERVICE_ERROR = "Error occurred while calling Encryption Service";

@@ -194,6 +194,9 @@ public class CaseServiceTest {
         requestInfo.setUserInfo(new User());
         joinCaseRequest.setRequestInfo(requestInfo);
 
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         CustomException exception = assertThrows(CustomException.class, () -> caseService.verifyJoinCaseRequest(joinCaseRequest));
 
         assertEquals("VALIDATION_EXCEPTION", exception.getCode());
@@ -262,6 +265,8 @@ public class CaseServiceTest {
         AdvocateMapping advocateMapping2 = AdvocateMapping.builder().advocateId("333").representing(Collections.singletonList(party1)).isActive(true).auditDetails(new AuditDetails()).build();
         joinCaseRequest.setRepresentative(advocateMapping2);
 
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         // Call the method
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
 
