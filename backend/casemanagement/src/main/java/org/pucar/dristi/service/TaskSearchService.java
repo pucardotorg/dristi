@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.web.models.TaskSearchRequest;
 import org.pucar.dristi.web.models.VcEntityCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +19,17 @@ public class TaskSearchService {
 
     private final RestTemplate restTemplate;
 
+    private final Configuration configuration;
+
     @Autowired
-    public TaskSearchService(RestTemplate restTemplate) {
+    public TaskSearchService(RestTemplate restTemplate,Configuration configuration) {
         this.restTemplate = restTemplate;
+        this.configuration=configuration;
     }
-
-    @Value("${dristi.dev.task.search.host}")
-    private String taskSearchHost;
-
-    @Value("${dristi.dev.task.search.url}")
-    private String taskSearchPath;
 
     public ResponseEntity<Object> getTaskSearchResponse(String referenceId, String tenantId,RequestInfo requestInfo) {
         StringBuilder searchTaskUrl= new StringBuilder();
-        searchTaskUrl.append(taskSearchHost).append(taskSearchPath);
+        searchTaskUrl.append(configuration.getTaskSearchHost()).append(configuration.getTaskSearchPath());
         HttpHeaders headers = new HttpHeaders();
 
         headers.set("Accept", "application/json, text/plain, */*");

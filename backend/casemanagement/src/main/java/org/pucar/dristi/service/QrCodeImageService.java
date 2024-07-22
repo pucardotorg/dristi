@@ -5,6 +5,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.jsoup.Jsoup;
 
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.web.models.PdfRequest;
 import org.pucar.dristi.web.models.QrCodeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,12 @@ public class QrCodeImageService {
 
     private final RestTemplate restTemplate;
 
+    private final Configuration configuration;
+
     @Autowired
-    public QrCodeImageService(RestTemplate restTemplate) {
+    public QrCodeImageService(RestTemplate restTemplate,Configuration configuration) {
         this.restTemplate = restTemplate;
+        this.configuration=configuration;
     }
 
     @Value("${egov.credential.host}")
@@ -32,12 +36,11 @@ public class QrCodeImageService {
     private String credentialUrl;
 
 
-
     public String getQrCodeImage(PdfRequest pdfRequestObject) {
         String referenceId= pdfRequestObject.getReferenceId();
         RequestInfo requestInfo= pdfRequestObject.getRequestInfo();
         StringBuilder requestQrImageUrl = new StringBuilder();
-        requestQrImageUrl.append(credentialHost).append(credentialUrl);
+        requestQrImageUrl.append(configuration.getCredentialHost()).append(configuration.getCredentialUrl());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -63,6 +66,9 @@ public class QrCodeImageService {
         try{
             Document doc = Jsoup.parse(qrResponse);
             Element img = doc.select("img").first();
+            if (img == null || !img.hasAttr("src")) {
+                throw new CustomException("ERROR_PARSING_QRCODE_RESPONSE", "there was an error fetching the image from the qr response");
+            }
             return img.attr("src");
 
         }
