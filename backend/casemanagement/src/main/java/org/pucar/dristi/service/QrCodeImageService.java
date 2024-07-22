@@ -42,7 +42,7 @@ public class QrCodeImageService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         QrCodeRequest qrCodeRequest= QrCodeRequest.builder()
-                .code("Pucar.SummonsOrder1")
+                .code(pdfRequestObject.getModuleName())
                 .uuid(referenceId)
                 .requestInfo(requestInfo)
                 .build();

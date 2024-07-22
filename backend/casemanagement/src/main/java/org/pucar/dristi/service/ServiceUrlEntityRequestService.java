@@ -68,7 +68,7 @@ public class ServiceUrlEntityRequestService {
                 .orderPdfSignature(signDate)
                 .respondentName(respondentName)
                 .id(referenceId)
-                .module("Pucar.SummonsOrder1")
+                .module(vcCredentialRequest.getModuleName())
                 .build();
 
     }

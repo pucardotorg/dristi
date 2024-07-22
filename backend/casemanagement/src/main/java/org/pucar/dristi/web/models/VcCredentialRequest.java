@@ -36,4 +36,8 @@ public class VcCredentialRequest {
     @Valid
     private String tenantId;
 
+    @JsonProperty("moduleName")
+    @Valid
+    private String moduleName;
+
 }

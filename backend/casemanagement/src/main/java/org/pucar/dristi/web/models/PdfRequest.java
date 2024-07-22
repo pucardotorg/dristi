@@ -33,4 +33,9 @@ public class PdfRequest {
     @Valid
     private String tenantId;
 
+
+    @JsonProperty("moduleName")
+    @Valid
+    private String moduleName;
+
 }
