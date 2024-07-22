@@ -107,4 +107,10 @@ public class ServiceConstants {
 	public static final String ENCRYPTION_SERVICE_ERROR = "Error occurred while calling Encryption Service";
 
 	public static final String PURPOSE = "purpose";
+
+	public static final String JUDGE_ROLE = "JUDGE_ROLE";
+	public static final String FSO_ROLE = "FSO_ROLE";
+	public static final String BENCH_CLERK_ROLE = "BENCHCLERK_ROLE";
+	public static final String ADVOCATE_ROLE = "ADVOCATE_ROLE";
+
 }

@@ -28,7 +28,7 @@ public class AdvocateUtil {
 	@Autowired
 	private Configuration configs;
 
-	public Boolean fetchAdvocateDetails(RequestInfo requestInfo, String advocateId) {
+	public List<Advocate> fetchAdvocates(RequestInfo requestInfo, String advocateId) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
 
@@ -51,7 +51,13 @@ public class AdvocateUtil {
 			throw new CustomException(ERROR_WHILE_FETCHING_FROM_ADVOCATE, e.getMessage());
 		}
 
-		List<Advocate> list = advocateResponse.getAdvocates().get(0).getResponseList().stream().filter(Advocate::getIsActive).toList();
+		return advocateResponse.getAdvocates().get(0).getResponseList().stream().filter(Advocate::getIsActive).toList();
+
+	}
+
+	public Boolean fetchAdvocateDetails(RequestInfo requestInfo, String advocateId) {
+
+		List<Advocate> list = fetchAdvocates(requestInfo,advocateId);
 
 		return !list.isEmpty();
 	}
