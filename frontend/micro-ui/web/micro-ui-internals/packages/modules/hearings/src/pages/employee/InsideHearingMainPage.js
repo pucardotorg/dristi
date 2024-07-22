@@ -55,7 +55,7 @@ const InsideHearingMainPage = () => {
   };
 
   // if (!userHasRole("HEARING_VIEWER")) {
-  //   history.push(`/${window.contextPath}/${userType}/home`);
+  //   history.push(`/${window.contextPath}/${userType}/home/home-pending-task`);
   // }
 
   const reqBody = {

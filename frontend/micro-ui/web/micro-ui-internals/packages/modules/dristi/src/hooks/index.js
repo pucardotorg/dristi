@@ -35,6 +35,9 @@ export const Urls = {
     submissionsUpdate: "/application/application/v1/update",
     pendingTask: "/analytics/pending_task/v1/create",
   },
+  case: {
+    addWitness: "/case/case/v1/add/witness",
+  },
   FileFetchById: "/filestore/v1/files/id",
 };
 
