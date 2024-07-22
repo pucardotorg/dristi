@@ -22,11 +22,13 @@ import org.springframework.util.StreamUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 
 @Service
@@ -95,7 +97,7 @@ public class FileDownloadService {
         return s3Url;
     }
 
-    private File downloadFileFromS3(String s3Url) {
+  /*  private File downloadFileFromS3(String s3Url) {
         File tempFile= null;
         CloseableHttpClient httpClient;
         CloseableHttpResponse closeableHttpResponse = null;
@@ -129,6 +131,50 @@ public class FileDownloadService {
                     log.info("failed to close closeable http connection"+ e.getMessage());
                 }
             }
+        }
+        return tempFile;
+    } */
+
+
+
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
+
+    private void createSecureTempDir() throws IOException {
+        Path tempDirPath = Paths.get(TEMP_DIR);
+        if (!Files.exists(tempDirPath)) {
+            Files.createDirectory(tempDirPath);
+            // Set directory permissions to be accessible only by the owner
+            Files.setPosixFilePermissions(tempDirPath, PosixFilePermissions.fromString("rwx------"));
+        }
+    }
+
+    private File downloadFileFromS3(String s3Url) {
+        File tempFile = null;
+        try {
+            createSecureTempDir();
+        } catch (Exception e) {
+            throw new CustomException("DIRECTORY_CREATION_FAILED", "Failed to create secure temporary directory" + e.getMessage());
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse closeableHttpResponse = httpClient.execute(new HttpGet(s3Url))) {
+
+            HttpEntity entity = closeableHttpResponse.getEntity();
+            if (entity != null) {
+                try (InputStream inputStream = entity.getContent()) {
+                    Path tempFilePath = Files.createTempFile(Paths.get(TEMP_DIR), "downloaded-", ".pdf");
+                    tempFile = tempFilePath.toFile();
+                    try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = inputStream.read(buffer)) != -1) {
+                            outputStream.write(buffer, 0, bytesRead);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new CustomException("FILE_DOWNLOAD_FAILED", "Failed to download file from S3 URL" + e.getMessage());
         }
         return tempFile;
     }
