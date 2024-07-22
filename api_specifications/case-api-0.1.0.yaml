@@ -144,6 +144,32 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/v1/add/witness:
+    post:
+      tags:
+        - Case
+      summary: add witness details for case
+      requestBody:
+        description: Details for adding witness details in the court case + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AddWitnessRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with added witness details
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AddWitnessResponse'
+        '400':
+          description: Failed to add witness details to the case
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_create:
     post:
       tags:
@@ -701,7 +727,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CaseExists'
-
+    AddWitnessRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        caseFilingNumber:
+          type: string
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+  AddWitnessResponse:
+    type: object
+    properties:
+      ResponseInfo:
+        $ref: >-
+          https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+      addWitnessRequest:
+        $ref: '#/components/schemas/AddWitnessRequest'          
+            
     JoinCaseRequest:
       type: object
       properties:
