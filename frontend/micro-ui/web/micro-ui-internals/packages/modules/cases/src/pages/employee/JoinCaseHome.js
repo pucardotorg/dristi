@@ -232,6 +232,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [joinCaseRequest, setJoinCaseRequest] = useState({});
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
 
@@ -1323,7 +1324,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   }
                   onButtonClick={() => {
                     if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
-                      history.push(`?caseId=${caseDetails?.caseId}`);
+                      history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
                     }
                   }}
                 >
