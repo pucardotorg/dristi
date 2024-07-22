@@ -169,7 +169,6 @@ public class CaseRegistrationValidator {
 	}
 
 	private void setUnEditableOnUpdate(CourtCase courtCase, CaseRequest caseRequest) {
-		caseRequest.getCases().setId(courtCase.getId());
 		caseRequest.getCases().setFilingDate(courtCase.getFilingDate());
 		caseRequest.getCases().setCaseNumber(courtCase.getCaseNumber());
 		caseRequest.getCases().setCnrNumber(courtCase.getCnrNumber());
