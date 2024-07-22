@@ -144,6 +144,7 @@ export const configsRescheduleRequest = [
         inline: true,
         label: "REF_ORDER_ID",
         disable: true,
+        isMandatory: false,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId", hideInForm: true },
@@ -289,6 +290,7 @@ export const configsCheckoutRequest = [
         inline: true,
         label: "REF_ORDER_ID",
         disable: true,
+        isMandatory: false,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -433,6 +435,7 @@ export const configsExtensionSubmissionDeadline = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -619,6 +622,7 @@ export const configsProductionOfDocuments = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -784,6 +788,7 @@ export const configsCaseWithdrawal = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -909,6 +914,7 @@ export const configsCaseTransfer = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -998,6 +1004,7 @@ export const configsCaseTransfer = [
         inline: true,
         label: "REQUESTED_COURT",
         isMandatory: true,
+        disable: true,
         key: "requestedCourt",
         type: "text",
         populators: { name: "requestedCourt" },
@@ -1028,6 +1035,7 @@ export const configsSettlement = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -1139,6 +1147,7 @@ export const configsBailBond = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -1250,6 +1259,7 @@ export const configsSurety = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
@@ -1361,6 +1371,7 @@ export const configsBail = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
         disable: true,
         key: "refOrderId",
         type: "text",
