@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.encryption.EncryptionService;
 import org.egov.tracer.model.CustomException;
@@ -8,6 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.AdvocateMapping;
 import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,12 +38,29 @@ class EncryptionDecryptionUtilTest {
     @Value("${decryption.abac.enabled}")
     private boolean abacEnabled = false;
 
+    @Mock
+    private IndividualService individualService;
+
+    @Mock
+    private AdvocateUtil advocateUtil;
+
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
+
+    private RequestInfo requestInfo;
+
+    private User userInfo;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        encryptionDecryptionUtil = new EncryptionDecryptionUtil(encryptionService, stateLevelTenantId, abacEnabled);
+        requestInfo = new RequestInfo();
+        userInfo = new User();
+        Role role = new Role();
+        role.setCode("user-role");
+        userInfo.setRoles(Collections.singletonList(role));
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        encryptionDecryptionUtil = new EncryptionDecryptionUtil(encryptionService, stateLevelTenantId, abacEnabled,individualService,advocateUtil);
     }
 
     @Test
@@ -132,10 +153,9 @@ class EncryptionDecryptionUtilTest {
     @Test
     void testIsUserDecryptingForSelf_ExceptionThrownWithCustomException() throws CustomException {
         Object objectToDecrypt = createCourtCase();
-        User userInfo = User.builder().uuid(UUID.randomUUID().toString()).type("EMPLOYEE").build();
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, userInfo));
+                encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo));
         assertEquals("DECRYPTION_NOTLIST_ERROR", exception.getCode());
     }
 
@@ -144,9 +164,8 @@ class EncryptionDecryptionUtilTest {
         // Test with no litigants
         Object objectToDecrypt = createCourtCase();
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
-        User userInfo = User.builder().uuid(UUID.randomUUID().toString()).type("EMPLOYEE").build();
 
-        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, userInfo);
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
         assertFalse(result);
     }
 
@@ -156,46 +175,83 @@ class EncryptionDecryptionUtilTest {
 
         Object objectToDecrypt = createCourtCase().addLitigantsItem(createLitigant(UUID.randomUUID())).addLitigantsItem(createLitigant(UUID.randomUUID()));
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
-        User userInfo = User.builder().uuid(UUID.randomUUID().toString()).type("EMPLOYEE").build();
 
-        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, userInfo);
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
         assertFalse(result);
     }
 
     @Test
-    void testIsUserDecryptingForSelf_SingleLitigant_MatchingUUID() {
+    void testIsUserDecryptingForLitigant_SingleSelf_MatchingUUID() {
         // Test with single litigant matching userInfo UUID
         UUID userUUID = UUID.randomUUID();
         Object objectToDecrypt = addLitigant(createCourtCase(), userUUID);
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
-        User userInfo = User.builder().uuid(userUUID.toString()).type("EMPLOYEE").build();
+        when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
 
-        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, userInfo);
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
         assertTrue(result);
     }
 
     @Test
-    void testIsUserDecryptingForSelf_SingleLitigant_NoMatchUUID() {
+    void testIsUserDecryptingForLitigant_SingleSelf_NoMatchUUID() {
         // Test with single litigant not matching userInfo UUID
         UUID userUUID = UUID.randomUUID();
         UUID litigantUUID = UUID.randomUUID();
         Object objectToDecrypt = addLitigant(createCourtCase(), litigantUUID);
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
-        User userInfo = User.builder().uuid(userUUID.toString()).type("EMPLOYEE").build();
+        when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
 
-        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, userInfo);
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
         assertFalse(result);
     }
+
+    @Test
+    void testIsUserDecryptingForAdvocate_SingleSelf_MatchingUUID() {
+        // Test with single litigant matching userInfo UUID
+        UUID userUUID = UUID.randomUUID();
+        Object objectToDecrypt = addRepresentatives(createCourtCase(), userUUID);
+        objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
+
+        when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
+        Advocate advocate = new Advocate();
+        advocate.setId(userUUID);
+        when(advocateUtil.fetchAdvocatesByIndividualId(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
+        Role roles = requestInfo.getUserInfo().getRoles().get(0);
+        roles.setCode("ADVOCATE_ROLE");
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
+        assertTrue(result);
+    }
+
+    @Test
+    void testIsUserDecryptingForAdvocate_SingleSelf_NoMatchUUID() {
+        // Test with single litigant not matching userInfo UUID
+        UUID userUUID = UUID.randomUUID();
+        UUID advocateUUID = UUID.randomUUID();
+        Object objectToDecrypt = addRepresentatives(createCourtCase(), advocateUUID);
+        objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
+
+        when(individualService.getIndividualId(requestInfo)).thenReturn(userUUID.toString());
+        Advocate advocate = new Advocate();
+        advocate.setId(userUUID);
+        when(advocateUtil.fetchAdvocatesByIndividualId(requestInfo,userUUID.toString())).thenReturn(Collections.singletonList(advocate));
+        Role roles = requestInfo.getUserInfo().getRoles().get(0);
+        roles.setCode("ADVOCATE_ROLE");
+        boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
+        assertFalse(result);
+    }
+
 
     private CourtCase createCourtCase() {
         CourtCase courtCase = new CourtCase();
         courtCase.setLitigants(new ArrayList<>());
+        courtCase.setRepresentatives(new ArrayList<>());
         return courtCase;
     }
 
     private Party createLitigant(UUID uuid) {
         Party litigant = new Party();
         litigant.setId(uuid);
+        litigant.setIndividualId(uuid.toString());
         return litigant;
     }
 
@@ -206,4 +262,16 @@ class EncryptionDecryptionUtilTest {
         return courtCase;
     }
 
+    private AdvocateMapping createRepresentative(UUID uuid) {
+        AdvocateMapping advocate = new AdvocateMapping();
+        advocate.setAdvocateId(uuid.toString());
+        return advocate;
+    }
+
+    private CourtCase addRepresentatives(CourtCase courtCase, UUID uuid) {
+        List<AdvocateMapping> advocates = courtCase.getRepresentatives();
+        advocates.add(createRepresentative(uuid));
+        courtCase.setRepresentatives(advocates);
+        return courtCase;
+    }
 }
