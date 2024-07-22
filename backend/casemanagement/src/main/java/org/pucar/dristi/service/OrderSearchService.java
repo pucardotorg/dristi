@@ -5,11 +5,11 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.web.models.VcEntityCriteria;
 import org.pucar.dristi.web.models.VcEntityOrderSearchRequest;
 import org.pucar.dristi.web.models.VcOrderSearchPagination;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,23 +23,18 @@ public class OrderSearchService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final Configuration configuration;
 
     @Autowired
-    public OrderSearchService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public OrderSearchService(RestTemplate restTemplate, ObjectMapper objectMapper, Configuration configuration) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.configuration = configuration;
     }
 
-    @Value("${dristi.dev.order.search.host}")
-    private String orderSearchHost;
-
-    @Value("${dristi.dev.order.search.url}")
-    private String orderSearchPath;
-
-
     public String searchOrder(String referenceId, String tenantId, RequestInfo requestInfo)  {
-        StringBuilder orderSearchurl=new StringBuilder();
-        orderSearchurl.append(orderSearchHost).append(orderSearchPath);
+        StringBuilder orderSearchUrl = new StringBuilder();
+        orderSearchUrl.append(configuration.getOrderSearchHost()).append(configuration.getOrderSearchPath());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json, text/plain, */*");
@@ -49,7 +44,7 @@ public class OrderSearchService {
 
         requestInfo.setAuthToken(requestInfo.getAuthToken());
 
-        VcOrderSearchPagination vcOrderSearchPagination= VcOrderSearchPagination.builder()
+        VcOrderSearchPagination vcOrderSearchPagination = VcOrderSearchPagination.builder()
                 .limit(1.0)
                 .offSet(0.0)
                 .build();
@@ -67,24 +62,23 @@ public class OrderSearchService {
 
         HttpEntity<VcEntityOrderSearchRequest> entity = new HttpEntity<>(vcEntityOrderSearchRequest, headers);
 
-        ResponseEntity<Object> response=null;
-        try{
-            response= restTemplate.exchange(orderSearchurl.toString(), HttpMethod.POST, entity, Object.class);
+        ResponseEntity<Object> response;
+        try {
+            response = restTemplate.exchange(orderSearchUrl.toString(), HttpMethod.POST, entity, Object.class);
+            if (response.getBody() == null) {
+                throw new CustomException("ORDER_SEARCH_ERR", "Response body is null");
+            }
+        } catch (Exception e) {
+            throw new CustomException("ORDER_SEARCH_ERR", "Error while fetching the order details: " + e.getMessage());
         }
-        catch (Exception e){
-            throw new CustomException("ORDER_SEARCH_ERR","error while fetching the order details " +e.getMessage());
-        }
-        // Extract cnrNumber from the response
 
-
-        String cnrNumber=null;
-        try{
+        String cnrNumber;
+        try {
             String responseBodyString = objectMapper.writeValueAsString(response.getBody());
             log.info("Response from the order search: " + responseBodyString);
             cnrNumber = JsonPath.parse(responseBodyString).read("$.list[0].cnrNumber", String.class);
-        }
-        catch (Exception e){
-            throw new CustomException("JSON_PARSING_ERROR","error while extracting cnr number from the order response");
+        } catch (Exception e) {
+            throw new CustomException("JSON_PARSING_ERROR", "Error while extracting cnr number from the order response");
         }
         log.info("CNR Number: " + cnrNumber);
         return cnrNumber;
