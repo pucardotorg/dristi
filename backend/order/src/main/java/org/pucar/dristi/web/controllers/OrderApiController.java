@@ -39,6 +39,7 @@ public class OrderApiController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
+    //TODO: Remove the extra /order here. Just keep it as v1/create. Applicable across all URLs.
     @RequestMapping(value = "/order/v1/create", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new order + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
             Order order = orderService.createOrder(body);

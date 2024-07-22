@@ -27,6 +27,7 @@ public class OrderRegistrationEnrichment {
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {
             if (orderRequest.getRequestInfo().getUserInfo() != null) {
+            	//TODO: Add the MDMS ID name to configs and read from there. 
                 List<String> orderRegistrationIdList = idgenUtil.getIdList(orderRequest.getRequestInfo(), orderRequest.getOrder().getTenantId(), "order.order_number", null, 1);
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(orderRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(orderRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                 orderRequest.getOrder().setAuditDetails(auditDetails);

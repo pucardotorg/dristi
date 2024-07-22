@@ -134,6 +134,7 @@ public class OrderRegistrationService {
         Workflow workflow = order.getWorkflow();
 
         String status ;
+        //TODO: Only judgement workflow is different?
         if (orderType.equalsIgnoreCase(JUDGEMENT)) {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
                     config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
