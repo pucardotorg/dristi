@@ -1,17 +1,24 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.LINKED_CASE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.LITIGANT_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.REPRESENTATIVES_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.REPRESENTING_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.STATUTE_SECTION_SEARCH_QUERY_EXCEPTION;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -161,7 +168,7 @@ public class CaseQueryBuilder {
     private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
+            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ? AND advocate.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getAdvocateId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -172,7 +179,7 @@ public class CaseQueryBuilder {
     private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
+            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ? AND litigant.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getLitigantId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -243,7 +250,9 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE ltg.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
+                        .append(")")
+                        .append(AND)
+                        .append("ltg.isactive = true");
                 preparedStmtList.addAll(ids);
             }
 
@@ -279,7 +288,9 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE rep.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
+                        .append(")")
+                        .append(AND)
+                        .append("rep.isactive = true");
                 preparedStmtList.addAll(ids);
             }
 
@@ -297,7 +308,9 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE rpst.representative_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
+                        .append(")")
+                        .append(AND)
+                        .append("rpst.isactive = true");
                 preparedStmtList.addAll(ids);
             }
 

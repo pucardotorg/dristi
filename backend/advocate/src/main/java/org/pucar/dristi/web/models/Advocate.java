@@ -77,9 +77,5 @@ public class Advocate {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
-	public Advocate addDocumentsItem(Document documentsItem) {
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

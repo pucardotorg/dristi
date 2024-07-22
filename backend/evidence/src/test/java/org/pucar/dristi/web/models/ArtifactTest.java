@@ -70,7 +70,7 @@ public class ArtifactTest {
         Object artifactDetails = new Object();
         List<Comment> comments = new ArrayList<>();
         comments.add(comment);
-        String additionalDetails = "testAdditionalDetails";
+        Object additionalDetails = "testAdditionalDetails";
         AuditDetails auditDetails = new AuditDetails();
         Workflow workflow = new Workflow();
 

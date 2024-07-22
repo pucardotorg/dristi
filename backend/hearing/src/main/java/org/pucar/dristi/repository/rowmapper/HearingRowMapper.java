@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -62,8 +61,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .hearingId(rs.getString("hearingid"))
                             .hearingType(rs.getString("hearingtype"))
                             .status(rs.getString("status"))
-                            .startTime(Long.valueOf(rs.getString("starttime")))
-                            .endTime(Long.valueOf(rs.getString("endtime")))
+                            .startTime(rs.getLong("starttime"))
+                            .endTime(rs.getLong("endtime"))
                             .vcLink(rs.getString("vclink"))
                             .isActive(rs.getBoolean("isactive"))
                             .notes(rs.getString("notes"))
@@ -73,12 +72,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .filingNumber(getListFromJson(rs.getString("filingnumber")))
                             .applicationNumbers(getListFromJson(rs.getString("applicationnumbers")))
                             .presidedBy(getObjectFromJson(rs.getString("presidedby"), new TypeReference<PresidedBy>() {}))
-                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {
-                                @Override
-                                public Type getType() {
-                                    return super.getType();
-                                }
-                            }))
+                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {}))
                             .transcript(getListFromJson(rs.getString("transcript")))
                             .build();
                 }

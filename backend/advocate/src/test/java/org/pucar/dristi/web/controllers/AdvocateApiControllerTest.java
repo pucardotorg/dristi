@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class AdvocateApiControllerTest {
+ class AdvocateApiControllerTest {
 
     @Autowired
     private AdvocateApiController advocateApiController;
@@ -41,7 +41,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1CreatePost() {
+     void testAdvocateV1CreatePost() {
         AdvocateRequest request = new AdvocateRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);
@@ -60,7 +60,7 @@ public class AdvocateApiControllerTest {
 
 
     @Test
-    public void testAdvocateV1StatusSearchPost() {
+     void testAdvocateV1StatusSearchPost() {
         String status = "active";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
@@ -82,7 +82,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1ApplicationnumberSearchPost() {
+     void testAdvocateV1ApplicationnumberSearchPost() {
         String applicationNumber = "app123";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
@@ -104,7 +104,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1UpdatePost() {
+     void testAdvocateV1UpdatePost() {
         AdvocateRequest request = new AdvocateRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);

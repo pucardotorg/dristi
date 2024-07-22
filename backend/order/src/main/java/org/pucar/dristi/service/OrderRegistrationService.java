@@ -70,7 +70,7 @@ public class OrderRegistrationService {
     public List<Order> searchOrder(OrderSearchRequest request) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getOrders(request.getCriteria());
+            List<Order> orderList = orderRepository.getOrders(request.getCriteria(), request.getPagination());
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
@@ -136,7 +136,7 @@ public class OrderRegistrationService {
         String status ;
         if (orderType.equalsIgnoreCase(JUDGEMENT)) {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
-                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderBusinessName());
+                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
         } else {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
                     workflow, config.getOrderBusinessName());

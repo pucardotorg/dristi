@@ -1,10 +1,12 @@
 package org.pucar.dristi.util;
 
+import static org.pucar.dristi.config.ServiceConstants.FAILED;
+import static org.pucar.dristi.config.ServiceConstants.RES_MSG_ID;
+import static org.pucar.dristi.config.ServiceConstants.SUCCESSFUL;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.stereotype.Component;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class ResponseInfoFactory {

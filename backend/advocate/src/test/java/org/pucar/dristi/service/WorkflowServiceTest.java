@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkflowServiceTest {
+ class WorkflowServiceTest {
 
     @InjectMocks
     private WorkflowService workflowService;

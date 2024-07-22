@@ -131,6 +131,8 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/OrderCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     OrderRequest:
       type: object
       properties:
@@ -157,7 +159,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Order'
-
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     OrderExistsRequest:
       type: object
       properties:
@@ -190,6 +193,8 @@ components:
           type: string
         orderNumber:
           type: string
+        orderType:
+          type: string  
         applicationNumber:
           type: string
         status:
@@ -213,7 +218,20 @@ components:
           type: string
         exists:
           type: boolean
-
+    IssuedBy:
+      type: object
+      properties:
+        benchID:
+          type: string
+        judgeID:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+        courtID:
+          type: string
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
       type: object
@@ -258,19 +276,7 @@ components:
           format: date
           description: the date on which the order was created. Can be treated as the start date also
         issuedBy:
-          type: object
-          properties:
-            benchID:
-              type: string
-            judgeID:
-              type: array
-              items:
-                type: string
-                format: uuid
-                minLength: 36
-                maxLength: 36
-            courtID:
-              type: string
+          $ref: '#/components/schemas/IssuedBy'
         orderType:
           type: string
           description: Master Data ID from OrderType master
@@ -294,7 +300,7 @@ components:
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
-          type: string
+          type: object
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
