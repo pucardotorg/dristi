@@ -14,7 +14,6 @@ import org.pucar.dristi.web.models.PdfRequest;
 import org.pucar.dristi.web.models.PdfSummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -56,21 +55,20 @@ public class PdfSummonsOrderRequestService {
     public void loadCache() {
         log.info("Loading data into cache from database");
         List<Map<String, Object>> rows = referenceIdMapperRepository.findAll();
-        BoundHashOperations<String, String, String> boundHashOps = stringRedisTemplate.boundHashOps(FILE_STORE_MAPPER_KEY);
         for (Map<String, Object> row : rows) {
             try {
                 String referenceId = (String) row.get("referenceId");
                 Object jsonResponseObject = row.get("jsonResponse");
-                if (jsonResponseObject instanceof PGobject) {
-                    PGobject pgObject = (PGobject) jsonResponseObject;
+                if (jsonResponseObject instanceof PGobject pgObject) {
                     String jsonResponse = pgObject.getValue();
-                    boundHashOps.put(referenceId, jsonResponse);
+                    stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
                 } else {
                     log.error("jsonResponse is not an instance of PGobject for referenceId: {}", referenceId);
+                    throw new CustomException("CACHE_LOADING_ERROR", "jsonResponse is not an instance of PGobject");
                 }
             } catch (Exception e) {
                 log.error("Error loading data into cache for referenceId: {}", row.get("referenceId"), e);
-                throw new CustomException("CACHE_LOADING_ERROR","error loading data into cache");
+                throw new CustomException("CACHE_LOADING_ERROR", "error loading data into cache");
             }
         }
     }
@@ -80,8 +78,7 @@ public class PdfSummonsOrderRequestService {
         String refCode=pdfRequestobject.getReferenceCode();
         String tenantId= pdfRequestobject.getTenantId();
         // Step 1: Check the cache
-        BoundHashOperations<String, String, String> boundHashOps = stringRedisTemplate.boundHashOps(FILE_STORE_MAPPER_KEY);
-        String cachedJsonResponse = boundHashOps.get(referenceId);
+        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get(FILE_STORE_MAPPER_KEY, referenceId);
         if (cachedJsonResponse != null) {
             log.info("Cache hit for referenceId: {}", referenceId);
             try{
@@ -97,7 +94,7 @@ public class PdfSummonsOrderRequestService {
         if (dbJsonResponse.isPresent()) {
             log.info("Database hit for referenceId: {}", referenceId);
             // Update cache
-            boundHashOps.put(referenceId, dbJsonResponse.get());
+            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, dbJsonResponse.get());
             try{
                 return objectMapper.readValue(dbJsonResponse.get(), Object.class);
             }
@@ -130,7 +127,7 @@ public class PdfSummonsOrderRequestService {
         log.info("Storing JSON response in database and updating cache for referenceId: {}", referenceId);
         if(jsonResponse!=null){
             referenceIdMapperRepository.saveJsonResponse(referenceId, jsonResponse);
-            boundHashOps.put(referenceId, jsonResponse);
+            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
         }
 
         return pdfResponse;
