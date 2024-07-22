@@ -319,6 +319,54 @@ serviceMaps:
             - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdTime
             - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedTime
 
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType,case_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET fileStore = EXCLUDED.fileStore, documentUid = EXCLUDED.documentUid, documentType = EXCLUDED.documentType, case_id = EXCLUDED.case_id, additionalDetails = EXCLUDED.additionalDetails;
+          basePath: cases.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.documents.*.id
+            - jsonPath: $.cases.documents.*.fileStore
+            - jsonPath: $.cases.documents.*.documentUid
+            - jsonPath: $.cases.documents.*.documentType
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, litigant_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET fileStore = EXCLUDED.fileStore, documentUid = EXCLUDED.documentUid, documentType = EXCLUDED.documentType, litigant_id = EXCLUDED.litigant_id, additionalDetails = EXCLUDED.additionalDetails;
+          basePath: cases.litigants.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.litigants.*.documents.*.id
+            - jsonPath: $.cases.litigants.*.documents.*.fileStore
+            - jsonPath: $.cases.litigants.*.documents.*.documentUid
+            - jsonPath: $.cases.litigants.*.documents.*.documentType
+            - jsonPath: $.cases.litigants[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.litigants.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representative_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET fileStore = EXCLUDED.fileStore, documentUid = EXCLUDED.documentUid, documentType = EXCLUDED.documentType, representative_id = EXCLUDED.representative_id, additionalDetails = EXCLUDED.additionalDetails;
+          basePath: cases.representatives.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.documents.*.id
+            - jsonPath: $.cases.representatives.*.documents.*.fileStore
+            - jsonPath: $.cases.representatives.*.documents.*.documentUid
+            - jsonPath: $.cases.representatives.*.documents.*.documentType
+            - jsonPath: $.cases.representatives[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.representatives.*.documents.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representing_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET fileStore = EXCLUDED.fileStore, documentUid = EXCLUDED.documentUid, documentType = EXCLUDED.documentType, representing_id = EXCLUDED.representing_id, additionalDetails = EXCLUDED.additionalDetails;
+          basePath: cases.representatives.*.representing.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.id
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.fileStore
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.documentUid
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.documentType
+            - jsonPath: $.cases.representatives.*.representing[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
     - version: 1.0
       description: Update case status in tables
       fromTopic: update-case-status-application
