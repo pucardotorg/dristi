@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class IndividualServiceTest {
+ class IndividualServiceTest {
 
     @Mock
     IndividualUtil individualUtil;
@@ -57,7 +57,7 @@ public class IndividualServiceTest {
     }
 
     @Test
-    public void testSearchIndividual_Exception() {
+     void testSearchIndividual_Exception() {
         // Arrange
         AdvocateRequest advocateRequest = new AdvocateRequest();
         advocateRequest.setAdvocate(new Advocate());

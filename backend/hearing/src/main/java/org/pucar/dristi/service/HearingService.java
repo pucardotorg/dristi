@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -73,20 +72,7 @@ public class HearingService {
     public List<Hearing> searchHearing(HearingSearchRequest request) {
 
         try {
-            HearingCriteria criteria = request.getCriteria();
-            validateCriteria(criteria);
-            return hearingRepository.getHearings(
-                    criteria.getCnrNumber(),
-                    criteria.getApplicationNumber(),
-                    criteria.getHearingId(),
-                    criteria.getFilingNumber(),
-                    criteria.getTenantId(),
-                    criteria.getFromDate(),
-                    criteria.getToDate(),
-                    criteria.getLimit(),
-                    criteria.getOffset(),
-                    criteria.getSortBy()
-            );
+            return hearingRepository.getHearings(request);
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
@@ -94,12 +80,6 @@ public class HearingService {
             log.error("Error while fetching search results");
             throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
         }
-    }
-
-    private void validateCriteria(HearingCriteria criteria) {
-        if (criteria.getLimit() == null || criteria.getLimit() < 1) criteria.setLimit(10);
-        if (criteria.getOffset() == null || criteria.getOffset() < 0) criteria.setOffset(0);
-        if (!Objects.equals(criteria.getSortBy(), "DESC")) criteria.setSortBy("ASC");
     }
 
     public Hearing updateHearing(HearingRequest hearingRequest) {
@@ -110,7 +90,6 @@ public class HearingService {
             Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
 
             // Updating Hearing request
-            // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
             hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
             hearing.setStartTime(hearingRequest.getHearing().getStartTime());
             hearing.setEndTime(hearingRequest.getHearing().getEndTime());
@@ -143,7 +122,11 @@ public class HearingService {
     public HearingExists isHearingExist(HearingExistsRequest body) {
         try {
             HearingExists order = body.getOrder();
-            List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(), order.getApplicationNumber(), order.getHearingId(), order.getFilingNumber(), body.getRequestInfo().getUserInfo().getTenantId(), null, null, 1, 0, null);
+            HearingCriteria criteria = HearingCriteria.builder().cnrNumber(order.getCnrNumber())
+                    .filingNumber( order.getFilingNumber()).applicationNumber(order.getApplicationNumber()).hearingId(order.getHearingId()).tenantId(body.getRequestInfo().getUserInfo().getTenantId()).build();
+            Pagination pagination = Pagination.builder().limit(1.0).offSet((double) 0).build();
+            HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
+            List<Hearing> hearingList = hearingRepository.getHearings(hearingSearchRequest);
             order.setExists(!hearingList.isEmpty());
             return order;
         } catch (CustomException e) {
@@ -164,6 +147,7 @@ public class HearingService {
             hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
             hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
             hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
             return hearing;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while verifying hearing");

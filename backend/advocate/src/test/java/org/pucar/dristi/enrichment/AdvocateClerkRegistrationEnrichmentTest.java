@@ -121,7 +121,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_MissingUserInfo() {
+     void testEnrichAdvocateClerkRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         advocateClerkRequest.setClerk(new AdvocateClerk());
@@ -133,7 +133,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_CustomException() {
+     void testEnrichAdvocateClerkRegistration_CustomException() {
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         AdvocateClerk clerk = new AdvocateClerk();
         clerk.setTenantId("tenantId");
@@ -158,7 +158,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
+     void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         AdvocateClerk clerk = new AdvocateClerk();

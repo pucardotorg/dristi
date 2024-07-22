@@ -16,33 +16,27 @@ import java.time.LocalDate;
 public class HearingCriteria {
 
     @JsonProperty("hearingId")
-    private String hearingId = null;
+    private String hearingId;
+
+    @JsonProperty("hearingType")
+    private String hearingType;
 
     @JsonProperty("cnrNumber")
-    private String cnrNumber = null;
+    private String cnrNumber;
 
     @JsonProperty("filingNumber")
-    private String filingNumber = null;
+    private String filingNumber;
 
     @JsonProperty("tenantId")
-    private String tenantId = null;
+    private String tenantId;
 
     @JsonProperty("applicationNumber")
-    private String applicationNumber = null;
+    private String applicationNumber;
 
     @JsonProperty("fromDate")
-    private LocalDate fromDate = null;
+    private LocalDate fromDate;
 
     @JsonProperty("toDate")
-    private LocalDate toDate = null;
-
-    @JsonProperty("limit")
-    private Integer limit = null;
-
-    @JsonProperty("offset")
-    private Integer offset = null;
-
-    @JsonProperty("sortBy")
-    private String sortBy = null;
+    private LocalDate toDate;
 
 }

@@ -63,7 +63,8 @@ public class HearingRegistrationValidator {
         baseValidations(requestInfo, hearing);
 
         // Validate individual ids
-        validateIndividualExistence(requestInfo, hearing);
+        if(config.getVerifyAttendeeIndividualId())
+            validateIndividualExistence(requestInfo, hearing);
 
         // Validating Hearing Type
         validateHearingType(requestInfo, hearing);
@@ -73,8 +74,6 @@ public class HearingRegistrationValidator {
 
         // Validate applicationNumbers
         validateApplicationExistence(requestInfo, hearing);
-
-        // TODO validate presided by judge.
 
     }
 
@@ -91,10 +90,10 @@ public class HearingRegistrationValidator {
         JSONArray hearingTypeList = mdmsUtil.fetchMdmsData(requestInfo,requestInfo.getUserInfo().getTenantId(),config.getMdmsHearingModuleName(),Collections.singletonList(config.getMdmsHearingTypeMasterName()))
                 .get(config.getMdmsHearingModuleName()).get(config.getMdmsHearingTypeMasterName());
 
-        Boolean validateHearingType = false;
-        for (int i = 0; i < hearingTypeList.size(); i++) {
-            HearingType hearingType = mapper.convertValue(hearingTypeList.get(i), HearingType.class);
-            if(hearingType.getType().equals(hearing.getHearingType())) validateHearingType = true;
+        boolean validateHearingType = false;
+        for (Object o : hearingTypeList) {
+            HearingType hearingType = mapper.convertValue(o, HearingType.class);
+            if (hearingType.getType().equals(hearing.getHearingType())) validateHearingType = true;
         }
         if (!validateHearingType)
             throw new CustomException(VALIDATION_EXCEPTION, "Could not validate Hearing Type!!!");
@@ -142,19 +141,14 @@ public class HearingRegistrationValidator {
      */
     public Hearing validateHearingExistence(RequestInfo requestInfo,Hearing hearing) {
         //checking if hearing exist or not
-        List<Hearing> existingHearings = repository.getHearings(hearing);
+        List<Hearing> existingHearings = repository.checkHearingsExist(hearing);
         log.info("Existing Hearing :: {}", existingHearings);
         if (existingHearings.isEmpty())
             throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
 
-        hearing.getAttendees().forEach(attendee -> {
-            if(ObjectUtils.isEmpty(attendee.getIndividualId())){
-                throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"individualId is mandatory for attendee");
-            }
-            //searching individual exist or not
-            if(!individualService.searchIndividual(requestInfo,attendee.getIndividualId(), new HashMap<>()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist. ID: "+ attendee.getIndividualId());
-        });
+        if(config.getVerifyAttendeeIndividualId())
+            validateIndividualExistence(requestInfo, hearing);
+
         return existingHearings.get(0);
     }
     public CaseExistsRequest createCaseExistsRequest(RequestInfo requestInfo, Hearing hearing){

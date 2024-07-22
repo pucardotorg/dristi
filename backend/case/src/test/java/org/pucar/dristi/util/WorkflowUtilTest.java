@@ -1,8 +1,30 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.pucar.dristi.config.ServiceConstants.BUSINESS_SERVICE_NOT_FOUND;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.workflow.BusinessService;
+import org.egov.common.contract.workflow.BusinessServiceResponse;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.contract.workflow.State;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,20 +33,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.workflow.BusinessService;
-import org.egov.common.contract.workflow.BusinessServiceResponse;
-import org.egov.common.contract.workflow.ProcessInstance;
-import org.egov.common.contract.workflow.ProcessInstanceResponse;
-import org.egov.common.contract.workflow.State;
-import org.egov.tracer.model.CustomException;
 
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.BUSINESS_SERVICE_NOT_FOUND;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkflowUtilTest {

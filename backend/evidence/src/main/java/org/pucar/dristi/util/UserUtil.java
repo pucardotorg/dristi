@@ -6,7 +6,6 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
-import org.egov.common.contract.user.enums.UserType;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +107,6 @@ public class UserUtil {
 		userInfo.setType(userType);
 		userInfo.setUserName(mobileNumber);
 		userInfo.setTenantId(getStateLevelTenant(tenantId));
-		// userInfo.setActive(true);
 	}
 
 	/**

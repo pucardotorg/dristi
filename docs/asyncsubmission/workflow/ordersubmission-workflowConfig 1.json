@@ -2,15 +2,15 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "asyncordersubmission",
-      "business": "async-order-submission-services",
+      "business": "async-order-submission",
+      "businessService": "async-order-submission-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "PENDINGSUBMISSION",
               "roles": [
-                "Judge"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
@@ -27,131 +27,102 @@
         {
           "sla": null,
           "state": "PENDINGSUBMISSION",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "applicationStatus": null,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SUBMIT",
-              "nextState": "ISRESPONSEREQUIRED",
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
               "roles": [
-                "Lawyer"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
               "action": "DELAY",
               "nextState": "REQUESTDELAY",
               "roles": [
-                "Lawyer"
+                "SUBMISSION_RESPONDER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
         },
         {
-          "sla": 5,
-          "state": "ISRESPONSEREQUIRED",
+          "sla": null,
+          "state": "PENDINGPAYMENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
-          "isStartState": false,
+          "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "APPROVE",
-              "nextState": "RESPONSEPENDING",
-              "roles": [
-                "System"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "PENDINGAPPROVAL",
-              "roles": [
-                "System"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "Judge",
-                "System"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "PENDINGAPPROVAL",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "APPROVE",
+              "action": "PAY",
               "nextState": "COMPLETED",
               "roles": [
-                "Judge"
+                "SYSTEM_ADMIN"
               ]
             },
             {
-              "action": "REJECT",
-              "nextState": "REJECTED",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
-                "Judge"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "Judge",
-                "System"
+                "SUBMISSION_DELETE"
               ]
             }
           ]
         },
         {
           "sla": 10,
-          "state": "RESPONSEPENDING",
+          "state": "REQUESTDELAY",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": false,
           "actions": [
             {
-              "action": "RESPOND",
-              "nextState": "PENDINGAPPROVAL",
+              "action": "APPROVE",
+              "nextState": "PENDINGSUBMISSION",
               "roles": [
-                "lawyer"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
-              "action": "AUTOESCALATE",
-              "nextState": "PENDINGAPPROVAL",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
-                "System"
+                "SUBMISSION_DELETE"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "PENDINGSUBMISSION",
+              "roles": [
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -167,7 +138,7 @@
         },
         {
           "sla": 5,
-          "state": "REJECTED",
+          "state": "DELETED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

@@ -21,13 +21,5 @@ public enum Order {
 		return String.valueOf(value);
 	}
 
-	@JsonCreator
-	public static Order fromValue(String text) {
-		for (Order b : Order.values()) {
-			if (String.valueOf(b.value).equals(text)) {
-				return b;
-			}
-		}
-		return null;
-	}
+
 }

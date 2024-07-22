@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class AdvocateClerkServiceTest {
+ class AdvocateClerkServiceTest {
 
     @InjectMocks
     private AdvocateClerkService advocateClerkService;
@@ -60,7 +60,7 @@ public class AdvocateClerkServiceTest {
     }
 
     @Test
-    public void testRegisterAdvocateClerkRequest_Success() {
+     void testRegisterAdvocateClerkRequest_Success() {
         // Mock data
         AdvocateClerkRequest request = new AdvocateClerkRequest();
         // Setup mocks

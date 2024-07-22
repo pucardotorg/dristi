@@ -1,6 +1,10 @@
 package org.pucar.dristi.repository;
 
-import org.egov.common.contract.models.AuditDetails;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,16 +16,14 @@ import org.pucar.dristi.repository.querybuilder.HearingQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.HearingDocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.HearingRowMapper;
 import org.pucar.dristi.web.models.Hearing;
+import org.pucar.dristi.web.models.HearingCriteria;
+import org.pucar.dristi.web.models.HearingSearchRequest;
+import org.pucar.dristi.web.models.Pagination;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-public class HearingRepositoryTest {
+class HearingRepositoryTest {
 
     @Mock
     private HearingQueryBuilder queryBuilder;
@@ -39,315 +41,182 @@ public class HearingRepositoryTest {
     private HearingRepository hearingRepository;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void getHearings_Success() {
-        // Arrange
-        List<Hearing> listHearings = new ArrayList<>();
-        Hearing hearing1 = new Hearing();
-        hearing1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
-        listHearings.add(hearing1);
+    void testGetHearings() {
+        // Mock data
+        HearingCriteria criteria = HearingCriteria.builder().hearingId("sdf").build();
+        Pagination pagination = Pagination.builder().build();
+        HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
+        List<Hearing> expectedHearings = List.of(Hearing.builder().id(UUID.randomUUID()).build());
 
+        // Mock behavior of queryBuilder
         String hearingQuery = "SELECT * FROM hearings";
-        String documentQuery = "SELECT * FROM hearing_documents";
+        String hearingDocumentQuery = "SELECT * FROM hearing_documents WHERE hearing_id IN (?)";
+        Map<UUID, List<Document>> hearingDocumentMap = new HashMap<>();
+        hearingDocumentMap.put(expectedHearings.get(0).getId(), List.of(new Document()));
 
-        when(queryBuilder.getHearingSearchQuery(anyList(), anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
-                .thenReturn(hearingQuery);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
-                .thenReturn(documentQuery);
-        when(jdbcTemplate.query(eq(hearingQuery), any(Object[].class), any(HearingRowMapper.class)))
-                .thenReturn(listHearings);
-        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), any(HearingDocumentRowMapper.class)))
-                .thenReturn(Collections.emptyMap());
+        when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class))).thenReturn(hearingQuery);
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(hearingQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(expectedHearings);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(hearingDocumentQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(hearingQuery);
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class))).thenReturn(5);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(hearingQuery);
+        // Test method call
+        List<Hearing> result = hearingRepository.getHearings(hearingSearchRequest);
 
-        // Act
-        List<Hearing> result = hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", LocalDate.now(), LocalDate.now(), 10, 0, "sortBy");
-
-        // Assert
+        // Assertions
         assertNotNull(result);
-        assertEquals(listHearings, result);
+        assertEquals(expectedHearings, result);
+        verify(queryBuilder).getHearingSearchQuery(anyList(), any(HearingCriteria.class));
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingRowMapper.class));
+        verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class));
     }
 
     @Test
-    void getHearings_EmptySuccess() {
-        // Arrange
-        List<Hearing> listHearings = new ArrayList<>();
+    void testGetHearings_WithPagination() {
+        // Mock data
+        HearingCriteria criteria = HearingCriteria.builder().hearingId("sdf").build();
+        Pagination pagination = Pagination.builder().limit(10.0).offSet(0.0).build();
+        HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
+        List<Hearing> expectedHearings = List.of(Hearing.builder().id(UUID.randomUUID()).build());
+
+        // Mock behavior of queryBuilder for pagination
         String hearingQuery = "SELECT * FROM hearings";
+        String hearingDocumentQuery = "SELECT * FROM hearing_documents WHERE hearing_id IN (?)";
+        Map<UUID, List<Document>> hearingDocumentMap = new HashMap<>();
+        hearingDocumentMap.put(expectedHearings.get(0).getId(), List.of(new Document()));
 
-        when(queryBuilder.getHearingSearchQuery(anyList(), anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
-                .thenReturn(hearingQuery);
-        when(jdbcTemplate.query(eq(hearingQuery), any(Object[].class), any(HearingRowMapper.class)))
-                .thenReturn(listHearings);
+        when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class))).thenReturn(hearingQuery);
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(hearingQuery);
+        when(queryBuilder.addPaginationQuery(anyString(),any(Pagination.class),anyList())).thenReturn(hearingQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(expectedHearings);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(hearingDocumentQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn("SELECT count(*) FROM hearings");
 
-        // Act
-        List<Hearing> result = hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", LocalDate.now(), LocalDate.now(), 10, 0, "sortBy");
+        // Mock total count query
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class))).thenReturn(20);
 
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        // Test method call
+        List<Hearing> result = hearingRepository.getHearings(hearingSearchRequest);
+
+        // Assertions
+        assertEquals(expectedHearings, result);
+        assertEquals(20.0, hearingSearchRequest.getPagination().getTotalCount());
+        verify(queryBuilder).getHearingSearchQuery(anyList(), any(HearingCriteria.class));
+        verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingRowMapper.class));
+        verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class));
+        verify(queryBuilder).getTotalCountQuery(anyString());
+        verify(jdbcTemplate).queryForObject(anyString(), any(Object[].class), eq(Integer.class));
     }
 
     @Test
-    void getHearings_Exception() {
-        // Arrange
-        String hearingQuery = "SELECT * FROM hearings";
-        when(queryBuilder.getHearingSearchQuery(anyList(), anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
-                .thenReturn(hearingQuery);
-        when(jdbcTemplate.query(eq(hearingQuery), any(Object[].class), any(HearingRowMapper.class)))
-                .thenThrow(RuntimeException.class);
+    void testGetHearings_CustomException() {
+        HearingCriteria criteria = HearingCriteria.builder().build();
+        Pagination pagination = Pagination.builder().build();
+        HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
 
-        // Assert
-        LocalDate fromDate = LocalDate.now();
-        LocalDate toDate = LocalDate.now();
-        assertThrows(CustomException.class, () ->
-                hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", fromDate, toDate, 10, 0, "sortBy"));
+        // Mock behavior to throw CustomException
+        when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class)))
+                .thenThrow(new CustomException("ERROR", "Custom exception"));
+
+        // Test and assert CustomException
+        CustomException exception = assertThrows(CustomException.class, () -> hearingRepository.getHearings(hearingSearchRequest));
+        assertEquals("ERROR", exception.getCode());
     }
 
     @Test
-    void getHearings_WithDocuments() {
-        // Arrange
-        List<Hearing> listHearings = new ArrayList<>();
-        Hearing hearing1 = new Hearing();
-        hearing1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
-        listHearings.add(hearing1);
+    void testGetHearings_RuntimeException() {
+        HearingCriteria criteria = HearingCriteria.builder().build();
+        Pagination pagination = Pagination.builder().build();
+        HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
 
-        String hearingQuery = "SELECT * FROM hearings";
-        String documentQuery = "SELECT * FROM hearing_documents";
+        // Mock behavior to throw RuntimeException
+        when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class)))
+                .thenThrow(new RuntimeException("Runtime exception"));
 
-        Map<UUID, List<Document>> documentMap = new HashMap<>();
-        documentMap.put(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"), new ArrayList<>());
-
-        when(queryBuilder.getHearingSearchQuery(anyList(), anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
-                .thenReturn(hearingQuery);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
-                .thenReturn(documentQuery);
-        when(jdbcTemplate.query(eq(hearingQuery), any(Object[].class), any(HearingRowMapper.class)))
-                .thenReturn(listHearings);
-        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), any(HearingDocumentRowMapper.class)))
-                .thenReturn(documentMap);
-
-        // Act
-        List<Hearing> result = hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", LocalDate.now(), LocalDate.now(), 10, 0, "sortBy");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(listHearings, result);
-        assertNotNull(result.get(0).getDocuments());
-    }
-    @Test
-    void getHearings_ExceptionHandling() {
-        // Arrange
-        String cnrNumber = "cnr123";
-        String applicationNumber = "app123";
-        String hearingId = "hear123";
-        String filingNumber = "file123";
-        String tenantId = "tenant123";
-        LocalDate fromDate = LocalDate.now().minusDays(10);
-        LocalDate toDate = LocalDate.now();
-        Integer limit = 10;
-        Integer offset = 0;
-        String sortBy = "date";
-
-        when(queryBuilder.getHearingSearchQuery(anyList(), eq(cnrNumber), eq(applicationNumber), eq(hearingId), eq(filingNumber), eq(tenantId), eq(fromDate), eq(toDate), eq(limit), eq(offset), eq(sortBy))).thenReturn("testHearingQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenThrow(new RuntimeException("Database error"));
-
-        // Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            // Act
-            hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
-        });
-
-        assertEquals("Error while fetching hearing application list: Database error", exception.getMessage());
+        // Test and assert CustomException
+        CustomException exception = assertThrows(CustomException.class, () -> hearingRepository.getHearings(hearingSearchRequest));
+        assertEquals("Exception while Searching hearing", exception.getCode());
+        assertTrue(exception.getMessage().contains("Error while fetching hearing application list"));
     }
 
     @Test
-    void getHearingsByHearingObject() {
-        // Arrange
+    void testCheckHearingsExist() {
+        // Mock data
         Hearing hearing = new Hearing();
-        hearing.setHearingId("hear123");
-        hearing.setTenantId("tenant123");
+        hearing.setId(UUID.randomUUID());
+        hearing.setHearingId(String.valueOf(UUID.randomUUID()));
+        hearing.setTenantId("tenant");
+        List<Hearing> expectedHearings = List.of(Hearing.builder().id(UUID.randomUUID()).build());
 
-        when(queryBuilder.getHearingSearchQuery(anyList(), isNull(), isNull(), eq("hear123"), isNull(), eq("tenant123"), isNull(), isNull(), eq(1), eq(0), isNull())).thenReturn("testHearingQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(new ArrayList<>());
+        // Mock behavior of queryBuilder
+        String hearingQuery = "SELECT * FROM hearings";
+        String hearingDocumentQuery = "SELECT * FROM hearing_documents WHERE hearing_id IN (?)";
+        Map<UUID, List<Document>> hearingDocumentMap = new HashMap<>();
+        hearingDocumentMap.put(expectedHearings.get(0).getId(), List.of(new Document()));
 
-        // Act
-        List<Hearing> result = hearingRepository.getHearings(hearing);
+        when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class))).thenReturn(hearingQuery);
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(hearingQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(expectedHearings);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(hearingDocumentQuery);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(hearingQuery);
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class))).thenReturn(5);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(hearingQuery);
 
-        // Assert
+        // Test method call
+        List<Hearing> result = hearingRepository.checkHearingsExist(hearing);
+
+        // Assertions
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertEquals(expectedHearings, result);
+        verify(queryBuilder).getHearingSearchQuery(anyList(), any(HearingCriteria.class));
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingRowMapper.class));
+        verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class));
     }
 
     @Test
-    void getHearings_NullDates() {
-        // Arrange
-        String cnrNumber = "cnr123";
-        String applicationNumber = "app123";
-        String hearingId = "hear123";
-        String filingNumber = "file123";
-        String tenantId = "tenant123";
-        Integer limit = 10;
-        Integer offset = 0;
-        String sortBy = "date";
-
-        when(queryBuilder.getHearingSearchQuery(anyList(), eq(cnrNumber), eq(applicationNumber), eq(hearingId), eq(filingNumber), eq(tenantId), isNull(), isNull(), eq(limit), eq(offset), eq(sortBy))).thenReturn("testHearingQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(new ArrayList<>());
-
-        // Act
-        List<Hearing> result = hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, null, null, limit, offset, sortBy);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getHearings_MultipleResults() {
-        // Arrange
-        String cnrNumber = "cnr123";
-        String applicationNumber = "app123";
-        String hearingId = "hear123";
-        String filingNumber = "file123";
-        String tenantId = "tenant123";
-        LocalDate fromDate = LocalDate.now().minusDays(10);
-        LocalDate toDate = LocalDate.now();
-        Integer limit = 10;
-        Integer offset = 0;
-        String sortBy = "date";
-
-        List<Hearing> listHearings = new ArrayList<>();
-        Hearing hearing1 = new Hearing();
-        hearing1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
-        Hearing hearing2 = new Hearing();
-        hearing2.setId(UUID.fromString("d747abff-6d5d-47d7-99e2-fc70eaa856cb"));
-        listHearings.add(hearing1);
-        listHearings.add(hearing2);
-
-        when(queryBuilder.getHearingSearchQuery(anyList(), eq(cnrNumber), eq(applicationNumber), eq(hearingId), eq(filingNumber), eq(tenantId), eq(fromDate), eq(toDate), eq(limit), eq(offset), eq(sortBy))).thenReturn("testHearingQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(listHearings);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingDocumentRowMapper.class))).thenReturn(new HashMap<>());
-
-        // Act
-        List<Hearing> result = hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
-
-        // Assert
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    void getHearings_InvalidDateRange() {
-        // Arrange
-        String cnrNumber = "cnr123";
-        String applicationNumber = "app123";
-        String hearingId = "hear123";
-        String filingNumber = "file123";
-        String tenantId = "tenant123";
-        LocalDate fromDate = LocalDate.now().plusDays(10);  // Invalid date range: fromDate is after toDate
-        LocalDate toDate = LocalDate.now();
-        Integer limit = 10;
-        Integer offset = 0;
-        String sortBy = "date";
-
-        when(queryBuilder.getHearingSearchQuery(anyList(), eq(cnrNumber), eq(applicationNumber), eq(hearingId), eq(filingNumber), eq(tenantId), eq(fromDate), eq(toDate), eq(limit), eq(offset), eq(sortBy))).thenReturn("testHearingQuery");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(HearingRowMapper.class))).thenReturn(new ArrayList<>());
-
-        // Act
-        List<Hearing> result = hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void updateTranscriptAdditionalAttendees_Success() {
-
-        AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setLastModifiedBy("user1");
-        auditDetails.setLastModifiedTime(123456789L);
-
+    void testUpdateTranscriptAdditionalAttendees() {
+        // Mock data
         Hearing hearing = new Hearing();
-        hearing.setHearingId("hearing123");
-        hearing.setTenantId("tenant1");
-        hearing.setTranscript(List.of("transcript1", "transcript2"));
-        hearing.setAuditDetails(auditDetails);
-        // Arrange
-        List<Object> preparedStmtList = new ArrayList<>();
-        String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+        String hearingUpdateQuery = "UPDATE hearings SET transcript = ? WHERE id = ?";
 
-        when(queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing))
-                .thenReturn(hearingUpdateQuery);
-        when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenReturn(1);
+        // Mock behavior of updateTranscriptAdditionalAttendees method
+        when(queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(anyList(), any(Hearing.class))).thenReturn(hearingUpdateQuery);
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
 
-        // Act
-        assertDoesNotThrow(() -> hearingRepository.updateTranscriptAdditionalAttendees(hearing));
+        // Test method call
+        hearingRepository.updateTranscriptAdditionalAttendees(hearing);
 
-        // Assert
-        verify(queryBuilder, times(1)).buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
-        verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
+        // Assertions
+        verify(queryBuilder).buildUpdateTranscriptAdditionalAttendeesQuery(anyList(), any(Hearing.class));
+        verify(jdbcTemplate).update(anyString(), any(Object[].class));
     }
 
     @Test
-    void updateTranscriptAdditionalAttendees_Failure() {
-
-        AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setLastModifiedBy("user1");
-        auditDetails.setLastModifiedTime(123456789L);
-
+    void testUpdateTranscriptAdditionalAttendees_NoUpdate() {
+        // Mock data
         Hearing hearing = new Hearing();
-        hearing.setHearingId("hearing123");
-        hearing.setTenantId("tenant1");
-        hearing.setTranscript(List.of("transcript1", "transcript2"));
-        hearing.setAuditDetails(auditDetails);
+        String hearingUpdateQuery = "UPDATE hearings SET transcript = ? WHERE id = ?";
 
-        // Arrange
-        List<Object> preparedStmtList = new ArrayList<>();
-        String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+        // Mock behavior of updateTranscriptAdditionalAttendees method when no rows are updated
+        when(queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(anyList(), any(Hearing.class))).thenReturn(hearingUpdateQuery);
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(0);
 
-        when(queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing))
-                .thenReturn(hearingUpdateQuery);
-        when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenReturn(0);
-
-        // Act & Assert
+        // Test and assert CustomException
         CustomException exception = assertThrows(CustomException.class, () -> hearingRepository.updateTranscriptAdditionalAttendees(hearing));
-
-        assertEquals("Error while updating hearing", exception.getMessage());
-        verify(queryBuilder, times(1)).buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
-        verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
-    }
-
-
-    @Test
-    void updateTranscriptAdditionalAttendees_Exception() {
-
-        AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setLastModifiedBy("user1");
-        auditDetails.setLastModifiedTime(123456789L);
-
-        Hearing hearing = new Hearing();
-        hearing.setHearingId("hearing123");
-        hearing.setTenantId("tenant1");
-        hearing.setTranscript(List.of("transcript1", "transcript2"));
-        hearing.setAuditDetails(auditDetails);
-        // Arrange
-        List<Object> preparedStmtList = new ArrayList<>();
-        String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
-
-        when(queryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing))
-                .thenReturn(hearingUpdateQuery);
-        when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> hearingRepository.updateTranscriptAdditionalAttendees(hearing));
-
-        assertEquals("Database error", exception.getMessage());
-        verify(queryBuilder, times(1)).buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
-        verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
+        assertEquals("Exception while updating hearing", exception.getCode());
+        assertTrue(exception.getMessage().contains("Error while updating hearing"));
     }
 }

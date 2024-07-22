@@ -77,9 +77,5 @@ public class AdvocateClerk {
 
 	private Object additionalDetails = null;
 
-	public AdvocateClerk addDocumentsItem(Document documentsItem) {
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

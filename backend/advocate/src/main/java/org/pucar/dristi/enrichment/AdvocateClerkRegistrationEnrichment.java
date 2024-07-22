@@ -46,9 +46,7 @@ public class AdvocateClerkRegistrationEnrichment {
             //setting false unless the application is approved
             advocateClerk.setIsActive(false);
             if (advocateClerk.getDocuments() != null)
-                advocateClerk.getDocuments().forEach(document -> {
-                    document.setId(String.valueOf(UUID.randomUUID()));
-                });
+                advocateClerk.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));;
 
             //setting generated application number
             advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(0));

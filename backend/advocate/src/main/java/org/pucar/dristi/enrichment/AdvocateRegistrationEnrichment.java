@@ -47,9 +47,7 @@ public class AdvocateRegistrationEnrichment {
             //setting generated application number
             advocate.setApplicationNumber(advocateApplicationNumbers.get(0));
             if (advocate.getDocuments() != null) {
-                advocate.getDocuments().forEach(document -> {
-                    document.setId(String.valueOf(UUID.randomUUID()));
-                });
+                advocate.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));
             }
         } catch(CustomException e){
             throw e;

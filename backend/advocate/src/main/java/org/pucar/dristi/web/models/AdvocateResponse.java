@@ -31,12 +31,4 @@ public class AdvocateResponse {
         private List<Advocate> advocates = null;
 
 
-        public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
-            if (this.advocates == null) {
-            this.advocates = new ArrayList<>();
-            }
-        this.advocates.add(advocatesItem);
-        return this;
-        }
-
 }
