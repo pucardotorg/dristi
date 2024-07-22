@@ -67,21 +67,21 @@ export const TabSearchconfig = {
                   },
                 },
               },
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Parties",
                 isMandatory: false,
@@ -94,10 +94,10 @@ export const TabSearchconfig = {
               {
                 label: "Order ID",
                 isMandatory: false,
-                key: "orderId",
+                key: "orderNumber",
                 type: "text",
                 populators: {
-                  name: "orderId",
+                  name: "orderNumber",
                 },
               },
             ],
@@ -112,10 +112,10 @@ export const TabSearchconfig = {
                 label: "Hearing Type",
                 jsonPath: "hearingType",
               },
-              {
-                label: "Stage",
-                jsonPath: "",
-              },
+              // {
+              //   label: "Stage",
+              //   jsonPath: "",
+              // },
               {
                 label: "Parties",
                 jsonPath: "attendees",
@@ -188,21 +188,21 @@ export const TabSearchconfig = {
                   },
                 },
               },
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Status",
                 isMandatory: false,
@@ -230,10 +230,10 @@ export const TabSearchconfig = {
               {
                 label: "Order ID",
                 isMandatory: false,
-                key: "orderId",
+                key: "orderNumber",
                 type: "text",
                 populators: {
-                  name: "orderId",
+                  name: "orderNumber",
                 },
               },
             ],
@@ -252,12 +252,12 @@ export const TabSearchconfig = {
               },
               {
                 label: "Order Id",
-                jsonPath: "id",
+                jsonPath: "orderNumber",
               },
-              {
-                label: "Stage",
-                jsonPath: "",
-              },
+              // {
+              //   label: "Stage",
+              //   jsonPath: "",
+              // },
               {
                 label: "Parties",
                 jsonPath: "",
@@ -328,21 +328,21 @@ export const TabSearchconfig = {
                   },
                 },
               },
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Status",
                 isMandatory: false,
@@ -370,10 +370,10 @@ export const TabSearchconfig = {
               {
                 label: "Documents",
                 isMandatory: false,
-                key: "documentName",
+                key: "applicationNumber",
                 type: "text",
                 populators: {
-                  name: "documentName",
+                  name: "applicationNumber",
                 },
               },
             ],
@@ -392,12 +392,12 @@ export const TabSearchconfig = {
               },
               {
                 label: "Submission Id",
-                jsonPath: "id",
+                jsonPath: "applicationNumber",
               },
-              {
-                label: "Stage",
-                jsonPath: "",
-              },
+              // {
+              //   label: "Stage",
+              //   jsonPath: "",
+              // },
               {
                 label: "Status",
                 jsonPath: "workflow.action",
@@ -481,21 +481,21 @@ export const TabSearchconfig = {
               //     offset: 0,
               //   },
               // },
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Status",
                 isMandatory: false,
@@ -523,10 +523,10 @@ export const TabSearchconfig = {
               {
                 label: "Documents",
                 isMandatory: false,
-                key: "documentName",
+                key: "artifactNumber",
                 type: "text",
                 populators: {
-                  name: "documentName",
+                  name: "artifactNumber",
                 },
               },
             ],
@@ -545,7 +545,7 @@ export const TabSearchconfig = {
               },
               {
                 label: "Document Id",
-                jsonPath: "id",
+                jsonPath: "artifactNumber",
               },
               {
                 label: "Source",
@@ -607,21 +607,21 @@ export const TabSearchconfig = {
             minReqFields: 0,
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
-              {
-                label: "Stage",
-                isMandatory: false,
-                key: "stage",
-                type: "dropdown",
-                populators: {
-                  name: "stage",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Stage",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Owner",
                 isMandatory: false,
@@ -650,10 +650,10 @@ export const TabSearchconfig = {
                 jsonPath: "date",
                 additionalCustomization: true,
               },
-              {
-                label: "Stage",
-                jsonPath: "stage",
-              },
+              // {
+              //   label: "Stage",
+              //   jsonPath: "stage",
+              // },
               {
                 label: "Status",
                 jsonPath: "status",

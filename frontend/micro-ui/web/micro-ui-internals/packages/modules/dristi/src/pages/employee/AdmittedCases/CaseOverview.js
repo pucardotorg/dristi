@@ -258,7 +258,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
             </div>
             <div
               style={{ color: "#007E7E", cursor: "pointer", fontWeight: 700, fontSize: "16px", lineHeight: "18.75px" }}
-              onClick={() => history.replace(`${path}?caseId=${caseId}&tab=Orders`)}
+              onClick={() => history.replace(`${path}?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`)}
             >
               {t("ALL_ORDERS_LINK")}
             </div>
