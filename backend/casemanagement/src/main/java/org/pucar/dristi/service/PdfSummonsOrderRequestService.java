@@ -5,12 +5,16 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.config.Configuration;
+import static org.pucar.dristi.config.ServiceConstants.FILE_STORE_MAPPER_KEY;
+import static org.pucar.dristi.config.ServiceConstants.JSON_PARSING_ERR;
 import org.pucar.dristi.repository.PdfResponseRepository;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.web.models.PdfRequest;
 import org.pucar.dristi.web.models.PdfSummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,16 +30,20 @@ public class PdfSummonsOrderRequestService {
     private final PdfResponseRepository referenceIdMapperRepository;
     private final StringRedisTemplate stringRedisTemplate;
 
+    private final Configuration configuration;
+
     @Autowired
     public PdfSummonsOrderRequestService(
-                     ObjectMapper objectMapper,
-                     ServiceRequestRepository serviceRequestRepository,
-                     PdfResponseRepository referenceIdMapperRepository,
-                     StringRedisTemplate stringRedisTemplate) {
+            ObjectMapper objectMapper,
+            ServiceRequestRepository serviceRequestRepository,
+            PdfResponseRepository referenceIdMapperRepository,
+            StringRedisTemplate stringRedisTemplate,
+            Configuration configuration) {
         this.objectMapper = objectMapper;
         this.serviceRequestRepository = serviceRequestRepository;
         this.referenceIdMapperRepository = referenceIdMapperRepository;
         this.stringRedisTemplate = stringRedisTemplate;
+        this.configuration=configuration;
     }
 
     @Value("${egov.pdf.create}")
@@ -44,18 +52,22 @@ public class PdfSummonsOrderRequestService {
     @Value("${egov.pdf.host}")
     private String generatePdfHost;
 
-    private static final String FILE_STORE_MAPPER_KEY="referenceid_filestore_mapper";
-    private static final String JSON_PARSING_ERR = "JSON_PARSING_ERR";
     @PostConstruct
     public void loadCache() {
         log.info("Loading data into cache from database");
         List<Map<String, Object>> rows = referenceIdMapperRepository.findAll();
+        BoundHashOperations<String, String, String> boundHashOps = stringRedisTemplate.boundHashOps(FILE_STORE_MAPPER_KEY);
         for (Map<String, Object> row : rows) {
             try {
                 String referenceId = (String) row.get("referenceId");
-                PGobject pgObject = (PGobject) row.get("jsonResponse");
-                String jsonResponse = pgObject.getValue();
-                stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
+                Object jsonResponseObject = row.get("jsonResponse");
+                if (jsonResponseObject instanceof PGobject) {
+                    PGobject pgObject = (PGobject) jsonResponseObject;
+                    String jsonResponse = pgObject.getValue();
+                    boundHashOps.put(referenceId, jsonResponse);
+                } else {
+                    log.error("jsonResponse is not an instance of PGobject for referenceId: {}", referenceId);
+                }
             } catch (Exception e) {
                 log.error("Error loading data into cache for referenceId: {}", row.get("referenceId"), e);
                 throw new CustomException("CACHE_LOADING_ERROR","error loading data into cache");
@@ -68,7 +80,8 @@ public class PdfSummonsOrderRequestService {
         String refCode=pdfRequestobject.getReferenceCode();
         String tenantId= pdfRequestobject.getTenantId();
         // Step 1: Check the cache
-        String cachedJsonResponse = (String) stringRedisTemplate.opsForHash().get(FILE_STORE_MAPPER_KEY, referenceId);
+        BoundHashOperations<String, String, String> boundHashOps = stringRedisTemplate.boundHashOps(FILE_STORE_MAPPER_KEY);
+        String cachedJsonResponse = boundHashOps.get(referenceId);
         if (cachedJsonResponse != null) {
             log.info("Cache hit for referenceId: {}", referenceId);
             try{
@@ -84,7 +97,7 @@ public class PdfSummonsOrderRequestService {
         if (dbJsonResponse.isPresent()) {
             log.info("Database hit for referenceId: {}", referenceId);
             // Update cache
-            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, dbJsonResponse.get());
+            boundHashOps.put(referenceId, dbJsonResponse.get());
             try{
                 return objectMapper.readValue(dbJsonResponse.get(), Object.class);
             }
@@ -96,7 +109,7 @@ public class PdfSummonsOrderRequestService {
         // Step 3: Create PDF if not found
         log.info("Creating PDF for referenceId: {}", referenceId);
         StringBuilder requestUrl = new StringBuilder();
-        requestUrl.append(generatePdfHost).append(generatePdfUrl).append("?key=").append(refCode)
+        requestUrl.append(configuration.getGeneratePdfHost()).append(configuration.getGeneratePdfUrl()).append("?key=").append(refCode)
                 .append("&tenantId=").append(tenantId);
 
         HttpHeaders headers = new HttpHeaders();
@@ -117,7 +130,7 @@ public class PdfSummonsOrderRequestService {
         log.info("Storing JSON response in database and updating cache for referenceId: {}", referenceId);
         if(jsonResponse!=null){
             referenceIdMapperRepository.saveJsonResponse(referenceId, jsonResponse);
-            stringRedisTemplate.opsForHash().put(FILE_STORE_MAPPER_KEY, referenceId, jsonResponse);
+            boundHashOps.put(referenceId, jsonResponse);
         }
 
         return pdfResponse;

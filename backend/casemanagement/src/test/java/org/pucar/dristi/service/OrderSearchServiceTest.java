@@ -127,7 +127,6 @@ class OrderSearchServiceTest {
 
         assertEquals("ORDER_SEARCH_ERR", exception.getCode());
         assertTrue(exception.getMessage().contains("Response body is null"));
-
         verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Object.class));
     }
 }
