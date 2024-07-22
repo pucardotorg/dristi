@@ -40,6 +40,7 @@ public class HearingQueryBuilder {
             String cnrNumber = criteria.getCnrNumber();
             String applicationNumber = criteria.getApplicationNumber();
             String hearingId = criteria.getHearingId();
+            String hearingType = criteria.getHearingType();
             String filingNumber = criteria.getFilingNumber();
             String tenantId = criteria.getTenantId();
             LocalDate fromDate = criteria.getFromDate();
@@ -49,6 +50,7 @@ public class HearingQueryBuilder {
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
             addCriteriaString(applicationNumber, query, " AND applicationNumbers @> ?::jsonb", preparedStmtList, "[\"" + applicationNumber + "\"]");
             addCriteriaString(hearingId, query, " AND hearingid = ?", preparedStmtList, hearingId);
+            addCriteriaString(hearingType, query, " AND hearingtype = ?", preparedStmtList, hearingType);
             addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
