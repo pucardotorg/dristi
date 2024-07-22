@@ -200,7 +200,7 @@ export const configsOrderSection202CRPC = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -661,7 +661,7 @@ export const configsOrderSubmissionExtension = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -821,7 +821,7 @@ export const configsOrderTranferToADR = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -939,7 +939,7 @@ export const configsScheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1079,7 +1079,7 @@ export const configsRejectRescheduleHeadingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1131,7 +1131,7 @@ export const configsRescheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1267,7 +1267,7 @@ export const configsInitiateRescheduleHearingDate = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1657,7 +1657,7 @@ export const configsVoluntarySubmissionStatus = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1781,7 +1781,7 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -1953,7 +1953,7 @@ export const configsCaseSettlement = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -2112,7 +2112,7 @@ export const configsIssueSummons = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -2214,7 +2214,7 @@ export const configsIssueOfWarrants = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -2331,7 +2331,7 @@ export const configsCaseWithdrawal = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",
@@ -2455,7 +2455,7 @@ export const configsBail = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: true,
+        isMandatory: false,
         key: "refApplicationId",
         disable: true,
         type: "text",

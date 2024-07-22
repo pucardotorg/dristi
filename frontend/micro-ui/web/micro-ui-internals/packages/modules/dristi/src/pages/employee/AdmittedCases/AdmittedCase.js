@@ -499,11 +499,14 @@ const AdmittedCases = ({ isJudge = true }) => {
   }
 
   return (
-    <div style={{ position: "absolute", width: "100%" }}>
-      <div style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Header styles={{ fontSize: "32px", marginTop: "10px" }}>{caseDetails?.caseTitle || ""}</Header>
+    <div className="admitted-case" style={{ position: "absolute", width: "100%" }}>
+      <div
+        className="admitted-case-header"
+        style={{ position: "sticky", top: "72px", width: "100%", height: "100%", zIndex: 150, background: "white" }}
+      >
+        <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
+          <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Header>{caseDetails?.caseTitle || ""}</Header>
             {statue && (
               <React.Fragment>
                 <hr className="vertical-line" />

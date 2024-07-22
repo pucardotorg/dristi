@@ -529,34 +529,32 @@
   }
 }
 
-.section.search.tab {
-  .search-tabs-container {
-    div {
-      background-color: #ffffff;
-      display: flex;
-      gap: 40px;
-      justify-content: start;
-      border-bottom: 1px #0000001a solid;
+.search-tabs-container {
+  div {
+    background-color: #ffffff;
+    display: flex;
+    gap: 40px;
+    justify-content: start;
+    border-bottom: 1px #0000001a solid;
 
-      .search-tab-head-selected,
-      .search-tab-head {
-        border: none !important;
-        background-color: transparent;
-        font-family: Roboto;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 18.75px;
-        text-align: left;
-        color: #6f767e;
-        padding: 0px 0px 10px;
-      }
+    .search-tab-head-selected,
+    .search-tab-head {
+      border: none !important;
+      background-color: transparent;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #6f767e;
+      padding: 0px 0px 10px;
+    }
 
-      .search-tab-head-selected {
-        font-weight: 700;
-        border-bottom: 3px #0a5757 solid !important;
-        color: #0a5757 !important;
-        padding: 0px 0px 7px;
-      }
+    .search-tab-head-selected {
+      font-weight: 700;
+      border-bottom: 3px #0a5757 solid !important;
+      color: #0a5757 !important;
+      padding: 0px 0px 7px;
     }
   }
 }
