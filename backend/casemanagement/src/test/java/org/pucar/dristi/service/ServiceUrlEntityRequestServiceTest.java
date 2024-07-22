@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceUrlEntityRequestServiceTest {
+class ServiceUrlEntityRequestServiceTest {
 
     @Mock
     private ObjectMapper objectMapper;
@@ -38,7 +38,7 @@ public class ServiceUrlEntityRequestServiceTest {
     private RequestInfo requestInfo;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         requestInfo = new RequestInfo();
         requestInfo.setAuthToken("testAuthToken");
 
@@ -51,7 +51,7 @@ public class ServiceUrlEntityRequestServiceTest {
     }
 
     @Test
-    public void testGetEntityDetails_success() throws Exception {
+    void testGetEntityDetails_success() throws Exception {
         String responseBodyString = "{ \"list\": [ { \"taskDetails\": \"{ \\\"caseDetails\\\": { \\\"courtName\\\": \\\"Test Court\\\" }, " +
                 "\\\"summonDetails\\\": { \\\"summonId\\\": \\\"TestSummonId\\\", \\\"issueDate\\\": \\\"2023-01-01\\\" }, " +
                 "\\\"respondentDetails\\\": { \\\"name\\\": \\\"Test Respondent\\\" } }\", \"orderId\": \"TestOrderId\" } ] }";
@@ -77,7 +77,7 @@ public class ServiceUrlEntityRequestServiceTest {
     }
 
     @Test
-    public void testGetEntityDetails_jsonParsingException() throws Exception {
+    void testGetEntityDetails_jsonParsingException() throws Exception {
         String responseBodyString = "{ \"list\": [ { \"taskDetails\": \"invalidJson\", \"orderId\": \"TestOrderId\" } ] }";
         ResponseEntity<Object> responseEntity = ResponseEntity.ok(responseBodyString);
 
@@ -93,7 +93,7 @@ public class ServiceUrlEntityRequestServiceTest {
     }
 
     @Test
-    public void testGetEntityDetails_orderSearchException() throws Exception {
+    void testGetEntityDetails_orderSearchException() throws Exception {
         String responseBodyString = "{ \"list\": [ { \"taskDetails\": \"{ \\\"caseDetails\\\": { \\\"courtName\\\": \\\"Test Court\\\" }, " +
                 "\\\"summonDetails\\\": { \\\"summonId\\\": \\\"TestSummonId\\\", \\\"issueDate\\\": \\\"2023-01-01\\\" }, " +
                 "\\\"respondentDetails\\\": { \\\"name\\\": \\\"Test Respondent\\\" } }\", \"orderId\": \"TestOrderId\" } ] }";
