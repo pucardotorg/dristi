@@ -219,16 +219,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Parties",
-                isMandatory: false,
-                key: "parties",
-                type: "dropdown",
-                populators: {
-                  name: "parties",
-                },
-              },
-              {
-                label: "Order ID",
+                label: "Search Order Number",
                 isMandatory: false,
                 key: "orderNumber",
                 type: "text",
@@ -260,7 +251,7 @@ export const TabSearchconfig = {
               // },
               {
                 label: "Parties",
-                jsonPath: "",
+                jsonPath: "workflow.assignees",
               },
               {
                 label: "Status",
@@ -283,7 +274,7 @@ export const TabSearchconfig = {
     {
       label: "Submissions",
       type: "search",
-      // customHookName: "dristi.useGetSubmissions",
+      customHookName: "dristi.useApplicationDetails",
       apiDetails: {
         serviceName: "/application/application/v1/search",
         requestParam: {
@@ -360,21 +351,12 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Owner",
+                label: "Search Submission Number",
                 isMandatory: false,
-                key: "owner",
-                type: "dropdown",
-                populators: {
-                  name: "owner",
-                },
-              },
-              {
-                label: "Documents",
-                isMandatory: false,
-                key: "applicationNumber",
+                key: "application Number",
                 type: "text",
                 populators: {
-                  name: "applicationNumber",
+                  name: "application Number",
                 },
               },
             ],
@@ -405,8 +387,7 @@ export const TabSearchconfig = {
               },
               {
                 label: "Owner",
-                jsonPath: "auditDetails.createdBy",
-                additionalCustomization: true,
+                jsonPath: "owner",
               },
               {
                 label: "Date Added",
@@ -430,6 +411,7 @@ export const TabSearchconfig = {
     {
       label: "Documents",
       type: "search",
+      customHookName: "dristi.useEvidenceDetails",
       apiDetails: {
         serviceName: "/evidence/artifacts/v1/_search",
         requestParam: {
@@ -514,16 +496,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Owner",
-                isMandatory: false,
-                key: "owner",
-                type: "dropdown",
-                populators: {
-                  name: "owner",
-                },
-              },
-              {
-                label: "Documents",
+                label: "Search Artifact Number",
                 isMandatory: false,
                 key: "artifactNumber",
                 type: "text",
@@ -554,8 +527,8 @@ export const TabSearchconfig = {
                 jsonPath: "sourceType",
               },
               {
-                label: "Evidence Number",
-                jsonPath: "evidenceNumber",
+                label: "Owner",
+                jsonPath: "owner",
               },
               {
                 label: "Date Added",

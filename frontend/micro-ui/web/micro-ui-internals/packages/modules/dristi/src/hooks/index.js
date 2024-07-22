@@ -12,6 +12,8 @@ import useInboxCustomHook from "./dristi/useInboxCustomHook";
 import useSearchCaseService from "./dristi/useSearchCaseService";
 import { useToast } from "../components/Toast/useToast.js";
 import useCreateHearings from "./dristi/useCreateHearings.js";
+import useApplicationDetails from "./dristi/useApplicationDetails.js";
+import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -50,6 +52,8 @@ const dristi = {
   useGetEvidence,
   useGetOrders,
   useGetSubmissions,
+  useApplicationDetails,
+  useEvidenceDetails,
   useToast,
 };
 

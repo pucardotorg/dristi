@@ -190,6 +190,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Parties",
+                      isMandatory: false,
+                      key: "parties",
+                      type: "dropdown",
+                      populators: {
+                        name: "parties",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {
@@ -247,6 +269,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Owner",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {
@@ -278,6 +322,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Owner",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {

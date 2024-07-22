@@ -5,7 +5,6 @@ import { Evidence } from "../components/Evidence";
 import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
 import { RenderInstance } from "../components/RenderInstance";
-import { Owner } from "../components/Owner";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -667,8 +666,6 @@ export const UICustomizations = {
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Status":
           return value ? "Marked as Evidence" : "Action Pending";
-        case "Owner":
-          return "";
         default:
           break;
       }
