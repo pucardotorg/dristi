@@ -84,7 +84,7 @@ public class CaseRegistrationEnrichment {
 
     private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
         if(courtCase.getWorkflow()!=null && courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)){
-            courtCase.setFilingDate(LocalDate.now());
+            courtCase.setFilingDate(System.currentTimeMillis());
         }
     }
 
@@ -258,4 +258,13 @@ public class CaseRegistrationEnrichment {
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
             }
         }
+
+    public void enrichRegistrationDate(CaseRequest caseRequest) {
+        try {
+            caseRequest.getCases().setRegistrationDate(System.currentTimeMillis());
+        } catch (Exception e) {
+            log.error("Error enriching registration date: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching registration date: " + e.getMessage());
+        }
+    }
 }

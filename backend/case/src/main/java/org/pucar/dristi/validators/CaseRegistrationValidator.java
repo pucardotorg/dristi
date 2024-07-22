@@ -112,8 +112,11 @@ public class CaseRegistrationValidator {
 				.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
 				.cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build()),
 				requestInfo);
-		if (existingApplications.isEmpty())
+		if (existingApplications.get(0).getResponseList().isEmpty())
 			return false;
+		//For not allowing certain fields to update
+		setUnEditableOnUpdate(existingApplications.get(0).getResponseList().get(0), caseRequest);
+
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(),
 				config.getCaseBusinessServiceName(), createMasterDetails());
 
@@ -163,6 +166,15 @@ public class CaseRegistrationValidator {
 		}
 
 		return true;
+	}
+
+	private void setUnEditableOnUpdate(CourtCase courtCase, CaseRequest caseRequest) {
+		caseRequest.getCases().setId(courtCase.getId());
+		caseRequest.getCases().setFilingDate(courtCase.getFilingDate());
+		caseRequest.getCases().setCaseNumber(courtCase.getCaseNumber());
+		caseRequest.getCases().setCnrNumber(courtCase.getCnrNumber());
+		caseRequest.getCases().setRegistrationDate(courtCase.getRegistrationDate());
+		caseRequest.getCases().setTenantId(courtCase.getTenantId());
 	}
 
 	public boolean canLitigantJoinCase(JoinCaseRequest joinCaseRequest) {
