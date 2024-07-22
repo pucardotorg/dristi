@@ -28,11 +28,11 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
     }));
 
     const filingNumbers = [];
-    const filingNumberToHearingId = new Map();
+    const filingNumberToHearing = new Map();
     for (const hearing of hearingListResponse.HearingList) {
       const filingNumber = hearing.filingNumber[0];
       filingNumbers.push(filingNumber);
-      filingNumberToHearingId.set(filingNumber, hearing.hearingId);
+      filingNumberToHearing.set(filingNumber, hearing);
     }
 
     const caseBody = {
@@ -93,7 +93,8 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
           stage: caseData?.stage || "",
           caseType: caseData?.caseType || "",
           pendingTasks: pendingTasksData || "-",
-          hearingId: filingNumberToHearingId.get(filingNumber),
+          hearingId: filingNumberToHearing.get(filingNumber).hearingId,
+          hearing: filingNumberToHearing.get(filingNumber),
         };
       });
 

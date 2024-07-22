@@ -3,6 +3,45 @@ import { Button } from "@egovernments/digit-ui-components";
 import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
 
+function timeInMillisToDateTime(timeInMillis) {
+  if (!timeInMillis || typeof timeInMillis !== "number") {
+    throw new Error("Invalid Time");
+  }
+
+  const date = new Date(timeInMillis);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const dateTimeObject = {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}:${seconds}`,
+  };
+
+  return dateTimeObject;
+}
+
+class HearingSlot {
+  hearings = [];
+  slotName = "";
+  slotStartTime = "";
+  slotEndTime = "";
+  constructor(slotName, slotStartTime, slotEndTime) {
+    this.slotName = slotName;
+    this.slotStartTime = slotStartTime;
+    this.slotEndTime = slotEndTime;
+  }
+
+  addHearingIfApplicable(hearing) {
+    const hearingTime = timeInMillisToDateTime(hearing.startTime).time;
+    if (this.slotStartTime <= hearingTime && hearingTime <= this.slotEndTime) {
+      this.hearings.push(hearing);
+    }
+  }
+}
+
 const UpcomingHearings = (props) => {
   const userName = Digit.SessionStorage.get("User");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
@@ -17,11 +56,6 @@ const UpcomingHearings = (props) => {
   const dayOptions = { weekday: "short" };
   const date = today.toLocaleDateString("en-US", dateOptions); // e.g., "Jun 15"
   const day = today.toLocaleDateString("en-US", dayOptions); // e.g., "Tue"
-  const time = "9:30am-12:00pm"; // Static time for demonstration purposes
-  const hearingType = "Admission Hearings";
-  const pendingTasks = 4;
-  const upcomingHearings = 2;
-  // [TODO: Time, Hearing Type, Pending Tasks, upcoming hearings need to be integrated with actual data]
   const curHr = today.getHours();
   const dateRange = useMemo(
     () => ({
@@ -40,16 +74,46 @@ const UpcomingHearings = (props) => {
     }),
     [dateRange.end, dateRange.start, tenantId]
   );
+
+  const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
+
+  // const orderedHearings
+
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
     dateRange.start && dateRange.end
   );
+
+  /**
+   * @type {HearingSlot[]}
+   */
+  const hearingSlots = useMemo(() => {
+    if (!hearingSlotsResponse || !hearingResponse) {
+      return [];
+    }
+    console.debug({ hearingResponse, hearingSlotsResponse });
+    const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
+    hearingResponse.HearingList.forEach((hearing) => {
+      hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
+    });
+    return hearingSlots;
+  }, [hearingResponse, hearingSlotsResponse]);
+
+  const latestHearing = hearingSlots.filter((slot) => slot.hearings.length).sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime))[0];
+
   const hearingCount = useMemo(() => hearingResponse?.TotalCount, [hearingResponse]);
   if (isLoading) {
     return <Loader />;
   }
+  if (!latestHearing) {
+    return null;
+  }
+  const hearingSearchParams = new URLSearchParams();
+  hearingSearchParams.set("from-date", dateRange.start);
+  hearingSearchParams.set("to-date", dateRange.end);
+  hearingSearchParams.set("slot", latestHearing.slotName);
   return (
     <div className="upcoming-hearing-container">
       <div className="header">
@@ -63,13 +127,21 @@ const UpcomingHearings = (props) => {
             <div className="dayText">{day}</div>
           </div>
           <div className="time-hearing-type">
-            <div className="timeText">{time}</div>
-            <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-              {hearingType} ({hearingCount})
+            <div className="timeText">
+              {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
+            </div>
+            <Link
+              className="hearingType"
+              to={{
+                pathname: `/${window.contextPath}/${userType}/hearings`,
+                search: hearingSearchParams.toString(),
+              }}
+            >
+              {latestHearing.hearings[0].hearingType} ({hearingCount})
             </Link>
           </div>
         </div>
-        <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
+        <Button className={"view-hearing-button"} label={"View Hearings"} variation={"primary"} onClick={props.handleNavigate} />
       </div>
     </div>
   );

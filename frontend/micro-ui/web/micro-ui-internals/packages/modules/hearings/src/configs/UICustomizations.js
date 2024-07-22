@@ -1,6 +1,7 @@
 import { Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import OverlayDropdown from "../components/HearingOverlayDropdown";
+import { hearingService } from "../hooks/services";
 
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -39,16 +40,32 @@ export const UICustomizations = {
         case "Actions":
           return (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Button
-                variation={"secondary"}
-                label={""}
-                onButtonClick={() => {
-                  window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
-                }}
-                style={{ marginRight: "1rem" }}
-              >
-                <strong>Start</strong>
-              </Button>
+              {row.hearing.status === "SCHEDULED" && (
+                <Button
+                  variation={"secondary"}
+                  label={""}
+                  onButtonClick={() => {
+                    hearingService.startHearing({ hearing: row.hearing }).then(() => {
+                      window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
+                    });
+                  }}
+                  style={{ marginRight: "1rem" }}
+                >
+                  <strong>{t(`START_HEARING`)}</strong>
+                </Button>
+              )}
+              {row.hearing.status === "INPROGRESS" && (
+                <Button
+                  variation={"secondary"}
+                  label={""}
+                  onButtonClick={() => {
+                    window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
+                  }}
+                  style={{ marginRight: "1rem" }}
+                >
+                  <strong>{t("JOIN_HEARING")}</strong>
+                </Button>
+              )}
               <OverlayDropdown style={{ position: "absolute" }} column={column} row={row} master="commonUiConfig" module="PreHearingsConfig" />
             </div>
           );
