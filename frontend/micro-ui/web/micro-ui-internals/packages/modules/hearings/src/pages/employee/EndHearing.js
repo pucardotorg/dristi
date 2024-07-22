@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { hearingService } from "../../hooks/services";
 import SummaryModal from "../../components/SummaryModal";
+import NextHearingModal from "../../components/NextHearingModal";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -44,8 +45,14 @@ const CloseBtn = (props) => {
 
 const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
   const { t } = useTranslation();
+  const [stepper, setStepper] = useState(1);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  const history = useHistory();
+
+  const handleNavigate = (path) => {
+    const contextPath = window?.contextPath || "";
+    history.push(`/${contextPath}${path}`);
+  };
 
   const updateHearing = async () => {
     try {
@@ -56,16 +63,12 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
   };
 
   const handleConfirmationModal = () => {
-    updateHearing();
-    setOpenConfirmationModal(!openConfirmationModal);
-    if (openConfirmationModal === true) {
-      handleEndHearingModal();
-    }
+    handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`);
   };
 
   return (
     <div>
-      {!openConfirmationModal ? (
+      {stepper === 1 && (
         <Modal
           popupStyles={{
             height: "222px",
@@ -99,7 +102,10 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
           headerBarMain={<Heading label={t("Are you sure you wish to end this hearing?")} />}
           headerBarEnd={<CloseBtn onClick={handleEndHearingModal} />}
           actionSaveLabel={t("End Hearing")}
-          actionSaveOnSubmit={handleConfirmationModal}
+          actionSaveOnSubmit={() => {
+            updateHearing();
+            setStepper(stepper + 1);
+          }}
           formId="modal-action"
         >
           <div style={{ height: "70px", padding: "5px 24px 16px 24px" }}>
@@ -108,9 +114,11 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
             </CardText>
           </div>
         </Modal>
-      ) : (
-        <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} />
       )}
+      {stepper === 2 && (
+        <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} stepper={stepper} setStepper={setStepper} />
+      )}
+      {stepper === 3 && <NextHearingModal hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />}
     </div>
   );
 };

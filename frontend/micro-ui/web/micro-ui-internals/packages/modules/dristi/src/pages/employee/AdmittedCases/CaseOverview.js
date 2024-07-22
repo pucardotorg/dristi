@@ -1,14 +1,11 @@
 import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
-import useGetOrders from "../../../hooks/dristi/useGetOrders";
-import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { ordersService } from "../../../../../orders/src/hooks/services";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
+import useGetOrders from "../../../hooks/dristi/useGetOrders";
+import { OrderWorkflowAction, OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import PublishedOrderModal from "./PublishedOrderModal";
-import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 
 const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
   const { t } = useTranslation();
@@ -21,10 +18,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
-  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
 
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
-  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
   const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
       id: representative?.advocateId,
@@ -113,7 +109,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
       },
     };
     ordersService
-      .createOrder(reqbody, { tenantId })
+      .createOrder?.(reqbody, { tenantId })
       .then(() => {
         history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
       })
