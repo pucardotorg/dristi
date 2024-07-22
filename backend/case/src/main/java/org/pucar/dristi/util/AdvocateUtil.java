@@ -67,7 +67,7 @@ public class AdvocateUtil {
 
 	}
 
-	public Boolean fetchAdvocateDetails(RequestInfo requestInfo, String advocateId) {
+	public Boolean doesAdvocateExist(RequestInfo requestInfo, String advocateId) {
 
 		List<Advocate> list = fetchAdvocates(requestInfo,advocateId);
 
