@@ -192,6 +192,8 @@ components:
           type: string
         applicationNumber:
           type: string
+        applicationType:
+          type: string
         status:
           type: string          
         id:

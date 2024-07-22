@@ -1,5 +1,11 @@
 package org.pucar.dristi.web.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,18 +18,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.CaseExistsResponse;
+import org.pucar.dristi.web.models.CaseListResponse;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseResponse;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.JoinCaseRequest;
+import org.pucar.dristi.web.models.JoinCaseResponse;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.pucar.dristi.web.models.WitnessResponse;
+import org.pucar.dristi.web.models.WitnessSearchRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 /**
 * API tests for CaseApiController

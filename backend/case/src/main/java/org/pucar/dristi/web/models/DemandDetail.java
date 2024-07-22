@@ -2,10 +2,9 @@ package org.pucar.dristi.web.models;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;

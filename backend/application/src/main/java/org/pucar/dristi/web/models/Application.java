@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -134,5 +135,13 @@ public class Application   {
         this.documents.add(documentsItem);
         return this;
         }
-
+    public boolean isResponseRequired() {
+        if (additionalDetails instanceof Map) {
+            Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
+            if (detailsMap.containsKey("isResponseRequired")) {
+                return (boolean) detailsMap.get("isResponseRequired");
+            }
+        }
+        return false;
+    }
 }

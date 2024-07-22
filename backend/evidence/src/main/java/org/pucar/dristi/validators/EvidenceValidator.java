@@ -1,7 +1,6 @@
 package org.pucar.dristi.validators;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -11,10 +10,8 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -41,8 +38,8 @@ public class EvidenceValidator {
 
     public void validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
 
-        if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId and caseId are mandatory for creating advocate");
+        if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getFilingNumber())) {
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId, caseId and filing number are mandatory for creating advocate");
         }
         if (evidenceRequest.getRequestInfo().getUserInfo() == null) {
             throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
@@ -88,7 +85,7 @@ public class EvidenceValidator {
         EvidenceSearchCriteria evidenceSearchCriteria = createEvidenceSearchCriteria(evidenceRequest);
 
         // Get existing applications using the repository method with EvidenceSearchCriteria
-        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria);
+        List<Artifact> existingApplications = repository.getArtifacts(evidenceSearchCriteria,null);
 
         log.info("Existing application :: {}", existingApplications.size());
 
@@ -100,11 +97,12 @@ public class EvidenceValidator {
         // Return the first existing application
         return existingApplications.get(0);
     }
-    private EvidenceSearchCriteria createEvidenceSearchCriteria(EvidenceRequest evidenceRequest) {
+    EvidenceSearchCriteria createEvidenceSearchCriteria(EvidenceRequest evidenceRequest) {
         EvidenceSearchCriteria evidenceSearchCriteria = new EvidenceSearchCriteria();
         evidenceSearchCriteria.setId(String.valueOf(evidenceRequest.getArtifact().getId()));
         evidenceSearchCriteria.setCaseId(evidenceRequest.getArtifact().getCaseId());
         evidenceSearchCriteria.setApplicationNumber(evidenceRequest.getArtifact().getApplication());
+        evidenceSearchCriteria.setFilingNumber(evidenceRequest.getArtifact().getFilingNumber());
         evidenceSearchCriteria.setHearing(evidenceRequest.getArtifact().getHearing());
         evidenceSearchCriteria.setOrder(evidenceRequest.getArtifact().getOrder());
         evidenceSearchCriteria.setSourceId(evidenceRequest.getArtifact().getSourceID());
@@ -115,6 +113,7 @@ public class EvidenceValidator {
         CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
         CaseExists caseExists = new CaseExists();
         caseExists.setCaseId(artifact.getCaseId());
+        caseExists.setFilingNumber(artifact.getFilingNumber());
         List<CaseExists> criteriaList = new ArrayList<>();
         criteriaList.add(caseExists);
         caseExistsRequest.setRequestInfo(requestInfo);

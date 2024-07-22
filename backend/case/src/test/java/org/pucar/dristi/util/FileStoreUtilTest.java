@@ -1,5 +1,13 @@
 package org.pucar.dristi.util;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,10 +19,6 @@ import org.pucar.dristi.config.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class FileStoreUtilTest {
 
@@ -45,7 +49,7 @@ public class FileStoreUtilTest {
         when(configs.getFileStoreHost()).thenReturn(FILE_STORE_HOST);
         when(configs.getFileStorePath()).thenReturn(FILE_STORE_PATH);
 
-        Boolean result = fileStoreUtil.fileStore(tenantId, fileStoreId);
+        Boolean result = fileStoreUtil.doesFileExist(tenantId, fileStoreId);
 
         assertTrue(result);
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(String.class));
@@ -61,7 +65,7 @@ public class FileStoreUtilTest {
         when(configs.getFileStoreHost()).thenReturn(FILE_STORE_HOST);
         when(configs.getFileStorePath()).thenReturn(FILE_STORE_PATH);
 
-        Boolean result = fileStoreUtil.fileStore(tenantId, fileStoreId);
+        Boolean result = fileStoreUtil.doesFileExist(tenantId, fileStoreId);
 
         assertFalse(result);
     }
@@ -75,7 +79,7 @@ public class FileStoreUtilTest {
         when(configs.getFileStoreHost()).thenReturn(FILE_STORE_HOST);
         when(configs.getFileStorePath()).thenReturn(FILE_STORE_PATH);
 
-        Boolean result = fileStoreUtil.fileStore(tenantId, fileStoreId);
+        Boolean result = fileStoreUtil.doesFileExist(tenantId, fileStoreId);
 
         assertFalse(result);
     }

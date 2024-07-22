@@ -28,6 +28,9 @@ public class OrderCriteria {
     @JsonProperty("applicationNumber")
     private String applicationNumber = null;
 
+    @JsonProperty("orderType")
+    private String orderType = null;
+
     @JsonProperty("orderNumber")
     private String orderNumber = null;
 

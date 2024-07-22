@@ -1,5 +1,13 @@
 package org.pucar.dristi.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.IndividualResponse;
@@ -14,16 +22,8 @@ import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
-public class IndividualServiceTest {
+class IndividualServiceTest {
 
     @Mock
     IndividualUtil individualUtil;

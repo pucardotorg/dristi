@@ -1,18 +1,22 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.LinkedCase;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -41,7 +45,7 @@ public class LitigantRowMapper implements ResultSetExtractor<Map<UUID, List<Part
                         .individualId(rs.getString("individualid"))
                         .organisationID(rs.getString("organisationid"))
                         .partyType(rs.getString("partytype"))
-                        .isActive(Boolean.getBoolean(rs.getString("isactive")))
+                        .isActive(rs.getBoolean("isactive"))
                         .caseId(rs.getString("case_id"))
                         .auditDetails(auditdetails)
                         .build();

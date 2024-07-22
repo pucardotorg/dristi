@@ -1,6 +1,18 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.pucar.dristi.config.ServiceConstants.IDGEN_ERROR;
+import static org.pucar.dristi.config.ServiceConstants.NO_IDS_FOUND_ERROR;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.egov.common.contract.idgen.IdGenerationRequest;
 import org.egov.common.contract.idgen.IdGenerationResponse;
 import org.egov.common.contract.idgen.IdResponse;
@@ -14,16 +26,7 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.pucar.dristi.config.ServiceConstants.IDGEN_ERROR;
-import static org.pucar.dristi.config.ServiceConstants.NO_IDS_FOUND_ERROR;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class IdgenUtilTest {
 

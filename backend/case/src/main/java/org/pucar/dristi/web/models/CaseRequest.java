@@ -1,8 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 

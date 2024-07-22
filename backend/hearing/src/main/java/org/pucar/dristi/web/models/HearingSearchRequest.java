@@ -17,10 +17,14 @@ public class HearingSearchRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
-    private RequestInfo requestInfo = null;
+    private RequestInfo requestInfo;
 
     @JsonProperty("criteria")
     @Valid
-    private HearingCriteria criteria = null;
+    private HearingCriteria criteria;
+
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination;
 
 }

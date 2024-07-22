@@ -45,7 +45,6 @@ class ApplicationRepositoryTest {
     @InjectMocks
     private ApplicationRepository applicationRepository;
 
-    private List<Application> applicationList;
     private List<Document> documentList;
     private Map<UUID, StatuteSection> statuteSectionsMap;
     private Map<UUID, List<Document>> documentMap;
@@ -55,7 +54,6 @@ class ApplicationRepositoryTest {
         // Setting up sample data
         Application application = new Application();
         application.setId(UUID.randomUUID());
-        applicationList = Collections.singletonList(application);
 
         Document document = new Document();
         documentList = Collections.singletonList(document);
@@ -69,37 +67,86 @@ class ApplicationRepositoryTest {
     }
 
     @Test
-    void testGetApplications_Success() {
+    void testGetApplicationsSuccess() {
+        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        ApplicationCriteria criteria = new ApplicationCriteria();
+        String applicationId = UUID.randomUUID().toString();
+        criteria.setId(applicationId);
 
-        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
-        applicationSearchRequest.setRequestInfo(new RequestInfo());
-        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
-        applicationCriteria.setApplicationNumber("");
-        applicationCriteria.setId("");
-        applicationCriteria.setStatus("");
-        applicationCriteria.setCnrNumber("");
-        applicationCriteria.setFilingNumber("");
-        applicationCriteria.setTenantId("");
-        applicationSearchRequest.setCriteria(applicationCriteria);
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
-                .thenReturn("some SQL query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(ApplicationRowMapper.class))).thenReturn(applicationList);
-        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
-                .thenReturn("statute section SQL query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
-                .thenReturn(statuteSectionsMap);
+        String applicationType = "type1"; // Set an example application type
+        criteria.setApplicationType(applicationType); // Ensure the application type is set in the criteria
 
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
-                .thenReturn("document SQL query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
-                .thenReturn(documentMap);
-        List<Application> result = applicationRepository.getApplications(applicationSearchRequest );
+        searchRequest.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        searchRequest.setPagination(pagination);
+
+        String applicationQuery = "SELECT * FROM applications";
+        String documentQuery = "SELECT * FROM documents WHERE applicationId IN (?)";
+        String statuteQuery = "SELECT * FROM statute_sections WHERE applicationId IN (?)";
+        String countQuery = "SELECT COUNT(*) FROM applications";
+
+        List<Application> applications = Arrays.asList(new Application());
+        applications.get(0).setId(UUID.randomUUID());
+
+        // Use eq and any to match arguments
+        when(queryBuilder.getApplicationSearchQuery(
+                any(), anyList()))
+                .thenReturn(applicationQuery);
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
+                .thenReturn(applicationQuery + " ORDER BY createdTime");
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList()))
+                .thenReturn(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0");
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
+
+        when(jdbcTemplate.query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class), eq(rowMapper)))
+                .thenReturn(applications);
+        when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class)))
+                .thenReturn(1);
+
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(documentQuery);
+        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), eq(documentRowMapper)))
+                .thenReturn(new HashMap<>());
+
+        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList())).thenReturn(statuteQuery);
+        when(jdbcTemplate.query(eq(statuteQuery), any(Object[].class), eq(statuteSectionRowMapper)))
+                .thenReturn(new HashMap<>());
+
+        List<Application> result = applicationRepository.getApplications(searchRequest);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(applicationList.size(), result.size());
-        assertEquals(documentList, result.get(0).getDocuments());
-        assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
+        assertEquals(applications, result);
+        assertEquals(1, pagination.getTotalCount());
+
+        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList());
+        verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
+        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
+
+        verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class), eq(rowMapper));
+        verify(jdbcTemplate, times(1)).queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class));
+        verify(jdbcTemplate, times(1)).query(eq(documentQuery), any(Object[].class), eq(documentRowMapper));
+        verify(jdbcTemplate, times(1)).query(eq(statuteQuery), any(Object[].class), eq(statuteSectionRowMapper));
+    }
+
+
+
+
+    @Test
+    public void testGetApplicationsThrowsCustomException() {
+        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        ApplicationCriteria criteria = new ApplicationCriteria();
+        searchRequest.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        searchRequest.setPagination(pagination);
+
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
+                .thenThrow(new CustomException("TEST_ERROR", "Test error"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                applicationRepository.getApplications(searchRequest));
+
+        assertEquals("TEST_ERROR", exception.getCode());
+        assertEquals("Test error", exception.getMessage());
     }
 
     @Test
@@ -114,7 +161,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        lenient().when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
+        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenReturn("some SQL query");
         lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
@@ -137,7 +184,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->

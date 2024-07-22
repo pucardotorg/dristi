@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.rowmapper;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,8 +68,11 @@ public class EvidenceRowMapperTest {
 
         // Verify artifact details and additional details
         ObjectMapper objectMapper = new ObjectMapper();
-        assertEquals("value", objectMapper.readTree(artifactDetailsObject.getValue()).get("key").asText());
-        assertEquals("{\"additionalKey\":\"additionalValue\"}", artifact.getAdditionalDetails());
+        JsonNode artifactDetailsJson = objectMapper.readTree(artifactDetailsObject.getValue());
+        assertEquals("value", artifactDetailsJson.get("key").asText());
+
+        JsonNode additionalDetailsJson = (JsonNode) artifact.getAdditionalDetails(); // Assuming getAdditionalDetails() returns a JsonNode
+        assertEquals("additionalValue", additionalDetailsJson.get("additionalKey").asText());
     }
 
     @Test

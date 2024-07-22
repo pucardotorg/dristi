@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class AdvocateRepositoryTest {
+ class AdvocateRepositoryTest {
 
     @Mock
     private AdvocateQueryBuilder queryBuilder;
@@ -275,7 +275,7 @@ public class AdvocateRepositoryTest {
     }
 
     @Test
-    public void testGetListApplicationsByApplicationNumber_WhenNoAdvocatesFound() {
+     void testGetListApplicationsByApplicationNumber_WhenNoAdvocatesFound() {
         // Arrange
         String applicationNumber = "APP12345";
         String tenantId = "tenantId";

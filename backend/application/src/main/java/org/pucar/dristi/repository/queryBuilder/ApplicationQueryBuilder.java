@@ -2,11 +2,11 @@ package org.pucar.dristi.repository.queryBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.ApplicationCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -40,8 +40,8 @@ public class ApplicationQueryBuilder {
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_application_statute_section stse";
 
     private static final String FROM_APP_TABLE = " FROM dristi_application app";
-    private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY app.createdtime DESC ";
-
+    private static final String ORDERBY_CLAUSE = " ORDER BY app.{orderBy} {sortingOrder} ";
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY app.createdtime DESC ";
     private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app";
 
     public String checkApplicationExistQuery(String filingNumber, String cnrNumber, String applicationNumber, List<Object> preparedStmtList) {
@@ -60,20 +60,20 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber,List<Object> preparedStmtList) {
+    public String getApplicationSearchQuery(ApplicationCriteria applicationCriteria, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
 
             boolean firstCriteria = true; // To check if it's the first criteria
-            firstCriteria = addCriteria(id, query, firstCriteria, "app.id = ?", preparedStmtList);
-            firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(tenantId, query, firstCriteria, "app.tenantId = ?", preparedStmtList);
-            firstCriteria = addCriteria(status, query, firstCriteria, "app.status = ?", preparedStmtList);
-            addCriteria(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getId(), query, firstCriteria, "app.id = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getFilingNumber(), query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
+            addCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
 
-            query.append(ORDERBY_CREATEDTIME_DESC);
             return query.toString();
         }
         catch (Exception e) {
@@ -82,7 +82,7 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+    boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(str);
@@ -109,7 +109,14 @@ public class ApplicationQueryBuilder {
         preparedStatementList.add(pagination.getOffSet());
         return query + " LIMIT ? OFFSET ?";
     }
-
+    public String addOrderByQuery(String query, Pagination pagination) {
+        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+            return query + DEFAULT_ORDERBY_CLAUSE;
+        } else {
+            query = query + ORDERBY_CLAUSE;
+        }
+        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
+    }
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);

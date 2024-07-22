@@ -47,6 +47,7 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .externalRefNumber(rs.getString("externalRefNumber"))
                             .caseId(rs.getString("caseId"))
                             .application(rs.getString("application"))
+                            .filingNumber(rs.getString("filingNumber"))
                             .hearing(rs.getString("hearing"))
                             .order(rs.getString("orders"))
                             .mediaType(rs.getString("mediaType"))
@@ -71,7 +72,7 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
 
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
-                    artifact.setAdditionalDetails(String.valueOf(objectMapper.readTree(additionalDetailsObject.getValue())));
+                    artifact.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));
                 }
 
                 artifactMap.put(id, artifact);

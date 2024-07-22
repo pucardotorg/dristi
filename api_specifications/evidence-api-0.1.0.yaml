@@ -95,7 +95,7 @@ paths:
 components:
   schemas:
     Artifact:
-      required: [tenantId, caseId]
+      required: [tenantId, caseId, filingNumber]
       type: object
       properties:
         id:
@@ -129,6 +129,9 @@ components:
         application:
           type: string
           description: Application number with which this evidence is associated
+        filingNumber:
+          type: string
+          description: Filing number with which this evidence is associated
         hearing:
           type: string
           description: Reference to the hearing where evidence could've been introduced.
@@ -142,7 +145,11 @@ components:
         artifactType:
           type: string
           description: Represents the legal classification of the artifact, such as sworn statement, affidavit, testimony, etc.
-          example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc.. 
+          example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc..
+        sourceType:
+          type: string
+          description: Represents the legal classification of the source, such as COMPLAINANT, ACCUSED, COURT.
+          example: COMPLAINANT, ACCUSED, COURT.
         sourceID:
           type: string
           description: The individual ID of the person who provided this artifact. In case of Person A providing an affidavit, this will be the individual ID of Person A.
@@ -264,6 +271,8 @@ components:
           type: string
         criteria:
           $ref: '#/components/schemas/EvidenceSearchCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
           
     EvidenceSearchResponse:
       type: object
@@ -277,6 +286,8 @@ components:
           description: his is an output field and will contain the list of artifacts found as per the search criteria
           items:
             $ref: '#/components/schemas/Artifact'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
           
     EvidenceSearchCriteria:
       type: object
@@ -286,6 +297,12 @@ components:
           type: string
         applicationId:
           type: string
+        filingNumber:
+          type: string
+        artifactType:
+          type: string
+        evidenceStatus:
+          type: string  
         hearing:
           type: string
         order:

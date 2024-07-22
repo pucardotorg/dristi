@@ -1,4 +1,23 @@
 package org.pucar.dristi.enrichment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
@@ -13,13 +32,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.*;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.StatuteSection;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRegistrationEnrichmentTest {

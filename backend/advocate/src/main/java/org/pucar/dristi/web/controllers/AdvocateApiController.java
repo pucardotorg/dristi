@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.Max;
@@ -39,7 +39,7 @@ public class AdvocateApiController {
 		this.responseInfoFactory = responseInfoFactory;
 	}
 
-	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
+	@PostMapping("/advocate/v1/_create")
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the advocate registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 
@@ -49,7 +49,7 @@ public class AdvocateApiController {
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
+	@PostMapping("/advocate/v1/_search")
 	public ResponseEntity<AdvocateListResponse> advocateV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body,
 	 		@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
@@ -61,7 +61,7 @@ public class AdvocateApiController {
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/advocate/v1/status/_search", method = RequestMethod.POST)
+	@PostMapping("/advocate/v1/status/_search")
 	public ResponseEntity<AdvocateResponse> advocateV1StatusSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "status of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "status", required = true) String status,
 																	   @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
 																	   @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
@@ -74,7 +74,7 @@ public class AdvocateApiController {
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/advocate/v1/applicationnumber/_search", method = RequestMethod.POST)
+	@PostMapping("/advocate/v1/applicationnumber/_search")
 	public ResponseEntity<AdvocateResponse> advocateV1ApplicationnumberSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "applicationNumber of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
 																				  @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
 																				  @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
@@ -87,7 +87,7 @@ public class AdvocateApiController {
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
+	@PostMapping("/advocate/v1/_update")
 	public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 

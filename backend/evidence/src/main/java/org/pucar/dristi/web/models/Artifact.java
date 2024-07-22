@@ -48,7 +48,10 @@ public class Artifact {
 
 	@Size(min = 2, max = 64)
 	private String evidenceNumber = null;
+	@JsonProperty("filingNumber")
+	@NotNull
 
+	private String filingNumber = null;
 	@JsonProperty("externalRefNumber")
 
 	@Size(min = 2, max = 128)
@@ -130,7 +133,7 @@ public class Artifact {
 
 	@JsonProperty("additionalDetails")
 
-	private String additionalDetails = null;
+	private Object additionalDetails = null;
 
 	@JsonProperty("auditdetails")
 
