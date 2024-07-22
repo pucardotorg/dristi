@@ -1769,6 +1769,9 @@ export const updateCaseDetails = async ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),
+                        additionalDetails: {
+                          ...data?.additionalDetails,
+                        },
                         tenantId,
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,

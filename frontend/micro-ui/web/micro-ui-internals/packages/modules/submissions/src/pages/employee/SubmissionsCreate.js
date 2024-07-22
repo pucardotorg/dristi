@@ -275,6 +275,7 @@ const SubmissionsCreate = () => {
           artifact: {
             artifactType: "DOCUMENTARY",
             caseId: caseDetails?.id,
+            filingNumber: caseDetails?.filingNumber,
             tenantId,
             comments: [],
             file,
