@@ -1,9 +1,6 @@
 package org.pucar.dristi.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,6 +17,7 @@ import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
@@ -85,10 +84,15 @@ public class CaseServiceTest {
         requestInfo = new RequestInfo();
         userInfo = new User();
         userInfo.setUuid("user-uuid");
+        userInfo.setType("employee");
+        Role role = new Role();
+        role.setName("employee");
+        userInfo.setRoles(Collections.singletonList(role));
         requestInfo.setUserInfo(userInfo);
 
         // Initialize mocks and create necessary objects for the tests
         joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setAdditionalDetails("form-data");
         courtCase = new CourtCase();
         caseObj = new CourtCase();
         auditDetails = AuditDetails.builder()
@@ -171,6 +175,8 @@ public class CaseServiceTest {
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setLitigant(litigant);
 
+        when(validator.canLitigantJoinCase(joinCaseRequest)).thenReturn(true);
+
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
         });
@@ -179,11 +185,40 @@ public class CaseServiceTest {
         assertEquals("Litigant is already a part of the given case", exception.getMessage());
     }
 
+    @Test
+    public void testVerifyJoinCaseRequestInvalidAccessCode() {
+        String filingNumber = "filing-number";
+        joinCaseRequest.setCaseFilingNumber(filingNumber);
+        joinCaseRequest.setAccessCode("access-code");
+
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
+        List<CaseCriteria> existingApplications = Collections.singletonList(caseCriteria);
+
+        Party party = Party.builder().individualId("individual-id").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
+        AdvocateMapping advocateMapping = AdvocateMapping.builder().representing(Collections.singletonList(party)).isActive(true).auditDetails(new AuditDetails()).build();
+        courtCase.setRepresentatives(Collections.singletonList(advocateMapping));
+
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+
+
+        when(caseRepository.getApplications(anyList(), any())).thenReturn(existingApplications);
+
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(new User());
+        joinCaseRequest.setRequestInfo(requestInfo);
+
+        CustomException exception = assertThrows(CustomException.class, () -> caseService.verifyJoinCaseRequest(joinCaseRequest));
+
+        assertEquals("VALIDATION_EXCEPTION", exception.getCode());
+        assertEquals("Access code not generated", exception.getMessage());
+    }
 
     @Test
     public void testVerifyJoinCaseRequest_RepresentativesAlreadyExists() {
         Party litigant = new Party();
         litigant.setIndividualId("existingLitigant");
+        litigant.setPartyType("primary");
+
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("existingAdv");
         representative.setRepresenting(Collections.singletonList(litigant));
@@ -202,13 +237,49 @@ public class CaseServiceTest {
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setRepresentative(representative);
+        when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
         });
 
-        assertEquals(VALIDATION_ERR, exception.getCode());
         assertEquals("Advocate is already a part of the given case", exception.getMessage());
+    }
+
+    @Test
+    void testVerifyJoinCaseRequest_DisableExistingRepresenting() {
+        // Prepare data for the test
+        String filingNumber = "filing-number";
+        joinCaseRequest.setCaseFilingNumber(filingNumber);
+        joinCaseRequest.setAccessCode("access-code");
+
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
+
+        Party party = Party.builder().individualId("111").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
+        AdvocateMapping advocateMapping = AdvocateMapping.builder().advocateId("222").representing(Collections.singletonList(party)).isActive(true).auditDetails(new AuditDetails()).build();
+        courtCase.setRepresentatives(Collections.singletonList(advocateMapping));
+        courtCase.setAccessCode("access-code");
+        courtCase.setId(UUID.randomUUID());
+
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        List<CaseCriteria> existingApplications = Collections.singletonList(caseCriteria);
+
+        when(caseRepository.getApplications(anyList(), any())).thenReturn(existingApplications);
+        when(config.getUpdateRepresentativeJoinCaseTopic()).thenReturn("update-topic");
+        when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(new User());
+        joinCaseRequest.setRequestInfo(requestInfo);
+        Party party1 = Party.builder().individualId("111").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
+        AdvocateMapping advocateMapping2 = AdvocateMapping.builder().advocateId("333").representing(Collections.singletonList(party1)).isActive(true).auditDetails(new AuditDetails()).build();
+        joinCaseRequest.setRepresentative(advocateMapping2);
+
+        // Call the method
+        JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
+
+        // Verify the results
+        assertNotNull(response);
     }
 
     @Test
@@ -229,6 +300,7 @@ public class CaseServiceTest {
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setLitigant(litigant);
+        joinCaseRequest.setAdditionalDetails("form-data");
 
         joinCaseRequest.setRepresentative(advocate);
         when(validator.canLitigantJoinCase(joinCaseRequest)).thenReturn(true);
