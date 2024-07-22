@@ -15,6 +15,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.commons.codec.binary.Hex;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import static org.pucar.dristi.config.ServiceConstants.TEMP_DIR;
+
 import org.pucar.dristi.web.models.VcCredentialRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,21 +37,17 @@ import java.util.List;
 @Service
 @Slf4j
 public class FileDownloadService {
+    private Configuration configuration;
 
-    @Value("${dristi.dev.file.search.host}")
-    private String fileStoreHost;
-
-    @Value("${dristi.dev.file.search.path}")
-    private String fileStorePath;
-
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
-
+    public FileDownloadService(Configuration configuration){
+        this.configuration=configuration;
+    }
 
     public String downloadAndExtractSignature(VcCredentialRequest vcCredentialRequest)  {
         String tenantId= vcCredentialRequest.getTenantId();
         String fileStoreId= vcCredentialRequest.getFileStoreId();
         StringBuilder fileStoreSearch = new StringBuilder();
-        fileStoreSearch.append(fileStoreHost).append(fileStorePath);
+        fileStoreSearch.append(configuration.getFileStoreHost()).append(configuration.getFileStorePath());
         String fileStoreSearchUrl= fileStoreSearch.toString()+"?fileStoreIds=" + fileStoreId + "&tenantId=" + tenantId;
         String authToken = vcCredentialRequest.getRequestInfo().getAuthToken();
         // Step 1: Call the API to get the S3 URL
@@ -75,7 +74,7 @@ public class FileDownloadService {
     }
 
 
-    private String getS3Url(String apiUrl, String authToken, String tenantId) {
+    public String getS3Url(String apiUrl, String authToken, String tenantId) {
         String s3Url=null;
         try{
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -109,7 +108,7 @@ public class FileDownloadService {
         }
     }
 
-    private File downloadFileFromS3(String s3Url) {
+    public File downloadFileFromS3(String s3Url) {
         File tempFile = null;
         try {
             createSecureTempDir();
@@ -140,7 +139,7 @@ public class FileDownloadService {
         return tempFile;
     }
 
-    private String extractSignature(File pdfFile) {
+    public String extractSignature(File pdfFile) {
         String signedHashValue=null;
         try (PDDocument document = PDDocument.load(pdfFile)) {
             List<PDSignature> signatureDictionaries = document.getSignatureDictionaries();
