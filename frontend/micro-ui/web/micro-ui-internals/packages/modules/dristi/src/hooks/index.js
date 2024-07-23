@@ -31,6 +31,7 @@ export const Urls = {
     evidenceUpdate: "/evidence/v1/_update",
     searchHearings: "/hearing/v1/search",
     createHearings: "/hearing/v1/create",
+    updateHearings: "/hearing/v1/update",
     demandCreate: "/billing-service/demand/_create",
     ordersSearch: "/order/v1/search",
     ordersCreate: "/order/v1/create",

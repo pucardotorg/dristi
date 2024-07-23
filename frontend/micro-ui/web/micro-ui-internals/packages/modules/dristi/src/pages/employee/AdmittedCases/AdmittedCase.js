@@ -283,7 +283,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name };
+                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
                         }),
                       },
                     },
@@ -336,7 +336,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name };
+                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
                         }),
                       },
                     },
@@ -654,7 +654,9 @@ const AdmittedCases = ({ isJudge = true }) => {
           </div>
         </div>
       </div>
-      <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
+      {config?.label !== "Overview" && (
+        <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
+      )}
       {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>

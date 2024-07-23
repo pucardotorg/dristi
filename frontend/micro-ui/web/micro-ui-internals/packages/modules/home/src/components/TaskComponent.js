@@ -16,7 +16,7 @@ export const CaseWorkflowAction = {
   ABANDON: "ABANDON",
 };
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -31,6 +31,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
+          ...(filingNumber && { filingNumber: filingNumber }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
