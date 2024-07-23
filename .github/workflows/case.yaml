@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-      - f/develop-case-encryption-update/
+      - f/develop-case-encryption-update
     paths:
       - 'backend/case/**'
   pull_request:
