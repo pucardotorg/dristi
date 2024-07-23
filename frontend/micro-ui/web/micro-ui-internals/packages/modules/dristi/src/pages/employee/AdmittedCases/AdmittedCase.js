@@ -17,6 +17,7 @@ import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
 import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
 import PublishedOrderModal from "./PublishedOrderModal";
+import ViewAllSubmissions from "./ViewAllSubmissions";
 
 const defaultSearchValues = {};
 
@@ -36,7 +37,9 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
   const [orderDraftModal, setOrderDraftModal] = useState(false);
+  const [submissionsViewModal, setSubmissionsViewModal] = useState(false);
   const [draftOrderList, setDraftOrderList] = useState([]);
+  const [submissionsViewList, setSubmissionsViewList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -112,6 +115,11 @@ const AdmittedCases = ({ isJudge = true }) => {
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
     setOrderDraftModal(true);
+  };
+
+  const openSubmissionViewModal = (submissionList, openEvidenceModalFunc) => {
+    setSubmissionsViewList({ list: submissionList, func: openEvidenceModalFunc });
+    setSubmissionsViewModal(true);
   };
 
   const handleTakeAction = () => {
@@ -655,7 +663,13 @@ const AdmittedCases = ({ isJudge = true }) => {
         </div>
       </div>
       {config?.label !== "Overview" && (
-        <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
+        <ExtraComponent
+          caseData={caseRelatedData}
+          setUpdateCounter={setUpdateCounter}
+          tab={config?.label}
+          setOrderModal={openDraftModal}
+          openSubmissionsViewModal={openSubmissionViewModal}
+        />
       )}
       {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
@@ -760,6 +774,15 @@ const AdmittedCases = ({ isJudge = true }) => {
         />
       )}
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
+      {submissionsViewModal && (
+        <ViewAllSubmissions
+          t={t}
+          setShow={setSubmissionsViewModal}
+          submissionList={submissionsViewList.list}
+          openEvidenceModal={submissionsViewList.func}
+          filingNumber={filingNumber}
+        />
+      )}
       {toast && toastDetails && (
         <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}

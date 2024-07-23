@@ -111,6 +111,7 @@ export const TabSearchconfig = {
               {
                 label: "Hearing Type",
                 jsonPath: "hearingType",
+                additionalCustomization: true,
               },
               // {
               //   label: "Stage",
@@ -124,6 +125,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Date",
@@ -260,6 +262,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Date Added",
@@ -388,6 +391,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "workflow.action",
+                additionalCustomization: true,
               },
               {
                 label: "Owner",
@@ -529,6 +533,7 @@ export const TabSearchconfig = {
               {
                 label: "Source",
                 jsonPath: "sourceType",
+                additionalCustomization: true,
               },
               {
                 label: "Owner",

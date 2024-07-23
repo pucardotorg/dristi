@@ -665,8 +665,10 @@ export const UICustomizations = {
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Hearing Type":
+        case "Source":
         case "Status":
-          return value ? "Marked as Evidence" : "Action Pending";
+          return t(value);
         case "Actions":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />

@@ -52,7 +52,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
-        {showAsHeading ? <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div> : <FactCheckIcon />}
+        {showAsHeading ? <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{t(value)}</div> : <FactCheckIcon />}
       </div>
     </React.Fragment>
   );
