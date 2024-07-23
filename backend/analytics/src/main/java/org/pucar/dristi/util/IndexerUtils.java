@@ -73,7 +73,10 @@ public class IndexerUtils {
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("id", 73);
 		userInfo.put("tenantId",config.getStateLevelTenantId());
-
+		JSONObject role = new JSONObject();
+		role.put("code","INTERNAL_MICROSERVICE_ROLE");
+		JSONArray roles = new JSONArray(role);
+		userInfo.put("roles",roles);
 		JSONObject requestInfo = new JSONObject();
 		requestInfo.put("apiId", "org.egov.pt");
 		requestInfo.put("ver", "1.0");
@@ -159,7 +162,7 @@ public class IndexerUtils {
 		Boolean isCompleted = pendingTask.getIsCompleted();
 		String cnrNumber = pendingTask.getCnrNumber();
 		String filingNumber = pendingTask.getFilingNumber();
-		String additionalDetails = "{}";
+		String additionalDetails;
 		try {
 			additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
 		}catch (Exception e){
