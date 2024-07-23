@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+    private ServiceConstants() {
+    }
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -57,6 +58,10 @@ public class ServiceConstants {
     public static final String ROW_MAPPER_EXCEPTION = "Error in row mapper";
     public static final String EXIST_TASK_ERR = "Error while checking task exist";
     public static final String SEARCH_TASK_ERR = "Error while searching task";
+    public static final String BAIL = "BAIL";
+    public static final String SUMMON = "SUMMON";
+    public static final String WARRANT = "WARRANT";
+    public static final String ISSUESUMMON = "ISSUESUMMON";
 
 
 }

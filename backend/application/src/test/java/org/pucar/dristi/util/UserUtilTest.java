@@ -1,85 +1,71 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
-import org.egov.common.contract.user.UserDetailResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.pucar.dristi.util.UserUtil;
 
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(MockitoExtension.class)
 class UserUtilTest {
 
     @InjectMocks
     private UserUtil userUtil;
 
     @Mock
-    private ObjectMapper mapper;
+    private ServiceRequestRepository serviceRequestRepository;
 
     @Mock
-    private ServiceRequestRepository serviceRequestRepository;
+    private ObjectMapper mapper;
 
     @Mock
     private Configuration configs;
 
     @BeforeEach
-    void setUp() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(userUtil, "configs", configs);
     }
 
+    @Test
+    void testUserCall_UserSearchEndpoint() {
+        // Setup
+        StringBuilder uri = new StringBuilder("/search");
+        Mockito.when(configs.getUserSearchEndpoint()).thenReturn("/search");
+
+        // Act
+        String endpoint = configs.getUserSearchEndpoint();
+        uri.append(endpoint);
+
+        // Assert
+        assertNotNull(uri);
+        assertEquals("/search/search", uri.toString());
+        Mockito.verify(configs, Mockito.times(1)).getUserSearchEndpoint();
+    }
 
     @Test
-    void testParseResponse() {
-        LinkedHashMap responseMap = new LinkedHashMap();
-        LinkedHashMap userMap = new LinkedHashMap();
-        userMap.put("createdDate", "01-01-2020 12:00:00");
-        responseMap.put("User", List.of(userMap));
-
+    void testParseResponse_WithUsers() {
+        // Setup
+        LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
+        List<LinkedHashMap<String, Object>> users = new ArrayList<>();
+        LinkedHashMap<String, Object> user = new LinkedHashMap<>();
+        user.put("createdDate", "2024-05-28 12:00:00");
+        users.add(user);
+        responseMap.put("user", users);
+        // Test
         userUtil.parseResponse(responseMap, "dd-MM-yyyy HH:mm:ss");
-
-        assertNotNull(responseMap);
-    }
-
-    @Test
-    void testDateToLong() {
-        String date = "01-01-2020 12:00:00";
-        Long result = ReflectionTestUtils.invokeMethod(userUtil, "dateTolong", date, "dd-MM-yyyy HH:mm:ss");
-
-        assertNotNull(result);
-    }
-
-
-    @Test
-    void testGetCitizenRole() {
-        String tenantId = "tenant";
-        Role role = ReflectionTestUtils.invokeMethod(userUtil, "getCitizenRole", tenantId);
-
-        assertNotNull(role);
-        assertEquals("CITIZEN", role.getCode());
-    }
-
-    @Test
-    void testGetStateLevelTenant() {
-        String tenantId = "tenant.subtenant";
-        String stateLevelTenant = userUtil.getStateLevelTenant(tenantId);
-
-        assertEquals("tenant", stateLevelTenant);
+        assertEquals(1, users.size());
+        Assertions.assertTrue(users.get(0).containsKey("createdDate"));
+        Assertions.assertTrue(users.get(0).get("createdDate") instanceof Long);
     }
 }

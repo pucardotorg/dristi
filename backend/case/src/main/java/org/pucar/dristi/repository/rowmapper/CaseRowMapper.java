@@ -1,7 +1,17 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+
+import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
@@ -9,13 +19,9 @@ import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -26,7 +32,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("casenumber");
+                String uuid = rs.getString("id");
                 CourtCase courtCase = caseMap.get(uuid);
 
                 if (courtCase == null) {
@@ -50,11 +56,18 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .caseDescription(rs.getString("casedescription"))
                             .filingNumber(rs.getString("filingnumber"))
                             .caseNumber(rs.getString("caseNumber"))
+                            .cnrNumber(rs.getString("cnrnumber"))
+                            .courtCaseNumber(rs.getString("courtcaseNumber"))
                             .accessCode(rs.getString("accesscode"))
                             .courtId(rs.getString("courtid"))
                             .benchId(rs.getString("benchid"))
-                            .filingDate(stringToLocalDate(rs.getString("filingdate")))
-                            .registrationDate(stringToLocalDate(rs.getString("registrationdate")))
+                            .judgeId(rs.getString("judgeid"))
+                            .stage(rs.getString("stage"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .substage(rs.getString("substage"))
+                            .filingDate(rs.getLong("filingdate"))
+                            .judgementDate(rs.getLong("judgementdate"))
+                            .registrationDate(rs.getLong("registrationdate"))
                             .caseCategory(rs.getString("casecategory"))
                             .natureOfPleading(rs.getString("natureofpleading"))
                             .status(rs.getString("status"))
@@ -64,31 +77,34 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                 }
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
-                if(pgObject!=null)
+                if (pgObject != null)
                     courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
                 PGobject caseDetailsObject = (PGobject) rs.getObject("casedetails");
-                if(caseDetailsObject!=null)
+                if (caseDetailsObject != null)
                     courtCase.setCaseDetails(objectMapper.readTree(caseDetailsObject.getValue()));
 
                 caseMap.put(uuid, courtCase);
             }
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while processing Case ResultSet :: {}", e.toString());
-            throw new CustomException(ROW_MAPPER_EXCEPTION,"Exception occurred while processing Case ResultSet: "+ e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION, "Exception occurred while processing Case ResultSet: " + e.getMessage());
         }
         return new ArrayList<>(caseMap.values());
     }
 
-    private LocalDate stringToLocalDate(String str){
+    private LocalDate stringToLocalDate(String str) {
         LocalDate localDate = null;
-        if(str!=null)
         try {
-            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            localDate = LocalDate.parse(str, pattern);
-        } catch (DateTimeParseException e) {}
-
+            if (str != null) {
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            }
+        } catch (DateTimeParseException e) {
+            log.error("Date parsing failed for input: {}", str, e);
+            throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
+        }
         return localDate;
     }
 }

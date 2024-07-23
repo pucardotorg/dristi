@@ -2,10 +2,9 @@ package org.pucar.dristi.validator;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
-import org.pucar.dristi.util.IdgenUtil;
+import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,14 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.ORDER_EXCEPTION;
 
 @Component
 public class ApplicationValidator {
+    private final ApplicationRepository repository;
+    private final CaseUtil caseUtil;
+    private final OrderUtil orderUtil;
     @Autowired
-    private CaseUtil caseUtil;
-
-    @Autowired
-    private ApplicationRepository repository;
+    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil,OrderUtil orderUtil) {
+        this.repository = repository;
+        this.caseUtil = caseUtil;
+        this.orderUtil = orderUtil;
+    }
 
     public void validateApplication(ApplicationRequest applicationRequest) throws CustomException {
         RequestInfo requestInfo = applicationRequest.getRequestInfo();
@@ -85,5 +89,23 @@ public class ApplicationValidator {
         caseExistsRequest.setRequestInfo(requestInfo);
         caseExistsRequest.setCriteria(criteriaList);
         return caseExistsRequest;
+    }
+    public OrderExistsRequest createOrderExistRequest(RequestInfo requestInfo, Application application){
+        OrderExistsRequest orderExistsRequest = new OrderExistsRequest();
+        orderExistsRequest.setRequestInfo(requestInfo);
+        List<OrderExists> criteriaList = new ArrayList<>();
+        OrderExists orderExists = new OrderExists();
+        orderExists.setOrderId(application.getReferenceId());
+        criteriaList.add(orderExists);
+        orderExistsRequest.setOrder(criteriaList);
+        return orderExistsRequest;
+    }
+    public void validateOrderDetails(ApplicationRequest applicationRequest) {
+        if (applicationRequest.getApplication().getReferenceId() != null) {
+            OrderExistsRequest orderExistsRequest = createOrderExistRequest(applicationRequest.getRequestInfo(), applicationRequest.getApplication());
+            if (!orderUtil.fetchOrderDetails(orderExistsRequest)) {
+                throw new CustomException(ORDER_EXCEPTION, "Order does not exist");
+            }
+        }
     }
 }

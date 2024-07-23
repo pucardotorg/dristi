@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -21,26 +22,34 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Service
 @Slf4j
 public class ApplicationService {
-    @Autowired
-    private ApplicationValidator validator;
+    private final ApplicationValidator validator;
+    private final ApplicationEnrichment enrichmentUtil;
+    private final ApplicationRepository applicationRepository;
+    private final WorkflowService workflowService;
+    private final Configuration config;
+    private final Producer producer;
 
     @Autowired
-    private ApplicationEnrichment enrichmentUtil;
-
-    @Autowired
-    private ApplicationRepository applicationRepository;
-
-    @Autowired
-    private WorkflowService workflowService;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private Producer producer;
+    public ApplicationService(
+            ApplicationValidator validator,
+            ApplicationEnrichment enrichmentUtil,
+            ApplicationRepository applicationRepository,
+            WorkflowService workflowService,
+            Configuration config,
+            Producer producer) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.applicationRepository = applicationRepository;
+        this.workflowService = workflowService;
+        this.config = config;
+        this.producer = producer;
+    }
 
     public Application createApplication(ApplicationRequest body) {
         try {
             validator.validateApplication(body);
             enrichmentUtil.enrichApplication(body);
+            validator.validateOrderDetails(body);
             workflowService.updateWorkflowStatus(body);
             producer.push(config.getApplicationCreateTopic(), body);
             return body.getApplication();
@@ -59,7 +68,7 @@ public class ApplicationService {
             }
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
-
+            validator.validateOrderDetails(applicationRequest);
             workflowService.updateWorkflowStatus(applicationRequest);
 
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
@@ -75,15 +84,16 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+    public List<Application> searchApplications (ApplicationSearchRequest request){
             try {
                 // Fetch applications from database according to the given search params
-                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
-                log.info("No. of applications :: {}", applicationList.size());
+                log.info("Starting application search with parameters :: {}", request);
+                List<Application> applicationList = applicationRepository.getApplications(request);
+                log.info("Application list fetched with size :: {}", applicationList.size());
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfoBody.getRequestInfo(), requestInfoBody.getTenantId(), application.getApplicationNumber()))));
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.getMessage());

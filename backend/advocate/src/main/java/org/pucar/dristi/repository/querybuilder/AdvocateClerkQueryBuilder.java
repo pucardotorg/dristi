@@ -3,29 +3,25 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
 public class AdvocateClerkQueryBuilder {
 
     private static final String BASE_ATR_QUERY = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status ";
+    private static final String ADV_TENANT_ID_QUERY = "LOWER(advc.tenantid) = LOWER(?)";
 
     private static final String DOCUMENT_SELECT_QUERY = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id ";
     private static final String FROM_CLERK_TABLES = " FROM dristi_advocate_clerk advc";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY advc.createdtime DESC ";
-    private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
+    private static final String LIMIT_OFFSET = " LIMIT ? OFFSET ?";
 
     /** To build query using search criteria to search clerks
      * @param criteria
@@ -35,44 +31,17 @@ public class AdvocateClerkQueryBuilder {
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
-            if(criteria != null) {
 
-                if (criteria.getId()!=null && !criteria.getId().isEmpty()) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.id = ? ");
-                    preparedStmtList.add(criteria.getId());
-                }
+            if (criteria != null) {
+                addCriteriaToQuery(criteria, query, preparedStmtList);
 
-                if (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append("advc.stateregnnumber = ?");
-                    preparedStmtList.add(criteria.getStateRegnNumber());
-                }
-
-                if (criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append("advc.applicationNumber = ?");
-                    preparedStmtList.add(criteria.getApplicationNumber());
-                }
-
-                if (criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append("advc.individualId = ?");
-                    preparedStmtList.add(criteria.getIndividualId());
-                }
-
-                if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
-                        || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
-                    query.append(")");
-                }
-
-                if(tenantId != null && !tenantId.isEmpty()){
+                if (tenantId != null && !tenantId.isEmpty()) {
                     addClauseIfRequiredForTenantId(query, preparedStmtList);
-                    query.append("LOWER(advc.tenantid) = LOWER(?)");
+                    query.append(ADV_TENANT_ID_QUERY);
                     preparedStmtList.add(tenantId.toLowerCase());
                 }
             }
@@ -81,21 +50,43 @@ public class AdvocateClerkQueryBuilder {
 
             // Adding Pagination
             if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
+                query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
                 preparedStmtList.add(offset);
             }
 
             return query.toString();
-        }
-        catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}",e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+        } catch (Exception e) {
+            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION, ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION + e.getMessage());
         }
     }
+
+    private void addCriteriaToQuery(AdvocateClerkSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList) {
+        boolean hasPreviousClause = false;
+
+        hasPreviousClause = addSingleCriteria(criteria.getId(), "advc.id", query, preparedStmtList, hasPreviousClause);
+        hasPreviousClause = addSingleCriteria(criteria.getStateRegnNumber(), "advc.stateregnnumber", query, preparedStmtList, hasPreviousClause);
+        hasPreviousClause = addSingleCriteria(criteria.getApplicationNumber(), "advc.applicationNumber", query, preparedStmtList, hasPreviousClause);
+        addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, hasPreviousClause);
+    }
+
+    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList, boolean hasPreviousClause) {
+        if (value != null && !value.isEmpty()) {
+            if (hasPreviousClause) {
+                query.append(" AND ");
+            } else {
+                addClauseIfRequired(query, preparedStmtList);
+                hasPreviousClause = true;
+            }
+            query.append(column).append(" = ? ");
+            preparedStmtList.add(value);
+        }
+        return hasPreviousClause;
+    }
+
 
     public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
         try {
@@ -111,7 +102,7 @@ public class AdvocateClerkQueryBuilder {
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
-                query.append("LOWER(advc.tenantid) = LOWER(?)");
+                query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
             }
 
@@ -119,7 +110,7 @@ public class AdvocateClerkQueryBuilder {
 
             // Adding Pagination
             if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
+                query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
                 preparedStmtList.add(offset);
             }
@@ -127,8 +118,8 @@ public class AdvocateClerkQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}", e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
 
@@ -146,7 +137,7 @@ public class AdvocateClerkQueryBuilder {
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
-                query.append("LOWER(advc.tenantid) = LOWER(?)");
+                query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
             }
 
@@ -154,7 +145,7 @@ public class AdvocateClerkQueryBuilder {
 
             // Adding Pagination
             if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
+                query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
                 preparedStmtList.add(offset);
             }
@@ -162,32 +153,32 @@ public class AdvocateClerkQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}",e.toString());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION,e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
 
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
-        if(preparedStmtList.isEmpty()){
-            query.append(" WHERE (");
-        }else{
-            query.append(" OR ");
-        }
-    }
-
-    private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
-        if(preparedStmtList.isEmpty()){
-            query.append(" WHERE (");
-        }else{
-            query.append(" AND ");
-        }
-    }
-
-    private void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
+    void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");
         }else{
-            query.append(" AND ");
+            query.append(AND);
+        }
+    }
+
+    void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ( ");
+        }else{
+            query.append(AND);
+        }
+    }
+
+    void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ");
+        }else{
+            query.append(AND);
         }
     }
 

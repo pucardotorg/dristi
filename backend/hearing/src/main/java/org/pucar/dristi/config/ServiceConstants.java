@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceConstants {
 
+    private ServiceConstants() {
+    }
+
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -51,13 +54,11 @@ public class ServiceConstants {
     public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
     public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
     public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
-    public static final String RESPONSE_INFO_FACTORY_EXCEPTION = "RESPONSE_INFO_FACTORY_EXCEPTION";
     public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
-    public static final String QUERY_EXECUTION_FAILED = "QUERY_EXECUTION_FAILED";
     public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
     public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
     public static final String TEST_EXCEPTION = "TEST_EXCEPTION";
-    public static final String HEARING_CREATE_EXCEPTION = "Exception while updating hearing";
+    public static final String HEARING_CREATE_EXCEPTION = "Exception while creating hearing";
     public static final String HEARING_UPDATE_EXCEPTION = "Exception while updating hearing";
     public static final String HEARING_SEARCH_EXCEPTION = "Exception while Searching hearing";
     public static final String SEARCH_QUERY_EXCEPTION = "Exception while creating query";

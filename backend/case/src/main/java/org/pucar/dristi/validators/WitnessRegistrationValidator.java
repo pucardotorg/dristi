@@ -1,21 +1,22 @@
 package org.pucar.dristi.validators;
 
+import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
+import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.repository.WitnessRepository;
 import org.pucar.dristi.service.IndividualService;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.pucar.dristi.web.models.WitnessSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
-
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
 
 @Component
 public class WitnessRegistrationValidator {

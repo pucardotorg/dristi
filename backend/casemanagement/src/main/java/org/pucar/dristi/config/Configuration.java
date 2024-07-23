@@ -89,4 +89,35 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    @Value("${dristi.dev.file.search.host}")
+    private String fileStoreHost;
+
+    @Value("${dristi.dev.file.search.path}")
+    private String fileStorePath;
+
+    @Value("${dristi.dev.order.search.host}")
+    private String orderSearchHost;
+
+    @Value("${dristi.dev.order.search.url}")
+    private String orderSearchPath;
+
+    @Value("${egov.pdf.create}")
+    private String generatePdfUrl;
+
+    @Value("${egov.pdf.host}")
+    private String generatePdfHost;
+
+    @Value("${egov.credential.host}")
+    private String credentialHost;
+
+    @Value("${egov.credential.url}")
+    private String credentialUrl;
+
+    @Value("${dristi.dev.task.search.host}")
+    private String taskSearchHost;
+
+    @Value("${dristi.dev.task.search.url}")
+    private String taskSearchPath;
+
 }

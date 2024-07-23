@@ -77,6 +77,12 @@ public class Configuration {
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
 
+    // Order Config
+    @Value("${egov.order.host}")
+    private String orderHost;
+
+    @Value("${egov.order.path}")
+    private String orderExistsPath;
 
     //URLShortening
     @Value("${egov.url.shortner.host}")
@@ -103,4 +109,23 @@ public class Configuration {
 
     @Value("${application.kafka.update.topic}")
     private String applicationUpdateTopic;
+
+    //Workflow
+    @Value("${egov.workflow.async.order.submission.business.name}")
+    private String asyncOrderSubBusinessName;
+
+    @Value("${egov.workflow.async.order.submission.business.service.name}")
+    private String asyncOrderSubBusinessServiceName;
+
+    @Value("${egov.workflow.async.order.submission.withresponse.business.name}")
+    private String asyncOrderSubWithResponseBusinessName;
+
+    @Value("${egov.workflow.async.order.submission.withresponse.business.service.name}")
+    private String asyncOrderSubWithResponseBusinessServiceName;
+
+    @Value("${egov.workflow.async.voluntary.submission.business.name}")
+    private String asyncVoluntarySubBusinessName;
+
+    @Value("${egov.workflow.async.voluntary.submission.business.service.name}")
+    private String asyncVoluntarySubBusinessServiceName;
 }

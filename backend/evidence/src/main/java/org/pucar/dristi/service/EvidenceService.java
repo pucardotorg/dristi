@@ -8,10 +8,7 @@ import org.pucar.dristi.enrichment.EvidenceEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.validators.EvidenceValidator;
-import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.EvidenceRequest;
-import org.pucar.dristi.web.models.EvidenceSearchCriteria;
-import org.pucar.dristi.web.models.EvidenceSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,18 +21,23 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Service
 public class EvidenceService {
+    private final EvidenceValidator validator;
+    private final EvidenceEnrichment evidenceEnrichment;
+    private final WorkflowService workflowService;
+    private final EvidenceRepository repository;
+    private final Producer producer;
+    private final Configuration config;
     @Autowired
-    private EvidenceValidator validator;
-    @Autowired
-    private EvidenceEnrichment enrichmentUtil;
-    @Autowired
-    private WorkflowService workflowService;
-    @Autowired
-    private EvidenceRepository repository;
-    @Autowired
-    private Producer producer;
-    @Autowired
-    private Configuration config;
+    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment,
+                           WorkflowService workflowService, EvidenceRepository repository,
+                           Producer producer, Configuration config) {
+        this.validator = validator;
+        this.evidenceEnrichment = evidenceEnrichment;
+        this.workflowService = workflowService;
+        this.repository = repository;
+        this.producer = producer;
+        this.config = config;
+    }
     public Artifact createEvidence(EvidenceRequest body) {
         try {
 
@@ -43,28 +45,32 @@ public class EvidenceService {
             validator.validateEvidenceRegistration(body);
 
             // Enrich applications
-            enrichmentUtil.enrichEvidenceRegistration(body);
+            evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            workflowService.updateWorkflowStatus(body);
-
-            // Push the application to the topic for persister to listen and persist
-
-            producer.push(config.getEvidenceCreateTopic(), body);
-
+            if(body.getArtifact().getArtifactType() != null && body.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(body);
+                producer.push(config.getEvidenceCreateTopic(), body);
+            }
+            else {
+                if(body.getArtifact().getIsEvidence().equals(true)) {
+                    evidenceEnrichment.enrichEvidenceNumber(body);
+                }
+                producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
+            }
             return body.getArtifact();
         } catch (CustomException e){
             log.error("Custom Exception occurred while creating evidence");
             throw e;
         } catch (Exception e){
             log.error("Error occurred while creating evidence");
-            throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.getMessage());
+            throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.toString());
         }
     }
-    public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
+    public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
+            List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria,pagination);
 
             // If no applications are found matching the given criteria, return an empty list
             if(CollectionUtils.isEmpty(artifacts))
@@ -78,42 +84,58 @@ public class EvidenceService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.getMessage());
+            throw new CustomException(EVIDENCE_SEARCH_EXCEPTION,e.toString());
         }
     }
 
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
-
         try {
+            Artifact existingApplication = validateExistingEvidence(evidenceRequest);
 
-            // Validate whether the application that is being requested for update indeed exists
-            Artifact existingApplication;
-            try {
-                existingApplication = validator.validateApplicationExistence(evidenceRequest);
-            } catch (Exception e) {
-                log.error("Error validating existing application");
-                throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
-            }
+            // Update workflow
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
 
             // Enrich application upon update
-            enrichmentUtil.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
+            evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            workflowService.updateWorkflowStatus(evidenceRequest);
-            if (ACTIVE_STATUS.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
-                evidenceRequest.getArtifact().setIsActive(true);
+            if(evidenceRequest.getArtifact().getArtifactType() != null &&evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(evidenceRequest);
+                enrichBasedOnStatus(evidenceRequest);
+                producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
             }
-            producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
-
+            else {
+                if(evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
+                    evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+                }
+                producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
+            }
             return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating evidence");
+            log.error("Custom Exception occurred while updating evidence", e);
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating evidence");
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.getMessage());
+            log.error("Error occurred while updating evidence", e);
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error occurred while updating evidence: " + e.toString());
         }
-
     }
+
+    Artifact validateExistingEvidence(EvidenceRequest evidenceRequest) {
+        try {
+            return validator.validateEvidenceExistence(evidenceRequest);
+        } catch (Exception e) {
+            log.error("Error validating existing application", e);
+            throw new CustomException(EVIDENCE_UPDATE_EXCEPTION, "Error validating existing application: " + e.toString());
+        }
+    }
+
+    void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
+        String status = evidenceRequest.getArtifact().getStatus();
+        if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
+            evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+        } else if (ABATED_STATE.equalsIgnoreCase(status)) {
+            evidenceEnrichment.enrichIsActive(evidenceRequest);
+        }
+    }
+
 }

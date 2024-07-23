@@ -1,18 +1,23 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -68,7 +73,7 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Lis
     public List<String> stringToList(String str){
         List<String> list = new ArrayList<>();
         if(str!=null){
-            StringTokenizer st = new StringTokenizer("str",",");
+            StringTokenizer st = new StringTokenizer(str,",");
             while (st.hasMoreTokens()) {
                 list.add(st.nextToken());
             }

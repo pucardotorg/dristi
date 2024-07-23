@@ -47,15 +47,18 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .externalRefNumber(rs.getString("externalRefNumber"))
                             .caseId(rs.getString("caseId"))
                             .application(rs.getString("application"))
+                            .filingNumber(rs.getString("filingNumber"))
                             .hearing(rs.getString("hearing"))
                             .order(rs.getString("orders"))
                             .mediaType(rs.getString("mediaType"))
                             .artifactType(rs.getString("artifactType"))
+                            .sourceType(rs.getString("sourceType"))
                             .sourceID(rs.getString("sourceID"))
                             .sourceName(rs.getString("sourceName"))
                             .applicableTo(Collections.singletonList(rs.getString("applicableTo")))
                             .createdDate(rs.getInt("createdDate"))
                             .isActive(rs.getBoolean("isActive"))
+                            .isEvidence(rs.getBoolean("isEvidence"))
                             .status(rs.getString("status"))
                             .description(rs.getString("description"))
                             .auditdetails(auditDetails)
@@ -69,14 +72,14 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
 
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
-                    artifact.setAdditionalDetails(String.valueOf(objectMapper.readTree(additionalDetailsObject.getValue())));
+                    artifact.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));
                 }
 
                 artifactMap.put(id, artifact);
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.toString());
         }
         return new ArrayList<>(artifactMap.values());
     }

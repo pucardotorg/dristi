@@ -3,9 +3,7 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +17,13 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Component
 @Slf4j
 public class ApplicationEnrichment {
+    private final IdgenUtil idgenUtil;
+
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private UserUtil userUtils;
+    public ApplicationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
+
     public void enrichApplication(ApplicationRequest applicationRequest) {
         try {
             if(applicationRequest.getRequestInfo().getUserInfo() != null) {
@@ -39,12 +38,13 @@ public class ApplicationEnrichment {
                         .build();
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
-                application.setApplicationNumber(applicationIdList.get(0));//FIXME
+                application.setApplicationNumber(applicationIdList.get(0));
                 application.setIsActive(true);
 
-                application.getStatuteSection().setId(UUID.randomUUID());
-                application.getStatuteSection().setAuditdetails(auditDetails);
-
+                if (application.getStatuteSection() != null) {
+                    application.getStatuteSection().setId(UUID.randomUUID());
+                    application.getStatuteSection().setAuditdetails(auditDetails);
+                }
                 if (application.getDocuments() != null) {
                     application.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));

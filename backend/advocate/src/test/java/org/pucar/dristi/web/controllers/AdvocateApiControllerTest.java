@@ -5,13 +5,11 @@ import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.service.AdvocateService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,10 +22,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class AdvocateApiControllerTest {
+ class AdvocateApiControllerTest {
 
     @Autowired
     private AdvocateApiController advocateApiController;
@@ -43,7 +41,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1CreatePost() {
+     void testAdvocateV1CreatePost() {
         AdvocateRequest request = new AdvocateRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);
@@ -62,7 +60,7 @@ public class AdvocateApiControllerTest {
 
 
     @Test
-    public void testAdvocateV1StatusSearchPost() {
+     void testAdvocateV1StatusSearchPost() {
         String status = "active";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
@@ -84,7 +82,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1ApplicationnumberSearchPost() {
+     void testAdvocateV1ApplicationnumberSearchPost() {
         String applicationNumber = "app123";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
@@ -106,7 +104,7 @@ public class AdvocateApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1UpdatePost() {
+     void testAdvocateV1UpdatePost() {
         AdvocateRequest request = new AdvocateRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);
@@ -134,8 +132,6 @@ public class AdvocateApiControllerTest {
         body.setTenantId("tenant1");
         Integer limit = 10;
         Integer offset = 0;
-        List<Advocate> advocateList = new ArrayList<>(); // Your list of advocates here
-       // when(advocateService.searchAdvocate(requestInfo, criteria, "tenant1", limit, offset)).thenReturn(advocateList);
         ResponseInfo responseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(responseInfo);
 

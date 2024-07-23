@@ -1,4 +1,16 @@
 package org.pucar.dristi.service;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +27,6 @@ import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 import org.pucar.dristi.web.models.WitnessSearchRequest;
 import org.springframework.util.Assert;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class WitnessServiceTest {
 
