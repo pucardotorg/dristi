@@ -113,6 +113,7 @@ public class ServiceConstants {
 	public static final String JUDGE_ROLE = "JUDGE_ROLE";
 	public static final String FSO_ROLE = "FSO_ROLE";
 	public static final String BENCH_CLERK_ROLE = "BENCHCLERK_ROLE";
+	public static final String NYAY_MITRA_ROLE = "NYAY_MITRA_ROLE";
 	public static final String ADVOCATE_ROLE = "ADVOCATE_ROLE";
 
 	public static final String EMPLOYEE = "EMPLOYEE";
