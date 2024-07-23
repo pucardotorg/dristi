@@ -40,7 +40,7 @@ public class CaseApiController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @PostMapping(value = "/case/v1/_create")
+    @PostMapping(value = "/v1/_create")
     public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
 
         CourtCase cases = caseService.createCase(body);
@@ -49,7 +49,7 @@ public class CaseApiController {
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
         }
 
-    @PostMapping(value = "/case/v1/_exists")
+    @PostMapping(value = "/v1/_exists")
     public ResponseEntity<CaseExistsResponse> caseV1ExistsPost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseExistsRequest body){
 
@@ -59,7 +59,7 @@ public class CaseApiController {
         return new ResponseEntity<>(caseExistsResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/v1/_search")
+    @PostMapping(value = "/v1/_search")
     public ResponseEntity<CaseListResponse> caseV1SearchPost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
 
@@ -69,7 +69,7 @@ public class CaseApiController {
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/v1/_verify")
+    @PostMapping(value = "/v1/_verify")
     public ResponseEntity<JoinCaseResponse> verifyV1JoinCase (
             @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody JoinCaseRequest body){
 
@@ -79,7 +79,7 @@ public class CaseApiController {
         return new ResponseEntity<>(joinCaseResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/v1/_update")
+    @PostMapping(value = "/v1/_update")
     public ResponseEntity<CaseResponse> caseV1UpdatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body){
 
@@ -89,7 +89,7 @@ public class CaseApiController {
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/v1/add/witness")
+    @PostMapping(value = "/v1/add/witness")
     public ResponseEntity<AddWitnessResponse> caseV1AddWitnessPost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for adding witness details in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AddWitnessRequest body){
         AddWitnessResponse addWitnessResponse = caseService.addWitness(body);
@@ -98,7 +98,7 @@ public class CaseApiController {
         return new ResponseEntity<>(addWitnessResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/witness/v1/_create")
+    @PostMapping(value = "/witness/v1/_create")
     public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
 
@@ -108,7 +108,7 @@ public class CaseApiController {
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/witness/v1/_search")
+    @PostMapping(value = "/witness/v1/_search")
     public ResponseEntity<WitnessResponse> caseWitnessV1SearchPost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body){
 
@@ -118,7 +118,7 @@ public class CaseApiController {
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/case/witness/v1/_update")
+    @PostMapping(value = "/witness/v1/_update")
     public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
 

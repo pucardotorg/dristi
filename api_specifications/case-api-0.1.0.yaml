@@ -359,9 +359,9 @@ components:
             entered the judicial system.
           example: 1709542147
         judgementDate:
-            type: integer
-            format: int64
-            description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
+          type: integer
+          format: int64
+          description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
         registrationDate:
           type: integer
           format: int64

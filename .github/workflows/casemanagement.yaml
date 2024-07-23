@@ -44,6 +44,14 @@ jobs:
           docker build --build-arg WORK_DIR="backend/casemanagement" -t pucar_casemanagement:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_casemanagement:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
+          
+      - name: Build and Push Docker image for casemanagement_DB
+        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: |
+          docker build -t pucar_casemanagement_db:v1.0.0-${{ github.sha }}  .
+          docker tag pucar_casemanagement_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_casemanagement_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/casemanagement/src/main/resources/db
       - name: Trigger Deployment Pipeline
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
