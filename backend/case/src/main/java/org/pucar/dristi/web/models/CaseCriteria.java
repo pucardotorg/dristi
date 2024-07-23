@@ -41,19 +41,19 @@ public class CaseCriteria {
 
     @JsonProperty("filingFromDate")
     @Valid
-    private LocalDate filingFromDate = null;
+    private Long filingFromDate = null;
 
     @JsonProperty("filingToDate")
     @Valid
-    private LocalDate filingToDate = null;
+    private Long filingToDate = null;
 
     @JsonProperty("registrationFromDate")
     @Valid
-    private LocalDate registrationFromDate = null;
+    private Long registrationFromDate = null;
 
     @JsonProperty("registrationToDate")
     @Valid
-    private LocalDate registrationToDate = null;
+    private Long registrationToDate = null;
     //todo judgeid, stage, substage
 
     @JsonProperty("judgeId")

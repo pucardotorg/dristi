@@ -147,7 +147,7 @@ public class CaseQueryBuilder {
             if (!firstCriteria)
                 query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
             else {
-                query.append("WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
+                query.append(" WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
             }
             firstCriteria = false;
         }
@@ -158,7 +158,7 @@ public class CaseQueryBuilder {
             if (!firstCriteria)
                 query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
             else {
-                query.append("WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
+                query.append(" WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
             }
             firstCriteria = false;
         }
