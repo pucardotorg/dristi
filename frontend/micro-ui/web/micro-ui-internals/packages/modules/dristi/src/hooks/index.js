@@ -34,7 +34,7 @@ export const Urls = {
     demandCreate: "/billing-service/demand/_create",
     ordersSearch: "/order/order/v1/search",
     submissionsSearch: "/application/application/v1/search",
-    submissionsUpdate: "/application/application/v1/update",
+    submissionsUpdate: "/application/v1/update",
     pendingTask: "/analytics/pending_task/v1/create",
   },
   FileFetchById: "/filestore/v1/files/id",

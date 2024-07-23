@@ -11,6 +11,7 @@ import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
 import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
+import { Urls } from "../../../hooks";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -75,7 +76,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   );
 
   const reqCreate = {
-    url: `/application/application/v1/update`,
+    url: Urls.dristi.submissionsUpdate,
     params: {},
     body: {},
     config: {
@@ -226,7 +227,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleAcceptApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: acceptApplicationPayload },
       config: {
@@ -238,7 +239,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleRejectApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: rejectApplicationPayload },
       config: {
@@ -251,7 +252,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const submitCommentApplication = async (newComment) => {
     // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: applicationCommentsPayload(newComment) },
       config: {
