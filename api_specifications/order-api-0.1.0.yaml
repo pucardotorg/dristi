@@ -312,7 +312,7 @@ components:
             tenantId:
               type: string
               writeOnly: true
-              description: tenantId for data security boundary. During creation, this is writable
+              description: tenantId for data security boundary. at time of creation of Order, this is writable
 
     OrderUpdate:
       allOf:
@@ -322,4 +322,4 @@ components:
             tenantId:
               type: string
               readOnly: true
-              description: tenantId for data security boundary. During update or search, this is read only
+              description: tenantId for data security boundary. During update or search of Order, this is read only
