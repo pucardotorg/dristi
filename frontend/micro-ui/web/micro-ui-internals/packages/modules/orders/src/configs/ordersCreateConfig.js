@@ -2111,12 +2111,39 @@ export const configsIssueSummons = [
   {
     body: [
       {
-        label: "REF_APPLICATION_ID",
-        isMandatory: false,
-        key: "refApplicationId",
-        disable: true,
-        type: "text",
-        populators: { name: "refApplicationId" },
+        type: "date",
+        label: "Date for Hearing",
+        labelChildren: "OutlinedInfoIcon",
+        isMandatory: true,
+        populators: {
+          name: "date",
+          validation: {
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        type: "component",
+        component: "SummonsOrderComponent",
+        key: "SummonsOrder",
+        label: "Party to Summon",
+        populators: {
+          inputs: [
+            {
+              name: "select party",
+              type: "dropdown",
+            },
+            {
+              name: "select deleivery channels",
+              type: "checkbox",
+            },
+          ],
+        },
       },
       {
         label: "COURT_NAME",
@@ -2452,6 +2479,14 @@ export const configsOthers = [
 
 export const configsBail = [
   {
+    defaultValues: {
+      orderType: {
+        id: 9,
+        type: "BAIL",
+        isactive: true,
+        code: "BAIL",
+      },
+    },
     body: [
       {
         label: "REF_APPLICATION_ID",
@@ -2542,26 +2577,12 @@ export const configsBail = [
         },
       },
       {
-        label: "BAIL_AMOUNT",
-        isMandatory: true,
-        key: "bailAmount",
-        type: "number",
-        populators: { name: "bailAmount" },
-      },
-      {
-        label: "OTHER_CONDITIONS",
-        isMandatory: true,
-        key: "otherConditions",
-        type: "text",
+        inline: true,
+        label: "Brief Summary",
+        type: "textarea",
+        key: "briefSummary",
         populators: {
-          name: "otherConditions",
-          error: "CS_ALPHANUMERIC_ALLOWED",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericInputTextValidation",
-            },
-          },
+          name: "briefSummary",
         },
       },
     ],
@@ -2739,12 +2760,15 @@ export const configsCreateOrderWarrant = [
         type: "radio",
         key: "bailable",
         label: "Is this a bailable warrant?",
-        disable: false,
         populators: {
           name: "bailable",
+          label: "bailableRadioButton",
+          type: "radioButton",
           optionsKey: "name",
           error: "Error!",
           required: false,
+          isMandatory: true,
+          isDependent: true,
           options: [
             {
               code: "Yes",

@@ -71,6 +71,7 @@ const MultiUploadWrapper = ({
   noteMsg,
   notSupportedError,
   maxFileErrorMessage,
+  displayName,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -79,6 +80,7 @@ const MultiUploadWrapper = ({
   const [enableButton, setEnableButton] = useState(true);
 
   const uploadMultipleFiles = (state, payload) => {
+    debugger;
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
     const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
@@ -163,6 +165,7 @@ const MultiUploadWrapper = ({
         customClass={customClass}
         enableButton={enableButton}
         disabled={!enableButton}
+        displayName={displayName}
       />
       <span className="error-msg" style={{ display: "flex" }}>
         {fileErrors.length ? (

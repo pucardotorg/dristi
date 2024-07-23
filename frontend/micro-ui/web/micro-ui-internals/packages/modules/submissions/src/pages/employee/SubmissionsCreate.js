@@ -27,6 +27,7 @@ import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 import { getAllAssignees } from "../../utils/caseUtils";
 import { Urls } from "../../hooks/services/Urls";
+import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -102,7 +103,7 @@ const SubmissionsCreate = () => {
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsCaseSettlement,
-      BAIL_BOND: configsBail,
+      BAIL_BOND: configsBailBond,
       SURETY: configsSurety,
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
@@ -235,7 +236,7 @@ const SubmissionsCreate = () => {
   }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
+    if (applicationType && !["OTHERS", "SETTLEMENT", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
     if (!isEqual(formdata, formData)) {
