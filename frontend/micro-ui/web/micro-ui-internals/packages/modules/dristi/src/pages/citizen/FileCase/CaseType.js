@@ -157,7 +157,6 @@ function CaseType({ t }) {
                 resolutionMechanism: "COURT",
                 caseDescription: "Case description",
                 linkedCases: [],
-                filingDate: formatDate(new Date()),
                 caseDetails: {},
                 caseCategory: "CRIMINAL",
                 statutesAndSections: [

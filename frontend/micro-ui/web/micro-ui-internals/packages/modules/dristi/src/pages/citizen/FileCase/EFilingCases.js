@@ -1566,7 +1566,6 @@ function EFilingCases({ path }) {
                 caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
               }`) ||
             caseDetails?.caseTitle,
-          filingDate: formatDate(new Date()),
           courtId: data?.court?.code,
           workflow: {
             ...caseDetails?.workflow,
@@ -1890,7 +1889,6 @@ function EFilingCases({ path }) {
                     cases: {
                       ...caseDetails,
                       litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
-                      filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
                         action: "DELETE_DRAFT",
@@ -1941,7 +1939,6 @@ function EFilingCases({ path }) {
                     cases: {
                       ...caseDetails,
                       litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
-                      filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
                         action: "SAVE_DRAFT",
