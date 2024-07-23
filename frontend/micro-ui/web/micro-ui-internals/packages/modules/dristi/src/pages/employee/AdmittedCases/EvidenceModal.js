@@ -11,6 +11,9 @@ import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
 import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
+import { DRISTIService } from "../../../services";
+import { Urls } from "../../../hooks";
+import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -130,7 +133,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "APPROVE",
+      action: SubmissionWorkflowAction.APPROVE,
     },
   };
 
@@ -138,7 +141,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "ABANDON",
+      action: SubmissionWorkflowAction.REJECT,
     },
   };
 
@@ -325,12 +328,27 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       } else {
         if (showConfirmationModal.type === "reject") {
           await handleRejectApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
+        const name = showConfirmationModal.type === "reject" ? t("GENERATE_REJECTION_ORDER_APPLICATION") : t("GENERATE_ACCEPTANCE_ORDER_APPLICATION");
+        DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name,
+            entityType: "order",
+            referenceId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: [],
+            cnrNumber: null,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
         setShowConfirmationModal(null);
       }
     } catch (error) {}

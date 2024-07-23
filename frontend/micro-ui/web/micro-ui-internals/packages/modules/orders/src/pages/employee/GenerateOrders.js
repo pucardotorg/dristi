@@ -41,6 +41,8 @@ import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGet
 import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
+import { Urls } from "../../hooks/services/Urls";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -480,9 +482,56 @@ const GenerateOrders = () => {
     }
   };
 
+  const createPendingTask = async () => {
+    let entityType = true ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+    let status = "CREATE";
+    let assignees = [];
+    await ordersService.customApiService(Urls.orders.pendingTask, {
+      pendingTask: {
+        name: "Submit Documents",
+        entityType,
+        referenceId: prevOrder?.orderNumber,
+        status,
+        assignedTo: assignees,
+        assignedRole: [],
+        cnrNumber: null,
+        filingNumber: filingNumber,
+        isCompleted: false,
+        stateSla: null,
+        additionalDetails: {},
+        tenantId,
+      },
+    });
+  };
+
+  const handleApplicationAction = async () => {
+    if (!applicationNumber || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.state)) {
+      return true;
+    }
+    try {
+      return await ordersService.customApiService(
+        `/application/application/v1/update`,
+        {
+          application: {
+            ...applicationDetails,
+            workflow: { ...applicationDetails.workflow, action: true ? SubmissionWorkflowAction.APPROVE : SubmissionWorkflowAction.REJECT },
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {
+      return false;
+    }
+  };
+
   const handleIssueOrder = async () => {
     try {
       setPrevOrder(currentOrder);
+      const applicationStatus = await handleApplicationAction();
+      if (!applicationStatus) {
+        // Show toast with submission approval failed and return
+        return;
+      }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
@@ -572,6 +621,14 @@ const GenerateOrders = () => {
 
   if (!filingNumber) {
     history.push("/employee/home/home-pending-task");
+  }
+
+  if (currentOrder?.refApplicationId && currentOrder?.refApplicationId !== applicationNumber) {
+    if (currentOrder?.orderNumber) {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}&orderNumber=${orderNumber}`);
+    } else {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}`);
+    }
   }
 
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
