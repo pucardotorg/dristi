@@ -7,7 +7,7 @@ import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { HomeService } from "../../hooks/services";
+import { HomeService, Urls } from "../../hooks/services";
 import LitigantHomePage from "./LitigantHomePage";
 
 const defaultSearchValues = {
@@ -163,7 +163,7 @@ const HomeView = () => {
     (async function () {
       if (userType) {
         setIsFetchCaseLoading(true);
-        const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+        const caseData = await HomeService.customApiService(Urls.caseSearch, {
           tenantId,
           criteria: [
             {

@@ -1588,6 +1588,7 @@ export const updateCaseDetails = async ({
                           artifactType: "DOCUMENTARY",
                           sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
+                          filingNumber: caseDetails?.filingNumber,
                           tenantId,
                           comments: [],
                           file: {
@@ -1768,6 +1769,9 @@ export const updateCaseDetails = async ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),
+                        additionalDetails: {
+                          ...data?.additionalDetails,
+                        },
                         tenantId,
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,

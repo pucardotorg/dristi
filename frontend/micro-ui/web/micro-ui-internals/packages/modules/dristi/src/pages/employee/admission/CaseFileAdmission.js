@@ -2,6 +2,7 @@ import { BackButton, FormComposerV2, Header, Loader, Toast } from "@egovernments
 import React, { useMemo, useState } from "react";
 import { Redirect, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
+import { Urls } from "../../../hooks";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
@@ -253,7 +254,7 @@ function CaseFileAdmission({ t, path }) {
         additionalDetails: {},
       },
     };
-    DRISTIService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+    DRISTIService.customApiService(Urls.dristi.ordersCreate, reqBody, { tenantId })
       .then(() => {
         history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
           caseId: caseId,

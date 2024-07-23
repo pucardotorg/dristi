@@ -3,7 +3,7 @@ import { Request } from "@egovernments/digit-ui-libraries";
 export const Urls = {
   Authenticate: "/user/oauth/token",
   case: {
-    joinCase: "/case/case/v1/_verify",
+    joinCase: "/case/v1/_verify",
   },
 };
 

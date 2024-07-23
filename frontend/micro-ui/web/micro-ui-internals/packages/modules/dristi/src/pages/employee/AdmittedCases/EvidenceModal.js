@@ -8,8 +8,8 @@ import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import { Urls } from "../../../hooks";
 import { RightArrow } from "../../../icons/svgIndex";
-import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
@@ -43,13 +43,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const hideSubmit = useMemo(() => {
-    if (userRoles.includes("CITIZEN")) {
-      return true;
-    }
-    return modalType === "Submissions"
-      ? !(userRoles.includes("APPLICATION_RESPONDER") && documentSubmission?.[0]?.status === "PENDINGREVIEW")
-      : !(userRoles.includes("APPLICATION_RESPONDER") || userRoles.includes("DEPOSITION_ESIGN") || userRoles.includes("DEPOSITION_PUBLISHER"));
-  }, [documentSubmission, modalType, userRoles]);
+    return !userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN");
+  }, [userRoles]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -63,7 +58,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const actionCancelLabel = useMemo(() => {
     return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
-      ? t("Reject")
+      ? t("REJECT")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
 
@@ -80,7 +75,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   );
 
   const reqCreate = {
-    url: `/application/application/v1/update`,
+    url: Urls.dristi.submissionsUpdate,
     params: {},
     body: {},
     config: {
@@ -88,7 +83,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     },
   };
   const reqEvidenceUpdate = {
-    url: `/evidence/artifacts/v1/_update`,
+    url: Urls.dristi.evidenceUpdate,
     params: {},
     body: {},
     config: {
@@ -184,7 +179,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (documentSubmission?.[0].artifactList.artifactType === "DEPOSITION") {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: Urls.dristi.evidenceUpdate,
           params: {},
           body: {
             artifact: {
@@ -208,7 +203,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: Urls.dristi.evidenceUpdate,
           params: {},
           body: {
             artifact: {
@@ -231,7 +226,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleAcceptApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: acceptApplicationPayload },
       config: {
@@ -243,7 +238,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleRejectApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: rejectApplicationPayload },
       config: {
@@ -256,7 +251,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const submitCommentApplication = async (newComment) => {
     // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: Urls.dristi.submissionsUpdate,
       params: {},
       body: { application: applicationCommentsPayload(newComment) },
       config: {
@@ -279,15 +274,24 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleApplicationAction = async (generateOrder) => {
     try {
-      if (showConfirmationModal.type === "reject") {
-        await handleRejectApplication();
-      }
-      if (showConfirmationModal.type === "accept" || showConfirmationModal.type === "documents-confirmation") {
-        await handleAcceptApplication();
-      }
-      if (!generateOrder) {
-        setShowConfirmationModal(null);
-      }
+      const formdata =
+        showConfirmationModal?.type === "reject"
+          ? {
+              orderType: {
+                code: "REJECT_VOLUNTARY_SUBMISSIONS",
+                type: "REJECT_VOLUNTARY_SUBMISSIONS",
+                name: "ORDER_TYPE_REJECT_VOLUNTARY_SUBMISSIONS",
+              },
+              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            }
+          : {
+              orderType: {
+                code: "APPROVE_VOLUNTARY_SUBMISSIONS",
+                type: "APPROVE_VOLUNTARY_SUBMISSIONS",
+                name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
+              },
+              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            };
       if (generateOrder) {
         const reqbody = {
           order: {
@@ -309,17 +313,25 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               documents: [{}],
             },
             documents: [],
-            additionalDetails: {},
+            additionalDetails: { formdata },
           },
         };
-        ordersService
-          .createOrder(reqbody, { tenantId })
-          .then(() => {
-            history.push(
-              `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}`
-            );
-          })
-          .catch((err) => {});
+        try {
+          const res = await ordersService.createOrder(reqbody, { tenantId });
+          history.push(
+            `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
+          );
+        } catch (error) {}
+      } else {
+        if (showConfirmationModal.type === "reject") {
+          await handleRejectApplication();
+          // create a pending task to create Order with applicationNumber as reference ID
+        }
+        if (showConfirmationModal.type === "accept") {
+          await handleAcceptApplication();
+          // create a pending task to create Order with applicationNumber as reference ID
+        }
+        setShowConfirmationModal(null);
       }
     } catch (error) {}
   };
@@ -466,25 +478,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Submissions" && (
         <ConfirmSubmissionAction
-          t={t}
-          setShowConfirmationModal={setShowConfirmationModal}
-          type={showConfirmationModal.type}
-          setShow={setShow}
-          handleAction={handleApplicationAction}
-        />
-      )}
-      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
-        <ConfirmEvidenceAction
-          t={t}
-          setShowConfirmationModal={setShowConfirmationModal}
-          type={showConfirmationModal.type}
-          setShow={setShow}
-          handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission?.[0].artifactList.isEvidence}
-        />
-      )}
-      {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (
-        <ConfirmEvidenceAction
           t={t}
           setShowConfirmationModal={setShowConfirmationModal}
           type={showConfirmationModal.type}

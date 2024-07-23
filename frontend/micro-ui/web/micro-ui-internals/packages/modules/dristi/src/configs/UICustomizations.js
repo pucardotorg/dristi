@@ -602,6 +602,7 @@ export const UICustomizations = {
           }),
           {}
         );
+      const tenantId = window?.Digit.ULBService.getStateId();
       return {
         ...requestCriteria,
         body: {
@@ -610,6 +611,7 @@ export const UICustomizations = {
             ...requestCriteria.body.criteria,
             ...filterList,
           },
+          tenantId,
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,
@@ -618,12 +620,13 @@ export const UICustomizations = {
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            if (requestCriteria.url.split("/".includes("order"))) {
-              if (userRoles.includes("CITIZEN")) {
-                return { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") };
-              }
-            }
-            return data;
+            // console.log(requestCriteria, data, requestCriteria.url.split("/").includes("order"));
+            // if (requestCriteria.url.split("/").includes("order")) {
+            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+            return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
+              ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              : data;
+            // }
           },
         },
       };
@@ -675,7 +678,7 @@ export const UICustomizations = {
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            console.log(data);
+            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             const applicationHistory = data.caseFiles[0].applications.map((application) => {
               return {
                 instance: `APPLICATION_TYPE_${application.applicationType}`,

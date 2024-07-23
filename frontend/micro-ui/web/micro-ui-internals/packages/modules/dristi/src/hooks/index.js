@@ -12,6 +12,8 @@ import useInboxCustomHook from "./dristi/useInboxCustomHook";
 import useSearchCaseService from "./dristi/useSearchCaseService";
 import { useToast } from "../components/Toast/useToast.js";
 import useCreateHearings from "./dristi/useCreateHearings.js";
+import useApplicationDetails from "./dristi/useApplicationDetails.js";
+import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -21,18 +23,19 @@ export const Urls = {
     searchIndividualAdvocate: "/advocate/advocate/v1/_search",
     searchIndividualClerk: "/advocate/clerk/v1/_search",
     updateAdvocateDetails: "/advocate/advocate/v1/_update",
-    caseCreate: "/case/case/v1/_create",
-    caseUpdate: "/case/case/v1/_update",
-    caseSearch: "/case/case/v1/_search",
-    evidenceSearch: "/evidence/artifacts/v1/_search",
-    evidenceCreate: "/evidence/artifacts/v1/_create",
-    evidenceUpdate: "/evidence/artifacts/v1/_update",
+    caseCreate: "/case/v1/_create",
+    caseUpdate: "/case/v1/_update",
+    caseSearch: "/case/v1/_search",
+    evidenceSearch: "/evidence/v1/_search",
+    evidenceCreate: "/evidence/v1/_create",
+    evidenceUpdate: "/evidence/v1/_update",
     searchHearings: "/hearing/v1/search",
     createHearings: "/hearing/v1/create",
     demandCreate: "/billing-service/demand/_create",
-    ordersSearch: "/order/order/v1/search",
-    submissionsSearch: "/application/application/v1/search",
-    submissionsUpdate: "/application/application/v1/update",
+    ordersSearch: "/order/v1/search",
+    ordersCreate: "/order/v1/create",
+    submissionsSearch: "/application/v1/search",
+    submissionsUpdate: "/application/v1/update",
     pendingTask: "/analytics/pending_task/v1/create",
   },
   case: {
@@ -53,6 +56,8 @@ const dristi = {
   useGetEvidence,
   useGetOrders,
   useGetSubmissions,
+  useApplicationDetails,
+  useEvidenceDetails,
   useToast,
 };
 
