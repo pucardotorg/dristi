@@ -4,11 +4,13 @@ import { useTranslation } from "react-i18next";
 import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { CustomArrowOut } from "../../../icons/svgIndex";
+import { useHistory } from "react-router-dom";
 
 const OrderDrafts = ({ caseData, setOrderModal }) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const filingNumber = caseData.filingNumber;
-  const cnr = caseData.cnrNumber;
+  const caseId = caseData.id;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
@@ -54,19 +56,25 @@ const OrderDrafts = ({ caseData, setOrderModal }) => {
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
           {ordersRes?.list
             ?.filter((order) => order.status === "DRAFT_IN_PROGRESS")
-            .slice(0, 5)
+            .slice(0, 3)
             .map((order) => (
               <div
                 style={{
                   padding: "12px 16px",
                   borderRadius: "4px",
-                  width: "300px",
+                  width: "33%",
                   cursor: "pointer",
                   background: "#ECF3FD66",
                 }}
                 onClick={() => {
-                  setShowReviewModal(true);
                   setCurrentOrder(order);
+                  history.push(
+                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order.orderNumber}`,
+                    {
+                      caseId: caseId,
+                      tab: "Orders",
+                    }
+                  );
                 }}
               >
                 <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
