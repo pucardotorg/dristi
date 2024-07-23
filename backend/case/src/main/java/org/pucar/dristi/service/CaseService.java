@@ -113,7 +113,9 @@ public class CaseService {
             if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
                 enrichmentUtil.enrichAccessCode(caseRequest);
                 enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
+                enrichmentUtil.enrichRegistrationDate(caseRequest);
             }
+
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
             return caseRequest.getCases();
