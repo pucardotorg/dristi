@@ -209,7 +209,7 @@ function CaseFileAdmission({ t, path }) {
         additionalDetails: {},
       },
     };
-    DRISTIService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+    DRISTIService.customApiService("/order/v1/create", reqBody, { tenantId })
       .then(() => {
         history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
           caseId: caseId,

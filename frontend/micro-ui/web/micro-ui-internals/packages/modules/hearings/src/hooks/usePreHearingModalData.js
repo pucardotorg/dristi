@@ -45,7 +45,7 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
     };
 
     const caseDetailsResponse = await Digit.CustomService.getResponse({
-      url: "/case/case/v1/_search",
+      url: "/case/v1/_search",
       params: { tenantId: Digit.ULBService.getCurrentTenantId() },
       body: caseBody,
       plainAccessRequest,

@@ -80,7 +80,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   );
 
   const reqCreate = {
-    url: `/application/application/v1/update`,
+    url: `/application/v1/update`,
     params: {},
     body: {},
     config: {
@@ -88,7 +88,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     },
   };
   const reqEvidenceUpdate = {
-    url: `/evidence/artifacts/v1/_update`,
+    url: `/evidence/v1/_update`,
     params: {},
     body: {},
     config: {
@@ -184,7 +184,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (documentSubmission?.[0].artifactList.artifactType === "DEPOSITION") {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: `/evidence/v1/_update`,
           params: {},
           body: {
             artifact: {
@@ -208,7 +208,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: `/evidence/v1/_update`,
           params: {},
           body: {
             artifact: {
@@ -231,7 +231,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleAcceptApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: `/application/v1/update`,
       params: {},
       body: { application: acceptApplicationPayload },
       config: {
@@ -243,7 +243,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const handleRejectApplication = async () => {
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: `/application/v1/update`,
       params: {},
       body: { application: rejectApplicationPayload },
       config: {
@@ -256,7 +256,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const submitCommentApplication = async (newComment) => {
     // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
-      url: `/application/application/v1/update`,
+      url: `/application/v1/update`,
       params: {},
       body: { application: applicationCommentsPayload(newComment) },
       config: {

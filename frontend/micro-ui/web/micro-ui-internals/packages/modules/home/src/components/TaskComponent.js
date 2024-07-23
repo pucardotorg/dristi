@@ -16,7 +16,7 @@ export const CaseWorkflowAction = {
   ABANDON: "ABANDON",
 };
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -31,6 +31,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
+          ...(filingNumber && { filingNumber: filingNumber }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
@@ -52,7 +53,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
 
   const getCaseDetailByFilingNumber = useCallback(
     async (payload) => {
-      const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+      const caseData = await HomeService.customApiService("/case/v1/_search", {
         tenantId,
         ...payload,
       });
@@ -85,7 +86,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
       },
     };
 
-    HomeService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+    HomeService.customApiService("/order/v1/create", reqBody, { tenantId })
       .then(() => {
         history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
       })

@@ -1,10 +1,16 @@
 import { Button, Card } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { DRISTIService } from "../../../services";
 
 const NextHearingCard = ({ caseData, width }) => {
   const filingNumber = caseData.filingNumber;
   const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const history = useHistory();
+  const { t } = useTranslation();
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
@@ -45,6 +51,20 @@ const NextHearingCard = ({ caseData, width }) => {
       day: "numeric",
     })}`;
     return formattedDate;
+  };
+
+  const handleButtonClick = () => {
+    const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+    const searchParams = new URLSearchParams();
+    searchParams.set("hearingId", scheduledHearing.hearingId);
+    if (userType === "citizen") {
+      history.push(`/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`);
+    } else {
+      DRISTIService.startHearing({ hearing: scheduledHearing }).then(() => {
+        window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
+      });
+    }
   };
 
   return (
@@ -102,7 +122,11 @@ const NextHearingCard = ({ caseData, width }) => {
               {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
             </div>
           </div>
-          <Button variation={"outlined"} label={"Start Now"} />
+          <Button
+            variation={"outlined"}
+            onButtonClick={handleButtonClick}
+            label={userRoles.includes("CITIZEN") ? t("JOIN_HEARING") : t("START_NOW")}
+          />
         </div>
       </Card>
     )

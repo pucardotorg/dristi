@@ -163,7 +163,7 @@ const HomeView = () => {
     (async function () {
       if (userType) {
         setIsFetchCaseLoading(true);
-        const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+        const caseData = await HomeService.customApiService("/case/v1/_search", {
           tenantId,
           criteria: [
             {
