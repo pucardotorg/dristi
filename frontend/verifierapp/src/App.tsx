@@ -7,11 +7,11 @@ import {RouterProvider, createBrowserRouter} from "react-router-dom";
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: 'verifyapp/',
         element: <Home/>
     },
     {
-        path: '/offline',
+        path: 'verifyapp/offline',
         element: <Offline/>
     }
 ])
