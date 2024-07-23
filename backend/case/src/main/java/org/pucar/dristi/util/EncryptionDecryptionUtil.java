@@ -118,7 +118,7 @@ public class EncryptionDecryptionUtil {
 
         for (Role role:userInfo.getRoles()){
             String code = role.getCode();
-            if (code.equalsIgnoreCase(NYAY_MITRA_ROLE) || code.equalsIgnoreCase(JUDGE_ROLE) || code.equalsIgnoreCase(FSO_ROLE) || code.equalsIgnoreCase(BENCH_CLERK_ROLE)){
+            if (code.equalsIgnoreCase(INTERNAL_MICROSERVICE_ROLE) || code.equalsIgnoreCase(NYAY_MITRA_ROLE) || code.equalsIgnoreCase(JUDGE_ROLE) || code.equalsIgnoreCase(FSO_ROLE) || code.equalsIgnoreCase(BENCH_CLERK_ROLE)){
                 return true;
             }
         }
