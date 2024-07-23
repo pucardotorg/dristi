@@ -1,10 +1,14 @@
 package org.pucar.dristi.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Data
@@ -87,4 +91,59 @@ public class Configuration {
 
 	@Value("${api.call.delay.in.seconds}")
 	private Integer apiCallDelayInSeconds;
+
+	// MDMS Config
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndPoint;
+
+	// MDMS Hearing module name
+	@Value("${egov.mdms.module.name}")
+	private String mdmsModuleName;
+
+	// MDMS Hearing Type Master List name
+	@Value("${egov.mdms.master.name}")
+	private String mdmsMasterName;
+
+	@Value("${egov.hearing.bussiness.services}")
+	private String hearingBussinessServices;
+
+	private List<String> hearingBussinessServiceList;
+
+	@Value("${egov.case.bussiness.services}")
+	private String caseBussinessServices;
+
+	private List<String> caseBussinessServiceList;
+
+	@Value("${egov.evidence.bussiness.services}")
+	private String evidenceBussinessServices;
+
+	private List<String> evidenceBussinessServiceList;
+
+	@Value("${egov.task.bussiness.services}")
+	private String taskBussinessServices;
+
+	private List<String> taskBussinessServiceList;
+
+	@Value("${egov.application.bussiness.services}")
+	private String applicationBussinessServices;
+
+	private List<String> applicationBussinessServiceList;
+
+	@Value("${egov.order.bussiness.service}")
+	private String orderBussinessServices;
+
+	private List<String> orderBussinessServiceList;
+
+	@PostConstruct
+	public void init() {
+		hearingBussinessServiceList = Arrays.asList(hearingBussinessServices.split(","));
+		caseBussinessServiceList = Arrays.asList(caseBussinessServices.split(","));
+		evidenceBussinessServiceList = Arrays.asList(evidenceBussinessServices.split(","));
+		taskBussinessServiceList = Arrays.asList(taskBussinessServices.split(","));
+		applicationBussinessServiceList = Arrays.asList(applicationBussinessServices.split(","));
+		orderBussinessServiceList = Arrays.asList(orderBussinessServices.split(","));
+	}
 }

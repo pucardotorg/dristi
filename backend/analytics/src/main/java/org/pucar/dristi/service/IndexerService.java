@@ -1,5 +1,6 @@
 package org.pucar.dristi.service;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import static org.pucar.dristi.config.ServiceConstants.PROCESS_INSTANCE_PATH;
+import static org.pucar.dristi.config.ServiceConstants.RES_MSG_ID;
 
 @Service
 @Slf4j
@@ -36,7 +38,8 @@ public class IndexerService {
 		log.info("Inside indexer service:: Topic: {}, kafkaJson: {}", topic, kafkaJson);
 		try {
 			JSONArray kafkaJsonArray = util.constructArray(kafkaJson, PROCESS_INSTANCE_PATH);
-			StringBuilder bulkRequest = buildBulkRequest(kafkaJsonArray);
+			JSONObject requestInfo = JsonPath.read(kafkaJson,RES_MSG_ID);
+			StringBuilder bulkRequest = buildBulkRequest(kafkaJsonArray,requestInfo);
 			if (!bulkRequest.isEmpty()) {
 				String uri = config.getEsHostUrl() + config.getBulkPath();
 				indexerUtils.esPost(uri, bulkRequest.toString());
@@ -46,21 +49,21 @@ public class IndexerService {
 		}
 	}
 
-	private StringBuilder buildBulkRequest(JSONArray kafkaJsonArray) {
+	private StringBuilder buildBulkRequest(JSONArray kafkaJsonArray, JSONObject requestInfo) {
 		StringBuilder bulkRequest = new StringBuilder();
 		for (int i = 0; i < kafkaJsonArray.length(); i++) {
 			JSONObject jsonObject = kafkaJsonArray.optJSONObject(i);
 			if (jsonObject != null) {
-				processJsonObject(jsonObject, bulkRequest);
+				processJsonObject(jsonObject, bulkRequest,requestInfo);
 			}
 		}
 		return bulkRequest;
 	}
 
-	private void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest) {
+	private void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest, JSONObject requestInfo) {
 		try {
 			String stringifiedObject = indexerUtils.buildString(jsonObject);
-			String payload = indexerUtils.buildPayload(stringifiedObject);
+			String payload = indexerUtils.buildPayload(stringifiedObject,requestInfo);
 			if(payload!=null && !payload.isEmpty())
 				bulkRequest.append(payload);
 		} catch (Exception e) {

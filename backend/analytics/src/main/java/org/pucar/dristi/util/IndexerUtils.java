@@ -10,9 +10,11 @@ import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
+import org.pucar.dristi.service.PendingTaskMapConfig;
 import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.pucar.dristi.web.models.CaseStageSubStage;
 import org.pucar.dristi.web.models.PendingTask;
+import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,8 +57,10 @@ public class IndexerUtils {
 
 	private final ObjectMapper mapper;
 
+	private final PendingTaskMapConfig pendingTaskMapConfig;
+
 	@Autowired
-    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper) {
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper, PendingTaskMapConfig pendingTaskMapConfig) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
@@ -67,26 +71,11 @@ public class IndexerUtils {
         this.orderUtil = orderUtil;
         this.producer = producer;
         this.mapper = mapper;
+        this.pendingTaskMapConfig = pendingTaskMapConfig;
     }
 
-    public JSONObject createRequestInfo() {
-		JSONObject userInfo = new JSONObject();
-		userInfo.put("id", 73);
-		userInfo.put("tenantId",config.getStateLevelTenantId());
-
-		JSONObject requestInfo = new JSONObject();
-		requestInfo.put("apiId", "org.egov.pt");
-		requestInfo.put("ver", "1.0");
-		requestInfo.put("ts", 1502890899493L);
-		requestInfo.put("action", "asd");
-		requestInfo.put("did", "4354648646");
-		requestInfo.put("key", "xyz");
-		requestInfo.put("msgId", "654654");
-		requestInfo.put("requesterId", "61");
-		requestInfo.put("authToken", "02dbe5be-28df-4d82-954f-3d27c56cca7d");
-		requestInfo.put("userInfo", userInfo);
-
-		return requestInfo;
+	public static boolean isNullOrEmpty(String str) {
+		return str == null || str.trim().isEmpty();
 	}
 
 	/**
@@ -174,10 +163,9 @@ public class IndexerUtils {
 		);
 	}
 
-	public String buildPayload(String jsonItem) {
+	public String buildPayload(String jsonItem, JSONObject requestInfo) {
 
 		String id = JsonPath.read(jsonItem, ID_PATH);
-		String name = "";
 		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
 		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
 		String status = JsonPath.read(jsonItem, STATE_PATH);
@@ -189,73 +177,217 @@ public class IndexerUtils {
 		List<String> assignedRoleList = JsonPath.read(jsonItem, ASSIGNED_ROLE_PATH);
 		String assignedTo = new JSONArray(assignedToList).toString();
 		String assignedRole = new JSONArray(assignedRoleList).toString();
-		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
 		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
 		String action = JsonPath.read(jsonItem, ACTION_PATH);
 		String additionalDetails;
 
-        log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}", entityType, referenceId);
-		Map<String, String> details = processEntity(entityType, referenceId,status,action,tenantId);
+		log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}, status: {}, action: {}, tenantId: {}", entityType, referenceId, status, action, tenantId);
+		Object object = checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);
+		Map<String, String> details = processEntity(entityType, referenceId, status, action, object, requestInfo);
+
+		// Validate details map using the utility function
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
+		String name = details.get("name");
+		String isCompletedStr = details.get("isCompleted");
+
+		if (isNullOrEmpty(filingNumber) || isNullOrEmpty(name) || isNullOrEmpty(isCompletedStr)) {
+			log.info("Could not build payload: Missing or empty required fields in details map: , filingNumber: {}, name: {}, isCompleted: {}",
+					filingNumber, name, isCompletedStr);
+			return null;
+		}
+
+		Boolean isCompleted = isCompletedStr.equals("true");
 		try {
 			additionalDetails = mapper.writeValueAsString(new HashMap<String,Object>());
-		}catch (Exception e){
+		} catch (Exception e){
 			log.error("Error while building listener payload");
 			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
 		}
-        if (filingNumber != null && !filingNumber.isEmpty()) {
-            return String.format(
-                    ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-                    config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
-            );
-        }
-        return null;
-    }
 
-	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, String tenantId) {
-		Map<String, String> caseDetails = new HashMap<>();
-		JSONObject request = new JSONObject();
-		request.put("RequestInfo", createRequestInfo());
+		return String.format(
+				ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
+				config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
+		);
+	}
+
+	private Object checkCaseOverAllStatus(String entityType, String referenceId, String status, String action, String tenantId, JSONObject requestInfo) {
 		try {
-		switch (entityType.toLowerCase()) {
-			case "hearing":
-				caseDetails = processHearingEntity(request, referenceId, action, tenantId);
-                break;
-			case "case":
-				caseDetails = processCaseEntity(request, referenceId, action, tenantId);
-				break;
-			case "evidence":
-				caseDetails = processEvidenceEntity(request, referenceId);
-				break;
-			case "async-voluntary-submission-services":
-			case "asynsubmissionwithresponse":
-			case "asyncsubmissionwithoutresponse":
-				caseDetails = processApplicationEntity(request, referenceId);
-				break;
-			default:
-				if (entityType.toLowerCase().contains("task")) {
-					caseDetails = processTaskEntity(request, referenceId);
-				}
-				else if (entityType.toLowerCase().contains("order")) {
-					caseDetails = processOrderEntity(request, referenceId, status, tenantId);
-				}
-				else {
-					log.error("Unexpected entityType: {}", entityType);
-				}
-				break;
-		}
+			JSONObject request = new JSONObject();
+			request.put("RequestInfo", requestInfo);
+			if(config.getCaseBussinessServiceList().contains(entityType)){
+				return processCaseOverallStatus(request, referenceId, action, tenantId);
+			} else if (config.getHearingBussinessServiceList().contains(entityType)) {
+				return processHearingCaseOverallStatus(request, referenceId, action, tenantId);
+			} else if (config.getOrderBussinessServiceList().contains(entityType)) {
+				return processOrderOverallStatus(request, referenceId, status, tenantId);
+			}
+			log.error("Case overall status not supported for entityType: {}", entityType);
+			return null;
 		} catch (InterruptedException e) {
+			log.error("Processing interrupted for entityType: {}", entityType, e);
+			Thread.currentThread().interrupt(); // Restore the interrupted status
 			throw new RuntimeException(e);
 		}
+	}
+
+	private Object processOrderOverallStatus(JSONObject request, String referenceId, String status, String tenantId) throws InterruptedException {
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
+		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
+		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
+		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
+		publishToCaseOverallStatus(determineOrderStage(filingNumber, tenantId, orderType, status),request);
+		return orderObject;
+	}
+
+	private Object processCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) {
+		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action), request);
+		return null;
+	}
+
+	private Object processHearingCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
+		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
+		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
+		List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
+		String filingNumber;
+		if (filingNumberList != null && !filingNumberList.isEmpty()) {
+			filingNumber = filingNumberList.get(0);
+		}
+		else {
+			log.info("Inside indexer util processHearingCaseOverallStatus:: Filing number not present");
+			throw new RuntimeException("Filing number not present for case overall status");
+		}
+		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
+		publishToCaseOverallStatus(determineHearingStage( filingNumber, tenantId, hearingType, action ), request);
+		return hearingObject;
+	}
+
+	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
+		return switch (action.toLowerCase()) {
+			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
+			case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
+			case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
+			case "save_draft" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Draft");
+			default -> null;
+		};
+	}
+
+	private CaseOverallStatus determineHearingStage(String filingNumber, String tenantId, String hearingType, String action) {
+
+		switch (hearingType.toLowerCase()) {
+			case "evidence":
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Evidence");
+				}
+				break;
+			case "arguments":
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Arguments");
+				}
+				break;
+			case "judgement":
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Judgment");
+				}
+				break;
+		}
+		return null;
+	}
+
+	private CaseOverallStatus determineOrderStage(String filingNumber, String tenantId, String orderType, String status) {
+
+		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
+			return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Post-Judgement");
+		}
+		return null;
+	}
+
+	private void publishToCaseOverallStatus(CaseOverallStatus caseOverallStatus, JSONObject request) {
+		try {
+			if(caseOverallStatus==null){
+				log.info("Case overall workflow update not eligible");
+			}
+			else if(caseOverallStatus.getFilingNumber()==null){
+				log.error("Filing number not present for Case overall workflow update");
+			}
+			else{
+				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
+				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(request.getJSONObject("RequestInfo"),caseOverallStatus);
+				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
+			}
+		} catch (Exception e) {
+			log.error("Error in publishToCaseOverallStatus method", e);
+		}
+	}
+
+	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
+		Map<String, String> caseDetails = new HashMap<>();
+		String name = null;
+		Boolean isCompleted = null;
+
+		List<PendingTaskType> pendingTaskTypeList = pendingTaskMapConfig.getPendingTaskTypeMap().get(entityType);
+		if (pendingTaskTypeList == null) return caseDetails;
+
+		// Determine name and isCompleted based on status and action
+		for (PendingTaskType pendingTaskType : pendingTaskTypeList) {
+			if (pendingTaskType.getState().equals(status)) {
+				if (pendingTaskType.getTriggerAction().equals(action)) {
+					name = pendingTaskType.getPendingTask();
+					isCompleted = false;
+				} else if (pendingTaskType.getCloserAction().equals(action)) {
+					name = pendingTaskType.getPendingTask();
+					isCompleted = true;
+				}
+			}
+		}
+
+		if (isNullOrEmpty(name)) return caseDetails;
+
+		// Create request and process entity based on type
+		JSONObject request = new JSONObject();
+		request.put("RequestInfo", requestInfo);
+		Map<String, String> entityDetails = processEntityByType(entityType, request, referenceId, object);
+
+		// Add additional details to the caseDetails map
+		caseDetails.putAll(entityDetails);
+		caseDetails.put("name", name);
+		caseDetails.put("isCompleted", isCompleted.toString());
+
 		return caseDetails;
 	}
 
-	private Map<String, String> processHearingEntity(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
-		Map<String, String> caseDetails = new HashMap<>();
-		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
-		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
+	private Map<String, String> processEntityByType(String entityType, JSONObject request, String referenceId, Object object) {
+		try {
+			switch (entityType.toLowerCase()) {
+				case "hearing":
+					return processHearingEntity(request, object);
+				case "case":
+					return processCaseEntity(request, referenceId);
+				case "evidence":
+					return processEvidenceEntity(request, referenceId);
+				case "async-voluntary-submission-services":
+				case "asynsubmissionwithresponse":
+				case "asyncsubmissionwithoutresponse":
+					return processApplicationEntity(request, referenceId);
+				default:
+					if (entityType.toLowerCase().contains("task")) {
+						return processTaskEntity(request, referenceId);
+					} else if (entityType.toLowerCase().contains("order")) {
+						return processOrderEntity(request, referenceId);
+					} else {
+						log.error("Unexpected entityType: {}", entityType);
+						return new HashMap<>();
+					}
+			}
+		} catch (InterruptedException e) {
+			log.error("Processing interrupted for entityType: {}", entityType, e);
+			Thread.currentThread().interrupt(); // Restore the interrupted status
+			throw new RuntimeException(e);
+		}
+	}
 
+	private Map<String, String> processHearingEntity(JSONObject request, Object hearingObject) throws InterruptedException {
+		Map<String, String> caseDetails = new HashMap<>();
 		List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
 		String cnrNumber;
 		String filingNumber;
@@ -278,19 +410,14 @@ public class IndexerUtils {
 
 		caseDetails.put("cnrNumber", cnrNumber);
 		caseDetails.put("filingNumber", filingNumber);
-
-		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
-		publishToCaseOverallStatus(determineHearingStage( filingNumber, tenantId, hearingType, action ));
 		return caseDetails;
 	}
 
-	private Map<String, String> processCaseEntity(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
+	private Map<String, String> processCaseEntity(JSONObject request, String referenceId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
 		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
         Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, referenceId, null);
 		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
-
-		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action));
 
 		caseDetails.put("cnrNumber", cnrNumber);
 		caseDetails.put("filingNumber", referenceId);
@@ -342,7 +469,7 @@ public class IndexerUtils {
 		return caseDetails;
 	}
 
-	private Map<String, String> processOrderEntity(JSONObject request, String referenceId, String status, String tenantId) throws InterruptedException {
+	private Map<String, String> processOrderEntity(JSONObject request, String referenceId) throws InterruptedException {
 		Map<String, String> caseDetails = new HashMap<>();
 		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
@@ -352,69 +479,7 @@ public class IndexerUtils {
 
 		caseDetails.put("cnrNumber", JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH));
 		caseDetails.put("filingNumber", JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH));
-		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
-
-		publishToCaseOverallStatus(determineOrderStage(filingNumber, tenantId, orderType, status));
 		return caseDetails;
-	}
-
-
-	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
-        return switch (action.toLowerCase()) {
-			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
-            case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
-            case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
-			case "save_draft" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Draft");
-            default -> null;
-        };
-	}
-
-	private CaseOverallStatus determineHearingStage(String filingNumber, String tenantId, String hearingType, String action) {
-
-		switch (hearingType.toLowerCase()) {
-			case "evidence":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Evidence");
-				}
-				break;
-			case "arguments":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Arguments");
-				}
-				break;
-			case "judgement":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Judgment");
-				}
-				break;
-		}
-		return null;
-	}
-
-	private CaseOverallStatus determineOrderStage(String filingNumber, String tenantId, String orderType, String status) {
-
-		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
-			return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Post-Judgement");
-		}
-		return null;
-	}
-
-	private void publishToCaseOverallStatus(CaseOverallStatus caseOverallStatus) {
-		try {
-			if(caseOverallStatus==null){
-				log.info("Case overall workflow update not eligible");
-			}
-			else if(caseOverallStatus.getFilingNumber()==null){
-				log.error("Filing number not present for Case overall workflow update");
-			}
-			else{
-				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
-				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(caseOverallStatus);
-				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
-			}
-		} catch (Exception e) {
-			log.error("Error in publishToCaseOverallStatus method", e);
-		}
 	}
 
 	public void esPost(String uri, String request) {
@@ -441,7 +506,7 @@ public class IndexerUtils {
 
 	public void esPostManual(String uri, String request) throws Exception {
 		try {
-			log.debug("Record being indexed: {}", request);
+			log.debug("Record being indexed manually: {}", request);
 
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -450,8 +515,8 @@ public class IndexerUtils {
 
 			String response = restTemplate.postForObject(uri, entity, String.class);
 			if (uri.contains("_bulk") && JsonPath.read(response, ERRORS_PATH).equals(true)) {
-				log.info("Indexing FAILED!!!!");
-				log.info("Response from ES: {}", response);
+				log.info("Manual Indexing FAILED!!!!");
+				log.info("Response from ES for manual push: {}", response);
 				throw new Exception("Error while updating index");
 			}
 		}

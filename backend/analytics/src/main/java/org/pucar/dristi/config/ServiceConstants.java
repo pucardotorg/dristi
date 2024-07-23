@@ -9,6 +9,8 @@ public class ServiceConstants {
 
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
+	public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
+
 
 	//Consumer
 	public static final String ES_INDEX_HEADER_FORMAT = "{\"index\":{\"_index\":\"%s\",\"_id\":\"%s\"}}\n";
@@ -29,6 +31,7 @@ public class ServiceConstants {
 
 	//JSON path
 	public static final String PROCESS_INSTANCE_PATH = "$.ProcessInstances.*";
+	public static final String REQUEST_INFO_PATH = "$.RequestInfo";
 	public static final String ID_PATH = "$.id";
 	public static final String BUSINESS_SERVICE_PATH = "$.businessService";
 	public static final String BUSINESS_ID_PATH = "$.businessId";
