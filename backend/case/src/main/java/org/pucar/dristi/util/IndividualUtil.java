@@ -21,16 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IndividualUtil {
 
-    private ObjectMapper mapper;
 
     private ServiceRequestRepository serviceRequestRepository;
 
-    private Configuration configs;
-
     @Autowired
-    public IndividualUtil(ObjectMapper mapper, Configuration configs, ServiceRequestRepository serviceRequestRepository) {
-        this.mapper = mapper;
-        this.configs = configs;
+    public IndividualUtil(ServiceRequestRepository serviceRequestRepository) {
         this.serviceRequestRepository = serviceRequestRepository;
     }
 

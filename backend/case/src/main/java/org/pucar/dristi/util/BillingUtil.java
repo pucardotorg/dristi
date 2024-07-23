@@ -31,15 +31,12 @@ public class BillingUtil {
 
 	private RestTemplate restTemplate;
 
-	private ObjectMapper mapper;
-
 	private Configuration configs;
 
 	@Autowired
-	public BillingUtil(RestTemplate restTemplate, Configuration configs, ObjectMapper mapper) {
+	public BillingUtil(RestTemplate restTemplate, Configuration configs) {
 		this.restTemplate = restTemplate;
 		this.configs = configs;
-		this.mapper = mapper;
 	}
 
 	public void createDemand(CaseRequest caseRequest) {
