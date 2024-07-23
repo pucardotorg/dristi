@@ -19,6 +19,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.common.models.stock.UserInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,16 +33,7 @@ import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseExists;
-import org.pucar.dristi.web.models.CaseExistsRequest;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.JoinCaseRequest;
-import org.pucar.dristi.web.models.JoinCaseResponse;
-import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseServiceTest {
@@ -547,6 +539,106 @@ public class CaseServiceTest {
         when(caseRepository.getApplications(any(), any())).thenReturn(Arrays.asList());
 
         caseService.searchCases(searchRequest);
+    }
+
+    @Test
+    public void testAddWitness_Success() {
+        AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
+        addWitnessRequest.setCaseFilingNumber("CASE123");
+        addWitnessRequest.setAdditionalDetails("details");
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("EMPLOYEE");
+        Role role = new Role();
+        role.setName("EMPLOYEE");
+        user.setRoles(Collections.singletonList(role));
+        requestInfo.setUserInfo(user);
+        addWitnessRequest.setRequestInfo(requestInfo);
+
+        CaseExists caseExists = new CaseExists();
+        caseExists.setExists(true);
+        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+
+        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+        when(config.getAdditionalJoinCaseTopic()).thenReturn("topic");
+
+        AddWitnessResponse response = caseService.addWitness(addWitnessRequest);
+
+        verify(producer, times(1)).push(eq("topic"), eq(addWitnessRequest));
+        assertEquals(addWitnessRequest, response.getAddWitnessRequest());
+    }
+
+    @Test
+    public void testAddWitness_CaseNotFound() {
+        AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
+        addWitnessRequest.setCaseFilingNumber("CASE123");
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("EMPLOYEE");
+        requestInfo.setUserInfo(user);
+        addWitnessRequest.setRequestInfo(requestInfo);
+
+        CaseExists caseExists = new CaseExists();
+        caseExists.setExists(false);
+        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+
+        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseService.addWitness(addWitnessRequest);
+        });
+
+        assertEquals("INVALID_CASE", exception.getCode());
+        assertEquals("No case found for the given filling Number", exception.getMessage());
+    }
+
+    @Test
+    public void testAddWitness_InvalidUser() {
+        AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
+        addWitnessRequest.setCaseFilingNumber("CASE123");
+        addWitnessRequest.setAdditionalDetails("data");
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("CITIZEN");
+        requestInfo.setUserInfo(user);
+        addWitnessRequest.setRequestInfo(requestInfo);
+
+        CaseExists caseExists = new CaseExists();
+        caseExists.setExists(true);
+        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+
+        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseService.addWitness(addWitnessRequest);
+        });
+
+        assertEquals("VALIDATION_EXCEPTION", exception.getCode());
+        assertEquals("Not a valid user to add witness details", exception.getMessage());
+    }
+
+    @Test
+    public void testAddWitness_AdditionalDetailsRequired() {
+        AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
+        addWitnessRequest.setCaseFilingNumber("CASE123");
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("EMPLOYEE");
+        requestInfo.setUserInfo(user);
+        addWitnessRequest.setRequestInfo(requestInfo);
+
+        CaseExists caseExists = new CaseExists();
+        caseExists.setExists(true);
+        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+
+        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseService.addWitness(addWitnessRequest);
+        });
+
+        assertEquals("VALIDATION_EXCEPTION", exception.getCode());
+        assertEquals("Additional details are required", exception.getMessage());
     }
 
 }

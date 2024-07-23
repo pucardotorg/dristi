@@ -50,7 +50,7 @@ public class CaseRegistrationEnrichment {
 
             List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
             log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(caseUtil.getCurrentTimeMil()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(caseUtil.getCurrentTimeMil()).build();
             courtCase.setAuditdetails(auditDetails);
 
             courtCase.setId(UUID.randomUUID());
@@ -84,7 +84,7 @@ public class CaseRegistrationEnrichment {
 
     private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
         if(courtCase.getWorkflow()!=null && courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)){
-            courtCase.setFilingDate(LocalDate.now());
+            courtCase.setFilingDate(caseUtil.getCurrentTimeMil());
         }
     }
 
@@ -227,7 +227,7 @@ public class CaseRegistrationEnrichment {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
             CourtCase courtCase = caseRequest.getCases();
             AuditDetails auditDetails  = courtCase.getAuditdetails();
-            auditDetails.setLastModifiedTime(System.currentTimeMillis());
+            auditDetails.setLastModifiedTime(caseUtil.getCurrentTimeMil());
             auditDetails.setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
             enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
 
@@ -258,4 +258,13 @@ public class CaseRegistrationEnrichment {
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
             }
         }
+
+    public void enrichRegistrationDate(CaseRequest caseRequest) {
+        try {
+            caseRequest.getCases().setRegistrationDate(caseUtil.getCurrentTimeMil());
+        } catch (Exception e) {
+            log.error("Error enriching registration date: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching registration date: " + e.getMessage());
+        }
+    }
 }

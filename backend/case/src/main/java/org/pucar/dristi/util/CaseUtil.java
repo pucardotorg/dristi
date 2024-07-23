@@ -30,4 +30,8 @@ public class CaseUtil {
 
         return sb.toString();
     }
+
+    public Long getCurrentTimeMil() {
+        return System.currentTimeMillis();
+    }
 }
