@@ -77,7 +77,6 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info || {};
-  const uuid = userInfo?.uuid;
   const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -200,21 +199,21 @@ const GenerateOrders = () => {
       workflow: {
         action: OrderWorkflowAction.SAVE_DRAFT,
         comments: "Creating order",
-        assignes: [uuid],
+        assignes: [],
         rating: null,
         documents: [{}],
       },
       documents: [],
       additionalDetails: { formdata: {} },
     }),
-    [cnrNumber, filingNumber, tenantId, uuid]
+    [cnrNumber, filingNumber, tenantId]
   );
 
   useEffect(() => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
       setNewFormdata([defaultOrderData]);
     } else {
-      setNewFormdata(ordersData?.list.reverse());
+      setNewFormdata([...(ordersData?.list || [])].reverse());
     }
   }, [ordersData, defaultOrderData]);
 
@@ -390,7 +389,6 @@ const GenerateOrders = () => {
     }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
-        console.log("applicationDetails1", applicationDetails, applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
         updatedFormdata.partyType = applicationDetails.additionalDetails?.partyType;
         updatedFormdata.reasonForWithdrawal = applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code;
@@ -432,8 +430,6 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
-    console.debug(order);
-    console.debug({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } });
     try {
       return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
     } catch (error) {
@@ -443,7 +439,7 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      await ordersService.createOrder({ order }, { tenantId });
+      return await ordersService.createOrder({ order }, { tenantId });
     } catch (error) {}
   };
 
@@ -471,8 +467,12 @@ const GenerateOrders = () => {
         return Promise.resolve();
       }
     });
-    await Promise.all(promises);
-    refetchOrdersData();
+    const responsesList = await Promise.all(promises);
+    setNewFormdata(
+      responsesList.map((res) => {
+        return res?.order;
+      })
+    );
     if (selectedOrder >= count) {
       setSelectedOrder(0);
     }
@@ -580,10 +580,8 @@ const GenerateOrders = () => {
     try {
       if (newformdata[deleteOrderIndex]?.orderNumber) {
         await updateOrder(newformdata[deleteOrderIndex], OrderWorkflowAction.ABANDON);
-        refetchOrdersData();
-      } else {
-        setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       }
+      setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       if (orderNumber) {
         history.push(`?filingNumber=${filingNumber}`);
       }
@@ -631,7 +629,14 @@ const GenerateOrders = () => {
     }
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
+  if (
+    isOrdersLoading ||
+    isOrdersFetching ||
+    isCaseDetailsLoading ||
+    isApplicationDetailsLoading ||
+    !ordersData?.list ||
+    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
+  ) {
     return <Loader />;
   }
 
@@ -640,7 +645,7 @@ const GenerateOrders = () => {
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
-          {newformdata?.map((_, index) => {
+          {newformdata?.map((item, index) => {
             return (
               <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>
                 <h1
@@ -649,7 +654,7 @@ const GenerateOrders = () => {
                   }}
                   style={{ cursor: "pointer", flex: 1 }}
                 >
-                  {t(newformdata[index]?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
+                  {t(item?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
                 </h1>
                 {newformdata?.length > 1 && (
                   <span
