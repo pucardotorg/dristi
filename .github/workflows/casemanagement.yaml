@@ -51,6 +51,7 @@ jobs:
           docker build -t pucar_casemanagement_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_casemanagement_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_casemanagement_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/casemanagement/src/main/resources/db
       - name: Trigger Deployment Pipeline
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
