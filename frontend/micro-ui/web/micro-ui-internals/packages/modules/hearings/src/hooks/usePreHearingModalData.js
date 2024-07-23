@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { Urls } from "../../../dristi/src/hooks";
 
 const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessRequest, state, changeQueryName = "Random" }) => {
   const client = useQueryClient();
@@ -45,7 +46,7 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
     };
 
     const caseDetailsResponse = await Digit.CustomService.getResponse({
-      url: "/case/v1/_search",
+      url: Urls.dristi.caseSearch,
       params: { tenantId: Digit.ULBService.getCurrentTenantId() },
       body: caseBody,
       plainAccessRequest,

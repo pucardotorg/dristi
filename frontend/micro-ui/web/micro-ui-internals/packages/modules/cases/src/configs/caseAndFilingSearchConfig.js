@@ -77,7 +77,6 @@ export const caseAndFilingSearchConfig = () => {
               label: "Filling Number",
               jsonPath: "filingNumber",
             },
-            ,
             {
               label: "Case Number",
               jsonPath: "caseNumber",

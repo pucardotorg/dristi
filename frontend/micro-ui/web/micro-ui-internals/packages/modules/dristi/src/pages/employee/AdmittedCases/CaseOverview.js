@@ -26,6 +26,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
 
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const isCitizen = userRoles.includes("CITIZEN");
   const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
       id: representative?.advocateId,

@@ -13,6 +13,7 @@ import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from ".
 import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+import { Urls } from "../../../hooks";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -209,7 +210,7 @@ function CaseFileAdmission({ t, path }) {
         additionalDetails: {},
       },
     };
-    DRISTIService.customApiService("/order/v1/create", reqBody, { tenantId })
+    DRISTIService.customApiService(Urls.dristi.ordersCreate, reqBody, { tenantId })
       .then(() => {
         history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
           caseId: caseId,

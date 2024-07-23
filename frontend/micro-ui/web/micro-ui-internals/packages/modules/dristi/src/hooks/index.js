@@ -34,6 +34,7 @@ export const Urls = {
     updateHearings: "/hearing/v1/update",
     demandCreate: "/billing-service/demand/_create",
     ordersSearch: "/order/v1/search",
+    ordersCreate: "/order/v1/create",
     submissionsSearch: "/application/v1/search",
     submissionsUpdate: "/application/v1/update",
     pendingTask: "/analytics/pending_task/v1/create",

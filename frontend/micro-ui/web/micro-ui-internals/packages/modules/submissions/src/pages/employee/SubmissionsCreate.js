@@ -134,7 +134,6 @@ const SubmissionsCreate = () => {
       tenantId,
     },
     {},
-    "dristi",
     applicationNumber,
     applicationNumber
   );
@@ -275,7 +274,7 @@ const SubmissionsCreate = () => {
           artifact: {
             artifactType: "DOCUMENTARY",
             caseId: caseDetails?.id,
-            filingNumber: caseDetails?.filingNumber,
+            filingNumber,
             tenantId,
             comments: [],
             file,
