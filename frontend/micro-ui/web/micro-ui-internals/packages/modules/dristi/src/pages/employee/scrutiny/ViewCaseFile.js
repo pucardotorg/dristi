@@ -265,12 +265,14 @@ function ViewCaseFile({ t, inViewCase = false }) {
   const handlePotentialConfirm = () => {
     setActionModal("caseRegisterPotential");
   };
-  const handleCloseModal = () => {
+  const handleCloseModal = (highlight = false) => {
     setActionModal(false);
-    setHighlightChecklist(true);
-    setTimeout(() => {
-      setHighlightChecklist(false);
-    }, 2000);
+    if (highlight) {
+      setHighlightChecklist(true);
+      setTimeout(() => {
+        setHighlightChecklist(false);
+      }, 2000);
+    }
   };
 
   if (!caseId) {
@@ -527,18 +529,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
             />
           )}
         </div>
-        {actionModal == "sendCaseBack" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
-            type="sendCaseBack"
-          />
-        )}
         {actionModal == "sendCaseBackPotential" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_NO_REGISTER_CASE"}

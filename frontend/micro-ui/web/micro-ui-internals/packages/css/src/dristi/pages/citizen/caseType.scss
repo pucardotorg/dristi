@@ -256,7 +256,9 @@
     .header-end {
       display: flex;
       gap: 40px;
+      align-items: center;
       padding-top: 8px;
+      justify-content: flex-end !important;
       .flag-icon,
       .close-icon {
         width: 24px;
