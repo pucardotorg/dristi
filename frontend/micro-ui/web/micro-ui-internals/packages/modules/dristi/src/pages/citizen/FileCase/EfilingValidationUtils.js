@@ -1,4 +1,5 @@
 import { useToast } from "../../../components/Toast/useToast";
+import { getUserDetails } from "../../../hooks/useGetAccessToken";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
@@ -615,18 +616,7 @@ export const respondentValidation = ({
     toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
     setFormErrors("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
     return true;
-  }
-  // else if (
-  //   formData &&
-  //   formData?.phonenumbers?.textfieldValue &&
-  //   formData?.phonenumbers?.textfieldValue?.length === 10 &&
-  //   formData?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue)
-  // ) {
-  //   toast.error("DUPLICATE_MOBILE_NUMBER");
-  //   // setFormErrors("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
-  //   return true;
-  // }
-  else {
+  } else {
     clearFormDataErrors("phonenumbers");
     return false;
   }
@@ -642,7 +632,7 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
       }
     }
 
-    if(formData?.delayApplicationType?.code === "NO") {
+    if (formData?.delayApplicationType?.code === "NO") {
       setReceiptDemandNoticeModal(true);
       return true;
     }
@@ -889,7 +879,19 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             name: "Citizen",
             tenantId: tenantId,
           },
-          ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"]?.map((role) => ({
+          ...[
+            "CASE_CREATOR",
+            "CASE_EDITOR",
+            "CASE_VIEWER",
+            "DEPOSITION_CREATOR",
+            "DEPOSITION_VIEWER",
+            "APPLICATION_CREATOR",
+            "APPLICATION_VIEWER",
+            "HEARING_VIEWER",
+            "ORDER_VIEWER",
+            "SUBMISSION_CREATOR",
+            "SUBMISSION_RESPONDER",
+          ]?.map((role) => ({
             code: role,
             name: role,
             tenantId: tenantId,
@@ -934,6 +936,11 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
     },
   };
   const response = await window?.Digit.DRISTIService.postIndividualService(Individual, tenantId);
+  const refreshToken = window.localStorage.getItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  window.localStorage.removeItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  if (refreshToken) {
+    await getUserDetails(refreshToken, data?.complainantVerification?.userDetails?.mobileNumber);
+  }
   return response;
 };
 
@@ -941,6 +948,38 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   if (fileData?.fileStore) return fileData;
   const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+};
+
+export const getAllAssignees = (caseDetails) => {
+  if (Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0) {
+    return caseDetails?.representatives
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        if (curr && curr?.representing && Array.isArray(curr?.representing || []) && curr?.representing?.length > 0) {
+          const representingUuids = curr?.representing?.reduce((result, current) => {
+            if (current && current?.additionalDetails?.uuid) {
+              result.push(current?.additionalDetails?.uuid);
+            }
+            return result;
+          }, []);
+          res.push(representingUuids);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  } else if (Array.isArray(caseDetails?.litigants || []) && caseDetails?.litigants?.length > 0) {
+    return caseDetails?.litigants
+      ?.reduce((res, curr) => {
+        if (curr && curr?.additionalDetails?.uuid) {
+          res.push(curr?.additionalDetails?.uuid);
+        }
+        return res;
+      }, [])
+      ?.flat();
+  }
+  return null;
 };
 
 export const updateCaseDetails = async ({
@@ -966,6 +1005,15 @@ export const updateCaseDetails = async ({
           .filter((item) => item.isenabled)
           .map(async (data, index) => {
             if (data?.data?.complainantVerification?.individualDetails) {
+              const Individual = await DRISTIService.searchIndividualUser(
+                {
+                  Individual: {
+                    individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+                  },
+                },
+                { tenantId, limit: 1, offset: 0 }
+              );
+              const userUuid = Individual?.Individual?.[0]?.userUuid || "";
               return {
                 tenantId,
                 caseId: caseDetails?.id,
@@ -974,6 +1022,7 @@ export const updateCaseDetails = async ({
                 partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                 additionalDetails: {
                   fullName: `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${data?.data?.lastName}`,
+                  uuid: userUuid ? userUuid : null,
                 },
               };
             } else {
@@ -998,7 +1047,6 @@ export const updateCaseDetails = async ({
                       },
                     });
                   const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -1008,9 +1056,10 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-                  const firstName = Individual?.Individual?.firstName;
-                  const lastName = Individual?.Individual?.lastName;
-                  const middleName = Individual?.Individual?.middleName;
+                  const firstName = Individual?.Individual?.name?.givenName;
+                  const lastName = Individual?.Individual?.name?.familyName;
+                  const middleName = Individual?.Individual?.name?.otherNames;
+                  const userUuid = Individual?.Individual?.userUuid;
 
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
@@ -1054,11 +1103,11 @@ export const updateCaseDetails = async ({
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                     additionalDetails: {
                       fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
                     },
                   };
                 } else {
                   const Individual = await createIndividualUser({ data: data?.data, tenantId });
-
                   const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
                   const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
                   const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
@@ -1068,10 +1117,10 @@ export const updateCaseDetails = async ({
                   const latitude = Individual?.Individual?.address[0]?.latitude || "";
                   const longitude = Individual?.Individual?.address[0]?.longitude || "";
                   const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-                  const firstName = Individual?.Individual?.firstName;
-                  const lastName = Individual?.Individual?.lastName;
-                  const middleName = Individual?.Individual?.middleName;
-
+                  const firstName = Individual?.Individual?.name?.givenName || "";
+                  const lastName = Individual?.Individual?.name?.familyName || "";
+                  const middleName = Individual?.Individual?.name?.otherNames || "";
+                  const userUuid = Individual?.Individual?.userUuid;
                   const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
                   complainantVerification[index] = {
                     individualDetails: {
@@ -1106,6 +1155,7 @@ export const updateCaseDetails = async ({
                     partyType: index === 0 ? "complainant.primary" : "complainant.additional",
                     additionalDetails: {
                       fullName: `${firstName}${middleName ? " " + middleName + " " : " "}${lastName}`,
+                      uuid: userUuid ? userUuid : null,
                     },
                   };
                 }
@@ -1463,7 +1513,7 @@ export const updateCaseDetails = async ({
                 );
               }
             })
-          ).catch(console.debug);
+          ).catch();
           return {
             ...data,
             data: {
@@ -1535,8 +1585,10 @@ export const updateCaseDetails = async ({
                     async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
-                          artifactType: "complainant",
+                          artifactType: "DOCUMENTARY",
+                          sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
+                          filingNumber: caseDetails?.filingNumber,
                           tenantId,
                           comments: [],
                           file: {
@@ -1717,11 +1769,14 @@ export const updateCaseDetails = async ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),
+                        additionalDetails: {
+                          ...data?.additionalDetails,
+                        },
                         tenantId,
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,
                         individualId: data?.individualId,
-                        partyType: data?.partyType,
+                        partyType: data?.partyType.includes("complainant") ? "complainant.primary" : "respondent.primary",
                       }))
                     : []),
                 ]
@@ -1729,6 +1784,7 @@ export const updateCaseDetails = async ({
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+              uuid: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateUuid,
             },
             tenantId,
           };
@@ -1758,7 +1814,7 @@ export const updateCaseDetails = async ({
       : caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
         `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
           caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-        } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
+        } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
           caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
         }`;
   setErrorCaseDetails({
@@ -1773,6 +1829,9 @@ export const updateCaseDetails = async ({
       action: action,
     },
   });
+
+  const assignees = getAllAssignees(caseDetails);
+
   return DRISTIService.caseUpdateService(
     {
       cases: {
@@ -1785,6 +1844,9 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          ...(action === "SUBMIT_CASE" && {
+            assignees,
+          }),
         },
       },
       tenantId,

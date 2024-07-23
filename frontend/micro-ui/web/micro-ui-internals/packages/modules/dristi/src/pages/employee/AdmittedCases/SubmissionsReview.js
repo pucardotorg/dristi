@@ -62,11 +62,13 @@ const SubmissionReview = ({ caseData, setUpdateCounter }) => {
       },
     },
     {},
-    cnr + filingNumber,
-    true
+    filingNumber,
+    filingNumber
   );
 
-  console.log(applicationRes);
+  const applicationListToShow = userRoles.includes("CITIZEN")
+    ? applicationRes?.applicationList?.filter((application) => application.workflow.action === "PENDINGSUBMISSION")
+    : applicationRes?.applicationList?.filter((application) => application.workflow.action === "PENDINGREVIEW");
 
   return (
     <React.Fragment>
@@ -84,63 +86,60 @@ const SubmissionReview = ({ caseData, setUpdateCounter }) => {
             color: "#231F20",
           }}
         >
-          Submissions To Review ({applicationRes?.applicationList?.filter((application) => application.workflow.action === "PENDINGREVIEW").length})
+          {userRoles.includes("CITIZEN") ? t("PENDING_SUBMISSIONS_HEADER") : t("REVIEW_SUBMISSIONS_HEADER")} ({applicationListToShow?.length})
         </div>
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-          {applicationRes?.applicationList
-            ?.filter((application) => application.workflow.action === "PENDINGREVIEW")
-            .slice(0, 5)
-            .map((app) => (
-              <div
-                style={{
-                  padding: "12px 16px",
-                  borderRadius: "4px",
-                  width: "300px",
-                  cursor: "pointer",
-                  background: "#ECF3FD66",
-                }}
-                onClick={() => docSetFunc(app)}
-              >
-                <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      lineHeight: "18.75px",
-                      color: "#101828",
-                    }}
-                  >
-                    {app?.applicationType?.charAt(0).toUpperCase()}
-                    {app?.applicationType?.slice(1).toLowerCase()}
-                  </div>
-                  <CustomArrowOut />
-                </div>
+          {applicationListToShow?.slice(0, 5).map((app) => (
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: "4px",
+                width: "300px",
+                cursor: "pointer",
+                background: "#ECF3FD66",
+              }}
+              onClick={() => docSetFunc(app)}
+            >
+              <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
                 <div
                   style={{
-                    fontWeight: 600,
-                    fontSize: "14px",
-                    lineHeight: "20px",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    lineHeight: "18.75px",
                     color: "#101828",
-                    marginTop: "12px",
                   }}
                 >
-                  Date:
-                  <span
-                    style={{
-                      fontWeight: 500,
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                    }}
-                  >
-                    {new Date(app?.auditDetails?.createdTime).toLocaleDateString("en-in", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
+                  {app?.applicationType?.charAt(0).toUpperCase()}
+                  {app?.applicationType?.slice(1).toLowerCase()}
                 </div>
+                <CustomArrowOut />
               </div>
-            ))}
+              <div
+                style={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  color: "#101828",
+                  marginTop: "12px",
+                }}
+              >
+                Date:
+                <span
+                  style={{
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                  }}
+                >
+                  {new Date(app?.auditDetails?.createdTime).toLocaleDateString("en-in", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </Card>
       {show && (

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Evidence } from "../components/Evidence";
 import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
+import { RenderInstance } from "../components/RenderInstance";
+import OverlayDropdown from "../components/OverlayDropdown";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -18,8 +20,8 @@ const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.co
 const partyTypes = {
   "complainant.primary": "Complainant",
   "complainant.additional": "Complainant",
-  "respondant.primary": "Respondant",
-  "respondant.additional": "Respondant",
+  "respondent.primary": "Respondent",
+  "respondent.additional": "Respondent",
 };
 
 export const UICustomizations = {
@@ -27,7 +29,7 @@ export const UICustomizations = {
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -102,7 +104,7 @@ export const UICustomizations = {
     }
     if (businessService === businessServiceMap?.["works.purchase"]) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -190,6 +192,7 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                advocateUuid: adv?.auditDetails?.createdBy,
               };
             });
           },
@@ -199,8 +202,8 @@ export const UICustomizations = {
   },
   getAdvocateNameUsingBarRegistrationNumberJoinCase: {
     getNames: (props) => {
-      console.log("props", props);
       const removeOptions = props?.removeOptions ? props?.removeOptions : [];
+      const removeOptionsKey = props?.removeOptionsKey || "";
       return {
         url: "/advocate/advocate/v1/status/_search",
         params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
@@ -210,7 +213,7 @@ export const UICustomizations = {
         config: {
           select: (data) => {
             return data.advocates
-              .filter((adv) => !removeOptions?.includes(adv?.barRegistrationNumber))
+              .filter((adv) => !removeOptions?.includes(adv?.[removeOptionsKey]))
               .map((adv) => {
                 return {
                   icon: (
@@ -221,7 +224,7 @@ export const UICustomizations = {
                       </span>
                     </span>
                   ),
-                  barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
+                  barRegistrationNumber: `${adv?.barRegistrationNumber}`,
                   advocateName: adv?.additionalDetails?.username,
                   advocateId: adv?.id,
                   barRegistrationNumberOriginal: adv?.barRegistrationNumber,
@@ -581,30 +584,68 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    // preProcess: (requestCriteria, additionalDetails) => {
-
-    //   return {
-    //     ...requestCriteria,
-    //     config: {
-    //       select: (data) => {
-    //         return { ...data };
-    //       },
-    //     },
-    //   };
-    // },
+    preProcess: (requestCriteria, additionalDetails) => {
+      const filterList = Object.keys(requestCriteria.state.searchForm)
+        .map((key) => {
+          if (requestCriteria.state.searchForm[key]?.type) {
+            return { [key]: requestCriteria.state.searchForm[key]?.type };
+          } else if (requestCriteria.state.searchForm[key]?.value) {
+            return { [key]: requestCriteria.state.searchForm[key]?.value };
+          } else if (typeof requestCriteria.state.searchForm[key] === "string") {
+            return { [key]: requestCriteria.state.searchForm[key] };
+          }
+        })
+        .filter((filter) => filter)
+        .reduce(
+          (fieldObj, item) => ({
+            ...fieldObj,
+            ...item,
+          }),
+          {}
+        );
+      const tenantId = window?.Digit.ULBService.getStateId();
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria.body,
+          criteria: {
+            ...requestCriteria.body.criteria,
+            ...filterList,
+          },
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
+          },
+        },
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            // console.log(requestCriteria, data, requestCriteria.url.split("/").includes("order"));
+            // if (requestCriteria.url.split("/").includes("order")) {
+            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+            return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
+              ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              : data;
+            // }
+          },
+        },
+      };
+    },
     additionalCustomizations: (row, key, column, value, t) => {
       const showDocument =
         userRoles?.includes("APPLICATION_APPROVER") ||
         userRoles?.includes("DEPOSITION_CREATOR") ||
         userRoles?.includes("DEPOSITION_ESIGN") ||
         userRoles?.includes("DEPOSITION_PUBLISHER") ||
-        row.workflow.action !== "PENDINGREVIEW";
+        row.workflow?.action !== "PENDINGREVIEW";
       switch (key) {
         case "Document":
           return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
         case "File":
           return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
+        case "Date":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
@@ -624,6 +665,174 @@ export const UICustomizations = {
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Status":
+          return value ? "Marked as Evidence" : "Action Pending";
+        case "Actions":
+          return (
+            <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
+          );
+        default:
+          break;
+      }
+    },
+    dropDownItems: (row) => {
+      const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      };
+      const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+      const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+      const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+      const searchParams = new URLSearchParams();
+      const date = new Date(row.startTime);
+      if (true || userInfo.roles.includes("JUDGE_ROLE")) {
+        return [
+          {
+            label: "Reschedule hearing",
+            id: "reschedule",
+            action: (history) => {
+              const requestBody = {
+                order: {
+                  createdDate: formatDate(new Date()),
+                  tenantId: row.tenantId,
+                  filingNumber: row.filingNumber[0],
+                  statuteSection: {
+                    tenantId: row.tenantId,
+                  },
+                  orderType: "RESCHEDULE_OF_HEARING_DATE",
+                  status: "",
+                  isActive: true,
+                  workflow: {
+                    action: OrderWorkflowAction.SAVE_DRAFT,
+                    comments: "Creating order",
+                    assignes: null,
+                    rating: null,
+                    documents: [{}],
+                  },
+                  documents: [],
+                  additionalDetails: {
+                    formdata: {
+                      orderType: {
+                        type: "RESCHEDULE_OF_HEARING_DATE",
+                        isactive: true,
+                        code: "RESCHEDULE_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
+                      },
+                      originalHearingDate: `${date.getDate()}-${
+                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+                      }-${date.getFullYear()}`,
+                    },
+                  },
+                },
+              };
+              ordersService
+                .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+                .then((res) => {
+                  history.push(
+                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}&orderNumber=${res.order.orderNumber}`,
+                    {
+                      caseId: row.caseId,
+                      tab: "Orders",
+                    }
+                  );
+                })
+                .catch((err) => {});
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+    },
+  },
+  HistoryConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+            const applicationHistory = data.caseFiles[0].applications.map((application) => {
+              return {
+                instance: `APPLICATION_TYPE_${application.applicationType}`,
+                stage: "",
+                date: application.auditDetails.createdTime,
+                status: application.status,
+              };
+            });
+            const evidenceHistory = data.caseFiles[0].evidence.map((evidence) => {
+              return {
+                instance: `ARTIFACT_TYPE_${evidence.artifactType}`,
+                stage: "",
+                date: evidence.auditDetails.createdTime,
+                status: evidence.status,
+              };
+            });
+            const hearingHistory = data.caseFiles[0].hearings.map((hearing) => {
+              return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
+            });
+            const orderHistory = userRoles.includes("CITIZEN")
+              ? data.caseFiles[0].orders
+                  .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                  .map((order) => {
+                    return {
+                      instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                      stage: "",
+                      date: order.order.auditDetails.createdTime,
+                      status: order.order.status,
+                    };
+                  })
+              : data.caseFiles[0].orders.map((order) => {
+                  return {
+                    instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                    stage: "",
+                    date: order.order.auditDetails.createdTime,
+                    status: order.order.status,
+                  };
+                });
+            const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
+            return { ...data, history: historyList };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Instance":
+          return <RenderInstance value={value} t={t} />;
+        case "Date":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
         default:
           break;
       }

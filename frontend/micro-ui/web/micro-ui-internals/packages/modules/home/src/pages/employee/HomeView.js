@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { CaseWorkflowState, TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
+import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { HomeService } from "../../hooks/services";
+import { HomeService, Urls } from "../../hooks/services";
 import LitigantHomePage from "./LitigantHomePage";
 
 const defaultSearchValues = {
@@ -36,13 +36,12 @@ const HomeView = () => {
   );
   const [callRefetch, SetCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
-  const [hasJoinFileCaseOption, setHasJoinFileCaseOption] = useState(false);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
-  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, []);
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
+  const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userInfoType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -54,7 +53,7 @@ const HomeView = () => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
-  const individualId = individualData?.Individual?.[0]?.individualId;
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
 
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
     individualData?.Individual,
@@ -103,6 +102,35 @@ const HomeView = () => {
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
   }, []);
+
+  const getTotalCountForTab = useCallback(
+    async function (tabConfig) {
+      const updatedTabData = await Promise.all(
+        tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
+          const response = await HomeService.customApiService(configItem?.apiDetails?.serviceName, {
+            tenantId,
+            criteria: [
+              {
+                ...configItem?.apiDetails?.requestBody?.criteria?.[0],
+                ...defaultSearchValues,
+                ...additionalDetails,
+                pagination: { offSet: 0, limit: 1 },
+              },
+            ],
+          });
+          const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
+          return {
+            key: index,
+            label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
+            active: index === 0 ? true : false,
+          };
+        }) || []
+      );
+      setTabData(updatedTabData);
+    },
+    [additionalDetails, tenantId]
+  );
+
   useEffect(() => {
     if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
       const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
@@ -111,19 +139,7 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      (async function () {
-        const updatedTabData = await Promise.all(
-          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
-            return {
-              key: index,
-              label: configItem.label,
-              active: index === 0 ? true : false,
-            };
-          }) || []
-        );
-        setTabData(updatedTabData);
-      })();
-      setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
+      getTotalCountForTab(tabConfig);
     } else {
       const rolesToConfigMappingData =
         rolesToConfigMapping?.find((item) =>
@@ -138,44 +154,20 @@ const HomeView = () => {
       setOnRowClickData(rowClickData);
       setConfig(tabConfig?.TabSearchConfig?.[0]);
       setTabConfig(tabConfig);
-      (async function () {
-        const updatedTabData = await Promise.all(
-          tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
-            const response = await HomeService.customApiService(configItem?.apiDetails?.serviceName, {
-              tenantId,
-              criteria: [
-                {
-                  ...configItem?.apiDetails?.requestBody?.criteria?.[0],
-                  ...defaultSearchValues,
-                  ...additionalDetails,
-                  pagination: { offSet: 0, limit: 1 },
-                },
-              ],
-            });
-            const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
-            return {
-              key: index,
-              label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
-              active: index === 0 ? true : false,
-            };
-          }) || []
-        );
-        setTabData(updatedTabData);
-      })();
-      setHasJoinFileCaseOption(Boolean(rolesToConfigMappingData?.showJoinFileOption));
+      getTotalCountForTab(tabConfig);
     }
-  }, [additionalDetails, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, roles, state, tenantId]);
 
+  // calling case api for tab's count
   useEffect(() => {
     (async function () {
       if (userType) {
         setIsFetchCaseLoading(true);
-        const caseData = await HomeService.customApiService("/case/case/v1/_search", {
+        const caseData = await HomeService.customApiService(Urls.caseSearch, {
           tenantId,
-
           criteria: [
             {
-              litigantId: individualId,
+              ...(advocateId ? { advocateId } : { litigantId: individualId }),
 
               pagination: { offSet: 0, limit: 1 },
             },
@@ -185,7 +177,7 @@ const HomeView = () => {
         setIsFetchCaseLoading(false);
       }
     })();
-  }, [individualId, tenantId, userType]);
+  }, [advocateId, individualId, tenantId, userType]);
 
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false })));
@@ -198,13 +190,53 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
+  const refreshInbox = () => {
+    SetCallRefetch(true);
+  };
+
+  const onRowClick = (row) => {
+    const searchParams = new URLSearchParams();
+    if (
+      onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
+        ? onRowClickData?.urlDependentValue.includes(row.original[onRowClickData?.urlDependentOn])
+        : row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
+    ) {
+      onRowClickData.params.forEach((item) => {
+        searchParams.set(item?.key, row.original[item?.value]);
+      });
+      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
+    } else if (onRowClickData?.url) {
+      onRowClickData.params.forEach((item) => {
+        searchParams.set(item?.key, row.original[item?.value]);
+      });
+      history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
+    } else {
+      const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+      if (statusArray.includes(row?.original?.status)) {
+        if (row?.original?.status === "CASE_ADMITTED") {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
+          );
+        } else if (row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/admission?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}`
+          );
+        } else {
+          history.push(
+            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaints`
+          );
+        }
+      }
+    }
+  };
+
   if (isLoading || isFetching || isSearchLoading || isFetchCaseLoading) {
     return <Loader />;
   }
 
-  const refreshInbox = () => {
-    SetCallRefetch(true);
-  };
+  if (isUserLoggedIn && !individualId && userInfoType === "citizen") {
+    history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
+  }
 
   return (
     <div className="home-view-hearing-container">
@@ -217,8 +249,8 @@ const HomeView = () => {
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
-                <div className="button-field" style={{ width: "50%" }}>
-                  {individualId && userType && userInfoType === "citizen" && (
+                {individualId && userType && userInfoType === "citizen" && (
+                  <div className="button-field" style={{ width: "50%" }}>
                     <React.Fragment>
                       <JoinCaseHome refreshInbox={refreshInbox} t={t} />
                       <Button
@@ -230,8 +262,8 @@ const HomeView = () => {
                         }}
                       />
                     </React.Fragment>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="inbox-search-wrapper pucar-home home-view">
                 <InboxSearchComposer
@@ -251,29 +283,7 @@ const HomeView = () => {
                   onTabChange={onTabChange}
                   additionalConfig={{
                     resultsTable: {
-                      onClickRow: (row) => {
-                        const searchParams = new URLSearchParams();
-                        if (
-                          onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
-                            ? onRowClickData?.urlDependentValue.includes(row.original[onRowClickData?.urlDependentOn])
-                            : row.original[onRowClickData?.urlDependentOn] === onRowClickData?.urlDependentValue
-                        ) {
-                          onRowClickData.params.forEach((item) => {
-                            searchParams.set(item?.key, row.original[item?.value]);
-                          });
-                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.dependentUrl}?${searchParams.toString()}`);
-                        } else if (onRowClickData?.url) {
-                          onRowClickData.params.forEach((item) => {
-                            searchParams.set(item?.key, row.original[item?.value]);
-                          });
-                          history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
-                        } else {
-                          if (row?.original?.status === CaseWorkflowState.CASE_ADMITTED)
-                            history.push(
-                              `/${window?.contextPath}/${userInfoType}/dristi/home/admitted-case?caseId=${row?.original?.id}&tab=Overview`
-                            );
-                        }
-                      },
+                      onClickRow: onRowClick,
                     },
                   }}
                 />
@@ -281,7 +291,13 @@ const HomeView = () => {
             </div>
           </div>
           <div className="right-side">
-            <TasksComponent taskType={taskType} setTaskType={setTaskType} />
+            <TasksComponent
+              taskType={taskType}
+              setTaskType={setTaskType}
+              isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
+              uuid={userInfo?.uuid}
+              userInfoType={userInfoType}
+            />
           </div>
         </React.Fragment>
       )}

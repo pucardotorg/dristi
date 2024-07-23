@@ -19,7 +19,7 @@ const AdvocateRegistration = () => {
   const location = useLocation();
   const propData = location.state || {};
   const reqCreate = {
-    url: `/case/case/v1/_update`,
+    url: `/case/v1/_update`,
     params: {},
     body: {},
     config: {
@@ -32,7 +32,7 @@ const AdvocateRegistration = () => {
   const onSubmit = async (data) => {
     await mutation.mutate(
       {
-        url: `/case/case/v1/_update`,
+        url: `/case/v1/_update`,
         params: { tenantId },
         body: transformCreateData(propData),
         config: {
@@ -49,7 +49,6 @@ const AdvocateRegistration = () => {
         },
       }
     );
-
   };
   return (
     <div>
@@ -60,11 +59,7 @@ const AdvocateRegistration = () => {
         }}
         variant="default"
         style={{ margin: "0rem", maxWidth: "100%" }}
-        additionalElements={[
-          <span style={{ color: "#505A5F" }}>
-            {t("HCM_BOUNDARY_INFO ")}
-          </span>,
-        ]}
+        additionalElements={[<span style={{ color: "#505A5F" }}>{t("HCM_BOUNDARY_INFO ")}</span>]}
         label={"Info"}
       />
       <FormComposerV2
@@ -78,13 +73,12 @@ const AdvocateRegistration = () => {
         onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
           console.log(formData, "formData");
         }}
-        onSubmit={(data,) => onSubmit(data,)}
+        onSubmit={(data) => onSubmit(data)}
         fieldStyle={fieldStyle}
         noBreakLine={true}
       />
-
     </div>
   );
-}
+};
 
 export default AdvocateRegistration;

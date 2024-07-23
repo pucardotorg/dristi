@@ -30,7 +30,7 @@ function ConfirmEvidenceAction({ t, setShowConfirmationModal, handleAction, isEv
         />
       }
       headerBarMain={<Heading label={isEvidence ? t("UNMARK_SUBMISSION_HEADER") : t("MARK_SUBMISSION_HEADER")} />}
-      actionCancelLabel={"CS_COMMON_BACK"}
+      actionCancelLabel={t("CS_COMMON_BACK")}
       actionSaveLabel={actionSaveLabel}
       actionCancelOnSubmit={() => {
         setShowConfirmationModal(null);

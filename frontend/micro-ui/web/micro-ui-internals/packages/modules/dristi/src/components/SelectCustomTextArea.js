@@ -1,5 +1,5 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { isEmptyObject } from "../Utils";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
@@ -14,6 +14,8 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       ],
     [config?.populators?.inputs]
   );
+
+  const [formdata, setFormData] = useState(formData);
 
   function setValue(value, input) {
     let updatedValue = {
@@ -36,11 +38,22 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       updatedValue = null;
     }
 
+    setFormData((prevData) => ({
+      ...prevData,
+      [config.key]: {
+        ...prevData[config.key],
+        [input]: value,
+      },
+    }));
+
     onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {
-    const newText = event.target.value;
+    let newText = event.target.value;
+    if (typeof config?.populators?.validation?.pattern === "object") {
+      newText = newText.replace(config?.populators?.validation?.pattern, "").trimStart().replace(/ +/g, " ");
+    }
     setValue(newText, input?.name);
   };
 
@@ -63,7 +76,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
           )}
         </div>
         <textarea
-          value={formData?.[config.key]?.[input.name]}
+          value={formdata?.[config.key]?.[input.name]}
           onChange={(data) => {
             handleChange(data, input);
           }}

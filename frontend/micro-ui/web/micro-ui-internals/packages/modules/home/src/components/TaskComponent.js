@@ -1,96 +1,198 @@
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "@egovernments/digit-ui-components";
-import { CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { useGetPendingTask } from "../hooks/useGetPendingTask";
-const TasksComponent = ({ taskType, setTaskType }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+import { useTranslation } from "react-i18next";
+import PendingTaskAccordion from "./PendingTaskAccordion";
+import { HomeService, Urls } from "../hooks/services";
+import { selectTaskType, taskTypes } from "../configs/HomeConfig";
+import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-  const { data: pendingTaskDetail, isLoading } = useGetPendingTask({
+export const CaseWorkflowAction = {
+  SAVE_DRAFT: "SAVE_DRAFT",
+  ESIGN: "E-SIGN",
+  ABANDON: "ABANDON",
+};
+
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType, filingNumber }) => {
+  const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+  const [pendingTasks, setPendingTasks] = useState([]);
+  const history = useHistory();
+  const { t } = useTranslation();
+  const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
+  const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
+
+  const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
+          ...(filingNumber && { filingNumber: filingNumber }),
+          isCompleted: false,
+          ...(isLitigant && { assignedTo: uuid }),
+          ...(!isLitigant && { assignedRole: [...roles] }),
         },
-        limit: 10,
+        limit: 10000,
         offset: 0,
       },
     },
     params: { tenantId },
     key: taskType?.code,
-    config: { cacheTime: 0, staleTime: Infinity, enable: Boolean(taskType.code && tenantId) },
+    config: { enable: Boolean(taskType.code && tenantId) },
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
+
+  const getCaseDetailByFilingNumber = useCallback(
+    async (payload) => {
+      const caseData = await HomeService.customApiService(Urls.caseSearch, {
+        tenantId,
+        ...payload,
+      });
+      return caseData || {};
+    },
+    [tenantId]
+  );
+  const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
+    let reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "REFERRAL_CASE_TO_ADR",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: CaseWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+
+    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
+      .then(() => {
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
+      })
+      .catch((err) => {});
+  };
+
+  const fetchPendingTasks = useCallback(
+    async function () {
+      if (isLoading) return;
+      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
+        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
+      }));
+      const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
+        criteria: listOfFilingNumber,
+      });
+      const pendingTaskToCaseDetailMap = new Map();
+      allPendingTaskCaseDetails?.criteria?.forEach((element) => {
+        pendingTaskToCaseDetailMap.set(element?.filingNumber, element?.responseList?.[0]);
+      });
+      const tasks = await Promise.all(
+        pendingTaskActionDetails?.map(async (data) => {
+          const filingNumber = data?.fields?.find((field) => field.key === "filingNumber")?.value || "";
+          const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
+          const status = data?.fields?.find((field) => field.key === "status")?.value;
+          const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
+          const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
+          const pendingTaskActions = selectTaskType?.[taskTypeCode];
+          const searchParams = new URLSearchParams();
+          const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
+          pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
+            searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
+          });
+          const redirectUrl = `/${window?.contextPath}/${userInfoType}${
+            pendingTaskActions?.[status]?.redirectDetails?.url
+          }?${searchParams.toString()}`;
+          return {
+            actionName: pendingTaskActions?.[status]?.actionName,
+            caseTitle: caseDetail?.caseTitle || "",
+            filingNumber: filingNumber,
+            caseType: "NIA S138",
+            due: dayCount > 1 ? `Due in ${dayCount} Days` : `Due today`,
+            dayCount,
+            isCompleted,
+            redirectUrl,
+          };
+        })
+      );
+      setPendingTasks(tasks);
+    },
+    [getCaseDetailByFilingNumber, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
+  );
+
+  useEffect(() => {
+    fetchPendingTasks();
+  }, [fetchPendingTasks]);
+
+  console.log("pendingTasks", pendingTasks, pendingTaskActionDetails);
+  const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
+    () => ({
+      pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
+      allOtherPendingTask: pendingTasks.filter((data) => data?.dayCount >= 7 && !data?.isCompleted).map((data) => data) || [],
+    }),
+    [pendingTasks]
+  );
   if (isLoading) {
     return <Loader />;
   }
   return (
     <div className="tasks-component">
       <h2>Your Tasks</h2>
-      <div className="filters">
+      <div className="task-filters">
         <LabelFieldPair>
-          <CardLabel style={{ width: "16rem" }}>Case Stage and Type</CardLabel>
-          <Dropdown style={{ width: "16rem" }} option={[]} optionKey={"code"} select={(value) => {}} />
+          <Dropdown
+            option={[{ name: "NIA S138", code: "NIA S138" }]}
+            selected={{ name: "NIA S138", code: "NIA S138" }}
+            optionKey={"code"}
+            select={(value) => {}}
+            placeholder={t("CS_CASE_TYPE")}
+          />
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={{ width: "16rem" }}>Task Type</CardLabel>
           <Dropdown
-            style={{ width: "16rem" }}
-            option={[
-              { code: "case", name: "Case" },
-              { code: "hearing", name: "Hearing" },
-            ]}
+            option={taskTypes}
             optionKey={"name"}
-            value={taskType}
+            selected={taskType}
             select={(value) => {
               setTaskType(value);
             }}
+            placeholder={t("CS_CASE_TYPE")}
           />
         </LabelFieldPair>
-        {/* <Select defaultValue="Case Stage & Type" variant="outlined" className="filter-select">
-                    <MenuItem value="Case Stage & Type">Case Stage & Type</MenuItem>
-                </Select>
-                <Select defaultValue="Task Type" variant="outlined" className="filter-select">
-                    <MenuItem value="Task Type">Task Type</MenuItem>
-                </Select> */}
       </div>
       <div className="task-section">
-        <div className="task-header">
-          <span>Complete this week (2)</span>
-        </div>
-        <div className="task-item due-today">
-          <input type="checkbox" />
-          <div className="task-details">
-            <span className="task-title">Reschedule hearing request: Aparna vs Sandesh</span>
-            <span className="task-info">NIA S138 - PB-PT-2023 - Due today</span>
-          </div>
-        </div>
-        <div className="task-item">
-          <input type="checkbox" />
-          <div className="task-details">
-            <span className="task-title">Delay application request: Raj vs Anushka</span>
-            <span className="task-info">NIA S138 - PB-PT-2023 - Hearing in 2 days</span>
-          </div>
-        </div>
-        {/* <div className="task-item completed">
-          <input type="checkbox" checked disabled />
-          <div className="task-details">
-            <span className="task-title completed">Reschedule hearing request: Aparna vs Sandesh</span>
-          </div>
-        </div> */}
+        <PendingTaskAccordion
+          pendingTasks={pendingTaskDataInWeek}
+          accordionHeader={"Complete this week"}
+          t={t}
+          totalCount={pendingTaskDataInWeek?.length}
+          isHighlighted={true}
+          isAccordionOpen={true}
+        />
       </div>
       <div className="task-section">
-        <div className="task-header">
-          <span>All other tasks (12)</span>
-        </div>
+        <PendingTaskAccordion pendingTasks={allOtherPendingTask} accordionHeader={"All other tasks"} t={t} totalCount={allOtherPendingTask?.length} />
       </div>
-      <div className="task-section">
-        <div className="task-header">
-          <span>Admit registered cases (32)</span>
-          {/* <Button className="new-tasks">4 new</Button> */}
-        </div>
-      </div>
+      <div className="task-section"></div>
     </div>
   );
 };

@@ -1,43 +1,6 @@
-.review-submission-appl-modal {
-  &.popup-module {
-    width: 60vw;
-    .popup-module-main {
-      .review-submission-appl-body-main {
-        height: 70vh;
-        display: flex;
-        flex-direction: column;
-        gap: 5%;
-        margin-bottom: 20px;
-        .review-submission-appl-modal-info-div {
-          min-height: 30%;
-          display: flex !important;
-          flex-direction: row;
-          gap: 5%;
-          background-color: #f7f5f3;
-          margin-bottom: 10px;
-          .keys-div {
-            margin-left: 5px;
-            font-family: Roboto;
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 18.75px;
-            text-align: left;
-          }
-          .values-div {
-            margin-left: 25px;
-            font-family: Roboto;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 18.75px;
-            text-align: left;
-            color: #3d3c3c;
-          }
-        }
-        .review-submission-appl-modal-doc-div {
-          height: 65%;
-        }
-      }
-    }
+.review-submission-appl-body-main {
+  .application-details {
+    width: 100%;
   }
 }
 

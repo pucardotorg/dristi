@@ -55,6 +55,7 @@ module.exports = function (app) {
     "/egov-url-shortening/shortener",
     "/inbox/v1/_search",
     "/inbox/v2/_search",
+    "/inbox/v2/_getFields",
     "/tl-services",
     "/tl-calculator",
     "/org-services",
@@ -93,6 +94,7 @@ module.exports = function (app) {
     "/evidence",
     "/project-factory/v1/data/_autoGenerateBoundaryCode",
     "/application",
+    "/casemanagement",
     "/case",
     "/order",
     "/hearing",
@@ -100,6 +102,7 @@ module.exports = function (app) {
     "/inbox",
     "/application",
     "/task/v1/search",
+    "/analytics",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));

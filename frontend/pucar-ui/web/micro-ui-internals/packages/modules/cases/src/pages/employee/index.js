@@ -15,12 +15,16 @@ import AdvocateJoinCase from "../advocate/AdvocateJoinCase";
 import AdvocateJoinSucess from "../advocate/AdvocateJoinSucess";
 import CaseAndFilingSearch from "./CaseAndFilingSearch";
 import LitigantSucess from "./LitigantSuccess";
-
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
       content: t("HOME"),
       show: true,
     },

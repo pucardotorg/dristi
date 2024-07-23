@@ -233,6 +233,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
 
+  history.push(`/${window?.contextPath}/citizen/dristi/landing-page`);
+
   return (
     <div className="citizen-form-wrapper">
       <Switch>

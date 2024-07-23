@@ -78,7 +78,7 @@ function Home() {
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
   } else {
-    history.push(`/${window?.contextPath}/citizen/home`);
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
   }
 
   const refreshInbox = () => {
@@ -125,8 +125,9 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  props?.original?.status === "CASE_ADMITTED"
-                    ? history.push(`${path}/admitted-case?caseId=${props.original.id}&tab=Overview`)
+                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+                  statusArray.includes(props?.original?.status)
+                    ? history.push(`${path}/view-case?caseId=${props.original.id}&filingNumber=${props.original.filingNumber}&tab=Overview`)
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },

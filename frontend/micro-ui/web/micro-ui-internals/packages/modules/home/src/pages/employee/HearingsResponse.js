@@ -21,9 +21,11 @@ const Response = () => {
 
   const navigate = (page) => {
     switch (page) {
-      case "home": {
+      case "home":
         history.push(`/${window.contextPath}/employee`);
-      }
+        break;
+      default:
+        break;
     }
   };
 

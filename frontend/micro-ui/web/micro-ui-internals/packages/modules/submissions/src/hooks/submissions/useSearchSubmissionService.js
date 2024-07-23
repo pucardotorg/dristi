@@ -2,7 +2,6 @@ import { useQuery, useQueryClient } from "react-query";
 import { submissionService } from "../services";
 
 function useSearchSubmissionService(reqData, params, key, enabled) {
-  console.log("reqData, params, key, enabled", reqData, params, key, enabled);
   const client = useQueryClient();
   const { isLoading, data, isFetching, refetch, error } = useQuery(
     `GET_SUBMISSION_DETAILS_${key}`,

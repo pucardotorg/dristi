@@ -1,13 +1,11 @@
 import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
-import CustomSubmitModal from "../../../dristi/src/pages/citizen/FileCase/admission/CustomSubmitModal";
 import { FileDownloadIcon } from "../../../dristi/src/icons/svgIndex";
 import CustomCopyTextDiv from "../../../dristi/src/components/CustomCopyTextDiv";
 import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-function OrderSucessModal({ order, t, setShowSuccessModal }) {
-  const history = useHistory();
+function OrderSucessModal({ order, t, handleDownloadOrders, handleClose }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -26,7 +24,7 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
       },
       {
         key: `${t("ORDER_ID")}:${t(order?.orderType)}`,
-        value: order?.id,
+        value: order?.orderNumber,
         copyData: true,
       },
     ],
@@ -35,14 +33,9 @@ function OrderSucessModal({ order, t, setShowSuccessModal }) {
   return (
     <Modal
       actionCancelLabel={t("DOWNLOAD_ORDER")}
-      actionCancelOnSubmit={() => {
-        setShowSuccessModal(false);
-      }}
+      actionCancelOnSubmit={handleDownloadOrders}
       actionSaveLabel={t("CS_COMMON_CLOSE")}
-      actionSaveOnSubmit={() => {
-        setShowSuccessModal(false);
-        history.goBack();
-      }}
+      actionSaveOnSubmit={handleClose}
       className={"orders-success-modal"}
       cancelButtonBody={<FileDownloadIcon></FileDownloadIcon>}
     >

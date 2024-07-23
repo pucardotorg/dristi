@@ -34,12 +34,14 @@ export const applicationTypeConfig = [
         disable: false,
         populators: {
           name: "applicationType",
-          optionsKey: "type",
+          optionsKey: "name",
           error: "required ",
           mdmsConfig: {
             masterName: "ApplicationType",
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
+            select:
+              "(data) => {return data['Application'].ApplicationType?.map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
         },
       },
@@ -91,7 +93,7 @@ export const configs = [
         key: "referenceId",
         type: "dropdown",
         label: "ORDER",
-        disable: false,
+        disable: true,
         populators: {
           name: "ORDER",
           optionsKey: "type",
@@ -105,7 +107,10 @@ export const configs = [
         key: "datePartyAvailable",
         type: "date",
         disable: false,
-        populators: { name: "datePartyAvailable", error: "Required" },
+        populators: {
+          name: "datePartyAvailable",
+          error: "Required",
+        },
       },
       {
         inline: true,
@@ -138,10 +143,11 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        disable: true,
+        isMandatory: false,
         key: "refOrderId",
         type: "text",
-        populators: { name: "refOrderId" },
+        populators: { name: "refOrderId", hideInForm: true },
       },
       {
         inline: true,
@@ -178,9 +184,10 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
-        type: "text",
+        type: "date",
         populators: { name: "applicationDate" },
       },
       {
@@ -226,7 +233,9 @@ export const configsRescheduleRequest = [
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
-        populators: { name: "initialHearingDate" },
+        populators: {
+          name: "initialHearingDate",
+        },
       },
       {
         inline: true,
@@ -258,7 +267,9 @@ export const configsRescheduleRequest = [
         isMandatory: true,
         key: "changedHearingDate",
         type: "date",
-        populators: { name: "changedHearingDate" },
+        populators: {
+          name: "changedHearingDate",
+        },
       },
       {
         inline: true,
@@ -278,7 +289,8 @@ export const configsCheckoutRequest = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        disable: true,
+        isMandatory: false,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -318,9 +330,10 @@ export const configsCheckoutRequest = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
-        type: "text",
+        type: "date",
         populators: { name: "applicationDate" },
       },
       {
@@ -366,7 +379,9 @@ export const configsCheckoutRequest = [
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
-        populators: { name: "initialHearingDate" },
+        populators: {
+          name: "initialHearingDate",
+        },
       },
       {
         inline: true,
@@ -398,7 +413,9 @@ export const configsCheckoutRequest = [
         isMandatory: true,
         key: "changedHearingDate",
         type: "date",
-        populators: { name: "changedHearingDate" },
+        populators: {
+          name: "changedHearingDate",
+        },
       },
       {
         inline: true,
@@ -418,7 +435,8 @@ export const configsExtensionSubmissionDeadline = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -458,10 +476,13 @@ export const configsExtensionSubmissionDeadline = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -502,35 +523,50 @@ export const configsExtensionSubmissionDeadline = [
       },
       {
         inline: true,
-        label: "SUBMISSION_TYPE",
+        label: "DOCUMENT_TYPE",
         isMandatory: true,
+        disable: true,
         type: "dropdown",
-        key: "submissionType",
+        key: "documentType",
         populators: {
-          name: "submissionType",
-          optionsKey: "type",
-          mdmsConfig: {
-            masterName: "ApplicationType",
-            moduleName: "Application",
-            localePrefix: "SUBMISSION_TYPE",
-          },
+          name: "documentType",
+          optionsKey: "name",
+          options: [
+            {
+              code: "DOCUMENT_TYPE_1",
+              name: "DOCUMENT_TYPE_1",
+            },
+            {
+              code: "DOCUMENT_TYPE_2",
+              name: "DOCUMENT_TYPE_2",
+            },
+            {
+              code: "DOCUMENT_TYPE_3",
+              name: "DOCUMENT_TYPE_3",
+            },
+          ],
         },
       },
       {
         inline: true,
         label: "SUBMISSION_DATE",
         isMandatory: true,
+        disable: true,
         key: "initialSubmissionDate",
         type: "date",
-        populators: { name: "initialSubmissionDate" },
+        populators: {
+          name: "initialSubmissionDate",
+        },
       },
       {
         inline: true,
         label: "REQUESTED_DATE",
         isMandatory: true,
         key: "changedSubmissionDate",
-        type: "date", // date picker here?
-        populators: { name: "changedSubmissionDate" },
+        type: "date",
+        populators: {
+          name: "changedSubmissionDate",
+        },
       },
       {
         inline: true,
@@ -586,6 +622,8 @@ export const configsProductionOfDocuments = [
       {
         inline: true,
         label: "REF_ORDER_ID",
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -625,10 +663,13 @@ export const configsProductionOfDocuments = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -689,7 +730,7 @@ export const configsProductionOfDocuments = [
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: false,
+              isMultipleUpload: true,
               uploadGuidelines: "UPLOAD_PDF_50",
               headerClassName: "dristi-font-bold",
             },
@@ -718,7 +759,7 @@ export const configsProductionOfDocuments = [
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: false,
+              isMultipleUpload: true,
               uploadGuidelines: "UPLOAD_PDF_50",
               headerClassName: "dristi-font-bold",
             },
@@ -747,7 +788,8 @@ export const configsCaseWithdrawal = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -787,10 +829,13 @@ export const configsCaseWithdrawal = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -869,7 +914,8 @@ export const configsCaseTransfer = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -909,10 +955,13 @@ export const configsCaseTransfer = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -955,6 +1004,7 @@ export const configsCaseTransfer = [
         inline: true,
         label: "REQUESTED_COURT",
         isMandatory: true,
+        disable: true,
         key: "requestedCourt",
         type: "text",
         populators: { name: "requestedCourt" },
@@ -985,7 +1035,8 @@ export const configsSettlement = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -1025,10 +1076,13 @@ export const configsSettlement = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -1093,7 +1147,8 @@ export const configsBailBond = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -1133,10 +1188,13 @@ export const configsBailBond = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -1201,7 +1259,8 @@ export const configsSurety = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -1241,10 +1300,13 @@ export const configsSurety = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -1309,7 +1371,8 @@ export const configsBail = [
       {
         inline: true,
         label: "REF_ORDER_ID",
-        isMandatory: true,
+        isMandatory: false,
+        disable: true,
         key: "refOrderId",
         type: "text",
         populators: { name: "refOrderId" },
@@ -1349,10 +1412,13 @@ export const configsBail = [
       {
         inline: true,
         label: "APPLICATION_DATE",
+        disable: true,
         isMandatory: true,
         key: "applicationDate",
         type: "date",
-        populators: { name: "applicationDate" },
+        populators: {
+          name: "applicationDate",
+        },
       },
       {
         inline: true,
@@ -1411,7 +1477,7 @@ export const configsBail = [
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: false,
+              isMultipleUpload: true,
               uploadGuidelines: "UPLOAD_PDF_50",
               headerClassName: "dristi-font-bold",
             },

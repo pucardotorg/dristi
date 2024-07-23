@@ -92,11 +92,11 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
 
   const handleDeleteDocument = async (index) => {
     let currentDocumentDataCopy = structuredClone(documentData);
-    debugger;
     if (currentDocumentDataCopy?.[index].document?.[0]?.artifactId)
       await DRISTIService.createEvidence({
         artifact: {
-          artifactType: "complainant",
+          artifactType: "DOCUMENTARY",
+          sourceType: "COMPLAINANT",
           caseId: caseId,
           tenantId,
           artifactId: currentDocumentDataCopy?.[index].document?.[0]?.artifactId,

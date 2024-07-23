@@ -203,6 +203,31 @@ const CustomArrowOut = () => (
   </svg>
 );
 
+const CustomThreeDots = () => (
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0.5" y="0.5" width="39" height="39" stroke="#0A5757" />
+    <g clip-path="url(#clip0_2577_76487)">
+      <path
+        d="M20 16C21.1 16 22 15.1 22 14C22 12.9 21.1 12 20 12C18.9 12 18 12.9 18 14C18 15.1 18.9 16 20 16ZM20 18C18.9 18 18 18.9 18 20C18 21.1 18.9 22 20 22C21.1 22 22 21.1 22 20C22 18.9 21.1 18 20 18ZM20 24C18.9 24 18 24.9 18 26C18 27.1 18.9 28 20 28C21.1 28 22 27.1 22 26C22 24.9 21.1 24 20 24Z"
+        fill="#007E7E"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_2577_76487">
+        <rect width="24" height="24" fill="white" transform="translate(8 8)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const ThreeDots = () => (
+  <svg width="4" height="16" viewBox="0 0 4 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z"
+      fill="#007E7E"
+    />
+  </svg>
+);
 const CustomSchedule = () => (
   <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -707,11 +732,21 @@ const WhiteRightArrow = () => (
     <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="white" />
   </svg>
 );
+
 const FactCheckIcon = () => (
   <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H18C18.55 0 19.0208 0.195833 19.4125 0.5875C19.8042 0.979167 20 1.45 20 2V16C20 16.55 19.8042 17.0208 19.4125 17.4125C19.0208 17.8042 18.55 18 18 18H2ZM2 16H18V2H2V16ZM3 14H8V12H3V14ZM12.55 12L17.5 7.05L16.075 5.625L12.55 9.175L11.125 7.75L9.725 9.175L12.55 12ZM3 10H8V8H3V10ZM3 6H8V4H3V6Z"
       fill="#007E7E"
+    />
+  </svg>
+);
+
+const FactCrossIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M16 17.425L13.875 19.525L12.475 18.125L14.575 16L12.475 13.875L13.875 12.475L16 14.575L18.125 12.475L19.525 13.875L17.425 16L19.525 18.125L18.125 19.525L16 17.425ZM3 20C2.16667 20 1.45833 19.7083 0.875 19.125C0.291667 18.5417 0 17.8333 0 17V14H3V0H18V10.375C17.6833 10.2583 17.3583 10.1708 17.025 10.1125C16.6917 10.0542 16.35 10.025 16 10.025V2H5V14H10.35C10.2333 14.3167 10.1458 14.6417 10.0875 14.975C10.0292 15.3083 10 15.65 10 16H2V17C2 17.2833 2.09583 17.5208 2.2875 17.7125C2.47917 17.9042 2.71667 18 3 18H10.35C10.4833 18.3833 10.65 18.7417 10.85 19.075C11.05 19.4083 11.2833 19.7167 11.55 20H3ZM6 7V5H15V7H6ZM6 10V8H15V10H6Z"
+      fill="#BB2C2F"
     />
   </svg>
 );
@@ -734,6 +769,15 @@ const InfoIcon = () => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M12.5 11H11.71L11.43 10.73C12.41 9.59 13 8.11 13 6.5C13 2.91 10.09 0 6.5 0C2.91 0 0 2.91 0 6.5C0 10.09 2.91 13 6.5 13C8.11 13 9.59 12.41 10.73 11.43L11 11.71V12.5L16 17.49L17.49 16L12.5 11ZM6.5 11C4.01 11 2 8.99 2 6.5C2 4.01 4.01 2 6.5 2C8.99 2 11 4.01 11 6.5C11 8.99 8.99 11 6.5 11Z"
+      fill="#505A5F"
+    />
+  </svg>
+);
+
 export {
   AdvocateIcon,
   CalendarLeftArrow,
@@ -749,6 +793,8 @@ export {
   CustomAddIcon,
   CustomArrowDownIcon,
   CustomArrowOut,
+  CustomThreeDots,
+  ThreeDots,
   CustomArrowUpIcon,
   CustomCompleteIcon,
   CustomDeleteIcon,
@@ -758,6 +804,7 @@ export {
   ErrorInfoIcon,
   FSOErrorIcon,
   FactCheckIcon,
+  FactCrossIcon,
   FileCaseIcon,
   FileDownloadIcon,
   FileIcon,
@@ -781,4 +828,5 @@ export {
   UploadIcon,
   WaitIcon,
   WhiteRightArrow,
+  SearchIcon,
 };

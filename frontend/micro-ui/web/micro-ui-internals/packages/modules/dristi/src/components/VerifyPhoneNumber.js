@@ -210,6 +210,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
@@ -229,6 +230,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
