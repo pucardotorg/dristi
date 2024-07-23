@@ -8,6 +8,9 @@ import java.util.UUID;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
+import org.pucar.dristi.validators.CreateGroup;
+import org.pucar.dristi.validators.SaveDraftGroup;
+import org.pucar.dristi.validators.UpdateGroup;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +35,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+//TODO: Why are all mandatory fields commented out?
 public class CourtCase {
 
 	@JsonProperty("id")
@@ -37,31 +43,31 @@ public class CourtCase {
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	//@NotNull
-	//@Size(min = 2, max = 64)
+	@NotNull(groups = {CreateGroup.class, UpdateGroup.class, SaveDraftGroup.class})
+	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("resolutionMechanism")
-	//@Size(min = 2, max = 128)
+	@Size(min = 2, max = 128)
 	private String resolutionMechanism = null;
 
 	@JsonProperty("caseTitle")
-	//@Size(min = 2, max = 512)
+	@Size(min = 2, max = 512)
 	private String caseTitle = null;
 
 	@JsonProperty("isActive")
 	private Boolean isActive = true;
 
 	@JsonProperty("caseDescription")
-	//@Size(min = 2, max = 10000)
+	@Size(min = 2, max = 10000)
 	private String caseDescription = null;
 
 	@JsonProperty("filingNumber")
-	//@Size(min = 2, max = 64)
+	@Size(min = 2, max = 64)
 	private String filingNumber = null;
 
 	@JsonProperty("courtCaseNumber")
-	//@Size(min=10,max=24)
+	@Size(min=10,max=24)
 	private String courtCaseNumber = null;
 
 	@JsonProperty("caseNumber")
@@ -70,13 +76,14 @@ public class CourtCase {
 	private String caseNumber = null;
 
 	@JsonProperty("cnrNumber")
-	//@Size(min = 2, max = 32)
+	@Size(min = 2, max = 32)
 	private String cnrNumber = null;
 
 	@JsonProperty("accessCode")
 	private String accessCode = null;
 
 	@JsonProperty("courtId")
+	//@NotNull(groups = {CreateGroup.class, UpdateGroup.class})
 	//@Size(min = 2, max = 64)
 	private String courtId = null;
 
@@ -106,8 +113,8 @@ public class CourtCase {
 	private Object caseDetails = null;
 
 	@JsonProperty("caseCategory")
-	//@NotNull
-	//@Size(min = 2, max = 64)
+	@NotNull(groups = {CreateGroup.class, UpdateGroup.class})
+	@Size(min = 2, max = 64)
 	private String caseCategory = null;
 
 	@JsonProperty("judgeId")
@@ -124,14 +131,14 @@ public class CourtCase {
 	private String natureOfPleading = null;
 
 	@JsonProperty("statutesAndSections")
-	//@NotNull
+	@NotNull(groups = {CreateGroup.class, UpdateGroup.class})
 	@Valid
 	private List<StatuteSection> statutesAndSections = new ArrayList<>();
 
 	@JsonProperty("litigants")
-	//@NotNull
+	@NotNull(groups = {CreateGroup.class, UpdateGroup.class})
 	@Valid
-	//@Size(min = 2) //FIX
+	@Size(min = 1) //FIX
 	private List<Party> litigants = new ArrayList<>();
 
 	@JsonProperty("representatives")

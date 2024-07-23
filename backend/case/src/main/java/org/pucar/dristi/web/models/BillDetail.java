@@ -25,7 +25,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = { "id" })
+//@EqualsAndHashCode(of = { "id" })
 public class BillDetail {
 
     @JsonProperty("id")

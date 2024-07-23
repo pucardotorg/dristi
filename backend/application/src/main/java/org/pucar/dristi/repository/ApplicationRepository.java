@@ -60,7 +60,7 @@ public class ApplicationRepository {
                 applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
                 applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList);
             }
-
+            //TODO: Fix this deprecated method
             List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
