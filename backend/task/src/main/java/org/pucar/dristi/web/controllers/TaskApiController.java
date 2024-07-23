@@ -40,7 +40,7 @@ public class TaskApiController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @RequestMapping(value = "/task/v1/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/create", method = RequestMethod.POST)
     public ResponseEntity<TaskResponse> taskV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "details for the creation of task", schema = @Schema()) @Valid @RequestBody TaskRequest body) {
         Task task = taskService.createTask(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -48,7 +48,7 @@ public class TaskApiController {
         return new ResponseEntity<>(taskResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/v1/exists", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<TaskExistsResponse> taskV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the task(S) exists", required = true, schema = @Schema()) @Valid @RequestBody TaskExistsRequest body) {
         TaskExists taskExists = taskService.existTask(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -56,7 +56,7 @@ public class TaskApiController {
         return new ResponseEntity<>(taskExistsResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/v1/search", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/search", method = RequestMethod.POST)
     public ResponseEntity<TaskListResponse> taskV1SearchPost( @Parameter(in = ParameterIn.DEFAULT, schema = @Schema()) @Valid @RequestBody TaskSearchRequest request){
         List<Task> tasks = taskService.searchTask(request);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
@@ -64,7 +64,7 @@ public class TaskApiController {
         return new ResponseEntity<>(taskListResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/v1/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/update", method = RequestMethod.POST)
     public ResponseEntity<TaskResponse> taskV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "details for the update of task", schema = @Schema()) @Valid @RequestBody TaskRequest body) {
         Task task = taskService.updateTask(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);

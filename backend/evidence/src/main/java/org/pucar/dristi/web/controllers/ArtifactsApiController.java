@@ -33,7 +33,7 @@ public class ArtifactsApiController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @RequestMapping(value = "/artifacts/v1/_create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<EvidenceResponse> artifactsV1CreatePost(
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
         Artifact response = evidenceService.createEvidence(body);
@@ -42,7 +42,7 @@ public class ArtifactsApiController {
         return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/artifacts/v1/_search", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<EvidenceSearchResponse> artifactsV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceSearchRequest body) {
 
@@ -56,7 +56,7 @@ public class ArtifactsApiController {
 		return new ResponseEntity<>(artifactResponse, HttpStatus.OK);
 	}
   
-	@RequestMapping(value = "/artifacts/v1/_update", method = RequestMethod.POST)
+	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<EvidenceResponse> artifactsV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact to be updated + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
 				Artifact response = evidenceService.updateEvidence(body);
