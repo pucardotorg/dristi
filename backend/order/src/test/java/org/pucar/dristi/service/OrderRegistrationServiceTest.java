@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
- class OrderRegistrationServiceTest {
+public class OrderRegistrationServiceTest {
 
     @InjectMocks
     private OrderRegistrationService orderRegistrationService;
@@ -47,15 +47,14 @@ import static org.mockito.Mockito.*;
     private Producer producer;
 
     @BeforeEach
-     void setup() {
+    public void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-     void testCreateOrder_success() {
+    public void testCreateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
-        order.setOrderType("other");
         orderRequest.setOrder(order);
 
         doNothing().when(validator).validateOrderRegistration(any(OrderRequest.class));
@@ -71,7 +70,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testCreateOrder_customException() {
+    public void testCreateOrder_customException() {
         OrderRequest orderRequest = new OrderRequest();
 
         doThrow(new CustomException("TEST_EXCEPTION", "Test exception"))
@@ -85,48 +84,36 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testSearchOrder_success() {
+    public void testSearchOrder_success() {
         List<Order> mockOrderList = new ArrayList<>();
-        Order order = new Order();
-        order.setTenantId("tenantId");
-        order.setCnrNumber("CNR123");
-        order.setFilingNumber("Filing123");
-        order.setStatus("status");
-        order.setOrderNumber("order");
-        order.setApplicationNumber(Collections.singletonList(""));
-        order.setId(UUID.fromString("3244d158-c5cb-4769-801f-a0f94f383679"));
-        order.setStatuteSection(new StatuteSection());
-        mockOrderList.add(order);
+        Order mockOrder = new Order();
+        mockOrder.setId(UUID.randomUUID());
+        mockOrderList.add(mockOrder);
 
-        when(orderRepository.getOrders(any(),any())).thenReturn(mockOrderList);
+        when(orderRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn(mockOrderList);
+      //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
 
-        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
-        orderSearchRequest.setCriteria(new OrderCriteria());
-        List<Order> result = orderRegistrationService.searchOrder(orderSearchRequest);
+        List<Order> result = orderRegistrationService.searchOrder("appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria(),orderSearchRequest.getPagination());
+        verify(orderRepository, times(1)).getApplications("appNum","cnrNum", "filingNum", "tenant", "id", "status");
     }
 
     @Test
-     void testSearchOrder_Exception() {
-        assertThrows(CustomException.class, () ->
-                orderRegistrationService.searchOrder(null));
-    }
-
-    @Test
-     void testUpdateOrder_success() {
+    public void testUpdateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setWorkflow(new Workflow());
-        order.setOrderType("other");
         orderRequest.setOrder(order);
 
         Order existingOrder = new Order();
         existingOrder.setId(UUID.randomUUID());
 
-        when(validator.validateApplicationExistence(any(OrderRequest.class))).thenReturn(true);
+        when(validator.validateApplicationExistence(any(OrderRequest.class)))
+                .thenReturn(existingOrder);
         doNothing().when(enrichmentUtil).enrichOrderRegistrationUponUpdate(any(OrderRequest.class));
+        //doNothing().when(workflowUtil).updateWorkflowStatus(any(RequestInfo.class),anyString(),anyString(),anyString(),any(),anyString());
         doNothing().when(producer).push(anyString(), any(OrderRequest.class));
 
         Order result = orderRegistrationService.updateOrder(orderRequest);
@@ -137,17 +124,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testUpdateOrder_customException() {
-        OrderRequest orderRequest = new OrderRequest();
-
-        when(validator.validateApplicationExistence(any(OrderRequest.class))).thenReturn(true);
-
-       assertThrows(CustomException.class, () ->
-                orderRegistrationService.updateOrder(orderRequest));
-    }
-
-    @Test
-     void testExistsOrder_success() {
+    public void testExistsOrder_success() {
         OrderExistsRequest orderExistsRequest = new OrderExistsRequest();
         OrderExists orderExists = new OrderExists();
         orderExists.setApplicationNumber("appNum");
@@ -166,18 +143,11 @@ import static org.mockito.Mockito.*;
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getOrders(any(),any()))
+        when(orderRepository.getApplications(any(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);
 
         assertNotNull(result);
-    }
-
-    @Test
-     void testExistOrder_customException() {
-
-       assertThrows(CustomException.class, () ->
-                orderRegistrationService.existsOrder(null));
     }
 }

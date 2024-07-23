@@ -1,16 +1,17 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.WitnessSearchCriteria;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.WitnessSearchCriteria;
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
 
 @Component
 @Slf4j

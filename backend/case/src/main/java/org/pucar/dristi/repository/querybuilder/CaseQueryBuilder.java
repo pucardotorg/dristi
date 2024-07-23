@@ -1,41 +1,31 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.LINKED_CASE_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.LITIGANT_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.REPRESENTATIVES_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.REPRESENTING_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.STATUTE_SECTION_SEARCH_QUERY_EXCEPTION;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.Pagination;
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
 public class CaseQueryBuilder {
     private static final String BASE_CASE_QUERY = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, " +
             "cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber, " +
-            " cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
+            " cases.courtid as courtid, cases.benchid as benchid, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
             " cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_CASES_TABLE = " FROM dristi_cases cases";
-    private static final String ORDERBY_CLAUSE = " ORDER BY cases.{orderBy} {sortingOrder} ";
-    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY cases.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME = " ORDER BY cases.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_case_document doc";
-
-    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
 
 
     private static final String BASE_LINKED_CASE_QUERY = " SELECT lics.id as id, lics.casenumbers as casenumbers, lics.case_id as case_id," +
@@ -72,8 +62,6 @@ public class CaseQueryBuilder {
 
     private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_cases cases WHERE ";
 
-    public static final String AND = " AND ";
-
     public String checkCaseExistQuery(String caseId, String courtCaseNumber, String cnrNumber, String filingNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
@@ -93,7 +81,7 @@ public class CaseQueryBuilder {
             }
 
             if (!conditions.isEmpty()) {
-                query.append(String.join(AND, conditions)).append(";");
+                query.append(String.join(" AND ", conditions)).append(";");
             }
 
             return query.toString();
@@ -103,37 +91,81 @@ public class CaseQueryBuilder {
         }
     }
 
-    public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo) {
+    public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_CASES_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
             if (criteria != null) {
 
-                firstCriteria = addCriteria(criteria.getCaseId(), query, firstCriteria, "cases.id = ?", preparedStmtList);
+                if (criteria.getCaseId() != null && !criteria.getCaseId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.id = ?");
+                    preparedStmtList.add(criteria.getCaseId());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getCnrNumber(), query, firstCriteria, "cases.cnrNumber = ?", preparedStmtList);
+                if (criteria.getCnrNumber() != null && !criteria.getCnrNumber().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.cnrNumber = ?");
+                    preparedStmtList.add(criteria.getCnrNumber());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getFilingNumber() == null? null : "%" + criteria.getFilingNumber() + "%", query, firstCriteria, "LOWER(cases.filingnumber) LIKE LOWER(?)", preparedStmtList);
+                if (criteria.getFilingNumber() != null && !criteria.getFilingNumber().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.filingnumber = ?");
+                    preparedStmtList.add(criteria.getFilingNumber());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getCourtCaseNumber(), query, firstCriteria, "cases.courtcasenumber = ?", preparedStmtList);
+                if (criteria.getCourtCaseNumber() != null && !criteria.getCourtCaseNumber().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.courtcasenumber = ?");
+                    preparedStmtList.add(criteria.getCourtCaseNumber());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getJudgeId(), query, firstCriteria, "cases.judgeid = ?", preparedStmtList);
+                if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?)");
+                    preparedStmtList.add(criteria.getLitigantId());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getStage(), query, firstCriteria, "cases.stage = ?", preparedStmtList);
+                if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?)");
+                    preparedStmtList.add(criteria.getAdvocateId());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addCriteria(criteria.getSubstage(), query, firstCriteria, "cases.substage = ?", preparedStmtList);
+                if (criteria.getStatus() != null && !criteria.getStatus().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.status = ?");
+                    preparedStmtList.add(criteria.getStatus());
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addLitigantCriteria(criteria, preparedStmtList, requestInfo, query, firstCriteria);
+                if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
+                    if (!firstCriteria)
+                        query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
+                    else {
+                        query.append("WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
+                    }
+                    firstCriteria = false;
+                }
 
-                firstCriteria = addAdvocateCriteria(criteria, preparedStmtList, requestInfo, query, firstCriteria);
-
-                firstCriteria = addCriteria(criteria.getStatus(), query, firstCriteria, "cases.status = ?", preparedStmtList);
-
-                firstCriteria = addFilingDateCriteria(criteria, firstCriteria, query);
-
-                addRegistrationDateCriteria(criteria, firstCriteria, query);
+                if (criteria.getRegistrationFromDate() != null && criteria.getRegistrationToDate() != null) {
+                    if (!firstCriteria)
+                        query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                    else {
+                        query.append("WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                    }
+                    firstCriteria = false;
+                }
             }
+            query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
@@ -142,66 +174,11 @@ public class CaseQueryBuilder {
         }
     }
 
-    private static void addRegistrationDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
-        if (criteria.getRegistrationFromDate() != null && criteria.getRegistrationToDate() != null) {
-            if (!firstCriteria)
-                query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
-            else {
-                query.append(" WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
-            }
-            firstCriteria = false;
-        }
-    }
-
-    private static boolean addFilingDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
-        if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
-            if (!firstCriteria)
-                query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
-            else {
-                query.append(" WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
-            }
-            firstCriteria = false;
-        }
-        return firstCriteria;
-    }
-
-    private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
-        if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
-            addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ? AND advocate.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
-            preparedStmtList.add(criteria.getAdvocateId());
-            preparedStmtList.add(requestInfo.getUserInfo().getUuid());
-            firstCriteria = false;
-        }
-        return firstCriteria;
-    }
-
-    private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
-        if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
-            addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ? AND litigant.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
-            preparedStmtList.add(criteria.getLitigantId());
-            preparedStmtList.add(requestInfo.getUserInfo().getUuid());
-            firstCriteria = false;
-        }
-        return firstCriteria;
-    }
-
-    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
-        if (criteria != null && !criteria.isEmpty()) {
-            addClauseIfRequired(query, firstCriteria);
-            query.append(str);
-            preparedStmtList.add(criteria);
-            firstCriteria = false;
-        }
-        return firstCriteria;
-    }
-
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(AND);
+            query.append(" AND ");
         }
     }
 
@@ -250,9 +227,7 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE ltg.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")")
-                        .append(AND)
-                        .append("ltg.isactive = true");
+                        .append(")");
                 preparedStmtList.addAll(ids);
             }
 
@@ -288,9 +263,7 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE rep.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")")
-                        .append(AND)
-                        .append("rep.isactive = true");
+                        .append(")");
                 preparedStmtList.addAll(ids);
             }
 
@@ -308,9 +281,7 @@ public class CaseQueryBuilder {
             if (!ids.isEmpty()) {
                 query.append(" WHERE rpst.representative_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")")
-                        .append(AND)
-                        .append("rpst.isactive = true");
+                        .append(")");
                 preparedStmtList.addAll(ids);
             }
 
@@ -391,23 +362,5 @@ public class CaseQueryBuilder {
             log.error("Error while building representing document search query :: {}",e.toString());
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query: " + e.getMessage());
         }
-    }
-
-    public String getTotalCountQuery(String baseQuery) {
-        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
-    }
-    public String addPaginationQuery(String query, List<Object> preparedStatementList, Pagination pagination) {
-        preparedStatementList.add(pagination.getLimit());
-        preparedStatementList.add(pagination.getOffSet());
-        return query + " LIMIT ? OFFSET ?";
-
-    }
-    public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
-            return query + DEFAULT_ORDERBY_CLAUSE;
-        } else {
-            query = query + ORDERBY_CLAUSE;
-        }
-        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 }

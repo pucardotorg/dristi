@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.UUID;
-
 /**
  * OrderExists
  */
@@ -19,9 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class OrderExists {
-
-    @JsonProperty("orderId")
-    private UUID orderId = null;
 
     @JsonProperty("filingNumber")
     private String filingNumber = null;

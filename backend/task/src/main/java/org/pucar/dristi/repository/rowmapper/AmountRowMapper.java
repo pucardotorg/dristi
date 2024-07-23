@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Amount;
@@ -37,7 +38,7 @@ public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
                 if (pgObject != null)
                     amount.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                amountMap.put(uuid, amount);
+                amountMap.get(uuid);
             }
         } catch(CustomException e){
             throw e;

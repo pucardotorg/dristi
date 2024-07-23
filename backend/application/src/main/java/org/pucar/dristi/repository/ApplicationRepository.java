@@ -7,7 +7,9 @@ import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.ApplicationExists;
+import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -23,45 +25,31 @@ import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 @Slf4j
 @Repository
 public class ApplicationRepository {
-    private final ApplicationQueryBuilder queryBuilder;
-    private final JdbcTemplate jdbcTemplate;
-    private final ApplicationRowMapper rowMapper;
-    private final DocumentRowMapper documentRowMapper;
-    private final StatuteSectionRowMapper statuteSectionRowMapper;
+    @Autowired
+    private ApplicationQueryBuilder queryBuilder;
 
     @Autowired
-    public ApplicationRepository(
-            ApplicationQueryBuilder queryBuilder,
-            JdbcTemplate jdbcTemplate,
-            ApplicationRowMapper rowMapper,
-            DocumentRowMapper documentRowMapper,
-            StatuteSectionRowMapper statuteSectionRowMapper) {
-        this.queryBuilder = queryBuilder;
-        this.jdbcTemplate = jdbcTemplate;
-        this.rowMapper = rowMapper;
-        this.documentRowMapper = documentRowMapper;
-        this.statuteSectionRowMapper = statuteSectionRowMapper;
-    }
+    private JdbcTemplate jdbcTemplate;
 
-    public List<Application> getApplications(ApplicationSearchRequest applicationSearchRequest) {
+    @Autowired
+    private ApplicationRowMapper rowMapper;
+
+    @Autowired
+    private DocumentRowMapper documentRowMapper;
+
+    @Autowired
+    private StatuteSectionRowMapper statuteSectionRowMapper;
+
+    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset ) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
-            List<Object> preparedStmtListSt;
-            List<Object> preparedStmtListDoc;
-
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList);
-            applicationQuery = queryBuilder.addOrderByQuery(applicationQuery, applicationSearchRequest.getPagination());
+            List<Object> preparedStmtListSt = new ArrayList<>();
+            List<Object> preparedStmtListDoc = new ArrayList<>();
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
             log.info("Final application search query: {}", applicationQuery);
-            if(applicationSearchRequest.getPagination() !=  null) {
-                Integer totalRecords = getTotalCountApplication(applicationQuery, preparedStmtList);
-                log.info("Total count without pagination :: {}", totalRecords);
-                applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList);
-            }
-
-            List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(), rowMapper);
+            List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
                 applicationList.addAll(list);
@@ -109,12 +97,6 @@ public class ApplicationRepository {
         }
     }
 
-    public Integer getTotalCountApplication(String baseQuery, List<Object> preparedStmtList) {
-        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
-        log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
-    }
-
     public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {
         try {
             for (ApplicationExists applicationExist : applicationExistsList) {
@@ -124,10 +106,9 @@ public class ApplicationRepository {
                     {
                         applicationExist.setExists(false);
                 } else {
-                    List<Object> preparedStmtList = new ArrayList<>();
-                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber(), preparedStmtList);
+                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber());
                     log.info("Final application exist query: {}", applicationExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, preparedStmtList.toArray(), Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class);
                     applicationExist.setExists(count != null && count > 0);
                 }
             }

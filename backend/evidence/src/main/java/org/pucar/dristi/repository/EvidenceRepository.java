@@ -8,68 +8,43 @@
     import org.pucar.dristi.web.models.Artifact;
     import org.pucar.dristi.web.models.Comment;
     import org.pucar.dristi.web.models.EvidenceSearchCriteria;
-    import org.pucar.dristi.web.models.Pagination;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.jdbc.core.JdbcTemplate;
     import org.springframework.stereotype.Repository;
 
     import java.util.ArrayList;
     import java.util.List;
+    import java.util.Map;
+    import java.util.UUID;
 
     @Slf4j
     @Repository
     public class EvidenceRepository {
 
-        private final EvidenceQueryBuilder queryBuilder;
-        private final JdbcTemplate jdbcTemplate;
-        private final EvidenceRowMapper evidenceRowMapper;
-        private final DocumentRowMapper documentRowMapper;
-        private final CommentRowMapper commentRowMapper;
+        @Autowired
+        private EvidenceQueryBuilder queryBuilder;
 
         @Autowired
-        public EvidenceRepository(
-                EvidenceQueryBuilder queryBuilder,
-                JdbcTemplate jdbcTemplate,
-                EvidenceRowMapper evidenceRowMapper,
-                DocumentRowMapper documentRowMapper,
-                CommentRowMapper commentRowMapper
-        ) {
-            this.queryBuilder = queryBuilder;
-            this.jdbcTemplate = jdbcTemplate;
-            this.evidenceRowMapper = evidenceRowMapper;
-            this.documentRowMapper = documentRowMapper;
-            this.commentRowMapper = commentRowMapper;
-        }
+        private JdbcTemplate jdbcTemplate;
 
-        public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
+        @Autowired
+        private EvidenceRowMapper evidenceRowMapper;
+
+        @Autowired
+        private DocumentRowMapper documentRowMapper;
+
+        @Autowired
+        private CommentRowMapper commentRowMapper;
+
+        public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria) {
             try {
+                List<Artifact> artifactList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
-                List<Object> preparedStmtList=new ArrayList<>();
-                String artifactQuery = queryBuilder.getArtifactSearchQuery(
-                        preparedStmtList,
-                        evidenceSearchCriteria.getArtifactType(),
-                        evidenceSearchCriteria.getEvidenceStatus(),
-                        evidenceSearchCriteria.getId(),
-                        evidenceSearchCriteria.getCaseId(),
-                        evidenceSearchCriteria.getApplicationNumber(),
-                        evidenceSearchCriteria.getFilingNumber(),
-                        evidenceSearchCriteria.getHearing(),
-                        evidenceSearchCriteria.getOrder(),
-                        evidenceSearchCriteria.getSourceId(),
-                        evidenceSearchCriteria.getSourceName(),
-                        evidenceSearchCriteria.getArtifactNumber()
-                );
-                    artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
-                log.info("Final artifact query: {}", artifactQuery);
-                if(pagination !=  null) {
-                    Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
-                    log.info("Total count without pagination :: {}", totalRecords);
-                    pagination.setTotalCount(Double.valueOf(totalRecords));
-                    artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
-                }
 
-                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery,preparedStmtList.toArray(), evidenceRowMapper);
+                String artifactQuery = queryBuilder.getArtifactSearchQuery(evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName());
+                log.info("Final artifact query: {}", artifactQuery);
+                artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
 
                 List<String> artifactIds = new ArrayList<>();
@@ -95,13 +70,9 @@
                 throw e;
             } catch (Exception e) {
                 log.error("Error while fetching artifact list");
-                throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.toString());
+                throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.getMessage());
             }
         }
-        public Integer getTotalCountArtifact(String baseQuery, List<Object> preparedStmtList) {
-            String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
-            log.info("Final count query :: {}", countQuery);
-            return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
-        }
+
     }
 

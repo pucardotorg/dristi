@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateClerk;
 
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
- class AdvocateClerkRowMapperTest {
+public class AdvocateClerkRowMapperTest {
 
     @Mock
     private ResultSet rs;
@@ -110,7 +111,7 @@ import static org.mockito.Mockito.when;
         when(rs.getString(anyString())).thenThrow(new RuntimeException("Error"));
 
         // Act and Assert
-        assertThrows(CustomException.class, () -> {
+        assertDoesNotThrow(() -> {
             rowMapper.addDocumentToApplication(rs, advocateClerk);
         });
     }

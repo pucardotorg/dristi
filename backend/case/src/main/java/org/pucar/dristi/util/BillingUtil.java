@@ -1,29 +1,20 @@
 package org.pucar.dristi.util;
 
-import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_CREATING_DEMAND_FOR_CASE;
-import static org.pucar.dristi.config.ServiceConstants.TAX_AMOUNT;
-import static org.pucar.dristi.config.ServiceConstants.TAX_HEADMASTER_CODE;
-import static org.pucar.dristi.config.ServiceConstants.TAX_PERIOD_FROM;
-import static org.pucar.dristi.config.ServiceConstants.TAX_PERIOD_TO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.Demand;
-import org.pucar.dristi.web.models.DemandDetail;
-import org.pucar.dristi.web.models.DemandRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Slf4j
 @Component

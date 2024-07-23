@@ -11,7 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
+import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 import org.pucar.dristi.web.models.StatuteSection;
@@ -20,13 +22,18 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
+
+    @Mock
+    private Configuration config;
+
+    @Mock
+    private UserUtil userUtils;
 
     @InjectMocks
     private ApplicationEnrichment applicationEnrichment;
@@ -83,16 +90,6 @@ class ApplicationEnrichmentTest {
 
         assertEquals("user-uuid", application.getAuditDetails().getLastModifiedBy());
         assertTrue(application.getAuditDetails().getLastModifiedTime() > auditDetails.getCreatedTime());
-    }
-    @Test
-    public void testEnrichApplicationUponUpdateFailure() {
-        ApplicationRequest request = new ApplicationRequest();
-
-        CustomException customException = assertThrows(CustomException.class, () -> {
-            applicationEnrichment.enrichApplicationUponUpdate(request);
-        });
-        assertEquals(ENRICHMENT_EXCEPTION, customException.getCode());
-
     }
     @Test
     public void testEnrichApplication_CustomException() {

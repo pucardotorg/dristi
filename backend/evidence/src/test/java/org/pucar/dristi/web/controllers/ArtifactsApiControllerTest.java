@@ -68,7 +68,7 @@ public class ArtifactsApiControllerTest {
     public void testArtifactsV1SearchPost_Success() {
         // Mock EvidenceService response
         List<Artifact> expectedArtifacts = Collections.singletonList(new Artifact());
-        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class), any()))
+        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class)))
                 .thenReturn(expectedArtifacts);
 
         // Mock ResponseInfoFactory response
@@ -173,7 +173,7 @@ public class ArtifactsApiControllerTest {
         requestBody.setCriteria(criteria);
 
         // Expected validation error
-        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class), any()))
+        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class)))
                 .thenThrow(new IllegalArgumentException("Invalid request"));
 
         // Perform POST request
@@ -187,12 +187,11 @@ public class ArtifactsApiControllerTest {
 
 
 
-
     @Test
     public void testArtifactsV1SearchPost_EmptyList() {
         // Mock service to return empty list
         List<Artifact> emptyList = Collections.emptyList();
-        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class), any()))
+        when(evidenceService.searchEvidence(any(RequestInfo.class), any(EvidenceSearchCriteria.class)))
                 .thenReturn(emptyList);
 
         // Mock ResponseInfoFactory

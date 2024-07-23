@@ -1,13 +1,11 @@
 package org.pucar.dristi.config;
 
-import java.math.BigDecimal;
-
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 @Component
 public class ServiceConstants {
-	private ServiceConstants() {
-	}
 
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
@@ -39,8 +37,6 @@ public class ServiceConstants {
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
-	public static final String RESPONDENT_PRIMARY = "respondent.primary";
-	public static final String COMPLAINANT_PRIMARY = "complainant.primary";
 
     public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
 
@@ -57,13 +53,11 @@ public class ServiceConstants {
 	public static final String CREATE_CASE_ERR = "CREATE_CASE_ERR";
 	public static final String SEARCH_CASE_ERR = "CASE_NOT_FOUND";
 	public static final String UPDATE_CASE_ERR = "UPDATE_CASE_ERR";
-	public static final String ADD_WITNESS_TO_CASE_ERR = "ADD_WITNESS_TO_CASE_ERR";
 
 	public static final String CREATE_WITNESS_ERR = "CREATE_WITNESS_ERR";
 	public static final String SEARCH_WITNESS_ERR = "WITNESS_NOT_FOUND";
 	public static final String UPDATE_WITNESS_ERR = "UPDATE_WITNESS_ERR";
 	public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
-	public static final String JOIN_CASE_ERR = "JOIN_CASE_ERR";
 	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
 	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
 	public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
@@ -81,7 +75,6 @@ public class ServiceConstants {
 	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 	public static final String INVALID_ADVOCATE_ID = "INVALID_ADVOCATE_ID";
 	public static final String INVALID_CASE_ID = "INVALID_CASE_ID";
-	public static final String INVALID_CASE = "INVALID_CASE";
 	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
 	public static final String REGISTERED_STATUS ="REGISTERED";
 	public static final String INWORKFLOW_STATUS ="INWORKFLOW";
@@ -98,17 +91,4 @@ public class ServiceConstants {
 	public static final String TAX_HEADMASTER_CODE = "CASE_ADVANCE_CARRYFORWARD";
 	public static final String CREATE_DEMAND_STATUS = "PAYMENT_PENDING";
 	public static final String CASE_ADMIT_STATUS = "CASE_ADMITTED";
-	public static final int ACCESSCODE_LENGTH = 6;
-	public static final String STATE = "KL";
-	public static final String DISTRICT = "JL";
-	public static final String ESTABLISHMENT_CODE = "01";
-
-	//error logs constants
-	public static final String JOIN_CASE_INVALID_REQUEST = "Invalid request for joining a case";
-	public static final String INVALID_COMPLAINANT_DETAILS = "Invalid complainant details";
-	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
-	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
-
-	public static final String EMPLOYEE = "EMPLOYEE";
-
 }

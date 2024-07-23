@@ -20,18 +20,14 @@ import java.util.Map;
 @Component
 public class CaseUtil {
 
+	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
 	private ObjectMapper mapper;
 
-	private Configuration configs;
-
 	@Autowired
-	public CaseUtil(RestTemplate restTemplate, Configuration configs, ObjectMapper mapper) {
-		this.restTemplate = restTemplate;
-		this.configs = configs;
-		this.mapper = mapper;
-	}
+	private Configuration configs;
 
 	public Boolean fetchCaseDetails(RequestInfo requestInfo, String cnrNumber, String filingNumber) {
 		StringBuilder uri = new StringBuilder();
@@ -55,8 +51,6 @@ public class CaseUtil {
 			log.error("ERROR_WHILE_FETCHING_FROM_CASE :: {}", e.toString());
 		}
 
-		if(caseResponse.getCriteria().isEmpty())
-			return false;
 		return caseResponse.getCriteria().get(0).getExists();
 	}
 }

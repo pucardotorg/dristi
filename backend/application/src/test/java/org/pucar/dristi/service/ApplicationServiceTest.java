@@ -137,24 +137,6 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void testUpdateApplication_validation_False() {
-        // Arrange
-        when(applicationRequest.getApplication()).thenReturn(application);
-        when(applicationRequest.getRequestInfo()).thenReturn(requestInfo);
-        when(validator.validateApplicationExistence(any(), any())).thenReturn(false);
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationService.updateApplication(applicationRequest);
-        });
-
-        assertEquals("Error occurred while validating existing application", exception.getMessage());
-        verify(validator).validateApplicationExistence(requestInfo, application);
-        verify(enrichmentUtil, never()).enrichApplicationUponUpdate(applicationRequest);
-        verify(producer, never()).push(anyString(), any());
-    }
-
-    @Test
     void testUpdateApplication_generalFailure() {
         // Arrange
         when(applicationRequest.getApplication()).thenReturn(application);
@@ -175,43 +157,47 @@ class ApplicationServiceTest {
 
     @Test
     public void testSearchApplication_success() {
-        // Arrange
-        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
-        applicationSearchRequest.setRequestInfo(new RequestInfo());
         List<Application> applicationList = new ArrayList<>();
         Application mockApplication = new Application();
         mockApplication.setId(UUID.randomUUID());
         applicationList.add(mockApplication);
 
-        // Act
-        List<Application> result = applicationService.searchApplications(applicationSearchRequest);
+        when(applicationRepository.getApplications(any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(applicationList);
 
-        // Assert
+        List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null, null, new RequestInfoBody());
+
         assertNotNull(result);
-        verify(applicationRepository, times(1)).getApplications(applicationSearchRequest);
+        verify(applicationRepository, times(1)).getApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null);
     }
 
     @Test
     public void testSearchApplications_NoResults() {
         // Arrange
-        when(applicationRepository.getApplications(any())).thenReturn(new ArrayList<>());
+        when(applicationRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt())).thenReturn(new ArrayList<>());
 
         // Act
-        List<Application> result = applicationService.searchApplications(new ApplicationSearchRequest());
+        List<Application> result = applicationService.searchApplications("id", "filingNumber", "cnrNumber", "tenantId", "status", 10, 0, "sortBy", new RequestInfoBody());
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(applicationRepository, times(1)).getApplications(any());
+        verify(applicationRepository, times(1)).getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
 
     @Test
     void testSearchApplicationHandleException() {
-        when(applicationRepository.getApplications(null)).thenThrow(new RuntimeException("Database error"));
+        String id = "testId";
+        String tenantId = "testTenantId";
+        String filingNumber = "filingNumber";
+        String cnrNumber = "cnrNumber";
+        String status = "status";
+
+        when(applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, null, null)).thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationService.searchApplications(null));
+                applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, null, null, null, new RequestInfoBody()));
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertEquals("Database error", exception.getMessage());
@@ -235,19 +221,6 @@ class ApplicationServiceTest {
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException thrown = assertThrows(CustomException.class, () -> {
-            applicationService.existsApplication(applicationExistsRequest);
-        });
-
-        assertEquals("Database error", thrown.getMessage());
-        verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
-    }
-
-    @Test
-    void testExistsApplication_Throws_Exception() {
-        when(applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists()))
-                .thenThrow(new RuntimeException("Database error"));
-
-        Exception thrown = assertThrows(Exception.class, () -> {
             applicationService.existsApplication(applicationExistsRequest);
         });
 

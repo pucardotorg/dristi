@@ -35,9 +35,6 @@ public class OrderListResponse {
     @Valid
     private List<Order> list = null;
 
-    @JsonProperty("pagination")
-    @Valid
-    private Pagination pagination = null;
 
     public OrderListResponse addListItem(Order listItem) {
         if (this.list == null) {

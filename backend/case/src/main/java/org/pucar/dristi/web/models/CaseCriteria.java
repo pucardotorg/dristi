@@ -4,15 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
 
 /**
  * CaseCriteria
@@ -41,29 +39,19 @@ public class CaseCriteria {
 
     @JsonProperty("filingFromDate")
     @Valid
-    private Long filingFromDate = null;
+    private LocalDate filingFromDate = null;
 
     @JsonProperty("filingToDate")
     @Valid
-    private Long filingToDate = null;
+    private LocalDate filingToDate = null;
 
     @JsonProperty("registrationFromDate")
     @Valid
-    private Long registrationFromDate = null;
+    private LocalDate registrationFromDate = null;
 
     @JsonProperty("registrationToDate")
     @Valid
-    private Long registrationToDate = null;
-    //todo judgeid, stage, substage
-
-    @JsonProperty("judgeId")
-    private String judgeId = null;
-
-    @JsonProperty("stage")
-    private String stage = null;
-
-    @JsonProperty("substage")
-    private String substage = null;
+    private LocalDate registrationToDate = null;
 
     @JsonProperty("litigantId")
     @Valid
@@ -80,14 +68,6 @@ public class CaseCriteria {
     @JsonProperty("responseList")
     @Valid
     private List<CourtCase> responseList = null;
-
-
-    @JsonProperty("pagination")
-
-    @Valid
-    private Pagination pagination = null;
-
-
 
     public CaseCriteria addResponseListItem(CourtCase responseListItem) {
         if (this.responseList == null) {

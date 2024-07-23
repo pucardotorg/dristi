@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
@@ -23,6 +24,7 @@ import org.pucar.dristi.web.models.AdvocateRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
- class WorkflowServiceTest {
+public class WorkflowServiceTest {
 
     @InjectMocks
     private WorkflowService workflowService;
@@ -158,6 +160,7 @@ import static org.mockito.Mockito.when;
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setState(new State());
+        ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
 
         // Mock repository.fetchResult
         when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
@@ -249,4 +252,24 @@ import static org.mockito.Mockito.when;
             workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
         });
     }
+//
+//    @Test
+//    void getProcessInstanceForAdvocateRegistrationPayment_Success() {
+//        // Mock AdvocateRequest
+//        Advocate advocate = new Advocate();
+//        advocate.setApplicationNumber("APP001");
+//        advocate.setTenantId("tenant1");
+//
+//        AdvocateRequest updateRequest = new AdvocateRequest();
+//        updateRequest.setRequestInfo(new RequestInfo());
+//        updateRequest.setAdvocate(advocate);
+//
+//        // Execute the method
+//        ProcessInstanceRequest processInstanceRequest = workflowService.getProcessInstanceForAdvocateRegistrationPayment(updateRequest);
+//
+//        // Assertions
+//        assertNotNull(processInstanceRequest);
+//        assertEquals(1, processInstanceRequest.getProcessInstances().size());
+//        assertEquals("ADV", processInstanceRequest.getProcessInstances().get(0).getBusinessService());
+//    }
 }

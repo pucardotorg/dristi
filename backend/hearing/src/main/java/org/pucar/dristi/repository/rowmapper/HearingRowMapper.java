@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -23,12 +24,8 @@ import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 @Slf4j
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
 
-    private final ObjectMapper objectMapper;
-
     @Autowired
-    public HearingRowMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    public ObjectMapper objectMapper;
     /** To map query result to a list of hearing instance
      * @param rs
      * @return list of hearing
@@ -61,8 +58,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .hearingId(rs.getString("hearingid"))
                             .hearingType(rs.getString("hearingtype"))
                             .status(rs.getString("status"))
-                            .startTime(rs.getLong("starttime"))
-                            .endTime(rs.getLong("endtime"))
+                            .startTime(Long.valueOf(rs.getString("starttime")))
+                            .endTime(Long.valueOf(rs.getString("endtime")))
                             .vcLink(rs.getString("vclink"))
                             .isActive(rs.getBoolean("isactive"))
                             .notes(rs.getString("notes"))
@@ -72,7 +69,12 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .filingNumber(getListFromJson(rs.getString("filingnumber")))
                             .applicationNumbers(getListFromJson(rs.getString("applicationnumbers")))
                             .presidedBy(getObjectFromJson(rs.getString("presidedby"), new TypeReference<PresidedBy>() {}))
-                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {}))
+                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {
+                                @Override
+                                public Type getType() {
+                                    return super.getType();
+                                }
+                            }))
                             .transcript(getListFromJson(rs.getString("transcript")))
                             .build();
                 }
@@ -95,7 +97,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         try {
             return objectMapper.readValue(json, new TypeReference<List<String>>() {});
         } catch (Exception e) {
-            throw new CustomException("Failed to convert JSON to List<String>", e.getMessage());
+            throw new RuntimeException("Failed to convert JSON to List<String>", e);
         }
     }
 
@@ -107,13 +109,13 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 }
                 return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
             } catch (IOException e) {
-                throw new CustomException("Failed to create an empty instance of " + typeRef.getType(), e.getMessage());
+                throw new RuntimeException("Failed to create an empty instance of " + typeRef.getType(), e);
             }
         }
         try {
             return objectMapper.readValue(json, typeRef);
         } catch (Exception e) {
-            throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
+            throw new RuntimeException("Failed to convert JSON to " + typeRef.getType(), e);
         }
     }
 

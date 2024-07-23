@@ -1,15 +1,17 @@
 package org.pucar.dristi.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
 
 @Component
 @Data
@@ -131,9 +133,6 @@ public class Configuration {
 	@Value("${case.kafka.create.topic}")
 	private String caseCreateTopic;
 
-	@Value("${case.kafka.status.update.topic}")
-	private String caseUpdateStatusTopic;
-
 	@Value("${witness.kafka.create.topic}")
 	private String witnessCreateTopic;
 
@@ -152,18 +151,5 @@ public class Configuration {
 
 	@Value("${egov.demand.create.endpoint}")
 	private String demandCreateEndPoint;
-
-	//Join a Case
-	@Value("${egov.litigant.join.case.kafka.topic}")
-	private String litigantJoinCaseTopic;
-
-	@Value("${egov.representative.join.case.kafka.topic}")
-	private String representativeJoinCaseTopic;
-
-	@Value("${egov.update.representative.join.case.kafka.topic}")
-	private String updateRepresentativeJoinCaseTopic;
-
-	@Value("${egov.additional.join.case.kafka.topic}")
-	private String additionalJoinCaseTopic;
 
 }

@@ -8,15 +8,12 @@ import org.pucar.dristi.enrichment.AdvocateClerkRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateClerkRepository;
 import org.pucar.dristi.validators.AdvocateClerkRegistrationValidator;
-import org.pucar.dristi.web.models.AdvocateClerk;
-import org.pucar.dristi.web.models.AdvocateClerkRequest;
-import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -24,24 +21,26 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class AdvocateClerkService {
 
-    private  AdvocateClerkRepository advocateClerkRepository;
-    private  AdvocateClerkRegistrationValidator validator;
-    private  AdvocateClerkRegistrationEnrichment enrichmentUtil;
-    private  WorkflowService workflowService;
-    private  Producer producer;
-    private  Configuration config;
+    @Autowired
+    private AdvocateClerkRepository advocateClerkRepository;
 
     @Autowired
-    public AdvocateClerkService(AdvocateClerkRepository advocateClerkRepository, AdvocateClerkRegistrationValidator validator, AdvocateClerkRegistrationEnrichment enrichmentUtil,
-                                WorkflowService workflowService, Producer producer, Configuration config) {
-        this.advocateClerkRepository = advocateClerkRepository;
-        this.validator = validator;
-        this.enrichmentUtil = enrichmentUtil;
-        this.workflowService = workflowService;
-        this.producer = producer;
-        this.config = config;
-    }
+    private AdvocateClerkRegistrationValidator validator;
 
+    @Autowired
+    private AdvocateClerkRegistrationEnrichment enrichmentUtil;
+
+
+    @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
+    private IndividualService individualService;
+
+    @Autowired
+    private Producer producer;
+    @Autowired
+    private Configuration config;
 
     public AdvocateClerk registerAdvocateClerkRequest(AdvocateClerkRequest body) {
         try {
@@ -76,7 +75,7 @@ public class AdvocateClerkService {
             throw e;
         }
         catch (Exception e){
-            log.error(FETCH_SEARCH_RESULT_EXCEPTION, e.toString());
+            log.error("Error while fetching to search results :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
         }
     }
@@ -105,7 +104,7 @@ public class AdvocateClerkService {
             throw e;
         }
         catch (Exception e){
-            log.error(FETCH_SEARCH_RESULT_EXCEPTION, e.toString());
+            log.error("Error while fetching to search results :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
         }
     }
@@ -134,17 +133,24 @@ public class AdvocateClerkService {
             throw e;
         }
         catch (Exception e){
-            log.error(FETCH_SEARCH_RESULT_EXCEPTION, e.toString());
+            log.error("Error while fetching to search results :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
         }
     }
 
     public AdvocateClerk updateAdvocateClerk(AdvocateClerkRequest advocateClerkRequest) {
+
         try {
             // Validate whether the application that is being requested for update indeed exists
-            AdvocateClerk existingApplication = validateAndRetrieveExistingApplication(advocateClerkRequest.getClerk());
-
+            AdvocateClerk existingApplication;
+            try {
+                existingApplication = validator.validateApplicationExistence(advocateClerkRequest.getClerk());
+            } catch (Exception e){
+                log.error("Error validating existing application :: {}",e.toString());
+                throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
+            }
             existingApplication.setWorkflow(advocateClerkRequest.getClerk().getWorkflow());
+
             advocateClerkRequest.setClerk(existingApplication);
 
             // Enrich application upon update
@@ -153,28 +159,18 @@ public class AdvocateClerkService {
             workflowService.updateWorkflowStatus(advocateClerkRequest);
 
             if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerkRequest.getClerk().getStatus())) {
-                // Setting true once application approved
+                //setting true once application approved
                 advocateClerkRequest.getClerk().setIsActive(true);
             }
 
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 
             return advocateClerkRequest.getClerk();
-        } catch (CustomException e) {
+        } catch(CustomException e){
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e){
             log.error("Error occurred while updating advocate clerk :: {}", e.toString());
-            throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION, "Error occurred while updating advocate clerk: " + e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());
         }
     }
-
-    private AdvocateClerk validateAndRetrieveExistingApplication(AdvocateClerk clerk) {
-        try {
-            return validator.validateApplicationExistence(clerk);
-        } catch (Exception e) {
-            log.error("Error validating existing application :: {}", e.toString());
-            throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
-        }
-    }
-
 }

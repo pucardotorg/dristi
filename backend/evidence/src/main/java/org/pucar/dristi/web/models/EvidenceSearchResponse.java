@@ -1,7 +1,6 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +24,6 @@ public class EvidenceSearchResponse {
 
     @JsonProperty("artifacts")
     private List<Artifact> artifacts;
-    @JsonProperty("pagination")
-    @Valid
-    private Pagination pagination = null;
 
     // Getters and setters
     public ResponseInfo getResponseInfo() {

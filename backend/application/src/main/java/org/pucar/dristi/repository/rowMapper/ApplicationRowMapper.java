@@ -7,11 +7,9 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.IssuedBy;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -47,7 +45,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
 
                     application = Application.builder()
                             .applicationNumber(rs.getString("applicationnumber"))
-                            .applicationType(rs.getString("applicationtype"))
+                            .applicationType(stringToList(rs.getString("applicationtype")))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .caseId(rs.getString("caseid"))
                             .filingNumber(rs.getString("filingnumber"))
@@ -60,15 +58,10 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .status(rs.getString("status"))
                             .comment(rs.getString("comment"))
                             .additionalDetails(rs.getString("additionaldetails"))
-                            .issuedBy(getObjectFromJson(rs.getString("issuedby"), new TypeReference<IssuedBy>(){}))
                             .auditDetails(auditdetails)
                             .build();
                 }
-                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
-                if(pgObject!=null) {
-                    application.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
-                }
-                applicationMap.put(uuid, application);
+                    applicationMap.put(uuid, application);
             }
         }
         catch (Exception e){
@@ -85,21 +78,6 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
         return UUID.fromString(toUuid);
     }
 
-    public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        if (json == null || json.trim().isEmpty()) {
-            try {
-                return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
-            } catch (IOException e) {
-                throw new CustomException("Failed to create an empty instance of " + typeRef.getType(), e.getMessage());
-            }
-        }
-        try {
-            return objectMapper.readValue(json, typeRef);
-        } catch (Exception e) {
-            throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
-        }
-    }
     public List<Integer> stringToList(String str) {
         ObjectMapper objectMapper = new ObjectMapper();
 

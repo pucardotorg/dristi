@@ -17,16 +17,14 @@ import java.util.*;
 @Component
 public class OrderUtil {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper mapper;
-    private final Configuration configs;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
-    public OrderUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
-        this.restTemplate = restTemplate;
-        this.mapper = mapper;
-        this.configs = configs;
-    }
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
 
     public Boolean fetchOrderDetails(RequestInfo requestInfo, UUID orderId) {
         StringBuilder uri = new StringBuilder();
@@ -48,9 +46,6 @@ public class OrderUtil {
         } catch (Exception e) {
             log.error("ERROR_WHILE_FETCHING_FROM_ORDER:: {}", e.toString());
         }
-
-        if(orderExistsResponse.getOrder() == null|| orderExistsResponse.getOrder().isEmpty())
-            return false;
 
         return orderExistsResponse.getOrder().get(0).getExists();
     }

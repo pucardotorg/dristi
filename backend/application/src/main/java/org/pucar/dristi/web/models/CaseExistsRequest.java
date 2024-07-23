@@ -27,6 +27,9 @@ public class CaseExistsRequest {
     @Valid
     private RequestInfo requestInfo = null;
 
+//    @JsonProperty("tenantId")
+//    private String tenantId = "pg";
+
     @JsonProperty("criteria")
     @Valid
     private List<CaseExists> criteria = new ArrayList<>();

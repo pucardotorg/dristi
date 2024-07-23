@@ -9,9 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.models.individual.Gender;
-import org.egov.common.models.individual.Identifier;
-import org.egov.common.models.individual.Name;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

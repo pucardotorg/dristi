@@ -2,12 +2,9 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.OrderCriteria;
-import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -17,12 +14,14 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_QUERY = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-            "orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber," +
+            "orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber," +
             "orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory," +
             "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
             "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime ";
 
     private static final String FROM_ORDERS_TABLE = " FROM dristi_orders orders";
+
+    private static final String ORDERBY_CREATEDTIME = " ORDER BY orders.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.order_id as order_id";
@@ -37,52 +36,27 @@ public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders";
 
-    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY orders.createdtime DESC ";
-    private static final String ORDERBY_CLAUSE = " ORDER BY orders.{orderBy} {sortingOrder} ";
-    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
-
-
-    public String getTotalCountQuery(String baseQuery) {
-        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
-    }
-
-    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber, String applicationNumber , UUID orderId, List<Object> preparedStmtList) {
+    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
 
             if (cnrNumber!=null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.cnrNumber = ?");
-                preparedStmtList.add(cnrNumber);
+                query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
             if (filingNumber!=null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.filingNumber = ?");
-                preparedStmtList.add(filingNumber);
+                query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false;
             }
 
             if (orderNumber!=null && !orderNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderNumber = ?");
-                preparedStmtList.add(orderNumber);
+                query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
                 firstCriteria = false;
-            }
-
-            if (orderId!=null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.id = ?");
-                preparedStmtList.add(orderId.toString());
-                firstCriteria = false;
-            }
-
-            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.applicationNumber::text LIKE ?");
-                preparedStmtList.add("%" + applicationNumber + "%");
             }
 
             return query.toString();
@@ -93,73 +67,49 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList) {
+    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
         try {
-            String orderNumber = criteria.getOrderNumber();
-            String applicationNumber = criteria.getApplicationNumber();
-            String orderType=criteria.getOrderType();
-            String cnrNumber = criteria.getCnrNumber();
-            String filingNumber = criteria.getFilingNumber();
-            String tenantId = criteria.getTenantId();
-            String id = criteria.getId();
-            String status = criteria.getStatus();
-
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
             if (applicationNumber!=null && !applicationNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.applicationNumber::text LIKE ?");
-                preparedStmtList.add("%" + applicationNumber + "%");
+                query.append("orders.applicationNumber::text LIKE '%\"").append(applicationNumber).append("\"%'");
                 firstCriteria = false;
             }
 
             if (cnrNumber!=null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.cnrnumber = ?");
-                preparedStmtList.add(cnrNumber);
+                query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
             if (filingNumber!=null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.filingNumber = ?");
-                preparedStmtList.add(filingNumber);
+                query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false;
             }
 
             if (tenantId!=null && !tenantId.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.tenantId = ?");
-                preparedStmtList.add(tenantId);
+                query.append("orders.tenantid =").append("'").append(tenantId).append("'");
                 firstCriteria = false;
             }
-            if (orderType!=null && !orderType.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderType = ?");
-                preparedStmtList.add(orderType);
-                firstCriteria = false;
-            }
+
             if (id!=null && !id.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.id = ?");
-                preparedStmtList.add(id);
+                query.append("orders.id = ").append("'").append(id).append("'");
                 firstCriteria = false;
 
             }
 
             if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.status = ?");
-                preparedStmtList.add(status);
+                query.append("orders.status =").append("'").append(status).append("'");
                 firstCriteria = false;
             }
-            if (orderNumber!=null && !orderNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderNumber = ?");
-                preparedStmtList.add(orderNumber);
-            }
+            query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
@@ -203,21 +153,6 @@ public class OrderQueryBuilder {
             log.error("Error while building statute search query :: {}",e.toString());
             throw new CustomException(STATUTE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
-    }
-
-    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
-        preparedStatementList.add(pagination.getLimit());
-        preparedStatementList.add(pagination.getOffSet());
-        return query + " LIMIT ? OFFSET ?";
-    }
-
-    public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
-            return query + DEFAULT_ORDERBY_CLAUSE;
-        } else {
-            query = query + ORDERBY_CLAUSE;
-        }
-        return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {

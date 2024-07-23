@@ -1,35 +1,32 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.models.RequestInfoWrapper;
-import org.egov.common.contract.models.Workflow;
+import org.pucar.dristi.config.Configuration;
+import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.workflow.*;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
+import org.egov.common.contract.models.*;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-
-import static org.pucar.dristi.config.ServiceConstants.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkflowUtil {
 
-	private final ServiceRequestRepository repository;
-	private final ObjectMapper mapper;
-	private final Configuration configs;
+	@Autowired
+	private ServiceRequestRepository repository;
 
 	@Autowired
-	public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
-		this.repository = repository;
-		this.mapper = mapper;
-		this.configs = configs;
-	}
+	private ObjectMapper mapper;
+
+	@Autowired
+	private Configuration configs;
 
 	/**
 	 * Searches the BussinessService corresponding to the businessServiceCode
@@ -145,23 +142,18 @@ public class WorkflowUtil {
 	 * @return
 	 */
 	public Map<String, Workflow> getWorkflow(List<ProcessInstance> processInstances) {
+
 		Map<String, Workflow> businessIdToWorkflow = new HashMap<>();
 
 		processInstances.forEach(processInstance -> {
 			List<String> userIds = null;
 
 			if (!CollectionUtils.isEmpty(processInstance.getAssignes())) {
-				userIds = processInstance.getAssignes().stream()
-						.map(User::getUuid)
-						.toList();  // Replaced collect(Collectors.toList()) with toList()
+				userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
 			}
 
-			Workflow workflow = Workflow.builder()
-					.action(processInstance.getAction())
-					.assignes(userIds)
-					.comments(processInstance.getComment())
-					.documents(processInstance.getDocuments())
-					.build();
+			Workflow workflow = Workflow.builder().action(processInstance.getAction()).assignes(userIds)
+					.comments(processInstance.getComment()).documents(processInstance.getDocuments()).build();
 
 			businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
 		});

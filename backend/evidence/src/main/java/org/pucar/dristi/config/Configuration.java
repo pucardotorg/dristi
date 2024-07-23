@@ -1,15 +1,23 @@
 package org.pucar.dristi.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
 
 @Component
+@Data
 @Import({ TracerConfiguration.class })
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 public class Configuration {
@@ -79,14 +87,8 @@ public class Configuration {
 	@Value("${evidence.kafka.create.topic}")
 	private String evidenceCreateTopic;
 
-	@Value("${evidence.kafka.create.withoutWorkflow.topic}")
-	private String evidenceCreateWithoutWorkflowTopic;
-
 	@Value("${evidence.kafka.update.topic}")
 	private String updateEvidenceKafkaTopic;
-
-	@Value("${evidence.kafka.update.withoutWorkflow.topic}")
-	private String updateEvidenceWithoutWorkflowKafkaTopic;
 
 	// Workflow/Business Module name
 	@Value("${egov.workflow.businessservice.module}")
@@ -94,32 +96,4 @@ public class Configuration {
 
 	@Value("${egov.workflow.businessservice.name}")
 	private String businessServiceName;
-
-	// Case Config
-	@Value("${egov.case.host}")
-	private String caseHost;
-
-	@Value("${egov.case.path}")
-	private String caseExistsPath;
-
-	// Application Config
-	@Value("${egov.application.host}")
-	private String applicationHost;
-
-	@Value("${egov.application.path}")
-	private String applicationExistsPath;
-
-	// Order Config
-	@Value("${egov.order.host}")
-	private String orderHost;
-
-	@Value("${egov.order.path}")
-	private String orderExistsPath;
-
-	// Hearing Config
-	@Value("${egov.hearing.host}")
-	private String hearingHost;
-
-	@Value("${egov.hearing.path}")
-	private String hearingExistsPath;
 }

@@ -20,14 +20,11 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class TaskRegistrationEnrichment {
 
-    private final IdgenUtil idgenUtil;
-    private final Configuration config;
+    @Autowired
+    private IdgenUtil idgenUtil;
 
     @Autowired
-    public TaskRegistrationEnrichment(IdgenUtil idgenUtil, Configuration config) {
-        this.idgenUtil = idgenUtil;
-        this.config = config;
-    }
+    private Configuration config;
 
     public void enrichTaskRegistration(TaskRequest taskRequest) {
         try {

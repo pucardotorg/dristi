@@ -9,17 +9,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class AdvocateRegistrationEnrichmentTest {
 
@@ -120,7 +121,7 @@ class AdvocateRegistrationEnrichmentTest {
     }
 
     @Test
-     void testEnrichAdvocateRegistration_MissingUserInfo() {
+    public void testEnrichAdvocateRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateRequest advocateRequest = new AdvocateRequest();
         advocateRequest.setAdvocate(new Advocate());
@@ -132,7 +133,7 @@ class AdvocateRegistrationEnrichmentTest {
     }
 
     @Test
-     void testEnrichAdvocateRegistration_IdgenUtilException() {
+    public void testEnrichAdvocateRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateRequest advocateRequest = new AdvocateRequest();
         Advocate advocate = new Advocate();
@@ -170,6 +171,7 @@ class AdvocateRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateRequest.setRequestInfo(requestInfo);
+        List<String> idList = List.of("P-2021-01-01-001");
         when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
 
         assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));

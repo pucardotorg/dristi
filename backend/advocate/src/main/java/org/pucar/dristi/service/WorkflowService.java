@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.contract.workflow.ProcessInstance;
-import org.egov.common.contract.workflow.ProcessInstanceRequest;
-import org.egov.common.contract.workflow.ProcessInstanceResponse;
-import org.egov.common.contract.workflow.State;
+import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,16 +25,14 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Slf4j
 public class WorkflowService {
 
-    private final ObjectMapper mapper;
-    private final ServiceRequestRepository repository;
-    private final Configuration config;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
-    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
-        this.mapper = mapper;
-        this.repository = repository;
-        this.config = config;
-    }
+    private ServiceRequestRepository repository;
+
+    @Autowired
+    private Configuration config;
 
 
     /** For updating workflow status of advocate by calling workflow
@@ -45,7 +41,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
         try {
             Advocate advocate =  advocateRequest.getAdvocate();
-            ProcessInstance processInstance = getProcessInstanceForADV(advocate);
+            ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -80,7 +76,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
         AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
         try {
-            ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk);
+            ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -96,9 +92,10 @@ public class WorkflowService {
 
     /** for advocate clerk application process instance
      * @param advocateClerk
+     * @param requestInfo
      * @return payload for workflow service call
      */
-    public ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk) {
+    public ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
         try {
             Workflow workflow = advocateClerk.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -129,9 +126,10 @@ public class WorkflowService {
 
     /** for advocate application process instance
      * @param advocate
+     * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForADV(Advocate advocate) {
+    private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {
         try {
             Workflow workflow = advocate.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();

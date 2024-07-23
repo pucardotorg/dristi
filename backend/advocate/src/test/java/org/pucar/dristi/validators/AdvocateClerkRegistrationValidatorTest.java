@@ -1,6 +1,5 @@
 package org.pucar.dristi.validators;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,20 +8,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.AdvocateClerkRepository;
-import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkRequest;
+import org.egov.common.contract.request.RequestInfo;
+import org.pucar.dristi.service.IndividualService;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
- class AdvocateClerkRegistrationValidatorTest {
+public class AdvocateClerkRegistrationValidatorTest {
 
     @InjectMocks
     private AdvocateClerkRegistrationValidator validator;
@@ -81,7 +81,6 @@ import static org.mockito.Mockito.*;
     void validateApplicationExistence_ApplicationExists() {
         // Arrange
         AdvocateClerk advocateClerk = new AdvocateClerk();
-        advocateClerk.setTenantId("pg");
         advocateClerk.setApplicationNumber("testAppNumber");
         List<AdvocateClerk> existingApplications = new ArrayList<>();
         existingApplications.add(advocateClerk);
@@ -99,7 +98,6 @@ import static org.mockito.Mockito.*;
     void validateApplicationExistence_ApplicationDoesNotExist() {
         // Arrange
         AdvocateClerk advocateClerk = new AdvocateClerk();
-        advocateClerk.setTenantId("pg");
         advocateClerk.setApplicationNumber("nonExistingAppNumber");
         when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 

@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -51,29 +50,24 @@ public class Order {
 
     @JsonProperty("hearingNumber")
     @Valid
-    private String hearingNumber = null;
+    private UUID hearingNumber = null;
 
     @JsonProperty("orderNumber")
     @Size(min = 24, max = 256)
     private String orderNumber = null;
 
-    @JsonProperty("linkedOrderNumber")
-    @Size(min = 24, max = 256)
-    private String linkedOrderNumber = null;
-
     @JsonProperty("createdDate")
     @NotNull
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdDate = null;
 
     @JsonProperty("issuedBy")
-    private IssuedBy issuedBy = null;
+    private Object issuedBy = null;
 
     @JsonProperty("orderType")
     @NotNull
     @Valid
-    private String orderType = null;
+    private List<Integer> orderType = new ArrayList<>();
 
     @JsonProperty("orderCategory")
     private String orderCategory = null;
@@ -111,6 +105,11 @@ public class Order {
 
     public Order addApplicationIdsItem(String applicationNumbersItem) {
         this.applicationNumber.add(applicationNumbersItem);
+        return this;
+    }
+
+    public Order addOrderTypeItem(Integer orderTypeItem) {
+        this.orderType.add(orderTypeItem);
         return this;
     }
 

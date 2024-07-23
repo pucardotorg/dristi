@@ -1,7 +1,6 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +23,7 @@ public class EvidenceSearchRequest {
 
     @JsonProperty("criteria")
     private EvidenceSearchCriteria criteria;
-    @JsonProperty("pagination")
-    @Valid
-    private Pagination pagination = null;
+
     // Getters and setters
     public RequestInfo getRequestInfo() {
         return requestInfo;

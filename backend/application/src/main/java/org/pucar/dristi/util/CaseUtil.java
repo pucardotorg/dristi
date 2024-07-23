@@ -22,16 +22,15 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Component
 public class CaseUtil {
-    private final RestTemplate restTemplate;
-    private final ObjectMapper mapper;
-    private final Configuration configs;
 
     @Autowired
-    public CaseUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
-        this.restTemplate = restTemplate;
-        this.mapper = mapper;
-        this.configs = configs;
-    }
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
 
     public Boolean fetchCaseDetails(CaseExistsRequest caseExistsRequest) {
         StringBuilder uri = new StringBuilder();

@@ -16,13 +16,14 @@ import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
- class AdvocateClerkRepositoryTest {
+public class AdvocateClerkRepositoryTest {
 
     @InjectMocks
     private AdvocateClerkRepository advocateClerkRepository;
@@ -43,6 +44,8 @@ import static org.mockito.Mockito.*;
     private AdvocateClerkSearchCriteria searchCriteria;
     private List<AdvocateClerk> advocateClerkList;
     private Map<UUID, List<Document>> documentMap;
+    private AtomicReference<Boolean> isIndividualLoggedInUser;
+
     @BeforeEach
     public void setUp() {
         searchCriteria = new AdvocateClerkSearchCriteria();
@@ -59,7 +62,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplications() {
+    public void testGetApplications() {
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -81,7 +84,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsEmpty() {
+    public void testGetApplicationsEmpty() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
@@ -96,7 +99,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByStatus() {
+    public void testGetApplicationsByStatus() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -118,7 +121,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByStatusWithEmptySuccess() {
+    public void testGetApplicationsByStatusWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
@@ -133,7 +136,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByAppNumber() {
+    public void testGetApplicationsByAppNumber() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
@@ -155,7 +158,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByAppNumberWithEmptySuccess() {
+    public void testGetApplicationsByAppNumberWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
@@ -170,7 +173,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplications_Exception() {
+    public void testGetApplications_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
@@ -188,7 +191,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByStatus_CustomException() {
+    public void testGetApplicationsByStatus_CustomException() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
@@ -197,7 +200,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByStatus_Exception() {
+    public void testGetApplicationsByStatus_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
@@ -206,7 +209,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByAppNumber_CustomException() {
+    public void testGetApplicationsByAppNumber_CustomException() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
@@ -215,7 +218,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-     void testGetApplicationsByAppNumber_Exception() {
+    public void testGetApplicationsByAppNumber_Exception() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,28 +25,27 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Slf4j
 public class WorkflowService {
 
-    private final ObjectMapper mapper;
-    private final ServiceRequestRepository repository;
-    private final Configuration config;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
-    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
-        this.mapper = mapper;
-        this.repository = repository;
-        this.config = config;
-    }
+    private ServiceRequestRepository repository;
+
+    @Autowired
+    private Configuration config;
+
 
     public void updateWorkflowStatus(EvidenceRequest evidenceRequest) {
             try {
-                ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact());
+                ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact(), evidenceRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(evidenceRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                String state=callWorkFlow(workflowRequest).getState();
-                evidenceRequest.getArtifact().setStatus(state);
+                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                evidenceRequest.getArtifact().setStatus(applicationStatus);
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.toString());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.toString());
+                log.error("Error updating workflow status: {}", e.getMessage());
+                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
             }
     }
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
@@ -57,11 +57,11 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error calling workflow: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
+            log.error("Error calling workflow: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
-    ProcessInstance getProcessInstanceForArtifact(Artifact artifact) {
+    ProcessInstance getProcessInstanceForArtifact(Artifact artifact, RequestInfo requestInfo) {
         try {
             Workflow workflow = artifact.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -85,8 +85,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting process instance for Evidence: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
+            log.error("Error getting process instance for Evidence: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
@@ -107,8 +107,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting current workflow: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
+            log.error("Error getting current workflow: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
         StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {

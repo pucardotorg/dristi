@@ -3,25 +3,24 @@ package org.pucar.dristi.repository.querybuilder;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 
- class AdvocateClerkQueryBuilderTest {
+public class AdvocateClerkQueryBuilderTest {
 
     private AdvocateClerkQueryBuilder queryBuilder;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-         queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
+        queryBuilder = new AdvocateClerkQueryBuilder();
     }
 
     @Test
@@ -156,7 +155,7 @@ import static org.mockito.Mockito.doThrow;
     }
 
     @Test
-     void testGetAdvocateClerkSearchQuery_withNullCriteria() {
+    public void testGetAdvocateClerkSearchQuery_withNullCriteria() {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
         Integer limit = 10;
@@ -169,33 +168,9 @@ import static org.mockito.Mockito.doThrow;
         assertEquals(expectedQuery, actualQuery);
         assertEquals(List.of(10, 0), preparedStmtList);
     }
+
     @Test
-    void testGetAdvocateClerkSearchQuery_CustomException() {
-        // Arrange
-        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
-        criteria.setId("123");
-        criteria.setStateRegnNumber("456");
-        criteria.setApplicationNumber("4567");
-        criteria.setIndividualId("indivID");
-        List<Object> preparedStmtList = new ArrayList<>();
-        String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
-
-        doThrow(new CustomException("Error", "Simulated Exception"))
-                .when(queryBuilder)
-                .getAdvocateClerkSearchQuery(any(), any(), any(),any(),any());
-
-        // Act and Assert
-        CustomException thrown = assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
-        });
-
-        assertEquals("Error", thrown.getCode());
-        assertEquals("Simulated Exception", thrown.getMessage());
-    }
-    @Test
-     void testGetDocumentSearchQuery_withValidIds() {
+    public void testGetDocumentSearchQuery_withValidIds() {
         List<String> ids = List.of("clerk1", "clerk2");
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -207,7 +182,7 @@ import static org.mockito.Mockito.doThrow;
         assertEquals(List.of("clerk1", "clerk2"), preparedStmtList);
     }
     @Test
-     void testGetDocumentSearchQuery_withEmptyIds() {
+    public void testGetDocumentSearchQuery_withEmptyIds() {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -274,85 +249,5 @@ import static org.mockito.Mockito.doThrow;
         assertThrows(CustomException.class, () -> {
             queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
         });
-    }
-    @Test
-    void testAddClauseIfRequired_EmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder();
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequired(query, preparedStmtList);
-
-        // Assert
-        assertEquals(" WHERE ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequired_NonEmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder("InitialQuery ");
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add("mockObject");
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequired(query, preparedStmtList);
-
-        // Assert
-        assertEquals("InitialQuery  AND ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForStatus_EmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder();
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequiredForStatus(query, preparedStmtList);
-
-        // Assert
-        assertEquals(" WHERE ( ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForStatus_NonEmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder("InitialQuery ");
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add("mockObject");
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequiredForStatus(query, preparedStmtList);
-
-        // Assert
-        assertEquals("InitialQuery  AND ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForTenantId_EmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder();
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequiredForTenantId(query, preparedStmtList);
-
-        // Assert
-        assertEquals(" WHERE ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForTenantId_NonEmptyList() {
-        // Arrange
-        StringBuilder query = new StringBuilder("InitialQuery ");
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add("mockObject");
-
-        // Act
-        new AdvocateClerkQueryBuilder().addClauseIfRequiredForTenantId(query, preparedStmtList);
-
-        // Assert
-        assertEquals("InitialQuery  AND ", query.toString());
     }
 }

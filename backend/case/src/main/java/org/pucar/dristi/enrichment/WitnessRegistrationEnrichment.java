@@ -1,17 +1,18 @@
 package org.pucar.dristi.enrichment;
 
 
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.util.IdgenUtil;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.Witness;
-import org.pucar.dristi.web.models.WitnessRequest;
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
 @Slf4j

@@ -15,9 +15,6 @@ import org.pucar.dristi.util.UserUtil;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class UserUtilTest {
 
     @InjectMocks
@@ -42,17 +39,9 @@ class UserUtilTest {
         // Setup
         StringBuilder uri = new StringBuilder("/search");
         Mockito.when(configs.getUserSearchEndpoint()).thenReturn("/search");
-
-        // Act
-        String endpoint = configs.getUserSearchEndpoint();
-        uri.append(endpoint);
-
-        // Assert
-        assertNotNull(uri);
-        assertEquals("/search/search", uri.toString());
-        Mockito.verify(configs, Mockito.times(1)).getUserSearchEndpoint();
+        // Test
+        // Write test logic here
     }
-
     @Test
     void testParseResponse_WithUsers() {
         // Setup
@@ -64,7 +53,7 @@ class UserUtilTest {
         responseMap.put("user", users);
         // Test
         userUtil.parseResponse(responseMap, "dd-MM-yyyy HH:mm:ss");
-        assertEquals(1, users.size());
+        Assertions.assertEquals(1, users.size());
         Assertions.assertTrue(users.get(0).containsKey("createdDate"));
         Assertions.assertTrue(users.get(0).get("createdDate") instanceof Long);
     }

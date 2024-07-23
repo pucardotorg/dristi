@@ -29,14 +29,15 @@ public class HearingRowMapperTest {
 
     @Mock
     private ResultSet rs;
-
     private ObjectMapper objectMapper;
+
     private HearingRowMapper rowMapper;
 
     @BeforeEach
     void setUp() {
+        rowMapper = new HearingRowMapper();
         objectMapper = new ObjectMapper();
-        rowMapper = new HearingRowMapper(objectMapper);
+        rowMapper.objectMapper = objectMapper;
     }
 
     @Test
@@ -57,8 +58,8 @@ public class HearingRowMapperTest {
         when(rs.getString("hearingid")).thenReturn("hearing1");
         when(rs.getString("hearingtype")).thenReturn("type1");
         when(rs.getString("status")).thenReturn("status1");
-        when(rs.getLong("starttime")).thenReturn(1625140800000L);
-        when(rs.getLong("endtime")).thenReturn(1625144400000L);
+        when(rs.getString("starttime")).thenReturn("1625140800000");
+        when(rs.getString("endtime")).thenReturn("1625144400000");
         when(rs.getString("vclink")).thenReturn("link1");
         when(rs.getBoolean("isactive")).thenReturn(true);
         when(rs.getString("notes")).thenReturn("note1");
@@ -112,6 +113,12 @@ public class HearingRowMapperTest {
     void shouldHandleNullAndEmptyJsonGracefully() throws SQLException, JsonProcessingException {
         // Arrange
         String uuid = "921e3cc0-64df-490f-adc1-91c3492219e6";
+        String cnrNumbersJson = "[\"cnr1\"]";
+        String filingNumberJson = "[\"file1\"]";
+        String applicationNumbersJson = "[\"app1\"]";
+        String presidedByJson = "{\"benchID\":\"bench1\"}";
+        String attendeesJson = "[{\"name\":\"Attendee1\"}]";
+        String transcriptJson = "[\"transcript1\"]";
         String additionalDetailsJson = "{\"key\":\"value\"}";
         when(rs.next()).thenReturn(true).thenReturn(false);
         when(rs.getString("id")).thenReturn(uuid);
@@ -119,8 +126,8 @@ public class HearingRowMapperTest {
         when(rs.getString("hearingid")).thenReturn("hearing1");
         when(rs.getString("hearingtype")).thenReturn("type1");
         when(rs.getString("status")).thenReturn("status1");
-        when(rs.getLong("starttime")).thenReturn(0L);
-        when(rs.getLong("endtime")).thenReturn(1625140800000L);
+        when(rs.getString("starttime")).thenReturn("1625140800000");
+        when(rs.getString("endtime")).thenReturn("1625144400000");
         when(rs.getString("vclink")).thenReturn("link1");
         when(rs.getBoolean("isactive")).thenReturn(true);
         when(rs.getString("notes")).thenReturn("note1");
@@ -144,8 +151,8 @@ public class HearingRowMapperTest {
                 .hearingId("hearing1")
                 .hearingType("type1")
                 .status("status1")
-                .startTime(0L)
-                .endTime(1625140800000L)
+                .startTime(1625140800000L)
+                .endTime(1625144400000L)
                 .vcLink("link1")
                 .isActive(true)
                 .notes("note1")
@@ -177,6 +184,8 @@ public class HearingRowMapperTest {
         when(rs.getString("hearingid")).thenReturn("hearing1");
         when(rs.getString("hearingtype")).thenReturn("type1");
         when(rs.getString("status")).thenReturn("status1");
+        when(rs.getString("starttime")).thenReturn("1625140800000");
+        when(rs.getString("endtime")).thenReturn("1625144400000");
         when(rs.getString("vclink")).thenReturn("link1");
         when(rs.getBoolean("isactive")).thenReturn(true);
         when(rs.getString("notes")).thenReturn("note1");
@@ -263,20 +272,6 @@ public class HearingRowMapperTest {
         if (!Objects.equals(expected.getNotes(), actual.getNotes())) return false;
 
         return true;
-    }
-
-    @Test
-    void testGetListFromJson_NullJson() {
-        String json = null;
-        List<String> result = rowMapper.getListFromJson(json);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testGetListFromJson_EmptyJson() {
-        String json = "  ";
-        List<String> result = rowMapper.getListFromJson(json);
-        assertTrue(result.isEmpty());
     }
 }
 

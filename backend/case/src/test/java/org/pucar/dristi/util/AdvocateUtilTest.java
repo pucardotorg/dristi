@@ -1,35 +1,23 @@
 package org.pucar.dristi.util;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateListResponse;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
-import org.pucar.dristi.web.models.AdvocateSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class AdvocateUtilTest {
 
@@ -75,7 +63,7 @@ public class AdvocateUtilTest {
         advocateResponse.setAdvocates(List.of(criteria));
         when(mapper.convertValue(any(), eq(AdvocateListResponse.class))).thenReturn(advocateResponse);
 
-        Boolean result = advocateUtil.doesAdvocateExist(requestInfo, advocateId);
+        Boolean result = advocateUtil.fetchAdvocateDetails(requestInfo, advocateId);
 
         assertTrue(result);
         verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));
@@ -90,7 +78,7 @@ public class AdvocateUtilTest {
         when(restTemplate.postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class)))
                 .thenThrow(new RuntimeException("Error"));
 
-        assertThrows(Exception.class, () -> advocateUtil.doesAdvocateExist(requestInfo, advocateId));
+        assertThrows(Exception.class, () -> advocateUtil.fetchAdvocateDetails(requestInfo, advocateId));
     }
 
     @Test
@@ -112,7 +100,7 @@ public class AdvocateUtilTest {
         advocateResponse.setAdvocates(List.of(criteria));
         when(mapper.convertValue(any(), eq(AdvocateListResponse.class))).thenReturn(advocateResponse);
 
-        Boolean result = advocateUtil.doesAdvocateExist(requestInfo, advocateId);
+        Boolean result = advocateUtil.fetchAdvocateDetails(requestInfo, advocateId);
 
         assertFalse(result);
         verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));

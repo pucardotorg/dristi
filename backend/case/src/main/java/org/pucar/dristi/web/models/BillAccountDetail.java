@@ -1,19 +1,11 @@
 package org.pucar.dristi.web.models;
 
-import java.math.BigDecimal;
-
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Setter
 @Getter

@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -72,7 +71,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private String applicationType = null;
+                private List<Integer> applicationType = null;
 
         @JsonProperty("applicationNumber")
 
@@ -80,7 +79,7 @@ public class Application   {
 
         @JsonProperty("issuedBy")
 
-                private IssuedBy issuedBy = null;
+                private Object issuedBy = null;
 
         @JsonProperty("status")
           @NotNull
@@ -107,7 +106,7 @@ public class Application   {
 
         @JsonProperty("additionalDetails")
 
-                private Object additionalDetails = null;
+                private String additionalDetails = null;
 
         @JsonProperty("auditDetails")
 
@@ -135,13 +134,5 @@ public class Application   {
         this.documents.add(documentsItem);
         return this;
         }
-    public boolean isResponseRequired() {
-        if (additionalDetails instanceof Map) {
-            Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
-            if (detailsMap.containsKey("isResponseRequired")) {
-                return (boolean) detailsMap.get("isResponseRequired");
-            }
-        }
-        return false;
-    }
+
 }

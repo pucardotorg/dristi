@@ -1,17 +1,5 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
-
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +8,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CourtCase;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRowMapperTest {
@@ -37,37 +33,17 @@ class CaseRowMapperTest {
 
     @Test
     void testExtractData() throws Exception {
-        when(rs.next()).thenReturn(true, false);  // Two rows
+        when(rs.next()).thenReturn(true).thenReturn(false);
+        when(rs.getString("casenumber")).thenReturn("case123");
         when(rs.getString("id")).thenReturn(UUID.randomUUID().toString());
         when(rs.getString("tenantid")).thenReturn("tenant1");
-        when(rs.getString("resolutionmechanism")).thenReturn("mechanism");
-        when(rs.getString("casetitle")).thenReturn("title");
-        when(rs.getString("casedescription")).thenReturn("description");
-        when(rs.getString("filingnumber")).thenReturn("filing123");
-        when(rs.getString("caseNumber")).thenReturn("case123");
-        when(rs.getString("cnrnumber")).thenReturn("cnr123");
-        when(rs.getString("courtcaseNumber")).thenReturn("court123");
-        when(rs.getString("accesscode")).thenReturn("access1");
-        when(rs.getString("courtid")).thenReturn("court1");
-        when(rs.getString("benchid")).thenReturn("bench1");
-        when(rs.getString("judgeid")).thenReturn("judge1");
-        when(rs.getString("stage")).thenReturn("stage1");
-        when(rs.getString("substage")).thenReturn("substage1");
-        when(rs.getLong("filingdate")).thenReturn(123453634747L);
-        when(rs.getLong("judgementdate")).thenReturn(12325326L);
-        when(rs.getLong("registrationdate")).thenReturn(123453634747L);
-        when(rs.getString("casecategory")).thenReturn("category1");
-        when(rs.getString("natureofpleading")).thenReturn("pleading");
-        when(rs.getString("status")).thenReturn("status1");
-        when(rs.getString("remarks")).thenReturn("remarks");
-
-        when(rs.getLong("lastmodifiedtime")).thenReturn(123456789L);
+        when(rs.getLong("createdtime")).thenReturn(1609459200000L);
+        when(rs.getLong("lastmodifiedtime")).thenReturn(1609459200000L);
         when(rs.getString("createdby")).thenReturn("user1");
-        when(rs.getLong("createdtime")).thenReturn(123456789L);
-        when(rs.getString("lastmodifiedby")).thenReturn("modifier");
+        when(rs.getString("lastmodifiedby")).thenReturn("user1");
 
+        // Return null for fields that are not mandatory or could be null
         when(rs.getObject("additionalDetails")).thenReturn(null);
-        when(rs.getObject("casedetails")).thenReturn(null);
 
         List<CourtCase> cases = rowMapper.extractData(rs);
 
@@ -76,7 +52,7 @@ class CaseRowMapperTest {
         assertEquals("tenant1", cases.get(0).getTenantId());
         assertEquals("user1", cases.get(0).getAuditdetails().getCreatedBy());
 
-        verify(rs, times(2)).getString("id");
+        verify(rs, times(1)).getString("casenumber");
     }
 
     @Test

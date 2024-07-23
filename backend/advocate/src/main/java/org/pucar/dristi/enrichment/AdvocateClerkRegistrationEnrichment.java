@@ -20,14 +20,11 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class AdvocateClerkRegistrationEnrichment {
 
-    private final IdgenUtil idgenUtil;
-    private final Configuration configuration;
-
     @Autowired
-    public AdvocateClerkRegistrationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
-        this.idgenUtil = idgenUtil;
-        this.configuration = configuration;
-    }
+    private IdgenUtil idgenUtil;
+    @Autowired
+    private Configuration configuration;
+
     /**
      * Enrich the advocate clerk application by setting values in different field
      *
@@ -46,7 +43,9 @@ public class AdvocateClerkRegistrationEnrichment {
             //setting false unless the application is approved
             advocateClerk.setIsActive(false);
             if (advocateClerk.getDocuments() != null)
-                advocateClerk.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));;
+                advocateClerk.getDocuments().forEach(document -> {
+                    document.setId(String.valueOf(UUID.randomUUID()));
+                });
 
             //setting generated application number
             advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(0));

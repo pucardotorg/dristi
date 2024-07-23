@@ -10,16 +10,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
- class IndividualServiceTest {
+public class IndividualServiceTest {
 
     @Mock
     IndividualUtil individualUtil;
@@ -44,10 +51,12 @@ import static org.mockito.Mockito.when;
         advocate.setIndividualId("IND-2024-04-15-000023");
         advocate.setTenantId("pg");
         advocateRequest.setAdvocate(advocate);
+        Map<String, String> individualUserUUID = new HashMap<>();
 
         // Mock the behavior of dependent components
         when(configuration.getIndividualHost()).thenReturn("http://example.com");
         when(configuration.getIndividualSearchEndpoint()).thenReturn("/search");
+//        when(individualUtil.individualCall(any(), any(), any())).thenReturn(true);
 
         // Call the method under test
         Boolean result = individualService.searchIndividual(advocateRequest.getRequestInfo(),advocateRequest.getAdvocate().getIndividualId(), new HashMap<>());
@@ -57,7 +66,7 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void testSearchIndividual_Exception() {
+    public void testSearchIndividual_Exception() {
         // Arrange
         AdvocateRequest advocateRequest = new AdvocateRequest();
         advocateRequest.setAdvocate(new Advocate());
@@ -66,6 +75,7 @@ import static org.mockito.Mockito.when;
         advocate.setIndividualId("IND-2024-04-15-000023");
         advocate.setTenantId("pg");
         advocateRequest.setAdvocate(advocate);
+        Map<String, String> individualUserUUID = new HashMap<>();
 
         // Act and Assert
         assertThrows(Exception.class, () -> {

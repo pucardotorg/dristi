@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
- class ClerkApiControllerTest {
+public class ClerkApiControllerTest {
 
     @Autowired
     private ClerkApiController advocateApiController;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void testAdvocateClerkV1CreatePost() {
+    public void testAdvocateClerkV1CreatePost() {
         AdvocateClerkRequest request = new AdvocateClerkRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);
@@ -60,7 +60,7 @@ import static org.mockito.Mockito.when;
 
 
     @Test
-     void testAdvocateClerkV1StatusSearchPost() {
+    public void testAdvocateClerkV1StatusSearchPost() {
         String status = "active";
         String tenantId = "tenantId";
         List<AdvocateClerk> advocateList = Arrays.asList(new AdvocateClerk());
@@ -82,7 +82,7 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void testAdvocateClerkV1ApplicationnumberSearchPost() {
+    public void testAdvocateClerkV1ApplicationnumberSearchPost() {
         String applicationNumber = "app123";
         String tenantId = "tenantId";
         List<AdvocateClerk> advocateList = Arrays.asList(new AdvocateClerk());
@@ -104,7 +104,7 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void testAdvocateClerkV1UpdatePost() {
+    public void testAdvocateClerkV1UpdatePost() {
         AdvocateClerkRequest request = new AdvocateClerkRequest();
         RequestInfo requestInfo = new RequestInfo();
         request.setRequestInfo(requestInfo);
@@ -132,6 +132,8 @@ import static org.mockito.Mockito.when;
         body.setTenantId("tenant1");
         Integer limit = 10;
         Integer offset = 0;
+        List<AdvocateClerk> advocateList = new ArrayList<>(); // Your list of advocates here
+        //when(advocateService.searchAdvocateClerkApplications(requestInfo, criteria, "tenant1", limit, offset)).thenReturn(advocateList);
         ResponseInfo responseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(responseInfo);
 

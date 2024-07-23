@@ -10,10 +10,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +50,7 @@ class ServiceRequestRepositoryTest {
         verify(restTemplate, times(1)).postForObject(anyString(), any(), eq(Map.class));
     }
     @Test()
-     void testFetchResult_GenericException() {
+    public void testFetchResult_GenericException() {
         StringBuilder uri = new StringBuilder("https://google.com");
         Map<String, Object> request = new HashMap<>();
         request.put("key", "value");
@@ -66,7 +64,7 @@ class ServiceRequestRepositoryTest {
         }
     }
     @Test()
-     void testFetchResult_HttpClientErrorException() {
+    public void testFetchResult_HttpClientErrorException() {
         StringBuilder uri = new StringBuilder("http://mock-service/api/endpoint");
         Map<String, Object> request = new HashMap<>();
         request.put("key", "value"); // Replace with your request object class

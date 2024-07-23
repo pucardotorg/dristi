@@ -22,16 +22,16 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class MdmsUtil {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper mapper;
-    private final Configuration configs;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
-    public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
-        this.restTemplate = restTemplate;
-        this.mapper = mapper;
-        this.configs = configs;
-    }
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
+
+
 
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
@@ -50,6 +50,7 @@ public class MdmsUtil {
         }
 
         return mdmsResponse.getMdmsRes();
+        //log.info(ulbToCategoryListMap.toString());
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
