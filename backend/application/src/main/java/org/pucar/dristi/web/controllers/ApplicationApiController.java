@@ -31,7 +31,7 @@ public class ApplicationApiController{
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @RequestMapping(value="/application/v1/create", method = RequestMethod.POST)
+    @RequestMapping(value="/v1/create", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
                     Application application = applicationService.createApplication(body);
                     ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -39,7 +39,7 @@ public class ApplicationApiController{
                     return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/application/v1/exists", method = RequestMethod.POST)
+    @RequestMapping(value="/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<ApplicationExistsResponse> applicationV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the application(S) exists", required=true, schema=@Schema()) @Valid @RequestBody ApplicationExistsRequest body) {
             List<ApplicationExists> applicationExistsList = applicationService.existsApplication(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -47,7 +47,7 @@ public class ApplicationApiController{
             return new ResponseEntity<>(applicationExistsResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)
+    @RequestMapping(value="/v1/search", method = RequestMethod.POST)
     public ResponseEntity<ApplicationListResponse> applicationV1SearchPost(
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody ApplicationSearchRequest request) {
                 List<Application> applicationList = applicationService.searchApplications(request);
@@ -63,7 +63,7 @@ public class ApplicationApiController{
         }
 
 
-    @RequestMapping(value="/application/v1/update", method = RequestMethod.POST)
+    @RequestMapping(value="/v1/update", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update application(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
                 Application application = applicationService.updateApplication(body);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);

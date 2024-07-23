@@ -39,7 +39,7 @@ public class OrderApiController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @RequestMapping(value = "/order/v1/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/create", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new order + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
             Order order = orderService.createOrder(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
@@ -47,7 +47,7 @@ public class OrderApiController {
             return new ResponseEntity<>(orderResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/order/v1/exists", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<OrderExistsResponse> orderV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the order(S) exists", required = true, schema = @Schema()) @Valid @RequestBody OrderExistsRequest body) {
             List<OrderExists> order = orderService.existsOrder(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
@@ -55,7 +55,7 @@ public class OrderApiController {
             return new ResponseEntity<>(orderExistsResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/order/v1/search", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/search", method = RequestMethod.POST)
     public ResponseEntity<OrderListResponse> orderV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody OrderSearchRequest request) {
             List<Order> orders = orderService.searchOrder(request);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
@@ -69,7 +69,7 @@ public class OrderApiController {
             return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/order/v1/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/update", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update order(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
             Order order = orderService.updateOrder(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
