@@ -1701,7 +1701,7 @@ export const configsVoluntarySubmissionStatus = [
       },
       {
         label: "APPROVAL_STATUS",
-        isMandatory: true,
+        isMandatory: false,
         key: "approvalStatus",
         type: "text",
         disable: true,
@@ -1857,7 +1857,7 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "APPROVAL_STATUS",
-        isMandatory: true,
+        isMandatory: false,
         key: "approvalStatus",
         type: "text",
         disable: true,
@@ -2364,7 +2364,7 @@ export const configsCaseWithdrawal = [
       {
         label: "REASON_FOR_WITHDRAWAL",
         isMandatory: true,
-        key: "reasonForWarrant",
+        key: "reasonForWithdrawal",
         disable: true,
         type: "text",
         populators: { name: "reasonForWithdrawal" },

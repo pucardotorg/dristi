@@ -212,7 +212,7 @@ const GenerateOrders = () => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
       setNewFormdata([defaultOrderData]);
     } else {
-      setNewFormdata(ordersData?.list);
+      setNewFormdata(ordersData?.list.reverse());
     }
   }, [ordersData, defaultOrderData]);
 
@@ -386,6 +386,15 @@ const GenerateOrders = () => {
     if (applicationDetails?.referenceId) {
       updatedFormdata.refApplicationId = applicationDetails?.referenceId;
     }
+    if (orderType === "WITHDRAWAL") {
+      if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
+        console.log("applicationDetails1", applicationDetails, applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
+        updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
+        updatedFormdata.partyType = applicationDetails.additionalDetails?.partyType;
+        updatedFormdata.reasonForWithdrawal = applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code;
+        // updatedFormdata.applicationStatus = applicationDetails.additionalDetails?.applicationStatus;
+      }
+    }
     if (orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
       if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
         updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.name;
@@ -530,7 +539,7 @@ const GenerateOrders = () => {
         history.push(`?filingNumber=${filingNumber}`);
       }
       setSelectedOrder((prev) => {
-        return deleteOrderIndex < prev ? prev - 1 : prev;
+        return deleteOrderIndex <= prev ? prev - 1 : prev;
       });
     } catch (error) {
       //show toast of API failed
