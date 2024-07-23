@@ -75,7 +75,6 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info || {};
-  const uuid = userInfo?.uuid;
   const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -198,14 +197,14 @@ const GenerateOrders = () => {
       workflow: {
         action: OrderWorkflowAction.SAVE_DRAFT,
         comments: "Creating order",
-        assignes: [uuid],
+        assignes: [],
         rating: null,
         documents: [{}],
       },
       documents: [],
       additionalDetails: { formdata: {} },
     }),
-    [cnrNumber, filingNumber, tenantId, uuid]
+    [cnrNumber, filingNumber, tenantId]
   );
 
   useEffect(() => {
