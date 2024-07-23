@@ -90,19 +90,4 @@ public class BillDetail {
     private Long expiryDate;
 
 
-    public Boolean addBillAccountDetail(BillAccountDetail billAccountDetail) {
-
-        if (CollectionUtils.isEmpty(billAccountDetails)) {
-
-            billAccountDetails = new ArrayList<>();
-            return billAccountDetails.add(billAccountDetail);
-        } else {
-
-            if (!billAccountDetails.contains(billAccountDetail))
-                return billAccountDetails.add(billAccountDetail);
-            else
-                return false;
-        }
-    }
-
 }

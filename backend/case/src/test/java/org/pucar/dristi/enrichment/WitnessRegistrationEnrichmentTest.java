@@ -21,9 +21,6 @@ public class WitnessRegistrationEnrichmentTest {
     @InjectMocks
     private WitnessRegistrationEnrichment witnessRegistrationEnrichment;
 
-    @Mock
-    private IdgenUtil idgenUtil;
-
     @BeforeEach
     public void setUp() {
         witnessRegistrationEnrichment = new WitnessRegistrationEnrichment();
@@ -65,7 +62,6 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        Witness witness = new Witness();
         witnessRequest.setWitness(null);
 
         assertThrows(Exception.class, () -> witnessRegistrationEnrichment.enrichWitnessRegistration(witnessRequest));
@@ -106,7 +102,6 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        Witness witness = new Witness();
         witnessRequest.setWitness(null);
 
         // Assert

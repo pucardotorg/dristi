@@ -32,19 +32,24 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentUpdateService {
 
-    @Autowired
     private WorkflowService workflowService;
 
-    @Autowired
     private ObjectMapper mapper;
 
-    @Autowired
     private CaseRepository repository;
-    @Autowired
+
     private Producer producer;
 
-    @Autowired
     private Configuration configuration;
+
+    @Autowired
+    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository, Producer producer, Configuration configuration) {
+        this.workflowService = workflowService;
+        this.mapper = mapper;
+        this.repository = repository;
+        this.producer = producer;
+        this.configuration = configuration;
+    }
 
     public void process(HashMap<String, Object> record) {
 

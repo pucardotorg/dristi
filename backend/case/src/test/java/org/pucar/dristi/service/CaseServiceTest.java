@@ -60,8 +60,6 @@ public class CaseServiceTest {
 
     private JoinCaseRequest joinCaseRequest;
     private CourtCase courtCase;
-    private CourtCase caseObj;
-    private AuditDetails auditDetails;
 
     private CaseSearchRequest caseSearchRequest;
 
@@ -86,13 +84,6 @@ public class CaseServiceTest {
         joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setAdditionalDetails("form-data");
         courtCase = new CourtCase();
-        caseObj = new CourtCase();
-        auditDetails = AuditDetails.builder()
-                .createdBy("user-uuid")
-                .createdTime(System.currentTimeMillis())
-                .lastModifiedBy("user-uuid")
-                .lastModifiedTime(System.currentTimeMillis())
-                .build();
     }
     @Test
     void testCreateCase() {
@@ -117,7 +108,6 @@ public class CaseServiceTest {
     public void testVerifyJoinCaseRequest_CaseDoesNotExist() {
         // Mock the CaseRepository to return an empty list
         when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(new CaseCriteria()));
-        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         assertThrows(CustomException.class, () -> {
@@ -129,12 +119,10 @@ public class CaseServiceTest {
     @Test
     public void testVerifyJoinCaseRequest_AccessCodeNotGenerated() {
         // Setup a sample CourtCase object access code as null
-        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("existingAdv");
-        CourtCase courtCase = new CourtCase();
         courtCase.setId(UUID.randomUUID());
         courtCase.setFilingNumber(joinCaseRequest.getCaseFilingNumber());
         courtCase.setStatus(CASE_ADMIT_STATUS);
@@ -152,7 +140,6 @@ public class CaseServiceTest {
         // Setup a Litigant that is already part of the case
         Party litigant = new Party();
         litigant.setIndividualId("existingLitigant");
-        CourtCase courtCase = new CourtCase();
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
@@ -161,7 +148,6 @@ public class CaseServiceTest {
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
 
-        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
@@ -195,7 +181,6 @@ public class CaseServiceTest {
 
         when(caseRepository.getApplications(anyList(), any())).thenReturn(existingApplications);
 
-        RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(new User());
         joinCaseRequest.setRequestInfo(requestInfo);
 
@@ -214,7 +199,6 @@ public class CaseServiceTest {
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("existingAdv");
         representative.setRepresenting(Collections.singletonList(litigant));
-        CourtCase courtCase = new CourtCase();
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
@@ -224,7 +208,6 @@ public class CaseServiceTest {
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
 
-        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
@@ -260,7 +243,6 @@ public class CaseServiceTest {
         when(config.getUpdateRepresentativeJoinCaseTopic()).thenReturn("update-topic");
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
-        RequestInfo requestInfo = new RequestInfo();
         requestInfo.setUserInfo(new User());
         joinCaseRequest.setRequestInfo(requestInfo);
         Party party1 = Party.builder().individualId("111").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
@@ -280,14 +262,12 @@ public class CaseServiceTest {
         litigant.setIndividualId("newLitigant");
         AdvocateMapping advocate = new AdvocateMapping();
         advocate.setAdvocateId("newAdvocate");
-        CourtCase courtCase = new CourtCase();
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
-        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
@@ -311,7 +291,6 @@ public class CaseServiceTest {
         String filingNumber = "123";
         joinCaseRequest.setCaseFilingNumber(filingNumber);
         joinCaseRequest.setAccessCode("validAccessCode");
-        RequestInfo requestInfo = new RequestInfo();
         User user = new User();
         user.setUuid("user-uuid");
         requestInfo.setUserInfo(user);
@@ -358,8 +337,6 @@ public class CaseServiceTest {
     @Test
     void testSearchCases2() {
         // Set up mock responses
-        List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
-
         when(caseRepository.getApplications(any(), any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
 
         // Call the method under test
@@ -410,7 +387,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Mock case-indexer.yml CourtCase object with required fields
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenReturn(true);
+        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
@@ -430,7 +407,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenReturn(false);
+        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(false);
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -442,7 +419,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
+        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -451,10 +428,9 @@ public class CaseServiceTest {
     @Test
     void testUpdateCase_Validation_Exception() {
         // Setup
-        CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenThrow(new RuntimeException());
+        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenThrow(new RuntimeException());
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -566,6 +542,7 @@ public class CaseServiceTest {
 
         verify(producer, times(1)).push(eq("topic"), eq(addWitnessRequest));
         assertEquals(addWitnessRequest, response.getAddWitnessRequest());
+        assertEquals(addWitnessRequest.getAdditionalDetails(), response.getAddWitnessRequest().getAdditionalDetails());
     }
 
     @Test
@@ -597,7 +574,6 @@ public class CaseServiceTest {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
         addWitnessRequest.setCaseFilingNumber("CASE123");
         addWitnessRequest.setAdditionalDetails("data");
-        RequestInfo requestInfo = new RequestInfo();
         User user = new User();
         user.setType("CITIZEN");
         requestInfo.setUserInfo(user);
@@ -621,7 +597,6 @@ public class CaseServiceTest {
     public void testAddWitness_AdditionalDetailsRequired() {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
         addWitnessRequest.setCaseFilingNumber("CASE123");
-        RequestInfo requestInfo = new RequestInfo();
         User user = new User();
         user.setType("EMPLOYEE");
         requestInfo.setUserInfo(user);

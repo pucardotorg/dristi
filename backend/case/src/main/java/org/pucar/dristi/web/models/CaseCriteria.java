@@ -87,14 +87,4 @@ public class CaseCriteria {
     @Valid
     private Pagination pagination = null;
 
-
-
-    public CaseCriteria addResponseListItem(CourtCase responseListItem) {
-        if (this.responseList == null) {
-            this.responseList = new ArrayList<>();
-        }
-        this.responseList.add(responseListItem);
-        return this;
-    }
-
 }

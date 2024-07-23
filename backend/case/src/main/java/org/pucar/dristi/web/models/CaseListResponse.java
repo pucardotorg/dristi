@@ -38,12 +38,4 @@ public class CaseListResponse {
     @Valid
     private Pagination pagination = null;
 
-    public CaseListResponse addCaseItem(CaseCriteria caseCriteria) {
-        if (this.criteria == null) {
-            this.criteria = new ArrayList<>();
-        }
-        this.criteria.add(caseCriteria);
-        return this;
-    }
-
 }

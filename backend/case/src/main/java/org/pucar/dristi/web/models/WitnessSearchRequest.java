@@ -34,12 +34,4 @@ public class WitnessSearchRequest {
     private List<WitnessSearchCriteria> searchCriteria = null;
 
 
-    public WitnessSearchRequest addSearchCriteriaItem(WitnessSearchCriteria searchCriteriaItem) {
-        if (this.searchCriteria == null) {
-            this.searchCriteria = new ArrayList<>();
-        }
-        this.searchCriteria.add(searchCriteriaItem);
-        return this;
-    }
-
 }

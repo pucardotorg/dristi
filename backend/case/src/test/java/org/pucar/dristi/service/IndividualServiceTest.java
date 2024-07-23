@@ -41,7 +41,6 @@ public class IndividualServiceTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(new CourtCase());
         caseRequest.setRequestInfo(RequestInfo.builder().userInfo(User.builder().tenantId("pg").build()).build()); // Mock or provide necessary data
-        Map<String, String> individualUserUUID = new HashMap<>();
 
         // Mock the behavior of dependent components
         IndividualResponse individualResponse = new IndividualResponse(); // Mock or provide necessary data

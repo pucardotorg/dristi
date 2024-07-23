@@ -65,20 +65,4 @@ public class AdvocateMapping   {
                 private Object additionalDetails = null;
 
 
-        public AdvocateMapping addRepresentingItem(Party representingItem) {
-            if (this.representing == null) {
-            this.representing = new ArrayList<>();
-            }
-        this.representing.add(representingItem);
-        return this;
-        }
-
-        public AdvocateMapping addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
-
 }

@@ -54,12 +54,5 @@ public class LinkedCase {
 	@Valid
 	private AuditDetails auditdetails = null;
 
-	public LinkedCase addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

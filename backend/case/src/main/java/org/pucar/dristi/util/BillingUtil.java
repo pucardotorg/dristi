@@ -29,14 +29,18 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class BillingUtil {
 
-	@Autowired
 	private RestTemplate restTemplate;
 
-	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
 	private Configuration configs;
+
+	@Autowired
+	public BillingUtil(RestTemplate restTemplate, Configuration configs, ObjectMapper mapper) {
+		this.restTemplate = restTemplate;
+		this.configs = configs;
+		this.mapper = mapper;
+	}
 
 	public void createDemand(CaseRequest caseRequest) {
 		StringBuilder uri = new StringBuilder();
