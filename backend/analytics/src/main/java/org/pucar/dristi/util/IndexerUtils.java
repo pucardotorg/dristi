@@ -228,9 +228,9 @@ public class IndexerUtils {
 			case "evidence":
 				caseDetails = processEvidenceEntity(request, referenceId);
 				break;
-			case "async-voluntary-submission-services":
-			case "asynsubmissionwithresponse":
-			case "asyncsubmissionwithoutresponse":
+			case "async-order-submission-managelifecycle":
+			case "async-submission-with-response-managelifecycle":
+			case "async-voluntary-submission-managelifecycle":
 				caseDetails = processApplicationEntity(request, referenceId);
 				break;
 			default:
