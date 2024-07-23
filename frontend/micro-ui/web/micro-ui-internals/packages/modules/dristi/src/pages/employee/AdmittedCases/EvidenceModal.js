@@ -14,7 +14,6 @@ import DocViewerWrapper from "../docViewerWrapper";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
-import { Urls } from "../../../hooks";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
