@@ -1596,31 +1596,11 @@ export const configRejectSubmission = [
   {
     body: [
       {
-        label: "SUBMISSION_ID",
-        isMandatory: true,
-        key: "submissionId",
-        type: "dropdown",
-        populators: {
-          name: "submissionId",
-          optionsKey: "name",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          options: [
-            {
-              code: "0001",
-              name: "0001",
-            },
-            {
-              code: "0002",
-              name: "0002",
-            },
-            {
-              code: "0003",
-              name: "0003",
-            },
-          ],
-        },
+        label: "REF_APPLICATION_ID",
+        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        key: "refApplicationId",
+        type: "text",
+        populators: { name: "refApplicationId" },
       },
     ],
   },
@@ -1721,11 +1701,11 @@ export const configsVoluntarySubmissionStatus = [
       },
       {
         label: "APPROVAL_STATUS",
-        isMandatory: true,
+        isMandatory: false,
         key: "approvalStatus",
         type: "text",
         disable: true,
-        populators: { name: "approvalStatus" },
+        populators: { name: "approvalStatus", hideInForm: true },
       },
     ],
   },
@@ -1877,11 +1857,11 @@ export const configsCaseTransfer = [
     body: [
       {
         label: "APPROVAL_STATUS",
-        isMandatory: true,
+        isMandatory: false,
         key: "approvalStatus",
         type: "text",
         disable: true,
-        populators: { name: "approvalStatus" },
+        populators: { name: "approvalStatus", hideInForm: true },
       },
       {
         label: "CASE_TRANSFERRED_TO",
@@ -2411,7 +2391,7 @@ export const configsCaseWithdrawal = [
       {
         label: "REASON_FOR_WITHDRAWAL",
         isMandatory: true,
-        key: "reasonForWarrant",
+        key: "reasonForWithdrawal",
         disable: true,
         type: "text",
         populators: { name: "reasonForWithdrawal" },

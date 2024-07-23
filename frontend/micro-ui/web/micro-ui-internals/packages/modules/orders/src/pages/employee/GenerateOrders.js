@@ -111,7 +111,6 @@ const GenerateOrders = () => {
       tenantId,
     },
     {},
-    "dristi",
     applicationNumber,
     applicationNumber
   );
@@ -214,7 +213,7 @@ const GenerateOrders = () => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
       setNewFormdata([defaultOrderData]);
     } else {
-      setNewFormdata(ordersData?.list);
+      setNewFormdata(ordersData?.list.reverse());
     }
   }, [ordersData, defaultOrderData]);
 
@@ -263,7 +262,9 @@ const GenerateOrders = () => {
       REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
       JUDGEMENT: configsJudgement,
     };
-    let newConfig = structuredClone(applicationTypeConfig);
+    let newConfig = currentOrder?.orderNumber
+      ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
+      : structuredClone(applicationTypeConfig);
     if (orderType && configKeys.hasOwnProperty(orderType)) {
       let orderTypeForm = configKeys[orderType];
       if (orderType === "SECTION_202_CRPC") {
@@ -379,12 +380,21 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, orderType, respondants, t]);
+  }, [complainants, currentOrder, orderType, respondants, t]);
 
   const defaultValue = useMemo(() => {
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
     if (applicationDetails?.referenceId) {
       updatedFormdata.refApplicationId = applicationDetails?.referenceId;
+    }
+    if (orderType === "WITHDRAWAL") {
+      if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
+        console.log("applicationDetails1", applicationDetails, applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
+        updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
+        updatedFormdata.partyType = applicationDetails.additionalDetails?.partyType;
+        updatedFormdata.reasonForWithdrawal = applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code;
+        // updatedFormdata.applicationStatus = applicationDetails.additionalDetails?.applicationStatus;
+      }
     }
     if (orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
       if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
@@ -530,7 +540,7 @@ const GenerateOrders = () => {
         history.push(`?filingNumber=${filingNumber}`);
       }
       setSelectedOrder((prev) => {
-        return deleteOrderIndex < prev ? prev - 1 : prev;
+        return deleteOrderIndex <= prev ? prev - 1 : prev;
       });
     } catch (error) {
       //show toast of API failed
@@ -555,7 +565,7 @@ const GenerateOrders = () => {
   };
 
   const handleClose = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tabs=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
       from: "orderSuccessModal",
     });
     setShowSuccessModal(false);

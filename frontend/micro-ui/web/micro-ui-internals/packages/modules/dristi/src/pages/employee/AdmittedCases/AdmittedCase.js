@@ -70,6 +70,21 @@ const AdmittedCases = ({ isJudge = true }) => {
         : "",
     [caseDetails?.statutesAndSections]
   );
+  const litigants = caseDetails?.litigants?.length > 0 ? caseDetails?.litigants : [];
+  const finalLitigantsData = litigants.map((litigant) => {
+    return {
+      ...litigant,
+      name: litigant.additionalDetails?.fullName,
+    };
+  });
+  const reps = caseDetails?.representatives?.length > 0 ? caseDetails?.representatives : [];
+  const finalRepresentativesData = reps.map((rep) => {
+    return {
+      ...rep,
+      name: rep.additionalDetails?.advocateName,
+      partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
+    };
+  });
 
   const caseRelatedData = useMemo(
     () => ({
@@ -78,11 +93,14 @@ const AdmittedCases = ({ isJudge = true }) => {
       cnrNumber,
       title: caseDetails?.caseTitle || "",
       stage: caseDetails?.stage,
+      parties: [...finalLitigantsData, ...finalRepresentativesData],
       case: caseDetails,
       statue: statue,
     }),
     [caseDetails, caseId, cnrNumber, filingNumber, statue]
   );
+
+  console.log(caseRelatedData);
 
   const showMakeSubmission = useMemo(() => {
     return (
@@ -172,6 +190,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Parties",
+                      isMandatory: false,
+                      key: "parties",
+                      type: "dropdown",
+                      populators: {
+                        name: "parties",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {
@@ -229,6 +269,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Owner",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {
@@ -260,6 +322,28 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
             sections: {
               ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Owner",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
               searchResult: {
                 ...tabConfig.sections.searchResult,
                 uiConfig: {
@@ -269,6 +353,11 @@ const AdmittedCases = ({ isJudge = true }) => {
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
+                        }
+                      : column.label === "Owner"
+                      ? {
+                          ...column,
+                          parties: caseRelatedData.parties,
                         }
                       : column;
                   }),
@@ -414,11 +503,11 @@ const AdmittedCases = ({ isJudge = true }) => {
   const handleDownload = () => {
     setShowOrderReviewModal(false);
   };
-  const handleRequestLabel = () => {
-    setShowOrderReviewModal(false);
+  const handleExtensionRequest = (orderNumber) => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${orderNumber}&isExtension=true`);
   };
-  const handleSubmitDocument = () => {
-    setShowOrderReviewModal(false);
+  const handleSubmitDocument = (orderNumber) => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${orderNumber}`);
   };
 
   const openHearingModule = () => {
@@ -566,7 +655,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         </div>
       </div>
       <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
-      {config?.label !== "Overview" && config?.label !== "Complaints" && (
+      {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
@@ -610,7 +699,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         <div className="case-overview-wrapper">
           <CaseOverview
             handleDownload={handleDownload}
-            handleRequestLabel={handleRequestLabel}
+            handleRequestLabel={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
@@ -641,8 +730,9 @@ const AdmittedCases = ({ isJudge = true }) => {
           order={currentOrder}
           setShowReviewModal={setShowOrderReviewModal}
           handleDownload={handleDownload}
-          handleRequestLabel={handleRequestLabel}
+          handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
+          showSubmissionButtons={isCitizen}
         />
       )}
 
