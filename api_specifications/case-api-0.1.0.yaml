@@ -352,18 +352,19 @@ components:
           items:
             $ref: '#/components/schemas/LinkedCase'
         filingDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
           description: >-
             Date of case filing in epoch time. This is the date when the case
             entered the judicial system.
           example: 1709542147
         judgementDate:
-            type: string
-            format: date
+            type: integer
+            format: int64
             description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
         registrationDate:
-          type: string
+          type: integer
+          format: int64
           description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
         caseDetails:
           type: object
@@ -812,19 +813,19 @@ components:
         status:
           type: string
         filingFromDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
           description: search cases within filing date range. if only filingFromDate is specified, then cases for this filing date will be retrieved
         filingToDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
         registrationFromDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
           description: search cases within registration date range. if only registrationFromDate is specified, then cases for this registration date will be retrieved
         registrationToDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
         responseList:
           type: array
           items:
