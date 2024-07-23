@@ -43,13 +43,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const hideSubmit = useMemo(() => {
-    if (userRoles.includes("CITIZEN")) {
-      return true;
-    }
-    return modalType === "Submissions"
-      ? !(userRoles.includes("APPLICATION_RESPONDER") && documentSubmission?.[0]?.status === "PENDINGREVIEW")
-      : !(userRoles.includes("APPLICATION_RESPONDER") || userRoles.includes("DEPOSITION_ESIGN") || userRoles.includes("DEPOSITION_PUBLISHER"));
-  }, [documentSubmission, modalType, userRoles]);
+    return !userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN");
+  }, [userRoles]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -63,7 +58,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const actionCancelLabel = useMemo(() => {
     return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
-      ? t("Reject")
+      ? t("REJECT")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
 
