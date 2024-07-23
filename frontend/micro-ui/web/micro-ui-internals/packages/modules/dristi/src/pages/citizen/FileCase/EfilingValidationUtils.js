@@ -987,7 +987,9 @@ const documentUploadHandler = async (document, index, prevCaseDetails, data, pag
   let tempFile;
   debugger;
   const isMultipleUpload =
-    pageConfig?.formConfig?.find((config) => config?.body?.[0]?.key === key)?.populators?.inputs?.[0]?.isMultipleUpload === true || false;
+    pageConfig?.formconfig
+      ?.find((config) => config?.body?.[0]?.key === key)
+      ?.body?.[0]?.populators?.inputs?.find((input) => input.name === "document")?.isMultipleUpload === true || false;
 
   const oldBouncedChequeFileUpload = prevCaseDetails?.caseDetails?.[selected]?.formdata?.[data?.displayindex]?.data?.[key];
 
@@ -1723,6 +1725,19 @@ export const updateCaseDetails = async ({
             setFormDataValue("swornStatement", documentData?.swornStatement);
           }
           if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
+            const prevMemorandumOfComplaint =
+              prevCaseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.[0]?.data?.memorandumOfComplaint?.document;
+            const newMemorandumOfComplaint = data?.data?.memorandumOfComplaint?.document;
+            const temp = prevCaseDetails?.documents
+              ?.filter((doc) =>
+                prevMemorandumOfComplaint
+                  ?.filter((leftItem) => !newMemorandumOfComplaint?.find((rightItem) => leftItem?.fileStore === rightItem?.fileStore))
+                  ?.find((doc2) => doc2?.fileStore === doc?.fileStore)
+              )
+              ?.map((doc) => {
+                return { ...doc, isActive: false };
+              });
+            tempDocList = [...tempDocList, ...(temp ? temp : [])];
             documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
             documentData.memorandumOfComplaint.document = await Promise.all(
               data?.data?.memorandumOfComplaint?.document?.map(async (document, index) => {
@@ -1746,6 +1761,18 @@ export const updateCaseDetails = async ({
             documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
           }
           if (data?.data?.prayerForRelief?.document && data?.data?.prayerForRelief?.document.length > 0) {
+            const prevPrayerForRelief = prevCaseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.[0]?.data?.prayerForRelief?.document;
+            const newPrayerForRelief = data?.data?.prayerForRelief?.document;
+            const temp = prevCaseDetails?.documents
+              ?.filter((doc) =>
+                prevPrayerForRelief
+                  ?.filter((leftItem) => !newPrayerForRelief?.find((rightItem) => leftItem?.fileStore === rightItem?.fileStore))
+                  ?.find((doc2) => doc2?.fileStore === doc?.fileStore)
+              )
+              ?.map((doc) => {
+                return { ...doc, isActive: false };
+              });
+            tempDocList = [...tempDocList, ...(temp ? temp : [])];
             documentData.prayerForRelief = documentData.prayerForRelief || {};
             documentData.prayerForRelief.document = await Promise.all(
               data?.data?.prayerForRelief?.document?.map(async (document, index) => {
@@ -1906,7 +1933,6 @@ export const updateCaseDetails = async ({
     ...data,
     caseTitle,
     linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-    filingDate: caseDetails.filingDate,
     workflow: {
       ...caseDetails?.workflow,
       action: action,
@@ -1924,7 +1950,6 @@ export const updateCaseDetails = async ({
         ...data,
         documents: tempDocList,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-        filingDate: formatDate(new Date()),
         workflow: {
           ...caseDetails?.workflow,
           action: action,
