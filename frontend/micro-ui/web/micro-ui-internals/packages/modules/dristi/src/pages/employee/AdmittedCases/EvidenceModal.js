@@ -84,7 +84,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     },
   };
   const reqEvidenceUpdate = {
-    url: `/evidence/artifacts/v1/_update`,
+    url: Urls.dristi.evidenceUpdate,
     params: {},
     body: {},
     config: {
@@ -180,7 +180,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (documentSubmission?.[0].artifactList.artifactType === "DEPOSITION") {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: Urls.dristi.evidenceUpdate,
           params: {},
           body: {
             artifact: {
@@ -204,7 +204,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       await evidenceUpdateMutation.mutate(
         {
-          url: `/evidence/artifacts/v1/_update`,
+          url: Urls.dristi.evidenceUpdate,
           params: {},
           body: {
             artifact: {
