@@ -555,7 +555,7 @@ const GenerateOrders = () => {
   };
 
   const handleClose = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tabs=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
       from: "orderSuccessModal",
     });
     setShowSuccessModal(false);

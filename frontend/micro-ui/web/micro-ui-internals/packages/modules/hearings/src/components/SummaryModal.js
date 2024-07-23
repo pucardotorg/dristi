@@ -77,19 +77,28 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [transcript, setTranscript] = useState("");
 
-  const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
-    { hearing: { tenantId } },
+  const reqBody = {
+    hearing: { tenantId },
+    criteria: {
+      tenantID: tenantId,
+      hearingId: hearingId,
+    },
+  };
+
+  const { data: latestText, refetch } = Digit.Hooks.hearings.useGetHearings(
+    reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
     true
   );
 
   useEffect(() => {
+    // await refetch();
     if (latestText && latestText?.HearingList?.[0]?.transcript?.[0]) {
       const hearingData = latestText?.HearingList?.[0];
       setTranscript(hearingData.transcript[0]);
     }
-  }, [latestText, hearingId]);
+  }, [latestText, stepper]);
 
   return (
     <div>

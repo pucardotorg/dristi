@@ -1,68 +1,28 @@
-import React, { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { useState } from "react";
-import { Button, Modal } from "@egovernments/digit-ui-react-components";
 import { FormComposerV2 } from "@egovernments/digit-ui-components";
-import { Card } from "@egovernments/digit-ui-react-components";
-import useGetAvailableDates from "../../hooks/hearings/useGetAvailableDates";
+import { Modal } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import NextHearingModal from "../../components/NextHearingModal";
 import SummaryModal from "../../components/SummaryModal";
+
 const AdjournHearing = (props) => {
-  const { tenantId } = props;
-  const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+  const { hearing } = props;
+  const { hearingId } = Digit.Hooks.useQueryParams();
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
-  const [caseDetails, setCaseDetails] = useState();
-  const [selectedDate, setSelectedDate] = useState(null);
   const [reasonFormData, setReasonFormData] = useState({});
 
   const history = useHistory();
-
-  useEffect(() => {
-    getCaseDetails();
-  }, []);
-
-  const getCaseDetails = async () => {
-    try {
-      const response = await DRISTIService.searchCaseService(
-        {
-          criteria: [
-            {
-              filingNumber: latestText?.HearingList[0]?.filingNumber[0],
-            },
-          ],
-          tenantId,
-        },
-        {}
-      );
-      setCaseDetails(response);
-    } catch (error) {
-      const response = {
-        Case_Number: "FSM-29-04-23-898898",
-        Court_Name: "Kerala City Criminal Court",
-        Case_Type: "NIA S 138",
-      };
-      setCaseDetails(response);
-    }
-  };
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}${path}`);
   };
 
-  const { data: datesResponse, refetch: refetchGetAvailableDates } = useGetAvailableDates(true);
-  const Dates = useMemo(() => datesResponse || [], [datesResponse]);
-  const { t } = useTranslation();
-  const closeSetDate = () => {
-    handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`);
-  };
-
   const onSubmit = (data) => {
     setStepper(stepper + 1);
     setDisable(true);
   };
-  const onGenerateOrder = () => {};
 
   const config = [
     {
@@ -125,10 +85,6 @@ const AdjournHearing = (props) => {
     );
   };
 
-  const onBack = () => {
-    setStepper(stepper - 1);
-  };
-
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -140,17 +96,6 @@ const AdjournHearing = (props) => {
       if (formData.reason.code !== "Select a Reason") setDisable(false);
     }
   };
-  const DateCard = ({ date, isSelected, onClick }) => (
-    <div
-      className="date-card"
-      style={{
-        border: `1px solid ${isSelected ? "#007BFF" : "#DDD"}`,
-      }}
-      onClick={onClick}
-    >
-      {date}
-    </div>
-  );
 
   return (
     <div>
@@ -190,48 +135,7 @@ const AdjournHearing = (props) => {
       {stepper === 2 && (
         <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} stepper={stepper} setStepper={setStepper} />
       )}
-      {stepper === 3 && (
-        <Modal
-          headerBarMain={<Heading label={"Set Next Hearing Date"} />}
-          headerBarEnd={<CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />}
-          onClose={closeSetDate}
-          actionSaveLabel="Generate Order"
-          actionSaveOnSubmit={onGenerateOrder}
-          actionCancelLabel="Back"
-          actionCancelOnSubmit={onBack}
-          style={{ marginTop: "5px" }}
-          popupStyles={{ width: "50%", height: "auto" }}
-          isDisabled={selectedDate === null}
-        >
-          <Card style={{ marginTop: "20px" }}>
-            <div className="case-card">
-              <div className="case-details">
-                Case Number:
-                <div> {caseDetails.Case_Number} </div>
-              </div>
-              <div className="case-details">
-                Court Name:
-                <div> {caseDetails.Court_Name} </div>
-              </div>
-              <div className="case-details">
-                Case Type:
-                <div> {caseDetails.Case_Type} </div>
-              </div>
-            </div>
-          </Card>
-          <div style={{ margin: "10px" }}>Select a Date</div>
-          <Card>
-            <div className="case-card">
-              {Dates.map((date, index) => (
-                <DateCard key={index} date={date} isSelected={selectedDate === date} onClick={() => setSelectedDate(date)} />
-              ))}
-            </div>
-          </Card>
-          <div className="footClass">
-            Dates Doesn't work? <Button label={"Select Custom Date"} variation={"teritiary"} onClick={() => {}} style={{ border: "none" }} />
-          </div>
-        </Modal>
-      )}
+      {stepper === 3 && <NextHearingModal hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />}
     </div>
   );
 };

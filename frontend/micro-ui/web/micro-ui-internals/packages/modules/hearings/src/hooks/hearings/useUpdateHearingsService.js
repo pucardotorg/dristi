@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { hearingService } from "../services";
 
 function useUpdateHearingsService(data, params, keys, enabled) {

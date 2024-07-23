@@ -311,7 +311,7 @@ const SubmissionsCreate = () => {
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
-            assignes: getAllAssignees(caseDetails),
+            // assignes: getAllAssignees(caseDetails),
           },
         },
       };
@@ -329,7 +329,7 @@ const SubmissionsCreate = () => {
       const reqBody = {
         application: {
           ...applicationDetails,
-          workflow: { ...applicationDetails?.workflow, documents: [{}], action, assignes: null },
+          workflow: { ...applicationDetails?.workflow, documents: [{}], action },
           tenantId,
         },
         tenantId,
