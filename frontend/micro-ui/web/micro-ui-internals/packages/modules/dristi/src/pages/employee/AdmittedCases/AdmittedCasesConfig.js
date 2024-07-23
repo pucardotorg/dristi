@@ -147,7 +147,7 @@ export const TabSearchconfig = {
       label: "Orders",
       type: "search",
       apiDetails: {
-        serviceName: "/order/order/v1/search",
+        serviceName: "/order/v1/search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
@@ -276,7 +276,7 @@ export const TabSearchconfig = {
       type: "search",
       customHookName: "dristi.useApplicationDetails",
       apiDetails: {
-        serviceName: "/application/application/v1/search",
+        serviceName: "/application/v1/search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
@@ -413,7 +413,7 @@ export const TabSearchconfig = {
       type: "search",
       customHookName: "dristi.useEvidenceDetails",
       apiDetails: {
-        serviceName: "/evidence/artifacts/v1/_search",
+        serviceName: "/evidence/v1/_search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
@@ -644,7 +644,7 @@ export const TabSearchconfig = {
       label: "Parties",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },

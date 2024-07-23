@@ -2,7 +2,7 @@ export const litigantInboxConfig = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/case/case/v1/_search",
+    serviceName: "/case/v1/_search",
     requestParam: {},
     requestBody: {
       tenantId: "pg",

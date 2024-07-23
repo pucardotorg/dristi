@@ -92,7 +92,7 @@ module.exports = function (app) {
     "/hcm-bff/bulk/_transform",
     "/hcm-bff/hcm/_processmicroplan",
     "/health-hrms",
-    "/case/case/v1/_search",
+    "/case/v1/_search",
     "/casemanagement/*",
     "/case/*",
     "/order/*",

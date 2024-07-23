@@ -122,7 +122,7 @@ export const TabLitigantSearchConfig = {
       label: "All",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -238,7 +238,7 @@ export const TabLitigantSearchConfig = {
       label: "Drafts",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -351,7 +351,7 @@ export const TabLitigantSearchConfig = {
       label: "Closed",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -474,7 +474,7 @@ export const TabJudgeSearchConfig = {
       label: "All",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -593,7 +593,7 @@ export const TabJudgeSearchConfig = {
       label: "Ongoing",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -712,7 +712,7 @@ export const TabJudgeSearchConfig = {
       label: "Registered",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -850,7 +850,7 @@ export const TabJudgeSearchConfig = {
       label: "Closed",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -995,7 +995,7 @@ export const TabFSOSearchConfig = {
       label: "All",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
@@ -1133,7 +1133,7 @@ export const TabFSOSearchConfig = {
       label: "Scrutiny Due",
       type: "search",
       apiDetails: {
-        serviceName: "/case/case/v1/_search",
+        serviceName: "/case/v1/_search",
         requestParam: {},
         requestBody: {
           tenantId: "pg",
