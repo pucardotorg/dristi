@@ -186,20 +186,20 @@ public class CaseRepository {
         List<CourtCase> responseList = caseCriteria.getResponseList();
         if(responseList.isEmpty())
             return;
-        setRepresentingDoc(caseRepresentingDocumentMap,responseList);
-    }
-
-    private void setRepresentingDoc(Map<UUID, List<Document>> caseRepresentingDocumentMap, List<CourtCase> responseList){
         if (caseRepresentingDocumentMap != null) {
             responseList.forEach(courtCase -> {
-                if (courtCase.getRepresentatives() != null) {
-                    courtCase.getRepresentatives().forEach(rep -> {
-                        if (rep.getRepresenting() != null) {
-                            rep.getRepresenting().forEach(representing -> {
-                                if (representing != null) {
-                                    representing.setDocuments(caseRepresentingDocumentMap.get(representing.getId()));
-                                }
-                            });
+                setRepresentingDoc(courtCase,caseRepresentingDocumentMap);
+            });
+        }
+    }
+
+    private void setRepresentingDoc(CourtCase courtCase, Map<UUID, List<Document>> caseRepresentingDocumentMap){
+        if (courtCase.getRepresentatives() != null) {
+            courtCase.getRepresentatives().forEach(rep -> {
+                if (rep.getRepresenting() != null) {
+                    rep.getRepresenting().forEach(representing -> {
+                        if (representing != null) {
+                            representing.setDocuments(caseRepresentingDocumentMap.get(representing.getId()));
                         }
                     });
                 }
