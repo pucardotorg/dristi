@@ -75,41 +75,13 @@ paths:
       summary: search for orders
       description: |
         search order(s) based on different parameters
-      parameters:
-        - name: id
-          in: query
-          description: id of the order being searched
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: tenantId whose order(s) are being searched
-          schema:
-            type: string
-        - name: applicationNumber
-          in: query
-          description: the aapplicationNumber whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: filingNumber
-          in: query
-          description: the filingNumber of the case whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: the status of the order(s) being searched
-          schema:
-            type: string
+      requestBody:
+        description: Details for the search order(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/OrderSearchRequest'
+        required: true
       responses:
         "200":
           description: ResponseInfo with order list
@@ -152,20 +124,29 @@ paths:
 
 components:
   schemas:
+    OrderSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/OrderCriteria'
+
     OrderRequest:
       type: object
       properties:
         RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: '#/components/schemas/OrderCreate'
+
     OrderResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: '#/components/schemas/OrderUpdate'
 
     OrderListResponse:
       type: object
@@ -177,7 +158,7 @@ components:
         list:
           type: array
           items:
-            $ref: '#/components/schemas/Order'
+            $ref: '#/components/schemas/OrderUpdate'
 
     OrderExistsRequest:
       type: object
@@ -188,6 +169,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderExists'
+
     OrderExistsResponse:
       type: object
       properties:
@@ -198,10 +180,34 @@ components:
           items:
             $ref: '#/components/schemas/OrderExists'
 
+    OrderCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        tenantId:
+          type: string
+        id:
+          type: string
+        orderNumber:
+          type: string
+        applicationNumber:
+          type: string
+        status:
+          type: string
+
     OrderExists:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
         filingNumber:
           type: string
         cnrNumber:
@@ -225,9 +231,7 @@ components:
           maxLength: 36
           description: auto generated primary for internal reference
           readOnly: true
-        tenantId:
-          type: string
-          description: This is tenantId of the case
+
         filingNumber:
           type: string
           description: the associated case
@@ -241,15 +245,17 @@ components:
             description: application number the order is based on. Could be null if not based on any application
         hearingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
           type: string
           minLength: 24
           maxLength: 256
           description: Order date and Case Name For example it will be Order number 1 for Rajpal et all vs State of Kerala
+        linkedOrderNumber:
+          type: string
+          minLength: 24
+          maxLength: 256
+          description: Linked orderNumber for reissue of orders (for summons and warrants et)
         createdDate:
           type: string
           format: date
@@ -297,3 +303,23 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
+
+    OrderCreate:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          properties:
+            tenantId:
+              type: string
+              writeOnly: true
+              description: tenantId for data security boundary. During creation, this is writable
+
+    OrderUpdate:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          properties:
+            tenantId:
+              type: string
+              readOnly: true
+              description: tenantId for data security boundary. During update or search, this is read only
