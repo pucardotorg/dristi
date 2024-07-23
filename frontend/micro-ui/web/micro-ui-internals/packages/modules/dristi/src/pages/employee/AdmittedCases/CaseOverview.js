@@ -21,6 +21,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
 
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const isCitizen = userRoles.includes("CITIZEN");
   const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
       id: representative?.advocateId,
@@ -306,6 +307,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
           handleDownload={handleDownload}
           handleRequestLabel={handleRequestLabel}
           handleSubmitDocument={handleSubmitDocument}
+          showSubmissionButtons={isCitizen}
         />
       )}
     </React.Fragment>

@@ -732,6 +732,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           handleDownload={handleDownload}
           handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
+          showSubmissionButtons={isCitizen}
         />
       )}
 
