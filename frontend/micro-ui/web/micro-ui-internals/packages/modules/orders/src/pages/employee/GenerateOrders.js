@@ -110,7 +110,6 @@ const GenerateOrders = () => {
       tenantId,
     },
     {},
-    "dristi",
     applicationNumber,
     applicationNumber
   );
@@ -262,7 +261,9 @@ const GenerateOrders = () => {
       REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
       JUDGEMENT: configsJudgement,
     };
-    let newConfig = structuredClone(applicationTypeConfig);
+    let newConfig = currentOrder?.orderNumber
+      ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
+      : structuredClone(applicationTypeConfig);
     if (orderType && configKeys.hasOwnProperty(orderType)) {
       let orderTypeForm = configKeys[orderType];
       if (orderType === "SECTION_202_CRPC") {
@@ -378,7 +379,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, orderType, respondants, t]);
+  }, [complainants, currentOrder, orderType, respondants, t]);
 
   const defaultValue = useMemo(() => {
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);

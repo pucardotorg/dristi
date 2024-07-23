@@ -503,11 +503,11 @@ const AdmittedCases = ({ isJudge = true }) => {
   const handleDownload = () => {
     setShowOrderReviewModal(false);
   };
-  const handleRequestLabel = () => {
-    setShowOrderReviewModal(false);
+  const handleExtensionRequest = (orderNumber) => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${orderNumber}&isExtension=true`);
   };
-  const handleSubmitDocument = () => {
-    setShowOrderReviewModal(false);
+  const handleSubmitDocument = (orderNumber) => {
+    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${orderNumber}`);
   };
 
   const openHearingModule = () => {
@@ -699,7 +699,7 @@ const AdmittedCases = ({ isJudge = true }) => {
         <div className="case-overview-wrapper">
           <CaseOverview
             handleDownload={handleDownload}
-            handleRequestLabel={handleRequestLabel}
+            handleRequestLabel={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
@@ -730,7 +730,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           order={currentOrder}
           setShowReviewModal={setShowOrderReviewModal}
           handleDownload={handleDownload}
-          handleRequestLabel={handleRequestLabel}
+          handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
         />
       )}
