@@ -1,6 +1,7 @@
 export const modalConfig = [
   {
     headModal: "CS_SEND_CASE_BACK",
+    wordCount: "50",
     body: [
       {
         type: "component",
@@ -50,7 +51,7 @@ export const selectParticipantConfig = {
   checkBoxes: [
     {
       key: "Compliant",
-      name: "CS_COMPLAINANT",
+      name: "CS_COMPLAINANTS",
       dependentText: "CS_COMPLAINANT_SELECT",
       dependentFields: [],
     },

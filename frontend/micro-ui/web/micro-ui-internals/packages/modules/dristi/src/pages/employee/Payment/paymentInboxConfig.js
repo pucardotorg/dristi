@@ -26,19 +26,54 @@ export const paymentInboxConfig = {
         type: "registration-requests-table-search",
         primaryLabel: "ES_COMMON_SEARCH",
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-        minReqFields: 1,
+        minReqFields: 0,
         defaultValues: {
           filingNumber: "",
           isActive: false,
+          stage: "",
         },
         fields: [
           {
-            label: "Filing No",
+            type: "component",
+            component: "CustomSortComponent",
+            isMandatory: false,
+            disable: false,
+            name: "Sort by",
+            key: "sortCaseListByDate",
+            sortBy: "createdtime",
+            ascText: "Newest to Oldest",
+            descText: "Oldest to Newest",
+            showAdditionalText: true,
+            showIcon: true,
+            icon: "ArrowDownIcon",
+            populators: {},
+          },
+          {
+            label: "Stage",
+            isMandatory: false,
+            key: "stage",
+            type: "dropdown",
+            disable: false,
+            populators: {
+              name: "substage",
+              options: ["Filing", "Cognizance", "Inquiry", "Appearance", "Framing of charges", "Evidence", "Arguments", "Judgment", "Post-Judgement"],
+              styles: {
+                maxWidth: "300px",
+                minWidth: "200px",
+              },
+              optionsCustomStyle: {
+                overflowX: "hidden",
+              },
+            },
+          },
+          {
+            label: "Case ID",
             type: "text",
             isMandatory: false,
             disable: false,
             populators: {
               name: "filingNumber",
+              placeholder: "Case ID",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -71,8 +106,7 @@ export const paymentInboxConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "",
-            additionalCustomization: true,
+            jsonPath: "substage",
           },
 
           {
@@ -95,5 +129,5 @@ export const paymentInboxConfig = {
     },
   },
   additionalSections: {},
-  additionalDetails: "filingNumber",
+  additionalDetails: { filingNumber: "", stage: "", sortBy: "sortCaseListByDate" },
 };

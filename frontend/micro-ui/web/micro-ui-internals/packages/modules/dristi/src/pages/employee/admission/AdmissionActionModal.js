@@ -1,5 +1,5 @@
 import { CardText, Modal, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 
 import { modalConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
@@ -30,7 +30,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
   return (
-    <div style={{ padding: "10px" }} onClick={props.onClick}>
+    <div style={{ padding: "10px", cursor: "pointer" }} onClick={props.onClick}>
       <Close />
     </div>
   );
@@ -49,12 +49,17 @@ function AdmissionActionModal({
   updatedConfig,
   tenantId,
   // hearingDetails,
+  handleScheduleNextHearing,
+  filingNumber,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [label, setLabel] = useState(false);
+
   const closeToast = () => {
     setShowErrorToast(false);
   };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       closeToast();
@@ -62,23 +67,29 @@ function AdmissionActionModal({
 
     return () => clearTimeout(timer);
   }, [closeToast]);
-  const stepItems = useMemo(() =>
-    modalConfig.map(
-      (step) => {
-        const texts = {};
-        for (const key in step.texts) {
-          texts[key] = t(step.texts[key]);
-        }
-        return { ...step, texts };
-      },
-      [modalConfig]
-    )
-  );
+
+  const stepItems = useMemo(() => {
+    return modalConfig.map((step) => {
+      const texts = {};
+      for (const key in step?.texts) {
+        texts[key] = t(step?.texts[key]);
+      }
+      return { ...step, texts };
+    });
+  }, [t]);
+
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
 
-  const onSubmit = (props) => {
+  const onSubmit = (props, wordLimit) => {
+    const words = props?.commentForLitigant?.trim()?.split(/\s+/);
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
+      setLabel("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS");
+      return;
+    }
+    if (words?.length >= wordLimit) {
+      setShowErrorToast(true);
+      setLabel(`ES_WORD_COUNT_LIMIT ${wordLimit}`);
     } else {
       handleSendCaseBack(props);
     }
@@ -120,6 +131,7 @@ function AdmissionActionModal({
       date: newSelectedChip,
     });
   };
+
   return (
     <React.Fragment>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
@@ -127,6 +139,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popmoduleClassName={"send-case-back-modal"}
         >
           <FormComposerV2
             config={[stepItems[0]]}
@@ -140,14 +153,14 @@ function AdmissionActionModal({
             // onFormValueChange={onFormValueChange}
             headingStyle={{ textAlign: "center" }}
             cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-            onSubmit={(props) => onSubmit(props)}
+            onSubmit={(props) => onSubmit(props, stepItems[0]?.wordCount)}
             submitInForm
             // className={"registration-select-name"}
             secondaryActionLabel={t("CORE_LOGOUT_CANCEL")}
             buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
             actionClassName="e-filing-action-bar"
           ></FormComposerV2>
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && <Toast error={true} label={t(label)} isDleteBtn={true} onClose={closeToast} />}
         </Modal>
       )}
       {modalInfo?.page == 0 && modalInfo?.type === "admitCase" && (
@@ -166,6 +179,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popupStyles={{ width: "917px" }}
         >
           <ScheduleAdmission
             config={stepItems[2]}
@@ -189,6 +203,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popmoduleClassName={"schedule-admission-select-participants-modal"}
         >
           <SelectParticipant
             config={updatedConfig}
@@ -213,6 +228,7 @@ function AdmissionActionModal({
           headerBarEnd={<CloseBtn onClick={() => setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: false })} />}
           // actionSaveLabel={t("CS_COMMON_CONFIRM")}
           hideSubmit={true}
+          popmoduleClassName={"custom-date-selector-modal"}
 
           // actionSaveOnSubmit={onSelect}
         >
@@ -235,8 +251,10 @@ function AdmissionActionModal({
             </div>
           }
           actionCancelLabel={t(submitModalInfo?.backButtonText)}
-          actionCancelOnSubmit={() => history.push(`/employee`)} // to be changed aster per req, for next hearing
-          actionSaveOnSubmit={() => history.push(`/employee`)}
+          actionCancelOnSubmit={() => {
+            history.push(`/employee`);
+          }}
+          actionSaveOnSubmit={handleScheduleNextHearing}
           className="case-types"
           formId="modal-action"
         >

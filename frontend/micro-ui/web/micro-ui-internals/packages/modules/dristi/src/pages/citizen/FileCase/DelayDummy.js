@@ -6,8 +6,6 @@ export const DelayDummy = [
         code: "NO",
         name: "NO",
         showForm: true,
-        isVerified: true,
-        hasBarRegistrationNo: true,
         isEnabled: true,
       },
       delayApplicationReason: {

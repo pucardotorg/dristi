@@ -1,5 +1,9 @@
+import { ArrowDirection } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Evidence } from "../components/Evidence";
+import { OrderName } from "../components/OrderName";
+import { OwnerColumn } from "../components/OwnerColumn";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -8,6 +12,9 @@ const businessServiceMap = {
 const inboxModuleNameMap = {
   "muster-roll-approval": "muster-roll-service",
 };
+
+const user = localStorage.getItem("user-info");
+const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
 
 export const UICustomizations = {
   businessServiceMap,
@@ -177,6 +184,7 @@ export const UICustomizations = {
                 advocateName: adv?.additionalDetails?.username,
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                data: adv,
               };
             });
           },
@@ -207,6 +215,11 @@ export const UICustomizations = {
             moduleSearchCriteria: {
               ...moduleSearchCriteria,
             },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: window?.Digit.ULBService.getStateId(),
+            },
+            tenantId: window?.Digit.ULBService.getStateId(),
           },
         },
       };
@@ -285,6 +298,10 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -293,6 +310,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -301,6 +322,12 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId: window?.Digit.ULBService.getStateId(),
+          config: {
+            ...requestCriteria?.config,
+            select: (data) => {
+              return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+            },
+          },
         },
       };
     },
@@ -314,7 +341,7 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
         case "Stage":
-          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+          return <span>{t("UNDER_SCRUTINY")}</span>;
         case "Case Type":
           return <span>NIA S138</span>;
         case "Days Since Filing":
@@ -334,27 +361,36 @@ export const UICustomizations = {
   paymentInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          ...("sortBy" in additionalDetails && {
+            [additionalDetails.sortBy]: undefined,
+          }),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+            ...("sortBy" in additionalDetails && {
+              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            }),
+          },
         },
       ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
-        });
-      }
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -389,7 +425,16 @@ export const UICustomizations = {
         case "Action":
           return (
             <span className="action-link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("CS_RECORD_PAYMENT")}</Link>
+              <Link
+                style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}
+              >
+                {" "}
+                <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
+                  {t("CS_RECORD_PAYMENT")}
+                </span>{" "}
+                <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
+              </Link>
             </span>
           );
         default:
@@ -407,6 +452,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...additionalDetails,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
@@ -416,6 +465,10 @@ export const UICustomizations = {
           [additionalDetails.searchKey]: "",
           ...additionalDetails,
           tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -425,35 +478,222 @@ export const UICustomizations = {
           criteria,
           tenantId,
         },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
+        },
       };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        default:
+          return t("ES_COMMON_NA");
+      }
     },
   },
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      const tenantId = window?.Digit.ULBService.getStateId();
       // We need to change tenantId "processSearchCriteria" here
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
+      const criteria = requestCriteria?.body?.criteria?.map((item) => {
+        return {
+          ...item,
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
-        },
-      ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
-        });
-      }
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
+        };
+      });
+
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
   },
+  SearchIndividualConfig: {
+    // preProcess: (requestCriteria, additionalDetails) => {
+    //   console.log(requestCriteria, additionalDetails, "PREPROCESS");
+
+    //   return {
+    //     ...requestCriteria,
+    //     config: {
+    //       select: (data) => {
+    //         return { ...data };
+    //       },
+    //     },
+    //   };
+    // },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Document":
+          console.log("document", row);
+          console.log("document Column", column);
+          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
+            row.workflow.action !== "PENDINGREVIEW" ? (
+            <OwnerColumn rowData={row} colData={column} t={t} />
+          ) : (
+            ""
+          );
+        case "File":
+          console.log("document", row);
+          console.log("document Column", column);
+          return userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
+            row.workflow.action !== "PENDINGREVIEW" ? (
+            <Evidence rowData={row} colData={column} t={t} />
+          ) : (
+            ""
+          );
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Parties":
+          return (
+            <span>{`${value
+              .slice(0, 2)
+              .map((party) => party.name)
+              .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+          );
+        case "Order Type":
+          return <OrderName rowData={row} colData={column} value={value} />;
+        case "Submission Name":
+          return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Document Type":
+          return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        default:
+          break;
+      }
+    },
+  },
+  PartiesConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      console.log(requestCriteria, additionalDetails);
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            console.log(data, "CONFIG");
+            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
+            const finalLitigantsData = litigants.map((litigant) => {
+              return {
+                ...litigant,
+                name: litigant.additionalDetails?.fullName,
+              };
+            });
+            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ? data.criteria[0].responseList[0].representatives : [];
+            const finalRepresentativesData = reps.map((rep) => {
+              return {
+                ...rep,
+                name: rep.additionalDetails?.advocateName,
+                partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
+              };
+            });
+            return {
+              ...data,
+              criteria: {
+                ...data.criteria[0],
+                responseList: {
+                  ...data.criteria[0].responseList[0],
+                  parties: [...finalLitigantsData, ...finalRepresentativesData],
+                },
+              },
+            };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        // case "Document":
+        //   console.log("document", row);
+        //   return <OwnerColumn name={row?.name?.familyName} t={t} />;
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        default:
+          break;
+      }
+    },
+  },
+  patternValidation: (key) => {
+    switch (key) {
+      case "contact":
+        return /^[6-9]\d{9}$/;
+      case "email":
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      case "userName":
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+      default:
+        return;
+    }
+  },
+  maxDateValidation: (key) => {
+    switch (key) {
+      case "date":
+        return new Date().toISOString().split("T")[0];
+      default:
+        return;
+    }
+  },
+};
+
+const CommentComponent = ({ key, comment }) => {
+  return (
+    <div className="comment-body" key={key}>
+      <div className="name-logo">
+        <div className="comment-avatar">
+          <span>{comment?.author[0]}</span>
+        </div>
+      </div>
+      <div className="comment-details">
+        <h3 className="comment-header">
+          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
+        </h3>
+        <p className="comment-text">{comment?.text}</p>
+      </div>
+    </div>
+  );
 };

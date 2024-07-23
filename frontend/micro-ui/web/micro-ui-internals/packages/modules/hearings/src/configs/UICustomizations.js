@@ -2,7 +2,7 @@ import { Link, useHistory, } from "react-router-dom";
 import React from "react";
 import _ from "lodash";
 import { Button } from "@egovernments/digit-ui-react-components";
-import OverlayDropdown from "../components/custom_dropdown";
+import OverlayDropdown from "../components/HearingOverlayDropdown";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -306,8 +306,8 @@ export const UICustomizations = {
                     alignItems: "center"
                 }}>
                 
-                  <Button variation={"secondary"} label={"Start"} onButtonClick={()=> handleNavigate('/employee/hearings/inside-hearing')}></Button>,
-                  <OverlayDropdown style={{position:"absolute"}}/>
+                  <Button variation={"secondary"} label={"Start"} onButtonClick={()=> handleNavigate('/employee/hearings/inside-hearing')}></Button>
+                  <OverlayDropdown style={{position:"absolute"}} column={column}/>
                   </div>
                 );
     
@@ -348,4 +348,35 @@ export const UICustomizations = {
           }
         },
       },
+      PreHearingsConfig: {
+          preProcess: (data) => {
+            console.log("PreConfigData", data);
+            return data;
+          },
+          additionalCustomizations: (row, key, column, value, t, searchResult) => {
+            switch (key) {
+              case "Actions":
+                return (
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    {true ? (
+                      <Button
+                        variation={"secondary"}
+                        label={""}
+                        onButtonClick={() => handleNavigate("/employee/hearings/inside-hearing?hearingId=HEARING-ID-2024-07-05-000068")} // pass the dynamic hearingID
+                        style={{ marginRight: "1rem" }}
+                      >
+                        <strong>Start</strong>
+                      </Button>
+                    ) : (
+                      <div style={{ marginRight: "1rem" }}>{"-"}</div>
+                    )}
+
+                    {/* <OverlayDropdown style={{ position: "absolute" }} /> */}
+                  </div>
+                );
+              default:
+                return t("ES_COMMON_NA");
+            }
+          },
+        },
 };

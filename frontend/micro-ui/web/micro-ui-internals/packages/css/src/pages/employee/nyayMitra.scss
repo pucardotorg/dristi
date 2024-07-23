@@ -8,6 +8,7 @@
     .hambuger-back-wrapper {
       display: flex !important;
       gap: 16px;
+      cursor: pointer;
       img {
         width: fit-content !important;
       }

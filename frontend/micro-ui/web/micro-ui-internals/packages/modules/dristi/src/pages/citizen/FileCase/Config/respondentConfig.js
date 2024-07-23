@@ -1,5 +1,3 @@
-import { Label } from "@egovernments/digit-ui-react-components";
-
 const respondentFromconfig = [
   {
     head: "CS_RESPONDENT_TYPE",
@@ -251,7 +249,7 @@ const respondentFromconfig = [
     body: [
       {
         type: "text",
-        key: "company_Name",
+        key: "companyName",
         label: "company_Name",
         isMandatory: true,
         populators: {

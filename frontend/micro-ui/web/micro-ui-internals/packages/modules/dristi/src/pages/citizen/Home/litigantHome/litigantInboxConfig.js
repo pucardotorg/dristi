@@ -29,7 +29,7 @@ export const litigantInboxConfig = {
         },
         fields: [
           {
-            label: "Filing No",
+            label: "CS_FILING_NO",
             type: "text",
             isMandatory: false,
             disable: false,
@@ -57,7 +57,8 @@ export const litigantInboxConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "",
+            jsonPath: "status",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",
@@ -66,6 +67,7 @@ export const litigantInboxConfig = {
           {
             label: "Case Type",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",

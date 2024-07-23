@@ -94,6 +94,9 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
           isDisabled = true;
         }
+        if (input?.name == "barRegistrationNumber" && formData?.clientDetails?.barRegistrationNumber?.length < input?.validation?.minlength) {
+          isDisabled = true;
+        }
       });
     });
     if (isDisabled) {

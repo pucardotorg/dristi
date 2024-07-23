@@ -1,10 +1,8 @@
-import React, { useMemo, useState } from "react";
-import CustomErrorTooltip from "./CustomErrorTooltip";
-import { FileUploader } from "react-drag-drop-files";
-import { UploadIcon } from "@egovernments/digit-ui-react-components";
-import RenderFileCard from "./RenderFileCard";
+import { CardLabelError } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
+import { isEmptyObject } from "../Utils";
 
-function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
+function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -18,15 +16,27 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
   );
 
   function setValue(value, input) {
+    let updatedValue = {
+      ...formData[config.key],
+    };
+
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
+      updatedValue = {
+        ...updatedValue,
         ...input.reduce((res, curr) => {
           res[curr] = value[curr];
           return res;
         }, {}),
-      });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+      };
+    } else {
+      updatedValue[input] = value;
+    }
+
+    if (!value) {
+      updatedValue = null;
+    }
+
+    onSelect(config.key, isEmptyObject(updatedValue) ? null : updatedValue, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {
@@ -43,14 +53,14 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
               {t(input?.textAreaHeader)}
             </h1>
           )}
-          {
+          {!config?.disableScrutinyHeader && (
             <span>
               <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
               </p>
             </span>
-          }
+          )}
         </div>
         <textarea
           value={formData?.[config.key]?.[input.name]}
@@ -59,10 +69,11 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
           }}
           rows={5}
           maxLength={400}
-          className="custom-textarea-style"
+          className={`custom-textarea-style${errors[config.key] ? " alert-error-border" : ""}`}
           placeholder={t(input?.placeholder)}
           disabled={config.disable}
         ></textarea>
+        {errors[config.key] && <CardLabelError>{t(errors[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
       </div>
     );
   });

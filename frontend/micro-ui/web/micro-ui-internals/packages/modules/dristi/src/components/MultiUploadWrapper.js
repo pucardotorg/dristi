@@ -9,15 +9,16 @@ const displayError = ({ t, error, name }, customErrorMsg) => (
 );
 
 const fileValidationStatus = (file, regex, maxSize, t, notSupportedError, maxFileErrorMessage) => {
+  const updatedRegex = typeof regex === "string" ? new RegExp(regex.replace("/i", "").replace("/(.*?)", "(.*?)")) : regex;
   const status = { valid: true, name: file?.name?.substring(0, 15), error: "" };
   if (!file) return;
 
-  if (!regex.test(file.name) && file.size / 1024 / 1024 > maxSize) {
+  if (!updatedRegex.test(file.name) && file.size / 1024 / 1024 > maxSize) {
     status.valid = false;
     status.error = t(`NOT_SUPPORTED_FILE_TYPE_AND_FILE_SIZE_EXCEEDED_5MB`);
   }
 
-  if (!regex.test(file.name)) {
+  if (!updatedRegex.test(file.name)) {
     status.valid = false;
     status.error = t(notSupportedError ? notSupportedError : `NOT_SUPPORTED_FILE_TYPE`);
   }
@@ -69,7 +70,7 @@ const MultiUploadWrapper = ({
   containerStyles,
   noteMsg,
   notSupportedError,
-  maxFileErrorMessage
+  maxFileErrorMessage,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -110,7 +111,16 @@ const MultiUploadWrapper = ({
     const files = Array.from(e.target.files);
 
     if (!files.length) return;
-    const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state, notSupportedError, maxFileErrorMessage);
+    const [validationMsg, error] = checkIfAllValidFiles(
+      files,
+      allowedFileTypesRegex,
+      allowedMaxSizeInMB,
+      t,
+      maxFilesAllowed,
+      state,
+      notSupportedError,
+      maxFileErrorMessage
+    );
 
     if (!error) {
       try {

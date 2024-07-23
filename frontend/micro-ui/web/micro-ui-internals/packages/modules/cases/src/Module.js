@@ -9,7 +9,7 @@ export const CasesModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   console.log(path);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["cases", "common", "workflow"];
+  const moduleCode = ["case", "common", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -25,7 +25,7 @@ export const CasesModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   CasesModule,
-  CasesCard
+  CasesCard,
 };
 
 export const initCasesComponents = () => {
