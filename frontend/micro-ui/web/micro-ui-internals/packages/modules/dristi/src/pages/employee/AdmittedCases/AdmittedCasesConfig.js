@@ -135,6 +135,10 @@ export const TabSearchconfig = {
               //   jsonPath: "auditDetails.createdTime",
               //   additionalCustomization: true,
               // },
+              {
+                label: "Actions",
+                additionalCustomization: true,
+              },
             ],
             enableColumnSort: true,
             resultsJsonPath: "HearingList",
@@ -210,10 +214,10 @@ export const TabSearchconfig = {
                 type: "dropdown",
                 populators: {
                   name: "status",
-                  optionsKey: "value",
+                  optionsKey: "type",
                   mdmsConfig: {
-                    masterName: "Status",
-                    moduleName: "case",
+                    masterName: "OrderStatus",
+                    moduleName: "Order",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -342,10 +346,10 @@ export const TabSearchconfig = {
                 type: "dropdown",
                 populators: {
                   name: "status",
-                  optionsKey: "value",
+                  optionsKey: "type",
                   mdmsConfig: {
-                    masterName: "Status",
-                    moduleName: "case",
+                    masterName: "ApplicationStatus",
+                    moduleName: "Application",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -445,10 +449,10 @@ export const TabSearchconfig = {
               {
                 label: "Type",
                 isMandatory: false,
-                key: "evidenceType",
+                key: "artifactType",
                 type: "dropdown",
                 populators: {
-                  name: "evidenceType",
+                  name: "artifactType",
                   optionsKey: "type",
                   mdmsConfig: {
                     masterName: "EvidenceType",
@@ -480,21 +484,21 @@ export const TabSearchconfig = {
               //     },
               //   },
               // },
-              {
-                label: "Status",
-                isMandatory: false,
-                key: "status",
-                type: "dropdown",
-                populators: {
-                  name: "status",
-                  optionsKey: "value",
-                  mdmsConfig: {
-                    masterName: "Status",
-                    moduleName: "case",
-                    // localePrefix: "SUBMISSION_TYPE",
-                  },
-                },
-              },
+              // {
+              //   label: "Status",
+              //   isMandatory: false,
+              //   key: "status",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "status",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Status",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
               {
                 label: "Search Artifact Number",
                 isMandatory: false,
@@ -519,7 +523,7 @@ export const TabSearchconfig = {
                 additionalCustomization: true,
               },
               {
-                label: "Document Id",
+                label: "Artifact Number",
                 jsonPath: "artifactNumber",
               },
               {

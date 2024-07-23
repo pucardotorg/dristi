@@ -76,7 +76,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   );
 
   const reqCreate = {
-    url: Urls.dristi.submissionsUpdate,
+    url: `/application/v1/update`,
     params: {},
     body: {},
     config: {

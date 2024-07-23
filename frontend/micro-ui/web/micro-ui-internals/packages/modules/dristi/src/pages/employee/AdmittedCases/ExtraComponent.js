@@ -8,7 +8,7 @@ const ExtraComponent = ({ tab, setUpdateCounter, caseData, setOrderModal }) => {
   switch (tab) {
     case "Hearings":
     case "Overview":
-      return <NextHearingCard caseData={caseData} width={tab === "Overview" ? "70%" : "100%"} />;
+      return <NextHearingCard caseData={caseData} width={"100%"} />;
     case "Orders":
       return !userRoles.includes("CITIZEN") && <OrderDrafts caseData={caseData} setOrderModal={setOrderModal} />;
     case "Submissions":
