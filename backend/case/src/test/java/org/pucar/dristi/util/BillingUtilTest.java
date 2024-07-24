@@ -36,9 +36,6 @@ public class BillingUtilTest {
     @Mock
     private Configuration configs;
 
-    @BeforeEach
-    public void setup() {
-    }
     @Test
     public void createDemand_createsDemandSuccessfully() {
         CaseRequest caseRequest = new CaseRequest();

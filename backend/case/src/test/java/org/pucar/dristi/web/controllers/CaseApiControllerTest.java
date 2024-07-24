@@ -104,7 +104,6 @@ public class CaseApiControllerTest {
         CaseSearchRequest caseRequest = new CaseSearchRequest(); // Create a mock CaseRequest object
         caseRequest.setCriteria(List.of(CaseCriteria.builder().cnrNumber("cnrNumber").build()));
         // Mocking caseService.createCase method to return a CourtCase object
-        CourtCase courtCase = new CourtCase(); // Create a mock CourtCase object
         caseService.searchCases(caseRequest);
 
         // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object

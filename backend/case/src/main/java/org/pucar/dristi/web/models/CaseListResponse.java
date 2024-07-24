@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -37,13 +36,5 @@ public class CaseListResponse {
 
     @Valid
     private Pagination pagination = null;
-
-    public CaseListResponse addCaseItem(CaseCriteria caseCriteria) {
-        if (this.criteria == null) {
-            this.criteria = new ArrayList<>();
-        }
-        this.criteria.add(caseCriteria);
-        return this;
-    }
 
 }

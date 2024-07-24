@@ -26,24 +26,24 @@ public class PaymentBackUpdateConsumerTest {
 
     @Test
     void listenPayments_processesRecordSuccessfully() {
-        HashMap<String, Object> record = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
         String topic = "topic";
 
-        doNothing().when(paymentUpdateService).process(record);
+        doNothing().when(paymentUpdateService).process(data);
 
-        paymentBackUpdateConsumer.listenPayments(record, topic);
+        paymentBackUpdateConsumer.listenPayments(data, topic);
 
-        verify(paymentUpdateService, times(1)).process(record);
+        verify(paymentUpdateService, times(1)).process(data);
     }
 
     @Test
     void listenPayments_logsErrorWhenExceptionIsThrown() {
-        HashMap<String, Object> record = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
         String topic = "topic";
 
-        doThrow(new RuntimeException()).when(paymentUpdateService).process(record);
+        doThrow(new RuntimeException()).when(paymentUpdateService).process(data);
 
-        assertDoesNotThrow(() -> paymentBackUpdateConsumer.listenPayments(record, topic));
-        verify(paymentUpdateService, times(1)).process(record);
+        assertDoesNotThrow(() -> paymentBackUpdateConsumer.listenPayments(data, topic));
+        verify(paymentUpdateService, times(1)).process(data);
     }
 }

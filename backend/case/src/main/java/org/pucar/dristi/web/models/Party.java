@@ -74,12 +74,5 @@ public class Party {
 
 	private Object additionalDetails = null;
 
-	public Party addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

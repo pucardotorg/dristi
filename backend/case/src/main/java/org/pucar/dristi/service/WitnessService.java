@@ -28,19 +28,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WitnessService {
 
-    @Autowired
     private WitnessRegistrationValidator validator;
 
-    @Autowired
     private WitnessRegistrationEnrichment enrichmentUtil;
 
-    @Autowired
     private WitnessRepository witnessRepository;
 
-    @Autowired
     private Configuration config;
-    @Autowired
+
     private Producer producer;
+
+    @Autowired
+    public WitnessService(WitnessRegistrationValidator validator, Producer producer, Configuration config, WitnessRepository witnessRepository, WitnessRegistrationEnrichment enrichmentUtil) {
+        this.validator = validator;
+        this.producer = producer;
+        this.config = config;
+        this.witnessRepository = witnessRepository;
+        this.enrichmentUtil = enrichmentUtil;
+    }
 
     public Witness registerWitnessRequest(WitnessRequest body) {
         try {

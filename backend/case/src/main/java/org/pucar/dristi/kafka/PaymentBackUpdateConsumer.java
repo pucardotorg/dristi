@@ -1,6 +1,6 @@
 package org.pucar.dristi.kafka;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.pucar.dristi.service.PaymentUpdateService;
 import org.slf4j.Logger;
@@ -24,12 +24,12 @@ public class PaymentBackUpdateConsumer {
     }
 
     @KafkaListener(topics = {"${kafka.topics.receipt.create}"})
-    public void listenPayments(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listenPayments(final Map<String, Object> data, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
-            logger.info("Received record: {} on topic: {}", record, topic);
-            paymentUpdateService.process(record);
+            logger.info("Received record: {} on topic: {}", data, topic);
+            paymentUpdateService.process(data);
         } catch (final Exception e) {
-            logger.error("Error while listening to value: {} on topic: {}: ", record, topic, e);
+            logger.error("Error while listening to value: {} on topic: {}: ", data, topic, e);
         }
     }
 }

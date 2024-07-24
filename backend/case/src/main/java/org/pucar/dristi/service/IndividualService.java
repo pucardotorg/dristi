@@ -16,10 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class IndividualService {
-    @Autowired
+
     private IndividualUtil individualUtils;
-    @Autowired
+
     private Configuration config;
+
+    @Autowired
+    public IndividualService(IndividualUtil individualUtils, Configuration config) {
+        this.individualUtils = individualUtils;
+        this.config = config;
+    }
 
     public Boolean searchIndividual(RequestInfo requestInfo, String individualId) {
         try {

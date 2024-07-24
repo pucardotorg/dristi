@@ -51,8 +51,8 @@ public class AdvocateUtil {
 		criteriaList.add(advocateSearchCriteria);
 		advocateSearchRequest.setCriteria(criteriaList);
 
-		Object response = new HashMap<>();
-		AdvocateListResponse advocateResponse = new AdvocateListResponse();
+		Object response;
+		AdvocateListResponse advocateResponse;
 		try {
 			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
 			advocateResponse = mapper.convertValue(response, AdvocateListResponse.class);
