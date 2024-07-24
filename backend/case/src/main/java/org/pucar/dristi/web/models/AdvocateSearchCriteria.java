@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
@@ -39,11 +38,4 @@ public class AdvocateSearchCriteria {
 	@Valid
 	private List<Advocate> responseList = null;
 
-	public AdvocateSearchCriteria addResponseListItem(Advocate responseListItem) {
-		if (this.responseList == null) {
-			this.responseList = new ArrayList<>();
-		}
-		this.responseList.add(responseListItem);
-		return this;
-	}
 }

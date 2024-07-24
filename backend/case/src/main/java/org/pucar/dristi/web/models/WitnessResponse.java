@@ -34,12 +34,4 @@ public class WitnessResponse   {
                 private List<Witness> witnesses = null;
 
 
-        public WitnessResponse addWitnessesItem(Witness witnessesItem) {
-            if (this.witnesses == null) {
-            this.witnesses = new ArrayList<>();
-            }
-        this.witnesses.add(witnessesItem);
-        return this;
-        }
-
 }

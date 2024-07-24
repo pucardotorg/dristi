@@ -7,7 +7,6 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.ESTABLISHMENT_CODE;
 import static org.pucar.dristi.config.ServiceConstants.STATE;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 

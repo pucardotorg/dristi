@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.IndividualResponse;
@@ -41,7 +38,6 @@ public class IndividualServiceTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(new CourtCase());
         caseRequest.setRequestInfo(RequestInfo.builder().userInfo(User.builder().tenantId("pg").build()).build()); // Mock or provide necessary data
-        Map<String, String> individualUserUUID = new HashMap<>();
 
         // Mock the behavior of dependent components
         IndividualResponse individualResponse = new IndividualResponse(); // Mock or provide necessary data
