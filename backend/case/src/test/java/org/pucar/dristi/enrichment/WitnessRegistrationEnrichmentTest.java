@@ -11,8 +11,6 @@ import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 

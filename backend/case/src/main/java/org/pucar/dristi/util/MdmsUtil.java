@@ -42,8 +42,7 @@ public class MdmsUtil {
 		uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
 		log.info("MDMS Criteria :: {}",mdmsCriteriaReq);
-		Object response = new HashMap<>();
-		Integer rate = 0;
+		Object response;
 		MdmsResponse mdmsResponse = new MdmsResponse();
 		try {
 			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);

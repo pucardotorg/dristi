@@ -8,7 +8,6 @@ import static org.pucar.dristi.config.ServiceConstants.REPRESENTATIVES_SEARCH_QU
 import static org.pucar.dristi.config.ServiceConstants.REPRESENTING_SEARCH_QUERY_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.STATUTE_SECTION_SEARCH_QUERY_EXCEPTION;
 
-import java.lang.reflect.Type;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;

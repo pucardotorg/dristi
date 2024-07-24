@@ -64,7 +64,7 @@ public class BillingUtil {
 		demands.add(demand);
 		demandRequest.setDemands(demands);
 
-		Object response = new HashMap<>();
+		Object response;
 		try {
 			response = restTemplate.postForObject(uri.toString(), demandRequest, Map.class);
 			log.info("Demand response :: {}", response);

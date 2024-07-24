@@ -1,9 +1,5 @@
 package org.pucar.dristi.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
@@ -28,6 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 public class PaymentUpdateService {
@@ -51,7 +52,7 @@ public class PaymentUpdateService {
         this.configuration = configuration;
     }
 
-    public void process(HashMap<String, Object> record) {
+    public void process(Map<String, Object> record) {
 
         try {
 

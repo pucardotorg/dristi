@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;

@@ -33,7 +33,6 @@ import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.JoinCaseRequest;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 

@@ -5,7 +5,6 @@ import static org.pucar.dristi.config.ServiceConstants.NO_IDS_FOUND_ERROR;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.idgen.IdGenerationRequest;
 import org.egov.common.contract.idgen.IdGenerationResponse;
