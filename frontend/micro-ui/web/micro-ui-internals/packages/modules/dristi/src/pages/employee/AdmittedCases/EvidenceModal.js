@@ -9,7 +9,6 @@ import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
-import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
 import { Urls } from "../../../hooks";
 
@@ -146,6 +145,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const applicationCommentsPayload = (newComment) => {
     return {
       ...documentSubmission[0]?.applicationList,
+      statuteSection: { ...documentSubmission[0]?.applicationList.statuteSection, tenantId: tenantId },
       comment: documentSubmission[0]?.applicationList.comment
         ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),

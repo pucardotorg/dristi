@@ -82,24 +82,24 @@ export const TabSearchconfig = {
               //     },
               //   },
               // },
-              {
-                label: "Parties",
-                isMandatory: false,
-                key: "parties",
-                type: "dropdown",
-                populators: {
-                  name: "parties",
-                },
-              },
-              {
-                label: "Order ID",
-                isMandatory: false,
-                key: "orderNumber",
-                type: "text",
-                populators: {
-                  name: "orderNumber",
-                },
-              },
+              // {
+              //   label: "Parties",
+              //   isMandatory: false,
+              //   key: "parties",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "parties",
+              //   },
+              // },
+              // {
+              //   label: "Order ID",
+              //   isMandatory: false,
+              //   key: "orderNumber",
+              //   type: "text",
+              //   populators: {
+              //     name: "orderNumber",
+              //   },
+              // },
             ],
           },
           show: true,
@@ -225,7 +225,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Order Number",
+                label: "Search Order Id",
                 isMandatory: false,
                 key: "orderNumber",
                 type: "text",
@@ -358,12 +358,12 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Submission Number",
+                label: "Search Submission Id",
                 isMandatory: false,
-                key: "application Number",
+                key: "applicationNumber",
                 type: "text",
                 populators: {
-                  name: "application Number",
+                  name: "applicationNumber",
                 },
               },
             ],

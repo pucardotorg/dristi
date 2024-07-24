@@ -249,6 +249,31 @@ const AdmittedCases = ({ isJudge = true }) => {
                 },
               },
             },
+            sections: {
+              ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Parties",
+                      isMandatory: false,
+                      key: "parties",
+                      type: "dropdown",
+                      populators: {
+                        name: "parties",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
+            },
           }
         : tabConfig.label === "History"
         ? {
@@ -674,28 +699,50 @@ const AdmittedCases = ({ isJudge = true }) => {
       {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
+          {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
+            (config?.label === "Hearings" || config?.label === "Documents") && (
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
+            )}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
-            <div
-              onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("GENERATE_ORDERS_LINK")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("GENERATE_ORDERS_LINK")}
+              </div>
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
-            <div
-              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("REQUEST_DOCUMENTS_LINK")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("REQUEST_DOCUMENTS_LINK")}
+              </div>
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
           {isCitizen && config?.label === "Submissions" && (
-            <div
-              onClick={handleMakeSubmission}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("MAKE_SUBMISSION")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                onClick={handleMakeSubmission}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("MAKE_SUBMISSION")}
+              </div>
+
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
         </div>

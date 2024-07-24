@@ -120,7 +120,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
       },
     },
     params: { tenantId },
-    key: "",
+    key: "With",
     config: { enable: true },
   });
   const { data: pendingTaskDetailsWithout = [] } = useGetPendingTask({
@@ -139,7 +139,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
       },
     },
     params: { tenantId },
-    key: "",
+    key: "Without",
     config: { enable: true },
   });
 
