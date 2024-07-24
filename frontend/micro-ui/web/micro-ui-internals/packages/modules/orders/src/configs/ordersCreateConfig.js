@@ -1087,7 +1087,7 @@ export const configsRejectRescheduleHeadingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "originalHearingDate",
         disable: true,
         type: "date",
@@ -1192,7 +1192,7 @@ export const configsRescheduleHearingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "originalHearingDate",
         disable: true,
         type: "date",
@@ -1313,7 +1313,7 @@ export const configsInitiateRescheduleHearingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "originalHearingDate",
         disable: true,
         type: "date",
@@ -2347,7 +2347,7 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "APPLICATION_ON_BEHALF_OF",
-        isMandatory: true,
+        isMandatory: false,
         key: "applicationOnBehalfOf",
         disable: true,
         type: "text",
@@ -2355,7 +2355,7 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "PARTY_TYPE",
-        isMandatory: true,
+        isMandatory: false,
         key: "partyType",
         disable: true,
         type: "text",
@@ -2363,7 +2363,7 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "REASON_FOR_WITHDRAWAL",
-        isMandatory: true,
+        isMandatory: false,
         key: "reasonForWithdrawal",
         disable: true,
         type: "text",
@@ -2371,7 +2371,7 @@ export const configsCaseWithdrawal = [
       },
       {
         label: "APPLICATION_STATUS",
-        isMandatory: true,
+        isMandatory: false,
         key: "applicationStatus",
         disable: true,
         type: "text",
@@ -2947,7 +2947,7 @@ export const configsJudgement = [
     body: [
       {
         label: "CASE_NUMBER",
-        isMandatory: true,
+        isMandatory: false,
         key: "caseNumber",
         disable: true,
         type: "text",
@@ -2955,7 +2955,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_JUDGEMENT",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateOfJudgement",
         disable: true,
         type: "date",
@@ -2963,7 +2963,7 @@ export const configsJudgement = [
       },
       {
         label: "NAME_OF_JUDGE",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameOfJudge",
         disable: true,
         type: "text",
@@ -2971,7 +2971,7 @@ export const configsJudgement = [
       },
       {
         label: "NAME_OF_COURT",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameOfCourt",
         disable: true,
         type: "text",
@@ -2995,7 +2995,7 @@ export const configsJudgement = [
       },
       {
         label: "DESCRIPTION_OF_ACCUSED_RESIDENCE",
-        isMandatory: true,
+        isMandatory: false,
         key: "addressRespondant",
         disable: true,
         type: "text",
@@ -3003,7 +3003,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_OCCURENCE",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateChequeReturnMemo",
         disable: true,
         type: "date",
@@ -3011,7 +3011,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_COMPLAINT",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateFiling",
         disable: true,
         type: "date",
@@ -3019,7 +3019,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_APPREHENSION",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateApprehension",
         disable: true,
         type: "date",
@@ -3027,7 +3027,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_RELEASE_ON_BAIL",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateofReleaseOnBail",
         disable: true,
         type: "date",
@@ -3035,7 +3035,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_COMMENCEMENT_TRIAL",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateofCommencementTrial",
         disable: true,
         type: "date",
@@ -3043,7 +3043,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_CLOSE_TRIAL",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateofCloseTrial",
         disable: true,
         type: "date",
@@ -3051,7 +3051,7 @@ export const configsJudgement = [
       },
       {
         label: "DATE_OF_SENTENCE",
-        isMandatory: true,
+        isMandatory: false,
         key: "dateofSentence",
         disable: true,
         type: "date",
@@ -3059,7 +3059,7 @@ export const configsJudgement = [
       },
       {
         label: "NAME_COMPLAINANT",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameofComplainant",
         disable: true,
         type: "text",
@@ -3067,7 +3067,7 @@ export const configsJudgement = [
       },
       {
         label: "NAME_COMPLAINANT_ADVOCATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameofComplainantAdvocate",
         disable: true,
         type: "text",
@@ -3075,7 +3075,7 @@ export const configsJudgement = [
       },
       {
         label: "NAME_RESPONDANT_ADVOCATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "nameofRespondantAdvocate",
         disable: true,
         type: "text",
@@ -3083,7 +3083,7 @@ export const configsJudgement = [
       },
       {
         label: "OFFENSE",
-        isMandatory: true,
+        isMandatory: false,
         key: "offense",
         disable: true,
         type: "text",
