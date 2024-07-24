@@ -452,6 +452,33 @@ const GenerateOrders = () => {
     setSelectedOrder(newformdata?.length);
   };
 
+  const createPendingTask = async (order) => {
+    console.debug("vaiba", order?.orderType);
+    if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
+      const formdata = order?.additionalDetails?.formdata;
+      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+      let status = "CREATE";
+      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
+      await ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: "Submit Documents",
+          entityType,
+          referenceId: order?.orderNumber,
+          status,
+          assignedTo: assignees,
+          assignedRole: [],
+          cnrNumber: null,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+    }
+    return;
+  };
+
   const handleSaveDraft = async ({ showReviewModal }) => {
     let count = 0;
     const promises = newformdata.map(async (order) => {
@@ -479,32 +506,6 @@ const GenerateOrders = () => {
     if (showReviewModal) {
       setShowReviewModal(true);
     }
-  };
-
-  const createPendingTask = async () => {
-    if (prevOrder?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
-      const formdata = prevOrder?.additionalDetails?.formdata;
-      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
-      let status = "CREATE";
-      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => item?.uuid);
-      await ordersService.customApiService(Urls.orders.pendingTask, {
-        pendingTask: {
-          name: "Submit Documents",
-          entityType,
-          referenceId: prevOrder?.orderNumber,
-          status,
-          assignedTo: assignees,
-          assignedRole: [],
-          cnrNumber: null,
-          filingNumber: filingNumber,
-          isCompleted: false,
-          stateSla: null,
-          additionalDetails: {},
-          tenantId,
-        },
-      });
-    }
-    return;
   };
 
   const handleApplicationAction = async () => {
@@ -536,7 +537,7 @@ const GenerateOrders = () => {
         return;
       }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
-      createPendingTask();
+      createPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {

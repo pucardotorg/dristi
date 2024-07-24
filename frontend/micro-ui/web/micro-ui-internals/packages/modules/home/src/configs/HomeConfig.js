@@ -1408,7 +1408,20 @@ export const pendingTaskOrderOfJudgementActions = {};
 
 export const pendingTaskVoluntarySubmissionActions = {};
 
-export const pendingTaskSubmissionWithResponseActions = {};
+export const pendingTaskSubmissionWithResponseActions = {
+  CREATE: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Mandatory Submission of Documents",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskSubmissionWithoutResponseActions = {};
 
