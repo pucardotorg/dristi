@@ -1947,7 +1947,7 @@ export const updateCaseDetails = async ({
         caseTitle,
         litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
         ...data,
-        documents: tempDocList,
+        // documents: tempDocList,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
         workflow: {
           ...caseDetails?.workflow,
