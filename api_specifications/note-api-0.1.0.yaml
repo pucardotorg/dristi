@@ -1,9 +1,7 @@
 openapi: 3.0.1
 info:
   title: Note And Constitute Element API Documentation
-  description: >-
-    This draft API specification defines the Note and Constitute element
-    registries.
+  description: This draft API specification defines the Note and Constitute element registries.
   version: 1.0.0
 tags:
   - name: Note
@@ -159,6 +157,11 @@ components:
     ConstituteElement:
       type: object
       description: Constitute element registory
+      required:
+        - id
+        - noteId
+        - caseType
+        - value
       properties:
         id:
           type: string
@@ -178,8 +181,8 @@ components:
         RequestInfo:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         note:
-            $ref: '#/components/schemas/Note'
-    NoteResponse: 
+          $ref: '#/components/schemas/Note'
+    NoteResponse:
       type: object
       properties:
         ResponseInfo:
@@ -194,7 +197,7 @@ components:
         RequestInfo:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-            $ref: '#/components/schemas/NoteCriteria'
+          $ref: '#/components/schemas/NoteCriteria'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     NoteListResponse:
