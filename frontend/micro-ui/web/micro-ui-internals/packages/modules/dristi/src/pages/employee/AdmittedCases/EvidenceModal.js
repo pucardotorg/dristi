@@ -62,18 +62,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
 
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
-    {
-      Individual: {
-        userUuid: documentSubmission?.map((docSubmission) => docSubmission.details.sender),
-      },
-    },
-    { tenantId, limit: 10, offset: 0 },
-    "DRISTI",
-    "",
-    true
-  );
-
   const reqCreate = {
     url: `/application/v1/update`,
     params: {},
@@ -342,10 +330,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentApplication(newComment);
     }
   };
-
-  console.log(modalType === "Documents" && documentSubmission[0]?.artifactList.isEvidence);
-
-  if (isLoading) return <div></div>;
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (
@@ -402,7 +386,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>Sender</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{`${data.Individual[index]?.name?.givenName} ${data.Individual[index]?.name?.familyName}`}</h3>
+                        <h3>{docSubmission.details.sender}</h3>
                       </div>
                     </div>
                     <div className="info-row">
