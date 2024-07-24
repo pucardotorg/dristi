@@ -183,7 +183,7 @@ function CaseFileAdmission({ t, path }) {
 
   const handleAdmitCase = async () => {
     setCaseADmitLoader(true);
-    const individualId = fetchBasicUserInfo();
+    const individualId = await fetchBasicUserInfo();
     let documentList = [];
     documentList = [
       ...documentList,
