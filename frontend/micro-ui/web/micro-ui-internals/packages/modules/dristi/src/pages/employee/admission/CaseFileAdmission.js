@@ -165,7 +165,54 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 1 });
     });
   };
-  const handleAdmitCase = () => {
+  const handleAdmitCase = async () => {
+    let documentList = [];
+    documentList = [
+      ...documentList,
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.bouncedChequeFileUpload?.document),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.depositChequeFileUpload?.document),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.returnMemoFileUpload?.document),
+      ...caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((form) => form?.data?.debtLiabilityFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.legalDemandNoticeFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfAcknowledgmentFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfDispatchFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfReplyFileUpload?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.memorandumOfComplaint?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.prayerForRelief?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.swornStatement?.document),
+      ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((form) => form?.data?.inquiryAffidavitFileUpload?.document),
+      ...caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((form) => form?.data?.vakalatnamaFileUpload?.document),
+    ].flat();
+
+    await Promise.all(
+      documentList?.map(async (data) => {
+        await DRISTIService.createEvidence({
+          artifact: {
+            artifactType: "DOCUMENTARY",
+            sourceType: "COMPLAINANT",
+            caseId: caseDetails?.id,
+            filingNumber: caseDetails?.filingNumber,
+            tenantId,
+            comments: [],
+            file: {
+              documentType: data.fileType || data?.documentType,
+              fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
+            },
+            workflow: {
+              action: "TYPE DEPOSITION",
+              documents: [
+                {
+                  documentType: data.fileType,
+                  fileName: data.fileName,
+                  fileStoreId: data.file?.files?.[0]?.fileStoreId,
+                },
+              ],
+            },
+          },
+        });
+      })
+    );
+
     updateCaseDetails("ADMIT", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
