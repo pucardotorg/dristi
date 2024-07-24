@@ -133,7 +133,11 @@ public class CaseService {
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
-            return caseRequest.getCases();
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(caseRequest.getCases(),null, CourtCase.class,caseRequest.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
+
 
         } catch (CustomException e) {
             throw e;

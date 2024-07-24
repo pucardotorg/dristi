@@ -416,6 +416,8 @@ public class CaseServiceTest {
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
         when(config.getCaseUpdateTopic()).thenReturn("case-update-topic");
 
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),eq(CourtCase.class),any())).thenReturn(courtCase);
+
         // Execute
         CourtCase results = caseService.updateCase(caseRequest);
 
