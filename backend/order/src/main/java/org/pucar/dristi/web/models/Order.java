@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -15,7 +14,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,10 +60,8 @@ public class Order {
     private String linkedOrderNumber = null;
 
     @JsonProperty("createdDate")
-    @NotNull
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate createdDate = null;
+    private Long createdDate = null;
 
     @JsonProperty("issuedBy")
     private IssuedBy issuedBy = null;
@@ -107,19 +103,5 @@ public class Order {
     @JsonProperty("workflow")
     @Valid
     private Workflow workflow = null;
-
-
-    public Order addApplicationIdsItem(String applicationNumbersItem) {
-        this.applicationNumber.add(applicationNumbersItem);
-        return this;
-    }
-
-    public Order addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        this.documents.add(documentsItem);
-        return this;
-    }
 
 }

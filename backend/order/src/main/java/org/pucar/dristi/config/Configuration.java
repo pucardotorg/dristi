@@ -108,4 +108,13 @@ public class Configuration {
     // Order Workflow/Business Service name
     @Value("${egov.workflow.order.judgement.business.service.name}")
     private String orderJudgementBusinessServiceName;
+
+    @Value("${mdms.order.type.path}")
+    private String orderTypePath;
+
+    @Value("${mdms.order.category.path}")
+    private String orderCategoryPath;
+
+    @Value("${mdms.order.module.name}")
+    private String orderModule;
 }

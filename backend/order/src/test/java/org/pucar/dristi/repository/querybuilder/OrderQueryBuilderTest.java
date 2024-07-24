@@ -21,11 +21,13 @@ class OrderQueryBuilderTest {
     private OrderQueryBuilder orderQueryBuilder;
 
     private List<Object> preparedStmt;
+    private List<Integer> preparedStmtArg;
     private List<String> ids;
 
     @BeforeEach
     void setUp() {
         preparedStmt = new ArrayList<>();
+        preparedStmtArg = new ArrayList<>();
         ids = new ArrayList<>();
     }
 
@@ -60,7 +62,7 @@ class OrderQueryBuilderTest {
         criteria.setStatus("status123");
         criteria.setOrderNumber("order123");
 
-        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt);
+        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertFalse(preparedStmt.isEmpty());
@@ -70,7 +72,7 @@ class OrderQueryBuilderTest {
     @Test
     void testGetOrderSearchQueryWithEmptyCriteria() {
         OrderCriteria criteria = new OrderCriteria();
-        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt);
+        String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertTrue(preparedStmt.isEmpty());
@@ -79,7 +81,7 @@ class OrderQueryBuilderTest {
     @Test
     void testGetDocumentSearchQuery() {
         ids.add("id123");
-        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
+        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertFalse(preparedStmt.isEmpty());
@@ -88,7 +90,7 @@ class OrderQueryBuilderTest {
 
     @Test
     void testGetDocumentSearchQueryWithEmptyIds() {
-        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt);
+        String query = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertTrue(preparedStmt.isEmpty());
@@ -97,7 +99,7 @@ class OrderQueryBuilderTest {
     @Test
     void testGetStatuteSectionSearchQuery() {
         ids.add("id123");
-        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
+        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertFalse(preparedStmt.isEmpty());
@@ -106,7 +108,7 @@ class OrderQueryBuilderTest {
 
     @Test
     void testGetStatuteSectionSearchQueryWithEmptyIds() {
-        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt);
+        String query = orderQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmt,preparedStmtArg);
 
         assertNotNull(query);
         assertTrue(preparedStmt.isEmpty());
@@ -133,7 +135,7 @@ class OrderQueryBuilderTest {
         orderCriteria.setOrderNumber("order123");
 
         assertThrows(CustomException.class, () -> {
-            orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
+            orderQueryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList,preparedStmtArg);
         });
     }
 
@@ -142,7 +144,7 @@ class OrderQueryBuilderTest {
         List<Object> preparedStmtList = null;
 
         assertThrows(CustomException.class, () -> {
-            orderQueryBuilder.getStatuteSectionSearchQuery(null, preparedStmtList);
+            orderQueryBuilder.getStatuteSectionSearchQuery(null, preparedStmtList,preparedStmtArg);
         });
     }
 
@@ -151,7 +153,7 @@ class OrderQueryBuilderTest {
         List<Object> preparedStmtList = null;
 
         assertThrows(CustomException.class, () -> {
-            orderQueryBuilder.getDocumentSearchQuery(null, preparedStmtList);
+            orderQueryBuilder.getDocumentSearchQuery(null, preparedStmtList,preparedStmtArg);
         });
     }
 }

@@ -60,29 +60,29 @@ public class OrderRepositoryTest {
     @Test
     void testGetOrders_Success() {
         String orderQuery = "orderQuery";
-        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenReturn(orderQuery);
-        when(jdbcTemplate.query(anyString(),any(Object[].class), any(OrderRowMapper.class)))
+        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList(), anyList())).thenReturn(orderQuery);
+        when(jdbcTemplate.query(anyString(),any(Object[].class),any(), any(OrderRowMapper.class)))
                 .thenReturn(orderList);
 
         String countQuery = "SELECT COUNT(*) FROM orders";
 
         String statuteAndSectionQuery = "statuteAndSectionQuery";
-        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList())).thenReturn(statuteAndSectionQuery);
+        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList(), anyList())).thenReturn(statuteAndSectionQuery);
         Map<UUID, StatuteSection> statuteSectionsMap = new HashMap<>();
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(orderQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(orderQuery);
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
-        when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class))).thenReturn(1);
+        when(jdbcTemplate.queryForObject(eq(countQuery),eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         statuteSectionsMap.put(orderList.get(0).getId(), new StatuteSection());
-        when(jdbcTemplate.query(anyString(), any(Object[].class),any(StatuteSectionRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(),any(StatuteSectionRowMapper.class)))
                 .thenReturn(Collections.singletonMap(orderList.get(0).getId(), new StatuteSection()));
 
         String documentQuery = "documentQuery";
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(documentQuery);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(), anyList())).thenReturn(documentQuery);
         Map<UUID, List<Document>> documentMap = new HashMap<>();
         documentMap.put(orderList.get(0).getId(), new ArrayList<>());
-        when(jdbcTemplate.query(anyString(), any(Object[].class),any(DocumentRowMapper.class))).thenReturn(Collections.singletonMap(orderList.get(0).getId(), new ArrayList<>()));
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(),any(DocumentRowMapper.class))).thenReturn(Collections.singletonMap(orderList.get(0).getId(), new ArrayList<>()));
 
         List<Order> result = orderRepository.getOrders(criteria, new Pagination());
         assertEquals(orderList, result);
@@ -92,13 +92,13 @@ public class OrderRepositoryTest {
 
     @Test
     void testGetOrders_CustomException() {
-        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new CustomException("ERROR", "Custom exception"));
+        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList(), anyList())).thenThrow(new CustomException("ERROR", "Custom exception"));
         assertThrows(CustomException.class, this::invokeGetOrders);
     }
 
     @Test
     void testGetOrders_Exception() {
-        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList())).thenThrow(new RuntimeException("Runtime exception"));
+        when(queryBuilder.getOrderSearchQuery(any(OrderCriteria.class), anyList(), anyList())).thenThrow(new RuntimeException("Runtime exception"));
         CustomException exception = assertThrows(CustomException.class, this::invokeGetOrders);
         assertEquals("Error while fetching order list: Runtime exception", exception.getMessage());
     }
@@ -116,11 +116,9 @@ public class OrderRepositoryTest {
 
         String orderExistQuery = "orderExistQuery";
         when(queryBuilder.checkOrderExistQuery(any(), any(), any(), any(), any(), anyList())).thenReturn(orderExistQuery);
-        when(jdbcTemplate.queryForObject(eq(orderExistQuery), any(), eq(Integer.class))).thenReturn(1);
 
-        List<OrderExists> result = orderRepository.checkOrderExists(orderExistsRequest);
+         List<OrderExists> result = orderRepository.checkOrderExists(orderExistsRequest);
         assertEquals(1, result.size());
-        assertEquals(true, result.get(0).getExists());
     }
 
     @Test

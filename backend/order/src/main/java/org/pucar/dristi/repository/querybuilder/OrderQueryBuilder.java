@@ -6,6 +6,7 @@ import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList) {
+    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
             String orderNumber = criteria.getOrderNumber();
             String applicationNumber = criteria.getApplicationNumber();
@@ -112,6 +113,7 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.applicationNumber::text LIKE ?");
                 preparedStmtList.add("%" + applicationNumber + "%");
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
 
@@ -119,6 +121,7 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.cnrnumber = ?");
                 preparedStmtList.add(cnrNumber);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
 
@@ -126,6 +129,7 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.filingNumber = ?");
                 preparedStmtList.add(filingNumber);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
 
@@ -133,18 +137,21 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.tenantId = ?");
                 preparedStmtList.add(tenantId);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if (orderType!=null && !orderType.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.orderType = ?");
                 preparedStmtList.add(orderType);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if (id!=null && !id.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.id = ?");
                 preparedStmtList.add(id);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
 
             }
@@ -153,12 +160,14 @@ public class OrderQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.status = ?");
                 preparedStmtList.add(status);
+                preparedStmtArgList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if (orderNumber!=null && !orderNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.orderNumber = ?");
                 preparedStmtList.add(orderNumber);
+                preparedStmtArgList.add(Types.VARCHAR);
             }
 
             return query.toString();
@@ -168,7 +177,7 @@ public class OrderQueryBuilder {
         }
     }
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtDocList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -177,6 +186,7 @@ public class OrderQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtDocList.add(Types.VARCHAR));
             }
 
             return query.toString();
@@ -187,7 +197,7 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getStatuteSectionSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getStatuteSectionSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtStsecList) {
         try {
             StringBuilder query = new StringBuilder(BASE_STATUTE_SECTION_QUERY);
             query.append(FROM_STATUTE_SECTION_TABLE);
@@ -196,6 +206,7 @@ public class OrderQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtStsecList.add(Types.VARCHAR));
             }
 
             return query.toString();
