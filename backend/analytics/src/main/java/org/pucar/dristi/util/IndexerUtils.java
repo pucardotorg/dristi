@@ -75,7 +75,8 @@ public class IndexerUtils {
 		userInfo.put("tenantId",config.getStateLevelTenantId());
 		JSONObject role = new JSONObject();
 		role.put("code","INTERNAL_MICROSERVICE_ROLE");
-		JSONArray roles = new JSONArray(role);
+		JSONArray roles = new JSONArray();
+		roles.put(role);
 		userInfo.put("roles",roles);
 		JSONObject requestInfo = new JSONObject();
 		requestInfo.put("apiId", "org.egov.pt");
