@@ -75,7 +75,6 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info || {};
-  const uuid = userInfo?.uuid;
   const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -173,9 +172,10 @@ const GenerateOrders = () => {
     cnrNumber + filingNumber,
     true
   );
+
   const defaultIndex = useMemo(() => {
-    return ordersData?.list?.findIndex((order) => order.orderNumber === orderNumber);
-  }, [ordersData, orderNumber]);
+    return newformdata.findIndex((order) => order.orderNumber === orderNumber);
+  }, [newformdata, orderNumber]);
 
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -198,21 +198,21 @@ const GenerateOrders = () => {
       workflow: {
         action: OrderWorkflowAction.SAVE_DRAFT,
         comments: "Creating order",
-        assignes: [uuid],
+        assignes: [],
         rating: null,
         documents: [{}],
       },
       documents: [],
       additionalDetails: { formdata: {} },
     }),
-    [cnrNumber, filingNumber, tenantId, uuid]
+    [cnrNumber, filingNumber, tenantId]
   );
 
   useEffect(() => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
       setNewFormdata([defaultOrderData]);
     } else {
-      setNewFormdata(ordersData?.list.reverse());
+      setNewFormdata([...(ordersData?.list || [])].reverse());
     }
   }, [ordersData, defaultOrderData]);
 
@@ -225,9 +225,10 @@ const GenerateOrders = () => {
       const timer = setTimeout(() => {
         setShowErrorToast(false);
       }, 2000);
-      clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [showErrorToast]);
+
   useEffect(() => {
     if (defaultIndex && defaultIndex !== -1 && defaultIndex !== selectedOrder) {
       setSelectedOrder(defaultIndex);
@@ -383,12 +384,11 @@ const GenerateOrders = () => {
 
   const defaultValue = useMemo(() => {
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
-    if (applicationDetails?.referenceId) {
-      updatedFormdata.refApplicationId = applicationDetails?.referenceId;
+    if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
+      updatedFormdata.refApplicationId = applicationNumber;
     }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
-        console.log("applicationDetails1", applicationDetails, applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
         updatedFormdata.partyType = applicationDetails.additionalDetails?.partyType;
         updatedFormdata.reasonForWithdrawal = applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code;
@@ -430,8 +430,6 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
-    console.debug(order);
-    console.debug({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } });
     try {
       return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
     } catch (error) {
@@ -441,7 +439,7 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      await ordersService.createOrder({ order }, { tenantId });
+      return await ordersService.createOrder({ order }, { tenantId });
     } catch (error) {}
   };
 
@@ -469,12 +467,18 @@ const GenerateOrders = () => {
         return Promise.resolve();
       }
     });
-    await Promise.all(promises);
-    refetchOrdersData();
+    const responsesList = await Promise.all(promises);
+    setNewFormdata(
+      responsesList.map((res) => {
+        return res?.order;
+      })
+    );
+    if (!showReviewModal) {
+      setShowErrorToast(true);
+    }
     if (selectedOrder >= count) {
       setSelectedOrder(0);
     }
-
     if (showReviewModal) {
       setShowReviewModal(true);
     }
@@ -531,10 +535,8 @@ const GenerateOrders = () => {
     try {
       if (newformdata[deleteOrderIndex]?.orderNumber) {
         await updateOrder(newformdata[deleteOrderIndex], OrderWorkflowAction.ABANDON);
-        refetchOrdersData();
-      } else {
-        setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       }
+      setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       if (orderNumber) {
         history.push(`?filingNumber=${filingNumber}`);
       }
@@ -559,8 +561,10 @@ const GenerateOrders = () => {
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
     setShowSuccessModal(false);
-    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
   };
 
   const handleClose = () => {
@@ -574,7 +578,14 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
+  if (
+    isOrdersLoading ||
+    isOrdersFetching ||
+    isCaseDetailsLoading ||
+    isApplicationDetailsLoading ||
+    !ordersData?.list ||
+    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
+  ) {
     return <Loader />;
   }
 
@@ -583,7 +594,7 @@ const GenerateOrders = () => {
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
-          {newformdata?.map((_, index) => {
+          {newformdata?.map((item, index) => {
             return (
               <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>
                 <h1
@@ -592,7 +603,7 @@ const GenerateOrders = () => {
                   }}
                   style={{ cursor: "pointer", flex: 1 }}
                 >
-                  {t(newformdata[index]?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
+                  {t(item?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
                 </h1>
                 {newformdata?.length > 1 && (
                   <span
@@ -614,7 +625,7 @@ const GenerateOrders = () => {
         {modifiedFormConfig && (
           <FormComposerV2
             className={"generate-orders"}
-            key={`${selectedOrder}=${orderType.code}`}
+            key={`${selectedOrder}=${orderType}`}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
             defaultValues={defaultValue}
