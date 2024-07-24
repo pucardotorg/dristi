@@ -183,7 +183,7 @@ function CaseFileAdmission({ t, path }) {
 
   const handleAdmitCase = async () => {
     setCaseADmitLoader(true);
-    const individualId = fetchBasicUserInfo();
+    const individualId = await fetchBasicUserInfo();
     let documentList = [];
     documentList = [
       ...documentList,
@@ -203,7 +203,7 @@ function CaseFileAdmission({ t, path }) {
     ].flat();
 
     await Promise.all(
-      documentList?.map(async (data) => {
+      documentList?.filter(data => data)?.map(async (data) => {
         await DRISTIService.createEvidence({
           artifact: {
             artifactType: "DOCUMENTARY",
@@ -385,6 +385,7 @@ function CaseFileAdmission({ t, path }) {
                   updatedConfig={updatedConfig}
                   tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
+                  caseAdmitLoader={caseAdmitLoader}
                 ></AdmissionActionModal>
               )}
             </div>
