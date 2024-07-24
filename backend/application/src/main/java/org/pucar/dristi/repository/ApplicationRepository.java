@@ -6,7 +6,6 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
-import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,20 +26,16 @@ public class ApplicationRepository {
     private final JdbcTemplate jdbcTemplate;
     private final ApplicationRowMapper rowMapper;
     private final DocumentRowMapper documentRowMapper;
-    private final StatuteSectionRowMapper statuteSectionRowMapper;
-
     @Autowired
     public ApplicationRepository(
             ApplicationQueryBuilder queryBuilder,
             JdbcTemplate jdbcTemplate,
             ApplicationRowMapper rowMapper,
-            DocumentRowMapper documentRowMapper,
-            StatuteSectionRowMapper statuteSectionRowMapper) {
+            DocumentRowMapper documentRowMapper) {
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.rowMapper = rowMapper;
         this.documentRowMapper = documentRowMapper;
-        this.statuteSectionRowMapper = statuteSectionRowMapper;
     }
 
     public List<Application> getApplications(ApplicationSearchRequest applicationSearchRequest) {
@@ -48,7 +43,6 @@ public class ApplicationRepository {
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
-            List<Object> preparedStmtListSt;
             List<Object> preparedStmtListDoc;
 
             String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList);
@@ -73,18 +67,6 @@ public class ApplicationRepository {
             }
             if (ids.isEmpty()) {
                 return applicationList;
-            }
-
-            String statueAndSectionQuery = "";
-            preparedStmtListSt = new ArrayList<>();
-            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt);
-            log.info("Final statue and sections query: {}", statueAndSectionQuery);
-            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), statuteSectionRowMapper);
-            log.info("DB statute sections map :: {}", statuteSectionsMap);
-            if (statuteSectionsMap != null) {
-                applicationList.forEach(application -> {
-                    application.setStatuteSection(statuteSectionsMap.get(application.getId()));
-                });
             }
 
             String documentQuery = "";

@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
-import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -38,9 +37,6 @@ class ApplicationRepositoryTest {
 
     @Mock
     private DocumentRowMapper documentRowMapper;
-
-    @Mock
-    private StatuteSectionRowMapper statuteSectionRowMapper;
 
     @InjectMocks
     private ApplicationRepository applicationRepository;
@@ -106,11 +102,6 @@ class ApplicationRepositoryTest {
         when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(documentQuery);
         when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), eq(documentRowMapper)))
                 .thenReturn(new HashMap<>());
-
-        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList())).thenReturn(statuteQuery);
-        when(jdbcTemplate.query(eq(statuteQuery), any(Object[].class), eq(statuteSectionRowMapper)))
-                .thenReturn(new HashMap<>());
-
         List<Application> result = applicationRepository.getApplications(searchRequest);
 
         assertNotNull(result);
@@ -125,7 +116,6 @@ class ApplicationRepositoryTest {
         verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class), eq(rowMapper));
         verify(jdbcTemplate, times(1)).queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class));
         verify(jdbcTemplate, times(1)).query(eq(documentQuery), any(Object[].class), eq(documentRowMapper));
-        verify(jdbcTemplate, times(1)).query(eq(statuteQuery), any(Object[].class), eq(statuteSectionRowMapper));
     }
 
 

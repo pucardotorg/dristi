@@ -36,6 +36,8 @@ ServiceMaps:
                 outJsonPath: $.Data.applicationDetails.applicationType
               - inJsonPath: $.applicationNumber
                 outJsonPath: $.Data.applicationDetails.applicationNumber
+              - inJsonPath: $.statuteSection
+                outJsonPath: $.Data.applicationDetails.statuteSection
               - inJsonPath: $.issuedBy
                 outJsonPath: $.Data.applicationDetails.issuedBy
               - inJsonPath: $.status
@@ -118,6 +120,8 @@ ServiceMaps:
                 outJsonPath: $.Data.applicationDetails.applicationType
               - inJsonPath: $.applicationNumber
                 outJsonPath: $.Data.applicationDetails.applicationNumber
+              - inJsonPath: $.statuteSection
+                outJsonPath: $.Data.applicationDetails.statuteSection
               - inJsonPath: $.issuedBy
                 outJsonPath: $.Data.applicationDetails.issuedBy
               - inJsonPath: $.status
