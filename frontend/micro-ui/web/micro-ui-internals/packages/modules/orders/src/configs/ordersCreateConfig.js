@@ -2541,7 +2541,7 @@ export const configsBail = [
         label: "BAIL_TYPE",
         isMandatory: true,
         key: "bailType",
-        disable: true,
+        // disable: true,
         type: "dropdown",
         populators: {
           name: "bailType",
