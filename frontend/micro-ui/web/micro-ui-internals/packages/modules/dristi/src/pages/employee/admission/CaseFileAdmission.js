@@ -27,6 +27,7 @@ function CaseFileAdmission({ t, path }) {
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [caseAdmitLoader, setCaseADmitLoader] = useState(false);
   const { data: caseFetchResponse, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -77,7 +78,6 @@ function CaseFileAdmission({ t, path }) {
         cases: {
           ...newcasedetails,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
             action,
@@ -166,6 +166,7 @@ function CaseFileAdmission({ t, path }) {
     });
   };
   const handleAdmitCase = async () => {
+    setCaseADmitLoader(true);
     let documentList = [];
     documentList = [
       ...documentList,
@@ -195,16 +196,19 @@ function CaseFileAdmission({ t, path }) {
             tenantId,
             comments: [],
             file: {
-              documentType: data.fileType || data?.documentType,
-              fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
+              documentType: data?.fileType || data?.documentType,
+              fileStore: data?.fileStore,
+              fileName: data?.fileName,
+              documentName: data?.documentName,
             },
             workflow: {
               action: "TYPE DEPOSITION",
               documents: [
                 {
-                  documentType: data.fileType,
-                  fileName: data.fileName,
-                  fileStoreId: data.file?.files?.[0]?.fileStoreId,
+                  documentType: data?.documentType,
+                  fileName: data?.fileName,
+                  documentName: data?.documentName,
+                  fileStoreId: data?.fileStore,
                 },
               ],
             },
@@ -216,6 +220,7 @@ function CaseFileAdmission({ t, path }) {
     updateCaseDetails("ADMIT", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
+    setCaseADmitLoader(false);
   };
   const handleScheduleCase = (props) => {
     setSubmitModalInfo({
@@ -362,6 +367,7 @@ function CaseFileAdmission({ t, path }) {
                   updatedConfig={updatedConfig}
                   tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
+                  caseAdmitLoader={caseAdmitLoader}
                 ></AdmissionActionModal>
               )}
             </div>

@@ -985,7 +985,6 @@ export const getAllAssignees = (caseDetails) => {
 const documentUploadHandler = async (document, index, prevCaseDetails, data, pageConfig, key, selected, tenantId) => {
   const tempDocList = [];
   let tempFile;
-  debugger;
   const isMultipleUpload =
     pageConfig?.formconfig
       ?.find((config) => config?.body?.[0]?.key === key)
