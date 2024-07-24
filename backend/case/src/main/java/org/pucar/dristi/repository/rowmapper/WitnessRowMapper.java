@@ -44,7 +44,7 @@ public class WitnessRowMapper implements ResultSetExtractor<List<Witness>> {
                             .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
-                    witness = witness.builder()
+                    witness = Witness.builder()
                             .id(UUID.fromString(rs.getString("id")))
                             .caseId(rs.getString("caseid"))
                             .filingNumber(rs.getString("filingnumber"))

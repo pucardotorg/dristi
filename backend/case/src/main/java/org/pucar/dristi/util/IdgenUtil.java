@@ -5,7 +5,6 @@ import static org.pucar.dristi.config.ServiceConstants.NO_IDS_FOUND_ERROR;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.idgen.IdGenerationRequest;
 import org.egov.common.contract.idgen.IdGenerationResponse;
@@ -24,17 +23,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class IdgenUtil {
 
-	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
 	private ServiceRequestRepository restRepo;
 
-	@Autowired
 	private Configuration configs;
 
+	@Autowired
+	public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, Configuration configs) {
+		this.mapper = mapper;
+		this.restRepo = restRepo;
+		this.configs = configs;
+	}
+
 	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
-			Integer count) {
+								  Integer count) {
 		List<IdRequest> reqList = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
@@ -51,6 +54,6 @@ public class IdgenUtil {
 		if (CollectionUtils.isEmpty(idResponses))
 			throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+		return idResponses.stream().map(IdResponse::getId).toList();
 	}
 }

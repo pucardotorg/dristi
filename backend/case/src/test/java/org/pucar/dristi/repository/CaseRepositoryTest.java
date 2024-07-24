@@ -179,46 +179,46 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(queryBuilder.addOrderByQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
 
-        lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LinkedCaseRowMapper.class))).thenReturn(linkedCasesMap);
+        lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LinkedCaseRowMapper.class))).thenReturn(linkedCasesMap);
 
-        lenient().when(queryBuilder.getLitigantSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_litigant_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LitigantRowMapper.class))).thenReturn(litigantMap);
+        lenient().when(queryBuilder.getLitigantSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_litigant_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LitigantRowMapper.class))).thenReturn(litigantMap);
 
-        lenient().when(queryBuilder.getStatuteSectionSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_statute_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class))).thenReturn(statuteSectionsMap);
+        lenient().when(queryBuilder.getStatuteSectionSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_statute_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(StatuteSectionRowMapper.class))).thenReturn(statuteSectionsMap);
 
-        lenient().when(queryBuilder.getRepresentativesSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_representive_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentativeRowMapper.class))).thenReturn(representativeMap);
+        lenient().when(queryBuilder.getRepresentativesSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_representive_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentativeRowMapper.class))).thenReturn(representativeMap);
 
-        lenient().when(queryBuilder.getRepresentingSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_representing_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingRowMapper.class))).thenReturn(representingMap);
+        lenient().when(queryBuilder.getRepresentingSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_representing_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentingRowMapper.class))).thenReturn(representingMap);
 
-        lenient().when(queryBuilder.getDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class))).thenReturn(caseDocumentMap);
+        lenient().when(queryBuilder.getDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(DocumentRowMapper.class))).thenReturn(caseDocumentMap);
 
-        lenient().when(queryBuilder.getLitigantDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_bis_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LitigantDocumentRowMapper.class))).thenReturn(caseLitigantDocumentMap);
+        lenient().when(queryBuilder.getLitigantDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_bis_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LitigantDocumentRowMapper.class))).thenReturn(caseLitigantDocumentMap);
 
-        lenient().when(queryBuilder.getLinkedCaseDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LinkedCaseDocumentRowMapper.class))).thenReturn(caseLinkedCaseDocumentMap);
+        lenient().when(queryBuilder.getLinkedCaseDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LinkedCaseDocumentRowMapper.class))).thenReturn(caseLinkedCaseDocumentMap);
 
-        lenient().when(queryBuilder.getRepresentativeDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentiveDocumentRowMapper.class))).thenReturn(caseRepresentiveDocumentMap);
+        lenient().when(queryBuilder.getRepresentativeDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentiveDocumentRowMapper.class))).thenReturn(caseRepresentiveDocumentMap);
 
-        lenient().when(queryBuilder.getRepresentingDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
+        lenient().when(queryBuilder.getRepresentingDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
 
         // Invoke the method
         List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria, requestInfo);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
+        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any(),any());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(), any(CaseRowMapper.class));
 
         // Assert result
         assertEquals(expectedCourtCaseList, resultCourtCaseList.get(0).getResponseList());
@@ -263,7 +263,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
@@ -310,7 +310,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {

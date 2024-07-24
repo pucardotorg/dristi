@@ -121,7 +121,6 @@ class CaseRegistrationEnrichmentTest {
         User user = new User();
         user.setUuid("user-uuid");
         requestInfo.setUserInfo(user);
-        caseRequest = new CaseRequest();
         caseRequest.setRequestInfo(requestInfo);
         caseRequest.setCases(courtCase);
         // Call the method under test
@@ -180,7 +179,6 @@ class CaseRegistrationEnrichmentTest {
 
     @Test
     void enrichAccessCode_generatesAccessCode() {
-        CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(new CourtCase());
         caseRegistrationEnrichment.enrichAccessCode(caseRequest);
 
@@ -229,7 +227,6 @@ class CaseRegistrationEnrichmentTest {
 
     @Test
     void enrichCaseNumberAndCNRNumber_generatesCaseNumberAndCNRNumber() {
-        CaseRequest caseRequest = new CaseRequest();
         CourtCase courtCase = new CourtCase();
         courtCase.setFilingNumber("2022-12345");
         caseRequest.setCases(courtCase);
@@ -244,7 +241,6 @@ class CaseRegistrationEnrichmentTest {
 
     @Test
     void enrichCaseNumberAndCNRNumber_handlesException() {
-        CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(null);
 
         assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest));
@@ -252,7 +248,6 @@ class CaseRegistrationEnrichmentTest {
 
     @Test
     void enrichAccessCode_handlesException() {
-        CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(null);
 
         assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichAccessCode(caseRequest));
