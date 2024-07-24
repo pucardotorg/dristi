@@ -45,6 +45,7 @@ public class HearingQueryBuilder {
             String tenantId = criteria.getTenantId();
             LocalDate fromDate = criteria.getFromDate();
             LocalDate toDate = criteria.getToDate();
+            String attendeeIndividualId = criteria.getAttendeeIndividualId();
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
@@ -55,6 +56,7 @@ public class HearingQueryBuilder {
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
+            addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList, attendeeIndividualId);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building hearing search query");
