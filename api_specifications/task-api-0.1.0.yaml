@@ -258,16 +258,16 @@ components:
           type: string
           description: The CNR number of the associated case. helps in faster search
         createdDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
           description: the date on which the task was created. Can be treated as the start date also
         dateCloseBy:
-          type: string
-          format: date
+          type: integer
+          format: int64
           description: the date by which the task needs to be closed
         dateClosed:
-          type: string
-          format: date
+          type: integer
+          format: int64
           nullable: true
           description: the date on which the task was actually closed
         taskDescription:
