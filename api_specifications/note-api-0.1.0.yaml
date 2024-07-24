@@ -5,15 +5,12 @@ info:
     This draft API specification defines the Note and Constitute element
     registries.
   version: 1.0.0
-
 tags:
   - name: Note
     description: APIs to create, update, search to a case note.
   - name: Constitute Element
     description: APIs related to search constitute element to a case type.
-
 paths:
-  
   /note/v1/create:
     post:
       tags:
@@ -24,10 +21,10 @@ paths:
         content:
           '*/*':
             schema:
-                $ref: '#/components/schemas/NoteRequest'
+              $ref: '#/components/schemas/NoteRequest'
         required: true
       responses:
-        '200':
+        '201':
           description: RequestInfo with note details created successfully
           content:
             '*/*':
@@ -38,17 +35,13 @@ paths:
           content:
             '*/*':
               schema:
-                  $ref: >-
-                    https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /note/v1/update:
     post:
       tags:
         - Note
       summary: Update/edit a note
-      description: >-
-        API to update the note. Updates can include constitute element,
-        note.
+      description: API to update the note. Updates can include constitute element, note.
       requestBody:
         description: Details for updating all editable fields in the note + RequestInfo meta data.
         content:
@@ -68,9 +61,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /note/v1/search:
     post:
       tags:
@@ -95,9 +86,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-                  
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /element/v1/search:
     post:
       tags:
@@ -122,9 +111,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
     Note:
@@ -158,30 +145,24 @@ components:
         submittedById:
           type: string
         workflow:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
-          description: >-
-            This field is meant to hold any extra information that we want to
-            store for a note.
+          description: This field is meant to hold any extra information that we want to store for a note.
         auditDetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         constituteElements:
           type: array
-          description: >- 
-            This field is meant to hold the element list to note by the case type
+          description: This field is meant to hold the element list to note by the case type
           items:
             $ref: '#/components/schemas/ConstituteElement'
-    
     ConstituteElement:
       type: object
       description: Constitute element registory
       properties:
         id:
           type: string
-        casetype:
+        caseType:
           type: string
         noteId:
           type: string
@@ -191,97 +172,68 @@ components:
         value:
           type: boolean
           description: checked/unchecked value for constitute element to a note 
-    
     NoteRequest:
       type: object
       properties:
         RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        case:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        note:
             $ref: '#/components/schemas/Note'
-    
     NoteResponse: 
       type: object
       properties:
         ResponseInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        cases:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        notes:
           type: array
           items:
             $ref: '#/components/schemas/Note'
-            
     NoteSearchRequest:
       type: object
       properties:
         RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-          type: array
-          items:
             $ref: '#/components/schemas/NoteCriteria'
-            
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     NoteListResponse:
       type: object
       properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        criteria:
+        ResponseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        list:
           type: array
           items:
-            $ref: '#/components/schemas/NoteCriteria'
-            
+            $ref: '#/components/schemas/Note'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     ConstituteElementSearchRequest:
       type: object
       properties:
         RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstituteElementCriteria'
-            
+          $ref: '#/components/schemas/ConstituteElementCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'  
     ConstituteElementListResponse:
       type: object
       properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        criteria:
+        ResponseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        list:
           type: array
           items:
-            $ref: '#/components/schemas/ConstituteElementCriteria'
-    
+            $ref: '#/components/schemas/ConstituteElement'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     NoteCriteria:
       type: object
       properties:
         caseId:
           type: string
-        defaultFields:
-          type: boolean
-        createdFromDate:
-          type: integer
-          format: int64
-          description: search note within created date range. if only createdFromDate is specified, then notes for this filing date will be retrieved
-        createdToDate:
-          type: integer
-          format: int64
-        responseList:
-          type: array
-          items:
-            $ref: '#/components/schemas/Note'
-        pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-            
-    ConstituteElementCriteria:
-      type: object
-      properties:
-        caseId:
+        note:
           type: string
         defaultFields:
           type: boolean
@@ -292,11 +244,10 @@ components:
         createdToDate:
           type: integer
           format: int64
-        responseList:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstituteElement'
-        pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    
+    ConstituteElementCriteria:
+      type: object
+      properties:
+        caseType:
+          type: string
+        defaultFields:
+          type: boolean
