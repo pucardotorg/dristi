@@ -2,15 +2,15 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "asyncordersubmission",
-      "business": "async-order-submission-services",
+      "business": "async-order-submission",
+      "businessService": "async-order-submission-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
@@ -27,15 +27,15 @@
         {
           "sla": null,
           "state": "PENDINGSUBMISSION",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "applicationStatus": null,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SUBMIT",
-              "nextState": "COMPLETED",
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
               "roles": [
                 "SUBMISSION_RESPONDER"
               ]
@@ -48,6 +48,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -57,10 +64,35 @@
           ]
         },
         {
+          "sla": null,
+          "state": "PENDINGPAYMENT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "PAY",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
+            }
+          ]
+        },
+        {
           "sla": 10,
           "state": "REQUESTDELAY",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": false,
@@ -70,6 +102,13 @@
               "nextState": "PENDINGSUBMISSION",
               "roles": [
                 "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             },
             {
@@ -92,6 +131,15 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
