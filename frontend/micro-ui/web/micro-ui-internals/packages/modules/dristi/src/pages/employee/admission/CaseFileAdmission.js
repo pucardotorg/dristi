@@ -203,7 +203,7 @@ function CaseFileAdmission({ t, path }) {
     ].flat();
 
     await Promise.all(
-      documentList?.map(async (data) => {
+      documentList?.filter(data => data)?.map(async (data) => {
         await DRISTIService.createEvidence({
           artifact: {
             artifactType: "DOCUMENTARY",
