@@ -31,12 +31,9 @@ import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import { ordersService } from "../../hooks/services";
-import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
-import { CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
 import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
 import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
@@ -125,13 +122,15 @@ const GenerateOrders = () => {
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
   const complainants = useMemo(() => {
-    return caseDetails?.litigants?.map((item) => {
-      return {
-        code: item?.additionalDetails?.fullName,
-        name: item?.additionalDetails?.fullName,
-        individualId: item?.individualId,
-      };
-    });
+    return (
+      caseDetails?.litigants?.map((item) => {
+        return {
+          code: item?.additionalDetails?.fullName,
+          name: item?.additionalDetails?.fullName,
+          uuid: item?.additionalDetails?.uuid,
+        };
+      }) || []
+    );
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
@@ -165,7 +164,7 @@ const GenerateOrders = () => {
     };
   });
 
-  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+  const { data: advocateDetails } = useGetIndividualAdvocate(
     {
       criteria: advocateIds,
     },
@@ -277,7 +276,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants ? complainants : [],
+                    options: complainants,
                   },
                 };
               }
@@ -305,7 +304,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants ? complainants : [],
+                    options: complainants,
                   },
                 };
               }
@@ -483,25 +482,29 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async () => {
-    let entityType = true ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
-    let status = "CREATE";
-    let assignees = [];
-    await ordersService.customApiService(Urls.orders.pendingTask, {
-      pendingTask: {
-        name: "Submit Documents",
-        entityType,
-        referenceId: prevOrder?.orderNumber,
-        status,
-        assignedTo: assignees,
-        assignedRole: [],
-        cnrNumber: null,
-        filingNumber: filingNumber,
-        isCompleted: false,
-        stateSla: null,
-        additionalDetails: {},
-        tenantId,
-      },
-    });
+    if (prevOrder?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
+      const formdata = prevOrder?.additionalDetails?.formdata;
+      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+      let status = "CREATE";
+      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => item?.uuid);
+      await ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: "Submit Documents",
+          entityType,
+          referenceId: prevOrder?.orderNumber,
+          status,
+          assignedTo: assignees,
+          assignedRole: [],
+          cnrNumber: null,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+    }
+    return;
   };
 
   const handleApplicationAction = async () => {
@@ -533,6 +536,7 @@ const GenerateOrders = () => {
         return;
       }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
+      createPendingTask();
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -607,7 +611,9 @@ const GenerateOrders = () => {
   };
   const handleDownloadOrders = () => {
     setShowSuccessModal(false);
-    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
   };
 
   const handleClose = () => {
@@ -619,6 +625,10 @@ const GenerateOrders = () => {
 
   if (!filingNumber) {
     history.push("/employee/home/home-pending-task");
+  }
+
+  if (applicationNumber && !currentOrder?.refApplicationId) {
+    history.push(`?filingNumber=${filingNumber}`);
   }
 
   if (currentOrder?.refApplicationId && currentOrder?.refApplicationId !== applicationNumber) {

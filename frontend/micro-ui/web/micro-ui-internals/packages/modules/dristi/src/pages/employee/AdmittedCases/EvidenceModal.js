@@ -2,16 +2,15 @@ import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { ordersService } from "../../../../../orders/src/hooks/services";
 import CommentComponent from "../../../components/CommentComponent";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
-import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
 import { DRISTIService } from "../../../services";
+import { Loader } from "@egovernments/digit-ui-components";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
 
@@ -21,14 +20,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
   const history = useHistory();
-  const filingNumber = caseData.filingNumber;
-  const cnrNumber = caseData.cnrNumber;
+  const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
+  const cnrNumber = useMemo(() => caseData.cnrNumber, [caseData]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
-
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const user = Digit.UserService.getUser()?.info?.userName;
-  // console.log();
 
   const CloseBtn = (props) => {
     return (
@@ -252,7 +250,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const submitCommentApplication = async (newComment) => {
-    // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
       url: Urls.dristi.submissionsUpdate,
       params: {},
@@ -327,10 +324,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         } catch (error) {}
       } else {
         if (showConfirmationModal.type === "reject") {
-          await handleRejectApplication();
+          // await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          await handleAcceptApplication();
+          // await handleAcceptApplication();
         }
         const name = showConfirmationModal.type === "reject" ? t("GENERATE_REJECTION_ORDER_APPLICATION") : t("GENERATE_ACCEPTANCE_ORDER_APPLICATION");
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
@@ -340,9 +337,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             referenceId: documentSubmission?.[0]?.applicationList?.applicationNumber,
             status: "SAVE_DRAFT",
             assignedTo: [],
-            assignedRole: [],
-            cnrNumber: null,
-            filingNumber: filingNumber,
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber,
+            filingNumber,
             isCompleted: false,
             stateSla: null,
             additionalDetails: {},
@@ -360,9 +357,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     }
   };
 
-  console.log(modalType === "Documents" && documentSubmission[0]?.artifactList.isEvidence);
+  if (isLoading) {
+    return <Loader />;
+  }
 
-  if (isLoading) return <div></div>;
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (

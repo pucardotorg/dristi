@@ -1389,7 +1389,20 @@ export const pendingTaskCaseActions = {
 
 export const pendingTaskHearingActions = {};
 
-export const pendingTaskOrderActions = {};
+export const pendingTaskOrderActions = {
+  SAVE_DRAFT: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskOrderOfJudgementActions = {};
 

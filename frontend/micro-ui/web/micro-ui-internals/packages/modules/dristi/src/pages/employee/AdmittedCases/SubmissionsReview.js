@@ -8,13 +8,11 @@ import EvidenceModal from "./EvidenceModal";
 const SubmissionReview = ({ caseData, setUpdateCounter }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
-  const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [show, setShow] = useState(false);
   const [documentSubmission, setDocumentSubmission] = useState();
   const [comment, setComment] = useState("");
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
 
   const getDate = (value) => {
     const date = new Date(value);
@@ -54,7 +52,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter }) => {
     setShow(true);
   };
 
-  const { data: applicationRes, refetch: refetchApplicationData, isLoading: isApplicationLoading } = useGetSubmissions(
+  const { data: applicationRes } = useGetSubmissions(
     {
       criteria: {
         filingNumber: filingNumber,
