@@ -72,6 +72,10 @@ ServiceMaps:
                 outJsonPath: $.Data.statueSection.auditDetails.lastModifiedTime
               - inJsonPath: $.additionalDetails
                 outJsonPath: $.Data.applicationDetails.additionalDetails
+              - inJsonPath: $.documents
+                outJsonPath: $.Data.applicationDetails.documents
+              - inJsonPath: $.workflow
+                outJsonPath: $.Data.applicationDetails.workflow
               - inJsonPath: $.auditDetails
                 outJsonPath: $.Data.auditDetails
             externalUriMapping:
@@ -156,6 +160,10 @@ ServiceMaps:
                 outJsonPath: $.Data.statueSection.auditDetails.lastModifiedTime
               - inJsonPath: $.additionalDetails
                 outJsonPath: $.Data.applicationDetails.additionalDetails
+              - inJsonPath: $.documents
+                outJsonPath: $.Data.applicationDetails.documents
+              - inJsonPath: $.workflow
+                outJsonPath: $.Data.applicationDetails.workflow
               - inJsonPath: $.auditDetails
                 outJsonPath: $.Data.auditDetails
             externalUriMapping:

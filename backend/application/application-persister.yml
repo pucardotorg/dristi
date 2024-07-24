@@ -5,10 +5,12 @@ serviceMaps:
       description: Persists application details in tables
       fromTopic: save-application
       isTransaction: true
+      isAuditEnabled: true
       module: APPLICATION
       objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
-      auditAttributeBasePath: $.application
+      auditAttributeBasePath: application
       queryMaps:
 
         - query: INSERT INTO dristi_application(id, tenantId, caseId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, statuteSection,issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -60,15 +62,16 @@ serviceMaps:
       description: Update application details in tables
       fromTopic: update-application
       isTransaction: true
+      isAuditEnabled: true
       module: APPLICATION
       objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
-      auditAttributeBasePath: $.application
+      auditAttributeBasePath: application
       queryMaps:
-        - query: INSERT INTO dristi_application (id, tenantId, caseId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber,statuteSection, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, caseId = EXCLUDED.caseId, filingNumber = EXCLUDED.filingNumber, cnrNumber = EXCLUDED.cnrNumber, referenceId = EXCLUDED.referenceId, createdDate = EXCLUDED.createdDate, applicationCreatedBy = EXCLUDED.applicationCreatedBy, onBehalfOf = EXCLUDED.onBehalfOf, applicationType = EXCLUDED.applicationType, applicationNumber = EXCLUDED.applicationNumber,statuteSection = EXCLUDED.statuteSection, issuedBy = EXCLUDED.issuedBy, status = EXCLUDED.status, comment = EXCLUDED.comment, isActive = EXCLUDED.isActive, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
+        - query: UPDATE dristi_application SET tenantId=?,caseId=?,filingNumber=?,cnrNumber=?,referenceId=?,createdDate=?,applicationCreatedBy=?,onBehalfOf=?,applicationType=?,applicationNumber=?,statuteSection=?,issuedBy=?,status=?,comment=?,isActive=?,additionalDetails=?,lastModifiedBy=?,lastModifiedTime=? WHERE id=? ;
           basePath: application
           jsonMaps:
-            - jsonPath: $.application.id
             - jsonPath: $.application.tenantId
             - jsonPath: $.application.caseId
             - jsonPath: $.application.filingNumber
@@ -93,7 +96,6 @@ serviceMaps:
             - jsonPath: $.application.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.application.auditDetails.createdBy
             - jsonPath: $.application.auditDetails.lastModifiedBy
-            - jsonPath: $.application.auditDetails.createdTime
             - jsonPath: $.application.auditDetails.lastModifiedTime
+            - jsonPath: $.application.id
