@@ -232,9 +232,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
                     lineHeight: "24px",
                   }}
                 >
-                  {previousHearing?.transcript.map((transcript) => (
-                    <div>{transcript}</div>
-                  ))}
+                  {previousHearing?.transcript.length
+                    ? previousHearing?.transcript.map((transcript) => <div>{transcript}</div>)
+                    : "No Transcript available for this hearing"}
                 </div>
               </Card>
             )}
@@ -265,6 +265,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
                 </div>
                 <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
                   {orderList
+                    .filter((order) => order.status === "PUBLISHED")
                     ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
                     .slice(0, 5)
                     .map((order) => (
