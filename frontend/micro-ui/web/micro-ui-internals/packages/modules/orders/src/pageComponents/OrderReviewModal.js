@@ -79,7 +79,6 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     <Modal
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
-      actionCancelLabel={showActions && t("SAVE_DRAFT")}
       actionCancelOnSubmit={showActions && handleSaveDraft}
       actionSaveLabel={showActions && t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
