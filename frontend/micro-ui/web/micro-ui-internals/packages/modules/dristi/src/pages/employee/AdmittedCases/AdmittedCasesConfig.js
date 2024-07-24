@@ -376,7 +376,7 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Submission Name",
+                label: "Submission Type",
                 jsonPath: "applicationType",
                 additionalCustomization: true,
               },

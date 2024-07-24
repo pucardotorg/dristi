@@ -661,7 +661,7 @@ export const UICustomizations = {
           );
         case "Order Type":
           return <OrderName rowData={row} colData={column} value={value} />;
-        case "Submission Name":
+        case "Submission Type":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
@@ -689,7 +689,7 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const date = new Date(row.startTime);
       const future = row.startTime > Date.now();
-      if (future && userInfo.roles.includes("JUDGE_ROLE")) {
+      if (future && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
