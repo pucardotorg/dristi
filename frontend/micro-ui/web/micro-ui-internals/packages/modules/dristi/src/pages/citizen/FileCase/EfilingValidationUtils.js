@@ -1063,7 +1063,7 @@ export const updateCaseDetails = async ({
   const data = {};
   setIsDisabled(true);
   let tempDocList = [];
-  const individualId = fetchBasicUserInfo(prevCaseDetails, tenantId);
+  const individualId = await fetchBasicUserInfo(prevCaseDetails, tenantId);
   if (selected === "complainantDetails") {
     let litigants = [];
     const complainantVerification = {};
