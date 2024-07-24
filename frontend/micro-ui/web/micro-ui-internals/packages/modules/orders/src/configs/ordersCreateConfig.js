@@ -475,24 +475,15 @@ export const configsOrderMandatorySubmissions = [
         type: "dropdown",
         populators: {
           name: "documentType",
-          optionsKey: "name",
+          optionsKey: "value",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "DOCUMENT_TYPE_1",
-              name: "DOCUMENT_TYPE_1",
-            },
-            {
-              code: "DOCUMENT_TYPE_2",
-              name: "DOCUMENT_TYPE_2",
-            },
-            {
-              code: "DOCUMENT_TYPE_3",
-              name: "DOCUMENT_TYPE_3",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "DocumentType",
+            localePrefix: "",
+          },
         },
       },
       {
