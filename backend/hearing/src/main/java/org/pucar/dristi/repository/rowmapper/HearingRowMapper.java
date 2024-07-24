@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -73,12 +72,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .filingNumber(getListFromJson(rs.getString("filingnumber")))
                             .applicationNumbers(getListFromJson(rs.getString("applicationnumbers")))
                             .presidedBy(getObjectFromJson(rs.getString("presidedby"), new TypeReference<PresidedBy>() {}))
-                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {
-                                @Override
-                                public Type getType() {
-                                    return super.getType();
-                                }
-                            }))
+                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {}))
                             .transcript(getListFromJson(rs.getString("transcript")))
                             .build();
                 }

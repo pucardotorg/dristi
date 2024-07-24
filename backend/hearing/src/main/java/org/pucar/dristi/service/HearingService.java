@@ -90,7 +90,6 @@ public class HearingService {
             Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
 
             // Updating Hearing request
-            // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
             hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
             hearing.setStartTime(hearingRequest.getHearing().getStartTime());
             hearing.setEndTime(hearingRequest.getHearing().getEndTime());
@@ -148,6 +147,7 @@ public class HearingService {
             hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
             hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
             hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
             return hearing;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while verifying hearing");

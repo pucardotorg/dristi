@@ -34,7 +34,7 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList,String id, String caseId, String application,String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList,String artifactType ,Boolean evidenceStatus ,String id, String caseId, String application,String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
@@ -43,6 +43,8 @@ public class EvidenceQueryBuilder {
             firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
             firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
             firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria =addArtifactCriteria(artifactType, query, preparedStmtList, firstCriteria, "art.artifactType = ?");
+            firstCriteria =addArtifactCriteria(evidenceStatus, query, preparedStmtList, firstCriteria, "art.isEvidence = ?");
             firstCriteria =addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?");
             firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
             firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
@@ -59,6 +61,15 @@ public class EvidenceQueryBuilder {
     }
     boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
         if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(criteriaClause);
+            preparedStmtList.add(criteria);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+    boolean     addArtifactCriteria(Boolean criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+        if (criteria != null) {
             addClauseIfRequired(query, firstCriteria);
             query.append(criteriaClause);
             preparedStmtList.add(criteria);

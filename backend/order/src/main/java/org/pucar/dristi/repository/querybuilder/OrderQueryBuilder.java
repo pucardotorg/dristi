@@ -97,6 +97,7 @@ public class OrderQueryBuilder {
         try {
             String orderNumber = criteria.getOrderNumber();
             String applicationNumber = criteria.getApplicationNumber();
+            String orderType=criteria.getOrderType();
             String cnrNumber = criteria.getCnrNumber();
             String filingNumber = criteria.getFilingNumber();
             String tenantId = criteria.getTenantId();
@@ -134,7 +135,12 @@ public class OrderQueryBuilder {
                 preparedStmtList.add(tenantId);
                 firstCriteria = false;
             }
-
+            if (orderType!=null && !orderType.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.orderType = ?");
+                preparedStmtList.add(orderType);
+                firstCriteria = false;
+            }
             if (id!=null && !id.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.id = ?");

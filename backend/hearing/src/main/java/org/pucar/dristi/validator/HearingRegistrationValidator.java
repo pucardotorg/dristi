@@ -75,8 +75,6 @@ public class HearingRegistrationValidator {
         // Validate applicationNumbers
         validateApplicationExistence(requestInfo, hearing);
 
-        // TODO validate presided by judge.
-
     }
 
     private void baseValidations(RequestInfo requestInfo, Hearing hearing){
@@ -148,15 +146,9 @@ public class HearingRegistrationValidator {
         if (existingHearings.isEmpty())
             throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
 
+        if(config.getVerifyAttendeeIndividualId())
+            validateIndividualExistence(requestInfo, hearing);
 
-        hearing.getAttendees().forEach(attendee -> {
-            if(ObjectUtils.isEmpty(attendee.getIndividualId())){
-                throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"individualId is mandatory for attendee");
-            }
-            //searching individual exist or not
-            if(!individualService.searchIndividual(requestInfo,attendee.getIndividualId(), new HashMap<>()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist. ID: "+ attendee.getIndividualId());
-        });
         return existingHearings.get(0);
     }
     public CaseExistsRequest createCaseExistsRequest(RequestInfo requestInfo, Hearing hearing){

@@ -313,14 +313,14 @@ class CaseQueryBuilderTest {
         criteria.setCnrNumber(null);
         criteria.setFilingNumber(null);
         criteria.setCourtCaseNumber("456");
-        criteria.setFilingFromDate(LocalDate.parse("2024-05-28"));
-        criteria.setFilingToDate(LocalDate.parse("2024-05-28"));
-        criteria.setRegistrationFromDate(LocalDate.parse("2024-05-28"));
-        criteria.setRegistrationToDate(LocalDate.parse("2024-05-28"));
+        criteria.setFilingFromDate(1223235235l);
+        criteria.setFilingToDate(1223235236l);
+        criteria.setRegistrationFromDate(1223235238l);
+        criteria.setRegistrationToDate(1223235239l);
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.courtcasenumber = ?OR cases.filingdate BETWEEN 2024-05-28 AND 2024-05-28 OR cases.registrationdate BETWEEN 2024-05-28 AND 2024-05-28 ";
+        String expectedQuery  = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.courtcasenumber = ?OR cases.filingdate BETWEEN 1223235235 AND 1223235236 OR cases.registrationdate BETWEEN 1223235238 AND 1223235239 ";
         String actualQuery = queryBuilder.getCasesSearchQuery(criteria, preparedStmtList, null);
 
         assertEquals(expectedQuery, actualQuery);

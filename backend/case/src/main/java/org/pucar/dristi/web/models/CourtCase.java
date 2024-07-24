@@ -91,16 +91,13 @@ public class CourtCase {
 	@JsonProperty("filingDate")
 	//@NotNull
 	@Valid
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate filingDate = null;
+	private Long filingDate = null;
 
 	@JsonProperty("registrationDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate registrationDate = null;
+	private Long registrationDate = null;
 
 	@JsonProperty("judgementDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate judgementDate = null;
+	private Long judgementDate = null;
 
 	@JsonProperty("caseDetails")
 	private Object caseDetails = null;

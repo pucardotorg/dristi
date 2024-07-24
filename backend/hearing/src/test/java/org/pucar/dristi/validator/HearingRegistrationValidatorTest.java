@@ -294,4 +294,32 @@ class HearingRegistrationValidatorTest {
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingExistence(requestInfo,hearing));
         assertEquals("Hearing does not exist", exception.getMessage());
     }
+
+    @Test
+    void testCreateCaseExistsRequest_EmptyCriteria() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        Hearing hearing = new Hearing();
+
+        // Act
+        CaseExistsRequest request = validator.createCaseExistsRequest(requestInfo, hearing);
+
+        // Assert
+        assertNotNull(request);
+        assertTrue(request.getCriteria().isEmpty());
+    }
+
+    @Test
+    void testCreateApplicationExistsRequest_EmptyCriteria() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        Hearing hearing = new Hearing();
+
+        // Act
+        ApplicationExistsRequest request = validator.createApplicationExistRequest(requestInfo, hearing);
+
+        // Assert
+        assertNotNull(request);
+        assertTrue(request.getApplicationExists().isEmpty());
+    }
 }

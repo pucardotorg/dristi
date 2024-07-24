@@ -40,6 +40,7 @@ public class HearingQueryBuilder {
             String cnrNumber = criteria.getCnrNumber();
             String applicationNumber = criteria.getApplicationNumber();
             String hearingId = criteria.getHearingId();
+            String hearingType = criteria.getHearingType();
             String filingNumber = criteria.getFilingNumber();
             String tenantId = criteria.getTenantId();
             LocalDate fromDate = criteria.getFromDate();
@@ -49,6 +50,7 @@ public class HearingQueryBuilder {
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
             addCriteriaString(applicationNumber, query, " AND applicationNumbers @> ?::jsonb", preparedStmtList, "[\"" + applicationNumber + "\"]");
             addCriteriaString(hearingId, query, " AND hearingid = ?", preparedStmtList, hearingId);
+            addCriteriaString(hearingType, query, " AND hearingtype = ?", preparedStmtList, hearingType);
             addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
@@ -102,7 +104,7 @@ public class HearingQueryBuilder {
     }
 
     public String buildUpdateTranscriptAdditionalAttendeesQuery(List<Object> preparedStmtList, Hearing hearing) throws CustomException {
-        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , vclink = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
         // Convert the objects to JSON
         try {
@@ -117,6 +119,7 @@ public class HearingQueryBuilder {
         }
 
         // Add other parameters to preparedStmtList
+        preparedStmtList.add(hearing.getVcLink());
         preparedStmtList.add(hearing.getAuditDetails().getLastModifiedBy());
         preparedStmtList.add(hearing.getAuditDetails().getLastModifiedTime());
         preparedStmtList.add(hearing.getHearingId());
