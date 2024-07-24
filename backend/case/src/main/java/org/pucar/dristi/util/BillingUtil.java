@@ -29,14 +29,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class BillingUtil {
 
-	@Autowired
 	private RestTemplate restTemplate;
 
-	@Autowired
-	private ObjectMapper mapper;
+	private Configuration configs;
 
 	@Autowired
-	private Configuration configs;
+	public BillingUtil(RestTemplate restTemplate, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.configs = configs;
+	}
 
 	public void createDemand(CaseRequest caseRequest) {
 		StringBuilder uri = new StringBuilder();
@@ -63,7 +64,7 @@ public class BillingUtil {
 		demands.add(demand);
 		demandRequest.setDemands(demands);
 
-		Object response = new HashMap<>();
+		Object response;
 		try {
 			response = restTemplate.postForObject(uri.toString(), demandRequest, Map.class);
 			log.info("Demand response :: {}", response);

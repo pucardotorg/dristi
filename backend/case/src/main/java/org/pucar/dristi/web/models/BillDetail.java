@@ -1,12 +1,9 @@
 package org.pucar.dristi.web.models;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
-
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,20 +86,5 @@ public class BillDetail {
     @JsonProperty("expiryDate")
     private Long expiryDate;
 
-
-    public Boolean addBillAccountDetail(BillAccountDetail billAccountDetail) {
-
-        if (CollectionUtils.isEmpty(billAccountDetails)) {
-
-            billAccountDetails = new ArrayList<>();
-            return billAccountDetails.add(billAccountDetail);
-        } else {
-
-            if (!billAccountDetails.contains(billAccountDetail))
-                return billAccountDetails.add(billAccountDetail);
-            else
-                return false;
-        }
-    }
 
 }

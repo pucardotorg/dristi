@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,12 +53,5 @@ public class LinkedCase {
 	@Valid
 	private AuditDetails auditdetails = null;
 
-	public LinkedCase addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

@@ -34,19 +34,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
     private ObjectMapper mapper;
 
-    @Autowired
     private ServiceRequestRepository repository;
 
-    @Autowired
     private Configuration config;
 
+    @Autowired
+    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
+        this.mapper = mapper;
+        this.repository = repository;
+        this.config = config;
+    }
 
     public void updateWorkflowStatus(CaseRequest caseRequest) {
             try {
-                ProcessInstance processInstance = getProcessInstance(caseRequest.getCases(), caseRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(caseRequest.getCases());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String state=callWorkFlow(workflowRequest).getState();
@@ -74,7 +77,7 @@ public class WorkflowService {
         }
     }
 
-    public ProcessInstance getProcessInstance(CourtCase courtCase, RequestInfo requestInfo) {
+    public ProcessInstance getProcessInstance(CourtCase courtCase) {
         try {
             Workflow workflow = courtCase.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();

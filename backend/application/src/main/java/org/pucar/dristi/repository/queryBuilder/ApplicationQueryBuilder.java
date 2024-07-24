@@ -15,11 +15,11 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class ApplicationQueryBuilder {
 
-    private static final String BASE_APP_QUERY =
+    private static final String     BASE_APP_QUERY =
             " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                     " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                     " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
-                    " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
+                    " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                     " app.additionaldetails as additionaldetails,"+
                     " app.createdby as createdby," +
                     " app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime," +
@@ -31,13 +31,6 @@ public class ApplicationQueryBuilder {
             "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id";
 
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_application_document doc";
-
-    private static final String BASE_STATUTE_SECTION_QUERY = " SELECT stse.id as id, stse.tenantid as tenantid" +
-            ", stse.statute as statute, stse.application_id as application_id, " +
-            "stse.sections as sections, stse.subsections as subsections, stse.strsections as strsections, stse.strsubsections as strsubsections, stse.additionaldetails as additionaldetails, stse.createdby as createdby," +
-            " stse.lastmodifiedby as lastmodifiedby, stse.createdtime as createdtime, stse.lastmodifiedtime as lastmodifiedtime";
-
-    private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_application_statute_section stse";
 
     private static final String FROM_APP_TABLE = " FROM dristi_application app";
     private static final String ORDERBY_CLAUSE = " ORDER BY app.{orderBy} {sortingOrder} ";
@@ -135,24 +128,6 @@ public class ApplicationQueryBuilder {
         }
     }
 
-
-    public String getStatuteSectionSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-        try {
-            StringBuilder query = new StringBuilder(BASE_STATUTE_SECTION_QUERY);
-            query.append(FROM_STATUTE_SECTION_TABLE);
-            if (!ids.isEmpty()) {
-                query.append(" WHERE stse.application_id IN (")
-                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(ids);
-            }
-
-            return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building statute section search query {}", e.getMessage());
-            throw new CustomException(STATUTE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
-        }
-    }
 }
 
 

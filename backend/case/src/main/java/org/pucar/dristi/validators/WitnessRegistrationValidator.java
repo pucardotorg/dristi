@@ -21,14 +21,18 @@ import org.springframework.util.ObjectUtils;
 @Component
 public class WitnessRegistrationValidator {
 
-    @Autowired
     private IndividualService individualService;
 
-    @Autowired
     private CaseRepository repository;
 
-    @Autowired
     private WitnessRepository witnessRepository;
+
+    @Autowired
+    public WitnessRegistrationValidator(IndividualService individualService, CaseRepository repository, WitnessRepository witnessRepository) {
+        this.individualService = individualService;
+        this.repository = repository;
+        this.witnessRepository = witnessRepository;
+    }
 
     public void validateCaseRegistration(WitnessRequest witnessRequest) throws CustomException {
         RequestInfo requestInfo = witnessRequest.getRequestInfo();

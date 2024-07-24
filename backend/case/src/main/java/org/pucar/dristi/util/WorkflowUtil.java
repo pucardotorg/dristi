@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.models.Workflow;
@@ -37,14 +36,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class WorkflowUtil {
 
-	@Autowired
 	private ServiceRequestRepository repository;
 
-	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
 	private Configuration configs;
+
+	@Autowired
+	public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
+		this.repository = repository;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
 
 	/**
 	 * Searches the BussinessService corresponding to the businessServiceCode
@@ -167,7 +170,7 @@ public class WorkflowUtil {
 			List<String> userIds = null;
 
 			if (!CollectionUtils.isEmpty(processInstance.getAssignes())) {
-				userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+				userIds = processInstance.getAssignes().stream().map(User::getUuid).toList();
 			}
 
 			Workflow workflow = Workflow.builder().action(processInstance.getAction()).assignes(userIds)
