@@ -385,6 +385,7 @@ function CaseFileAdmission({ t, path }) {
                   updatedConfig={updatedConfig}
                   tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
+                  caseAdmitLoader={caseAdmitLoader}
                 ></AdmissionActionModal>
               )}
             </div>
