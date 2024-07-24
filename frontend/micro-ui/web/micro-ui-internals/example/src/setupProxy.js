@@ -101,6 +101,7 @@ module.exports = function (app) {
     "/order",
     "/inbox",
     "/application",
+    "/task/v1/search",
     "/analytics",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

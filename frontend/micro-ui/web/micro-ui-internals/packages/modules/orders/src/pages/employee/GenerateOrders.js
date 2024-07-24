@@ -384,8 +384,8 @@ const GenerateOrders = () => {
 
   const defaultValue = useMemo(() => {
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
-    if (applicationDetails?.referenceId) {
-      updatedFormdata.refApplicationId = applicationDetails?.referenceId;
+    if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
+      updatedFormdata.refApplicationId = applicationNumber;
     }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
@@ -676,7 +676,7 @@ const GenerateOrders = () => {
         {modifiedFormConfig && (
           <FormComposerV2
             className={"generate-orders"}
-            key={`${selectedOrder}=${orderType.code}`}
+            key={`${selectedOrder}=${orderType}`}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
             defaultValues={defaultValue}
