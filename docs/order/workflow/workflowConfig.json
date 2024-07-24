@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "order",
-      "business": "order-services",
+      "business": "order",
+      "businessService": "order-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
@@ -41,6 +41,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -63,6 +70,13 @@
               "nextState": "PENDINGSTAMPING",
               "roles": [
                 "ORDER_ESIGN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
               ]
             },
             {
@@ -91,6 +105,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -116,6 +137,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -128,6 +156,15 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

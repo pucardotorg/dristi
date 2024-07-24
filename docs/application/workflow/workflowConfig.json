@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "application",
-      "business": "application-services",
+      "business": "application",
+      "businessService": "application-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
@@ -41,6 +41,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -73,6 +80,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -95,6 +109,13 @@
               "nextState": "RESPONSESUBMITTED",
               "roles": [
                 "System"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
               ]
             },
             {
@@ -131,6 +152,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -151,6 +179,15 @@
         {
           "sla": 5,
           "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
