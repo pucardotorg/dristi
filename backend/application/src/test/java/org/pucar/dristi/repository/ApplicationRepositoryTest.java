@@ -78,7 +78,6 @@ class ApplicationRepositoryTest {
 
         String applicationQuery = "SELECT * FROM applications";
         String documentQuery = "SELECT * FROM documents WHERE applicationId IN (?)";
-        String statuteQuery = "SELECT * FROM statute_sections WHERE applicationId IN (?)";
         String countQuery = "SELECT COUNT(*) FROM applications";
 
         List<Application> applications = Arrays.asList(new Application());
