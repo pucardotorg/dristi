@@ -578,14 +578,7 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (
-    isOrdersLoading ||
-    isOrdersFetching ||
-    isCaseDetailsLoading ||
-    isApplicationDetailsLoading ||
-    !ordersData?.list ||
-    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
-  ) {
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
     return <Loader />;
   }
 
