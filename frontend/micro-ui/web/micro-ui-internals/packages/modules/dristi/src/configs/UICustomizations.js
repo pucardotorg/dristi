@@ -725,6 +725,9 @@ export const UICustomizations = {
                       originalHearingDate: `${date.getDate()}-${
                         date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
                       }-${date.getFullYear()}`,
+                      originalHearingDate: `${date.getFullYear()}-${
+                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+                      }-${date.getDate()}`,
                     },
                   },
                 },

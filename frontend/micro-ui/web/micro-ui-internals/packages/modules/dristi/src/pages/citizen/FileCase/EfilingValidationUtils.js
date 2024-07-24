@@ -985,7 +985,6 @@ export const getAllAssignees = (caseDetails) => {
 const documentUploadHandler = async (document, index, prevCaseDetails, data, pageConfig, key, selected, tenantId) => {
   const tempDocList = [];
   let tempFile;
-  debugger;
   const isMultipleUpload =
     pageConfig?.formconfig
       ?.find((config) => config?.body?.[0]?.key === key)
@@ -1033,6 +1032,21 @@ const documentUploadHandler = async (document, index, prevCaseDetails, data, pag
   return { tempDocList: tempDocList, tempFile: tempFile };
 };
 
+const fetchBasicUserInfo = async (caseDetails, tenantId) => {
+  const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+    {
+      Individual: {
+        userUuid: [caseDetails?.auditDetails?.createdBy],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "",
+    caseDetails?.auditDetails?.createdBy
+  );
+
+  return individualData?.Individual?.[0]?.individualId;
+};
+
 export const updateCaseDetails = async ({
   isCompleted,
   setIsDisabled,
@@ -1049,6 +1063,7 @@ export const updateCaseDetails = async ({
   const data = {};
   setIsDisabled(true);
   let tempDocList = [];
+  const individualId = fetchBasicUserInfo(prevCaseDetails, tenantId);
   if (selected === "complainantDetails") {
     let litigants = [];
     const complainantVerification = {};
@@ -1661,6 +1676,7 @@ export const updateCaseDetails = async ({
                           artifactType: "DOCUMENTARY",
                           sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
+                          sourceID: individualId,
                           filingNumber: caseDetails?.filingNumber,
                           tenantId,
                           comments: [],
@@ -1948,7 +1964,7 @@ export const updateCaseDetails = async ({
         caseTitle,
         litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
         ...data,
-        documents: tempDocList,
+        // documents: tempDocList,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
         workflow: {
           ...caseDetails?.workflow,

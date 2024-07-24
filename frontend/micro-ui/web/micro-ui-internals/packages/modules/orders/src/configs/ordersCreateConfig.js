@@ -724,7 +724,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "originalSubmissionOrderDate",
         disable: true,
         type: "date",
@@ -734,7 +734,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "ORIGINAL_DEADLINE",
-        isMandatory: true,
+        isMandatory: false,
         key: "originalDeadline",
         disable: true,
         type: "date",
@@ -744,7 +744,7 @@ export const configsOrderSubmissionExtension = [
       },
       {
         label: "PROPOSED_SUBMISSION_DATE",
-        isMandatory: true,
+        isMandatory: false,
         key: "proposedSubmissionDate",
         disable: true,
         type: "date",
