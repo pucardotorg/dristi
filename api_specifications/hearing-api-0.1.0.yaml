@@ -175,6 +175,8 @@ components:
             type: string
           tenantId:
             type: string
+          attendeeIndividualId:
+            type: string
           fromDate:
             type: string
             format: date
