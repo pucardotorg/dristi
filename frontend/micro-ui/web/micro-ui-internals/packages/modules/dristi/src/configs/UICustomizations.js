@@ -665,8 +665,10 @@ export const UICustomizations = {
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Hearing Type":
+        case "Source":
         case "Status":
-          return value ? "Marked as Evidence" : "Action Pending";
+          return t(value);
         case "Actions":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
@@ -685,10 +687,9 @@ export const UICustomizations = {
       const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
       const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
-      const searchParams = new URLSearchParams();
       const date = new Date(row.startTime);
-      if (true || userInfo.roles.includes("JUDGE_ROLE")) {
+      const future = row.startTime > Date.now();
+      if (future && userInfo.roles.includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
@@ -735,7 +736,7 @@ export const UICustomizations = {
                 .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
                 .then((res) => {
                   history.push(
-                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}&orderNumber=${res.order.orderNumber}`,
+                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber[0]}&orderNumber=${res.order.orderNumber}`,
                     {
                       caseId: row.caseId,
                       tab: "Orders",
@@ -771,6 +772,71 @@ export const UICustomizations = {
           },
         ];
       }
+      if (future && userInfo.type === "CITIZEN") {
+        return [
+          {
+            label: "Request for Reschedule hearing",
+            id: "reschedule",
+            action: (history) => {
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
+      return [
+        {
+          label: "View transcript",
+          id: "view_transcript",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View witness deposition",
+          id: "view_witness",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View pending task",
+          id: "view_pending_tasks",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+      ];
     },
   },
   HistoryConfig: {

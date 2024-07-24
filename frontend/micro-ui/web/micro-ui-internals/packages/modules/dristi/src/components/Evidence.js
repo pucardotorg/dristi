@@ -39,7 +39,7 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
         {showAsHeading ? (
-          <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div>
+          <div style={{ textDecoration: "underline", cursor: "pointer" }}>{t(value)}</div>
         ) : rowData.isEvidence ? (
           <FactCrossIcon />
         ) : (
