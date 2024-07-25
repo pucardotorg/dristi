@@ -54,7 +54,7 @@ const SubmissionsCreate = () => {
 
   const submissionFormConfig = useMemo(() => {
     const submissionConfigKeys = {
-      APPLICATION_TYPE: applicationTypeConfig,
+      APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
       if (orderNumber) {
@@ -187,8 +187,8 @@ const SubmissionsCreate = () => {
         if (isExtension) {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "EXTENSION_SUBMISSION_DEADLINE",
@@ -203,8 +203,8 @@ const SubmissionsCreate = () => {
         } else {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "PRODUCTION_DOCUMENTS",
@@ -218,16 +218,16 @@ const SubmissionsCreate = () => {
       } else {
         return {
           submissionType: {
-            code: "APPLICATION_TYPE",
-            name: "APPLICATION_TYPE",
+            code: "APPLICATION",
+            name: "APPLICATION",
           },
         };
       }
     } else {
       return {
         submissionType: {
-          code: "APPLICATION_TYPE",
-          name: "APPLICATION_TYPE",
+          code: "APPLICATION",
+          name: "APPLICATION",
         },
       };
     }
