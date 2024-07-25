@@ -66,7 +66,7 @@ public class ApplicationQueryBuilder {
             firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
-            firstCriteria = addCriteria(String.valueOf(applicationCriteria.getOwner()), query, firstCriteria, "app.createdBy = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList);
             addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber", preparedStmtList);
 
             return query.toString();
@@ -87,7 +87,7 @@ public class ApplicationQueryBuilder {
     }
 
     boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
-        if (criteria != null && !criteria.isEmpty() && !"null".equals(criteria)) {
+        if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(str);
             preparedStmtList.add(criteria);

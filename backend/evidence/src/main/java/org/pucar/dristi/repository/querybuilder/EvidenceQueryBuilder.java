@@ -50,7 +50,7 @@ public class EvidenceQueryBuilder {
             firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
             firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
             firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
-            firstCriteria =addArtifactCriteria(String.valueOf(owner), query, preparedStmtList, firstCriteria, "art.createdBy = ?");
+            firstCriteria =addArtifactCriteria(owner!=null?(owner.toString()):null, query, preparedStmtList, firstCriteria, "art.createdBy = ?");
             firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
             addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber");
 
@@ -71,7 +71,7 @@ public class EvidenceQueryBuilder {
         return firstCriteria;
     }
     boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
-        if (criteria != null && !criteria.isEmpty() && !"null".equals(criteria)) {
+        if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(criteriaClause);
             preparedStmtList.add(criteria);
