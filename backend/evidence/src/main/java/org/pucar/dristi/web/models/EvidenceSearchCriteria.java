@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import java.util.UUID;
 
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-16T15:17:16.225735+05:30[Asia/Kolkata]")
@@ -26,7 +27,7 @@ public class EvidenceSearchCriteria {
     private String status;
     private String artifactNumber;
     private String filingNumber;
-
+    private UUID owner;
     // Getters and setters
 
     public String getId() {
@@ -97,7 +98,12 @@ public class EvidenceSearchCriteria {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    public UUID getOwner() {
+        return owner;
+    }
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
     public String getArtifactNumber() {
         return artifactNumber;
     }

@@ -7,6 +7,7 @@ import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -65,7 +66,8 @@ public class ApplicationQueryBuilder {
             firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
-            addCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList);
+            addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber", preparedStmtList);
 
             return query.toString();
         }
@@ -73,6 +75,15 @@ public class ApplicationQueryBuilder {
             log.error("Error while building application search query {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
+    }
+    boolean addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str).append(" LIKE ?");
+            preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
+            firstCriteria = false;
+        }
+        return firstCriteria;
     }
 
     boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
@@ -84,6 +95,7 @@ public class ApplicationQueryBuilder {
         }
         return firstCriteria;
     }
+
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {

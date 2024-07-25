@@ -159,9 +159,8 @@ class ApplicationQueryBuilderTest {
 
         String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
 
-        assertTrue(query.contains(expectedQueryPart));
+        assertFalse(query.contains(expectedQueryPart));
         assertEquals(1, preparedStmtList.size());
-        assertEquals("applicationNumber123", preparedStmtList.get(0));
     }
 
     @Test

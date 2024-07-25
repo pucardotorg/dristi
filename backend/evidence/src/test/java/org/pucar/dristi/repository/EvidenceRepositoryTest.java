@@ -67,7 +67,7 @@ class EvidenceRepositoryTest {
 
         List<Comment> commentList = new ArrayList<>();
 
-        when(queryBuilder.getArtifactSearchQuery(anyList(),any(),any(), any(), any(), any(), any(),any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(),any(),any(),any(), any(), any(), any(), any(),any(), any(), any(), any(), any()))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
@@ -93,7 +93,7 @@ class EvidenceRepositoryTest {
 
         String artifactQuery = "SELECT * FROM artifact";
 
-        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(),any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(),any(), any(), any(), any(), any(), any()))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
@@ -112,7 +112,7 @@ class EvidenceRepositoryTest {
         Pagination pagination = new Pagination();
         String artifactQuery = "SELECT * FROM artifact";
 
-        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(),any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(), any(),  any(),any(), any(), any(), any(), any(),any(), any(), any(), any(), any()))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
