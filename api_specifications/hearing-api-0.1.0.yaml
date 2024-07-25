@@ -301,12 +301,12 @@ components:
           type: integer
           format: int64
           nullable: true
-          description: This field holds information about start date time of hearing in epoch time.
+          description: This field holds information about start date time of hearing in epoch time in milliseconds.
         endTime:
           type: integer
           format: int64
           nullable: true
-          description: This field holds information about end date time of hearing in epoch time. Optional field.
+          description: This field holds information about end date time of hearing in epoch time in milliseconds. Optional field.
         presidedBy:
           description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
           type: object

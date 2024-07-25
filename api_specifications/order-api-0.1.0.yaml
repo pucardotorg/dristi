@@ -258,7 +258,7 @@ components:
           items:
             type: string
             description: application number the order is based on. Could be null if not based on any application
-        hearingNumber:
+        hearingId:
           type: string
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
