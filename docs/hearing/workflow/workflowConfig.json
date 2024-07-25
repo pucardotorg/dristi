@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "hearing",
-      "businessService": "hearing-managelifecycle",
+      "businessService": "hearing",
+      "business": "hearing-services",
       "businessServiceSla": 30,
       "states": [
         {

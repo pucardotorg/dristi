@@ -72,60 +72,13 @@ paths:
       summary: Get hearing requests
       description: |
         Gets the list of hearing requests for a particular ULB based on search criteria.
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-        - name: filingNumber
-          in: query
-          description: Search by filingNumber
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: Search by tenantId of case request
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose hearing(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: applicationNumber
-          in: query
-          description: the applicationNumber of the case whose hearing(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: fromDate
-          in: query
-          description: search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved
-          schema:
-            type: string
-            format: date
-        - name: toDate
-          in: query
-          description: search hearings within date range
-          schema:
-            type: string
-            format: date
-        - name: limit
-          in: query
-          description: No of record return
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset
-          schema:
-            type: integer
-        - name: sortBy
-          in: query
-          description: sorted by ascending by default if this parameter is not provided
-          schema:
-            type: string
+      requestBody:
+        description: Details for the search hearing(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingSearchRequest'
+        required: true
       responses:
         "200":
           description: ResponseInfo with hearing(s) search successfully
@@ -165,9 +118,70 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  
+  /hearing/v1/updateTranscript:
+    post:
+      tags:
+        - Hearing
+      summary: update hearing transcript requests.
+      requestBody:
+        description: Details for the update hearing(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with hearing(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingResponse'
+        "400":
+          description: hearing(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: hearingRequest
 
 components:
   schemas:
+    HearingSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/HearingCriteria'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
+      HearingCriteria:
+        type: object
+        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+        properties:
+          filingNumber:
+            type: string
+          cnrNumber:
+            type: string
+          applicationNumber:
+            type: string
+          hearingType:
+            type: string
+          hearingId:
+            type: string
+          tenantId:
+            type: string
+          fromDate:
+            type: string
+            format: date
+          toDate:
+            type: string
+            format: date
+
     HearingRequest:
       type: object
       properties:
@@ -226,7 +240,7 @@ components:
       properties:
         hearingId:
           type: string
-          format: uuid
+          format: string
           minLength: 36
           maxLength: 36
         filingNumber:
@@ -255,6 +269,11 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
+        hearingId:
+          type: string
+          description: The formatted number given when a hearing gets created.
+          minLength: 2
+          maxLength: 64
         filingNumber:
           type: array
           items:
@@ -279,15 +298,15 @@ components:
           description: workflow state being set as hearing status
           example: scheduled, in progress, in transcription, closed
         startTime:
-          type: string
-          format: date
+          type: integer
+          format: int64
           nullable: true
-          description: This field holds information about start date time of hearing in epoch time.
+          description: This field holds information about start date time of hearing in epoch time in milliseconds.
         endTime:
-          type: string
-          format: date
+          type: integer
+          format: int64
           nullable: true
-          description: This field holds information about end date time of hearing in epoch time. Optional field.
+          description: This field holds information about end date time of hearing in epoch time in milliseconds. Optional field.
         presidedBy:
           description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
           type: object

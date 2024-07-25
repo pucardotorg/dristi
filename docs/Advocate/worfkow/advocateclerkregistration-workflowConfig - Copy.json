@@ -38,14 +38,14 @@
               "action": "APPROVE",
               "nextState": "REGISTERED",
               "roles": [
-                "ADVOCATE_CLERK_APPROVER"
+                "ADVOCATECLERK_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "ADVOCATE_CLERK_APPROVER"
+                "ADVOCATECLERK_APPROVER"
               ]
             }
           ]
