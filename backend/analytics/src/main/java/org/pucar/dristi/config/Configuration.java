@@ -132,7 +132,7 @@ public class Configuration {
 
 	private List<String> applicationBussinessServiceList;
 
-	@Value("${egov.order.bussiness.service}")
+	@Value("${egov.order.bussiness.services}")
 	private String orderBussinessServices;
 
 	private List<String> orderBussinessServiceList;

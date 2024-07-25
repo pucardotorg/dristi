@@ -2,10 +2,12 @@ package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
 
@@ -28,5 +30,16 @@ public class CaseOverallStatus {
 
     @JsonProperty("substage")
     private String substage = null;
+
+    @JsonProperty("auditdetails")
+    @Valid
+    private AuditDetails auditdetails = null;
+
+    public CaseOverallStatus(String filingNumber, String tenantId, String stage, String substage) {
+        this.filingNumber = filingNumber;
+        this.tenantId = tenantId;
+        this.stage = stage;
+        this.substage = substage;
+    }
 
 }

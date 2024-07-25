@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
 import org.json.JSONObject;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 public class CaseStageSubStage {
 
     @JsonProperty("RequestInfo")
-    private JSONObject requestInfo = null;
+    private RequestInfo requestInfo = null;
 
     @JsonProperty("caseOverallStatus")
     private CaseOverallStatus caseOverallStatus = null;

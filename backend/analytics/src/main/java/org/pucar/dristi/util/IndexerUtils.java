@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
-import org.pucar.dristi.service.PendingTaskMapConfig;
+import org.pucar.dristi.config.PendingTaskMapConfig;
 import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.pucar.dristi.web.models.CaseStageSubStage;
 import org.pucar.dristi.web.models.PendingTask;
@@ -59,8 +59,10 @@ public class IndexerUtils {
 
 	private final PendingTaskMapConfig pendingTaskMapConfig;
 
+	private final CaseOverallStatusUtil caseOverallStatusUtil;
+
 	@Autowired
-    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper, PendingTaskMapConfig pendingTaskMapConfig) {
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, HearingUtil hearingUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper, PendingTaskMapConfig pendingTaskMapConfig, CaseOverallStatusUtil caseOverallStatusUtil) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
@@ -72,6 +74,7 @@ public class IndexerUtils {
         this.producer = producer;
         this.mapper = mapper;
         this.pendingTaskMapConfig = pendingTaskMapConfig;
+        this.caseOverallStatusUtil = caseOverallStatusUtil;
     }
 
 	public static boolean isNullOrEmpty(String str) {
@@ -175,29 +178,24 @@ public class IndexerUtils {
 		Long businessServiceSla = businessServiceSlaObj != null ? ((Number) businessServiceSlaObj).longValue() : null;
 		List<Object> assignedToList = JsonPath.read(jsonItem, ASSIGNES_PATH);
 		List<String> assignedRoleList = JsonPath.read(jsonItem, ASSIGNED_ROLE_PATH);
+		Set<String> assignedRoleSet = new HashSet<>(assignedRoleList);
 		String assignedTo = new JSONArray(assignedToList).toString();
-		String assignedRole = new JSONArray(assignedRoleList).toString();
+		String assignedRole = new JSONArray(assignedRoleSet).toString();
 		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
 		String action = JsonPath.read(jsonItem, ACTION_PATH);
 		String additionalDetails;
+		boolean isCompleted;
 
 		log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}, status: {}, action: {}, tenantId: {}", entityType, referenceId, status, action, tenantId);
-		Object object = checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);
+		Object object = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);
 		Map<String, String> details = processEntity(entityType, referenceId, status, action, object, requestInfo);
 
 		// Validate details map using the utility function
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
 		String name = details.get("name");
-		String isCompletedStr = details.get("isCompleted");
+		isCompleted = isNullOrEmpty(name);
 
-		if (isNullOrEmpty(filingNumber) || isNullOrEmpty(name) || isNullOrEmpty(isCompletedStr)) {
-			log.info("Could not build payload: Missing or empty required fields in details map: , filingNumber: {}, name: {}, isCompleted: {}",
-					filingNumber, name, isCompletedStr);
-			return null;
-		}
-
-		Boolean isCompleted = isCompletedStr.equals("true");
 		try {
 			additionalDetails = mapper.writeValueAsString(new HashMap<String,Object>());
 		} catch (Exception e){
@@ -211,119 +209,12 @@ public class IndexerUtils {
 		);
 	}
 
-	private Object checkCaseOverAllStatus(String entityType, String referenceId, String status, String action, String tenantId, JSONObject requestInfo) {
-		try {
-			JSONObject request = new JSONObject();
-			request.put("RequestInfo", requestInfo);
-			if(config.getCaseBussinessServiceList().contains(entityType)){
-				return processCaseOverallStatus(request, referenceId, action, tenantId);
-			} else if (config.getHearingBussinessServiceList().contains(entityType)) {
-				return processHearingCaseOverallStatus(request, referenceId, action, tenantId);
-			} else if (config.getOrderBussinessServiceList().contains(entityType)) {
-				return processOrderOverallStatus(request, referenceId, status, tenantId);
-			}
-			log.error("Case overall status not supported for entityType: {}", entityType);
-			return null;
-		} catch (InterruptedException e) {
-			log.error("Processing interrupted for entityType: {}", entityType, e);
-			Thread.currentThread().interrupt(); // Restore the interrupted status
-			throw new RuntimeException(e);
-		}
-	}
 
-	private Object processOrderOverallStatus(JSONObject request, String referenceId, String status, String tenantId) throws InterruptedException {
-		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
-		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
-		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
-		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
-		publishToCaseOverallStatus(determineOrderStage(filingNumber, tenantId, orderType, status),request);
-		return orderObject;
-	}
-
-	private Object processCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) {
-		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action), request);
-		return null;
-	}
-
-	private Object processHearingCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) throws InterruptedException {
-		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
-		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
-		List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
-		String filingNumber;
-		if (filingNumberList != null && !filingNumberList.isEmpty()) {
-			filingNumber = filingNumberList.get(0);
-		}
-		else {
-			log.info("Inside indexer util processHearingCaseOverallStatus:: Filing number not present");
-			throw new RuntimeException("Filing number not present for case overall status");
-		}
-		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
-		publishToCaseOverallStatus(determineHearingStage( filingNumber, tenantId, hearingType, action ), request);
-		return hearingObject;
-	}
-
-	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
-		return switch (action.toLowerCase()) {
-			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
-			case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
-			case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
-			case "save_draft" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Draft");
-			default -> null;
-		};
-	}
-
-	private CaseOverallStatus determineHearingStage(String filingNumber, String tenantId, String hearingType, String action) {
-
-		switch (hearingType.toLowerCase()) {
-			case "evidence":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Evidence");
-				}
-				break;
-			case "arguments":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Arguments");
-				}
-				break;
-			case "judgement":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Judgment");
-				}
-				break;
-		}
-		return null;
-	}
-
-	private CaseOverallStatus determineOrderStage(String filingNumber, String tenantId, String orderType, String status) {
-
-		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
-			return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Post-Judgement");
-		}
-		return null;
-	}
-
-	private void publishToCaseOverallStatus(CaseOverallStatus caseOverallStatus, JSONObject request) {
-		try {
-			if(caseOverallStatus==null){
-				log.info("Case overall workflow update not eligible");
-			}
-			else if(caseOverallStatus.getFilingNumber()==null){
-				log.error("Filing number not present for Case overall workflow update");
-			}
-			else{
-				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
-				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(request.getJSONObject("RequestInfo"),caseOverallStatus);
-				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
-			}
-		} catch (Exception e) {
-			log.error("Error in publishToCaseOverallStatus method", e);
-		}
-	}
 
 	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
 		Map<String, String> caseDetails = new HashMap<>();
 		String name = null;
-		Boolean isCompleted = null;
+		boolean isCompleted = true;
 
 		List<PendingTaskType> pendingTaskTypeList = pendingTaskMapConfig.getPendingTaskTypeMap().get(entityType);
 		if (pendingTaskTypeList == null) return caseDetails;
@@ -331,17 +222,15 @@ public class IndexerUtils {
 		// Determine name and isCompleted based on status and action
 		for (PendingTaskType pendingTaskType : pendingTaskTypeList) {
 			if (pendingTaskType.getState().equals(status)) {
-				if (pendingTaskType.getTriggerAction().equals(action)) {
+				if (pendingTaskType.getTriggerAction().contains(action)) {
 					name = pendingTaskType.getPendingTask();
 					isCompleted = false;
-				} else if (pendingTaskType.getCloserAction().equals(action)) {
-					name = pendingTaskType.getPendingTask();
-					isCompleted = true;
+					break;
 				}
 			}
 		}
 
-		if (isNullOrEmpty(name)) return caseDetails;
+		if (isCompleted) return caseDetails;
 
 		// Create request and process entity based on type
 		JSONObject request = new JSONObject();
@@ -351,33 +240,28 @@ public class IndexerUtils {
 		// Add additional details to the caseDetails map
 		caseDetails.putAll(entityDetails);
 		caseDetails.put("name", name);
-		caseDetails.put("isCompleted", isCompleted.toString());
+		caseDetails.put("isCompleted", Boolean.toString(isCompleted));
 
 		return caseDetails;
 	}
 
 	private Map<String, String> processEntityByType(String entityType, JSONObject request, String referenceId, Object object) {
 		try {
-			switch (entityType.toLowerCase()) {
-				case "hearing":
-					return processHearingEntity(request, object);
-				case "case":
-					return processCaseEntity(request, referenceId);
-				case "evidence":
-					return processEvidenceEntity(request, referenceId);
-				case "async-voluntary-submission-services":
-				case "asynsubmissionwithresponse":
-				case "asyncsubmissionwithoutresponse":
-					return processApplicationEntity(request, referenceId);
-				default:
-					if (entityType.toLowerCase().contains("task")) {
-						return processTaskEntity(request, referenceId);
-					} else if (entityType.toLowerCase().contains("order")) {
-						return processOrderEntity(request, referenceId);
-					} else {
+			if(config.getHearingBussinessServiceList().contains(entityType))
+				return processHearingEntity(request, object);
+			else if (config.getCaseBussinessServiceList().contains(entityType))
+				return processCaseEntity(request, referenceId);
+			else if (config.getEvidenceBussinessServiceList().contains(entityType))
+				return processEvidenceEntity(request, referenceId);
+			else if (config.getApplicationBussinessServiceList().contains(entityType))
+				return processApplicationEntity(request, referenceId);
+			else if (config.getOrderBussinessServiceList().contains(entityType))
+				return processOrderEntity(request, referenceId);
+			else if (config.getTaskBussinessServiceList().contains(entityType))
+				return processTaskEntity(request, referenceId);
+			else {
 						log.error("Unexpected entityType: {}", entityType);
 						return new HashMap<>();
-					}
 			}
 		} catch (InterruptedException e) {
 			log.error("Processing interrupted for entityType: {}", entityType, e);
@@ -429,9 +313,8 @@ public class IndexerUtils {
 		Map<String, String> caseDetails = new HashMap<>();
 		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
-		String caseId = JsonPath.read(artifactObject.toString(), CASE_ID_PATH);
-		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
-		String filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+		String filingNumber = JsonPath.read(artifactObject.toString(), FILING_NUMBER_PATH);
+		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber, null);
 		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 
 		caseDetails.put("cnrNumber", cnrNumber);
@@ -445,8 +328,7 @@ public class IndexerUtils {
 		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
 		String cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
-		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null, null);
-		String filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+		String filingNumber = JsonPath.read(taskObject.toString(), FILING_NUMBER_PATH);
 
 		caseDetails.put("cnrNumber", cnrNumber);
 		caseDetails.put("filingNumber", filingNumber);
@@ -458,13 +340,11 @@ public class IndexerUtils {
 		Map<String, String> caseDetails = new HashMap<>();
 		Thread.sleep(config.getApiCallDelayInSeconds()*1000);
 		Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
-		String caseId = JsonPath.read(applicationObject.toString(), CASE_ID_PATH);
 		String cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(applicationObject.toString(), FILING_NUMBER_PATH);
-		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber, caseId);
 
-		caseDetails.put("cnrNumber", JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH));
-		caseDetails.put("filingNumber", JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH));
+		caseDetails.put("cnrNumber", cnrNumber);
+		caseDetails.put("filingNumber", filingNumber);
 
 		return caseDetails;
 	}
@@ -475,10 +355,9 @@ public class IndexerUtils {
 		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
 		String cnrNumber = JsonPath.read(orderObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
-		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber, null);
 
-		caseDetails.put("cnrNumber", JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH));
-		caseDetails.put("filingNumber", JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH));
+		caseDetails.put("cnrNumber", cnrNumber);
+		caseDetails.put("filingNumber", filingNumber);
 		return caseDetails;
 	}
 

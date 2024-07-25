@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Schema(description = "Pending task type to be fetched from mdms")
 @Validated
@@ -32,7 +35,7 @@ public class PendingTaskType {
 
     @JsonProperty("triggerAction")
     @Valid
-    private String triggerAction = null;
+    private List<String> triggerAction = null;
 
     @JsonProperty("state")
     @Valid
@@ -44,5 +47,5 @@ public class PendingTaskType {
 
     @JsonProperty("closerAction")
     @Valid
-    private String closerAction = null;
+    private List<String> closerAction = new ArrayList<>();
 }

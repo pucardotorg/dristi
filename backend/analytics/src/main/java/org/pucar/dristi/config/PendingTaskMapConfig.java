@@ -1,4 +1,4 @@
-package org.pucar.dristi.service;
+package org.pucar.dristi.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
-import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.beans.factory.annotation.Autowired;
