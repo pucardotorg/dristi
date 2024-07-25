@@ -70,7 +70,7 @@ const GenerateOrders = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [newformdata, setNewFormdata] = useState([]);
+  const [formList, setFormList] = useState([]);
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -174,8 +174,8 @@ const GenerateOrders = () => {
   );
 
   const defaultIndex = useMemo(() => {
-    return newformdata.findIndex((order) => order.orderNumber === orderNumber);
-  }, [newformdata, orderNumber]);
+    return formList.findIndex((order) => order.orderNumber === orderNumber);
+  }, [formList, orderNumber]);
 
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -210,9 +210,9 @@ const GenerateOrders = () => {
 
   useEffect(() => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
-      setNewFormdata([defaultOrderData]);
+      setFormList([defaultOrderData]);
     } else {
-      setNewFormdata([...(ordersData?.list || [])].reverse());
+      setFormList([...(ordersData?.list || [])].reverse());
     }
   }, [ordersData, defaultOrderData]);
 
@@ -235,7 +235,7 @@ const GenerateOrders = () => {
     }
   }, [defaultIndex, selectedOrder]);
 
-  const currentOrder = useMemo(() => newformdata?.[selectedOrder], [newformdata, selectedOrder]);
+  const currentOrder = useMemo(() => formList?.[selectedOrder] , [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
 
   const modifiedFormConfig = useMemo(() => {
@@ -392,7 +392,7 @@ const GenerateOrders = () => {
         },
       };
     }
-    let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
+    let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
     if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
       updatedFormdata.refApplicationId = applicationNumber;
     }
@@ -419,7 +419,7 @@ const GenerateOrders = () => {
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
       const updatedFormData =
         currentOrder?.additionalDetails?.formdata?.orderType?.code !== formData?.orderType?.code ? { orderType: formData.orderType } : formData;
-      setNewFormdata((prev) => {
+      setFormList((prev) => {
         return prev?.map((item, index) => {
           return index !== selectedOrder
             ? item
@@ -453,18 +453,18 @@ const GenerateOrders = () => {
   };
 
   const handleAddOrder = () => {
-    setNewFormdata((prev) => {
+    setFormList((prev) => {
       return [...prev, defaultOrderData];
     });
     if (orderNumber) {
       history.push(`?filingNumber=${filingNumber}`);
     }
-    setSelectedOrder(newformdata?.length);
+    setSelectedOrder(formList?.length);
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
     let count = 0;
-    const promises = newformdata.map(async (order) => {
+    const promises = formList.map(async (order) => {
       if (order?.orderType) {
         count += 1;
         if (order?.orderNumber) {
@@ -477,7 +477,7 @@ const GenerateOrders = () => {
       }
     });
     const responsesList = await Promise.all(promises);
-    setNewFormdata(
+    setFormList(
       responsesList.map((res) => {
         return res?.order;
       })
@@ -542,10 +542,10 @@ const GenerateOrders = () => {
 
   const handleDeleteOrder = async () => {
     try {
-      if (newformdata[deleteOrderIndex]?.orderNumber) {
-        await updateOrder(newformdata[deleteOrderIndex], OrderWorkflowAction.ABANDON);
+      if (formList[deleteOrderIndex]?.orderNumber) {
+        await updateOrder(formList[deleteOrderIndex], OrderWorkflowAction.ABANDON);
       }
-      setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
+      setFormList((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       if (orderNumber) {
         history.push(`?filingNumber=${filingNumber}`);
       }
@@ -587,7 +587,14 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
+  if (
+    isOrdersLoading ||
+    isOrdersFetching ||
+    isCaseDetailsLoading ||
+    isApplicationDetailsLoading ||
+    !ordersData?.list ||
+    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
+  ) {
     return <Loader />;
   }
 
@@ -596,7 +603,7 @@ const GenerateOrders = () => {
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
-          {newformdata?.map((item, index) => {
+          {formList?.map((item, index) => {
             return (
               <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>
                 <h1
@@ -607,7 +614,7 @@ const GenerateOrders = () => {
                 >
                   {t(item?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
                 </h1>
-                {newformdata?.length > 1 && (
+                {formList?.length > 1 && (
                   <span
                     onClick={() => {
                       setDeleteOrderIndex(index);
