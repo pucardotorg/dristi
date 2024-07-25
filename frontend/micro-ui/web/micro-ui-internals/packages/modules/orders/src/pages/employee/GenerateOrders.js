@@ -235,7 +235,7 @@ const GenerateOrders = () => {
     }
   }, [defaultIndex, selectedOrder]);
 
-  const currentOrder = useMemo(() => newformdata?.[selectedOrder], [newformdata, selectedOrder]);
+  const currentOrder = useMemo(() => newformdata?.[selectedOrder] || {}, [newformdata, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
 
   const modifiedFormConfig = useMemo(() => {
@@ -392,7 +392,7 @@ const GenerateOrders = () => {
         },
       };
     }
-    let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
+    let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
     if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
       updatedFormdata.refApplicationId = applicationNumber;
     }
@@ -587,7 +587,14 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
+  if (
+    isOrdersLoading ||
+    isOrdersFetching ||
+    isCaseDetailsLoading ||
+    isApplicationDetailsLoading ||
+    !ordersData?.list ||
+    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
+  ) {
     return <Loader />;
   }
 

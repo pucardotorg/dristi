@@ -279,7 +279,15 @@ function CaseFileAdmission({ t, path }) {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: {},
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              type: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+              code: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+              name: `ORDER_TYPE_${OrderTypes.SCHEDULE_OF_HEARING_DATE}`,
+            },
+          },
+        },
       },
     };
     DRISTIService.customApiService(Urls.dristi.ordersCreate, reqBody, { tenantId })
