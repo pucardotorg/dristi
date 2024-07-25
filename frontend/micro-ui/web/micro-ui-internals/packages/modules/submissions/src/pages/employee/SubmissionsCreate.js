@@ -45,7 +45,7 @@ const SubmissionsCreate = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loader, setLoader] = useState(false);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const individualId = localStorage.getItem("individualId");
   const submissionType = useMemo(() => {
@@ -301,10 +301,12 @@ const SubmissionsCreate = () => {
           additionalDetails: {
             formdata,
             ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
+            ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
+            onBehalOfName: userInfo.name,
             partyType: "complainant.primary",
           },
           documents,
-          // onBehalfOf: { individualId },
+          onBehalfOf: [userInfo?.uuid],
           workflow: {
             id: "workflow123",
             action: SubmissionWorkflowAction.CREATE,
