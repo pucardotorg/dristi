@@ -527,7 +527,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     setToastDetails(details);
     setTimeout(() => {
       setToast(false);
-      // history.replace(history.location.pathname + history.location.search, { from: "" });
+      history.replace(history.location.pathname + history.location.search, { from: "" });
     }, duration);
   };
 

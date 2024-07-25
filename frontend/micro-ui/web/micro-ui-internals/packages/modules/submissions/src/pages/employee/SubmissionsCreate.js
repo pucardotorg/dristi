@@ -107,7 +107,37 @@ const SubmissionsCreate = () => {
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
     };
-    return applicationConfigKeys?.[applicationType] || [];
+    let newConfig = applicationConfigKeys?.[applicationType] || [];
+
+    if (newConfig.length > 0) {
+      const updatedConfig = newConfig.map((config) => {
+        return {
+          ...config,
+          body: config?.body.map((body) => {
+            if (body?.populators?.validation?.customValidationFn) {
+              const customValidations =
+                Digit.Customizations[body.populators.validation.customValidationFn.moduleName][
+                  body.populators.validation.customValidationFn.masterName
+                ];
+
+              if (customValidations) {
+                body.populators.validation = {
+                  ...body.populators.validation,
+                  ...customValidations(),
+                };
+              }
+            }
+            return {
+              ...body,
+            };
+          }),
+        };
+      });
+      return updatedConfig;
+    }
+    else {
+      return [];
+    }
   }, [applicationType]);
 
   const formatDate = (date, format) => {
