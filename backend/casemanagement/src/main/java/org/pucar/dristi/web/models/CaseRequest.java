@@ -1,15 +1,13 @@
 package org.pucar.dristi.web.models;
 
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * CaseRequest
@@ -20,23 +18,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseRequest   {
-        @JsonProperty("requestInfo")
+public class CaseRequest {
+	@JsonProperty("RequestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+	@Valid
+	private RequestInfo requestInfo = null;
 
-        @JsonProperty("caseId")
+	@JsonProperty("caseId")
 
-                private String caseId = null;
+	private String caseId = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("filingNumber")
 
-                private String filingNumber = null;
+	private String filingNumber = null;
 
-        @JsonProperty("caseNumber")
+	@JsonProperty("caseNumber")
 
-                private String caseNumber = null;
+	private String caseNumber = null;
 
 
 }
