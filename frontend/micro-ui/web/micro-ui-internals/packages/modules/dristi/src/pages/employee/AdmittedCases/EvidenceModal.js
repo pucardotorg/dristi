@@ -347,13 +347,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           formId="modal-action"
           headerBarMain={
             <Heading
-              label={t("Document Submission")}
+              label={t("DOCUMENT_SUBMISSION")}
               status={
                 modalType === "Documents"
                   ? documentSubmission?.[0]?.artifactList?.isEvidence
                     ? "Accepeted"
                     : "Action Pending"
-                  : documentSubmission?.[0]?.status
+                  : t(documentSubmission?.[0]?.status)
               }
               isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
             />
@@ -367,15 +367,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                   <div className="application-info">
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Application Type</h3>
+                        <h3>{t("APPLICATION_TYPE")}</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{docSubmission?.details?.applicationType}</h3>
+                        <h3>{t(docSubmission?.details?.applicationType)}</h3>
                       </div>
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Application Sent On</h3>
+                        <h3>{t("APPLICATION_SENT_ON")}</h3>
                       </div>
                       <div className="info-value">
                         <h3>{docSubmission.details.applicationSentOn}</h3>
@@ -383,7 +383,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Sender</h3>
+                        <h3>{t("SENDER")}</h3>
                       </div>
                       <div className="info-value">
                         <h3>{docSubmission.details.sender}</h3>
@@ -391,7 +391,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Additional Details</h3>
+                        <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
                       </div>
                       <div className="info-value">
                         {/* <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3> */}
@@ -419,7 +419,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             {modalType === "Submissions" && (
               <div className="application-comment">
                 <div className="comment-section">
-                  <h1 className="comment-xyzoo">Comments</h1>
+                  <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
                   <div className="comment-main">
                     {comments?.map((comment, index) => (
                       <CommentComponent key={index} comment={comment} />
