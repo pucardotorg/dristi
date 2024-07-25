@@ -5,6 +5,7 @@ import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -34,7 +35,7 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList,String artifactType ,Boolean evidenceStatus ,String id, String caseId, String application,String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList, UUID owner, String artifactType , Boolean evidenceStatus , String id, String caseId, String application, String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
@@ -49,8 +50,9 @@ public class EvidenceQueryBuilder {
             firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
             firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
             firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria =addArtifactCriteria(owner!=null?(owner.toString()):null, query, preparedStmtList, firstCriteria, "art.createdBy = ?");
             firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
-            addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
+            addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber");
 
 
             return query.toString();
@@ -58,6 +60,15 @@ public class EvidenceQueryBuilder {
             log.error("Error while building artifact search query", e);
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
+    }
+    boolean addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(criteriaClause).append(" LIKE ?");
+            preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
+            firstCriteria = false;
+        }
+        return firstCriteria;
     }
     boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
         if (criteria != null && !criteria.isEmpty()) {

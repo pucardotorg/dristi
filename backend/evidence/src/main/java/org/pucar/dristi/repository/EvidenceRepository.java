@@ -48,6 +48,7 @@
                 List<Object> preparedStmtList=new ArrayList<>();
                 String artifactQuery = queryBuilder.getArtifactSearchQuery(
                         preparedStmtList,
+                        evidenceSearchCriteria.getOwner(),
                         evidenceSearchCriteria.getArtifactType(),
                         evidenceSearchCriteria.getEvidenceStatus(),
                         evidenceSearchCriteria.getId(),
