@@ -44,16 +44,17 @@ public class OrderRegistrationValidator {
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 
-        String orderType = orderRequest.getOrder().getOrderType().toUpperCase();
+        String orderType = orderRequest.getOrder().getOrderType();
         String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(), configuration.getOrderModule(), createMasterDetails());
 
-        List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, configuration.getOrderTypePath() + configuration.getOrderTypeFilter() + orderType + configuration.getOrderIsActiveFilter());
+        System.out.printf(configuration.getOrderTypePath().replace("{}",orderType));
+        List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, configuration.getOrderTypePath().replace("{}",orderType));
         if (orderTypeResults.isEmpty()) {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid OrderType");
         }
 
-        String orderCategory = orderRequest.getOrder().getOrderCategory().toUpperCase();
-        List<Map<String, Object>> orderCategoryResults = JsonPath.read(mdmsData, configuration.getOrderCategoryPath() + configuration.getOrderCategoryFilter() + orderCategory + configuration.getOrderIsActiveFilter());
+        String orderCategory = orderRequest.getOrder().getOrderCategory();
+        List<Map<String, Object>> orderCategoryResults = JsonPath.read(mdmsData, configuration.getOrderCategoryPath().replace("{}",orderCategory));
         if (orderCategoryResults.isEmpty()) {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid Order Category");
         }
