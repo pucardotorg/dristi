@@ -26,7 +26,9 @@ const AdmittedCases = ({ isJudge = true }) => {
   const { path } = useRouteMatch();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
-  const activeTab = urlParams.get("tab") || "Overview";
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isFSO = roles.some((role) => role.code === "FSO_ROLE");
+  const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -411,7 +413,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             },
           };
     });
-  }, [caseId, cnrNumber, filingNumber, history, isCitizen, tenantId]);
+  }, [caseId, caseRelatedData.parties, cnrNumber, filingNumber, history, isCitizen, tenantId]);
 
   const newTabSearchConfig = {
     ...TabSearchconfig,
@@ -438,8 +440,10 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const isTabDisabled = useMemo(() => {
-    return caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
-  }, [caseDetails?.status, config?.label]);
+    return isFSO
+      ? true
+      : caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
+  }, [caseDetails?.status, config?.label, isFSO]);
 
   useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {

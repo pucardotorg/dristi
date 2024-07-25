@@ -209,8 +209,8 @@ export const UICustomizations = {
       switch (key) {
         case "Case Type":
           return <span>NIA S138</span>;
-        case "Stage":
-          return t(row?.status);
+        case "Scrutiny Status":
+          return t(row?.status === "UNDER_SCRUTINY" ? "IN_PROGRESS" : "NOT_STARTED");
         case "Days Since Filing":
           const createdAt = new Date(value);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
