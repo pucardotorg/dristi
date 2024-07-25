@@ -47,7 +47,6 @@ public class OrderRegistrationValidator {
         String orderType = orderRequest.getOrder().getOrderType();
         String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(), configuration.getOrderModule(), createMasterDetails());
 
-        System.out.printf(configuration.getOrderTypePath().replace("{}",orderType));
         List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, configuration.getOrderTypePath().replace("{}",orderType));
         if (orderTypeResults.isEmpty()) {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid OrderType");
