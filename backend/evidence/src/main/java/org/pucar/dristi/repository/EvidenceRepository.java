@@ -15,6 +15,8 @@
 
     import java.util.ArrayList;
     import java.util.List;
+    import java.util.Map;
+    import java.util.UUID;
 
     @Slf4j
     @Repository
@@ -43,9 +45,11 @@
 
         public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
             try {
-                List<Object> preparedStmtListDoc = new ArrayList<>();
+                List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
-                List<Object> preparedStmtList=new ArrayList<>();
+                List<Object> preparedStmtListDoc = new ArrayList<>();
+
+                // Artifact query building
                 String artifactQuery = queryBuilder.getArtifactSearchQuery(
                         preparedStmtList,
                         evidenceSearchCriteria.getOwner(),
@@ -61,33 +65,50 @@
                         evidenceSearchCriteria.getSourceName(),
                         evidenceSearchCriteria.getArtifactNumber()
                 );
-                    artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
+                artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
                 log.info("Final artifact query: {}", artifactQuery);
-                if(pagination !=  null) {
+
+                if (pagination != null) {
                     Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
                     log.info("Total count without pagination :: {}", totalRecords);
                     pagination.setTotalCount(Double.valueOf(totalRecords));
                     artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
                 }
 
-                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery,preparedStmtList.toArray(), evidenceRowMapper);
+                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
 
+                // Fetch associated comments
                 List<String> artifactIds = new ArrayList<>();
                 for (Artifact artifact : artifactList) {
-                    artifactIds.add(String.valueOf(artifact.getId()));
+                    artifactIds.add(artifact.getId().toString());
+                }
+                if (artifactIds.isEmpty()) {
+                    return artifactList;
                 }
 
-                if (!artifactIds.isEmpty()) {
-                    String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
-                    log.info("Final document query: {}", documentQuery);
-                    Document documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
-                    log.info("DB document map :: {}", documentMap);
+                // Fetch associated comments
+                String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom);
+                log.info("Final comment query: {}", commentQuery);
+                Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper);
+                log.info("DB comment map :: {}", commentMap);
 
-                    String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom);
-                    log.info("Final comment query: {}", commentQuery);
-                    List<Comment> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper);
-                    log.info("DB comment map :: {}", commentMap);
+                if (commentMap != null) {
+                    artifactList.forEach(artifact -> {
+                        artifact.setComments(commentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
+                    });
+                }
+
+                // Fetch associated documents
+                String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
+                log.info("Final document query: {}", documentQuery);
+                Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+                log.info("DB document map :: {}", documentMap);
+
+                if (documentMap != null) {
+                    artifactList.forEach(artifact -> {
+                        artifact.setFile(documentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
+                    });
                 }
 
                 return artifactList;
@@ -99,6 +120,8 @@
                 throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.toString());
             }
         }
+
+
         public Integer getTotalCountArtifact(String baseQuery, List<Object> preparedStmtList) {
             String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
             log.info("Final count query :: {}", countQuery);
