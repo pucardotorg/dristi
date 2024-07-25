@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
      void testCreateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
-        order.setOrderType("other");
+        order.setOrderCategory("other");
         orderRequest.setOrder(order);
 
         doNothing().when(validator).validateOrderRegistration(any(OrderRequest.class));
@@ -119,7 +119,7 @@ import static org.mockito.Mockito.*;
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setWorkflow(new Workflow());
-        order.setOrderType("other");
+        order.setOrderCategory("other");
         orderRequest.setOrder(order);
 
         Order existingOrder = new Order();
