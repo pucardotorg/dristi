@@ -86,20 +86,6 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
         return new ArrayList<>(orderMap.values());
     }
 
-    private LocalDate stringToLocalDate(String str){
-        LocalDate localDate = null;
-        if(str!=null)
-            try {
-                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                localDate = LocalDate.parse(str, pattern);
-            } catch (DateTimeParseException e) {
-                log.error("Date parsing failed for input: {}", str, e);
-                throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
-            }
-
-        return localDate;
-    }
-
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
         if (json == null || json.trim().isEmpty()) {
             try {
