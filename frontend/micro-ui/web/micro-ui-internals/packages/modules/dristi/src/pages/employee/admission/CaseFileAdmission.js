@@ -239,8 +239,22 @@ function CaseFileAdmission({ t, path }) {
 
     updateCaseDetails("ADMIT", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
+      setCaseADmitLoader(false);
+      DRISTIService.customApiService(Urls.dristi.pendingTask, {pendingTask: {
+        name: "Schedule Hearing",
+        entityType: "hearing",
+        referenceId: caseDetails?.filingNumber,
+        status: "SCHEDULE_HEARING",
+        assignedTo: [],
+        assignedRole: ["JUDGE_ROLE"],
+        cnrNumber: null,
+        filingNumber: caseDetails?.filingNumber,
+        isCompleted: false,
+        stateSla: null,
+        additionalDetails: {},
+        tenantId,
+      },})
     });
-    setCaseADmitLoader(false);
   };
   const handleScheduleCase = (props) => {
     setSubmitModalInfo({
