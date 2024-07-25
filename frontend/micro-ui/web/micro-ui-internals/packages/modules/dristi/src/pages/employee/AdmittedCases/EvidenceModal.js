@@ -10,9 +10,8 @@ import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
 import DocViewerWrapper from "../docViewerWrapper";
 import { DRISTIService } from "../../../services";
-import { Loader } from "@egovernments/digit-ui-components";
 import { Urls } from "../../../hooks";
-import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -21,7 +20,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const [currentComment, setCurrentComment] = useState("");
   const history = useHistory();
   const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
-  const cnrNumber = useMemo(() => caseData.cnrNumber, [caseData]);
+  const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -44,7 +43,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const hideSubmit = useMemo(() => {
-    return !userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN");
+    return (
+      (!userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN")) &&
+      ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+    );
   }, [userRoles]);
 
   const actionSaveLabel = useMemo(() => {
@@ -261,26 +263,40 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     await handleMarkEvidence();
   };
 
+  const getOrderTypes = (applicationType, type) => {
+    switch (applicationType) {
+      case "RE_SCHEDULE":
+        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "APPROVAL_RESCHEDULE_REQUEST";
+      case "WITHDRAWAL":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
+      case "TRANSFER":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "CASE_TRANSFER";
+      case "SETTLEMENT":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "SETTLEMENT";
+      case "BAIL_BOND":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+      case "SURETY":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+      case "EXTENSION_SUBMISSION_DEADLINE":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+      default:
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
+    }
+  };
   const handleApplicationAction = async (generateOrder) => {
     try {
-      const formdata =
-        showConfirmationModal?.type === "reject"
-          ? {
-              orderType: {
-                code: "REJECT_VOLUNTARY_SUBMISSIONS",
-                type: "REJECT_VOLUNTARY_SUBMISSIONS",
-                name: "ORDER_TYPE_REJECT_VOLUNTARY_SUBMISSIONS",
-              },
-              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-            }
-          : {
-              orderType: {
-                code: "APPROVE_VOLUNTARY_SUBMISSIONS",
-                type: "APPROVE_VOLUNTARY_SUBMISSIONS",
-                name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
-              },
-              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-            };
+      let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
+      const formdata = {
+        orderType: {
+          code: orderType,
+          type: orderType,
+          name: `ORDER_TYPE_${orderType}`,
+        },
+        refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+        ...(orderType === "BAIL" && { bailType: { type: documentSubmission?.[0]?.applicationList?.applicationType } }),
+      };
       if (generateOrder) {
         const reqbody = {
           order: {
@@ -291,7 +307,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             statuteSection: {
               tenantId,
             },
-            orderType: showConfirmationModal?.type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS",
+            orderType,
             status: "",
             isActive: true,
             workflow: {
@@ -323,7 +339,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           pendingTask: {
             name,
             entityType: "order",
-            referenceId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            referenceId: `MANUAL_${documentSubmission?.[0]?.applicationList?.applicationNumber}`,
             status: "SAVE_DRAFT",
             assignedTo: [],
             assignedRole: ["JUDGE_ROLE"],
@@ -345,10 +361,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentApplication(newComment);
     }
   };
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <React.Fragment>

@@ -343,7 +343,6 @@ const SubmissionsCreate = () => {
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
-            // assignes: getAllAssignees(caseDetails),
           },
         },
       };
@@ -356,6 +355,7 @@ const SubmissionsCreate = () => {
     }
   };
   const createPendingTask = async () => {
+    const assignes = getAllAssignees(caseDetails, Boolean(orderNumber)) || [];
     let entityType = "async-voluntary-submission-services";
     if (orderNumber) {
       entityType =
@@ -369,7 +369,7 @@ const SubmissionsCreate = () => {
         entityType,
         referenceId: `MANUAL_${applicationNumber}`,
         status: "MAKE_PAYMENT_SUBMISSION",
-        assignedTo: [{ uuid: userInfo?.uuid }],
+        assignedTo: assignes?.map((uuid) => ({ uuid })),
         assignedRole: [],
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,

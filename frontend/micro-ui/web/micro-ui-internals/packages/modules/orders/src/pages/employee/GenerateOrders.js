@@ -59,10 +59,7 @@ const OutlinedInfoIcon = () => (
 
 const GenerateOrders = () => {
   const { t } = useTranslation();
-  const urlParams = new URLSearchParams(window.location.search);
-  const filingNumber = urlParams.get("filingNumber");
-  const applicationNumber = urlParams.get("applicationNumber");
-  const orderNumber = urlParams.get("orderNumber");
+  const { orderNumber, filingNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -97,21 +94,6 @@ const GenerateOrders = () => {
     filingNumber,
     filingNumber
   );
-
-  const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
-    {
-      criteria: {
-        filingNumber: filingNumber,
-        tenantId: tenantId,
-        applicationNumber: applicationNumber,
-      },
-      tenantId,
-    },
-    {},
-    applicationNumber,
-    applicationNumber
-  );
-  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -238,6 +220,22 @@ const GenerateOrders = () => {
 
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
+  const referenceId = useMemo(() => currentOrder?.additionalDetails?.formdata?.refApplicationId, [currentOrder]);
+
+  const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber: filingNumber,
+        tenantId: tenantId,
+        applicationNumber: referenceId,
+      },
+      tenantId,
+    },
+    {},
+    referenceId,
+    referenceId
+  );
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
@@ -394,9 +392,6 @@ const GenerateOrders = () => {
       };
     }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
-    if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
-      updatedFormdata.refApplicationId = applicationNumber;
-    }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.additionalDetails?.onBehalOfName;
@@ -530,17 +525,22 @@ const GenerateOrders = () => {
     }
   };
 
-  const handleApplicationAction = async () => {
-    if (!applicationNumber || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.state)) {
+  const handleApplicationAction = async (order) => {
+    if (!referenceId || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
       return true;
     }
     try {
       return await ordersService.customApiService(
-        `/application/application/v1/update`,
+        `/application/v1/update`,
         {
           application: {
             ...applicationDetails,
-            workflow: { ...applicationDetails.workflow, action: true ? SubmissionWorkflowAction.APPROVE : SubmissionWorkflowAction.REJECT },
+            workflow: {
+              ...applicationDetails.workflow,
+              action: ["REJECTION_RESCHEDULE_REQUEST", "REJECT_VOLUNTARY_SUBMISSIONS"].includes(order?.orderType)
+                ? SubmissionWorkflowAction.REJECT
+                : SubmissionWorkflowAction.APPROVE,
+            },
           },
         },
         { tenantId }
@@ -553,7 +553,7 @@ const GenerateOrders = () => {
   const handleIssueOrder = async () => {
     try {
       setPrevOrder(currentOrder);
-      const applicationStatus = await handleApplicationAction();
+      const applicationStatus = await handleApplicationAction(currentOrder);
       if (!applicationStatus) {
         // Show toast with submission approval failed and return
         return;
@@ -648,18 +648,6 @@ const GenerateOrders = () => {
 
   if (!filingNumber) {
     history.push("/employee/home/home-pending-task");
-  }
-
-  if (applicationNumber && !currentOrder?.refApplicationId) {
-    history.push(`?filingNumber=${filingNumber}`);
-  }
-
-  if (currentOrder?.refApplicationId && currentOrder?.refApplicationId !== applicationNumber) {
-    if (currentOrder?.orderNumber) {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}&orderNumber=${orderNumber}`);
-    } else {
-      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}`);
-    }
   }
 
   if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
