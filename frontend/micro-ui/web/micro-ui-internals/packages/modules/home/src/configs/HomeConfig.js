@@ -1412,7 +1412,19 @@ export const pendingTaskOrderActions = {
 
 export const pendingTaskOrderOfJudgementActions = {};
 
-export const pendingTaskVoluntarySubmissionActions = {};
+export const pendingTaskVoluntarySubmissionActions = {
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskSubmissionWithResponseActions = {
   CREATE_SUBMISSION: {
@@ -1427,9 +1439,32 @@ export const pendingTaskSubmissionWithResponseActions = {
       ],
     },
   },
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
-export const pendingTaskSubmissionWithoutResponseActions = {};
+export const pendingTaskSubmissionWithoutResponseActions = {
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const selectTaskType = {
   case: pendingTaskCaseActions,
