@@ -203,36 +203,38 @@ function CaseFileAdmission({ t, path }) {
     ].flat();
 
     await Promise.all(
-      documentList?.filter(data => data)?.map(async (data) => {
-        await DRISTIService.createEvidence({
-          artifact: {
-            artifactType: "DOCUMENTARY",
-            sourceType: "COMPLAINANT",
-            sourceID: individualId,
-            caseId: caseDetails?.id,
-            filingNumber: caseDetails?.filingNumber,
-            tenantId,
-            comments: [],
-            file: {
-              documentType: data?.fileType || data?.documentType,
-              fileStore: data?.fileStore,
-              fileName: data?.fileName,
-              documentName: data?.documentName,
+      documentList
+        ?.filter((data) => data)
+        ?.map(async (data) => {
+          await DRISTIService.createEvidence({
+            artifact: {
+              artifactType: "DOCUMENTARY",
+              sourceType: "COMPLAINANT",
+              sourceID: individualId,
+              caseId: caseDetails?.id,
+              filingNumber: caseDetails?.filingNumber,
+              tenantId,
+              comments: [],
+              file: {
+                documentType: data?.fileType || data?.documentType,
+                fileStore: data?.fileStore,
+                fileName: data?.fileName,
+                documentName: data?.documentName,
+              },
+              workflow: {
+                action: "TYPE DEPOSITION",
+                documents: [
+                  {
+                    documentType: data?.documentType,
+                    fileName: data?.fileName,
+                    documentName: data?.documentName,
+                    fileStoreId: data?.fileStore,
+                  },
+                ],
+              },
             },
-            workflow: {
-              action: "TYPE DEPOSITION",
-              documents: [
-                {
-                  documentType: data?.documentType,
-                  fileName: data?.fileName,
-                  documentName: data?.documentName,
-                  fileStoreId: data?.fileStore,
-                },
-              ],
-            },
-          },
-        });
-      })
+          });
+        })
     );
 
     updateCaseDetails("ADMIT", formdata).then((res) => {
