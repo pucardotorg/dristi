@@ -236,7 +236,7 @@ const GenerateOrders = () => {
     }
   }, [defaultIndex, selectedOrder]);
 
-  const currentOrder = useMemo(() => formList?.[selectedOrder] , [formList, selectedOrder]);
+  const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
 
   const modifiedFormConfig = useMemo(() => {
@@ -460,7 +460,7 @@ const GenerateOrders = () => {
     if (orderNumber) {
       history.push(`?filingNumber=${filingNumber}`);
     }
-    setSelectedOrder(newformdata?.length);
+    setSelectedOrder(formList?.length);
   };
 
   const createPendingTask = async (order) => {
