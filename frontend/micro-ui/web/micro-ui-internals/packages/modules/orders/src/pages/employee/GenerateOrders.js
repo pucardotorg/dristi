@@ -399,9 +399,9 @@ const GenerateOrders = () => {
     }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
-        updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
-        updatedFormdata.partyType = t(applicationDetails.additionalDetails?.partyType);
-        updatedFormdata.reasonForWithdrawal = t(applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
+        updatedFormdata.applicationOnBehalfOf = applicationDetails?.additionalDetails?.onBehalOfName;
+        updatedFormdata.partyType = t(applicationDetails?.additionalDetails?.partyType);
+        updatedFormdata.reasonForWithdrawal = t(applicationDetails?.additionalDetails?.formdata?.reasonForWithdrawal?.code);
         updatedFormdata.applicationStatus = t(applicationDetails?.status);
       }
     }
@@ -412,6 +412,16 @@ const GenerateOrders = () => {
         updatedFormdata.proposedSubmissionDate = applicationDetails.additionalDetails?.formdata?.changedSubmissionDate;
         updatedFormdata.originalSubmissionOrderDate = applicationDetails.additionalDetails?.orderDate;
       }
+    }
+    if (
+      [
+        "RESCHEDULE_OF_HEARING_DATE",
+        "REJECTION_RESCHEDULE_REQUEST",
+        "APPROVAL_RESCHEDULE_REQUEST",
+        "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+      ].includes(orderType)
+    ) {
+      updatedFormdata.originalHearingDate = applicationDetails?.additionalDetails?.formdata?.initialHearingDate;
     }
     return updatedFormdata;
   }, [currentOrder, applicationDetails, orderType]);
@@ -623,13 +633,10 @@ const GenerateOrders = () => {
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
-      from: "orderSuccessModal",
-    });
-    setShowSuccessModal(false);
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
-      from: "orderSuccessModal",
-    });
+    // setShowSuccessModal(false);
+    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+    //   from: "orderSuccessModal",
+    // });
   };
 
   const handleClose = () => {
