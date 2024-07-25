@@ -384,6 +384,15 @@ const GenerateOrders = () => {
   }, [complainants, currentOrder, orderType, respondants, t]);
 
   const defaultValue = useMemo(() => {
+    if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
+      return {
+        orderType: {
+          code: currentOrder?.orderType,
+          type: currentOrder?.orderType,
+          name: `ORDER_TYPE_${currentOrder?.orderType}`,
+        },
+      };
+    }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
     if (applicationNumber && updatedFormdata && typeof updatedFormdata === "object") {
       updatedFormdata.refApplicationId = applicationNumber;
