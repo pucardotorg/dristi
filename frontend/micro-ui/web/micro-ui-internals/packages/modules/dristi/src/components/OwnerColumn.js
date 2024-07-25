@@ -49,9 +49,11 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     };
   }) || [defaultObj];
 
+  const showDoc = rowData?.status === "PENDINGREVIEW" || rowData?.status === "PENDINGAPPROVAL" || rowData?.status === "COMPLETED";
+
   return (
     <React.Fragment>
-      <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
+      <div className="fack-check-icon" onClick={() => (showDoc ? colData?.clickFunc(docObj) : null)}>
         {showAsHeading ? (
           <div
             style={{
@@ -62,7 +64,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
             {t(value)}
           </div>
         ) : (
-          <FactCheckIcon />
+          showDoc && <FactCheckIcon />
         )}
       </div>
     </React.Fragment>

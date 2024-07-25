@@ -382,7 +382,7 @@ const AdmittedCases = ({ isJudge = true }) => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Document" || column.label === "Submission Name"
+                    return column.label === "Document" || column.label === "Submission Type"
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
@@ -764,6 +764,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             handleDownload={handleDownload}
             handleRequestLabel={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
+            openHearingModule={openHearingModule}
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
             showToast={showToast}

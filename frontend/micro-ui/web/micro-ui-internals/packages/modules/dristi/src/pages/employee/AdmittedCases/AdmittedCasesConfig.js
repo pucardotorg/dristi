@@ -457,10 +457,13 @@ export const TabSearchconfig = {
                 type: "dropdown",
                 populators: {
                   name: "artifactType",
-                  optionsKey: "type",
+                  optionsKey: "name",
                   mdmsConfig: {
                     masterName: "EvidenceType",
                     moduleName: "Evidence",
+                    localePrefix: "EVIDENCE_TYPE",
+                    select:
+                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -567,10 +570,6 @@ export const TabSearchconfig = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
         requestBody: {
-          apiOperation: "SEARCH",
-          Individual: {
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-          },
           criteria: {
             tenantId: Digit.ULBService.getCurrentTenantId(),
           },
