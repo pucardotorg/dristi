@@ -9,10 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -39,7 +36,7 @@ public class EvidenceQueryBuilderTest {
         String sourceId = "testSourceId";
         String sourceName = "testSourceName";
         String artifactNumber = "artifactNumber";
-
+        UUID owner = UUID.fromString("baf36d5a-58ff-4b9b-b263-69ab45b1c7b4");
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
@@ -51,12 +48,12 @@ public class EvidenceQueryBuilderTest {
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.artifactType = ? AND art.isEvidence = ? AND art.filingNumber = ? " +
                 "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
-                "AND art.sourceName = ? " +
-                "AND art.artifactNumber = ?";
+                "AND art.createdBy = ? AND art.sourceName = ? " +
+                "AND art.artifactNumber LIKE ?";
         List<Object> preparedStmtList=new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,artifactType,evidenceStatus,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,owner,artifactType,evidenceStatus,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -86,7 +83,7 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art";
         List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,null,null,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,null,null,null,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -123,6 +120,7 @@ public class EvidenceQueryBuilderTest {
         String sourceId = "testSourceId";
         String sourceName = "testSourceName";
         String artifactNumber = "testArtifactNumber";
+        UUID owner = UUID.fromString("baf36d5a-58ff-4b9b-b263-69ab45b1c7b4");
 
         // Inject a scenario that causes an exception
         EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
@@ -130,7 +128,7 @@ public class EvidenceQueryBuilderTest {
 
         // Execute the method and assert that the CustomException is thrown
         CustomException exception = assertThrows(CustomException.class, () -> {
-            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,artifactType,evidenceStatus, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,owner,artifactType,evidenceStatus, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -173,11 +171,11 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
 
         // Stubbing the method call to return the expected query
-        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null,true,null, null, null, null,null, null, null, null,null))
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null,null,true,null, null, null, null,null, null, null, null,null))
                 .thenReturn(expectedQuery);
 
         // Calling the method under test
-        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null,true,null, null, null,null, null, null, null, null,null);
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null,null,true,null, null, null,null, null, null, null, null,null);
 
         // Assertions
         assertEquals(expectedQuery, actualQuery);

@@ -157,8 +157,8 @@ public class OrderQueryBuilder {
             }
             if (orderNumber!=null && !orderNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderNumber = ?");
-                preparedStmtList.add(orderNumber);
+                query.append("orders.orderNumber LIKE ?");
+                preparedStmtList.add("%" + orderNumber + "%");
             }
 
             return query.toString();
