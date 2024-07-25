@@ -8,6 +8,8 @@ const UpcomingHearings = (props) => {
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isFSO = roles.some((role) => role.code === "FSO_ROLE");
 
   // Get the current date
   const today = useMemo(() => new Date(), []);
@@ -55,22 +57,24 @@ const UpcomingHearings = (props) => {
       <div className="header">
         {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
       </div>
-      <div className="hearingCard">
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          <div className="hearingDate">
-            <div className="dateText">{date.split(" ")[0]}</div>
-            <div className="dateNumber">{date.split(" ")[1]}</div>
-            <div className="dayText">{day}</div>
+      {!isFSO && (
+        <div className="hearingCard">
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <div className="hearingDate">
+              <div className="dateText">{date.split(" ")[0]}</div>
+              <div className="dateNumber">{date.split(" ")[1]}</div>
+              <div className="dayText">{day}</div>
+            </div>
+            <div className="time-hearing-type">
+              <div className="timeText">{time}</div>
+              <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                {hearingType} ({hearingCount})
+              </Link>
+            </div>
           </div>
-          <div className="time-hearing-type">
-            <div className="timeText">{time}</div>
-            <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-              {hearingType} ({hearingCount})
-            </Link>
-          </div>
+          <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
         </div>
-        <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
-      </div>
+      )}
     </div>
   );
 };
