@@ -2,7 +2,7 @@ name: analytics workflow
 on:
   push:
     branches:
-      - pending-tasks-analytics
+      - pending-tasks-analytics-v2
     paths:
       - 'backend/analytics/**'
   pull_request:
@@ -45,10 +45,10 @@ jobs:
           docker tag pucar_analytics:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_analytics:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_analytics:v1.0.0-${{ github.sha }}
 
-      - name: trigger deployment pipeline
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
-          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
-          -d '{"ref":"Dev-0"}'
+      # - name: trigger deployment pipeline
+      #   run: |
+      #     curl -X POST \
+      #     -H "Accept: application/vnd.github.v3+json" \
+      #     -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+      #     https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+      #     -d '{"ref":"Dev-0"}'
