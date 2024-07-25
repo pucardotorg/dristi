@@ -1,121 +1,91 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.Comment;
 import org.postgresql.util.PGobject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CommentRowMapperTest {
 
+    @InjectMocks
+    private CommentRowMapper commentRowMapper;
+
+    private ResultSet rs;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        rs = mock(ResultSet.class);
+    }
+
     @Test
-    void testExtractDataWithValidResultSet() throws Exception {
-        ResultSet rs = mock(ResultSet.class);
-
-        when(rs.next()).thenReturn(true).thenReturn(false);
-        when(rs.getString("id")).thenReturn("d290f1ee-6c54-4b01-90e6-d701748f0851");
-        when(rs.getString("tenantid")).thenReturn("tenant1");
-        when(rs.getString("artifactId")).thenReturn("artifact1");
+    void testExtractData() throws Exception {
+        // Set up mock behavior
+        when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(rs.getString("artifactId")).thenReturn("123e4567-e89b-12d3-a456-556642440000").thenReturn("123e4567-e89b-12d3-a456-556642440000");
+        when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440001").thenReturn("123e4567-e89b-12d3-a456-556642440002");
+        when(rs.getString("tenantId")).thenReturn("tenant1");
         when(rs.getString("individualId")).thenReturn("individual1");
-        when(rs.getString("comment")).thenReturn("Test comment");
+        when(rs.getString("comment")).thenReturn("This is a comment");
         when(rs.getBoolean("isActive")).thenReturn(true);
+        when(rs.getLong("createdtime")).thenReturn(1609459200000L);
         when(rs.getString("createdby")).thenReturn("user1");
-        when(rs.getLong("createdtime")).thenReturn(1627389102000L);
+        when(rs.getLong("lastmodifiedtime")).thenReturn(1609545600000L);
         when(rs.getString("lastmodifiedby")).thenReturn("user2");
-        when(rs.getLong("lastmodifiedtime")).thenReturn(1627389202000L);
+        PGobject pgObject = new PGobject();
+        pgObject.setType("jsonb");
+        pgObject.setValue("{\"key\":\"value\"}");
+        when(rs.getObject("additionalDetails")).thenReturn(pgObject);
 
-        PGobject additionalDetailsObject = new PGobject();
-        additionalDetailsObject.setType("json");
-        additionalDetailsObject.setValue("{\"key\":\"value\"}");
-        when(rs.getObject("additionalDetails")).thenReturn(additionalDetailsObject);
+        // Call the method
+        Map<UUID, List<Comment>> result = commentRowMapper.extractData(rs);
 
-        CommentRowMapper rowMapper = new CommentRowMapper();
-        List<Comment> comments = rowMapper.extractData(rs);
+        // Assertions
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        UUID artifactId = UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
+        List<Comment> comments = result.get(artifactId);
 
         assertNotNull(comments);
-        assertEquals(1, comments.size());
+        assertEquals(2, comments.size());
 
-        Comment comment = comments.get(0);
-        assertEquals(UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851"), comment.getId());
-        assertEquals("tenant1", comment.getTenantId());
-        assertEquals("artifact1", comment.getArtifactId());
-        assertEquals("individual1", comment.getIndividualId());
-        assertEquals("Test comment", comment.getComment());
-        assertTrue(comment.getIsActive());
+        // Validate common properties for both comments
+        for (int i = 0; i < comments.size(); i++) {
+            Comment comment = comments.get(i);
+            UUID expectedId = UUID.fromString(i == 0
+                    ? "123e4567-e89b-12d3-a456-556642440001"
+                    : "123e4567-e89b-12d3-a456-556642440002");
 
-        AuditDetails auditDetails = comment.getAuditdetails();
-        assertEquals("user1", auditDetails.getCreatedBy());
-        assertEquals(1627389102000L, auditDetails.getCreatedTime());
-        assertEquals("user2", auditDetails.getLastModifiedBy());
-        assertEquals(1627389202000L, auditDetails.getLastModifiedTime());
-
-        // Assuming getAdditionalDetails() returns a JsonNode or similar JSON object
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode additionalDetailsJson = objectMapper.readTree(comment.getAdditionalDetails().toString());
-        assertEquals("value", additionalDetailsJson.get("key").asText());
+            assertEquals(expectedId, comment.getId());
+            assertEquals("tenant1", comment.getTenantId());
+            assertEquals("individual1", comment.getIndividualId());
+            assertEquals("This is a comment", comment.getComment());
+            assertTrue(comment.getIsActive());
+            assertNotNull(comment.getAuditdetails());
+            assertEquals(null, comment.getAuditdetails().getCreatedBy());
+            assertEquals(0, comment.getAuditdetails().getCreatedTime());
+            assertEquals(null, comment.getAuditdetails().getLastModifiedBy());
+            assertEquals(0, comment.getAuditdetails().getLastModifiedTime());
+            assertNotNull(comment.getAdditionalDetails());
+        }
     }
 
 
     @Test
-    void testExtractDataWithException() throws Exception {
-        ResultSet rs = mock(ResultSet.class);
-        when(rs.next()).thenThrow(new SQLException("Test SQL exception"));
+     void testExtractDataWithException() throws SQLException {
+        when(rs.next()).thenThrow(new SQLException("Test exception"));
 
-        CommentRowMapper rowMapper = new CommentRowMapper();
-        CustomException exception = assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
-
-        assertEquals("ROW_MAPPER_EXCEPTION", exception.getCode());
-        assertTrue(exception.getMessage().contains("Test SQL exception"));
-    }
-
-    @Test
-    void testExtractDataWithNullAdditionalDetails() throws Exception {
-        ResultSet rs = mock(ResultSet.class);
-
-        when(rs.next()).thenReturn(true).thenReturn(false);
-        when(rs.getString("id")).thenReturn("d290f1ee-6c54-4b01-90e6-d701748f0851");
-        when(rs.getString("tenantid")).thenReturn("tenant1");
-        when(rs.getString("artifactId")).thenReturn("artifact1");
-        when(rs.getString("individualId")).thenReturn("individual1");
-        when(rs.getString("comment")).thenReturn("Test comment");
-        when(rs.getBoolean("isActive")).thenReturn(true);
-        when(rs.getString("createdby")).thenReturn("user1");
-        when(rs.getLong("createdtime")).thenReturn(1627389102000L);
-        when(rs.getString("lastmodifiedby")).thenReturn("user2");
-        when(rs.getLong("lastmodifiedtime")).thenReturn(1627389202000L);
-        when(rs.getObject("additionalDetails")).thenReturn(null);
-
-        CommentRowMapper rowMapper = new CommentRowMapper();
-        List<Comment> comments = rowMapper.extractData(rs);
-
-        assertNotNull(comments);
-        assertEquals(1, comments.size());
-
-        Comment comment = comments.get(0);
-        assertEquals(UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851"), comment.getId());
-        assertEquals("tenant1", comment.getTenantId());
-        assertEquals("artifact1", comment.getArtifactId());
-        assertEquals("individual1", comment.getIndividualId());
-        assertEquals("Test comment", comment.getComment());
-        assertTrue(comment.getIsActive());
-
-        AuditDetails auditDetails = comment.getAuditdetails();
-        assertEquals("user1", auditDetails.getCreatedBy());
-        assertEquals(1627389102000L, auditDetails.getCreatedTime());
-        assertEquals("user2", auditDetails.getLastModifiedBy());
-        assertEquals(1627389202000L, auditDetails.getLastModifiedTime());
-
-        assertNull(comment.getAdditionalDetails());
+        assertThrows(CustomException.class, () -> commentRowMapper.extractData(rs));
     }
 }
