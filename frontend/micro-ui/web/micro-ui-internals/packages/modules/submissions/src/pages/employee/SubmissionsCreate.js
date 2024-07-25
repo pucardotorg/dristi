@@ -337,8 +337,8 @@ const SubmissionsCreate = () => {
       pendingTask: {
         name: t("MAKE_PAYMENT_SUBMISSION"),
         entityType,
-        referenceId: applicationNumber,
-        status: "MAKE_PAYMENT",
+        referenceId: `MANUAL_${applicationNumber}`,
+        status: "MAKE_PAYMENT_SUBMISSION",
         assignedTo: [{ uuid: userInfo?.uuid }],
         assignedRole: [],
         cnrNumber: caseDetails?.cnrNumber,

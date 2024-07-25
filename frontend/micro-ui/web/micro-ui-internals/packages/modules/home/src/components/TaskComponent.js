@@ -122,7 +122,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
-          const defaultObj = { referenceId, ...caseDetail };
+          const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
+          const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const searchParams = new URLSearchParams();
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
