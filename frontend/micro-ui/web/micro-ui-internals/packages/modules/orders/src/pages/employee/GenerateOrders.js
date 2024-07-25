@@ -400,14 +400,14 @@ const GenerateOrders = () => {
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.onBehalfOf;
-        updatedFormdata.partyType = applicationDetails.additionalDetails?.partyType;
-        updatedFormdata.reasonForWithdrawal = applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code;
-        // updatedFormdata.applicationStatus = applicationDetails.additionalDetails?.applicationStatus;
+        updatedFormdata.partyType = t(applicationDetails.additionalDetails?.partyType);
+        updatedFormdata.reasonForWithdrawal = t(applicationDetails.additionalDetails?.formdata?.reasonForWithdrawal?.code);
+        updatedFormdata.applicationStatus = t(applicationDetails?.status);
       }
     }
     if (orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
       if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
-        updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.name;
+        updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.value;
         updatedFormdata.originalDeadline = applicationDetails.additionalDetails?.formdata?.initialSubmissionDate;
         updatedFormdata.proposedSubmissionDate = applicationDetails.additionalDetails?.formdata?.changedSubmissionDate;
         updatedFormdata.originalSubmissionOrderDate = applicationDetails.additionalDetails?.orderDate;

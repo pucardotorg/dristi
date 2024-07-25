@@ -224,6 +224,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -452,6 +453,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -579,6 +581,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -698,6 +701,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -833,6 +837,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -970,6 +975,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 

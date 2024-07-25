@@ -71,8 +71,8 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
             </div>
             <div className="donwload-submission">
               <h2>{t("WANT_TO_DOWNLOAD")}</h2>
-              <span>
-                <a href="">{t("CLICK_HERE")}</a>
+              <span style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}>
+                {t("CLICK_HERE")}
               </span>
             </div>
           </div>

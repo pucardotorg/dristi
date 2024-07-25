@@ -397,7 +397,7 @@ const SubmissionsCreate = () => {
     return <Loader />;
   }
   return (
-    <div>
+    <div className="create-submission">
       <Header> {t("CREATE_SUBMISSION")}</Header>
       <FormComposerV2
         label={t("REVIEW_SUBMISSION")}
