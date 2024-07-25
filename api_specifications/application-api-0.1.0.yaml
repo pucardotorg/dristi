@@ -188,6 +188,9 @@ components:
       properties:
         filingNumber:
           type: string
+        owner:
+          type: UUID
+          description: UUID of user
         cnrNumber:
           type: string
         applicationNumber:
