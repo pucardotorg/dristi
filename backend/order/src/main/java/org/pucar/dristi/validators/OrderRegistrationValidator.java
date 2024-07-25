@@ -4,8 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
@@ -16,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -46,77 +44,23 @@ public class OrderRegistrationValidator {
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 
-        String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(),
-                configuration.getOrderModule(), createMasterDetails());
+        String orderType = orderRequest.getOrder().getOrderType().toUpperCase();
+        String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(), configuration.getOrderModule(), createMasterDetails());
 
-        Object jsonObjectOrderType = JsonPath.read(mdmsData, configuration.getOrderTypePath());
-        Object jsonObjectOrderCategory = JsonPath.read(mdmsData, configuration.getOrderCategoryPath());
-
-        //MDMS Order Type list
-        JSONArray mdmsArrayOrderType = new JSONArray(jsonObjectOrderType.toString());
-        List<OrderType> orderTypeList = convertToOrderType(mdmsArrayOrderType);
-
-        //MDMS Order category list
-        JSONArray mdmsArrayOrderCategory = new JSONArray(jsonObjectOrderCategory.toString());
-        List<OrderCategory> orderCategoryList = convertToOrderCategory(mdmsArrayOrderCategory);
-
-        String orderType = orderRequest.getOrder().getOrderType();
-        String orderCategory = orderRequest.getOrder().getOrderCategory();
-
-        if(orderTypeList.stream().filter(o -> o.getCode().equalsIgnoreCase(orderType)&& o.getIsActive()).toList().isEmpty())
+        List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, configuration.getOrderTypePath() + configuration.getOrderTypeFilter() + orderType + configuration.getOrderIsActiveFilter());
+        if (orderTypeResults.isEmpty()) {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid OrderType");
+        }
 
-        if(orderCategoryList.stream().filter(o -> o.getCategory().equalsIgnoreCase(orderCategory)&& o.getIsActive()).toList().isEmpty())
+        String orderCategory = orderRequest.getOrder().getOrderCategory().toUpperCase();
+        List<Map<String, Object>> orderCategoryResults = JsonPath.read(mdmsData, configuration.getOrderCategoryPath() + configuration.getOrderCategoryFilter() + orderCategory + configuration.getOrderIsActiveFilter());
+        if (orderCategoryResults.isEmpty()) {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid Order Category");
+        }
 
         if (!caseUtil.fetchCaseDetails(requestInfo, orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber()))
             throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
     }
-
-
-    private List<OrderType> convertToOrderType(JSONArray orderTypeArray) throws JSONException {
-        List<OrderType> orderTypeList = new ArrayList<>();
-
-        for (int i = 0; i < orderTypeArray.length(); i++) {
-            OrderType orderType = new OrderType();
-
-            if(orderTypeArray.getJSONObject(i).has("code")){
-                orderType.setCode(orderTypeArray.getJSONObject(i).getString("code"));
-            } else {
-                orderType.setCode(null);
-            }
-            if(orderTypeArray.getJSONObject(i).has("isactive")){
-                orderType.setIsActive(orderTypeArray.getJSONObject(i).getBoolean("isactive"));
-            } else {
-                orderType.setIsActive(null);
-            }
-            orderTypeList.add(orderType);
-        }
-
-        return orderTypeList;
-    }
-
-    private List<OrderCategory> convertToOrderCategory(JSONArray orderCategoryArray) throws JSONException {
-        List<OrderCategory> orderCategoryList = new ArrayList<>();
-
-        for (int i = 0; i < orderCategoryArray.length(); i++) {
-            OrderCategory orderCategory = new OrderCategory();
-            if(orderCategoryArray.getJSONObject(i).has("category")){
-                orderCategory.setCategory(orderCategoryArray.getJSONObject(i).getString("category"));
-            } else {
-                orderCategory.setCategory(null);
-            }
-            if(orderCategoryArray.getJSONObject(i).has("isactive")){
-                orderCategory.setIsActive(orderCategoryArray.getJSONObject(i).getBoolean("isactive"));
-            } else {
-                orderCategory.setIsActive(null);
-            }
-            orderCategoryList.add(orderCategory);
-        }
-
-        return orderCategoryList;
-    }
-
 
     public boolean validateApplicationExistence(OrderRequest orderRequest) {
         Order order = orderRequest.getOrder();

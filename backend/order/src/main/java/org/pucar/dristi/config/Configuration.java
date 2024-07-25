@@ -109,6 +109,7 @@ public class Configuration {
     @Value("${egov.workflow.order.judgement.business.service.name}")
     private String orderJudgementBusinessServiceName;
 
+    //MDMS validation
     @Value("${mdms.order.type.path}")
     private String orderTypePath;
 
@@ -117,4 +118,13 @@ public class Configuration {
 
     @Value("${mdms.order.module.name}")
     private String orderModule;
+
+    @Value("${mdms.order.type.filter}")
+    private String orderTypeFilter;
+
+    @Value("${mdms.order.category.filter}")
+    private String orderCategoryFilter;
+
+    @Value("${mdms.order.isactive.filter}")
+    private String orderIsActiveFilter;
 }
