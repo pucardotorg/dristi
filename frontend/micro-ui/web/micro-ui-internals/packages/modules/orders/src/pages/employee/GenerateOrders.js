@@ -31,16 +31,15 @@ import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import { ordersService } from "../../hooks/services";
-import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
-import { CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
 import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
 import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
+import { Urls } from "../../hooks/services/Urls";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -123,13 +122,15 @@ const GenerateOrders = () => {
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
   const complainants = useMemo(() => {
-    return caseDetails?.litigants?.map((item) => {
-      return {
-        code: item?.additionalDetails?.fullName,
-        name: item?.additionalDetails?.fullName,
-        individualId: item?.individualId,
-      };
-    });
+    return (
+      caseDetails?.litigants?.map((item) => {
+        return {
+          code: item?.additionalDetails?.fullName,
+          name: item?.additionalDetails?.fullName,
+          uuid: item?.additionalDetails?.uuid,
+        };
+      }) || []
+    );
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
@@ -163,7 +164,7 @@ const GenerateOrders = () => {
     };
   });
 
-  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+  const { data: advocateDetails } = useGetIndividualAdvocate(
     {
       criteria: advocateIds,
     },
@@ -277,7 +278,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants ? complainants : [],
+                    options: complainants,
                   },
                 };
               }
@@ -305,7 +306,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants ? complainants : [],
+                    options: complainants,
                   },
                 };
               }
@@ -462,6 +463,32 @@ const GenerateOrders = () => {
     setSelectedOrder(formList?.length);
   };
 
+  const createPendingTask = async (order) => {
+    if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
+      const formdata = order?.additionalDetails?.formdata;
+      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+      let status = "CREATE_SUBMISSION";
+      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
+      await ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: "Submit Documents",
+          entityType,
+          referenceId: order?.orderNumber,
+          status,
+          assignedTo: assignees,
+          assignedRole: [],
+          cnrNumber: null,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+    }
+    return;
+  };
+
   const handleSaveDraft = async ({ showReviewModal }) => {
     let count = 0;
     const promises = formList.map(async (order) => {
@@ -493,10 +520,36 @@ const GenerateOrders = () => {
     }
   };
 
+  const handleApplicationAction = async () => {
+    if (!applicationNumber || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.state)) {
+      return true;
+    }
+    try {
+      return await ordersService.customApiService(
+        `/application/application/v1/update`,
+        {
+          application: {
+            ...applicationDetails,
+            workflow: { ...applicationDetails.workflow, action: true ? SubmissionWorkflowAction.APPROVE : SubmissionWorkflowAction.REJECT },
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {
+      return false;
+    }
+  };
+
   const handleIssueOrder = async () => {
     try {
       setPrevOrder(currentOrder);
+      const applicationStatus = await handleApplicationAction();
+      if (!applicationStatus) {
+        // Show toast with submission approval failed and return
+        return;
+      }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
+      createPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -574,6 +627,9 @@ const GenerateOrders = () => {
       from: "orderSuccessModal",
     });
     setShowSuccessModal(false);
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
   };
 
   const handleClose = () => {
@@ -587,14 +643,19 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (
-    isOrdersLoading ||
-    isOrdersFetching ||
-    isCaseDetailsLoading ||
-    isApplicationDetailsLoading ||
-    !ordersData?.list ||
-    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
-  ) {
+  if (applicationNumber && !currentOrder?.refApplicationId) {
+    history.push(`?filingNumber=${filingNumber}`);
+  }
+
+  if (currentOrder?.refApplicationId && currentOrder?.refApplicationId !== applicationNumber) {
+    if (currentOrder?.orderNumber) {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}&orderNumber=${orderNumber}`);
+    } else {
+      history.push(`?filingNumber=${filingNumber}&applicationNumber=${currentOrder?.refApplicationId}`);
+    }
+  }
+
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
     return <Loader />;
   }
 

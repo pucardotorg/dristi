@@ -29,8 +29,8 @@ export const submissionService = {
   customApiService: (url, data, params, useCache = false, userService = true) =>
     Request({
       url: url,
-      useCache: useCache,
-      userService: true,
+      useCache,
+      userService,
       data,
       params,
     }),

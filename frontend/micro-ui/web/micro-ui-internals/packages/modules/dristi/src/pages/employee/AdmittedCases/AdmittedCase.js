@@ -500,9 +500,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           additionalDetails: {
             formdata: {
               orderType: {
-                id: 4,
                 type: "REFERRAL_CASE_TO_ADR",
-                isactive: true,
                 code: "REFERRAL_CASE_TO_ADR",
                 name: "ORDER_TYPE_REFERRAL_CASE_TO_ADR",
               },
@@ -575,10 +573,8 @@ const AdmittedCases = ({ isJudge = true }) => {
             hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
             hearingPurpose: data.purpose,
             orderType: {
-              id: 7,
               code: "SCHEDULE_OF_HEARING_DATE",
               type: "SCHEDULE_OF_HEARING_DATE",
-              isactive: true,
               name: "ORDER_TYPE_SCHEDULE_OF_HEARING_DATE",
             },
           },
@@ -810,16 +806,6 @@ const AdmittedCases = ({ isJudge = true }) => {
         />
       )}
 
-      {showScheduleHearingModal && (
-        <ScheduleHearing
-          setUpdateCounter={setUpdateCounter}
-          showToast={showToast}
-          tenantId={tenantId}
-          caseData={caseRelatedData}
-          setShowModal={setShowScheduleHearingModal}
-          caseAdmittedSubmit={caseAdmittedSubmit}
-        />
-      )}
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
       {submissionsViewModal && (
         <ViewAllSubmissions

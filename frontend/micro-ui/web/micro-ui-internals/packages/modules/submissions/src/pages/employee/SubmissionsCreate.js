@@ -54,7 +54,7 @@ const SubmissionsCreate = () => {
 
   const submissionFormConfig = useMemo(() => {
     const submissionConfigKeys = {
-      APPLICATION_TYPE: applicationTypeConfig,
+      APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
       if (orderNumber) {
@@ -187,8 +187,8 @@ const SubmissionsCreate = () => {
         if (isExtension) {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "EXTENSION_SUBMISSION_DEADLINE",
@@ -203,8 +203,8 @@ const SubmissionsCreate = () => {
         } else {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "PRODUCTION_DOCUMENTS",
@@ -218,16 +218,16 @@ const SubmissionsCreate = () => {
       } else {
         return {
           submissionType: {
-            code: "APPLICATION_TYPE",
-            name: "APPLICATION_TYPE",
+            code: "APPLICATION",
+            name: "APPLICATION",
           },
         };
       }
     } else {
       return {
         submissionType: {
-          code: "APPLICATION_TYPE",
-          name: "APPLICATION_TYPE",
+          code: "APPLICATION",
+          name: "APPLICATION",
         },
       };
     }
@@ -325,6 +325,31 @@ const SubmissionsCreate = () => {
       return null;
     }
   };
+  const createPendingTask = async () => {
+    let entityType = "async-voluntary-submission-services";
+    if (orderNumber) {
+      entityType =
+        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
+          ? "asynsubmissionwithresponse"
+          : "asyncsubmissionwithoutresponse";
+    }
+    await submissionService.customApiService(Urls.application.pendingTask, {
+      pendingTask: {
+        name: t("MAKE_PAYMENT_SUBMISSION"),
+        entityType,
+        referenceId: applicationNumber,
+        status: "MAKE_PAYMENT",
+        assignedTo: [{ uuid: userInfo?.uuid }],
+        assignedRole: [],
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: filingNumber,
+        isCompleted: false,
+        stateSla: null,
+        additionalDetails: {},
+        tenantId,
+      },
+    });
+  };
 
   const updateSubmission = async (action) => {
     try {
@@ -337,6 +362,7 @@ const SubmissionsCreate = () => {
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
+      createPendingTask();
       applicationRefetch();
       setShowPaymentModal(true);
     } catch (error) {

@@ -2,7 +2,6 @@ import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { ordersService } from "../../../../../orders/src/hooks/services";
 import CommentComponent from "../../../components/CommentComponent";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
@@ -10,7 +9,10 @@ import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { RightArrow } from "../../../icons/svgIndex";
 import DocViewerWrapper from "../docViewerWrapper";
+import { DRISTIService } from "../../../services";
+import { Loader } from "@egovernments/digit-ui-components";
 import { Urls } from "../../../hooks";
+import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -18,14 +20,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
   const history = useHistory();
-  const filingNumber = caseData.filingNumber;
-  const cnrNumber = caseData.cnrNumber;
+  const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
+  const cnrNumber = useMemo(() => caseData.cnrNumber, [caseData]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
-
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const user = Digit.UserService.getUser()?.info?.userName;
-  // console.log();
 
   const CloseBtn = (props) => {
     return (
@@ -118,7 +119,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "APPROVE",
+      action: SubmissionWorkflowAction.APPROVE,
     },
   };
 
@@ -126,7 +127,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "ABANDON",
+      action: SubmissionWorkflowAction.REJECT,
     },
   };
 
@@ -238,7 +239,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const submitCommentApplication = async (newComment) => {
-    // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
       url: Urls.dristi.submissionsUpdate,
       params: {},
@@ -314,12 +314,27 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       } else {
         if (showConfirmationModal.type === "reject") {
           await handleRejectApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
+        const name = showConfirmationModal.type === "reject" ? t("GENERATE_REJECTION_ORDER_APPLICATION") : t("GENERATE_ACCEPTANCE_ORDER_APPLICATION");
+        DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name,
+            entityType: "order",
+            referenceId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber,
+            filingNumber,
+            isCompleted: false,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
         setShowConfirmationModal(null);
       }
     } catch (error) {}
@@ -330,6 +345,11 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentApplication(newComment);
     }
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (

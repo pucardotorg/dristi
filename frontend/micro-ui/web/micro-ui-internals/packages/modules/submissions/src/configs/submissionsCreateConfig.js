@@ -13,8 +13,8 @@ export const submissionTypeConfig = [
           error: "required ",
           options: [
             {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
           ],
         },

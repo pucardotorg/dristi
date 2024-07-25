@@ -23,6 +23,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
   const { t } = useTranslation();
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
+  const [searchCaseLoading, setSearchCaseLoading] = useState(false);
 
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
@@ -47,16 +48,18 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
 
   const getCaseDetailByFilingNumber = useCallback(
     async (payload) => {
+      setSearchCaseLoading(true);
       const caseData = await HomeService.customApiService(Urls.caseSearch, {
         tenantId,
         ...payload,
       });
+      setSearchCaseLoading(false);
       return caseData || {};
     },
     [tenantId]
@@ -93,6 +96,10 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
       .catch((err) => {});
   };
 
+  const getCustomFunction = {
+    handleCreateOrder,
+  };
+
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
@@ -113,17 +120,20 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           const status = data?.fields?.find((field) => field.key === "status")?.value;
           const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
+          const actionName = data?.fields?.find((field) => field.key === "name")?.value;
+          const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
+          const defaultObj = { referenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const searchParams = new URLSearchParams();
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
           pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
-            searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
+            searchParams.set(item?.key, item?.value ? defaultObj?.[item?.value] : item?.defaultValue);
           });
           const redirectUrl = `/${window?.contextPath}/${userInfoType}${
             pendingTaskActions?.[status]?.redirectDetails?.url
           }?${searchParams.toString()}`;
           return {
-            actionName: pendingTaskActions?.[status]?.actionName,
+            actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
@@ -179,20 +189,30 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           />
         </LabelFieldPair>
       </div>
-      <div className="task-section">
-        <PendingTaskAccordion
-          pendingTasks={pendingTaskDataInWeek}
-          accordionHeader={"Complete this week"}
-          t={t}
-          totalCount={pendingTaskDataInWeek?.length}
-          isHighlighted={true}
-          isAccordionOpen={true}
-        />
-      </div>
-      <div className="task-section">
-        <PendingTaskAccordion pendingTasks={allOtherPendingTask} accordionHeader={"All other tasks"} t={t} totalCount={allOtherPendingTask?.length} />
-      </div>
-      <div className="task-section"></div>
+      {searchCaseLoading && <Loader />}
+      {!searchCaseLoading && (
+        <React.Fragment>
+          <div className="task-section">
+            <PendingTaskAccordion
+              pendingTasks={pendingTaskDataInWeek}
+              accordionHeader={"Complete this week"}
+              t={t}
+              totalCount={pendingTaskDataInWeek?.length}
+              isHighlighted={true}
+              isAccordionOpen={true}
+            />
+          </div>
+          <div className="task-section">
+            <PendingTaskAccordion
+              pendingTasks={allOtherPendingTask}
+              accordionHeader={"All other tasks"}
+              t={t}
+              totalCount={allOtherPendingTask?.length}
+            />
+          </div>
+          <div className="task-section"></div>
+        </React.Fragment>
+      )}
     </div>
   );
 };
