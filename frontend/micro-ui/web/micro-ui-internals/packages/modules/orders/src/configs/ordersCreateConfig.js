@@ -1588,7 +1588,8 @@ export const configRejectSubmission = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        isMandatory: false,
+        disable: true,
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
