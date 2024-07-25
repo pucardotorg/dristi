@@ -21,7 +21,7 @@ public class CommentRowMapper implements ResultSetExtractor<Map<UUID, List<Comme
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String artifactId = rs.getString("artifactId");
-                UUID uuid = UUID.fromString(artifactId != null ? artifactId : "00000000-0000-0000-0000-000000000000");
+                UUID uuid = UUID.fromString(artifactId);
 
                 // Building AuditDetails
                 Long lastModifiedTime = rs.getLong("lastModifiedTime");

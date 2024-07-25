@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
      void testExtractData() throws Exception {
         // Mock ResultSet behavior
         when(rs.next()).thenReturn(true).thenReturn(false); // Simulate having only one row
-        when(rs.getString("application_id")).thenReturn("123e4567-e89b-12d3-a456-556642440000");
+        when(rs.getString("artifactId")).thenReturn("123e4567-e89b-12d3-a456-556642440000");
         when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440001");
         when(rs.getString("documenttype")).thenReturn("type1");
         when(rs.getString("filestore")).thenReturn("fileStore1");
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.*;
         UUID applicationId = UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
         Document document = result.get(applicationId);
         // Ensure the document is not null
-        assertNull(document);
+        assertNotNull(document);
     }
     @Test
      void testExtractDataWithException() throws SQLException {

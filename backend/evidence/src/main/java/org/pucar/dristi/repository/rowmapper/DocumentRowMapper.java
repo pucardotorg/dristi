@@ -21,7 +21,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID, Document>
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String artifactId = rs.getString("artifactId");
-                UUID uuid = UUID.fromString(artifactId != null ? artifactId : "00000000-0000-0000-0000-000000000000");
+                UUID uuid = UUID.fromString(artifactId);
                 Document document = Document.builder()
                         .id(rs.getString("id"))
                         .documentType(rs.getString("documentType"))

@@ -299,6 +299,7 @@ components:
           type: string
         owner:
           type: UUID
+          description: UUID of user
         filingNumber:
           type: string
         artifactType:
