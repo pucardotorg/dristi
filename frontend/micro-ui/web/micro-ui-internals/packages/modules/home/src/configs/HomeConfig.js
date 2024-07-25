@@ -224,6 +224,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -452,6 +453,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -579,6 +581,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -698,6 +701,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -833,6 +837,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -970,6 +975,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -1389,13 +1395,39 @@ export const pendingTaskCaseActions = {
 
 export const pendingTaskHearingActions = {};
 
-export const pendingTaskOrderActions = {};
+export const pendingTaskOrderActions = {
+  SAVE_DRAFT: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskOrderOfJudgementActions = {};
 
 export const pendingTaskVoluntarySubmissionActions = {};
 
-export const pendingTaskSubmissionWithResponseActions = {};
+export const pendingTaskSubmissionWithResponseActions = {
+  CREATE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Mandatory Submission of Documents",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskSubmissionWithoutResponseActions = {};
 

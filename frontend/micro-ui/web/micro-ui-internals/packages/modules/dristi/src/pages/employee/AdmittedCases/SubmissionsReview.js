@@ -9,13 +9,12 @@ import { useGetPendingTask } from "../../../../../home/src/hooks/useGetPendingTa
 const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
-  const cnr = caseData.cnrNumber;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [show, setShow] = useState(false);
   const [documentSubmission, setDocumentSubmission] = useState();
   const [comment, setComment] = useState("");
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles.map((role) => role.code);
 
   const getDate = (value) => {
     const date = new Date(value);
@@ -92,7 +91,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
     setShow(true);
   };
 
-  const { data: applicationRes, refetch: refetchApplicationData, isLoading: isApplicationLoading } = useGetSubmissions(
+  const { data: applicationRes } = useGetSubmissions(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -113,7 +112,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           entityType: "asynsubmissionwithresponse",
           filingNumber: filingNumber,
           isCompleted: false,
-          assignedTo: JSON.parse(user).uuid,
+          assignedTo: userInfo?.uuid,
         },
         limit: 10000,
         offset: 0,
@@ -132,7 +131,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           entityType: "asyncsubmissionwithoutresponse",
           filingNumber: filingNumber,
           isCompleted: false,
-          assignedTo: JSON.parse(user).uuid,
+          assignedTo: userInfo?.uuid,
         },
         limit: 10000,
         offset: 0,

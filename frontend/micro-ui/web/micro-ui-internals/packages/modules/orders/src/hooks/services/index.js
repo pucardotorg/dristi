@@ -26,4 +26,12 @@ export const ordersService = {
       data,
       params,
     }),
+  customApiService: (url, data, params, useCache = false, userService = true) =>
+    Request({
+      url: url,
+      useCache: useCache,
+      userService,
+      data,
+      params,
+    }),
 };
