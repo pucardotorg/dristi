@@ -11,8 +11,6 @@ import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 
@@ -20,9 +18,6 @@ public class WitnessRegistrationEnrichmentTest {
 
     @InjectMocks
     private WitnessRegistrationEnrichment witnessRegistrationEnrichment;
-
-    @Mock
-    private IdgenUtil idgenUtil;
 
     @BeforeEach
     public void setUp() {
@@ -65,7 +60,6 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        Witness witness = new Witness();
         witnessRequest.setWitness(null);
 
         assertThrows(Exception.class, () -> witnessRegistrationEnrichment.enrichWitnessRegistration(witnessRequest));
@@ -106,7 +100,6 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        Witness witness = new Witness();
         witnessRequest.setWitness(null);
 
         // Assert

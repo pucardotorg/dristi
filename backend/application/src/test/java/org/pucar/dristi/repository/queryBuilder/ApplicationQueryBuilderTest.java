@@ -11,7 +11,6 @@ import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_QUERY_EXCEPTION;
 
 class ApplicationQueryBuilderTest {
@@ -45,7 +43,7 @@ class ApplicationQueryBuilderTest {
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
-                " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
+                " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ?";
 
@@ -140,7 +138,7 @@ class ApplicationQueryBuilderTest {
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
-                " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
+                " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app";
 
@@ -295,47 +293,13 @@ class ApplicationQueryBuilderTest {
         assertTrue(preparedStmtList.isEmpty());
     }
 
-    @Test
-    void testGetStatuteSectionSearchQuery() {
-        List<String> ids = Arrays.asList("id1", "id2", "id3");
-        List<Object> preparedStmtList = new java.util.ArrayList<>();
 
-        String expectedQuery = " SELECT stse.id as id, stse.tenantid as tenantid, stse.statute as statute, stse.application_id as application_id, " +
-                "stse.sections as sections, stse.subsections as subsections, stse.strsections as strsections, stse.strsubsections as strsubsections, stse.additionaldetails as additionaldetails, stse.createdby as createdby," +
-                " stse.lastmodifiedby as lastmodifiedby, stse.createdtime as createdtime, stse.lastmodifiedtime as lastmodifiedtime FROM dristi_application_statute_section stse WHERE stse.application_id IN (?,?,?)";
 
-        String actualQuery = applicationQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtList);
-
-        assertEquals(expectedQuery, actualQuery);
-        assertEquals(ids, preparedStmtList);
-    }
-
-    @Test
-    void testGetStatuteSectionSearchQueryWithNoIds() {
-        List<String> ids = Collections.emptyList();
-        List<Object> preparedStmtList = new java.util.ArrayList<>();
-
-        String expectedQuery = " SELECT stse.id as id, stse.tenantid as tenantid, stse.statute as statute, stse.application_id as application_id, " +
-                "stse.sections as sections, stse.subsections as subsections, stse.strsections as strsections, stse.strsubsections as strsubsections, stse.additionaldetails as additionaldetails, stse.createdby as createdby," +
-                " stse.lastmodifiedby as lastmodifiedby, stse.createdtime as createdtime, stse.lastmodifiedtime as lastmodifiedtime FROM dristi_application_statute_section stse";
-
-        String actualQuery = applicationQueryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtList);
-
-        assertEquals(expectedQuery, actualQuery);
-        assertTrue(preparedStmtList.isEmpty());
-    }
 
     @Test
     void testGetDocumentSearchQueryThrowsException() {
         assertThrows(CustomException.class, () -> {
             applicationQueryBuilder.getDocumentSearchQuery(null, null);
-        });
-    }
-
-    @Test
-    void testGetStatuteSectionSearchQueryThrowsException() {
-        assertThrows(CustomException.class, () -> {
-            applicationQueryBuilder.getStatuteSectionSearchQuery(null, null);
         });
     }
 

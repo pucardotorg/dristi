@@ -70,7 +70,6 @@ public class WitnessQueryBuilder {
                             .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(includeInactives);
-                    firstCriteria = false;
                 }
 
             }

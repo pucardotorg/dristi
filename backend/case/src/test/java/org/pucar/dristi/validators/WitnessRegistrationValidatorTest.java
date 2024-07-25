@@ -74,7 +74,7 @@ public class WitnessRegistrationValidatorTest {
         request.setWitness(witnessWithValidCaseId);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+         assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
                 "Validation should fail when caseId is null");
     }
 
@@ -90,7 +90,7 @@ public class WitnessRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), any())).thenReturn(false);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+       assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
                 "Validation should fail when caseId is null");
     }
 
@@ -185,7 +185,7 @@ public class WitnessRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), any())).thenReturn(false);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateApplicationExistence(new RequestInfo(), witnessWithValidCaseId),
+       assertThrows(Exception.class, () -> validator.validateApplicationExistence(new RequestInfo(), witnessWithValidCaseId),
                 "Validation should fail when caseId is null");
     }
 }

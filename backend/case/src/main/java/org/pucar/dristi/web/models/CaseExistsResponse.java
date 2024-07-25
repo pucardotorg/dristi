@@ -33,9 +33,5 @@ public class CaseExistsResponse {
 	@Valid
 	private List<CaseExists> criteria = new ArrayList<>();
 
-	public CaseExistsResponse addCriteriaItem(CaseExists criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
 
 }

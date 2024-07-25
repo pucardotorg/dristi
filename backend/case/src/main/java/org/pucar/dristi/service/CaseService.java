@@ -21,7 +21,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -99,7 +102,7 @@ public class CaseService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-            if (!validator.validateApplicationExistence(caseRequest))
+            if (!validator.validateUpdateRequest(caseRequest))
                 throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
 
             // Enrich application upon update
@@ -257,34 +260,7 @@ public class CaseService {
             //Scenario 2 -> If individual exists and advocate don't represent the individual then add the representing to the advocate and disable from existing one when relation is primary
             //Scenario 3 -> If individual doesn't exist then add him to the respective advocate
 
-            if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null &&
-                    advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
-
-                Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
-                        .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
-                        .findFirst();
-
-                if (existingRepresentativeOptional.isEmpty())
-                    throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-
-                AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
-                List<String> individualIds = existingRepresentative.getRepresenting().stream()
-                        .map(Party::getIndividualId)
-                        .toList();
-
-                log.info("Advocate is part of the case :: {}", existingRepresentative);
-                String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
-
-                if (joinCasePartyIndividualID != null &&
-                        individualIds.contains(joinCasePartyIndividualID)) {
-                    log.info("Advocate is already representing the individual");
-                    throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
-                } else {
-                    log.info("Advocate is not representing the individual");
-                    disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
-                    joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
-                }
-            }
+            advocatePartOfCaseHandler(advocateIds, joinCaseRequest, courtCase, auditDetails);
 
             //when advocate is not the part of the case
             //Scenario 1 -> If individual exist then replace other advocate when relation is primary
@@ -297,6 +273,37 @@ public class CaseService {
 
             caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
             verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
+        }
+    }
+
+    private  void advocatePartOfCaseHandler(List<String> advocateIds , JoinCaseRequest joinCaseRequest, CourtCase courtCase, AuditDetails auditDetails){
+        if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null &&
+                advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
+
+            Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
+                    .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
+                    .findFirst();
+
+            if (existingRepresentativeOptional.isEmpty())
+                throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+
+            AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
+            List<String> individualIds = existingRepresentative.getRepresenting().stream()
+                    .map(Party::getIndividualId)
+                    .toList();
+
+            log.info("Advocate is part of the case :: {}", existingRepresentative);
+            String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
+
+            if (joinCasePartyIndividualID != null &&
+                    individualIds.contains(joinCasePartyIndividualID)) {
+                log.info("Advocate is already representing the individual");
+                throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+            } else {
+                log.info("Advocate is not representing the individual");
+                disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
+                joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
+            }
         }
     }
 

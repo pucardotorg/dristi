@@ -104,12 +104,5 @@ public class Payment {
     @JsonProperty("paymentStatus")
     private String paymentStatus;
 
-    public Payment addpaymentDetailsItem(PaymentDetail paymentDetail) {
-        if (this.paymentDetails == null) {
-            this.paymentDetails = new ArrayList<>();
-        }
-        this.paymentDetails.add(paymentDetail);
-        return this;
-    }
 
 }

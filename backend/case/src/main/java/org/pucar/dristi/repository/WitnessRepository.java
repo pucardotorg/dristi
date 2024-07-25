@@ -21,14 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class WitnessRepository {
 
-    @Autowired
     private WitnessQueryBuilder queryBuilder;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     private WitnessRowMapper rowMapper;
+
+    @Autowired
+    public WitnessRepository(WitnessQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, WitnessRowMapper rowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+    }
 
     public List<Witness> getApplications(List<WitnessSearchCriteria> searchCriteria) {
 
