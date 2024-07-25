@@ -9,6 +9,7 @@ import ViewHearing from "./ViewHearing";
 import HomePopUp from "./HomePopUp";
 import EfilingPaymentBreakdown from "../../components/EfilingPaymentDropdown";
 import EFilingPaymentRes from "../../components/EfilingPaymentRes";
+import ScheduleHearing from "./ScheduleHearing";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
 let userType = "employee";
@@ -46,6 +47,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
+        <PrivateRoute path={`${path}/home-pending-task/home-schedule-hearing`} component={() => <ScheduleHearing />} />
       </AppContainer>
     </Switch>
   );

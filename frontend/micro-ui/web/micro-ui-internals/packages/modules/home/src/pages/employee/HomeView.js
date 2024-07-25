@@ -37,7 +37,7 @@ const HomeView = () => {
   const [callRefetch, SetCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
-  const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
+  const [taskType, setTaskType] = useState(state?.taskType || { code: "case", name: "Case" });
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -102,6 +102,10 @@ const HomeView = () => {
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
   }, []);
+
+  useEffect(() => {
+    state && state.taskType && setTaskType(state.taskType);
+  }, [state]);
 
   const getTotalCountForTab = useCallback(
     async function (tabConfig) {

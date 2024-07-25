@@ -1415,7 +1415,16 @@ export const pendingTaskCaseActions = {
   },
 };
 
-export const pendingTaskHearingActions = {};
+export const pendingTaskHearingActions = {
+  SCHEDULE_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+};
 
 export const pendingTaskOrderActions = {
   SAVE_DRAFT: {
