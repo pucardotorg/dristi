@@ -28,20 +28,20 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           status: true,
           attendees: [
             ...Object.values(data.participant)
-              .map((val) => val.attendees.map((attendee) => JSON.parse(attendee)))
+              .map((val) => val.attendees?.map((attendee) => JSON.parse(attendee)))
               .flat(Infinity),
             ...advocateDetails,
           ],
           startTime: Date.parse(
             `${data.date
               .split(" ")
-              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              ?.map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
               .join(" ")}`
           ),
           endTime: Date.parse(
             `${data.date
               .split(" ")
-              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              ?.map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
               .join(" ")}`
           ),
           workflow: {
@@ -106,7 +106,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
   };
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
-    const litigantsNames = caseDetails.litigants.map((litigant) => {
+    const litigantsNames = caseDetails.litigants?.map((litigant) => {
       return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId, type: partyTypes[litigant.partyType] };
     });
     const witnessNames = caseDetails.additionalDetails.witnessDetails.formdata?.map((data) => {

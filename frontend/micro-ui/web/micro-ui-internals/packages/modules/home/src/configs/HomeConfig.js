@@ -480,7 +480,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Pre-Trial",
+              stage: "",
             },
           ],
         },

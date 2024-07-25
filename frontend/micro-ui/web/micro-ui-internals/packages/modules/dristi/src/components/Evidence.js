@@ -17,7 +17,7 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
       details: {
         applicationType: rowData.artifactType,
         applicationSentOn: getDate(parseInt(rowData.auditdetails.createdTime)),
-        sender: rowData.auditdetails.createdBy,
+        sender: rowData.owner,
         additionalDetails: rowData.additionalDetails,
         applicationId: rowData.id,
         auditDetails: rowData.auditDetails,
@@ -39,7 +39,7 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
         {showAsHeading ? (
-          <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div>
+          <div style={{ textDecoration: "underline", cursor: "pointer" }}>{t(value)}</div>
         ) : rowData.isEvidence ? (
           <FactCrossIcon />
         ) : (

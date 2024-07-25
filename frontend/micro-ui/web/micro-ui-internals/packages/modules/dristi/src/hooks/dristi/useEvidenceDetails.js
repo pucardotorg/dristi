@@ -9,34 +9,41 @@ const useEvidenceDetails = ({ url, params, body, config = {}, plainAccessRequest
   const { searchForm } = state;
   const { stage, type, caseNameOrId } = searchForm;
 
-  const fetchCombinedData = async () => {
-    //need to filter this hearing list response based on slot
-    const res = await DRISTIService.searchEvidence(body, params, plainAccessRequest, true);
-    // .then((response) => {
-    //   console.log(response, "RESPONSE");
-    // });
-    const owenrList = res.artifacts?.map((artifact) => artifact.auditdetails.createdBy);
-    const owners =
-      owenrList?.length > 0
-        ? await DRISTIService.searchIndividualUser(
+  const getIndividual = async (individualIdsToSearch) => {
+    return await Promise.all(
+      individualIdsToSearch.map(
+        async (id) =>
+          await DRISTIService.searchIndividualUser(
             {
               Individual: {
-                userUuid: [...new Set(owenrList)],
+                individualId: id,
               },
             },
             { ...params, limit: 1000, offset: 0 },
             plainAccessRequest,
             true
           )
-        : [];
-    console.log(owners, owenrList);
+      )
+    );
+  };
+
+  const fetchCombinedData = async () => {
+    //need to filter this hearing list response based on slot
+    const res = await DRISTIService.searchEvidence(body, params, plainAccessRequest, true);
+    // .then((response) => {
+    //   console.log(response, "RESPONSE");
+    // });
+    const owenrList = res.artifacts?.map((artifact) => artifact.sourceID);
+    const individualIdsToSearch = [...new Set(owenrList)];
+    const owners = individualIdsToSearch?.length > 0 ? await getIndividual(individualIdsToSearch) : [];
+    const owner = { Individual: owners.map((owner) => owner.Individual[0]) };
     return {
       ...res,
       artifacts: res.artifacts.map((artifact) => {
         return {
           ...artifact,
-          owner: `${owners.Individual.find((individual) => artifact.auditdetails.createdBy === individual.userUuid)?.name.givenName} ${
-            owners.Individual.find((individual) => artifact.auditdetails.createdBy === individual.userUuid)?.name.familyName
+          owner: `${owner.Individual.find((individual) => artifact.sourceID === individual.individualId)?.name.givenName} ${
+            owner.Individual.find((individual) => artifact.sourceID === individual.individualId)?.name.familyName
           }`,
         };
       }),

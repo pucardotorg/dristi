@@ -17,6 +17,7 @@ import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import ScheduleHearing from "./ScheduleHearing";
 import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
 import PublishedOrderModal from "./PublishedOrderModal";
+import ViewAllSubmissions from "./ViewAllSubmissions";
 
 const defaultSearchValues = {};
 
@@ -36,7 +37,9 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
   const [orderDraftModal, setOrderDraftModal] = useState(false);
+  const [submissionsViewModal, setSubmissionsViewModal] = useState(false);
   const [draftOrderList, setDraftOrderList] = useState([]);
+  const [submissionsViewList, setSubmissionsViewList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -112,6 +115,11 @@ const AdmittedCases = ({ isJudge = true }) => {
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
     setOrderDraftModal(true);
+  };
+
+  const openSubmissionViewModal = (submissionList, openEvidenceModalFunc) => {
+    setSubmissionsViewList({ list: submissionList, func: openEvidenceModalFunc });
+    setSubmissionsViewModal(true);
   };
 
   const handleTakeAction = () => {
@@ -238,6 +246,31 @@ const AdmittedCases = ({ isJudge = true }) => {
                 criteria: {
                   filingNumber: filingNumber,
                   tenantId: tenantId,
+                },
+              },
+            },
+            sections: {
+              ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "Parties",
+                      isMandatory: false,
+                      key: "parties",
+                      type: "dropdown",
+                      populators: {
+                        name: "parties",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: party.name, name: party.name };
+                        }),
+                      },
+                    },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
                 },
               },
             },
@@ -651,33 +684,61 @@ const AdmittedCases = ({ isJudge = true }) => {
         </div>
       </div>
       {config?.label !== "Overview" && (
-        <ExtraComponent caseData={caseRelatedData} setUpdateCounter={setUpdateCounter} tab={config?.label} setOrderModal={openDraftModal} />
+        <ExtraComponent
+          caseData={caseRelatedData}
+          setUpdateCounter={setUpdateCounter}
+          tab={config?.label}
+          setOrderModal={openDraftModal}
+          openSubmissionsViewModal={openSubmissionViewModal}
+        />
       )}
       {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
+          {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
+            (config?.label === "Hearings" || config?.label === "Documents") && (
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
+            )}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
-            <div
-              onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("GENERATE_ORDERS_LINK")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("GENERATE_ORDERS_LINK")}
+              </div>
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
-            <div
-              // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("REQUEST_DOCUMENTS_LINK")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("REQUEST_DOCUMENTS_LINK")}
+              </div>
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
           {isCitizen && config?.label === "Submissions" && (
-            <div
-              onClick={handleMakeSubmission}
-              style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-            >
-              {t("MAKE_SUBMISSION")}
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                onClick={handleMakeSubmission}
+                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+              >
+                {t("MAKE_SUBMISSION")}
+              </div>
+
+              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+                {t("DOWNLOAD_ALL_LINK")}
+              </div>
             </div>
           )}
         </div>
@@ -746,6 +807,15 @@ const AdmittedCases = ({ isJudge = true }) => {
       )}
 
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
+      {submissionsViewModal && (
+        <ViewAllSubmissions
+          t={t}
+          setShow={setSubmissionsViewModal}
+          submissionList={submissionsViewList.list}
+          openEvidenceModal={submissionsViewList.func}
+          filingNumber={filingNumber}
+        />
+      )}
       {toast && toastDetails && (
         <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}

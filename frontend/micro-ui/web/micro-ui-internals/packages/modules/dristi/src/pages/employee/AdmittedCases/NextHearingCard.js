@@ -42,16 +42,12 @@ const NextHearingCard = ({ caseData, width }) => {
     return formattedDate;
   };
 
-  const formattedDate = () => {
-    const date1 = new Date(scheduledHearing?.startTime);
-    // const date2 = new Date(scheduledHearing?.endTime);
-    const formattedDate = `${date1.toLocaleDateString("en-in", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}`;
-    return formattedDate;
-  };
+  const formattedDate = `${new Date(scheduledHearing?.startTime).toLocaleDateString("en-in", {
+    month: "long",
+    day: "numeric",
+  })}`;
+
+  const day = new Date(scheduledHearing?.startTime).toLocaleDateString("en-in", { weekday: "short" });
 
   const handleButtonClick = () => {
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -88,38 +84,37 @@ const NextHearingCard = ({ caseData, width }) => {
         </div>
         <hr style={{ border: "1px solid #FFF6E880" }} />
         <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
-          <div>
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "16px",
-                lineHeight: "18.75px",
-                color: "#231F20",
-              }}
-            >
-              {formattedDate()}
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <div className="hearingCard">
+              <div className="hearingDate">
+                <div className="dateText">{formattedDate.split(" ")[1]}</div>
+                <div className="dateNumber">{formattedDate.split(" ")[0]}</div>
+                <div className="dayText">{day}</div>
+              </div>
             </div>
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "24px",
-                lineHeight: "28.13px",
-                color: "#231F20",
-                marginTop: "5px",
-              }}
-            >
-              {formattedTime()}
-            </div>
-            <div
-              style={{
-                fontWeight: 400,
-                fontSize: "14px",
-                lineHeight: "16.41px",
-                color: "#3D3C3C",
-                marginTop: "5px",
-              }}
-            >
-              {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
+            <div>
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "24px",
+                  lineHeight: "28.13px",
+                  color: "#231F20",
+                  marginTop: "5px",
+                }}
+              >
+                {formattedTime()}
+              </div>
+              <div
+                style={{
+                  fontWeight: 400,
+                  fontSize: "14px",
+                  lineHeight: "16.41px",
+                  color: "#3D3C3C",
+                  marginTop: "5px",
+                }}
+              >
+                {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
+              </div>
             </div>
           </div>
           <Button

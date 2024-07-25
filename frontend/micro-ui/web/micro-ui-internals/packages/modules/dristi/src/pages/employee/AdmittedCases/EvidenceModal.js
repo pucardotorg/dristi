@@ -63,18 +63,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
 
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
-    {
-      Individual: {
-        userUuid: documentSubmission?.map((docSubmission) => docSubmission.details.sender),
-      },
-    },
-    { tenantId, limit: 10, offset: 0 },
-    "DRISTI",
-    "",
-    true
-  );
-
   const reqCreate = {
     url: `/application/v1/update`,
     params: {},
@@ -146,6 +134,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const applicationCommentsPayload = (newComment) => {
     return {
       ...documentSubmission[0]?.applicationList,
+      statuteSection: { ...documentSubmission[0]?.applicationList.statuteSection, tenantId: tenantId },
       comment: documentSubmission[0]?.applicationList.comment
         ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),
@@ -417,7 +406,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <h3>Sender</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{`${data.Individual[index]?.name?.givenName} ${data.Individual[index]?.name?.familyName}`}</h3>
+                        <h3>{docSubmission.details.sender}</h3>
                       </div>
                     </div>
                     <div className="info-row">

@@ -173,9 +173,10 @@ const GenerateOrders = () => {
     cnrNumber + filingNumber,
     true
   );
+
   const defaultIndex = useMemo(() => {
-    return ordersData?.list?.findIndex((order) => order.orderNumber === orderNumber);
-  }, [ordersData, orderNumber]);
+    return newformdata.findIndex((order) => order.orderNumber === orderNumber);
+  }, [newformdata, orderNumber]);
 
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -225,9 +226,10 @@ const GenerateOrders = () => {
       const timer = setTimeout(() => {
         setShowErrorToast(false);
       }, 2000);
-      clearTimeout(timer);
+      return () => clearTimeout(timer);
     }
   }, [showErrorToast]);
+
   useEffect(() => {
     if (defaultIndex && defaultIndex !== -1 && defaultIndex !== selectedOrder) {
       setSelectedOrder(defaultIndex);
@@ -499,10 +501,12 @@ const GenerateOrders = () => {
         return res?.order;
       })
     );
+    if (!showReviewModal) {
+      setShowErrorToast(true);
+    }
     if (selectedOrder >= count) {
       setSelectedOrder(0);
     }
-
     if (showReviewModal) {
       setShowReviewModal(true);
     }
@@ -611,6 +615,9 @@ const GenerateOrders = () => {
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
     setShowSuccessModal(false);
     history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
       from: "orderSuccessModal",
@@ -640,14 +647,7 @@ const GenerateOrders = () => {
     }
   }
 
-  if (
-    isOrdersLoading ||
-    isOrdersFetching ||
-    isCaseDetailsLoading ||
-    isApplicationDetailsLoading ||
-    !ordersData?.list ||
-    (ordersData?.list?.length > 0 ? (currentOrder?.orderNumber ? defaultValue?.orderType?.code !== currentOrder?.orderType : false) : false)
-  ) {
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
     return <Loader />;
   }
 

@@ -54,6 +54,7 @@ function AdmissionActionModal({
   filingNumber,
   isCaseAdmitted = false,
   caseAdmittedSubmit = () => {},
+  caseAdmitLoader,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -171,6 +172,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[1].headModal)} />}
           actionSaveLabel={t(stepItems[1]?.submitText)}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          isDisabled={caseAdmitLoader}
           actionSaveOnSubmit={(props) => handleAdmitCase(props)}
         >
           <CardText>{t(stepItems[1]?.text)}</CardText>
