@@ -94,9 +94,9 @@
                 log.info("DB comment map :: {}", commentMap);
 
                 if (commentMap != null) {
-                    artifactList.forEach(artifact -> {
-                        artifact.setComments(commentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                    });
+                    artifactList.forEach(artifact ->
+                            artifact.setComments(commentMap.get(UUID.fromString(String.valueOf(artifact.getId()))))
+                    );
                 }
 
                 // Fetch associated documents
@@ -106,9 +106,9 @@
                 log.info("DB document map :: {}", documentMap);
 
                 if (documentMap != null) {
-                    artifactList.forEach(artifact -> {
-                        artifact.setFile(documentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                    });
+                    artifactList.forEach(artifact ->
+                            artifact.setFile(documentMap.get(UUID.fromString(String.valueOf(artifact.getId()))))
+                    );
                 }
 
                 return artifactList;
