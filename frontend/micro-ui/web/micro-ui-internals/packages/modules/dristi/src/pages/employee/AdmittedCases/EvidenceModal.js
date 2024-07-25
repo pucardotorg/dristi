@@ -313,10 +313,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         } catch (error) {}
       } else {
         if (showConfirmationModal.type === "reject") {
-          // await handleRejectApplication();
+          await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          // await handleAcceptApplication();
+          await handleAcceptApplication();
         }
         const name = showConfirmationModal.type === "reject" ? t("GENERATE_REJECTION_ORDER_APPLICATION") : t("GENERATE_ACCEPTANCE_ORDER_APPLICATION");
         DRISTIService.customApiService(Urls.dristi.pendingTask, {

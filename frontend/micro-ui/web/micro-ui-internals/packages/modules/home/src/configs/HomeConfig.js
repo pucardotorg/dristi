@@ -1409,7 +1409,7 @@ export const pendingTaskOrderOfJudgementActions = {};
 export const pendingTaskVoluntarySubmissionActions = {};
 
 export const pendingTaskSubmissionWithResponseActions = {
-  CREATE: {
+  CREATE_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Mandatory Submission of Documents",
     customFunction: "handleCreateOrder",

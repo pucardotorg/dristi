@@ -455,11 +455,10 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async (order) => {
-    console.debug("vaiba", order?.orderType);
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       const formdata = order?.additionalDetails?.formdata;
       let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
-      let status = "CREATE";
+      let status = "CREATE_SUBMISSION";
       let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
       await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {

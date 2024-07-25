@@ -13,7 +13,8 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
   const [show, setShow] = useState(false);
   const [documentSubmission, setDocumentSubmission] = useState();
   const [comment, setComment] = useState("");
-  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles.map((role) => role.code);
 
   const getDate = (value) => {
     const date = new Date(value);
@@ -111,7 +112,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           entityType: "asynsubmissionwithresponse",
           filingNumber: filingNumber,
           isCompleted: false,
-          assignedTo: JSON.parse(user).uuid,
+          assignedTo: userInfo?.uuid,
         },
         limit: 10000,
         offset: 0,
@@ -130,7 +131,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           entityType: "asyncsubmissionwithoutresponse",
           filingNumber: filingNumber,
           isCompleted: false,
-          assignedTo: JSON.parse(user).uuid,
+          assignedTo: userInfo?.uuid,
         },
         limit: 10000,
         offset: 0,
