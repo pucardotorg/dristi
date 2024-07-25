@@ -42,7 +42,7 @@ export const overrideHooks = () => {
   
   /* To Overide any existing config/middlewares  we need to use similar method */
  export const updateCustomConfigs = () => {
-    setupLibraries("Customizations", "commonUiConfig", { ...window?.Digit?.Customizations?.commonUiConfig, ...UICustomizations });
+    setupLibraries("Customizations", "dristiSubmissions", { ...window?.Digit?.Customizations?.dristiSubmissions, ...UICustomizations });
     // setupLibraries("Utils", "parsingUtils", { ...window?.Digit?.Utils?.parsingUtils, ...parsingUtils });
   };
 
