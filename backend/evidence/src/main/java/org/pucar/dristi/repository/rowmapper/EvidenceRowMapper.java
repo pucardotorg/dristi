@@ -1,14 +1,18 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.Comment;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.pucar.dristi.web.models.Artifact;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -55,7 +59,11 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .sourceType(rs.getString("sourceType"))
                             .sourceID(rs.getString("sourceID"))
                             .sourceName(rs.getString("sourceName"))
-                            .applicableTo(Collections.singletonList(rs.getString("applicableTo")))
+                            .applicableTo(getObjectFromJson(rs.getString("applicableTo"), new TypeReference<List<String>>() {
+                            }))
+                            .comments(getObjectFromJson(rs.getString("comments"), new TypeReference<List<Comment>>() {
+                            }))
+                            .file(getObjectFromJson(rs.getString("file"), new TypeReference<Document>(){}))
                             .createdDate(rs.getInt("createdDate"))
                             .isActive(rs.getBoolean("isActive"))
                             .isEvidence(rs.getBoolean("isEvidence"))
@@ -82,6 +90,21 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.toString());
         }
         return new ArrayList<>(artifactMap.values());
+    }
+    public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (json == null || json.trim().isEmpty()) {
+            try {
+                return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
+            } catch (IOException e) {
+                throw new CustomException("Failed to create an empty instance of " + typeRef.getType(), e.getMessage());
+            }
+        }
+        try {
+            return objectMapper.readValue(json, typeRef);
+        } catch (Exception e) {
+            throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
+        }
     }
 }
 

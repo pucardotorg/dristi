@@ -25,22 +25,17 @@ public class EvidenceRepository {
     private final EvidenceQueryBuilder queryBuilder;
     private final JdbcTemplate jdbcTemplate;
     private final EvidenceRowMapper evidenceRowMapper;
-    private final DocumentRowMapper documentRowMapper;
-    private final CommentRowMapper commentRowMapper;
 
     @Autowired
     public EvidenceRepository(
             EvidenceQueryBuilder queryBuilder,
             JdbcTemplate jdbcTemplate,
-            EvidenceRowMapper evidenceRowMapper,
-            DocumentRowMapper documentRowMapper,
-            CommentRowMapper commentRowMapper
+            EvidenceRowMapper evidenceRowMapper
+
     ) {
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.evidenceRowMapper = evidenceRowMapper;
-        this.documentRowMapper = documentRowMapper;
-        this.commentRowMapper = commentRowMapper;
     }
 
     public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
@@ -73,30 +68,6 @@ public class EvidenceRepository {
             }
             if (artifactIds.isEmpty()) {
                 return artifactList;
-            }
-
-            // Fetch associated comments
-            String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom);
-            log.info("Final comment query: {}", commentQuery);
-            Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper);
-            log.info("DB comment map :: {}", commentMap);
-
-            if (commentMap != null) {
-                artifactList.forEach(artifact -> {
-                    artifact.setComments(commentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                });
-            }
-
-            // Fetch associated documents
-            String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
-            log.info("Final document query: {}", documentQuery);
-            Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
-            log.info("DB document map :: {}", documentMap);
-
-            if (documentMap != null) {
-                artifactList.forEach(artifact -> {
-                    artifact.setFile(documentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                });
             }
 
             return artifactList;

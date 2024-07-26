@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO dristi_evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application,filingNumber, hearing, orders, mediaType, artifactType,sourceType ,sourceId, sourceName, createdDate, isActive,isEvidence, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?);
+        - query: INSERT INTO dristi_evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application,filingNumber, hearing, orders, mediaType, artifactType,sourceType ,sourceId, sourceName,applicableTo, comments, file, createdDate, isActive,isEvidence, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?,?,?,?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?);
           basePath: artifact
           jsonMaps:
             - jsonPath: $.artifact.id
@@ -25,6 +25,15 @@ serviceMaps:
             - jsonPath: $.artifact.sourceType
             - jsonPath: $.artifact.sourceID
             - jsonPath: $.artifact.sourceName
+            - jsonPath: $.artifact.applicableTo
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifact.comments
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifact.file
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.artifact.createdDate
             - jsonPath: $.artifact.isActive
             - jsonPath: $.artifact.isEvidence
@@ -40,45 +49,15 @@ serviceMaps:
             - jsonPath: $.artifact.auditdetails.lastModifiedBy
             - jsonPath: $.artifact.auditdetails.createdTime
             - jsonPath: $.artifact.auditdetails.lastModifiedTime
-
-        - query: INSERT INTO dristi_evidence_document(id,fileStore,documentUid,documentType,artifactId,additionalDetails) VALUES (?,?, ?, ?, ?,?);
-          basePath: artifact.file
-          jsonMaps:
-            - jsonPath: $.artifact.file.id
-            - jsonPath: $.artifact.file.fileStore
-            - jsonPath: $.artifact.file.documentUid
-            - jsonPath: $.artifact.file.documentType
-            - jsonPath: $.artifact.id
-            - jsonPath: $.artifact.file.additionalDetails
-              type: JSON
-              dbType: JSONB
-
-        - query: INSERT INTO dristi_evidence_comment(id, tenantId, artifactId, individualId, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: artifact.comments.*
-          jsonMaps:
-            - jsonPath: $.artifact.comments.*.id
-            - jsonPath: $.artifact.comments.*.tenantId
-            - jsonPath: $.artifact.id
-            - jsonPath: $.artifact.comments.*.individualId
-            - jsonPath: $.artifact.comments.*.comment
-            - jsonPath: $.artifact.comments.*.isActive
-            - jsonPath: $.artifact.comments.*.additionalDetails
-              type: JSON
-              dbType: JSONB
-            - jsonPath: $.artifact.comments.*.auditdetails.createdBy
-            - jsonPath: $.artifact.comments.*.auditdetails.lastModifiedBy
-            - jsonPath: $.artifact.comments.*.auditdetails.createdTime
-            - jsonPath: $.artifact.comments.*.auditdetails.lastModifiedTime
 
     - version: 1.0
       description: Update artifact details in tables
       fromTopic: update-artifact-withoutworkflow-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO dristi_evidence_artifact (id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application,filingNumber, hearing, orders, mediaType, artifactType, sourceType, sourceId, sourceName, createdDate, isActive, isEvidence,status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?,?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, artifactNumber = EXCLUDED.artifactNumber, evidenceNumber = EXCLUDED.evidenceNumber, externalRefNumber = EXCLUDED.externalRefNumber, caseId = EXCLUDED.caseId, application = EXCLUDED.application,filingNumber = EXCLUDED.filingNumber, hearing = EXCLUDED.hearing, orders = EXCLUDED.orders, mediaType = EXCLUDED.mediaType, artifactType = EXCLUDED.artifactType,sourceType=EXCLUDED.sourceType, sourceID = EXCLUDED.sourceID, sourceName = EXCLUDED.sourceName, createdDate = EXCLUDED.createdDate, isActive = EXCLUDED.isActive, isEvidence=EXCLUDED.isEvidence ,status = EXCLUDED.status, description = EXCLUDED.description, artifactDetails = EXCLUDED.artifactDetails, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
+        - query: UPDATE dristi_evidence_artifact SET tenantId=?, artifactNumber=?, evidenceNumber=?, externalRefNumber=?, caseId=?, application=?, filingNumber=?, hearing=?, orders=?, mediaType=?, artifactType=?, sourceType=?, sourceId=?, sourceName=?,applicableTo=?, comments=?, file=? ,createdDate=?, isActive=?, isEvidence=?, status=?, description=?, artifactDetails=?, additionalDetails=?, lastModifiedBy=?, lastModifiedTime=? WHERE id=?;
           basePath: artifact
           jsonMaps:
-            - jsonPath: $.artifact.id
             - jsonPath: $.artifact.tenantId
             - jsonPath: $.artifact.artifactNumber
             - jsonPath: $.artifact.evidenceNumber
@@ -93,6 +72,15 @@ serviceMaps:
             - jsonPath: $.artifact.sourceType
             - jsonPath: $.artifact.sourceID
             - jsonPath: $.artifact.sourceName
+            - jsonPath: $.artifact.applicableTo
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifact.comments
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifact.file
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.artifact.createdDate
             - jsonPath: $.artifact.isActive
             - jsonPath: $.artifact.isEvidence
@@ -104,27 +92,6 @@ serviceMaps:
             - jsonPath: $.artifact.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.artifact.auditdetails.createdBy
             - jsonPath: $.artifact.auditdetails.lastModifiedBy
-            - jsonPath: $.artifact.auditdetails.createdTime
             - jsonPath: $.artifact.auditdetails.lastModifiedTime
-
-        - query: INSERT INTO dristi_evidence_comment (id, tenantId, artifactId, individualId, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, artifactId = EXCLUDED.artifactId, individualId = EXCLUDED.individualId, comment = EXCLUDED.comment, isActive = EXCLUDED.isActive, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
-          basePath: artifact.comments.*
-          jsonMaps:
-            - jsonPath: $.artifact.comments.*.id
-            - jsonPath: $.artifact.comments.*.tenantId
             - jsonPath: $.artifact.id
-            - jsonPath: $.artifact.comments.*.individualId
-            - jsonPath: $.artifact.comments.*.comment
-            - jsonPath: $.artifact.comments.*.isActive
-            - jsonPath: $.artifact.comments.*.additionalDetails
-              type: JSON
-              dbType: JSONB
-            - jsonPath: $.artifact.comments.*.auditdetails.createdBy
-            - jsonPath: $.artifact.comments.*.auditdetails.lastModifiedBy
-            - jsonPath: $.artifact.comments.*.auditdetails.createdTime
-            - jsonPath: $.artifact.comments.*.auditdetails.lastModifiedTime
-
-
-
