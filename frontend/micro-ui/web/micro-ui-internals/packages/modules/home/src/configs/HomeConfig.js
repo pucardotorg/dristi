@@ -145,21 +145,6 @@ export const TabLitigantSearchConfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  style: { maxWidth: "250px", minWidth: "200px", width: "220px" },
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
-              {
                 label: "Case Type",
                 isMandatory: false,
                 key: "caseType",
@@ -195,9 +180,23 @@ export const TabLitigantSearchConfig = {
                   },
                 },
               },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  style: { maxWidth: "250px", minWidth: "200px", width: "220px" },
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
             ],
           },
-
           show: true,
         },
         searchResult: {
@@ -224,6 +223,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -452,6 +452,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -480,7 +481,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Pre-Trial",
+              stage: "",
             },
           ],
         },
@@ -500,20 +501,6 @@ export const TabJudgeSearchConfig = {
             minReqFields: 0,
             defaultValues: defaultSearchValues,
             fields: [
-              {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
               {
                 label: "Case Type",
                 isMandatory: false,
@@ -550,6 +537,20 @@ export const TabJudgeSearchConfig = {
                   },
                 },
               },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
             ],
           },
 
@@ -579,6 +580,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -698,6 +700,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -833,6 +836,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -970,6 +974,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Filing Date",
                 jsonPath: "filingDate",
+                additionalCustomization: true,
               },
             ],
 
@@ -1019,7 +1024,13 @@ export const TabFSOSearchConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues,
+            defaultValues: {
+              ...defaultSearchValues,
+              sortCaseListByDate: {
+                sortBy: "createdtime",
+                order: "desc",
+              },
+            },
             fields: [
               {
                 type: "component",
@@ -1029,26 +1040,12 @@ export const TabFSOSearchConfig = {
                 name: "Filed",
                 key: "sortCaseListByDate",
                 sortBy: "createdtime",
-                ascText: "(new first)",
-                descText: "(old first)",
+                ascText: "(old first)",
+                descText: "(new first)",
                 showAdditionalText: true,
                 showIcon: true,
                 icon: "UpDownArrowIcon",
                 populators: {},
-              },
-              {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
               },
               {
                 label: "Case Type",
@@ -1069,7 +1066,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Stage",
+                label: "Status",
                 isMandatory: false,
                 key: "stage",
                 type: "dropdown",
@@ -1086,9 +1083,22 @@ export const TabFSOSearchConfig = {
                   },
                 },
               },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
             ],
           },
-
           show: true,
         },
         searchResult: {
@@ -1175,20 +1185,6 @@ export const TabFSOSearchConfig = {
                 populators: {},
               },
               {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
-              {
                 label: "Case Type",
                 isMandatory: false,
                 key: "caseType",
@@ -1206,6 +1202,38 @@ export const TabFSOSearchConfig = {
                   },
                 },
               },
+              {
+                label: "Status",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: [],
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
             ],
           },
 
@@ -1220,7 +1248,7 @@ export const TabFSOSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "Status",
+                label: "Scrutiny Status",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
@@ -1387,17 +1415,87 @@ export const pendingTaskCaseActions = {
   },
 };
 
-export const pendingTaskHearingActions = {};
+export const pendingTaskHearingActions = {
+  SCHEDULE_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+};
 
-export const pendingTaskOrderActions = {};
+export const pendingTaskOrderActions = {
+  SAVE_DRAFT: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const pendingTaskOrderOfJudgementActions = {};
 
-export const pendingTaskVoluntarySubmissionActions = {};
+export const pendingTaskVoluntarySubmissionActions = {
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
-export const pendingTaskSubmissionWithResponseActions = {};
+export const pendingTaskSubmissionWithResponseActions = {
+  CREATE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Mandatory Submission of Documents",
+    customFunction: "handleCreateOrder",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
-export const pendingTaskSubmissionWithoutResponseActions = {};
+export const pendingTaskSubmissionWithoutResponseActions = {
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
 
 export const selectTaskType = {
   case: pendingTaskCaseActions,

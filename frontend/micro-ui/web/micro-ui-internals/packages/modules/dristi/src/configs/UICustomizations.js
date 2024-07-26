@@ -626,6 +626,8 @@ export const UICustomizations = {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
               ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
+              ? { ...data, applicationList: data.applicationList.filter((application) => application.status != "PENDINGPAYMENT") }
               : data;
             // }
           },
@@ -661,12 +663,14 @@ export const UICustomizations = {
           );
         case "Order Type":
           return <OrderName rowData={row} colData={column} value={value} />;
-        case "Submission Name":
+        case "Submission Type":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
           return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Hearing Type":
+        case "Source":
         case "Status":
-          return value ? "Marked as Evidence" : "Action Pending";
+          return t(value);
         case "Actions":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
@@ -685,10 +689,9 @@ export const UICustomizations = {
       const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
       const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
-      const searchParams = new URLSearchParams();
       const date = new Date(row.startTime);
-      if (true || userInfo.roles.includes("JUDGE_ROLE")) {
+      const future = row.startTime > Date.now();
+      if (future && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
@@ -724,6 +727,9 @@ export const UICustomizations = {
                       originalHearingDate: `${date.getDate()}-${
                         date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
                       }-${date.getFullYear()}`,
+                      originalHearingDate: `${date.getFullYear()}-${
+                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+                      }-${date.getDate()}`,
                     },
                   },
                 },
@@ -732,7 +738,7 @@ export const UICustomizations = {
                 .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
                 .then((res) => {
                   history.push(
-                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}&orderNumber=${res.order.orderNumber}`,
+                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber[0]}&orderNumber=${res.order.orderNumber}`,
                     {
                       caseId: row.caseId,
                       tab: "Orders",
@@ -768,6 +774,71 @@ export const UICustomizations = {
           },
         ];
       }
+      if (future && userInfo.type === "CITIZEN") {
+        return [
+          {
+            label: "Request for Reschedule hearing",
+            id: "reschedule",
+            action: (history) => {
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
+      return [
+        {
+          label: "View transcript",
+          id: "view_transcript",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View witness deposition",
+          id: "view_witness",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View pending task",
+          id: "view_pending_tasks",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+      ];
     },
   },
   HistoryConfig: {

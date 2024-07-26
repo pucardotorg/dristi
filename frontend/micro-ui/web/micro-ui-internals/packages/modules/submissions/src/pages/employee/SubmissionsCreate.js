@@ -46,7 +46,7 @@ const SubmissionsCreate = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loader, setLoader] = useState(false);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const individualId = localStorage.getItem("individualId");
   const submissionType = useMemo(() => {
@@ -55,7 +55,7 @@ const SubmissionsCreate = () => {
 
   const submissionFormConfig = useMemo(() => {
     const submissionConfigKeys = {
-      APPLICATION_TYPE: applicationTypeConfig,
+      APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
       if (orderNumber) {
@@ -108,7 +108,37 @@ const SubmissionsCreate = () => {
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
     };
-    return applicationConfigKeys?.[applicationType] || [];
+    let newConfig = applicationConfigKeys?.[applicationType] || [];
+
+    if (newConfig.length > 0) {
+      const updatedConfig = newConfig.map((config) => {
+        return {
+          ...config,
+          body: config?.body.map((body) => {
+            if (body?.populators?.validation?.customValidationFn) {
+              const customValidations =
+                Digit.Customizations[body.populators.validation.customValidationFn.moduleName][
+                  body.populators.validation.customValidationFn.masterName
+                ];
+
+              if (customValidations) {
+                body.populators.validation = {
+                  ...body.populators.validation,
+                  ...customValidations(),
+                };
+              }
+            }
+            return {
+              ...body,
+            };
+          }),
+        };
+      });
+      return updatedConfig;
+    }
+    else {
+      return [];
+    }
   }, [applicationType]);
 
   const formatDate = (date, format) => {
@@ -188,8 +218,8 @@ const SubmissionsCreate = () => {
         if (isExtension) {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "EXTENSION_SUBMISSION_DEADLINE",
@@ -204,8 +234,8 @@ const SubmissionsCreate = () => {
         } else {
           return {
             submissionType: {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
             applicationType: {
               type: "PRODUCTION_DOCUMENTS",
@@ -219,16 +249,16 @@ const SubmissionsCreate = () => {
       } else {
         return {
           submissionType: {
-            code: "APPLICATION_TYPE",
-            name: "APPLICATION_TYPE",
+            code: "APPLICATION",
+            name: "APPLICATION",
           },
         };
       }
     } else {
       return {
         submissionType: {
-          code: "APPLICATION_TYPE",
-          name: "APPLICATION_TYPE",
+          code: "APPLICATION",
+          name: "APPLICATION",
         },
       };
     }
@@ -302,17 +332,18 @@ const SubmissionsCreate = () => {
           additionalDetails: {
             formdata,
             ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
+            ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
+            onBehalOfName: userInfo.name,
             partyType: "complainant.primary",
           },
           documents,
-          // onBehalfOf: { individualId },
+          onBehalfOf: [userInfo?.uuid],
           workflow: {
             id: "workflow123",
             action: SubmissionWorkflowAction.CREATE,
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
-            // assignes: getAllAssignees(caseDetails),
           },
         },
       };
@@ -323,6 +354,32 @@ const SubmissionsCreate = () => {
       setLoader(false);
       return null;
     }
+  };
+  const createPendingTask = async () => {
+    const assignes = getAllAssignees(caseDetails, Boolean(orderNumber)) || [];
+    let entityType = "async-voluntary-submission-services";
+    if (orderNumber) {
+      entityType =
+        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
+          ? "asynsubmissionwithresponse"
+          : "asyncsubmissionwithoutresponse";
+    }
+    await submissionService.customApiService(Urls.application.pendingTask, {
+      pendingTask: {
+        name: t("MAKE_PAYMENT_SUBMISSION"),
+        entityType,
+        referenceId: `MANUAL_${applicationNumber}`,
+        status: "MAKE_PAYMENT_SUBMISSION",
+        assignedTo: assignes?.map((uuid) => ({ uuid })),
+        assignedRole: [],
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: filingNumber,
+        isCompleted: false,
+        stateSla: null,
+        additionalDetails: {},
+        tenantId,
+      },
+    });
   };
 
   const updateSubmission = async (action) => {
@@ -336,6 +393,7 @@ const SubmissionsCreate = () => {
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
+      createPendingTask();
       applicationRefetch();
       setShowPaymentModal(true);
     } catch (error) {
@@ -396,7 +454,7 @@ const SubmissionsCreate = () => {
     return <Loader />;
   }
   return (
-    <div>
+    <div className="create-submission">
       <Header> {t("CREATE_SUBMISSION")}</Header>
       <FormComposerV2
         label={t("REVIEW_SUBMISSION")}

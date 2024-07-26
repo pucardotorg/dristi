@@ -82,24 +82,24 @@ export const TabSearchconfig = {
               //     },
               //   },
               // },
-              {
-                label: "Parties",
-                isMandatory: false,
-                key: "parties",
-                type: "dropdown",
-                populators: {
-                  name: "parties",
-                },
-              },
-              {
-                label: "Order ID",
-                isMandatory: false,
-                key: "orderNumber",
-                type: "text",
-                populators: {
-                  name: "orderNumber",
-                },
-              },
+              // {
+              //   label: "Parties",
+              //   isMandatory: false,
+              //   key: "parties",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "parties",
+              //   },
+              // },
+              // {
+              //   label: "Order ID",
+              //   isMandatory: false,
+              //   key: "orderNumber",
+              //   type: "text",
+              //   populators: {
+              //     name: "orderNumber",
+              //   },
+              // },
             ],
           },
           show: true,
@@ -111,6 +111,7 @@ export const TabSearchconfig = {
               {
                 label: "Hearing Type",
                 jsonPath: "hearingType",
+                additionalCustomization: true,
               },
               // {
               //   label: "Stage",
@@ -124,6 +125,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Date",
@@ -223,7 +225,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Order Number",
+                label: "Search Order Id",
                 isMandatory: false,
                 key: "orderNumber",
                 type: "text",
@@ -260,6 +262,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Date Added",
@@ -355,12 +358,12 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Submission Number",
+                label: "Search Submission Id",
                 isMandatory: false,
-                key: "application Number",
+                key: "applicationNumber",
                 type: "text",
                 populators: {
-                  name: "application Number",
+                  name: "applicationNumber",
                 },
               },
             ],
@@ -373,7 +376,7 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Submission Name",
+                label: "Submission Type",
                 jsonPath: "applicationType",
                 additionalCustomization: true,
               },
@@ -388,6 +391,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "workflow.action",
+                additionalCustomization: true,
               },
               {
                 label: "Owner",
@@ -453,10 +457,13 @@ export const TabSearchconfig = {
                 type: "dropdown",
                 populators: {
                   name: "artifactType",
-                  optionsKey: "type",
+                  optionsKey: "name",
                   mdmsConfig: {
                     masterName: "EvidenceType",
                     moduleName: "Evidence",
+                    localePrefix: "EVIDENCE_TYPE",
+                    select:
+                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -529,6 +536,7 @@ export const TabSearchconfig = {
               {
                 label: "Source",
                 jsonPath: "sourceType",
+                additionalCustomization: true,
               },
               {
                 label: "Owner",
@@ -562,10 +570,6 @@ export const TabSearchconfig = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
         requestBody: {
-          apiOperation: "SEARCH",
-          Individual: {
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-          },
           criteria: {
             tenantId: Digit.ULBService.getCurrentTenantId(),
           },

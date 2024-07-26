@@ -6,8 +6,12 @@
     justify-content: space-between;
     margin-bottom: 20px;
     .header {
+      font-family: Roboto;
       font-size: 32px;
-      font-weight: 600;
+      font-weight: 700;
+      line-height: 37.5px;
+      text-align: left;
+      color: #231f20;
     }
     .button-field {
       display: flex;

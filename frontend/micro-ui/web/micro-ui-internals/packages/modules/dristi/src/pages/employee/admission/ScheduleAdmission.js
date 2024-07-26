@@ -29,6 +29,7 @@ function ScheduleAdmission({
   handleClickDate,
   disabled = true,
   isCaseAdmitted = false,
+  isSubmitBarDisabled = false,
   caseAdmittedSubmit = () => {},
 }) {
   const getNextNDates = (n) => {
@@ -211,6 +212,7 @@ function ScheduleAdmission({
           variation="primary"
           onSubmit={handleSubmit}
           className="primary-label-btn select-participant-submit"
+          disabled={isSubmitBarDisabled}
           label={isCaseAdmitted ? t("GENERATE_ORDERS_LINK") : selectedChip ? t("CS_COMMON_CONTINUE") : t("CS_SELECT_PARTICIPANT")}
         ></SubmitBar>
       </div>
