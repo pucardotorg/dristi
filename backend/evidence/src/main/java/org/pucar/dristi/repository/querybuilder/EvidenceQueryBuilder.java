@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +37,27 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList, List<Integer> preparedStmtArgList,UUID owner, String artifactType , Boolean evidenceStatus , String id, String caseId, String application, String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList, List<Integer> preparedStmtArgList, EvidenceSearchCriteria criteria) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
+
+            // Extract fields from EvidenceSearchCriteria
+            UUID owner = criteria.getOwner();
+            String artifactType = criteria.getArtifactType();
+            Boolean evidenceStatus = criteria.getEvidenceStatus();
+            String id = criteria.getId();
+            String caseId = criteria.getCaseId();
+            String application = criteria.getApplicationNumber();
+            String filingNumber = criteria.getFilingNumber();
+            String hearing = criteria.getHearing();
+            String order = criteria.getOrder();
+            String sourceId = criteria.getSourceId();
+            String sourceName = criteria.getSourceName();
+            String artifactNumber = criteria.getArtifactNumber();
+
+            // Build the query using the extracted fields
 
             firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?",preparedStmtArgList);
             firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?",preparedStmtArgList);
@@ -55,14 +72,14 @@ public class EvidenceQueryBuilder {
             firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?",preparedStmtArgList);
             addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, preparedStmtArgList);
 
-
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building artifact search query", e);
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
-    void addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, List<Integer>preparedStmtArgList ) {
+
+    void addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append("art.artifactNumber").append(" LIKE ?");
@@ -94,7 +111,7 @@ public class EvidenceQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgDocList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -103,7 +120,7 @@ public class EvidenceQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
-                ids.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
+                ids.forEach(i->preparedStmtArgDocList.add(Types.VARCHAR));
             }
 
             return query.toString();
@@ -127,7 +144,7 @@ public class EvidenceQueryBuilder {
         return query + " LIMIT ? OFFSET ?";
     }
 
-    public String getCommentSearchQuery(List<String> artifactIds, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+    public String getCommentSearchQuery(List<String> artifactIds, List<Object> preparedStmtList,  List<Integer> preparedStmtArgComList) {
         try {
             StringBuilder query = new StringBuilder(COMMENT_SELECT_QUERY);
             query.append(FROM_COMMENTS_TABLE);
@@ -137,7 +154,7 @@ public class EvidenceQueryBuilder {
                 for (int i = 0; i < artifactIds.size(); i++) {
                     query.append("?");
                     preparedStmtList.add(artifactIds.get(i));
-                    preparedStmtArgList.add(Types.VARCHAR);
+                    preparedStmtArgComList.add(Types.VARCHAR);
                     if (i < artifactIds.size() - 1) {
                         query.append(",");
                     }
