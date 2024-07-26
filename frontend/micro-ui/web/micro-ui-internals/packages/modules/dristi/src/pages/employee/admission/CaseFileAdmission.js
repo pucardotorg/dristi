@@ -10,6 +10,9 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
+import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -38,16 +41,14 @@ function CaseFileAdmission({ t, path }) {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-  const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complainantDetails?.formdata || null, [caseDetails]);
-  const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
 
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
-      ...reviewCaseFileFormConfig.map((form) => {
+      ...reviewCaseFileFormConfig?.map((form) => {
         return {
           ...form,
-          body: form.body.map((section) => {
+          body: form.body?.map((section) => {
             return {
               ...section,
               populators: {
@@ -79,6 +80,7 @@ function CaseFileAdmission({ t, path }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === "SEND_BACK" && { assignes: getAllAssignees(caseDetails) || [] }),
           },
         },
         tenantId,
@@ -184,28 +186,47 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const handleScheduleNextHearing = () => {
-    history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`);
+    const reqBody = {
+      order: {
+        createdDate: formatDate(new Date()),
+        tenantId,
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: caseDetails?.filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {},
+      },
+    };
+    DRISTIService.customApiService("/order/order/v1/create", reqBody, { tenantId })
+      .then(() => {
+        history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
+          caseId: caseId,
+          tab: "Orders",
+        });
+      })
+      .catch();
   };
 
   const updateConfigWithCaseDetails = (config, caseDetails) => {
-    const complainantNames = complainantFormData?.map((form) => {
-      const firstName = form?.data?.firstName || "";
-      const middleName = form?.data?.middleName || "";
-      const lastName = form?.data?.lastName || "";
-      return `${firstName} ${middleName} ${lastName}`.trim();
-    });
-
-    const respondentNames = respondentFormData?.map((form) => {
-      const firstName = form?.data?.respondentFirstName || "";
-      const lastName = form?.data?.respondentLastName || "";
-      return `${firstName} ${lastName}`.trim();
+    const litigantsNames = caseDetails.litigants?.map((litigant) => {
+      return { name: litigant.additionalDetails.fullName, individualId: litigant.individualId };
     });
 
     config.checkBoxes.forEach((checkbox) => {
-      if (checkbox.key === "Compliant") {
-        checkbox.dependentFields = complainantNames;
-      } else if (checkbox.key === "Respondent") {
-        checkbox.dependentFields = respondentNames;
+      if (checkbox.key === "Litigants") {
+        checkbox.dependentFields = litigantsNames;
       }
     });
 
@@ -220,21 +241,20 @@ function CaseFileAdmission({ t, path }) {
     additionalDetails: "CS_ADDITIONAL_DETAILS",
   };
 
-  if (!caseId) {
-    return <Redirect to="admission" />;
+  if (!caseId || (caseDetails && caseDetails?.status === CaseWorkflowState.CASE_ADMITTED)) {
+    return <Redirect to="/" />;
   }
 
   if (isLoading) {
     return <Loader />;
   }
-
   return (
     <div className={"case-and-admission"}>
       <div className="view-case-file">
         <div className="file-case">
           <div className="file-case-side-stepper">
             <div className="file-case-select-form-section">
-              {sidebar.map((key, index) => (
+              {sidebar?.map((key, index) => (
                 <div className="accordion-wrapper">
                   <div key={index} className="accordion-title">
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>
@@ -267,11 +287,11 @@ function CaseFileAdmission({ t, path }) {
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-                showSecondaryLabel={true}
-                // actionClassName="admission-action-buttons"
+                showSecondaryLabel={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 actionClassName="case-file-admission-action-bar"
-                showSkip={true}
+                showSkip={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 onSkip={onSendBack}
+                skiplabel={t("SEND_BACK_FOR_CORRECTION")}
                 noBreakLine
                 submitIcon={<RightArrow />}
                 skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}

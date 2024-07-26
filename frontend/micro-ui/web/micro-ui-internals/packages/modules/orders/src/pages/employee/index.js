@@ -9,11 +9,16 @@ import GenerateOrders from "./GenerateOrders";
 import MakeSubmission from "./MakeSubmission";
 import PaymentModal from "./PaymentModal";
 const bredCrumbStyle = { maxWidth: "min-content" };
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
       content: t("HOME"),
       show: true,
     },
@@ -29,7 +34,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path, stateCode, userType, tenants }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer className="ground-container order-submission">
         <React.Fragment>
           <ProjectBreadCrumb location={location} />
         </React.Fragment>

@@ -1,16 +1,19 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import { default as EmployeeApp } from "./pages/employee";
 import OrdersCard from "./components/OrdersCard";
-import { overrideHooks, updateCustomConfigs } from "./utils";
 import DeliveryChannels from "./pageComponents/DeliveryChannels";
+import { default as EmployeeApp } from "./pages/employee";
+import { overrideHooks, updateCustomConfigs } from "./utils";
+import { OrderWorkflowAction, OrderWorkflowState } from "./utils/orderWorkflow";
+import { ordersService } from "./hooks/services";
+import OrderReviewModal from "./pageComponents/OrderReviewModal";
+
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { path } = useRouteMatch();
   const moduleCode = ["orders", "common", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
-  const { isLoading, data: store } = Digit.Services.useStore({
+  const { isLoading } = Digit.Services.useStore({
     stateCode,
     moduleCode,
     language,
@@ -25,7 +28,11 @@ export const OrdersModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   OrdersModule,
   OrdersCard,
-  DeliveryChannels
+  DeliveryChannels,
+  OrderWorkflowActionEnum: OrderWorkflowAction,
+  OrderWorkflowStateEnum: OrderWorkflowState,
+  OrdersService: ordersService,
+  OrderReviewModal,
 };
 
 export const initOrdersComponents = () => {

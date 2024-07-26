@@ -53,11 +53,11 @@ const CustomReviewCardRow = ({
   isCaseReAssigned,
   disableScrutiny,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null } = config;
+  const { type = null, label = null, value = null, badgeType = null, textDependentOn = null, textDependentValue = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const extractValue = (data, key) => {
-    if (!key.includes(".")) {
+    if (!key?.includes(".")) {
       return data[key];
     }
     const keyParts = key.split(".");
@@ -162,6 +162,7 @@ const CustomReviewCardRow = ({
         );
       case "text":
         const textValue = extractValue(data, value);
+        const dependentOnValue = extractValue(data, textDependentOn);
         return (
           <div className={`text-main ${bgclassname}`}>
             <div className="text">
@@ -171,7 +172,7 @@ const CustomReviewCardRow = ({
                   ? textValue.length > 0
                     ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
                     : t("CS_NOT_AVAILABLE")
-                  : textValue || t("CS_NOT_AVAILABLE")}
+                  : textValue || dependentOnValue && textDependentValue || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div

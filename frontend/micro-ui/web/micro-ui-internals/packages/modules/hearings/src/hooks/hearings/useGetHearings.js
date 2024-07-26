@@ -1,6 +1,12 @@
 import { useQuery } from "react-query";
 import { hearingService } from "../services";
 
+/**
+ * @param {string} keys
+ * @param {boolean} enabled
+ * @param {number} refetchInterval
+ * @returns data
+ */
 function useGetHearings(data, params, keys, enabled, refetchInterval = false) {
   const { isLoading, data: hearingResponse, isFetching, refetch, error } = useQuery(
     `GET_HEARING_${keys}`,

@@ -33,8 +33,8 @@ const authenticate = async (details) => {
   }
   return authResponse;
 };
-export const getUserDetails = async (refreshToken) => {
-  const mobileNumber = window?.Digit.UserService.getUser()?.info?.mobileNumber;
+export const getUserDetails = async (refreshToken, mobNumber = null) => {
+  const mobileNumber = mobNumber ? mobNumber : window?.Digit.UserService.getUser()?.info?.mobileNumber;
   const response = await authenticate({
     username: mobileNumber,
     grant_type: "refresh_token",

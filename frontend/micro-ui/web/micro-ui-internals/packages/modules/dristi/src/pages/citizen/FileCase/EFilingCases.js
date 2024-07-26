@@ -32,6 +32,7 @@ import {
   complainantValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
+  getAllAssignees,
   prayerAndSwornValidation,
   respondentValidation,
   showDemandNoticeModal,
@@ -42,6 +43,7 @@ import {
 } from "./EfilingValidationUtils";
 import _, { isEqual, isMatch } from "lodash";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
+import { Urls } from "../../../hooks";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -433,7 +435,7 @@ function EFilingCases({ path }) {
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
 
-    if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted) {
+    if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
   }, [selected, caseDetails]);
@@ -1308,7 +1310,15 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+        .some((data) =>
+          demandNoticeFileValidation({
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setFormErrors: setFormErrors.current,
+            setReceiptDemandNoticeModal,
+          })
+        )
     ) {
       return;
     }
@@ -1527,20 +1537,21 @@ function EFilingCases({ path }) {
 
   const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
+    const assignees = getAllAssignees(caseDetails);
     await DRISTIService.caseUpdateService(
       {
         cases: {
           ...caseDetails,
           caseTitle:
             (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-              caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
               `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
                 caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-              } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+              } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
                 caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
               }`) ||
             caseDetails?.caseTitle,
           filingDate: formatDate(new Date()),
+          courtId: data?.court?.code,
           workflow: {
             ...caseDetails?.workflow,
             action: "SUBMIT_CASE",
@@ -1549,7 +1560,24 @@ function EFilingCases({ path }) {
         tenantId,
       },
       tenantId
-    );
+    ).then(() => {
+      DRISTIService.customApiService(Urls.dristi.pendingTask, {
+        pendingTask: {
+          name: "Pending Payment",
+          entityType: "case",
+          referenceId: caseDetails?.filingNumber,
+          status: "PAYMENT_PENDING",
+          assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
+          assignedRole: ["CASE_CREATOR"],
+          cnrNumber: null,
+          filingNumber: caseDetails?.filingNumber,
+          isCompleted: false,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+    });
     setPrevSelected(selected);
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };

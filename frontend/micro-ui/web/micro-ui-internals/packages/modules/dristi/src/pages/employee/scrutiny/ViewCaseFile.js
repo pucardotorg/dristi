@@ -1,30 +1,19 @@
-import {
-  BackButton,
-  CheckSvg,
-  CloseButton,
-  CloseSvg,
-  EditIcon,
-  FormComposerV2,
-  Header,
-  Loader,
-  TextInput,
-  Toast,
-} from "@egovernments/digit-ui-react-components";
+import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { useLocation, Redirect, useHistory } from "react-router-dom";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBackModal from "../../../components/SendCaseBackModal";
-import SuccessModal from "../../../components/SuccessModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
-import { DRISTIService } from "../../../services";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
-import ReactTooltip from "react-tooltip";
-
-function ViewCaseFile({ t }) {
+import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+function ViewCaseFile({ t, inViewCase = false }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
@@ -229,6 +218,7 @@ function ViewCaseFile({ t }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: getAllAssignees(caseDetails) }),
           },
         },
         tenantId,
@@ -336,6 +326,11 @@ function ViewCaseFile({ t }) {
     return <h1 className="heading-m">{props.label}</h1>;
   };
 
+  const scrollToHeading = (heading) => {
+    const scroller = Array.from(document.querySelectorAll(".label-field-pair .accordion-title")).find((el) => el.textContent === heading);
+    scroller.scrollIntoView({ block: "center", behavior: "smooth" });
+  };
+
   return (
     <div className={"case-and-admission"}>
       <div className="view-case-file">
@@ -344,9 +339,9 @@ function ViewCaseFile({ t }) {
             <div className="file-case-select-form-section">
               {sidebar.map((key, index) => (
                 <div className="accordion-wrapper">
-                  <div key={index} className="accordion-title">
+                  <div key={index} className="accordion-title" onClick={() => scrollToHeading(`${index + 1}. ${t(labels[key])}`)}>
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>
-                    <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
+                    {!inViewCase && <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>}
                   </div>
                 </div>
               ))}
@@ -354,38 +349,42 @@ function ViewCaseFile({ t }) {
           </div>
           <div className="file-case-form-section">
             <div className="employee-card-wrapper">
-              <div className="back-button-home">
-                <BackButton />
-              </div>
-              <div className="header-content">
-                <div className="header-details">
-                  <div className="header-title-icon">
-                    <Header>
-                      {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
-                    </Header>
-                    <div
-                      className="case-edit-icon"
-                      onClick={() => {
-                        setShowEditCaseNameModal(true);
-                      }}
-                    >
-                      <React.Fragment>
-                        <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
-                          {" "}
-                          <EditIcon />
-                        </span>
-                        <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
-                          {t("CS_CLICK_TO_EDIT")}
-                        </ReactTooltip>
-                      </React.Fragment>
-                    </div>
+              {!inViewCase && (
+                <div>
+                  <div className="back-button-home">
+                    <BackButton />
                   </div>
-                  <div className="header-icon" onClick={() => {}}>
-                    <CustomArrowDownIcon />
+                  <div className="header-content">
+                    <div className="header-details">
+                      <div className="header-title-icon">
+                        <Header>
+                          {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                        </Header>
+                        <div
+                          className="case-edit-icon"
+                          onClick={() => {
+                            setShowEditCaseNameModal(true);
+                          }}
+                        >
+                          <React.Fragment>
+                            <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                              {" "}
+                              <EditIcon />
+                            </span>
+                            <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                              {t("CS_CLICK_TO_EDIT")}
+                            </ReactTooltip>
+                          </React.Fragment>
+                        </div>
+                      </div>
+                      <div className="header-icon" onClick={() => {}}>
+                        <CustomArrowDownIcon />
+                      </div>
+                    </div>
+                    <CustomCaseInfoDiv data={caseInfo} t={t} />
                   </div>
                 </div>
-                <CustomCaseInfoDiv data={caseInfo} t={t} />
-              </div>
+              )}
               <FormComposerV2
                 label={primaryButtonLabel}
                 config={formConfig}
@@ -401,35 +400,39 @@ function ViewCaseFile({ t }) {
                 actionClassName="e-filing-action-bar"
               />
 
-              <div className="error-flag-class">
-                <FlagIcon isError={totalErrors?.total > 0} />
-                <h3>
-                  {totalErrors.total
-                    ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
-                    : t("CS_NO_ERRORS")}
-                </h3>
-              </div>
+              {!inViewCase && (
+                <div className="error-flag-class">
+                  <FlagIcon isError={totalErrors?.total > 0} />
+                  <h3>
+                    {totalErrors.total
+                      ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
+                      : t("CS_NO_ERRORS")}
+                  </h3>
+                </div>
+              )}
 
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
               )}
             </div>
           </div>
-          <div className={highlightChecklist ? "file-case-checklist-highlight" : "file-case-checklist"}>
-            <div className="checklist-main">
-              <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-              {checkList.map((item, index) => {
-                return (
-                  <div className="checklist-item" key={index}>
-                    <div className="item-logo">
-                      <CheckSvg />
+          {!inViewCase && (
+            <div className={highlightChecklist ? "file-case-checklist-highlight" : "file-case-checklist"}>
+              <div className="checklist-main">
+                <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+                {checkList.map((item, index) => {
+                  return (
+                    <div className="checklist-item" key={index}>
+                      <div className="item-logo">
+                        <CheckSvg />
+                      </div>
+                      <h3 className="item-text">{t(item)}</h3>
                     </div>
-                    <h3 className="item-text">{t(item)}</h3>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {showEditCaseNameModal && (
             <Modal
