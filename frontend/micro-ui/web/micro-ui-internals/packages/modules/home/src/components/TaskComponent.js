@@ -83,6 +83,30 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
     [filingNumber, tenantId]
   );
 
+  const getOrderDetail = useCallback(
+    async (orderNumber) => {
+      setSearchCaseLoading(true);
+      const orderData = await HomeService.customApiService(Urls.orderSearch, {
+        criteria: {
+          filingNumber,
+          tenantId,
+          orderNumber,
+        },
+        tenantId,
+      });
+      setSearchCaseLoading(false);
+      return orderData?.list?.[0] || {};
+    },
+    [filingNumber, tenantId]
+  );
+
+  const handleReviewOrder = useCallback(
+    async ({ filingNumber, caseId, referenceId }) => {
+      const orderDetails = await getOrderDetail();
+    },
+    [getOrderDetail]
+  );
+
   const handleReviewSubmission = useCallback(
     async ({ filingNumber, caseId, referenceId }) => {
       const getDate = (value) => {
@@ -215,6 +239,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
       const getCustomFunction = {
         handleCreateOrder,
         handleReviewSubmission,
+        handleReviewOrder,
       };
 
       const tasks = await Promise.all(
