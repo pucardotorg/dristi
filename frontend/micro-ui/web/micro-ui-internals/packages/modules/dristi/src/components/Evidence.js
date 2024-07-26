@@ -1,5 +1,6 @@
 import React from "react";
 import { FactCheckIcon, FactCrossIcon } from "../icons/svgIndex";
+import ReactTooltip from "react-tooltip";
 
 export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
   const getDate = (value) => {
@@ -35,15 +36,24 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
     },
   ];
 
+  // const message = () => ;
+
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
+        <ReactTooltip id={`mark-unmark-tooltip-${rowData.artifactNumber}`} place="left">
+          {t(rowData.isEvidence ? "UNMARK_EVIDENCE_TOOLTIP" : "MARK_EVIDENCE_TOOLTIP")}
+        </ReactTooltip>
         {showAsHeading ? (
           <div style={{ textDecoration: "underline", cursor: "pointer" }}>{t(value)}</div>
         ) : rowData.isEvidence ? (
-          <FactCrossIcon />
+          <span data-tip data-for={`mark-unmark-tooltip-${rowData.artifactNumber}`} style={{ cursor: "pointer" }}>
+            <FactCrossIcon />
+          </span>
         ) : (
-          <FactCheckIcon />
+          <span data-tip data-for={`mark-unmark-tooltip-${rowData.artifactNumber}`} style={{ cursor: "pointer" }}>
+            <FactCheckIcon />
+          </span>
         )}
       </div>
     </React.Fragment>
