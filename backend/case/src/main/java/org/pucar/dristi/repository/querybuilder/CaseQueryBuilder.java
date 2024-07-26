@@ -411,9 +411,12 @@ public class CaseQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String addPaginationQuery(String query, List<Object> preparedStatementList, Pagination pagination) {
+    public String addPaginationQuery(String query, List<Object> preparedStatementList, Pagination pagination, List<Integer> preparedStmtArgList) {
         preparedStatementList.add(pagination.getLimit());
+        preparedStmtArgList.add(Types.DOUBLE);
+
         preparedStatementList.add(pagination.getOffSet());
+        preparedStmtArgList.add(Types.DOUBLE);
         return query + " LIMIT ? OFFSET ?";
 
     }
