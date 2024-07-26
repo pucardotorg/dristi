@@ -61,5 +61,6 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
     public static final String JUDGEMENT_ID = "2";
+    public static final String JUDGEMENT = "JUDGEMENT";
 
 }
