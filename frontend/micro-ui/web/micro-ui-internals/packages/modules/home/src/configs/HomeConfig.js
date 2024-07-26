@@ -1455,6 +1455,17 @@ export const pendingTaskVoluntarySubmissionActions = {
       ],
     },
   },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskSubmissionWithResponseActions = {
@@ -1481,12 +1492,34 @@ export const pendingTaskSubmissionWithResponseActions = {
       ],
     },
   },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskSubmissionWithoutResponseActions = {
   MAKE_PAYMENT_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [
