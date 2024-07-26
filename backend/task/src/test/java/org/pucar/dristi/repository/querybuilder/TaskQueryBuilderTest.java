@@ -35,7 +35,8 @@ public class TaskQueryBuilderTest {
         criteria.setStatus("Open");
         criteria.setOrderId(UUID.randomUUID());
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = taskQueryBuilder.getTaskSearchQuery(criteria, preparedStmtList);
+        List<Integer> preparedStmtargList = new ArrayList<>();
+        String query = taskQueryBuilder.getTaskSearchQuery(criteria, preparedStmtList,preparedStmtargList);
 
         assertNotNull(query);
         assertTrue(query.contains("SELECT task.id as id"));
@@ -49,7 +50,7 @@ public class TaskQueryBuilderTest {
     }
 
     private void invokeSearchTaskQuery() {
-        taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>());
+        taskQueryBuilder.getTaskSearchQuery(null, new ArrayList<>(),new ArrayList<>());
     }
 
 
@@ -62,7 +63,7 @@ public class TaskQueryBuilderTest {
     }
 
     private void invokeDocumentSearchTaskQuery() {
-        taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null);
+        taskQueryBuilder.getDocumentSearchQuery(Arrays.asList("id1", "id2"), null,null);
     }
 
 
@@ -101,12 +102,12 @@ public class TaskQueryBuilderTest {
         String id = "1";
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
+            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList,List<Integer> preparedStArgList) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(new TaskCriteria(), null));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(new TaskCriteria(), null,null));
     }
 
     @Test
@@ -115,10 +116,12 @@ public class TaskQueryBuilderTest {
         ids.add("1");
         ids.add("2");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtargList = new ArrayList<>();
+
         String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
                 " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id FROM dristi_task_document doc WHERE doc.task_id IN (?,?)";
 
-        String actualQuery = taskQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String actualQuery = taskQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtargList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(ids, preparedStmtList);
@@ -130,12 +133,12 @@ public class TaskQueryBuilderTest {
         ids.add("1");
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+            public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtargList) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getDocumentSearchQuery(ids, new ArrayList<>()));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getDocumentSearchQuery(ids, new ArrayList<>(),new ArrayList<>()));
     }
 
     @Test
@@ -144,10 +147,12 @@ public class TaskQueryBuilderTest {
         ids.add("1");
         ids.add("2");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtargList = new ArrayList<>();
+
         String expectedQuery = "SELECT amount.id as id, amount.type as type, amount.amount as amount," +
                 " amount.paymentRefNumber as paymentRefNumber, amount.status as status, amount.additionaldetails as additionaldetails, amount.task_id as task_id FROM dristi_task_amount amount WHERE amount.task_id IN (?,?)";
 
-        String actualQuery = taskQueryBuilder.getAmountSearchQuery(ids, preparedStmtList);
+        String actualQuery = taskQueryBuilder.getAmountSearchQuery(ids, preparedStmtList,preparedStmtargList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(ids, preparedStmtList);
@@ -159,11 +164,11 @@ public class TaskQueryBuilderTest {
         ids.add("1");
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getAmountSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+            public String getAmountSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmArgList) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getAmountSearchQuery(ids, new ArrayList<>()));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getAmountSearchQuery(ids, new ArrayList<>(),new ArrayList<>()));
     }
 }

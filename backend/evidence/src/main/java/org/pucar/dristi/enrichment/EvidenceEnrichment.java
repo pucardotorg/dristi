@@ -52,6 +52,7 @@ public class EvidenceEnrichment {
                 }
 
                 evidenceRequest.getArtifact().setIsActive(true);
+                evidenceRequest.getArtifact().setCreatedDate(System.currentTimeMillis());
                 evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(0));
 
                 if (evidenceRequest.getArtifact().getFile() != null) {

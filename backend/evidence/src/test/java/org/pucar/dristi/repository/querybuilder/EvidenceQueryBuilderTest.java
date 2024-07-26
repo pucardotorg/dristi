@@ -51,9 +51,10 @@ public class EvidenceQueryBuilderTest {
                 "AND art.createdBy = ? AND art.sourceName = ? " +
                 "AND art.artifactNumber LIKE ?";
         List<Object> preparedStmtList=new ArrayList<>();
+        List<Integer> preparedStmtArgList=new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,owner,artifactType,evidenceStatus,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,preparedStmtArgList,owner,artifactType,evidenceStatus,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -83,7 +84,7 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art";
         List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,null,null,null,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,null,null,null,null,id, caseId, application,filingNumber, hearing, order, sourceId, sourceName,artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -94,11 +95,12 @@ public class EvidenceQueryBuilderTest {
         Boolean criteria = true;
         StringBuilder query = new StringBuilder("SELECT * FROM artifacts");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         boolean firstCriteria = true;
         String criteriaClause = "art.isEvidence = ?";
 
         // Call the method under test
-        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria, criteriaClause);
+        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria,preparedStmtArgList);
 
         // Verify the results
         assertFalse(result); // firstCriteria should be false after adding the first criteria
@@ -109,6 +111,7 @@ public class EvidenceQueryBuilderTest {
     @Test
     public void testGetArtifactSearchQuery_exception() {
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         String id = "testId";
         String caseId = "testCaseId";
         Boolean evidenceStatus = true;
@@ -124,11 +127,11 @@ public class EvidenceQueryBuilderTest {
 
         // Inject a scenario that causes an exception
         EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
-        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).addArtifactCriteria(anyString(), any(), anyList(), anyBoolean(), anyString());
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).addArtifactCriteria(anyString(), any(), anyList(), anyBoolean(), anyString(),anyList());
 
         // Execute the method and assert that the CustomException is thrown
         CustomException exception = assertThrows(CustomException.class, () -> {
-            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,owner,artifactType,evidenceStatus, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,preparedStmtArgList,owner,artifactType,evidenceStatus, id, caseId, application,filingNumber, hearing, order, sourceId, sourceName, artifactNumber);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -142,14 +145,15 @@ public class EvidenceQueryBuilderTest {
         ids.add("testId2");
 
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Inject a scenario that causes an exception
         EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
-        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getDocumentSearchQuery(anyList(), anyList());
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getDocumentSearchQuery(anyList(), anyList(),anyList());
 
         // Execute the method and assert that the RuntimeException is thrown
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            spyQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+            spyQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -171,11 +175,11 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
 
         // Stubbing the method call to return the expected query
-        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null,null,true,null, null, null, null,null, null, null, null,null))
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null,null,null,true,null, null, null, null,null, null, null, null,null))
                 .thenReturn(expectedQuery);
 
         // Calling the method under test
-        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null,null,true,null, null, null,null, null, null, null, null,null);
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null,null,null,true,null, null, null,null, null, null, null, null,null);
 
         // Assertions
         assertEquals(expectedQuery, actualQuery);
@@ -213,11 +217,12 @@ public class EvidenceQueryBuilderTest {
     void testGetDocumentSearchQuery() {
         List<String> ids = List.of("doc1", "doc2", "doc3");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmArgtList = new ArrayList<>();
 
         String expectedQuery = "SELECT doc.id as id, doc.fileStore as fileStore, doc.documentUid as documentUid, " +
                 "doc.documentType as documentType, doc.artifactId as artifactId, doc.additionalDetails as additionalDetails  FROM dristi_evidence_document doc WHERE doc.artifactId IN (?,?,?)";
 
-        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmArgtList);
         assertEquals(expectedQuery, query);
         assertEquals(ids, preparedStmtList);
     }
@@ -229,14 +234,15 @@ public class EvidenceQueryBuilderTest {
         artifactIds.add("artifactId2");
 
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmArgtList = new ArrayList<>();
 
         // Mocking the query builder to spy and throw an exception
         EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
-        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getCommentSearchQuery(anyList(), anyList());
+        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getCommentSearchQuery(anyList(), anyList(),anyList());
 
         // Invoke the method and expect RuntimeException
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            spyQueryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
+            spyQueryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList,preparedStmArgtList);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -247,11 +253,12 @@ public class EvidenceQueryBuilderTest {
     void testGetDocumentSearchQueryWithEmptyIds() {
         List<String> ids = Collections.emptyList();
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmArgtList = new ArrayList<>();
 
         String expectedQuery = "SELECT doc.id as id, doc.fileStore as fileStore, doc.documentUid as documentUid, " +
                 "doc.documentType as documentType, doc.artifactId as artifactId, doc.additionalDetails as additionalDetails  FROM dristi_evidence_document doc";
 
-        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmArgtList);
         assertEquals(expectedQuery, query);
         assertTrue(preparedStmtList.isEmpty());
     }
@@ -283,13 +290,14 @@ public class EvidenceQueryBuilderTest {
     void testGetCommentSearchQuery() {
         List<String> artifactIds = List.of("art1", "art2", "art3");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmArgtList = new ArrayList<>();
 
         String expectedQuery = "SELECT com.id as id, com.tenantId as tenantId, com.artifactId as artifactId, " +
                 "com.individualId as individualId, com.comment as comment, com.isActive as isActive, com.additionalDetails as additionalDetails, " +
                 "com.createdBy as createdBy, com.lastModifiedBy as lastModifiedBy, com.createdTime as createdTime, com.lastModifiedTime as lastModifiedTime  " +
                 "FROM dristi_evidence_comment com WHERE com.artifactId IN (?,?,?)";
 
-        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
+        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList,preparedStmArgtList);
         assertEquals(expectedQuery, query);
         assertEquals(artifactIds, preparedStmtList);
     }
@@ -318,13 +326,14 @@ public class EvidenceQueryBuilderTest {
     void testGetCommentSearchQueryWithEmptyArtifactIds() {
         List<String> artifactIds = Collections.emptyList();
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmArgtList = new ArrayList<>();
 
         String expectedQuery = "SELECT com.id as id, com.tenantId as tenantId, com.artifactId as artifactId, " +
                 "com.individualId as individualId, com.comment as comment, com.isActive as isActive, com.additionalDetails as additionalDetails, " +
                 "com.createdBy as createdBy, com.lastModifiedBy as lastModifiedBy, com.createdTime as createdTime, com.lastModifiedTime as lastModifiedTime  " +
                 "FROM dristi_evidence_comment com";
 
-        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
+        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList,preparedStmArgtList);
         assertEquals(expectedQuery, query);
         assertTrue(preparedStmtList.isEmpty());
     }

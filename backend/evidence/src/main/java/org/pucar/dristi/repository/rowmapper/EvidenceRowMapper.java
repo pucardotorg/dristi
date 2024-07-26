@@ -56,7 +56,7 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .sourceID(rs.getString("sourceID"))
                             .sourceName(rs.getString("sourceName"))
                             .applicableTo(Collections.singletonList(rs.getString("applicableTo")))
-                            .createdDate(rs.getInt("createdDate"))
+                            .createdDate(rs.getLong("createdDate"))
                             .isActive(rs.getBoolean("isActive"))
                             .isEvidence(rs.getBoolean("isEvidence"))
                             .status(rs.getString("status"))

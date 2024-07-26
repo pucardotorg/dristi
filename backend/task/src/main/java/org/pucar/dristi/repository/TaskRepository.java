@@ -49,11 +49,18 @@ public class TaskRepository {
         try {
             List<Task> taskList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
             List<Object> preparedStmtAm = new ArrayList<>();
+            List<Integer> preparedStmtArgAm = new ArrayList<>();
+
             List<Object> preparedStmtDc = new ArrayList<>();
-            String casesQuery = "";
-            casesQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList);             log.info("Final case query :: {}", casesQuery);
-            List<Task> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
+            List<Integer> preparedStmtArgDc = new ArrayList<>();
+
+            String taskQuery = "";
+            taskQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList,preparedStmtArgList);
+            log.info("Final Task query :: {}", taskQuery);
+            List<Task> list = jdbcTemplate.query(taskQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB task list :: {}", list);
             if (list != null) {
                 taskList.addAll(list);
@@ -67,25 +74,21 @@ public class TaskRepository {
                 return taskList;
 
             String amountQuery = "";
-            amountQuery = queryBuilder.getAmountSearchQuery(ids, preparedStmtAm);
+            amountQuery = queryBuilder.getAmountSearchQuery(ids, preparedStmtAm, preparedStmtArgAm);
             log.info("Final Amount query :: {}", amountQuery);
-            Map<UUID, Amount> amountMap = jdbcTemplate.query(amountQuery, preparedStmtAm.toArray(), amountRowMapper);
+            Map<UUID, Amount> amountMap = jdbcTemplate.query(amountQuery, preparedStmtAm.toArray(),preparedStmtArgAm.stream().mapToInt(Integer::intValue).toArray(), amountRowMapper);
             log.info("DB Amount map :: {}", amountMap);
             if (amountMap != null) {
-                taskList.forEach(order -> {
-                    order.setAmount(amountMap.get(order.getId()));
-                });
+                taskList.forEach(order -> order.setAmount(amountMap.get(order.getId())));
             }
 
             String documentQuery = "";
-            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtDc);
+            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtDc,preparedStmtArgDc);
             log.info("Final document query :: {}", documentQuery);
-            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtDc.toArray(), documentRowMapper);
+            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtDc.toArray(),preparedStmtArgDc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
-                taskList.forEach(order -> {
-                    order.setDocuments(documentMap.get(order.getId()));
-                });
+                taskList.forEach(order -> order.setDocuments(documentMap.get(order.getId())));
             }
             return taskList;
         } catch (CustomException e) {
@@ -99,11 +102,13 @@ public class TaskRepository {
     public TaskExists checkTaskExists(TaskExists taskExists) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
-            if (taskExists.getCnrNumber() == null && taskExists.getFilingNumber() == null &&taskExists.getTaskId()==null) {                taskExists.setExists(false);
+            if (taskExists.getCnrNumber() == null && taskExists.getFilingNumber() == null &&taskExists.getTaskId()==null) {
+                taskExists.setExists(false);
             } else {
                 String taskExistQuery = queryBuilder.checkTaskExistQuery(taskExists.getCnrNumber(), taskExists.getFilingNumber(), taskExists.getTaskId(),preparedStmtList);
                 log.info("Final task exist query :: {}", taskExistQuery);
-                Integer count = jdbcTemplate.queryForObject(taskExistQuery, preparedStmtList.toArray(), Integer.class);                taskExists.setExists(count != null && count > 0);
+                Integer count = jdbcTemplate.queryForObject(taskExistQuery, Integer.class, preparedStmtList.toArray());
+                taskExists.setExists(count != null && count > 0);
             }
             return taskExists;
         } catch (CustomException e) {

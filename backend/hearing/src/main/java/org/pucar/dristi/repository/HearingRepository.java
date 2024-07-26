@@ -50,9 +50,12 @@ public class HearingRepository {
         try {
             List<Hearing> hearingList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
             List<Object> preparedStmtListDoc = new ArrayList<>();
+            List<Integer> preparedStmtListArgDoc = new ArrayList<>();
             String hearingQuery;
-            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, hearingSearchRequest.getCriteria());
+            hearingQuery = queryBuilder.getHearingSearchQuery(preparedStmtList, hearingSearchRequest.getCriteria(),preparedStmtArgList);
             hearingQuery = queryBuilder.addOrderByQuery(hearingQuery, hearingSearchRequest.getPagination());
             log.info("Hearing list query: {}", hearingQuery);
 
@@ -63,7 +66,7 @@ public class HearingRepository {
                 hearingQuery = queryBuilder.addPaginationQuery(hearingQuery, hearingSearchRequest.getPagination(), preparedStmtList);
                 log.info("Post Pagination Query :: {}", hearingQuery);
             }
-            List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(), rowMapper);
+            List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             if (list != null) {
                 hearingList.addAll(list);
             }
@@ -77,9 +80,9 @@ public class HearingRepository {
             }
 
             String hearingDocumentQuery;
-            hearingDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            hearingDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtListArgDoc);
             log.info("Final document query: {}", hearingDocumentQuery);
-            Map<UUID, List<Document>> hearingDocumentMap = jdbcTemplate.query(hearingDocumentQuery, preparedStmtListDoc.toArray(), hearingDocumentRowMapper);
+            Map<UUID, List<Document>> hearingDocumentMap = jdbcTemplate.query(hearingDocumentQuery, preparedStmtListDoc.toArray(),preparedStmtListArgDoc.stream().mapToInt(Integer::intValue).toArray(), hearingDocumentRowMapper);
             if (hearingDocumentMap != null) {
                 hearingList.forEach(hearing -> hearing.setDocuments(hearingDocumentMap.get(hearing.getId())));
             }
@@ -98,7 +101,7 @@ public class HearingRepository {
     public Integer getTotalCountHearing(String baseQuery, List<Object> preparedStmtList) {
         String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+        return jdbcTemplate.queryForObject(countQuery,Integer.class, preparedStmtList.toArray());
     }
 
     public List<Hearing> checkHearingsExist(Hearing hearing) {

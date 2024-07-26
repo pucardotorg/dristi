@@ -5,6 +5,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.TaskCriteria;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,9 +37,9 @@ public class TaskQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
             boolean firstCriteria = true;
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?" ,preparedStmtList);
-            firstCriteria = addTaskCriteria(filingNumber, query, firstCriteria, "task.filingnumber = ?",preparedStmtList);
-            addTaskCriteria(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(cnrNumber, query, firstCriteria, "task.cnrnumber = ?" ,preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(filingNumber, query, firstCriteria, "task.filingnumber = ?",preparedStmtList);
+            addTaskCriteriaExist(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
 
             return query.toString();
         } catch (Exception e) {
@@ -48,7 +49,7 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
+    public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
             String taskNumber = criteria.getTaskNumber();
             String cnrNumber = criteria.getCnrNumber();
@@ -61,12 +62,12 @@ public class TaskQueryBuilder {
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList);
-            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList);
-            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList);
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList);
-            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList);
+            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList,preparedStmtArgList);
+            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList,preparedStmtArgList);
 
             query.append(ORDERBY_CREATEDTIME);
 
@@ -76,8 +77,7 @@ public class TaskQueryBuilder {
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
-
-    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+    private boolean addTaskCriteriaExist(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(str);
@@ -88,7 +88,19 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str);
+            preparedStmtList.add(criteria);
+            preparedStmtArgList.add(Types.VARCHAR);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgListDoc) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -97,6 +109,7 @@ public class TaskQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgListDoc.add(Types.VARCHAR));
             }
 
             return query.toString();
@@ -108,7 +121,7 @@ public class TaskQueryBuilder {
         }
     }
 
-    public String getAmountSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getAmountSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgListAm) {
         try {
             StringBuilder query = new StringBuilder(AMOUNT_SELECT_QUERY_CASE);
             query.append(FROM_AMOUNT_TABLE);
@@ -117,6 +130,7 @@ public class TaskQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgListAm.add(Types.VARCHAR));
             }
 
             return query.toString();

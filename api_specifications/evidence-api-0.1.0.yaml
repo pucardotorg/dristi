@@ -164,7 +164,7 @@ components:
             type: string
         createdDate:
           type: integer
-          format: date
+          format: int64
           description: Date this artifact was created. This may be different from the upload time which will be captured in the audit details.
         isActive:
           type: boolean

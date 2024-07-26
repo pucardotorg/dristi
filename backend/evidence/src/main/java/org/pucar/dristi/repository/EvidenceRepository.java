@@ -46,12 +46,18 @@
         public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
             try {
                 List<Object> preparedStmtList = new ArrayList<>();
+                List<Integer> preparedStmtArgList = new ArrayList<>();
+
                 List<Object> preparedStmtListCom = new ArrayList<>();
+                List<Integer> preparedStmtArgListCom = new ArrayList<>();
+
                 List<Object> preparedStmtListDoc = new ArrayList<>();
+                List<Integer> preparedStmtArgListDoc = new ArrayList<>();
 
                 // Artifact query building
                 String artifactQuery = queryBuilder.getArtifactSearchQuery(
                         preparedStmtList,
+                        preparedStmtArgList,
                         evidenceSearchCriteria.getOwner(),
                         evidenceSearchCriteria.getArtifactType(),
                         evidenceSearchCriteria.getEvidenceStatus(),
@@ -75,7 +81,7 @@
                     artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
                 }
 
-                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), evidenceRowMapper);
+                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(),evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
 
                 // Fetch associated comments
@@ -88,9 +94,9 @@
                 }
 
                 // Fetch associated comments
-                String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom);
+                String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom,preparedStmtArgListCom);
                 log.info("Final comment query: {}", commentQuery);
-                Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper);
+                Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(),preparedStmtArgListCom.stream().mapToInt(Integer::intValue).toArray(), commentRowMapper);
                 log.info("DB comment map :: {}", commentMap);
 
                 if (commentMap != null) {
@@ -100,9 +106,9 @@
                 }
 
                 // Fetch associated documents
-                String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
+                String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc,preparedStmtArgListDoc);
                 log.info("Final document query: {}", documentQuery);
-                Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+                Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(),documentRowMapper);
                 log.info("DB document map :: {}", documentMap);
 
                 if (documentMap != null) {
@@ -125,7 +131,7 @@
         public Integer getTotalCountArtifact(String baseQuery, List<Object> preparedStmtList) {
             String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
             log.info("Final count query :: {}", countQuery);
-            return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+            return jdbcTemplate.queryForObject(countQuery,Integer.class, preparedStmtList.toArray());
         }
     }
 

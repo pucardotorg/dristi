@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,24 +36,24 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList, UUID owner, String artifactType , Boolean evidenceStatus , String id, String caseId, String application, String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList, List<Integer> preparedStmtArgList,UUID owner, String artifactType , Boolean evidenceStatus , String id, String caseId, String application, String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
-            firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
-            firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
-            firstCriteria =addArtifactCriteria(artifactType, query, preparedStmtList, firstCriteria, "art.artifactType = ?");
-            firstCriteria =addArtifactCriteria(evidenceStatus, query, preparedStmtList, firstCriteria, "art.isEvidence = ?");
-            firstCriteria =addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?");
-            firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
-            firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
-            firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
-            firstCriteria =addArtifactCriteria(owner!=null?(owner.toString()):null, query, preparedStmtList, firstCriteria, "art.createdBy = ?");
-            firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
-            addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber");
+            firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(artifactType, query, preparedStmtList, firstCriteria, "art.artifactType = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(evidenceStatus, query, preparedStmtList, firstCriteria, preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(owner!=null?(owner.toString()):null, query, preparedStmtList, firstCriteria, "art.createdBy = ?",preparedStmtArgList);
+            firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?",preparedStmtArgList);
+            addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, preparedStmtArgList);
 
 
             return query.toString();
@@ -61,29 +62,30 @@ public class EvidenceQueryBuilder {
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
-    boolean addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+    void addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, List<Integer>preparedStmtArgList ) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append(criteriaClause).append(" LIKE ?");
-            preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
-            firstCriteria = false;
+            query.append("art.artifactNumber").append(" LIKE ?");
+            preparedStmtList.add("%" + criteria + "%");
+            preparedStmtArgList.add(Types.VARCHAR);// Add wildcard characters for partial match
         }
-        return firstCriteria;
     }
-    boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+    boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause,List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(criteriaClause);
             preparedStmtList.add(criteria);
+            preparedStmtArgList.add(Types.VARCHAR);
             firstCriteria = false;
         }
         return firstCriteria;
     }
-    boolean     addArtifactCriteria(Boolean criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+    boolean addArtifactCriteria(Boolean criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, List<Integer> preparedStmtArgList) {
         if (criteria != null) {
             addClauseIfRequired(query, firstCriteria);
-            query.append(criteriaClause);
+            query.append("art.isEvidence = ?");
             preparedStmtList.add(criteria);
+            preparedStmtArgList.add(Types.VARCHAR);
             firstCriteria = false;
         }
         return firstCriteria;
@@ -92,7 +94,7 @@ public class EvidenceQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -101,6 +103,7 @@ public class EvidenceQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
             }
 
             return query.toString();
@@ -124,7 +127,7 @@ public class EvidenceQueryBuilder {
         return query + " LIMIT ? OFFSET ?";
     }
 
-    public String getCommentSearchQuery(List<String> artifactIds, List<Object> preparedStmtList) {
+    public String getCommentSearchQuery(List<String> artifactIds, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
             StringBuilder query = new StringBuilder(COMMENT_SELECT_QUERY);
             query.append(FROM_COMMENTS_TABLE);
@@ -134,6 +137,7 @@ public class EvidenceQueryBuilder {
                 for (int i = 0; i < artifactIds.size(); i++) {
                     query.append("?");
                     preparedStmtList.add(artifactIds.get(i));
+                    preparedStmtArgList.add(Types.VARCHAR);
                     if (i < artifactIds.size() - 1) {
                         query.append(",");
                     }

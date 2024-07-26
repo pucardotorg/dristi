@@ -62,7 +62,7 @@ public class ArtifactTest {
         String sourceName = "testSourceName";
         List<String> applicableTo = new ArrayList<>();
         applicableTo.add("testApplicableTo");
-        Integer createdDate = 1234567890;
+        Long createdDate = 1234567890l;
         Boolean isActive = true;
         String status = "testStatus";
         Document file = new Document();

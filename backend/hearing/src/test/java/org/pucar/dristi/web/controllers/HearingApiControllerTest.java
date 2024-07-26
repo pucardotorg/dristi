@@ -80,8 +80,8 @@ public class HearingApiControllerTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
                 .build();
 
         User user = new User();

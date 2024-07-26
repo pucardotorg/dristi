@@ -43,9 +43,11 @@ public class ApplicationRepository {
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
             List<Object> preparedStmtListDoc;
 
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList);
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList,preparedStmtArgList);
             applicationQuery = queryBuilder.addOrderByQuery(applicationQuery, applicationSearchRequest.getPagination());
             log.info("Final application search query: {}", applicationQuery);
             if(applicationSearchRequest.getPagination() !=  null) {
@@ -55,7 +57,7 @@ public class ApplicationRepository {
                 applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList);
             }
 
-            List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(), rowMapper);
+            List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
                 applicationList.addAll(list);
@@ -71,9 +73,11 @@ public class ApplicationRepository {
 
             String documentQuery = "";
             preparedStmtListDoc = new ArrayList<>();
-            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+
+            List<Integer> preparedStmtArgListDoc = new ArrayList<>();
+            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
-            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(),preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
                 applicationList.forEach(application -> {
@@ -94,7 +98,7 @@ public class ApplicationRepository {
     public Integer getTotalCountApplication(String baseQuery, List<Object> preparedStmtList) {
         String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
 
     public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {
@@ -109,7 +113,7 @@ public class ApplicationRepository {
                     List<Object> preparedStmtList = new ArrayList<>();
                     String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber(), preparedStmtList);
                     log.info("Final application exist query: {}", applicationExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, preparedStmtList.toArray(), Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class, preparedStmtList.toArray());
                     applicationExist.setExists(count != null && count > 0);
                 }
             }

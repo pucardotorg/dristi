@@ -260,8 +260,8 @@ components:
           maxLength: 36
           description: could be the orderID due to which this application is filed, for example, application to revoke the penalty
         createdDate:
-          type: string
-          format: datetime
+          type: integer
+          format: int64
           description: the date on which the application was created
         createdBy:
           type: string

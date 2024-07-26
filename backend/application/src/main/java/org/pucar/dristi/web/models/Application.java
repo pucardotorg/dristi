@@ -58,7 +58,7 @@ public class Application   {
         @JsonProperty("createdDate")
           @NotNull
 
-                private String createdDate = null;
+                private Long createdDate = null;
 
         @JsonProperty("createdBy")
 
