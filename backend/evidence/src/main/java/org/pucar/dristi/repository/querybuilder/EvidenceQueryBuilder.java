@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
@@ -35,25 +36,39 @@ public class EvidenceQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
 
-    public String getArtifactSearchQuery(List<Object> preparedStmtList, UUID owner, String artifactType , Boolean evidenceStatus , String id, String caseId, String application, String filingNumber, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList, EvidenceSearchCriteria criteria) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
-            firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
-            firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
-            firstCriteria =addArtifactCriteria(artifactType, query, preparedStmtList, firstCriteria, "art.artifactType = ?");
-            firstCriteria =addArtifactCriteria(evidenceStatus, query, preparedStmtList, firstCriteria, "art.isEvidence = ?");
-            firstCriteria =addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?");
-            firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
-            firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
-            firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
-            firstCriteria =addArtifactCriteria(owner!=null?(owner.toString()):null, query, preparedStmtList, firstCriteria, "art.createdBy = ?");
-            firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
-            addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber");
+            // Extract fields from EvidenceSearchCriteria
+            UUID owner = criteria.getOwner();
+            String artifactType = criteria.getArtifactType();
+            Boolean evidenceStatus = criteria.getEvidenceStatus();
+            String id = criteria.getId();
+            String caseId = criteria.getCaseId();
+            String application = criteria.getApplicationNumber();
+            String filingNumber = criteria.getFilingNumber();
+            String hearing = criteria.getHearing();
+            String order = criteria.getOrder();
+            String sourceId = criteria.getSourceId();
+            String sourceName = criteria.getSourceName();
+            String artifactNumber = criteria.getArtifactNumber();
 
+            // Build the query using the extracted fields
+            firstCriteria = addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
+            firstCriteria = addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
+            firstCriteria = addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria = addArtifactCriteria(artifactType, query, preparedStmtList, firstCriteria, "art.artifactType = ?");
+            firstCriteria = addArtifactCriteria(evidenceStatus, query, preparedStmtList, firstCriteria, "art.isEvidence = ?");
+            firstCriteria = addArtifactCriteria(filingNumber, query, preparedStmtList, firstCriteria, "art.filingNumber = ?");
+            firstCriteria = addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
+            firstCriteria = addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
+            firstCriteria = addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria = addArtifactCriteria(owner != null ? owner.toString() : null, query, preparedStmtList, firstCriteria, "art.createdBy = ?");
+            firstCriteria = addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
+            addArtifactPartialCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber");
 
             return query.toString();
         } catch (Exception e) {
@@ -61,6 +76,7 @@ public class EvidenceQueryBuilder {
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
+
     boolean addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
