@@ -266,6 +266,12 @@ const SubmissionsCreate = () => {
     if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
+    if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
+      setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
+    }
+    // if (applicationType && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
+    //   setValue("initialHearingDate", );
+    // }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -442,7 +448,7 @@ const SubmissionsCreate = () => {
   };
 
   const handleDownloadSubmission = () => {
-    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+    // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
   if (

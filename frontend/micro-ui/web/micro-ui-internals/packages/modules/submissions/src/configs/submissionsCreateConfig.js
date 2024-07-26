@@ -285,6 +285,12 @@ export const configsRescheduleRequest = [
         populators: {
           name: "changedHearingDate",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
     ],
@@ -458,6 +464,12 @@ export const configsCheckoutRequest = [
         populators: {
           name: "changedHearingDate",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
     ],
