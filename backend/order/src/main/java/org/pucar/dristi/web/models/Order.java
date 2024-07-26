@@ -72,7 +72,7 @@ public class Order {
     private String orderType = null;
 
     @JsonProperty("orderCategory")
-    @NotNull
+    //@NotNull
     private String orderCategory = null;
 
     @JsonProperty("status")
