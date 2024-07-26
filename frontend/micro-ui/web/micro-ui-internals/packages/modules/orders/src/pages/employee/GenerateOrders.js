@@ -469,12 +469,16 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async (order) => {
+    let create = false;
+    const formdata = order?.additionalDetails?.formdata;
+    let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
+    let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+    let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
-      const formdata = order?.additionalDetails?.formdata;
-      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
-      let status = "CREATE_SUBMISSION";
-      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
-      await ordersService.customApiService(Urls.orders.pendingTask, {
+      create = true;
+    }
+    create &&
+      (await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
           name: "Submit Documents",
           entityType,
@@ -489,8 +493,7 @@ const GenerateOrders = () => {
           additionalDetails: {},
           tenantId,
         },
-      });
-    }
+      }));
     return;
   };
 
