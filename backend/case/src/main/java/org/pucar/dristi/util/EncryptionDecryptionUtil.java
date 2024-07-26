@@ -175,28 +175,28 @@ public class EncryptionDecryptionUtil {
         Map<String,String> keyPurposeMap = new HashMap<>();
 
         if (!abacEnabled){
-            keyPurposeMap.put("key","CaseDecryptSelf");
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"AbacDisabled");
         }
 
         else if (isUserDecryptingForAllowedRoles(requestInfo.getUserInfo())){
-            keyPurposeMap.put("key","CaseDecryptSelf");
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"AllowedRole");
         }
 
         else if (isUserDecryptingForSelf(objectToDecrypt, requestInfo)){
-            keyPurposeMap.put("key","CaseDecryptSelf");
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"Self");
         }
 
 
         else if (isDecryptionForIndividualUser(objectToDecrypt)){
-            keyPurposeMap.put("key","CaseDecryptOther");
+            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"SingleSearchResult");
         }
 
         else{
-            keyPurposeMap.put("key","CaseDecryptOther");
+            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"BulkSearchResult");
         }
 
