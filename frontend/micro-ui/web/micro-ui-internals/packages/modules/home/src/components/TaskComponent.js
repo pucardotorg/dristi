@@ -67,7 +67,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
   const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
     let reqBody = {
       order: {
-        createdDate: formatDate(new Date()),
+        createdDate: new Date().getTime(),
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,

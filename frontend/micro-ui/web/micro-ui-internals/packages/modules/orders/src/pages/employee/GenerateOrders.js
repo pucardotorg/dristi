@@ -169,7 +169,7 @@ const GenerateOrders = () => {
 
   const defaultOrderData = useMemo(
     () => ({
-      createdDate: formatDate(new Date()),
+      createdDate: new Date().getTime(),
       tenantId,
       cnrNumber,
       filingNumber,
