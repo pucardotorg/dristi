@@ -81,48 +81,15 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
   };
 
   const navigateOrdersGenerate = () => {
-    const reqbody = {
-      order: {
-        createdDate: formatDate(new Date()),
-        tenantId,
-        cnrNumber,
-        filingNumber: filingNumber,
-        statuteSection: {
-          tenantId,
-        },
-        orderType: "Bail",
-        status: "",
-        isActive: true,
-        workflow: {
-          action: OrderWorkflowAction.SAVE_DRAFT,
-          comments: "Creating order",
-          assignes: null,
-          rating: null,
-          documents: [{}],
-        },
-        documents: [],
-        additionalDetails: {
-          formdata: {
-            orderType: {
-              id: 15,
-              type: "BAIL",
-              isactive: true,
-              code: "BAIL",
-              name: "ORDER_TYPE_BAIL",
-            },
-          },
-        },
-      },
-    };
-    ordersService
-      .createOrder?.(reqbody, { tenantId })
-      .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
-      })
-      .catch((err) => {});
+    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
   };
 
-  const orderList = userRoles.includes("CITIZEN") ? ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") : ordersRes?.list;
+  const orderList =
+    userRoles.includes("CITIZEN") && !userRoles.includes("ADVOCATE_ROLE")
+      ? ordersRes?.list.filter((order) => order.status === "PUBLISHED")
+      : userRoles.includes("ADVOCATE_ROLE")
+      ? ordersRes?.list?.filter((order) => order.status === "ABATED" || order.status === "PUBLISHED")
+      : ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS");
 
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
@@ -199,7 +166,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
                       marginTop: "16px",
                     }}
                   >
-                    <Button variation={"outlined"} label={"Raise Application"} onClick={handleMakeSubmission} />
+                    <Button variation={"outlined"} label={"Raise Application"} onButtonClick={handleMakeSubmission} />
                   </div>
                 )}
               </div>
@@ -265,7 +232,6 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
                 </div>
                 <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
                   {orderList
-                    .filter((order) => order.status === "PUBLISHED")
                     ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
                     .slice(0, 5)
                     .map((order) => (

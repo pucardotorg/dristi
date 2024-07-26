@@ -764,6 +764,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             handleDownload={handleDownload}
             handleRequestLabel={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
+            openHearingModule={openHearingModule}
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
             showToast={showToast}

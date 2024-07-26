@@ -44,8 +44,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
   const hideSubmit = useMemo(() => {
     return (
-      (!userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN")) &&
-      ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+      !userRoles.includes("JUDGE_ROLE") ||
+      userRoles.includes("CITIZEN") ||
+      (modalType !== "Documents" &&
+        ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status))
     );
   }, [userRoles]);
 
@@ -119,6 +121,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
       action: SubmissionWorkflowAction.APPROVE,
@@ -127,6 +133,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const rejectApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
       action: SubmissionWorkflowAction.REJECT,
@@ -136,7 +146,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const applicationCommentsPayload = (newComment) => {
     return {
       ...documentSubmission[0]?.applicationList,
-      statuteSection: { ...documentSubmission[0]?.applicationList.statuteSection, tenantId: tenantId },
+      statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
       comment: documentSubmission[0]?.applicationList.comment
         ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),
@@ -149,18 +159,22 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const onSuccess = async (result) => {
     setShow(false);
-    const details = showToast({
-      isError: false,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
-    });
+    if (modalType === "Documents") {
+      const details = showToast({
+        isError: false,
+        message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+      });
+    }
     counterUpdate();
   };
   const onError = async (result) => {
     setShow(false);
-    const details = showToast({
-      isError: true,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
-    });
+    if (modalType === "Documents") {
+      const details = showToast({
+        isError: true,
+        message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+      });
+    }
   };
 
   const counterUpdate = () => {
@@ -217,27 +231,37 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const handleAcceptApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: acceptApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: acceptApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const handleRejectApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: rejectApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: rejectApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const submitCommentApplication = async (newComment) => {
