@@ -1,6 +1,5 @@
 package org.pucar.dristi.repository;
 
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.EvidenceRowMapper;
 import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,16 +65,6 @@ class EvidenceRepositoryTest {
 
         // Mock artifact query result
         when(jdbcTemplate.query(eq(artifactQuery), any(Object[].class), eq(evidenceRowMapper))).thenReturn(artifactList);
-
-        // Mock document query result
-        Document document = new Document();
-        Map<UUID, Document> documentMap = Collections.singletonMap(artifactId, document);
-
-        // Mock comment query result
-        List<Comment> commentList = new ArrayList<>();
-        Comment comment = new Comment();
-        commentList.add(comment);
-        Map<UUID, List<Comment>> commentMap = Collections.singletonMap(artifactId, commentList);
 
         // Execute
         List<Artifact> result = evidenceRepository.getArtifacts(criteria, pagination);

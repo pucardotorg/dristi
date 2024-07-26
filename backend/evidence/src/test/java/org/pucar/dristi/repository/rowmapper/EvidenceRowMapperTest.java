@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowmapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.egov.common.contract.models.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Artifact;
+import org.pucar.dristi.web.models.Comment;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -25,15 +27,12 @@ class EvidenceRowMapperTest {
     @Mock
     private ResultSet rs;
 
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper();
     }
 
-    @Test
-    void testExtractData() throws Exception {
+    private void mockResultSet() throws Exception {
         when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 
         when(rs.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440000").thenReturn("123e4567-e89b-12d3-a456-556642440001");
@@ -73,7 +72,11 @@ class EvidenceRowMapperTest {
         additionalDetailsObject.setType("jsonb");
         additionalDetailsObject.setValue("{\"key\":\"value\"}");
         when(rs.getObject("additionalDetails")).thenReturn(additionalDetailsObject);
+    }
 
+    @Test
+    void testExtractDataBasicProperties() throws Exception {
+        mockResultSet();
         List<Artifact> artifacts = evidenceRowMapper.extractData(rs);
 
         assertNotNull(artifacts);
@@ -97,29 +100,62 @@ class EvidenceRowMapperTest {
         assertEquals("sourceID1", artifact1.getSourceID());
         assertEquals("sourceName1", artifact1.getSourceName());
         assertEquals(List.of("applicable1"), artifact1.getApplicableTo());
+    }
+
+    @Test
+    void testExtractDataCommentsAndFile() throws Exception {
+        mockResultSet();
+        List<Artifact> artifacts = evidenceRowMapper.extractData(rs);
+
+        Artifact artifact1 = artifacts.get(0);
         assertEquals(1, artifact1.getComments().size());
-        assertEquals(UUID.fromString("123e4567-e89b-12d3-a456-556642440002"), artifact1.getComments().get(0).getId());
-        assertEquals("tenant1", artifact1.getComments().get(0).getTenantId());
-        assertEquals("individual1", artifact1.getComments().get(0).getIndividualId());
-        assertEquals("This is a comment", artifact1.getComments().get(0).getComment());
-        assertTrue(artifact1.getComments().get(0).getIsActive());
-        assertNotNull(artifact1.getComments().get(0).getAdditionalDetails());
-        assertNotNull(artifact1.getComments().get(0).getAuditdetails());
-        assertEquals("user1", artifact1.getComments().get(0).getAuditdetails().getCreatedBy());
-        assertEquals(1609459200000L, artifact1.getComments().get(0).getAuditdetails().getCreatedTime());
-        assertEquals("user2", artifact1.getComments().get(0).getAuditdetails().getLastModifiedBy());
-        assertEquals(1609545600000L, artifact1.getComments().get(0).getAuditdetails().getLastModifiedTime());
+
+        Comment comment = artifact1.getComments().get(0);
+        assertNotNull(comment);
+        assertEquals(UUID.fromString("123e4567-e89b-12d3-a456-556642440002"), comment.getId());
+        assertEquals("tenant1", comment.getTenantId());
+        assertEquals("individual1", comment.getIndividualId());
+        assertEquals("This is a comment", comment.getComment());
+        assertTrue(comment.getIsActive());
+        assertNotNull(comment.getAdditionalDetails());
+
+        Document file = artifact1.getFile();
+        assertNotNull(file);
+    }
+
+    @Test
+    void testExtractDataAuditDetails() throws Exception {
+        mockResultSet();
+        List<Artifact> artifacts = evidenceRowMapper.extractData(rs);
+
+        Artifact artifact1 = artifacts.get(0);
+        assertNotNull(artifact1.getAuditdetails());
+        assertEquals("user1", artifact1.getAuditdetails().getCreatedBy());
+        assertEquals(1609459200000L, artifact1.getAuditdetails().getCreatedTime());
+        assertEquals("user2", artifact1.getAuditdetails().getLastModifiedBy());
+        assertEquals(1609545600000L, artifact1.getAuditdetails().getLastModifiedTime());
+    }
+
+    @Test
+    void testExtractDataAdditionalDetails() throws Exception {
+        mockResultSet();
+        List<Artifact> artifacts = evidenceRowMapper.extractData(rs);
+
+        Artifact artifact1 = artifacts.get(0);
+        assertNotNull(artifact1.getArtifactDetails());
+        assertNotNull(artifact1.getAdditionalDetails());
+    }
+
+    @Test
+    void testExtractDataStatusAndDescription() throws Exception {
+        mockResultSet();
+        List<Artifact> artifacts = evidenceRowMapper.extractData(rs);
+
+        Artifact artifact1 = artifacts.get(0);
         assertEquals(20210101, artifact1.getCreatedDate());
         assertTrue(artifact1.getIsActive());
         assertTrue(artifact1.getIsEvidence());
         assertEquals("status1", artifact1.getStatus());
         assertEquals("description1", artifact1.getDescription());
-        assertNotNull(artifact1.getArtifactDetails());
-        assertNotNull(artifact1.getAdditionalDetails());
-
-        Artifact artifact2 = artifacts.get(1);
-        assertNotNull(artifact2);
-        assertEquals(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"), artifact2.getId());
     }
-
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -27,9 +26,6 @@ public class EvidenceQueryBuilder {
     private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY art.createdtime DESC ";
     private static final String ORDERBY_CLAUSE = " ORDER BY art.{orderBy} {sortingOrder} ";
     private static final String FROM_ARTIFACTS_TABLE = " FROM dristi_evidence_artifact art";
-    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
-    private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
-
     public String getArtifactSearchQuery(List<Object> preparedStmtList, EvidenceSearchCriteria criteria) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);

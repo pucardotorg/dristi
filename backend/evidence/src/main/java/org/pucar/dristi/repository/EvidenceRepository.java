@@ -1,12 +1,10 @@
 package org.pucar.dristi.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Repository
-public class EvidenceRepository {
+public class    EvidenceRepository {
 
     private final EvidenceQueryBuilder queryBuilder;
     private final JdbcTemplate jdbcTemplate;
@@ -41,8 +37,6 @@ public class EvidenceRepository {
     public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
-            List<Object> preparedStmtListCom = new ArrayList<>();
-            List<Object> preparedStmtListDoc = new ArrayList<>();
 
             // Artifact query building
             String artifactQuery = queryBuilder.getArtifactSearchQuery(
