@@ -47,10 +47,11 @@ public class OrderRepository {
         try {
             List<Order> orderList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
             List<Object> preparedStmtListSt;
             List<Object> preparedStmtListDoc;
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(criteria,preparedStmtList);
+            orderQuery = queryBuilder.getOrderSearchQuery(criteria,preparedStmtList,preparedStmtArgList);
 
             orderQuery = queryBuilder.addOrderByQuery(orderQuery, pagination);
             log.info("Final order query :: {}", orderQuery);
@@ -62,7 +63,7 @@ public class OrderRepository {
                 orderQuery = queryBuilder.addPaginationQuery(orderQuery, pagination, preparedStmtList);
             }
 
-            List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(), rowMapper);
+            List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB order list :: {}", list);
             if (list != null) {
                 orderList.addAll(list);
@@ -78,9 +79,11 @@ public class OrderRepository {
 
             String statueAndSectionQuery = "";
             preparedStmtListSt = new ArrayList<>();
-            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt);
+            List<Integer> preparedStmtStSecArgList = new ArrayList<>();
+
+            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt,preparedStmtStSecArgList);
             log.info("Final statue and sections query :: {}", statueAndSectionQuery);
-            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), statuteSectionRowMapper);
+            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), preparedStmtStSecArgList.stream().mapToInt(Integer::intValue).toArray(),statuteSectionRowMapper);
             log.info("DB statute sections map :: {}", statuteSectionsMap);
             if (statuteSectionsMap != null) {
                 orderList.forEach(order -> {
@@ -90,9 +93,11 @@ public class OrderRepository {
 
             String documentQuery = "";
             preparedStmtListDoc = new ArrayList<>();
-            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            List<Integer> preparedStmtDocArgList = new ArrayList<>();
+
+            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtDocArgList);
             log.info("Final document query :: {}", documentQuery);
-            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtDocArgList.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
                 orderList.forEach(order -> {
@@ -120,7 +125,7 @@ public class OrderRepository {
                 } else {
                     String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber(), orderExists.getOrderId(),preparedStmtList);
                     log.info("Final order exist query :: {}", orderExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(orderExistQuery, preparedStmtList.toArray(),Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(orderExistQuery,Integer.class, preparedStmtList.toArray());
                     orderExists.setExists(count != null && count > 0);
                 }
             }
@@ -136,7 +141,7 @@ public class OrderRepository {
     public Integer getTotalCountOrders(String baseQuery, List<Object> preparedStmtList) {
         String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
 
 }

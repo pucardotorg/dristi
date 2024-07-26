@@ -14,7 +14,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Document>>> {
+public class DocumentRowMapper implements ResultSetExtractor<Map<UUID, List<Document>>> {
     public Map<UUID,List<Document>> extractData(ResultSet rs) {
         Map<UUID, List<Document>> documentMap = new LinkedHashMap<>();
         try {
