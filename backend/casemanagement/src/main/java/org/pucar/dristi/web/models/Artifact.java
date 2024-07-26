@@ -101,10 +101,6 @@ public class Artifact {
 
 	private Boolean isActive = true;
 
-	@JsonProperty("isEvidence")
-
-	private Boolean isEvidence = false;
-
 	@JsonProperty("status")
 
 	private String status = null;

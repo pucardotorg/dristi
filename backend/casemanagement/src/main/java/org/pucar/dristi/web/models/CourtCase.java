@@ -1,9 +1,9 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +13,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +34,7 @@ public class CourtCase {
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	//@NotNull
+	@NotNull
 	//@Size(min = 2, max = 64)
 	private String tenantId = null;
 
@@ -89,16 +88,13 @@ public class CourtCase {
 	@JsonProperty("filingDate")
 	//@NotNull
 	@Valid
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate filingDate = null;
+	private Long filingDate = null;
 
 	@JsonProperty("registrationDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate registrationDate = null;
+	private Long registrationDate = null;
 
 	@JsonProperty("judgementDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate judgementDate = null;
+	private Long judgementDate = null;
 
 	@JsonProperty("caseDetails")
 	private Object caseDetails = null;

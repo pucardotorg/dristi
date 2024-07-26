@@ -1,7 +1,6 @@
 package org.pucar.dristi;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.config.TracerConfiguration;
@@ -69,11 +68,6 @@ public class Main {
 	@PostConstruct
 	public void init() {
 		trustSelfSignedSSL();
-	}
-
-	@Bean
-	public ObjectMapper objectMapper() {
-		return new ObjectMapper();
 	}
 
 }

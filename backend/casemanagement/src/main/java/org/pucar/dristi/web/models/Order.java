@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -15,7 +14,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,94 +30,93 @@ import java.util.UUID;
 @Builder
 public class Order {
 
-    @JsonProperty("id")
-    @Valid
-    private UUID id = null;
+	@JsonProperty("id")
+	@Valid
+	private UUID id = null;
 
-    @JsonProperty("tenantId")
-    @NotNull
-    private String tenantId = null;
+	@JsonProperty("tenantId")
+	@NotNull
+	private String tenantId = null;
 
-    @JsonProperty("filingNumber")
-    private String filingNumber = null;
+	@JsonProperty("filingNumber")
+	private String filingNumber = null;
 
-    @JsonProperty("cnrNumber")
-    private String cnrNumber = null;
+	@JsonProperty("cnrNumber")
+	private String cnrNumber = null;
 
-    @JsonProperty("applicationNumber")
-    private List<String> applicationNumber = new ArrayList<>();
+	@JsonProperty("applicationNumber")
+	private List<String> applicationNumber = new ArrayList<>();
 
-    @JsonProperty("hearingNumber")
-    @Valid
-    private String hearingNumber = null;
+	@JsonProperty("hearingNumber")
+	@Valid
+	private String hearingNumber = null;
 
-    @JsonProperty("orderNumber")
-    @Size(min = 24, max = 256)
-    private String orderNumber = null;
+	@JsonProperty("orderNumber")
+	@Size(min = 24, max = 256)
+	private String orderNumber = null;
 
-    @JsonProperty("linkedOrderNumber")
-    @Size(min = 24, max = 256)
-    private String linkedOrderNumber = null;
+	@JsonProperty("linkedOrderNumber")
+	@Size(min = 24, max = 256)
+	private String linkedOrderNumber = null;
 
-    @JsonProperty("createdDate")
-    @NotNull
-    @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate createdDate = null;
+	@JsonProperty("createdDate")
+	@NotNull
+	@Valid
+	private Long createdDate = null;
 
-    @JsonProperty("issuedBy")
-    private IssuedBy issuedBy = null;
+	@JsonProperty("issuedBy")
+	private IssuedBy issuedBy = null;
 
-    @JsonProperty("orderType")
-    @NotNull
-    @Valid
-    private String orderType = null;
+	@JsonProperty("orderType")
+	@NotNull
+	@Valid
+	private String orderType = null;
 
-    @JsonProperty("orderCategory")
-    private String orderCategory = null;
+	@JsonProperty("orderCategory")
+	private String orderCategory = null;
 
-    @JsonProperty("status")
-    @NotNull
-    private String status = null;
+	@JsonProperty("status")
+	@NotNull
+	private String status = null;
 
-    @JsonProperty("comments")
-    private String comments = null;
+	@JsonProperty("comments")
+	private String comments = null;
 
-    @JsonProperty("isActive")
-    @NotNull
-    private Boolean isActive = null;
+	@JsonProperty("isActive")
+	@NotNull
+	private Boolean isActive = null;
 
-    @JsonProperty("statuteSection")
-    @Valid
-    private StatuteSection statuteSection = null;
+	@JsonProperty("statuteSection")
+	@Valid
+	private StatuteSection statuteSection = null;
 
-    @JsonProperty("documents")
-    @Valid
-    private List<Document> documents = null;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-    @JsonProperty("additionalDetails")
-    private Object additionalDetails = null;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails = null;
 
-    @JsonProperty("auditDetails")
-    @Valid
-    private AuditDetails auditDetails = null;
+	@JsonProperty("auditDetails")
+	@Valid
+	private AuditDetails auditDetails = null;
 
-    @JsonProperty("workflow")
-    @Valid
-    private Workflow workflow = null;
+	@JsonProperty("workflow")
+	@Valid
+	private Workflow workflow = null;
 
 
-    public Order addApplicationIdsItem(String applicationNumbersItem) {
-        this.applicationNumber.add(applicationNumbersItem);
-        return this;
-    }
+	public Order addApplicationIdsItem(String applicationNumbersItem) {
+		this.applicationNumber.add(applicationNumbersItem);
+		return this;
+	}
 
-    public Order addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        this.documents.add(documentsItem);
-        return this;
-    }
+	public Order addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
 }
