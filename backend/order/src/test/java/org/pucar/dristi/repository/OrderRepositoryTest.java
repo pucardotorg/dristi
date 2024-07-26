@@ -70,7 +70,7 @@ public class OrderRepositoryTest {
         when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList(), anyList())).thenReturn(statuteAndSectionQuery);
         Map<UUID, StatuteSection> statuteSectionsMap = new HashMap<>();
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(orderQuery);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(orderQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(orderQuery);
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
         when(jdbcTemplate.queryForObject(eq(countQuery),eq(Integer.class), any(Object[].class))).thenReturn(1);
 
