@@ -121,6 +121,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
       action: SubmissionWorkflowAction.APPROVE,
@@ -129,6 +133,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const rejectApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
       action: SubmissionWorkflowAction.REJECT,
@@ -138,7 +146,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const applicationCommentsPayload = (newComment) => {
     return {
       ...documentSubmission[0]?.applicationList,
-      statuteSection: { ...documentSubmission[0]?.applicationList.statuteSection, tenantId: tenantId },
+      statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
       comment: documentSubmission[0]?.applicationList.comment
         ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),
@@ -158,10 +166,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     handleBack();
   };
   const onError = async (result) => {
-    const details = showToast({
-      isError: true,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
-    });
+    if (modalType === "Documents") {
+      const details = showToast({
+        isError: true,
+        message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+      });
+    }
     handleBack();
   };
 
@@ -219,27 +229,37 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const handleAcceptApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: acceptApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: acceptApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const handleRejectApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: rejectApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: rejectApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const submitCommentApplication = async (newComment) => {
@@ -326,7 +346,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (generateOrder) {
         const reqbody = {
           order: {
-            createdDate: formatDate(new Date()),
+            createdDate: new Date().getTime(),
             tenantId,
             cnrNumber,
             filingNumber,

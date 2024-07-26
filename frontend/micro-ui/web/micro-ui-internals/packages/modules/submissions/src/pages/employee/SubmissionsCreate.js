@@ -4,6 +4,7 @@ import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-com
 import {
   applicationTypeConfig,
   configsBail,
+  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -11,6 +12,7 @@ import {
   configsOthers,
   configsProductionOfDocuments,
   configsRescheduleRequest,
+  configsSettlement,
   configsSurety,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
@@ -18,7 +20,6 @@ import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
-import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -100,8 +101,8 @@ const SubmissionsCreate = () => {
       PRODUCTION_DOCUMENTS: configsProductionOfDocuments,
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
-      SETTLEMENT: configsCaseSettlement,
-      BAIL_BOND: configsBail,
+      SETTLEMENT: configsSettlement,
+      BAIL_BOND: configsBailBond,
       SURETY: configsSurety,
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,

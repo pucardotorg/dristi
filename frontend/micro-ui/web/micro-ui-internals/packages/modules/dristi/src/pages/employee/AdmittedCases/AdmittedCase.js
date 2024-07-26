@@ -490,7 +490,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     } else if (option === t("REFER_TO_ADR")) {
       const reqBody = {
         order: {
-          createdDate: formatDate(new Date()),
+          createdDate: new Date().getTime(),
           tenantId,
           cnrNumber,
           filingNumber: filingNumber,
@@ -771,6 +771,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             handleDownload={handleDownload}
             handleRequestLabel={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
+            openHearingModule={openHearingModule}
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
             showToast={showToast}

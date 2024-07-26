@@ -626,6 +626,8 @@ export const UICustomizations = {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
               ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
+              ? { ...data, applicationList: data.applicationList.filter((application) => application.status != "PENDINGPAYMENT") }
               : data;
             // }
           },
@@ -697,7 +699,7 @@ export const UICustomizations = {
             action: (history) => {
               const requestBody = {
                 order: {
-                  createdDate: formatDate(new Date()),
+                  createdDate: new Date().getTime(),
                   tenantId: row.tenantId,
                   filingNumber: row.filingNumber[0],
                   statuteSection: {
