@@ -1588,7 +1588,8 @@ export const configRejectSubmission = [
     body: [
       {
         label: "REF_APPLICATION_ID",
-        isMandatory: false, // Change this to mandatory after system filled is implememnted
+        isMandatory: false,
+        disable: true,
         key: "refApplicationId",
         type: "text",
         populators: { name: "refApplicationId" },
@@ -1976,6 +1977,7 @@ export const configsCaseSettlement = [
         type: "date",
         populators: {
           name: "settlementAgreementDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
         },
       },
       {
@@ -1987,6 +1989,7 @@ export const configsCaseSettlement = [
           name: "settlementMechanism",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
           options: [

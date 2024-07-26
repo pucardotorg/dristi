@@ -107,7 +107,37 @@ const SubmissionsCreate = () => {
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
     };
-    return applicationConfigKeys?.[applicationType] || [];
+    let newConfig = applicationConfigKeys?.[applicationType] || [];
+
+    if (newConfig.length > 0) {
+      const updatedConfig = newConfig.map((config) => {
+        return {
+          ...config,
+          body: config?.body.map((body) => {
+            if (body?.populators?.validation?.customValidationFn) {
+              const customValidations =
+                Digit.Customizations[body.populators.validation.customValidationFn.moduleName][
+                  body.populators.validation.customValidationFn.masterName
+                ];
+
+              if (customValidations) {
+                body.populators.validation = {
+                  ...body.populators.validation,
+                  ...customValidations(),
+                };
+              }
+            }
+            return {
+              ...body,
+            };
+          }),
+        };
+      });
+      return updatedConfig;
+    }
+    else {
+      return [];
+    }
   }, [applicationType]);
 
   const formatDate = (date, format) => {
@@ -313,7 +343,6 @@ const SubmissionsCreate = () => {
             status: "in_progress",
             comments: "Workflow comments",
             documents: [{}],
-            // assignes: getAllAssignees(caseDetails),
           },
         },
       };
@@ -326,6 +355,7 @@ const SubmissionsCreate = () => {
     }
   };
   const createPendingTask = async () => {
+    const assignes = getAllAssignees(caseDetails, Boolean(orderNumber)) || [];
     let entityType = "async-voluntary-submission-services";
     if (orderNumber) {
       entityType =
@@ -337,9 +367,9 @@ const SubmissionsCreate = () => {
       pendingTask: {
         name: t("MAKE_PAYMENT_SUBMISSION"),
         entityType,
-        referenceId: applicationNumber,
-        status: "MAKE_PAYMENT",
-        assignedTo: [{ uuid: userInfo?.uuid }],
+        referenceId: `MANUAL_${applicationNumber}`,
+        status: "MAKE_PAYMENT_SUBMISSION",
+        assignedTo: assignes?.map((uuid) => ({ uuid })),
         assignedRole: [],
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,
