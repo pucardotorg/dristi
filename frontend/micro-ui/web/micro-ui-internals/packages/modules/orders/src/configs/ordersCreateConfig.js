@@ -348,6 +348,7 @@ export const configsOrderSection202CRPC = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseRequiredBy",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -529,6 +530,7 @@ export const configsOrderMandatorySubmissions = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "submissionDeadline",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -628,6 +630,7 @@ export const configsOrderMandatorySubmissions = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "responseDeadline",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -761,6 +764,7 @@ export const configsOrderSubmissionExtension = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newSubmissionDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -992,6 +996,7 @@ export const configsScheduleHearingDate = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "hearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -1200,6 +1205,7 @@ export const configsRescheduleHearingDate = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -1400,6 +1406,7 @@ export const configsAssignDateToRescheduledHearing = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -1496,6 +1503,7 @@ export const configsAssignNewHearingDate = [
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
           name: "newHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
