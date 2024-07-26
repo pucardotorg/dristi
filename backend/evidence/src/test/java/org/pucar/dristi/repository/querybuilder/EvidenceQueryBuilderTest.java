@@ -102,7 +102,6 @@ public class EvidenceQueryBuilderTest {
         StringBuilder query = new StringBuilder("SELECT * FROM artifacts");
         List<Object> preparedStmtList = new ArrayList<>();
         boolean firstCriteria = true;
-        String criteriaClause = "art.isEvidence = ?";
         List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Call the method under test
@@ -181,7 +180,6 @@ public class EvidenceQueryBuilderTest {
     void testGetArtifactSearchQueryWithNullValues() {
         // Mock the EvidenceQueryBuilder
         EvidenceQueryBuilder mockQueryBuilder = Mockito.mock(EvidenceQueryBuilder.class);
-        List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Expected query when all values are null
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +

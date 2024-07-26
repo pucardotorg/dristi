@@ -117,12 +117,17 @@ public class TaskRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(TaskRowMapper.class))).thenThrow(new RuntimeException("Database error"));
 
         // Test the method and expect CustomException
-        assertThrows(CustomException.class ,()-> taskRepository.getApplications(new TaskCriteria()));
+        assertThrows(CustomException.class ,this::invokeGetTask);
 
         // Verify method calls
         verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(), any(TaskRowMapper.class));
     }
+
+    private void invokeGetTask() {
+        taskRepository.getApplications(new TaskCriteria());
+    }
+
 
     @Test
     public void testCheckTaskExists_NoMatch() {
