@@ -178,6 +178,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             data={submitInfoData?.caseInfo}
             tableDataClassName={"e-filing-table-data-style"}
             tableValueClassName={"e-filing-table-value-style"}
+            column={1}
           />
         )}
         <div className="button-field">

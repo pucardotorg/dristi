@@ -1,7 +1,9 @@
 import { CloseSvg } from "@egovernments/digit-ui-components";
 import React, { useEffect, useMemo, useState } from "react";
-import Modal from "../../../dristi/src/components/Modal";
-function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft, showActions = true }) {
+import Modal from "../../../components/Modal";
+import { Button, SubmitBar } from "@egovernments/digit-ui-react-components";
+
+function PublishedOrderModal({ setShowReviewModal, t, order, handleDownload, handleRequestLabel, handleSubmitDocument }) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -77,29 +79,32 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
 
   return (
     <Modal
-      headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
+      headerBarMain={<Heading label={t("VIEW_ORDER_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
-      actionCancelLabel={showActions && t("SAVE_DRAFT")}
-      actionCancelOnSubmit={showActions && handleSaveDraft}
-      actionSaveLabel={showActions && t("ADD_SIGNATURE")}
-      actionSaveOnSubmit={() => {
-        if (showActions) {
-          setShowsignatureModal(true);
-          setShowReviewModal(false);
-        }
-      }}
-      className={"review-order-modal"}
+      actionCancelLabel={null}
+      actionCancelOnSubmit={() => {}}
+      actionSaveLabel={null}
+      hideSubmit={true}
+      actionSaveOnSubmit={() => {}}
+      popupStyles={{ minHeight: "755px", minWidth: "1050px" }}
     >
-      <div className="review-order-body-main">
-        <div className="review-order-modal-list-div">
-          <div className="review-order-type-side-stepper">
-            <h1> {t(order?.orderType)}</h1>
-          </div>
+      {showDocument}
+      <div style={{ marginTop: "65%", display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
+        <div onClick={handleDownload} style={{ fontWeight: 700, fontSize: "16px", lineHeight: "18.75px", color: "#007E7E", cursor: "pointer" }}>
+          {t("DOWNLOAD_ORDER_LINK")}
         </div>
-        <div className="review-order-modal-document-div">{showDocument} </div>
+        <div style={{ display: "flex", width: "50%", gap: "20px", justifyContent: "end" }}>
+          <Button
+            variation="secondary"
+            onButtonClick={handleRequestLabel}
+            className="primary-label-btn"
+            label={t("EXTENSION_REQUEST_LABEL")}
+          ></Button>
+          <SubmitBar variation="primary" onSubmit={handleSubmitDocument} className="primary-label-btn" label={t("SUBMIT_DOCUMENT_LABEL")}></SubmitBar>
+        </div>
       </div>
     </Modal>
   );
 }
 
-export default OrderReviewModal;
+export default PublishedOrderModal;

@@ -5,7 +5,7 @@ import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderRevi
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import { CustomArrowOut } from "../../../icons/svgIndex";
 
-const OrderDrafts = ({ caseData }) => {
+const OrderDrafts = ({ caseData, setOrderModal }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const cnr = caseData.cnrNumber;
@@ -21,8 +21,8 @@ const OrderDrafts = ({ caseData }) => {
       },
     },
     {},
-    cnr + filingNumber,
-    true
+    filingNumber,
+    filingNumber
   );
 
   return ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS").length ? (
@@ -33,15 +33,23 @@ const OrderDrafts = ({ caseData }) => {
           marginTop: "10px",
         }}
       >
-        <div
-          style={{
-            fontWeight: 700,
-            fontSize: "24px",
-            lineHeight: "28.8px",
-            color: "#231F20",
-          }}
-        >
-          Drafts ({ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS").length})
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "24px",
+              lineHeight: "28.8px",
+              color: "#231F20",
+            }}
+          >
+            Drafts ({ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS").length})
+          </div>
+          <div
+            onClick={() => setOrderModal(ordersRes?.list?.filter((order) => order.status === "DRAFT_IN_PROGRESS"))}
+            style={{ cursor: "pointer", fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757" }}
+          >
+            {t("VIEW_ALL_LINK")}
+          </div>
         </div>
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
           {ordersRes?.list
@@ -70,8 +78,7 @@ const OrderDrafts = ({ caseData }) => {
                       color: "#101828",
                     }}
                   >
-                    Order for {order?.orderType.charAt(0).toUpperCase()}
-                    {order?.orderType.slice(1).toLowerCase()}
+                    {t(`ORDER_TYPE_${order?.orderType?.toUpperCase()}`)}
                   </div>
                   <CustomArrowOut />
                 </div>

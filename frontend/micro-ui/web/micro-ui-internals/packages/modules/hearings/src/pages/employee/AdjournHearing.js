@@ -1,48 +1,18 @@
-import React, { useEffect, useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { useState } from "react";
-import { Button, Modal } from "@egovernments/digit-ui-react-components";
 import { FormComposerV2 } from "@egovernments/digit-ui-components";
-import SummaryModal from "../../components/SummaryModal";
+import { Modal } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import NextHearingModal from "../../components/NextHearingModal";
+import SummaryModal from "../../components/SummaryModal";
+
 const AdjournHearing = (props) => {
-  const { tenantId, hearing } = props;
-  const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+  const { hearing } = props;
+  const { hearingId } = Digit.Hooks.useQueryParams();
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
-  const [caseDetails, setCaseDetails] = useState();
-  const [selectedDate, setSelectedDate] = useState(null);
   const [reasonFormData, setReasonFormData] = useState({});
 
   const history = useHistory();
-
-  useEffect(() => {
-    getCaseDetails();
-  }, []);
-
-  const getCaseDetails = async () => {
-    try {
-      const response = await DRISTIService.searchCaseService(
-        {
-          criteria: [
-            {
-              filingNumber: latestText?.HearingList[0]?.filingNumber[0],
-            },
-          ],
-          tenantId,
-        },
-        {}
-      );
-      setCaseDetails(response);
-    } catch (error) {
-      const response = {
-        Case_Number: "FSM-29-04-23-898898",
-        Court_Name: "Kerala City Criminal Court",
-        Case_Type: "NIA S 138",
-      };
-      setCaseDetails(response);
-    }
-  };
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
@@ -53,7 +23,6 @@ const AdjournHearing = (props) => {
     setStepper(stepper + 1);
     setDisable(true);
   };
-  const onGenerateOrder = () => {};
 
   const config = [
     {

@@ -1,0 +1,2 @@
+export const SubmissionWorkflowAction = { CREATE: "CREATE", ESIGN: "ESIGN" };
+export const SubmissionWorkflowState = { PENDINGSUBMISSION: "PENDINGSUBMISSION", PENDINGPAYMENT: "PENDINGPAYMENT", PENDINGESIGN: "PENDINGESIGN" };

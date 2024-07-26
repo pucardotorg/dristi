@@ -32,6 +32,7 @@ import {
   complainantValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
+  getAllAssignees,
   prayerAndSwornValidation,
   respondentValidation,
   showDemandNoticeModal,
@@ -42,6 +43,7 @@ import {
 } from "./EfilingValidationUtils";
 import _, { isEqual, isMatch } from "lodash";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
+import { Urls } from "../../../hooks";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -1535,6 +1537,7 @@ function EFilingCases({ path }) {
 
   const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
+    const assignees = getAllAssignees(caseDetails);
     await DRISTIService.caseUpdateService(
       {
         cases: {
@@ -1557,7 +1560,24 @@ function EFilingCases({ path }) {
         tenantId,
       },
       tenantId
-    );
+    ).then(() => {
+      DRISTIService.customApiService(Urls.dristi.pendingTask, {
+        pendingTask: {
+          name: "Pending Payment",
+          entityType: "case",
+          referenceId: caseDetails?.filingNumber,
+          status: "PAYMENT_PENDING",
+          assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
+          assignedRole: ["CASE_CREATOR"],
+          cnrNumber: null,
+          filingNumber: caseDetails?.filingNumber,
+          isCompleted: false,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+    });
     setPrevSelected(selected);
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };

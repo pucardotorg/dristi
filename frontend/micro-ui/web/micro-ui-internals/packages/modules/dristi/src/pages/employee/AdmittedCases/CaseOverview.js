@@ -1,16 +1,13 @@
 import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
-import useGetOrders from "../../../hooks/dristi/useGetOrders";
-import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { ordersService } from "../../../../../orders/src/hooks/services";
-import { OrderWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
-import ScheduleHearing from "./ScheduleHearing";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
+import useGetOrders from "../../../hooks/dristi/useGetOrders";
+import { OrderWorkflowAction, OrderWorkflowState } from "../../../Utils/orderWorkflow";
+import PublishedOrderModal from "./PublishedOrderModal";
 
-const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -21,11 +18,12 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
-  const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
-  const advocateIds = caseData.case.representatives?.map((representative) => {
+  const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
-      id: representative.advocateId,
+      id: representative?.advocateId,
     };
   });
 
@@ -97,26 +95,34 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: {},
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              id: 15,
+              type: "BAIL",
+              isactive: true,
+              code: "BAIL",
+              name: "ORDER_TYPE_BAIL",
+            },
+          },
+        },
       },
     };
     ordersService
-      .createOrder(reqbody, { tenantId })
+      .createOrder?.(reqbody, { tenantId })
       .then(() => {
         history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
       })
       .catch((err) => {});
   };
 
+  const orderList = userRoles.includes("CITIZEN") ? ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") : ordersRes?.list;
+
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
   };
 
-  const openHearingModule = () => {
-    setShowScheduleHearingModal(true);
-  };
-
-  if (isHearingsLoading || isOrdersLoading || isAdvocatesLoading) {
+  if (isHearingsLoading || isOrdersLoading) {
     return <Loader />;
   }
   return hearingRes?.HearingList?.length === 0 && ordersRes?.list?.length === 0 ? (
@@ -171,25 +177,9 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
                 marginTop: "16px",
               }}
             >
-              <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
+              <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
               {userRoles.includes("ORDER_CREATOR") && (
-                <Button variation={"outlined"} label={"Generate Order"} onButtonClick={() => navigateOrdersGenerate()} />
-              )}
-              {showScheduleHearingModal && (
-                <ScheduleHearing
-                  setUpdateCounter={setUpdateCounter}
-                  showToast={showToast}
-                  tenantId={tenantId}
-                  caseData={caseData}
-                  setShowModal={setShowScheduleHearingModal}
-                  advocateDetails={advocateDetails.advocates.map((advocate) => {
-                    return {
-                      individualId: advocate.responseList[0].individualId,
-                      name: advocate.responseList[0].additionalDetails.username,
-                      type: "Advocate",
-                    };
-                  })}
-                />
+                <Button variation={"outlined"} label={t("GENERATE_ORDERS_LINK")} onButtonClick={() => navigateOrdersGenerate()} />
               )}
             </div>
           ) : (
@@ -213,7 +203,6 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
         <Card
           style={{
             width: "70%",
-            marginTop: "10px",
           }}
         >
           <div
@@ -271,7 +260,7 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
             </div>
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-            {ordersRes?.list
+            {orderList
               ?.sort((order1, order2) => order2.auditDetails?.createdTime - order1.auditDetails?.createdTime)
               .slice(0, 5)
               .map((order) => (
@@ -291,42 +280,32 @@ const CaseOverview = ({ caseData, setUpdateCounter, showToast }) => {
                     alignItems: "center",
                   }}
                   onClick={() => {
-                    setShowReviewModal(true);
-                    setCurrentOrder(order);
+                    if (order?.status === OrderWorkflowState.DRAFT_IN_PROGRESS) {
+                      history.push(
+                        `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${order?.orderNumber}`
+                      );
+                    } else {
+                      setShowReviewModal(true);
+                      setCurrentOrder(order);
+                    }
                   }}
                 >
-                  {t(order?.orderType)}
+                  {t(`ORDER_TYPE_${order?.orderType.toUpperCase()}`)}
                 </div>
               ))}
           </div>
         </Card>
       )}
-      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} />
+      {/* <Button variation={"outlined"} label={"Schedule Hearing"} onButtonClick={openHearingModule} /> */}
 
-      {showScheduleHearingModal && (
-        <ScheduleHearing
-          setUpdateCounter={setUpdateCounter}
-          showToast={showToast}
-          tenantId={tenantId}
-          caseData={caseData}
-          setShowModal={setShowScheduleHearingModal}
-          advocateDetails={advocateDetails.advocates.map((advocate) => {
-            return {
-              individualId: advocate.responseList[0].individualId,
-              name: advocate.responseList[0].additionalDetails.username,
-              type: "Advocate",
-            };
-          })}
-        />
-      )} */}
       {showReviewModal && (
-        <OrderReviewModal
+        <PublishedOrderModal
           t={t}
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
-          setShowsignatureModal={() => {}}
-          handleSaveDraft={() => {}}
-          showActions={false}
+          handleDownload={handleDownload}
+          handleRequestLabel={handleRequestLabel}
+          handleSubmitDocument={handleSubmitDocument}
         />
       )}
     </React.Fragment>

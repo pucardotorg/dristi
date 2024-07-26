@@ -6,10 +6,13 @@ import { Header, FormComposerV2, Toast } from "@egovernments/digit-ui-react-comp
 import {
   applicationTypeConfig,
   configRejectSubmission,
+  configsAssignDateToRescheduledHearing,
+  configsAssignNewHearingDate,
   configsBail,
   configsCaseSettlement,
   configsCaseTransfer,
   configsCaseWithdrawal,
+  configsInitiateRescheduleHearingDate,
   configsIssueOfWarrants,
   configsIssueSummons,
   configsJudgement,
@@ -28,13 +31,17 @@ import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
-import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { ordersService } from "../../hooks/services";
 import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
+import { CaseWorkflowState } from "../../../../dristi/src/Utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
+import { applicationTypes } from "../../utils/applicationTypes";
 import useSearchSubmissionService from "../../../../submissions/src/hooks/submissions/useSearchSubmissionService";
+import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
+import { DRISTIService } from "../../../../dristi/src/services";
+import isEqual from "lodash/isEqual";
+import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -58,6 +65,7 @@ const GenerateOrders = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const applicationNumber = urlParams.get("applicationNumber");
+  const orderNumber = urlParams.get("orderNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, _setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
@@ -65,7 +73,7 @@ const GenerateOrders = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [formdata, setFormdata] = useState(null);
+  const [newformdata, setNewFormdata] = useState([]);
   const [prevOrder, setPrevOrder] = useState();
   const [stepper, setStepper] = useState("-1");
   const [isBailable, setIsBailable] = useState();
@@ -73,30 +81,18 @@ const GenerateOrders = () => {
   const [isCash, setIsCash] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const userInfo = Digit.UserService.getUser()?.info || {};
+  const uuid = userInfo?.uuid;
+  const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
-    setFormdata(null);
   };
 
   const closeToast = () => {
     setShowErrorToast(false);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [closeToast]);
-
-  useEffect(() => {
-    if (!filingNumber) {
-      history.push("/employee/home/home-pending-task");
-    }
-  }, []);
-
-  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -111,19 +107,21 @@ const GenerateOrders = () => {
     filingNumber
   );
 
-  const { data: applicationData, isLoading: isApplicationDetailsLoading } = useSearchSubmissionService(
+  const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
-        filingNumber: "F-C.1973.002-2024-000505",
+        filingNumber: filingNumber,
         tenantId: tenantId,
+        applicationNumber: applicationNumber,
       },
       tenantId,
     },
     {},
     "dristi",
-    filingNumber,
-    filingNumber
+    applicationNumber,
+    applicationNumber
   );
+  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -134,11 +132,13 @@ const GenerateOrders = () => {
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
   const complainants = useMemo(() => {
-    return caseDetails?.litigants
-      ?.filter((item) => item?.partyType === "complainant.primary")
-      .map((item) => {
-        return { code: item?.additionalDetails?.fullName || "complainants", name: item?.additionalDetails?.fullName || "complainants" };
-      });
+    return caseDetails?.litigants?.map((item) => {
+      return {
+        code: item?.additionalDetails?.fullName,
+        name: item?.additionalDetails?.fullName,
+        individualId: item?.individualId,
+      };
+    });
   }, [caseDetails]);
 
   const respondants = useMemo(() => {
@@ -148,18 +148,102 @@ const GenerateOrders = () => {
     //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
     //   });
     return [{ code: "Respondent", name: "Respondent" }];
-  }, [caseDetails]);
+  }, []);
 
-  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
-    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber } },
+  const {
+    data: ordersData,
+    refetch: refetchOrdersData,
+    isLoading: isOrdersLoading,
+    isFetching: isOrdersFetching,
+  } = Digit.Hooks.orders.useSearchOrdersService(
+    {
+      tenantId,
+      criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS },
+      pagination: { limit: 1000, offset: 0 },
+    },
     { tenantId },
     filingNumber,
     Boolean(filingNumber && cnrNumber)
   );
 
-  const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
-  const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
-  const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
+  const advocateIds = caseDetails.representatives?.map((representative) => {
+    return {
+      id: representative.advocateId,
+    };
+  });
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
+  );
+  const defaultIndex = useMemo(() => {
+    return ordersData?.list?.findIndex((order) => order.orderNumber === orderNumber);
+  }, [ordersData, orderNumber]);
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const defaultOrderData = useMemo(
+    () => ({
+      createdDate: formatDate(new Date()),
+      tenantId,
+      cnrNumber,
+      filingNumber,
+      statuteSection: {
+        tenantId,
+      },
+      status: "",
+      isActive: true,
+      workflow: {
+        action: OrderWorkflowAction.SAVE_DRAFT,
+        comments: "Creating order",
+        assignes: [uuid],
+        rating: null,
+        documents: [{}],
+      },
+      documents: [],
+      additionalDetails: { formdata: {} },
+    }),
+    [cnrNumber, filingNumber, tenantId, uuid]
+  );
+
+  useEffect(() => {
+    if (!ordersData?.list || ordersData?.list.length < 1) {
+      setNewFormdata([defaultOrderData]);
+    } else {
+      setNewFormdata(ordersData?.list);
+    }
+  }, [ordersData, defaultOrderData]);
+
+  useEffect(() => {
+    refetchOrdersData();
+  }, [refetchOrdersData]);
+
+  useEffect(() => {
+    if (showErrorToast) {
+      const timer = setTimeout(() => {
+        setShowErrorToast(false);
+      }, 2000);
+      clearTimeout(timer);
+    }
+  }, [showErrorToast]);
+  useEffect(() => {
+    if (defaultIndex && defaultIndex !== -1 && defaultIndex !== selectedOrder) {
+      setSelectedOrder(defaultIndex);
+    }
+  }, [defaultIndex, selectedOrder]);
+
+  const currentOrder = useMemo(() => newformdata?.[selectedOrder], [newformdata, selectedOrder]);
+  const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
 
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
@@ -171,6 +255,9 @@ const GenerateOrders = () => {
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
       APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
+      INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
+      ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
+      ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
       CASE_TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsCaseSettlement,
       SUMMONS: configsIssueSummons,
@@ -309,10 +396,11 @@ const GenerateOrders = () => {
       });
     }
 
+
     let newConfig = structuredClone(applicationTypeConfig);
-    if (orderType?.code && configKeys.hasOwnProperty(orderType?.code)) {
-      let orderTypeForm = configKeys[orderType?.code];
-      if (orderType?.code === "SECTION_202_CRPC") {
+    if (orderType && configKeys.hasOwnProperty(orderType)) {
+      let orderTypeForm = configKeys[orderType];
+      if (orderType === "SECTION_202_CRPC") {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
@@ -340,7 +428,7 @@ const GenerateOrders = () => {
           };
         });
       }
-      if (orderType?.code === "SCHEDULE_OF_HEARING_DATE") {
+      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
@@ -359,7 +447,7 @@ const GenerateOrders = () => {
           };
         });
       }
-      if (orderType?.code === "MANDATORY_SUBMISSIONS_RESPONSES") {
+      if (orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
@@ -429,33 +517,36 @@ const GenerateOrders = () => {
 
 
   const defaultValue = useMemo(() => {
-    let returnValue = {};
-    if (formdata && currentOrder?.additionalDetails?.formdata?.orderType?.code !== formdata?.orderType?.code) {
-      returnValue = formdata;
-    } else if (currentOrder?.additionalDetails?.formdata) {
-      returnValue = structuredClone(currentOrder?.additionalDetails?.formdata);
-    } else if (currentOrder?.orderType && applicationNumber) {
-      returnValue = {
-        orderType: {
-          type: currentOrder?.orderType,
-          isactive: true,
-          code: currentOrder?.orderType,
-          name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
-        },
-      };
-    } else {
-      returnValue = {};
+    let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata);
+    if (applicationDetails?.referenceId) {
+      updatedFormdata.refApplicationId = applicationDetails?.referenceId;
     }
-    // merge returnValue with system filled;
+    if (orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
+      if (applicationDetails?.applicationType === applicationTypes.EXTENSION_SUBMISSION_DEADLINE) {
+        updatedFormdata.documentName = applicationDetails?.additionalDetails?.formdata?.documentType?.name;
+        updatedFormdata.originalDeadline = applicationDetails.additionalDetails?.formdata?.initialSubmissionDate;
+        updatedFormdata.proposedSubmissionDate = applicationDetails.additionalDetails?.formdata?.changedSubmissionDate;
+        updatedFormdata.originalSubmissionOrderDate = applicationDetails.additionalDetails?.orderDate;
+      }
+    }
+    return updatedFormdata;
+  }, [currentOrder, applicationDetails, orderType]);
 
-    return returnValue;
-  }, [currentOrder, applicationNumber, orderType.code]);
-
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, orderindex) => {
-    if (formdata?.orderType?.code && formdata?.orderType?.code !== formData?.orderType?.code) {
-      setFormdata({ orderType: formData.orderType });
-    } else if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
-      setFormdata(formData);
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
+      const updatedFormData =
+        currentOrder?.additionalDetails?.formdata?.orderType?.code !== formData?.orderType?.code ? { orderType: formData.orderType } : formData;
+      setNewFormdata((prev) => {
+        return prev?.map((item, index) => {
+          return index !== selectedOrder
+            ? item
+            : {
+                ...item,
+                orderType: formData?.orderType?.code,
+                additionalDetails: { ...item.order?.additionalDetails, formdata: updatedFormData },
+              };
+        });
+      });
     }
     if (Object.keys(formState?.errors).length) {
       setIsSubmitDisabled(true);
@@ -487,126 +578,153 @@ const GenerateOrders = () => {
     }
   }, [modifiedFormConfig, formdata]);
 
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+  const updateOrder = async (order, action) => {
+    console.debug(order);
+    console.debug({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } });
+    try {
+      return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
+    } catch (error) {
+      return null;
+    }
   };
 
-  const handleUpdateOrder = ({ action, oldOrderData, orderType, modal }) => {
-    const newAdditionalData =
-      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
-    const updatedreqBody = {
-      order: {
-        ...oldOrderData,
-        createdDate: formatDate(new Date()),
-        orderType,
-        workflow: {
-          action,
-          comments: "Creating for order registration",
-          assignes: null,
-          rating: null,
-          documents: [{}],
-        },
-        documents: [],
-        additionalDetails: newAdditionalData,
-      },
-    };
-    ordersService
-      .updateOrder(updatedreqBody, { tenantId })
-      .then(() => {
-        setPrevOrder(currentOrder);
-        refetchOrdersData();
-        if (modal !== "deleteModal" && modal !== "issueModal" && modal !== "reviewModal") {
-          setShowErrorToast(true);
-        }
-        if (action === CaseWorkflowAction.ESIGN) {
-          setShowSuccessModal(true);
-        }
-        if (modal === "reviewModal") {
-          setShowReviewModal(true);
-        }
-        setShowsignatureModal(false);
-        setDeleteOrderIndex(null);
-      })
-      .catch(() => {
-        refetchOrdersData();
-        setShowsignatureModal(false);
-        setDeleteOrderIndex(null);
-      });
+  const createOrder = async (order) => {
+    try {
+      await ordersService.createOrder({ order }, { tenantId });
+    } catch (error) {}
   };
 
   const handleAddOrder = () => {
-    const reqbody = {
-      order: {
-        createdDate: formatDate(new Date()),
-        tenantId,
-        cnrNumber,
-        filingNumber: filingNumber,
-        statuteSection: {
-          tenantId,
-        },
-        orderType: "Bail",
-        status: "",
-        isActive: true,
-        workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
-          comments: "Creating order",
-          assignes: null,
-          rating: null,
-          documents: [{}],
-        },
-        documents: [],
-        additionalDetails: {},
-      },
-    };
-    ordersService
-      .createOrder(reqbody, { tenantId })
-      .then(() => {
+    setNewFormdata((prev) => {
+      return [...prev, defaultOrderData];
+    });
+    if (orderNumber) {
+      history.push(`?filingNumber=${filingNumber}`);
+    }
+    setSelectedOrder(newformdata?.length);
+  };
+
+  const handleSaveDraft = async ({ showReviewModal }) => {
+    let count = 0;
+    const promises = newformdata.map(async (order) => {
+      if (order?.orderType) {
+        count += 1;
+        if (order?.orderNumber) {
+          return updateOrder(order, OrderWorkflowAction.SAVE_DRAFT);
+        } else {
+          return createOrder(order);
+        }
+      } else {
+        return Promise.resolve();
+      }
+    });
+    await Promise.all(promises);
+    refetchOrdersData();
+    if (selectedOrder >= count) {
+      setSelectedOrder(0);
+    }
+
+    if (showReviewModal) {
+      setShowReviewModal(true);
+    }
+  };
+
+  const handleIssueOrder = async () => {
+    try {
+      setPrevOrder(currentOrder);
+      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
+      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+        const advocateData = advocateDetails.advocates.map((advocate) => {
+          return {
+            individualId: advocate.responseList[0].individualId,
+            name: advocate.responseList[0].additionalDetails.username,
+            type: "Advocate",
+          };
+        });
+        DRISTIService.createHearings(
+          {
+            hearing: {
+              tenantId: tenantId,
+              filingNumber: [filingNumber],
+              hearingType: currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type,
+              status: true,
+              attendees: [
+                ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
+                  return { name: attendee.name, individualId: attendee.individualId };
+                }),
+                ...advocateData,
+              ],
+              startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+              endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.hearingDate),
+              workflow: {
+                action: "CREATE",
+                assignes: [],
+                comments: "Create new Hearing",
+                documents: [{}],
+              },
+              documents: [],
+            },
+            tenantId,
+          },
+          { tenantId: tenantId }
+        );
+      }
+      setShowSuccessModal(true);
+    } catch (error) {
+      //show toast of API failed
+      // setShowErrorToast()
+    }
+  };
+
+
+  const handleDeleteOrder = async () => {
+    try {
+      if (newformdata[deleteOrderIndex]?.orderNumber) {
+        await updateOrder(newformdata[deleteOrderIndex], OrderWorkflowAction.ABANDON);
         refetchOrdersData();
-      })
-      .catch(() => {
-        refetchOrdersData();
+      } else {
+        setNewFormdata((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
+      }
+      if (orderNumber) {
+        history.push(`?filingNumber=${filingNumber}`);
+      }
+      setSelectedOrder((prev) => {
+        return deleteOrderIndex < prev ? prev - 1 : prev;
       });
-  };
-
-  const handleSaveDraft = ({ modal }) => {
-    handleUpdateOrder({
-      action: CaseWorkflowAction.SAVE_DRAFT,
-      oldOrderData: currentOrder,
-      orderType: orderType?.code,
-      modal,
-    });
-  };
-
-  const handleIssueOrder = () => {
-    handleUpdateOrder({
-      action: CaseWorkflowAction.ESIGN,
-      oldOrderData: currentOrder,
-      orderType: orderType?.code,
-      modal: "issueModal",
-    });
-  };
-
-  const handleDeleteOrder = () => {
+    } catch (error) {
+      //show toast of API failed
+      // setShowErrorToast()
+    }
     setDeleteOrderIndex(null);
-    handleUpdateOrder({
-      action: CaseWorkflowAction.ABANDON,
-      oldOrderData: orderList[deleteOrderIndex],
-      orderType: orderList[deleteOrderIndex].orderType,
-      modal: "deleteModal",
-    });
-    setSelectedOrder((prev) => {
-      return deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
-    });
   };
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
   };
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
+  const handleOrderChange = (index) => {
+    if (orderNumber) {
+      history.push(`?filingNumber=${filingNumber}`);
+    }
+    setSelectedOrder(index);
+  };
+  const handleDownloadOrders = () => {
+    setShowSuccessModal(false);
+    // history.push(`/${window.contextPath}/employee/dristi/home/view-case?${searchParams.toString()}`, { from: "orderSuccessModal" });
+  };
+
+  const handleClose = () => {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tabs=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
+    setShowSuccessModal(false);
+  };
+
+  if (!filingNumber) {
+    history.push("/employee/home/home-pending-task");
+  }
+
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading) {
     return <Loader />;
   }
 
@@ -623,15 +741,23 @@ const GenerateOrders = () => {
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
-          {orderList?.map((order, index) => {
+          {newformdata?.map((_, index) => {
             return (
-              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`} onClick={() => setSelectedOrder(index)}>
-                <h1>{`${t("CS_ORDER")} ${index + 1}`}</h1>
-                {orderList?.length > 1 && (
+              <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>
+                <h1
+                  onClick={() => {
+                    handleOrderChange(index);
+                  }}
+                  style={{ cursor: "pointer", flex: 1 }}
+                >
+                  {t(newformdata[index]?.orderType) || `${t("CS_ORDER")} ${index + 1}`}
+                </h1>
+                {newformdata?.length > 1 && (
                   <span
                     onClick={() => {
                       setDeleteOrderIndex(index);
                     }}
+                    style={{ cursor: "pointer" }}
                   >
                     <CustomDeleteIcon />
                   </span>
@@ -642,19 +768,17 @@ const GenerateOrders = () => {
         </React.Fragment>
       </div>
       <div className="view-order">
-        {orderList?.length > 0 && <Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
-        {orderList?.length > 0 && modifiedFormConfig && (
+        {<Header className="order-header">{`${t("CS_ORDER")} ${selectedOrder + 1}`}</Header>}
+        {modifiedFormConfig && (
           <FormComposerV2
             className={"generate-orders"}
             key={`${selectedOrder}=${orderType.code}`}
             label={t("REVIEW_ORDER")}
             config={modifiedFormConfig}
             defaultValues={defaultValue}
-            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-              onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
-            }}
+            onFormValueChange={onFormValueChange}
             onSubmit={() => {
-              handleSaveDraft({ modal: "reviewModal" });
+              handleSaveDraft({ showReviewModal: true });
             }}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
@@ -681,13 +805,13 @@ const GenerateOrders = () => {
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
-          handleSaveDraft={handleSaveDraft}
+          handleSaveDraft={() => {}}
         />
       )}
       {showsignatureModal && (
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
-      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} setShowSuccessModal={setShowSuccessModal} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
       {showErrorToast && (
         <Toast
           style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}

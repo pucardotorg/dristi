@@ -1,16 +1,16 @@
-import { CloseSvg, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Modal from "../../../components/Modal";
-import DocViewerWrapper from "../docViewerWrapper";
-import { RightArrow } from "../../../icons/svgIndex";
-import CommentComponent from "../../../components/CommentComponent";
-import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { ordersService } from "../../../../../orders/src/hooks/services";
-import { OrderWorkflowAction } from "../../../../../orders/src/utils/caseWorkflow";
-import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import CommentComponent from "../../../components/CommentComponent";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
+import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
+import Modal from "../../../components/Modal";
+import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
+import { RightArrow } from "../../../icons/svgIndex";
+import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import DocViewerWrapper from "../docViewerWrapper";
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
@@ -22,6 +22,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const cnrNumber = caseData.cnrNumber;
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
 
   const user = Digit.UserService.getUser()?.info?.userName;
   // console.log();
@@ -37,7 +38,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return (
       <div className="evidence-title">
         <h1 className="heading-m">{props.label}</h1>
-        <h3 className="status">{props?.status}</h3>
+        <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>
       </div>
     );
   };
@@ -134,7 +135,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     ...documentSubmission?.[0]?.applicationList,
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "REQUESTFILERESPONSE",
+      action: "APPROVE",
     },
   };
 
@@ -213,6 +214,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             artifact: {
               ...documentSubmission?.[0].artifactList,
               isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              filingNumber: filingNumber,
             },
           },
           config: {
@@ -346,7 +348,19 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             setShowConfirmationModal({ type: "reject" });
           }}
           formId="modal-action"
-          headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission?.[0]?.status} />}
+          headerBarMain={
+            <Heading
+              label={t("Document Submission")}
+              status={
+                modalType === "Documents"
+                  ? documentSubmission?.[0]?.artifactList?.isEvidence
+                    ? "Accepeted"
+                    : "Action Pending"
+                  : documentSubmission?.[0]?.status
+              }
+              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
+            />
+          }
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
