@@ -3,6 +3,9 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DRISTIService } from "../../../../dristi/src/services/index.js";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
+import { hearingService } from "../../hooks/services/index.js";
+import _ from "lodash";
+
 
 const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
   const { t } = useTranslation();
@@ -77,7 +80,7 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
     if (cleanedData.length === aFormData.length) {
       onAdd(cleanedData);
       onDismiss();
-    }
+    } 
   };
   const generateUUID = () => {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
