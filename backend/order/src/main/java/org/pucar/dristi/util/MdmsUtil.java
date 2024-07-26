@@ -1,20 +1,18 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.protocol.types.Field;
 import org.pucar.dristi.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -24,32 +22,24 @@ public class MdmsUtil {
 
     private RestTemplate restTemplate;
 
-    private ObjectMapper mapper;
-
     private Configuration configs;
 
-    public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+    public MdmsUtil(RestTemplate restTemplate, Configuration configs) {
         this.restTemplate = restTemplate;
-        this.mapper = mapper;
         this.configs = configs;
     }
 
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                             List<String> masterNameList) {
+    public String fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName, List<String> masterNameList) {
+        String response = "";
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
-        Object response = new HashMap<>();
-        Integer rate = 0;
-        MdmsResponse mdmsResponse = new MdmsResponse();
         try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, String.class);
         }catch(Exception e) {
             log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
         }
-
-        return mdmsResponse.getMdmsRes();
+        return response;
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,

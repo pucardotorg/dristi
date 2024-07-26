@@ -88,7 +88,7 @@ public class CaseService {
 
             // If no applications are found matching the given criteria, return an empty list
             for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()) {
-                searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
+                searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getFilingNumber()))));
             }
         } catch (CustomException e) {
             throw e;
