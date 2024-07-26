@@ -249,7 +249,7 @@ const HomeView = () => {
       ) : (
         <React.Fragment>
           <div className="left-side">
-            <UpcomingHearings handleNavigate={handleNavigate} />
+            <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
