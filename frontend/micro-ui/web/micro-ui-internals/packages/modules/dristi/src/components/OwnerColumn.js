@@ -49,7 +49,12 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     };
   }) || [defaultObj];
 
-  const showDoc = rowData?.status === "PENDINGREVIEW" || rowData?.status === "PENDINGAPPROVAL" || rowData?.status === "COMPLETED";
+  const showDoc =
+    rowData?.status === "PENDINGPAYMENT" ||
+    rowData?.status === "PENDINGREVIEW" ||
+    rowData?.status === "PENDINGAPPROVAL" ||
+    rowData?.status === "PENDINGESIGN" ||
+    rowData?.status === "COMPLETED";
 
   return (
     <React.Fragment>
