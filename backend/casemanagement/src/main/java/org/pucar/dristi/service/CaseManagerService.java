@@ -83,7 +83,7 @@ public class CaseManagerService {
 		return caseFileList;
 	}
 
-	private <T> List<T> retrieveDocuments(String searchKeyValue, String indexName, String searchKeyPath, String sortKeyPath, String sortOrder, Function<JSONObject, T> converter, String errorCode) {
+	public <T> List<T> retrieveDocuments(String searchKeyValue, String indexName, String searchKeyPath, String sortKeyPath, String sortOrder, Function<JSONObject, T> converter, String errorCode) {
 		try {
 			List<T> documentList = new ArrayList<>();
 
