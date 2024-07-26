@@ -285,6 +285,30 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
   };
+
+  const getOrderActionName = (applicationType, type) => {
+    switch (applicationType) {
+      case "RE_SCHEDULE":
+        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      case "WITHDRAWAL":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
+      case "TRANSFER":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_CASE_TRANSFER";
+      case "SETTLEMENT":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_SETTLEMENT";
+      case "BAIL_BOND":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+      case "SURETY":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      case "EXTENSION_SUBMISSION_DEADLINE":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      default:
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
+    }
+  };
+
   const handleApplicationAction = async (generateOrder) => {
     try {
       let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
@@ -334,10 +358,10 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
         }
-        const name = showConfirmationModal.type === "reject" ? t("GENERATE_REJECTION_ORDER_APPLICATION") : t("GENERATE_ACCEPTANCE_ORDER_APPLICATION");
+        const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
           pendingTask: {
-            name,
+            name: t(name),
             entityType: "order",
             referenceId: `MANUAL_${documentSubmission?.[0]?.applicationList?.applicationNumber}`,
             status: "SAVE_DRAFT",
@@ -347,7 +371,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             filingNumber,
             isCompleted: false,
             stateSla: null,
-            additionalDetails: {},
+            additionalDetails: { orderType },
             tenantId,
           },
         });
