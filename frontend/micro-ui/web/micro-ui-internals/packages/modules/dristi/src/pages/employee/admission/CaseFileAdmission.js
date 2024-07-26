@@ -183,7 +183,6 @@ function CaseFileAdmission({ t, path }) {
 
   const handleAdmitCase = async () => {
     setCaseADmitLoader(true);
-    debugger;
     const individualId = await fetchBasicUserInfo();
     let documentList = [];
     documentList = [
@@ -278,7 +277,7 @@ function CaseFileAdmission({ t, path }) {
   const handleScheduleNextHearing = () => {
     const reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: formatDate(new Date()),
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,
