@@ -101,7 +101,7 @@ public class CaseRepository {
                 if (caseCriteria.getPagination() != null) {
                     Integer totalRecords = getTotalCount(casesQuery, preparedStmtList);
                     caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                    casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination());
+                    casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination(),preparedStmtArgList);
                 }
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray() ,rowMapper);
                 if (list != null) {
