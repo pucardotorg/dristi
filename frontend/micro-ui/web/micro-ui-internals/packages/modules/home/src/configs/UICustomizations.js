@@ -80,6 +80,7 @@ export const UICustomizations = {
       const { createdFrom, createdTo } = data;
       if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (!data?.filingNumber.trim() && !data?.caseType?.trim()) return { label: "PlEASE_APPLY_FILTER_CASE_ID", error: true };
       return false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
@@ -123,6 +124,13 @@ export const UICustomizations = {
       const today = new Date();
       const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       switch (key) {
+        case "Draft Name":
+        case "Case Name":
+          return (
+            <span className="case-name-on-hover">
+              {row?.caseTitle ? (row?.caseTitle?.trim().endsWith("vs") ? `${row?.caseTitle} _______` : row?.caseTitle) : "CASE_UNTITLED"}
+            </span>
+          );
         case "Case Type":
           return <span>NIA S138</span>;
         case "Stage":

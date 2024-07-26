@@ -38,9 +38,10 @@ const UpcomingHearings = (props) => {
         tenantId,
         fromDate: dateRange.start,
         toDate: dateRange.end,
+        attendeeIndividualId: props?.attendeeIndividualId,
       },
     }),
-    [dateRange.end, dateRange.start, tenantId]
+    [dateRange.end, dateRange.start, props?.attendeeIndividualId, tenantId]
   );
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
@@ -57,7 +58,7 @@ const UpcomingHearings = (props) => {
       <div className="header">
         {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
       </div>
-      {!isFSO && (
+      {!isFSO && hearingCount > 0 && (
         <div className="hearingCard">
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <div className="hearingDate">
