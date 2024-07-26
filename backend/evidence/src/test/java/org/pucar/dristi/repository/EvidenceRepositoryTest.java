@@ -66,7 +66,7 @@ class EvidenceRepositoryTest {
         String countQuery = "SELECT COUNT(*) FROM artifact";
 
         // Mock responses
-        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(), any(EvidenceSearchCriteria.class)))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
@@ -112,7 +112,7 @@ class EvidenceRepositoryTest {
         assertEquals(document, resultArtifact.getFile());
 
         // Verify method interactions
-        verify(queryBuilder).getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(queryBuilder).getArtifactSearchQuery(anyList(), any(EvidenceSearchCriteria.class));
         verify(queryBuilder).addOrderByQuery(anyString(), any(Pagination.class));
         verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList());
         verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList());
@@ -131,7 +131,7 @@ class EvidenceRepositoryTest {
 
         String artifactQuery = "SELECT * FROM artifact";
 
-        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(),any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(), any(EvidenceSearchCriteria.class)))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
@@ -151,7 +151,7 @@ class EvidenceRepositoryTest {
         String artifactQuery = "SELECT * FROM artifact";
 
         // Mock query builder responses
-        when(queryBuilder.getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+        when(queryBuilder.getArtifactSearchQuery(anyList(), any(EvidenceSearchCriteria.class)))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
         when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
@@ -169,8 +169,11 @@ class EvidenceRepositoryTest {
         assertEquals("ARTIFACT_SEARCH_EXCEPTION", exception.getCode());
         assertFalse(exception.getMessage().contains("Error while fetching artifact list: Some error"));
 
-        // Verify that no further methods are called after the exception is thrown
-        verify(queryBuilder).getArtifactSearchQuery(anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        // Verify that the methods were called in the expected order
+        verify(queryBuilder).getArtifactSearchQuery(anyList(), any(EvidenceSearchCriteria.class));
         verify(queryBuilder).addOrderByQuery(anyString(), any(Pagination.class));
+        verify(queryBuilder).getTotalCountQuery(anyString());
+        verifyNoMoreInteractions(queryBuilder); // Ensure no other methods were called
     }
+
 }
