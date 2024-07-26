@@ -1352,9 +1352,9 @@ export const taskTypes = [
   { code: "hearing", name: "Hearing" },
   { code: "order", name: "Order" },
   { code: "order-judgement", name: "Order of Judgement" },
-  { code: "async-voluntary-submission-services", name: "Voluntary Submission" },
-  { code: "asynsubmissionwithresponse", name: "Submission With Response" },
-  { code: "asyncsubmissionwithoutresponse", name: "Submission Without Response" },
+  { code: "async-voluntary-submission-managelifecycle", name: "Voluntary Submission" },
+  { code: "async-submission-with-response-managelifecycle", name: "Submission With Response" },
+  { code: "async-order-submission-managelifecycle", name: "Submission Without Response" },
 ];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
@@ -1431,6 +1431,7 @@ export const pendingTaskOrderActions = {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     customFunction: "handleCreateOrder",
+    additionalDetailsKeys: ["orderType"],
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
@@ -1458,6 +1459,30 @@ export const pendingTaskVoluntarySubmissionActions = {
   ESIGN_THE_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PENDINGREVIEW: {
+    actorName: ["JUDGE"],
+    actionName: "Review the submission",
+    customFunction: "handleReviewSubmission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PENDINGAPPROVAL: {
+    actorName: ["JUDGE"],
+    actionName: "Review the submission",
+    customFunction: "handleReviewSubmission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [
@@ -1535,7 +1560,7 @@ export const selectTaskType = {
   hearing: pendingTaskHearingActions,
   order: pendingTaskOrderActions,
   "order-judgement": pendingTaskOrderOfJudgementActions,
-  "async-voluntary-submission-services": pendingTaskVoluntarySubmissionActions,
-  asynsubmissionwithresponse: pendingTaskSubmissionWithResponseActions,
-  asyncsubmissionwithoutresponse: pendingTaskSubmissionWithoutResponseActions,
+  "async-voluntary-submission-managelifecycle": pendingTaskVoluntarySubmissionActions,
+  "async-submission-with-response-managelifecycle": pendingTaskSubmissionWithResponseActions,
+  "async-order-submission-managelifecycle": pendingTaskSubmissionWithoutResponseActions,
 };

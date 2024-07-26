@@ -276,14 +276,14 @@ const SubmissionsCreate = () => {
   };
 
   const createPendingTask = async ({ name, status, isCompleted = false, refId = applicationNumber }) => {
-    let entityType = "async-voluntary-submission-services";
+    let entityType = "async-voluntary-submission-managelifecycle";
     if (orderNumber) {
       entityType =
         orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
-          ? "asynsubmissionwithresponse"
-          : "asyncsubmissionwithoutresponse";
+          ? "async-submission-with-response-managelifecycle"
+          : "async-order-submission-managelifecycle";
     }
-    const assignes = getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-services") || [];
+    const assignes = getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [];
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
         name,

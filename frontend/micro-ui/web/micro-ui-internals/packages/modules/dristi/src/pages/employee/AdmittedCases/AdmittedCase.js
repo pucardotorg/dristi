@@ -456,6 +456,13 @@ const AdmittedCases = ({ isJudge = true }) => {
   }, [history.location]);
 
   useEffect(() => {
+    if (history.location?.state?.applicationDocObj && !show) {
+      setDocumentSubmission(history.location?.state?.applicationDocObj);
+      setShow(true);
+    }
+  }, [history.location?.state?.applicationDocObj, show]);
+
+  useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
   }, []);
@@ -785,6 +792,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           setUpdateCounter={setUpdateCounter}
           showToast={showToast}
           caseData={caseRelatedData}
+          caseId={caseId}
         />
       )}
       {showOrderReviewModal && (

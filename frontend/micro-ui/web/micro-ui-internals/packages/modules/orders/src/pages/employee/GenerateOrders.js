@@ -472,7 +472,7 @@ const GenerateOrders = () => {
     let create = false;
     const formdata = order?.additionalDetails?.formdata;
     let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
-    let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
+    let entityType = formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;

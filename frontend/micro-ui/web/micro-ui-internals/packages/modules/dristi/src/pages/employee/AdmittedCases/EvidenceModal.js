@@ -13,7 +13,7 @@ import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 
-const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
+const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
@@ -25,8 +25,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+  const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.userName;
-
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -44,10 +45,11 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
   const hideSubmit = useMemo(() => {
     return (
-      (!userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN")) &&
+      !userRoles.includes("JUDGE_ROLE") ||
+      userRoles.includes("CITIZEN") ||
       ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
     );
-  }, [userRoles]);
+  }, [documentSubmission, userRoles]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -148,19 +150,19 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const onSuccess = async (result) => {
-    setShow(false);
     const details = showToast({
       isError: false,
       message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
     });
     counterUpdate();
+    handleBack();
   };
   const onError = async (result) => {
-    setShow(false);
     const details = showToast({
       isError: true,
       message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
     });
+    handleBack();
   };
 
   const counterUpdate = () => {
@@ -362,7 +364,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
           pendingTask: {
             name: t(name),
-            entityType: "order",
+            entityType: "order-managelifecycle",
             referenceId: `MANUAL_${documentSubmission?.[0]?.applicationList?.applicationNumber}`,
             status: "SAVE_DRAFT",
             assignedTo: [],
@@ -375,9 +377,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             tenantId,
           },
         });
+        setShowSuccessModal(true);
         setShowConfirmationModal(null);
       }
     } catch (error) {}
+  };
+
+  const handleBack = () => {
+    if (modalType === "Submissions") {
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
+    } else {
+      setShow(false);
+    }
   };
 
   const handleSubmitComment = async (newComment) => {
@@ -390,7 +401,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (
         <Modal
-          headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
+          headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={() => {
             modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
@@ -536,14 +547,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           isEvidence={documentSubmission?.[0].artifactList.isEvidence}
         />
       )}
-      {showSuccessModal && modalType === "Submissions" && (
-        <SubmissionSuccessModal
-          t={t}
-          handleBack={() => {
-            setShow(false);
-          }}
-        />
-      )}
+      {showSuccessModal && modalType === "Submissions" && <SubmissionSuccessModal t={t} handleBack={handleBack} />}
     </React.Fragment>
   );
 };
