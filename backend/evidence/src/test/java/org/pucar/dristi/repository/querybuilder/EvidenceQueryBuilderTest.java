@@ -74,7 +74,6 @@ public class EvidenceQueryBuilderTest {
     @Test
     public void testGetDocumentSearchQuery() {
         List<String> ids = List.of("id1", "id2");
-        List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgDocList = new ArrayList<>();
 
         String query = evidenceQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList, preparedStmtArgDocList);
@@ -131,7 +130,6 @@ public class EvidenceQueryBuilderTest {
     @Test
     public void testGetCommentSearchQuery() {
         List<String> artifactIds = List.of("id1", "id2");
-        List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgComList = new ArrayList<>();
 
         String query = evidenceQueryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList, preparedStmtArgComList);
