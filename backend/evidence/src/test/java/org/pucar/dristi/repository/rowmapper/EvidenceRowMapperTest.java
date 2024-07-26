@@ -28,10 +28,6 @@ class EvidenceRowMapperTest {
     private ResultSet rs;
 
 
-    @BeforeEach
-    void setUp() {
-    }
-
     private void mockResultSet() throws Exception {
         when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 
