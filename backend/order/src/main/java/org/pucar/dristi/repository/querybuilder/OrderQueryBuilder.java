@@ -6,6 +6,7 @@ import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -93,74 +94,22 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList) {
+    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
-            String orderNumber = criteria.getOrderNumber();
-            String applicationNumber = criteria.getApplicationNumber();
-            String orderType=criteria.getOrderType();
-            String cnrNumber = criteria.getCnrNumber();
-            String filingNumber = criteria.getFilingNumber();
-            String tenantId = criteria.getTenantId();
-            String id = criteria.getId();
-            String status = criteria.getStatus();
 
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.applicationNumber::text LIKE ?");
-                preparedStmtList.add("%" + applicationNumber + "%");
-                firstCriteria = false;
-            }
+            firstCriteria = addCriteria(criteria.getApplicationNumber() == null? null : "%" + criteria.getApplicationNumber() + "%", query, firstCriteria, "orders.applicationNumber::text LIKE ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getCnrNumber(), query, firstCriteria, "orders.cnrNumber = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getFilingNumber(), query, firstCriteria, "orders.filingNumber = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getTenantId(), query, firstCriteria, "orders.tenantId = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getOrderType(), query, firstCriteria, "orders.orderType = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getId(), query, firstCriteria, "orders.id = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addCriteria(criteria.getStatus(), query, firstCriteria, "orders.status = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
-            if (cnrNumber!=null && !cnrNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.cnrnumber = ?");
-                preparedStmtList.add(cnrNumber);
-                firstCriteria = false;
-            }
-
-            if (filingNumber!=null && !filingNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.filingNumber = ?");
-                preparedStmtList.add(filingNumber);
-                firstCriteria = false;
-            }
-
-            if (tenantId!=null && !tenantId.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.tenantId = ?");
-                preparedStmtList.add(tenantId);
-                firstCriteria = false;
-            }
-            if (orderType!=null && !orderType.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderType = ?");
-                preparedStmtList.add(orderType);
-                firstCriteria = false;
-            }
-            if (id!=null && !id.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.id = ?");
-                preparedStmtList.add(id);
-                firstCriteria = false;
-
-            }
-
-            if (status!=null && !status.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.status = ?");
-                preparedStmtList.add(status);
-                firstCriteria = false;
-            }
-            if (orderNumber!=null && !orderNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.orderNumber LIKE ?");
-                preparedStmtList.add("%" + orderNumber + "%");
-            }
-
+             addCriteria(criteria.getOrderNumber() == null? null : "%" + criteria.getOrderNumber() + "%", query, firstCriteria, "LOWER(orders.orderNumber) LIKE LOWER(?)", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building order search query :: {}",e.toString());
@@ -168,7 +117,18 @@ public class OrderQueryBuilder {
         }
     }
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, int type ) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str);
+            preparedStmtList.add(criteria);
+            preparedStmtArgList.add(type);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtDocList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -177,6 +137,7 @@ public class OrderQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtDocList.add(Types.VARCHAR));
             }
 
             return query.toString();
@@ -187,7 +148,7 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getStatuteSectionSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getStatuteSectionSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtStsecList) {
         try {
             StringBuilder query = new StringBuilder(BASE_STATUTE_SECTION_QUERY);
             query.append(FROM_STATUTE_SECTION_TABLE);
@@ -196,6 +157,7 @@ public class OrderQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtStsecList.add(Types.VARCHAR));
             }
 
             return query.toString();

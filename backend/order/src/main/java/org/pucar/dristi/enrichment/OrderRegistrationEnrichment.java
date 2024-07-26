@@ -44,6 +44,7 @@ public class OrderRegistrationEnrichment {
                 }
 
                 orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
+                orderRequest.getOrder().setCreatedDate(System.currentTimeMillis());
             }
 
         } catch (CustomException e) {

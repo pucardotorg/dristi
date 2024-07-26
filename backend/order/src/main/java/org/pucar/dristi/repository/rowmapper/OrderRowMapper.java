@@ -60,7 +60,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .orderCategory(rs.getString("ordercategory"))
                             .isActive(rs.getBoolean("isactive"))
                             .orderType(rs.getString("ordertype"))
-                            .createdDate(stringToLocalDate(rs.getString("createddate")))
+                            .createdDate(rs.getLong("createddate"))
                             .comments(rs.getString("comments"))
                             .filingNumber(rs.getString("filingnumber"))
                             .issuedBy(getObjectFromJson(rs.getString("issuedby"), new TypeReference<IssuedBy>() {}))
@@ -84,20 +84,6 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing order ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(orderMap.values());
-    }
-
-    private LocalDate stringToLocalDate(String str){
-        LocalDate localDate = null;
-        if(str!=null)
-            try {
-                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                localDate = LocalDate.parse(str, pattern);
-            } catch (DateTimeParseException e) {
-                log.error("Date parsing failed for input: {}", str, e);
-                throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
-            }
-
-        return localDate;
     }
 
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {

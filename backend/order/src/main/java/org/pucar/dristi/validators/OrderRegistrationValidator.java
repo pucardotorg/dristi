@@ -5,10 +5,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
-import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.Order;
-import org.pucar.dristi.web.models.OrderExists;
-import org.pucar.dristi.web.models.OrderRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -25,6 +22,7 @@ public class OrderRegistrationValidator {
 
     private CaseUtil caseUtil;
 
+
     @Autowired
     public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil) {
         this.repository = repository;
@@ -34,8 +32,6 @@ public class OrderRegistrationValidator {
     public void validateOrderRegistration(OrderRequest orderRequest) throws CustomException {
         RequestInfo requestInfo = orderRequest.getRequestInfo();
 
-        if (ObjectUtils.isEmpty(orderRequest.getOrder().getTenantId()))
-            throw new CustomException(CREATE_ORDER_ERR, "tenantId is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 

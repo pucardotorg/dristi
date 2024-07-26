@@ -26,13 +26,11 @@ import java.util.UUID;
 @Builder
 public class Party {
 	@JsonProperty("id")
-
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	private String tenantId = null;
 
 	@JsonProperty("caseId")
@@ -41,23 +39,18 @@ public class Party {
 
 	@JsonProperty("partyCategory")
 	@NotNull
-
 	private String partyCategory = null;
 
 	@JsonProperty("organisationID")
-
 	private String organisationID = null;
 
 	@JsonProperty("individualId")
-
 	private String individualId = null;
 
 	@JsonProperty("partyType")
-
 	private String partyType = null;
 
 	@JsonProperty("isActive")
-
 	private Boolean isActive = true;
 
 	@JsonProperty("documents")
@@ -65,20 +58,10 @@ public class Party {
 	private List<Document> documents = null;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
 	private AuditDetails auditDetails = null;
 
 	@JsonProperty("additionalDetails")
-
 	private Object additionalDetails = null;
-
-	public Party addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

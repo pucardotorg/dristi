@@ -28,7 +28,7 @@ public class ServiceConstants {
     public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
     public static final String ERROR_WHILE_FETCHING_FROM_CASE = "Exception occurred while fetching case details: ";
     public static final String CREATE_ORDER_ERR = "Exception occurred while validating order details: ";
-    public static final String MDMS_DATA_NOT_FOUND = "MDMS data doesn't exist: ";
+    public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
