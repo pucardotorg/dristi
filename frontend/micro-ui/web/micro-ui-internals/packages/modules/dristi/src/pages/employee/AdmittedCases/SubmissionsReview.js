@@ -15,7 +15,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
   const [comment, setComment] = useState("");
   const userInfo = Digit.UserService.getUser()?.info;
   const userRoles = userInfo?.roles.map((role) => role.code);
-
+  const { caseId } = Digit.Hooks.useQueryParams();
   const getDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
@@ -109,7 +109,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: "asynsubmissionwithresponse",
+          entityType: "async-submission-with-response-managelifecycle",
           filingNumber: filingNumber,
           isCompleted: false,
           assignedTo: userInfo?.uuid,
@@ -128,7 +128,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: "asyncsubmissionwithoutresponse",
+          entityType: "async-order-submission-managelifecycle",
           filingNumber: filingNumber,
           isCompleted: false,
           assignedTo: userInfo?.uuid,
@@ -239,6 +239,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           modalType={"Submissions"}
           setUpdateCounter={setUpdateCounter}
           caseData={caseData}
+          caseId={caseId}
         />
       )}
     </React.Fragment>

@@ -23,9 +23,13 @@ function PendingTaskAccordion({
     setIsOpen(!isOpen);
   };
 
-  const redirectPendingTaskUrl = (url) => {
-    history.push(url);
-    setCheck(!check);
+  const redirectPendingTaskUrl = async (url, isCustomFunction = () => {}, params = {}) => {
+    if (isCustomFunction) {
+      await url(params);
+    } else {
+      history.push(url);
+      setCheck(!check);
+    }
   };
 
   return (
@@ -66,7 +70,7 @@ function PendingTaskAccordion({
               className={`task-item ${item?.due === "Due today" && "due-today"}`}
               key={item?.filingNumber}
               style={{ cursor: "pointer" }}
-              onClick={() => redirectPendingTaskUrl(item?.redirectUrl)}
+              onClick={() => redirectPendingTaskUrl(item?.redirectUrl, item?.isCustomFunction, item?.params)}
             >
               <input type="checkbox" value={check} />
               <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>

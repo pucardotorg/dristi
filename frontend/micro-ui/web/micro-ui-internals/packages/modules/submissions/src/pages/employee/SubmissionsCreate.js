@@ -48,7 +48,6 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
-  const individualId = localStorage.getItem("individualId");
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -277,6 +276,33 @@ const SubmissionsCreate = () => {
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
+  const createPendingTask = async ({ name, status, isCompleted = false, refId = applicationNumber }) => {
+    let entityType = "async-voluntary-submission-managelifecycle";
+    if (orderNumber) {
+      entityType =
+        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
+          ? "async-submission-with-response-managelifecycle"
+          : "async-order-submission-managelifecycle";
+    }
+    const assignes = getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [];
+    await submissionService.customApiService(Urls.application.pendingTask, {
+      pendingTask: {
+        name,
+        entityType,
+        referenceId: `MANUAL_${refId}`,
+        status,
+        assignedTo: assignes?.map((uuid) => ({ uuid })),
+        assignedRole: [],
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: filingNumber,
+        isCompleted,
+        stateSla: null,
+        additionalDetails: {},
+        tenantId,
+      },
+    });
+  };
+
   const createSubmission = async () => {
     try {
       let documentsList = [];
@@ -354,32 +380,6 @@ const SubmissionsCreate = () => {
       return null;
     }
   };
-  const createPendingTask = async () => {
-    const assignes = getAllAssignees(caseDetails, Boolean(orderNumber)) || [];
-    let entityType = "async-voluntary-submission-services";
-    if (orderNumber) {
-      entityType =
-        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
-          ? "asynsubmissionwithresponse"
-          : "asyncsubmissionwithoutresponse";
-    }
-    await submissionService.customApiService(Urls.application.pendingTask, {
-      pendingTask: {
-        name: t("MAKE_PAYMENT_SUBMISSION"),
-        entityType,
-        referenceId: `MANUAL_${applicationNumber}`,
-        status: "MAKE_PAYMENT_SUBMISSION",
-        assignedTo: assignes?.map((uuid) => ({ uuid })),
-        assignedRole: [],
-        cnrNumber: caseDetails?.cnrNumber,
-        filingNumber: filingNumber,
-        isCompleted: false,
-        stateSla: null,
-        additionalDetails: {},
-        tenantId,
-      },
-    });
-  };
 
   const updateSubmission = async (action) => {
     try {
@@ -392,7 +392,8 @@ const SubmissionsCreate = () => {
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
-      createPendingTask();
+      createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
+      createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION" });
       applicationRefetch();
       setShowPaymentModal(true);
     } catch (error) {
@@ -406,6 +407,7 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
+    createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", refId: newapplicationNumber });
     if (newapplicationNumber) {
       history.push(
         orderNumber

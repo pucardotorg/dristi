@@ -24,7 +24,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
   const [searchCaseLoading, setSearchCaseLoading] = useState(false);
-
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -64,41 +65,162 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
     },
     [tenantId]
   );
-  const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
-    let reqBody = {
-      order: {
-        createdDate: new Date().getTime(),
-        tenantId,
-        cnrNumber,
-        filingNumber: filingNumber,
-        statuteSection: {
+
+  const getApplicationDetail = useCallback(
+    async (applicationNumber) => {
+      setSearchCaseLoading(true);
+      const applicationData = await HomeService.customApiService(Urls.applicationSearch, {
+        criteria: {
+          filingNumber,
           tenantId,
+          applicationNumber,
         },
-        orderType: "REFERRAL_CASE_TO_ADR",
-        status: "",
-        isActive: true,
-        workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
-          comments: "Creating order",
-          assignes: null,
-          rating: null,
-          documents: [{}],
+        tenantId,
+      });
+      setSearchCaseLoading(false);
+      return applicationData?.applicationList?.[0] || {};
+    },
+    [filingNumber, tenantId]
+  );
+
+  const getOrderDetail = useCallback(
+    async (orderNumber) => {
+      setSearchCaseLoading(true);
+      const orderData = await HomeService.customApiService(Urls.orderSearch, {
+        criteria: {
+          filingNumber,
+          tenantId,
+          orderNumber,
         },
-        documents: [],
-        additionalDetails: {},
-      },
-    };
+        tenantId,
+      });
+      setSearchCaseLoading(false);
+      return orderData?.list?.[0] || {};
+    },
+    [filingNumber, tenantId]
+  );
 
-    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
-      .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
-      })
-      .catch((err) => {});
-  };
+  const handleReviewOrder = useCallback(
+    async ({ filingNumber, caseId, referenceId }) => {
+      const orderDetails = await getOrderDetail();
+    },
+    [getOrderDetail]
+  );
 
-  const getCustomFunction = {
-    handleCreateOrder,
-  };
+  const handleReviewSubmission = useCallback(
+    async ({ filingNumber, caseId, referenceId }) => {
+      const getDate = (value) => {
+        const date = new Date(value);
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+        const year = date.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        return formattedDate;
+      };
+      const applicationDetails = await getApplicationDetail(referenceId);
+      const defaultObj = {
+        status: applicationDetails?.status,
+        details: {
+          applicationType: applicationDetails?.applicationType,
+          applicationSentOn: getDate(parseInt(applicationDetails?.auditDetails?.createdTime)),
+          sender: applicationDetails?.owner,
+          additionalDetails: applicationDetails?.additionalDetails,
+          applicationId: applicationDetails?.id,
+          auditDetails: applicationDetails?.auditDetails,
+        },
+        applicationContent: null,
+        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        applicationList: applicationDetails,
+      };
+
+      const docObj = applicationDetails?.documents?.map((doc) => {
+        return {
+          status: applicationDetails?.status,
+          details: {
+            applicationType: applicationDetails?.applicationType,
+            applicationSentOn: getDate(parseInt(applicationDetails?.auditDetails?.createdTime)),
+            sender: applicationDetails?.owner,
+            additionalDetails: applicationDetails?.additionalDetails,
+            applicationId: applicationDetails?.id,
+            auditDetails: applicationDetails?.auditDetails,
+          },
+          applicationContent: {
+            tenantId: applicationDetails?.tenantId,
+            fileStoreId: doc.fileStore,
+            id: doc.id,
+            documentType: doc.documentType,
+            documentUid: doc.documentUid,
+            additionalDetails: doc.additionalDetails,
+          },
+          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          applicationList: applicationDetails,
+        };
+      }) || [defaultObj];
+
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`, {
+        applicationDocObj: docObj,
+      });
+    },
+    [getApplicationDetail, history, userType]
+  );
+
+  const handleCreateOrder = useCallback(
+    async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
+      let reqBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: orderType,
+          status: "",
+          isActive: true,
+          workflow: {
+            action: CaseWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                code: orderType,
+                type: orderType,
+                name: `ORDER_TYPE_${orderType}`,
+              },
+              refApplicationId: referenceId,
+            },
+          },
+        },
+      };
+      try {
+        const res = await HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId });
+        HomeService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: "Order Created",
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${referenceId}`,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: null,
+            filingNumber: filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+      } catch (error) {}
+    },
+    [history, tenantId]
+  );
 
   const fetchPendingTasks = useCallback(
     async function () {
@@ -113,9 +235,17 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
       allPendingTaskCaseDetails?.criteria?.forEach((element) => {
         pendingTaskToCaseDetailMap.set(element?.filingNumber, element?.responseList?.[0]);
       });
+
+      const getCustomFunction = {
+        handleCreateOrder,
+        handleReviewSubmission,
+        handleReviewOrder,
+      };
+
       const tasks = await Promise.all(
         pendingTaskActionDetails?.map(async (data) => {
           const filingNumber = data?.fields?.find((field) => field.key === "filingNumber")?.value || "";
+          const cnrNumber = data?.fields?.find((field) => field.key === "cnrNumber")?.value || "";
           const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
           const status = data?.fields?.find((field) => field.key === "status")?.value;
           const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
@@ -125,14 +255,19 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
-          const searchParams = new URLSearchParams();
+          const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
           const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
+          const additionalDetails = pendingTaskActions?.[status]?.additionalDetailsKeys?.reduce((result, current) => {
+            result[current] = data?.fields?.find((field) => field.key === `additionalDetails.${current}`)?.value;
+            return result;
+          }, {});
+          const searchParams = new URLSearchParams();
           pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
             searchParams.set(item?.key, item?.value ? defaultObj?.[item?.value] : item?.defaultValue);
           });
-          const redirectUrl = `/${window?.contextPath}/${userInfoType}${
-            pendingTaskActions?.[status]?.redirectDetails?.url
-          }?${searchParams.toString()}`;
+          const redirectUrl = isCustomFunction
+            ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
+            : `/${window?.contextPath}/${userInfoType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
@@ -142,19 +277,20 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
             dayCount,
             isCompleted,
             redirectUrl,
+            params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
+            isCustomFunction,
           };
         })
       );
       setPendingTasks(tasks);
     },
-    [getCaseDetailByFilingNumber, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
+    [getCaseDetailByFilingNumber, handleCreateOrder, handleReviewSubmission, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
   );
 
   useEffect(() => {
     fetchPendingTasks();
   }, [fetchPendingTasks]);
 
-  console.log("pendingTasks", pendingTasks, pendingTaskActionDetails);
   const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
     () => ({
       pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
