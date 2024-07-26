@@ -29,26 +29,21 @@ import java.util.UUID;
 @Builder
 public class StatuteSection {
 	@JsonProperty("id")
-
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("statute")
-
 	private String statute = null;
 
 	@JsonProperty("sections")
-
 	private List<String> sections = null;
 
 	@JsonProperty("subsections")
-
 	private List<String> subsections = null;
 
 	@JsonProperty("additionalDetails")
@@ -63,21 +58,5 @@ public class StatuteSection {
 
 	@JsonProperty("strSubsections")
 	private String strSubsections = null;
-
-	public StatuteSection addSectionsItem(String sectionsItem) {
-		if (this.sections == null) {
-			this.sections = new ArrayList<>();
-		}
-		this.sections.add(sectionsItem);
-		return this;
-	}
-
-	public StatuteSection addSubsectionsItem(String subsectionsItem) {
-		if (this.subsections == null) {
-			this.subsections = new ArrayList<>();
-		}
-		this.subsections.add(subsectionsItem);
-		return this;
-	}
 
 }
