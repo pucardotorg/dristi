@@ -31,6 +31,13 @@ import { Urls } from "../../hooks/services/Urls";
 
 const fieldStyle = { marginRight: 0 };
 
+const stateSla = {
+  RE_SCHEDULE: 2 * 24 * 3600 * 1000,
+  CHECKOUT_REQUEST: 2 * 24 * 3600 * 1000,
+  ESIGN_THE_SUBMISSION: 2 * 24 * 3600 * 1000,
+  MAKE_PAYMENT_SUBMISSION: 2 * 24 * 3600 * 1000,
+};
+
 const SubmissionsCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -48,6 +55,7 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const todayDate = new Date().getTime();
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -282,7 +290,15 @@ const SubmissionsCreate = () => {
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
-  const createPendingTask = async ({ name, status, isCompleted = false, refId = applicationNumber }) => {
+  const createPendingTask = async ({
+    name,
+    status,
+    isCompleted = false,
+    refId = applicationNumber,
+    stateSla = null,
+    isAssignedRole = false,
+    assignedRole = [],
+  }) => {
     let entityType = "async-voluntary-submission-managelifecycle";
     if (orderNumber) {
       entityType =
@@ -290,7 +306,7 @@ const SubmissionsCreate = () => {
           ? "async-submission-with-response-managelifecycle"
           : "async-order-submission-managelifecycle";
     }
-    const assignes = getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [];
+    const assignes = !isAssignedRole ? getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [] : [];
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
         name,
@@ -298,11 +314,11 @@ const SubmissionsCreate = () => {
         referenceId: `MANUAL_${refId}`,
         status,
         assignedTo: assignes?.map((uuid) => ({ uuid })),
-        assignedRole: [],
+        assignedRole: assignedRole,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,
         isCompleted,
-        stateSla: null,
+        stateSla,
         additionalDetails: {},
         tenantId,
       },
@@ -399,7 +415,11 @@ const SubmissionsCreate = () => {
       };
       await submissionService.updateApplication(reqBody, { tenantId });
       createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
-      createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION" });
+      createPendingTask({
+        name: t("MAKE_PAYMENT_SUBMISSION"),
+        status: "MAKE_PAYMENT_SUBMISSION",
+        stateSla: todayDate + stateSla.MAKE_PAYMENT_SUBMISSION,
+      });
       applicationRefetch();
       setShowPaymentModal(true);
     } catch (error) {
@@ -413,7 +433,12 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
-    createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", refId: newapplicationNumber });
+    createPendingTask({
+      name: t("ESIGN_THE_SUBMISSION"),
+      status: "ESIGN_THE_SUBMISSION",
+      refId: newapplicationNumber,
+      stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
+    });
     if (newapplicationNumber) {
       history.push(
         orderNumber
@@ -445,6 +470,17 @@ const SubmissionsCreate = () => {
   const handleMakePayment = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
+    createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
+    const applicationType = applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.applicationType;
+    if (["RE_SCHEDULE", "CHECKOUT_REQUEST"].includes(applicationType)) {
+      createPendingTask({
+        name: t(`PENDING_TASK_${applicationType}`),
+        status: applicationType,
+        isAssignedRole: true,
+        assignedRole: ["JUDGE_ROLE"],
+        stateSla: new Date().getTime() + stateSla[applicationType],
+      });
+    }
   };
 
   const handleDownloadSubmission = () => {

@@ -15,6 +15,9 @@ import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import { Urls } from "../../../hooks";
 
+const stateSla = {
+  SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
+};
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const history = useHistory();
@@ -24,6 +27,7 @@ function CaseFileAdmission({ t, path }) {
   const [submitModalInfo, setSubmitModalInfo] = useState(null);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const location = useLocation();
+  const todayDate = new Date().getTime();
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -251,7 +255,7 @@ function CaseFileAdmission({ t, path }) {
           cnrNumber: null,
           filingNumber: caseDetails?.filingNumber,
           isCompleted: false,
-          stateSla: null,
+          stateSla: todayDate + stateSla.SCHEDULE_HEARING,
           additionalDetails: {},
           tenantId,
         },

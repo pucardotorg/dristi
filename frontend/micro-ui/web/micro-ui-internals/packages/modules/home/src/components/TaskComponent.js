@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService, Urls } from "../hooks/services";
 import { selectTaskType, taskTypes } from "../configs/HomeConfig";
-import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const CaseWorkflowAction = {
@@ -16,7 +15,7 @@ export const CaseWorkflowAction = {
   ABANDON: "ABANDON",
 };
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType, filingNumber }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -25,6 +24,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
   const [searchCaseLoading, setSearchCaseLoading] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
+  const todayDate = useMemo(() => new Date().getTime(), []);
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
@@ -249,6 +249,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
           const status = data?.fields?.find((field) => field.key === "status")?.value;
           const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
+          const stateSla = data?.fields?.find((field) => field.key === "stateSla")?.value;
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
@@ -256,7 +257,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
-          const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
+          const dayCount = stateSla ? Number(stateSla) - todayDate : dueInSec ? Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24))) : null;
           const additionalDetails = pendingTaskActions?.[status]?.additionalDetailsKeys?.reduce((result, current) => {
             result[current] = data?.fields?.find((field) => field.key === `additionalDetails.${current}`)?.value;
             return result;
@@ -267,7 +268,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
           });
           const redirectUrl = isCustomFunction
             ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
-            : `/${window?.contextPath}/${userInfoType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
+            : `/${window?.contextPath}/${userType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
@@ -284,7 +285,17 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType,
       );
       setPendingTasks(tasks);
     },
-    [getCaseDetailByFilingNumber, handleCreateOrder, handleReviewSubmission, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
+    [
+      getCaseDetailByFilingNumber,
+      handleCreateOrder,
+      handleReviewOrder,
+      handleReviewSubmission,
+      isLoading,
+      pendingTaskActionDetails,
+      taskTypeCode,
+      todayDate,
+      userType,
+    ]
   );
 
   useEffect(() => {
