@@ -10,7 +10,7 @@ class ServiceConstantsTest {
     void testServiceConstants() {
         // Testing exception messages
         assertEquals("External Service threw an Exception: ", ServiceConstants.EXTERNAL_SERVICE_EXCEPTION);
-        assertEquals("Exception while fetching from searcher: ", ServiceConstants.SEARCHER_SERVICE_EXCEPTION);
+        assertEquals("Error while fetching result from URL: {} with request: {}", ServiceConstants.SEARCHER_SERVICE_EXCEPTION);
         assertEquals("Exception occurred while fetching category lists from mdms: ", ServiceConstants.ERROR_WHILE_FETCHING_FROM_MDMS);
 
         // Testing ES index formats

@@ -20,7 +20,7 @@ public class ResponseInfoFactory {
         final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
         final String responseStatus = success ? SUCCESSFUL : FAILED;
 
-        return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
+        return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId)
                 .status(responseStatus).build();
     }
 

@@ -107,43 +107,37 @@ public class Configuration {
 	@Value("${egov.mdms.master.name}")
 	private String mdmsMasterName;
 
-	@Value("${egov.hearing.bussiness.services}")
-	private String hearingBussinessServices;
+	@Value("${egov.hearing.business.services}")
+	private String hearingBusinessServices;
+	private List<String> hearingBusinessServiceList;
 
-	private List<String> hearingBussinessServiceList;
+	@Value("${egov.case.business.services}")
+	private String caseBusinessServices;
+	private List<String> caseBusinessServiceList;
 
-	@Value("${egov.case.bussiness.services}")
-	private String caseBussinessServices;
+	@Value("${egov.evidence.business.services}")
+	private String evidenceBusinessServices;
+	private List<String> evidenceBusinessServiceList;
 
-	private List<String> caseBussinessServiceList;
+	@Value("${egov.task.business.services}")
+	private String taskBusinessServices;
+	private List<String> taskBusinessServiceList;
 
-	@Value("${egov.evidence.bussiness.services}")
-	private String evidenceBussinessServices;
+	@Value("${egov.application.business.services}")
+	private String applicationBusinessServices;
+	private List<String> applicationBusinessServiceList;
 
-	private List<String> evidenceBussinessServiceList;
-
-	@Value("${egov.task.bussiness.services}")
-	private String taskBussinessServices;
-
-	private List<String> taskBussinessServiceList;
-
-	@Value("${egov.application.bussiness.services}")
-	private String applicationBussinessServices;
-
-	private List<String> applicationBussinessServiceList;
-
-	@Value("${egov.order.bussiness.services}")
-	private String orderBussinessServices;
-
-	private List<String> orderBussinessServiceList;
+	@Value("${egov.order.business.services}")
+	private String orderBusinessServices;
+	private List<String> orderBusinessServiceList;
 
 	@PostConstruct
 	public void init() {
-		hearingBussinessServiceList = Arrays.asList(hearingBussinessServices.split(","));
-		caseBussinessServiceList = Arrays.asList(caseBussinessServices.split(","));
-		evidenceBussinessServiceList = Arrays.asList(evidenceBussinessServices.split(","));
-		taskBussinessServiceList = Arrays.asList(taskBussinessServices.split(","));
-		applicationBussinessServiceList = Arrays.asList(applicationBussinessServices.split(","));
-		orderBussinessServiceList = Arrays.asList(orderBussinessServices.split(","));
+		hearingBusinessServiceList = Arrays.asList(hearingBusinessServices.split(","));
+		caseBusinessServiceList = Arrays.asList(caseBusinessServices.split(","));
+		evidenceBusinessServiceList = Arrays.asList(evidenceBusinessServices.split(","));
+		taskBusinessServiceList = Arrays.asList(taskBusinessServices.split(","));
+		applicationBusinessServiceList = Arrays.asList(applicationBusinessServices.split(","));
+		orderBusinessServiceList = Arrays.asList(orderBusinessServices.split(","));
 	}
 }

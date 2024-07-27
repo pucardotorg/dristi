@@ -64,7 +64,7 @@ class CaseOverallStatusUtilTest {
         JSONObject requestInfoJson = new JSONObject();
 
         // Mock configuration
-        when(config.getCaseBussinessServiceList()).thenReturn(List.of("case"));
+        when(config.getCaseBusinessServiceList()).thenReturn(List.of("case"));
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOverallStatusTopic()).thenReturn("topic");
         // Call the method
@@ -99,7 +99,7 @@ class CaseOverallStatusUtilTest {
         hearingObject.put("hearingType","evidence");
 
         // Mock configuration
-        when(config.getHearingBussinessServiceList()).thenReturn(List.of("hearing"));
+        when(config.getHearingBusinessServiceList()).thenReturn(List.of("hearing"));
         when(hearingUtil.getHearing(any(), any(), any(), eq(referenceId), any())).thenReturn(hearingObject);
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOverallStatusTopic()).thenReturn("topic");
@@ -133,7 +133,7 @@ class CaseOverallStatusUtilTest {
         orderObject.put("filingNumber","filingNumber");
         orderObject.put("orderType","judgement");
         // Mock configuration
-        when(config.getOrderBussinessServiceList()).thenReturn(List.of("order"));
+        when(config.getOrderBusinessServiceList()).thenReturn(List.of("order"));
         when(orderUtil.getOrder(any(), eq(referenceId), any())).thenReturn(orderObject);
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOverallStatusTopic()).thenReturn("topic");
@@ -159,9 +159,9 @@ class CaseOverallStatusUtilTest {
         JSONObject requestInfo = new JSONObject().put("RequestInfo", new JSONObject());
 
         // Mock configuration
-        when(config.getCaseBussinessServiceList()).thenReturn(List.of("case"));
-        when(config.getHearingBussinessServiceList()).thenReturn(List.of("hearing"));
-        when(config.getOrderBussinessServiceList()).thenReturn(List.of("order"));
+        when(config.getCaseBusinessServiceList()).thenReturn(List.of("case"));
+        when(config.getHearingBusinessServiceList()).thenReturn(List.of("hearing"));
+        when(config.getOrderBusinessServiceList()).thenReturn(List.of("order"));
 
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);

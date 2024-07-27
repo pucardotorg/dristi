@@ -87,7 +87,7 @@ class MdmsUtilTest {
 
         CustomException exception = assertThrows(CustomException.class, () -> mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList));
 
-        assertEquals("Fetch error", exception.getCode());
+        assertEquals("Failed to fetch MDMS data: Fetch error", exception.getCode());
         assertEquals(ERROR_WHILE_FETCHING_FROM_MDMS, exception.getMessage());
     }
 }

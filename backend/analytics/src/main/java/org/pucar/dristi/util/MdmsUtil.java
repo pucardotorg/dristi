@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class MdmsUtil {
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
         }catch(Exception e) {
             log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
-            throw new CustomException(e.getMessage(),ERROR_WHILE_FETCHING_FROM_MDMS);
+            throw new CustomException("Failed to fetch MDMS data: " + e.getMessage(), ERROR_WHILE_FETCHING_FROM_MDMS);
         }
 
         return mdmsResponse.getMdmsRes();

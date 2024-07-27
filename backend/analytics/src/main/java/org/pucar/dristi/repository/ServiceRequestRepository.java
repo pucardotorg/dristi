@@ -45,7 +45,7 @@ public class ServiceRequestRepository {
 			log.error(ServiceConstants.EXTERNAL_SERVICE_EXCEPTION, e);
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
-			log.error(ServiceConstants.SEARCHER_SERVICE_EXCEPTION, e);
+			log.error(ServiceConstants.SEARCHER_SERVICE_EXCEPTION, uri, request, e);
 		}
 
 		return response;

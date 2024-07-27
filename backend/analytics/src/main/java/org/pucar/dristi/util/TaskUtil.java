@@ -43,7 +43,7 @@ public class TaskUtil {
 			JSONArray tasks = util.constructArray(response, TASK_PATH);
 			return tasks.length() > 0 ? tasks.get(0) : null;
 		} catch (Exception e) {
-			log.error("Error while fetching or processing the task response", e);
+			log.error("Error while fetching or processing the task response for URL: {} with request: {}", url, request, e);
 			throw new RuntimeException("Error while fetching or processing the task response", e);
 		}
 	}

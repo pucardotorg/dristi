@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndexerUtils;
@@ -57,12 +58,17 @@ public class IndexerService {
 
 	StringBuilder buildBulkRequest(JSONArray kafkaJsonArray, JSONObject requestInfo) {
 		StringBuilder bulkRequest = new StringBuilder();
-		for (int i = 0; i < kafkaJsonArray.length(); i++) {
-			JSONObject jsonObject = kafkaJsonArray.optJSONObject(i);
-			if (jsonObject != null) {
-				processJsonObject(jsonObject, bulkRequest,requestInfo);
+		try {
+			for (int i = 0; i < kafkaJsonArray.length(); i++) {
+				JSONObject jsonObject = kafkaJsonArray.optJSONObject(i);
+				if (jsonObject != null) {
+					processJsonObject(jsonObject, bulkRequest,requestInfo);
+				}
 			}
+		} catch (JSONException e){
+			log.error("Error processing JSON array", e);
 		}
+
 		return bulkRequest;
 	}
 

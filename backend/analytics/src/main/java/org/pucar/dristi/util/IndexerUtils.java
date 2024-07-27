@@ -143,7 +143,7 @@ public class IndexerUtils {
 		try {
 			additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
 		}catch (Exception e){
-			log.error("Error while building API payload");
+			log.error("Error while building API payload",e);
 			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
 		}
 
@@ -236,17 +236,17 @@ public class IndexerUtils {
 
 	private Map<String, String> processEntityByType(String entityType, JSONObject request, String referenceId, Object object) {
 		try {
-			if(config.getHearingBussinessServiceList().contains(entityType))
+			if(config.getHearingBusinessServiceList().contains(entityType))
 				return processHearingEntity(request, object);
-			else if (config.getCaseBussinessServiceList().contains(entityType))
+			else if (config.getCaseBusinessServiceList().contains(entityType))
 				return processCaseEntity(request, referenceId);
-			else if (config.getEvidenceBussinessServiceList().contains(entityType))
+			else if (config.getEvidenceBusinessServiceList().contains(entityType))
 				return processEvidenceEntity(request, referenceId);
-			else if (config.getApplicationBussinessServiceList().contains(entityType))
+			else if (config.getApplicationBusinessServiceList().contains(entityType))
 				return processApplicationEntity(request, referenceId);
-			else if (config.getOrderBussinessServiceList().contains(entityType))
+			else if (config.getOrderBusinessServiceList().contains(entityType))
 				return processOrderEntity(object);
-			else if (config.getTaskBussinessServiceList().contains(entityType))
+			else if (config.getTaskBusinessServiceList().contains(entityType))
 				return processTaskEntity(request, referenceId);
 			else {
 						log.error("Unexpected entityType: {}", entityType);

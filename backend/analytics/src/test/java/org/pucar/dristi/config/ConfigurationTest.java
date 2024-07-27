@@ -17,12 +17,12 @@ class ConfigurationTest {
     void setUp() {
         configuration = new Configuration();
 
-        ReflectionTestUtils.setField(configuration, "hearingBussinessServices", "hearingService1,hearingService2");
-        ReflectionTestUtils.setField(configuration, "caseBussinessServices", "caseService1,caseService2");
-        ReflectionTestUtils.setField(configuration, "evidenceBussinessServices", "evidenceService1,evidenceService2");
-        ReflectionTestUtils.setField(configuration, "taskBussinessServices", "taskService1,taskService2");
-        ReflectionTestUtils.setField(configuration, "applicationBussinessServices", "applicationService1,applicationService2");
-        ReflectionTestUtils.setField(configuration, "orderBussinessServices", "orderService1,orderService2");
+        ReflectionTestUtils.setField(configuration, "hearingBusinessServices", "hearingService1,hearingService2");
+        ReflectionTestUtils.setField(configuration, "caseBusinessServices", "caseService1,caseService2");
+        ReflectionTestUtils.setField(configuration, "evidenceBusinessServices", "evidenceService1,evidenceService2");
+        ReflectionTestUtils.setField(configuration, "taskBusinessServices", "taskService1,taskService2");
+        ReflectionTestUtils.setField(configuration, "applicationBusinessServices", "applicationService1,applicationService2");
+        ReflectionTestUtils.setField(configuration, "orderBusinessServices", "orderService1,orderService2");
     }
 
     @Test
@@ -36,12 +36,12 @@ class ConfigurationTest {
         List<String> expectedApplicationList = Arrays.asList("applicationService1", "applicationService2");
         List<String> expectedOrderList = Arrays.asList("orderService1", "orderService2");
 
-        assertEquals(expectedHearingList, configuration.getHearingBussinessServiceList());
-        assertEquals(expectedCaseList, configuration.getCaseBussinessServiceList());
-        assertEquals(expectedEvidenceList, configuration.getEvidenceBussinessServiceList());
-        assertEquals(expectedTaskList, configuration.getTaskBussinessServiceList());
-        assertEquals(expectedApplicationList, configuration.getApplicationBussinessServiceList());
-        assertEquals(expectedOrderList, configuration.getOrderBussinessServiceList());
+        assertEquals(expectedHearingList, configuration.getHearingBusinessServiceList());
+        assertEquals(expectedCaseList, configuration.getCaseBusinessServiceList());
+        assertEquals(expectedEvidenceList, configuration.getEvidenceBusinessServiceList());
+        assertEquals(expectedTaskList, configuration.getTaskBusinessServiceList());
+        assertEquals(expectedApplicationList, configuration.getApplicationBusinessServiceList());
+        assertEquals(expectedOrderList, configuration.getOrderBusinessServiceList());
     }
 
     @Test

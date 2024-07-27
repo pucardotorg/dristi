@@ -40,11 +40,11 @@ public class CaseOverallStatusUtil {
 		try {
 			JSONObject request = new JSONObject();
 			request.put("RequestInfo", requestInfo);
-			if(config.getCaseBussinessServiceList().contains(entityType)){
+			if(config.getCaseBusinessServiceList().contains(entityType)){
 				return processCaseOverallStatus(request, referenceId, action, tenantId);
-			} else if (config.getHearingBussinessServiceList().contains(entityType)) {
+			} else if (config.getHearingBusinessServiceList().contains(entityType)) {
 				return processHearingCaseOverallStatus(request, referenceId, action, tenantId);
-			} else if (config.getOrderBussinessServiceList().contains(entityType)) {
+			} else if (config.getOrderBusinessServiceList().contains(entityType)) {
 				return processOrderOverallStatus(request, referenceId, status, tenantId);
 			}
 			log.error("Case overall status not supported for entityType: {}", entityType);
