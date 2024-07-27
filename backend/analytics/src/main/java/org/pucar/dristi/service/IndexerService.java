@@ -1,6 +1,5 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -10,7 +9,6 @@ import org.pucar.dristi.util.IndexerUtils;
 import org.pucar.dristi.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedHashMap;
 
@@ -24,19 +22,13 @@ public class IndexerService {
 
 	private final Configuration config;
 
-	private final RestTemplate restTemplate;
+    private final Util util;
 
-	private final Util util;
-
-	private final ObjectMapper mapper;
-
-	@Autowired
-    public IndexerService(IndexerUtils indexerUtils, Configuration config, RestTemplate restTemplate, Util util, ObjectMapper mapper) {
+    @Autowired
+    public IndexerService(IndexerUtils indexerUtils, Configuration config, Util util) {
         this.indexerUtils = indexerUtils;
         this.config = config;
-        this.restTemplate = restTemplate;
         this.util = util;
-        this.mapper = mapper;
     }
 
     public void esIndexer(String topic, String kafkaJson) {
@@ -63,7 +55,7 @@ public class IndexerService {
 		}
 	}
 
-	private StringBuilder buildBulkRequest(JSONArray kafkaJsonArray, JSONObject requestInfo) {
+	StringBuilder buildBulkRequest(JSONArray kafkaJsonArray, JSONObject requestInfo) {
 		StringBuilder bulkRequest = new StringBuilder();
 		for (int i = 0; i < kafkaJsonArray.length(); i++) {
 			JSONObject jsonObject = kafkaJsonArray.optJSONObject(i);
@@ -74,7 +66,7 @@ public class IndexerService {
 		return bulkRequest;
 	}
 
-	private void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest, JSONObject requestInfo) {
+	void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest, JSONObject requestInfo) {
 		try {
 			String stringifiedObject = indexerUtils.buildString(jsonObject);
 			String payload = indexerUtils.buildPayload(stringifiedObject,requestInfo);

@@ -11,8 +11,6 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
 import org.pucar.dristi.config.PendingTaskMapConfig;
-import org.pucar.dristi.web.models.CaseOverallStatus;
-import org.pucar.dristi.web.models.CaseStageSubStage;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,16 +219,17 @@ public class IndexerUtils {
 
 		// Determine name and isCompleted based on status and action
 		for (PendingTaskType pendingTaskType : pendingTaskTypeList) {
-			if (pendingTaskType.getState().equals(status)) {
-				if (pendingTaskType.getTriggerAction().contains(action)) {
-					name = pendingTaskType.getPendingTask();
-					isCompleted = false;
-					break;
-				}
-			}
+			if (pendingTaskType.getState().equals(status) && pendingTaskType.getTriggerAction().contains(action)) {
+                name = pendingTaskType.getPendingTask();
+                isCompleted = false;
+                break;
+            }
 		}
 
-		if (isCompleted) return caseDetails;
+		if (isCompleted){
+			log.info("No pending task with this config");
+			return caseDetails;
+		}
 
 		// Create request and process entity based on type
 		JSONObject request = new JSONObject();
