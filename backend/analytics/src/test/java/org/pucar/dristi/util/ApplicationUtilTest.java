@@ -61,7 +61,7 @@ public class ApplicationUtilTest {
 
         // Assert
         assertNotNull(result);
-        assertTrue(result instanceof JSONObject);
+        assertInstanceOf(JSONObject.class, result);
         JSONObject resultJson = (JSONObject) result;
         assertEquals("1", resultJson.getString("id"));
         assertEquals("Test Application", resultJson.getString("name"));
@@ -121,9 +121,7 @@ public class ApplicationUtilTest {
                 .thenThrow(new RuntimeException("Repository error"));
 
         // Act & Assert
-        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            applicationUtil.getApplication(request, tenantId, applicationNumber);
-        });
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> applicationUtil.getApplication(request, tenantId, applicationNumber));
 
         assertEquals("Error while processing application response", thrown.getMessage());
 

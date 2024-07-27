@@ -93,7 +93,6 @@ public class IndexerServiceTest {
         JSONArray kafkaJsonArray = new JSONArray();
         kafkaJsonArray.put(new JSONObject().put("key", "value"));
         JSONObject requestInfo = new JSONObject();
-        StringBuilder bulkRequest = new StringBuilder();
 
         when(indexerUtils.buildString(any())).thenReturn("stringifiedObject");
         when(indexerUtils.buildPayload(anyString(), any())).thenReturn("payload");

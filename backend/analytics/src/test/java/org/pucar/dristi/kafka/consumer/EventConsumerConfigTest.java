@@ -2,7 +2,6 @@ package org.pucar.dristi.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.egov.tracer.KafkaConsumerErrorHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,12 +25,6 @@ class EventConsumerConfigTest {
     @InjectMocks
     @Spy
     private EventConsumerConfig eventConsumerConfig;
-
-    @Mock
-    private KafkaConsumerErrorHandler kafkaConsumerErrorHandler;
-
-    @Mock
-    private EventListener indexerMessageListener;
 
     @Mock
     private ApplicationArguments applicationArguments;

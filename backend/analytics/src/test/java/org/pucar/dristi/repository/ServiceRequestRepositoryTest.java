@@ -63,9 +63,7 @@ class ServiceRequestRepositoryTest {
         when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
                 .thenThrow(exception);
 
-        ServiceCallException thrown = assertThrows(ServiceCallException.class, () -> {
-            serviceRequestRepository.fetchResult(uri, request);
-        });
+        ServiceCallException thrown = assertThrows(ServiceCallException.class, () -> serviceRequestRepository.fetchResult(uri, request));
 
         assertEquals("error body", thrown.getError());
         verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class));

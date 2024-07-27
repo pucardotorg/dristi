@@ -53,8 +53,7 @@ class MdmsUtilTest {
     }
 
     @Test
-    void testFetchMdmsData_Success() throws Exception {
-        String uri = "http://localhost/mdms";
+    void testFetchMdmsData_Success() {
 
         Map<String, Object> mockResponse = new HashMap<>();
         Map<String, Map<String, JSONArray>> mockMdmsRes = new HashMap<>();
@@ -81,7 +80,7 @@ class MdmsUtilTest {
     }
 
     @Test
-    void testFetchMdmsData_Exception() throws Exception {
+    void testFetchMdmsData_Exception() {
 
         when(restTemplate.postForObject(any(String.class), any(MdmsCriteriaReq.class), eq(Map.class)))
                 .thenThrow(new RuntimeException("Fetch error"));

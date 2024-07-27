@@ -9,13 +9,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
-import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.pucar.dristi.web.models.CaseStageSubStage;
 import static org.mockito.Mockito.*;
 
@@ -49,7 +47,7 @@ class CaseOverallStatusUtilTest {
     }
 
     @Test
-    void testCheckCaseOverAllStatusForCase() throws JSONException, JsonProcessingException {
+    void testCheckCaseOverAllStatusForCase() throws JsonProcessingException {
         // Prepare test data
         String entityType = "case";
         String referenceId = "123";

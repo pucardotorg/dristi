@@ -64,9 +64,7 @@ public class PendingTaskServiceTest {
         when(indexerUtils.buildPayload(any())).thenThrow(new CustomException("Custom Exception","Test Message"));
 
         // Act & Assert
-        CustomException thrown = assertThrows(CustomException.class, () -> {
-            pendingTaskService.createPendingTask(request);
-        });
+        CustomException thrown = assertThrows(CustomException.class, () -> pendingTaskService.createPendingTask(request));
 
         assertEquals("Test Message", thrown.getMessage());
         verify(indexerUtils, times(1)).buildPayload(any());
@@ -80,9 +78,7 @@ public class PendingTaskServiceTest {
         when(indexerUtils.buildPayload(any())).thenThrow(new RuntimeException("General Exception"));
 
         // Act & Assert
-        CustomException thrown = assertThrows(CustomException.class, () -> {
-            pendingTaskService.createPendingTask(request);
-        });
+        CustomException thrown = assertThrows(CustomException.class, () -> pendingTaskService.createPendingTask(request));
 
         assertEquals(Pending_Task_Exception, thrown.getCode());
         assertEquals("General Exception", thrown.getMessage());

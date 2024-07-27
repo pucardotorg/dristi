@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.config.PendingTaskMapConfig;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
@@ -55,9 +54,6 @@ public class IndexerUtilsTest {
 
     @Mock
     private OrderUtil orderUtil;
-
-    @Mock
-    private Producer producer;
 
     @Mock
     private ObjectMapper mapper;
@@ -118,9 +114,7 @@ public class IndexerUtilsTest {
     @Test
     public void testBuildString_NullException() {
         // Act
-        assertThrows(NullPointerException.class, () -> {
-            indexerUtils.buildString(null);
-        });
+        assertThrows(NullPointerException.class, () -> indexerUtils.buildString(null));
     }
 
     @Test
@@ -165,16 +159,14 @@ public class IndexerUtilsTest {
     }
 
     @Test()
-    public void testEsPostManual_Failure() throws Exception {
+    public void testEsPostManual_Failure() {
         // Arrange
         String uri = "http://localhost:9200/_bulk";
         String request = "{\"index\":{}}";
         when(restTemplate.postForObject(anyString(), any(), any())).thenThrow(new RuntimeException());
 
         // Act
-        assertThrows(RuntimeException.class, () -> {
-            indexerUtils.esPostManual(uri, request);
-        });
+        assertThrows(RuntimeException.class, () -> indexerUtils.esPostManual(uri, request));
 
     }
 

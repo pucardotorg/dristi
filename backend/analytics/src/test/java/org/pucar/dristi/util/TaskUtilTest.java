@@ -101,10 +101,7 @@ class TaskUtilTest {
     }
 
     @Test
-    void testGetTask_Exception() throws Exception {
-        // Prepare test data
-        String response = "{ \"task\": [] }";
-        JSONArray taskArray = new JSONArray();
+    void testGetTask_Exception() {
 
         // Mocking
         when(repository.fetchResult(any(StringBuilder.class), any(JSONObject.class))).thenThrow(new RuntimeException("Error while fetching or processing the task response"));

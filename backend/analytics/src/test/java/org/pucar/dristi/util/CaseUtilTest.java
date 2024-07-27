@@ -30,13 +30,10 @@ class CaseUtilTest {
     @InjectMocks
     private CaseUtil caseUtil;
 
-    private String caseHost;
-    private String caseSearchPath;
-
     @BeforeEach
     void setUp() {
-        caseHost = "http://localhost";
-        caseSearchPath = "/case-search";
+        String caseHost = "http://localhost";
+        String caseSearchPath = "/case-search";
         when(config.getCaseHost()).thenReturn(caseHost);
         when(config.getCaseSearchPath()).thenReturn(caseSearchPath);
     }
@@ -81,7 +78,7 @@ class CaseUtilTest {
         Object result = caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId);
 
         assertNotNull(result);
-        assertTrue(result instanceof JSONObject);
+        assertInstanceOf(JSONObject.class, result);
         assertEquals("CASE123", ((JSONObject) result).getString("caseId"));
     }
 
@@ -103,7 +100,7 @@ class CaseUtilTest {
         Object result = caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId);
 
         assertNotNull(result);
-        assertTrue(result instanceof JSONObject);
+        assertInstanceOf(JSONObject.class, result);
         assertEquals("CASE123", ((JSONObject) result).getString("caseId"));
     }
 
@@ -125,7 +122,7 @@ class CaseUtilTest {
         Object result = caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId);
 
         assertNotNull(result);
-        assertTrue(result instanceof JSONObject);
+        assertInstanceOf(JSONObject.class, result);
         assertEquals("CASE123", ((JSONObject) result).getString("caseId"));
     }
 
@@ -149,7 +146,7 @@ class CaseUtilTest {
     }
 
     @Test
-    void testGetCase_Exception() throws Exception {
+    void testGetCase_Exception() {
         JSONObject request = new JSONObject();
         String tenantId = "tenant1";
         String cnrNumber = "CNR123";
@@ -158,9 +155,7 @@ class CaseUtilTest {
 
         when(repository.fetchResult(any(StringBuilder.class), any(JSONObject.class))).thenThrow(new RuntimeException("Error fetching case"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId));
 
         assertEquals("Error while processing case response", exception.getMessage());
     }

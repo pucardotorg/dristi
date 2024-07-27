@@ -1,12 +1,11 @@
 package org.pucar.dristi.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResponseInfoFactoryTest {
 
@@ -70,7 +69,7 @@ public class ResponseInfoFactoryTest {
         assertNotNull(responseInfo);
         assertEquals("", responseInfo.getApiId());
         assertEquals("", responseInfo.getVer());
-        assertEquals(null, responseInfo.getTs());
+        assertNull(responseInfo.getTs());
         assertEquals("", responseInfo.getMsgId());
         assertEquals("uief87324", responseInfo.getResMsgId());
         assertEquals("successful", responseInfo.getStatus());
@@ -88,7 +87,7 @@ public class ResponseInfoFactoryTest {
         // Assert
         assertNotNull(responseInfo);
         assertEquals("apiId", responseInfo.getApiId());
-        assertEquals(null, responseInfo.getTs());
+        assertNull(responseInfo.getTs());
         assertEquals("uief87324", responseInfo.getResMsgId());
         assertEquals("successful", responseInfo.getStatus());
     }
