@@ -26,7 +26,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const userInfo = Digit.UserService.getUser()?.info;
-  const user = Digit.UserService.getUser()?.info?.userName;
+  const user = Digit.UserService.getUser()?.info?.name;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const CloseBtn = (props) => {
     return (
@@ -529,9 +529,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                           text: currentComment,
                           author: user,
                           timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
+                            year: "2-digit",
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
                           }),
                         };
                         setComments((prev) => [...prev, newComment]);

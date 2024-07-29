@@ -390,7 +390,7 @@ export const TabSearchconfig = {
               // },
               {
                 label: "Status",
-                jsonPath: "workflow.action",
+                jsonPath: "status",
                 additionalCustomization: true,
               },
               {
