@@ -7,6 +7,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.IssuedBy;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -59,8 +60,8 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .id(toUUID(rs.getString("id")))
                             .isActive(rs.getBoolean("isactive"))
                             .status(rs.getString("status"))
-                            .comment(rs.getString("comment"))
-                            .additionalDetails(rs.getString("additionaldetails"))
+                            .comment(getObjectFromJson(rs.getString("comment"), new TypeReference<List<Comment>>() {
+                            }))                            .additionalDetails(rs.getString("additionaldetails"))
                             .statuteSection(getObjectFromJson(rs.getString("statuteSection"), new TypeReference<StatuteSection>(){}))
                             .issuedBy(getObjectFromJson(rs.getString("issuedby"), new TypeReference<IssuedBy>(){}))
                             .auditDetails(auditdetails)

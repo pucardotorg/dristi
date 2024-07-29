@@ -37,6 +37,8 @@ serviceMaps:
               dbType: JSONB
             - jsonPath: $.application.status
             - jsonPath: $.application.comment
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.isActive
             - jsonPath: $.application.additionalDetails
               type: JSON
@@ -92,6 +94,8 @@ serviceMaps:
               dbType: JSONB
             - jsonPath: $.application.status
             - jsonPath: $.application.comment
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.isActive
             - jsonPath: $.application.additionalDetails
               type: JSON

@@ -288,8 +288,10 @@ components:
           type: string
           description: workflow status
         comment:
-          type: string
-          description: can be used to store any comments on application approval, rejection or otherwise
+          type: array
+          items:
+            type: object
+            description: can be used to store any comments on application approval, rejection or otherwise
         isActive:
           type: boolean
           description: to handle soft delete
