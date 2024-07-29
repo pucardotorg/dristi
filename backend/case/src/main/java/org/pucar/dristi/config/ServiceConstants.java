@@ -112,6 +112,19 @@ public class ServiceConstants {
 
 	public static final String PURPOSE = "purpose";
 
+	// Roles required for decryption
+	public static final String JUDGE_ROLE = "JUDGE_ROLE";
+	public static final String FSO_ROLE = "FSO_ROLE";
+	public static final String BENCH_CLERK_ROLE = "BENCHCLERK_ROLE";
+	public static final String NYAY_MITRA_ROLE = "NYAY_MITRA_ROLE";
+	public static final String INTERNAL_MICROSERVICE_ROLE = "INTERNAL_MICROSERVICE_ROLE";
+
+	public static final String ADVOCATE_ROLE = "ADVOCATE_ROLE";
+
 	public static final String EMPLOYEE = "EMPLOYEE";
 
+	//	Models for encryption decryption in MDMS
+	public static final String COURT_CASE_ENCRYPT = "CourtCase";
+	public static final String CASE_DECRYPT_SELF = "CaseDecryptSelf";
+	public static final String CASE_DECRYPT_OTHER = "CaseDecryptOther";
 }

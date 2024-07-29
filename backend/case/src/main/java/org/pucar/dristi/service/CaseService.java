@@ -24,11 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
-import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
-
-
 
 @Service
 @Slf4j
@@ -70,12 +65,15 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(body);
 
-            body.setCases(encryptionDecryptionUtil.encryptObject(body.getCases(), "CourtCase", CourtCase.class));
+            body.setCases(encryptionDecryptionUtil.encryptObject(body.getCases(), COURT_CASE_ENCRYPT, CourtCase.class));
 
             producer.push(config.getCaseCreateTopic(), body);
 
-            return body.getCases();
-        } catch (CustomException e) {
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(body.getCases(), CASE_DECRYPT_SELF,CourtCase.class,body.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating case :: {}", e.toString());
@@ -94,7 +92,7 @@ public class CaseService {
                 List<CourtCase> decryptedCourtCases = new ArrayList<>();
                 caseCriteria.getResponseList().forEach(cases -> {
                     cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber())));
-                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,"CaseDecryptSelf",CourtCase.class,caseSearchRequests.getRequestInfo()));
+                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,null, CourtCase.class,caseSearchRequests.getRequestInfo()));
                 });
                 caseCriteria.setResponseList(decryptedCourtCases);
             });
@@ -131,7 +129,11 @@ public class CaseService {
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
-            return caseRequest.getCases();
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(caseRequest.getCases(),null, CourtCase.class,caseRequest.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
+
 
         } catch (CustomException e) {
             throw e;
@@ -175,6 +177,12 @@ public class CaseService {
 
             AuditDetails auditDetails = AuditDetails.builder().lastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             addWitnessRequest.setAuditDetails(auditDetails);
+            CourtCase caseObj = CourtCase.builder()
+                    .filingNumber(addWitnessRequest.getCaseFilingNumber())
+                    .additionalDetails(addWitnessRequest.getAdditionalDetails())
+                    .build();
+            caseObj = encryptionDecryptionUtil.encryptObject(caseObj, COURT_CASE_ENCRYPT, CourtCase.class);
+            addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
 
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
@@ -196,6 +204,11 @@ public class CaseService {
         producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
+
+            caseObj.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
+            caseObj = encryptionDecryptionUtil.encryptObject(caseObj, COURT_CASE_ENCRYPT, CourtCase.class);
+            joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
+
             log.info("Pushing additional details for litigant:: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
         }
@@ -209,6 +222,11 @@ public class CaseService {
         producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
+
+            caseObj.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
+            caseObj = encryptionDecryptionUtil.encryptObject(caseObj, COURT_CASE_ENCRYPT, CourtCase.class);
+            joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
+
             log.info("Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
         }
@@ -354,7 +372,7 @@ public class CaseService {
         }
     }
 
-    private static @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
+    private @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
         if (existingApplications.isEmpty()) {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
@@ -362,8 +380,8 @@ public class CaseService {
         if (courtCaseList.isEmpty()) {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
-
-        CourtCase courtCase = courtCaseList.get(0);
+        
+        CourtCase courtCase = encryptionDecryptionUtil.decryptObject(courtCaseList.get(0), CASE_DECRYPT_SELF, CourtCase.class,joinCaseRequest.getRequestInfo());
 
         if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
             throw new CustomException(VALIDATION_ERR, "Access code not generated");

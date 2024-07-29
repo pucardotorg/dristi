@@ -1,14 +1,15 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.encryption.EncryptionService;
-import org.egov.encryption.audit.AuditService;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.ServiceConstants;
+import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.AdvocateMapping;
 import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +23,28 @@ import org.springframework.web.client.ResourceAccessException;
 import java.io.IOException;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {
     private final EncryptionService encryptionService;
     private final String stateLevelTenantId;
     private final boolean abacEnabled;
+    private final IndividualService individualService;
+    private final AdvocateUtil advocateUtil;
 
     @Autowired
     public EncryptionDecryptionUtil(@Qualifier("caseEncryptionServiceImpl") EncryptionService encryptionService,
                                     @Value("${state.level.tenant.id}") String stateLevelTenantId,
-                                    @Value("${decryption.abac.enabled}") boolean abacEnabled) {
+                                    @Value("${decryption.abac.enabled}") boolean abacEnabled,
+                                    IndividualService individualService,
+                                    AdvocateUtil advocateUtil) {
         this.encryptionService = encryptionService;
         this.stateLevelTenantId = stateLevelTenantId;
         this.abacEnabled = abacEnabled;
+        this.individualService = individualService;
+        this.advocateUtil = advocateUtil;
     }
 
     public <T> T encryptObject(Object objectToEncrypt, String key, Class<T> classType) {
@@ -78,7 +87,7 @@ public class EncryptionDecryptionUtil {
             final User encrichedUserInfo = getEncrichedandCopiedUserInfo(requestInfo.getUserInfo());
             requestInfo.setUserInfo(encrichedUserInfo);
 
-            Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, encrichedUserInfo);
+            Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, requestInfo);
             String purpose = keyPurposeMap.get(ServiceConstants.PURPOSE);
 
             if (key == null)
@@ -105,51 +114,89 @@ public class EncryptionDecryptionUtil {
         }
     }
 
-    public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
-        List<Party> usersToDecrypt = null;
+    private boolean isUserDecryptingForAllowedRoles(User userInfo){
+
+        for (Role role:userInfo.getRoles()){
+            String code = role.getCode();
+            if (code.equalsIgnoreCase(INTERNAL_MICROSERVICE_ROLE) || code.equalsIgnoreCase(NYAY_MITRA_ROLE) || code.equalsIgnoreCase(JUDGE_ROLE) || code.equalsIgnoreCase(FSO_ROLE) || code.equalsIgnoreCase(BENCH_CLERK_ROLE)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    public boolean isUserDecryptingForSelf(Object objectToDecrypt, RequestInfo requestInfo) {
+
         if (objectToDecrypt instanceof List list) {
             if (list.isEmpty())
                 return false;
             if (list.size() > 1)
                 return false;
-            usersToDecrypt = ((CourtCase) list.get(0)).getLitigants();
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of Object");
         }
-        List<UUID> userIDs = usersToDecrypt
-                .stream()
-                .map(Party::getId)
-                .filter(id -> id.toString().equalsIgnoreCase(userInfo.getUuid()))
-                .toList();
-        return !userIDs.isEmpty();
+
+        boolean isUserAdvocate = requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> role.getCode().equalsIgnoreCase(ADVOCATE_ROLE));
+
+        CourtCase courtCase = (CourtCase) list.get(0);
+
+        boolean isUserCaseCreator =  courtCase.getAuditdetails().getCreatedBy().equalsIgnoreCase(requestInfo.getUserInfo().getUuid());
+
+        if (isUserCaseCreator){
+            return true;
+        }
+
+        String individualId = individualService.getIndividualId(requestInfo);
+
+        List<AdvocateMapping> advocates = courtCase.getRepresentatives();
+
+        if (isUserAdvocate && advocates != null) {
+            List<Advocate> advocateResponse = advocateUtil.fetchAdvocatesByIndividualId(requestInfo,individualId);
+
+            return advocates.stream().anyMatch(advocateMapping -> advocateMapping.getAdvocateId().equalsIgnoreCase(advocateResponse.get(0).getId().toString()));
+        }
+
+        List<Party> litigants = courtCase.getLitigants();
+        if (litigants != null) {
+            return litigants.stream().anyMatch(litigant -> litigant.getIndividualId().equalsIgnoreCase(individualId));
+        }
+        return false;
+
     }
 
     private boolean isDecryptionForIndividualUser(Object objectToDecrypt) {
         return ((List) objectToDecrypt).size() == 1;
     }
 
-    public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
+    public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, RequestInfo requestInfo) {
         Map<String,String> keyPurposeMap = new HashMap<>();
 
         if (!abacEnabled){
-            keyPurposeMap.put("key","CaseDecryptSelf");
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"AbacDisabled");
         }
 
+        else if (isUserDecryptingForAllowedRoles(requestInfo.getUserInfo())){
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
+            keyPurposeMap.put(ServiceConstants.PURPOSE,"AllowedRole");
+        }
 
-        else if (isUserDecryptingForSelf(objectToDecrypt, userInfo)){
-            keyPurposeMap.put("key","CaseDecryptSelf");
+        else if (isUserDecryptingForSelf(objectToDecrypt, requestInfo)){
+            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"Self");
         }
 
 
         else if (isDecryptionForIndividualUser(objectToDecrypt)){
-            keyPurposeMap.put("key","CaseDecryptOther");
+            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"SingleSearchResult");
         }
 
         else{
-            keyPurposeMap.put("key","CaseDecryptOther");
+            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
             keyPurposeMap.put(ServiceConstants.PURPOSE,"BulkSearchResult");
         }
 
@@ -173,7 +220,6 @@ public class EncryptionDecryptionUtil {
         return User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
                 .type(userInfo.getType()).mobileNumber(userInfo.getMobileNumber()).emailId(userInfo.getEmailId())
                 .roles(newRoleList).tenantId(userInfo.getTenantId()).uuid(userInfo.getUuid()).build();
-
     }
 
 }
