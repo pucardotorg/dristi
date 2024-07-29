@@ -49,6 +49,8 @@ import Button from "./components/Button";
 import MultiUploadWrapper from "./components/MultiUploadWrapper";
 import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
 import { DRISTIService } from "./services";
+import CustomChooseDate from "./components/CustomChooseDate";
+import CustomCalendar from "./components/CustomCalendar";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -122,6 +124,8 @@ const componentsToRegister = {
   Button,
   CustomCopyTextDiv,
   DRISTIService,
+  CustomChooseDate,
+  CustomCalendar,
 };
 
 const overrideHooks = () => {

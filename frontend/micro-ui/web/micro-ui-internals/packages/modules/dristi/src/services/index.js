@@ -109,6 +109,15 @@ export const DRISTIService = {
       params,
     });
   },
+  startHearing: ({ hearing }, params) => {
+    return Request({
+      url: Urls.dristi.updateHearings,
+      useCache: false,
+      userService: false,
+      data: { hearing: { ...hearing, workflow: { action: "START" } } },
+      params,
+    });
+  },
   createHearings: (data, params) => {
     return Request({
       url: Urls.dristi.createHearings,

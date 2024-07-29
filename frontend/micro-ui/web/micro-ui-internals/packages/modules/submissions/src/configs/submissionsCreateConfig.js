@@ -10,11 +10,14 @@ export const submissionTypeConfig = [
         populators: {
           name: "submissionType",
           optionsKey: "name",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           options: [
             {
-              code: "APPLICATION_TYPE",
-              name: "APPLICATION_TYPE",
+              code: "APPLICATION",
+              name: "APPLICATION",
             },
           ],
         },
@@ -35,7 +38,10 @@ export const applicationTypeConfig = [
         populators: {
           name: "applicationType",
           optionsKey: "name",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           mdmsConfig: {
             masterName: "ApplicationType",
             moduleName: "Application",
@@ -62,7 +68,8 @@ export const configs = [
         populators: {
           name: "submissionType",
           optionsKey: "type",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           mdmsConfig: {
             //Used application type for timebeing since Submission type MDMS data is not defined
             masterName: "ApplicationType",
@@ -80,7 +87,8 @@ export const configs = [
         populators: {
           name: "applicationType",
           optionsKey: "type",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           mdmsConfig: {
             masterName: "ApplicationType",
             moduleName: "Application",
@@ -97,6 +105,7 @@ export const configs = [
         populators: {
           name: "ORDER",
           optionsKey: "type",
+          styles: { maxWidth: "100%" },
           error: "required ",
         },
       },
@@ -183,7 +192,7 @@ export const configsRescheduleRequest = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -229,12 +238,13 @@ export const configsRescheduleRequest = [
       },
       {
         inline: true,
-        label: "HEARING_DATE",
+        label: "INITIAL_HEARING_DATE",
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
         populators: {
           name: "initialHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
         },
       },
       {
@@ -244,7 +254,12 @@ export const configsRescheduleRequest = [
         key: "reschedulingReason",
         type: "dropdown",
         populators: {
+          name: "reschedulingReason",
           optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "conflict",
@@ -269,15 +284,42 @@ export const configsRescheduleRequest = [
         type: "date",
         populators: {
           name: "changedHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -329,7 +371,7 @@ export const configsCheckoutRequest = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -375,12 +417,13 @@ export const configsCheckoutRequest = [
       },
       {
         inline: true,
-        label: "HEARING_DATE",
+        label: "INITIAL_HEARING_DATE",
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
         populators: {
           name: "initialHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
         },
       },
       {
@@ -390,7 +433,12 @@ export const configsCheckoutRequest = [
         key: "reschedulingReason",
         type: "dropdown",
         populators: {
+          name: "reschedulingReason",
           optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "conflict",
@@ -415,15 +463,41 @@ export const configsCheckoutRequest = [
         type: "date",
         populators: {
           name: "changedHearingDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "minTodayDateValidation",
+            },
+          },
         },
       },
+    ],
+  },
+  {
+    body: [
       {
-        inline: true,
-        label: "COMMENTS",
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "applicationDetails",
         isMandatory: true,
-        key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -475,7 +549,7 @@ export const configsExtensionSubmissionDeadline = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -531,6 +605,10 @@ export const configsExtensionSubmissionDeadline = [
         populators: {
           name: "documentType",
           optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "DOCUMENT_TYPE_1",
@@ -575,7 +653,12 @@ export const configsExtensionSubmissionDeadline = [
         key: "extensionReason",
         type: "dropdown",
         populators: {
+          name: "extensionReason",
           optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
           options: [
             {
               code: "conflict",
@@ -662,7 +745,7 @@ export const configsProductionOfDocuments = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -726,12 +809,13 @@ export const configsProductionOfDocuments = [
               name: "documents",
               // documentSubText: "PRODUCED_DOCUMENTS",
               documentHeader: "PRODUCED_DOCUMENTS",
+              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
               isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_50",
+              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
               headerClassName: "dristi-font-bold",
             },
           ],
@@ -755,12 +839,13 @@ export const configsProductionOfDocuments = [
               name: "documents",
               // documentSubText: "PRODUCED_DOCUMENTS",
               documentHeader: "REASON_FOR_DOCUMENT_SUBMISSION",
+              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
               isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_50",
+              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
               headerClassName: "dristi-font-bold",
             },
           ],
@@ -772,11 +857,27 @@ export const configsProductionOfDocuments = [
     body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -828,7 +929,7 @@ export const configsCaseWithdrawal = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -883,7 +984,10 @@ export const configsCaseWithdrawal = [
         populators: {
           name: "reasonForWithdrawal",
           optionsKey: "name",
-          error: "required",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          styles: { maxWidth: "100%" },
           options: [
             {
               code: "REASON_1",
@@ -896,13 +1000,33 @@ export const configsCaseWithdrawal = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -954,7 +1078,7 @@ export const configsCaseTransfer = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -1015,15 +1139,44 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "groundsForTransfer",
         type: "text",
-        populators: { name: "groundsForTransfer" },
+        populators: {
+          name: "groundsForTransfer",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1075,7 +1228,7 @@ export const configsSettlement = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -1120,14 +1273,6 @@ export const configsSettlement = [
         key: "representedBy",
         type: "text",
         populators: { name: "representedBy", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "REASON_FOR_SETTLEMENT",
-        isMandatory: true,
-        key: "reasonForSettlement",
-        type: "text",
-        populators: { name: "reasonForSettlement" },
       },
       {
         inline: true,
@@ -1187,7 +1332,7 @@ export const configsBailBond = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -1299,7 +1444,7 @@ export const configsSurety = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -1351,7 +1496,16 @@ export const configsSurety = [
         isMandatory: true,
         key: "nameOfSurety",
         type: "text",
-        populators: { name: "nameOfSurety" },
+        populators: {
+          name: "nameOfSurety",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
       {
         inline: true,
@@ -1359,7 +1513,16 @@ export const configsSurety = [
         isMandatory: true,
         key: "bailAmount",
         type: "text",
-        populators: { name: "bailAmount", validation: {} },
+        populators: {
+          name: "bailAmount",
+          error: "CS_VALID_AMOUNT_DECIMAL",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "twoDecimalNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1411,7 +1574,7 @@ export const configsBail = [
       },
       {
         inline: true,
-        label: "APPLICATION_DATE",
+        label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
         key: "applicationDate",
@@ -1473,12 +1636,13 @@ export const configsBail = [
               name: "documents",
               // documentSubText: "PRODUCED_DOCUMENTS",
               documentHeader: "LIST_OF_DOCUMENTS",
+              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["PDF", "JPEG"],
               isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_50",
+              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
               headerClassName: "dristi-font-bold",
             },
           ],
@@ -1489,20 +1653,54 @@ export const configsBail = [
   {
     body: [
       {
-        inline: true,
-        label: "REASON_FOR_BAIL",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "reasonForBail",
-        type: "textarea",
-        populators: { name: "reasonForBail" },
-      },
-      {
-        inline: true,
-        label: "COMMENTS",
         isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "REASON_FOR_BAIL",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1513,17 +1711,46 @@ export const configsOthers = [
     body: [
       {
         label: "APPLICATION_TITLE",
-        isMandatory: false,
+        isMandatory: true,
         key: "applicationTitle",
         type: "text",
-        populators: { name: "applicationTitle" },
+        populators: {
+          name: "applicationTitle",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
-        label: "DETAILS",
-        isMandatory: false,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "applicationDetails",
-        type: "textarea",
-        populators: { name: "applicationDetails" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "DETAILS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },

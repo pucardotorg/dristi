@@ -214,7 +214,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
         cases: {
           ...newcasedetails,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
             action,
@@ -280,9 +279,9 @@ function ViewCaseFile({ t, inViewCase = false }) {
   if (isLoading) {
     return <Loader />;
   }
-  if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
-    history.push("/digit-ui/employee/dristi/cases");
-  }
+  // if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
+  //   history.push("/digit-ui/employee/dristi/cases");
+  // }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
     litigentDetails: "CS_LITIGENT_DETAILS",

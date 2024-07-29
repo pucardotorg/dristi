@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService, Urls } from "../hooks/services";
 import { selectTaskType, taskTypes } from "../configs/HomeConfig";
-import { formatDate } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/CaseType";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const CaseWorkflowAction = {
@@ -16,14 +15,17 @@ export const CaseWorkflowAction = {
   ABANDON: "ABANDON",
 };
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
   const { t } = useTranslation();
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
-
+  const [searchCaseLoading, setSearchCaseLoading] = useState(false);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const todayDate = useMemo(() => new Date().getTime(), []);
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -31,6 +33,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
+          ...(filingNumber && { filingNumber: filingNumber }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
@@ -46,51 +49,178 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
 
   const getCaseDetailByFilingNumber = useCallback(
     async (payload) => {
+      setSearchCaseLoading(true);
       const caseData = await HomeService.customApiService(Urls.caseSearch, {
         tenantId,
         ...payload,
       });
+      setSearchCaseLoading(false);
       return caseData || {};
     },
     [tenantId]
   );
-  const handleCreateOrder = (cnrNumber, filingNumber, caseId) => {
-    let reqBody = {
-      order: {
-        createdDate: formatDate(new Date()),
-        tenantId,
-        cnrNumber,
-        filingNumber: filingNumber,
-        statuteSection: {
-          tenantId,
-        },
-        orderType: "REFERRAL_CASE_TO_ADR",
-        status: "",
-        isActive: true,
-        workflow: {
-          action: CaseWorkflowAction.SAVE_DRAFT,
-          comments: "Creating order",
-          assignes: null,
-          rating: null,
-          documents: [{}],
-        },
-        documents: [],
-        additionalDetails: {},
-      },
-    };
 
-    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
-      .then(() => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
-      })
-      .catch((err) => {});
-  };
+  const getApplicationDetail = useCallback(
+    async (applicationNumber) => {
+      setSearchCaseLoading(true);
+      const applicationData = await HomeService.customApiService(Urls.applicationSearch, {
+        criteria: {
+          filingNumber,
+          tenantId,
+          applicationNumber,
+        },
+        tenantId,
+      });
+      setSearchCaseLoading(false);
+      return applicationData?.applicationList?.[0] || {};
+    },
+    [filingNumber, tenantId]
+  );
+
+  const getOrderDetail = useCallback(
+    async (orderNumber) => {
+      setSearchCaseLoading(true);
+      const orderData = await HomeService.customApiService(Urls.orderSearch, {
+        criteria: {
+          filingNumber,
+          tenantId,
+          orderNumber,
+        },
+        tenantId,
+      });
+      setSearchCaseLoading(false);
+      return orderData?.list?.[0] || {};
+    },
+    [filingNumber, tenantId]
+  );
+
+  const handleReviewOrder = useCallback(
+    async ({ filingNumber, caseId, referenceId }) => {
+      const orderDetails = await getOrderDetail();
+    },
+    [getOrderDetail]
+  );
+
+  const handleReviewSubmission = useCallback(
+    async ({ filingNumber, caseId, referenceId }) => {
+      const getDate = (value) => {
+        const date = new Date(value);
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+        const year = date.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        return formattedDate;
+      };
+      const applicationDetails = await getApplicationDetail(referenceId);
+      const defaultObj = {
+        status: applicationDetails?.status,
+        details: {
+          applicationType: applicationDetails?.applicationType,
+          applicationSentOn: getDate(parseInt(applicationDetails?.auditDetails?.createdTime)),
+          sender: applicationDetails?.owner,
+          additionalDetails: applicationDetails?.additionalDetails,
+          applicationId: applicationDetails?.id,
+          auditDetails: applicationDetails?.auditDetails,
+        },
+        applicationContent: null,
+        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        applicationList: applicationDetails,
+      };
+
+      const docObj = applicationDetails?.documents?.map((doc) => {
+        return {
+          status: applicationDetails?.status,
+          details: {
+            applicationType: applicationDetails?.applicationType,
+            applicationSentOn: getDate(parseInt(applicationDetails?.auditDetails?.createdTime)),
+            sender: applicationDetails?.owner,
+            additionalDetails: applicationDetails?.additionalDetails,
+            applicationId: applicationDetails?.id,
+            auditDetails: applicationDetails?.auditDetails,
+          },
+          applicationContent: {
+            tenantId: applicationDetails?.tenantId,
+            fileStoreId: doc.fileStore,
+            id: doc.id,
+            documentType: doc.documentType,
+            documentUid: doc.documentUid,
+            additionalDetails: doc.additionalDetails,
+          },
+          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          applicationList: applicationDetails,
+        };
+      }) || [defaultObj];
+
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`, {
+        applicationDocObj: docObj,
+      });
+    },
+    [getApplicationDetail, history, userType]
+  );
+
+  const handleCreateOrder = useCallback(
+    async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
+      let reqBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: orderType,
+          status: "",
+          isActive: true,
+          workflow: {
+            action: CaseWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                code: orderType,
+                type: orderType,
+                name: `ORDER_TYPE_${orderType}`,
+              },
+              refApplicationId: referenceId,
+            },
+          },
+        },
+      };
+      try {
+        const res = await HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId });
+        HomeService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: "Order Created",
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${referenceId}`,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: null,
+            filingNumber: filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+      } catch (error) {}
+    },
+    [history, tenantId]
+  );
 
   const fetchPendingTasks = useCallback(
     async function () {
@@ -105,24 +235,42 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
       allPendingTaskCaseDetails?.criteria?.forEach((element) => {
         pendingTaskToCaseDetailMap.set(element?.filingNumber, element?.responseList?.[0]);
       });
+
+      const getCustomFunction = {
+        handleCreateOrder,
+        handleReviewSubmission,
+        handleReviewOrder,
+      };
+
       const tasks = await Promise.all(
         pendingTaskActionDetails?.map(async (data) => {
           const filingNumber = data?.fields?.find((field) => field.key === "filingNumber")?.value || "";
+          const cnrNumber = data?.fields?.find((field) => field.key === "cnrNumber")?.value || "";
           const caseDetail = pendingTaskToCaseDetailMap.get(filingNumber);
           const status = data?.fields?.find((field) => field.key === "status")?.value;
           const dueInSec = data?.fields?.find((field) => field.key === "businessServiceSla")?.value;
+          const stateSla = data?.fields?.find((field) => field.key === "stateSla")?.value;
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
+          const actionName = data?.fields?.find((field) => field.key === "name")?.value;
+          const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
+          const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
+          const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
+          const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
+          const dayCount = stateSla ? Number(stateSla) - todayDate : dueInSec ? Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24))) : null;
+          const additionalDetails = pendingTaskActions?.[status]?.additionalDetailsKeys?.reduce((result, current) => {
+            result[current] = data?.fields?.find((field) => field.key === `additionalDetails.${current}`)?.value;
+            return result;
+          }, {});
           const searchParams = new URLSearchParams();
-          const dayCount = Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24)));
           pendingTaskActions?.[status]?.redirectDetails?.params?.forEach((item) => {
-            searchParams.set(item?.key, item?.value ? caseDetail?.[item?.value] : item?.defaultValue);
+            searchParams.set(item?.key, item?.value ? defaultObj?.[item?.value] : item?.defaultValue);
           });
-          const redirectUrl = `/${window?.contextPath}/${userInfoType}${
-            pendingTaskActions?.[status]?.redirectDetails?.url
-          }?${searchParams.toString()}`;
+          const redirectUrl = isCustomFunction
+            ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
+            : `/${window?.contextPath}/${userType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
           return {
-            actionName: pendingTaskActions?.[status]?.actionName,
+            actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
@@ -130,19 +278,30 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
             dayCount,
             isCompleted,
             redirectUrl,
+            params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
+            isCustomFunction,
           };
         })
       );
       setPendingTasks(tasks);
     },
-    [getCaseDetailByFilingNumber, isLoading, pendingTaskActionDetails, taskTypeCode, userInfoType]
+    [
+      getCaseDetailByFilingNumber,
+      handleCreateOrder,
+      handleReviewOrder,
+      handleReviewSubmission,
+      isLoading,
+      pendingTaskActionDetails,
+      taskTypeCode,
+      todayDate,
+      userType,
+    ]
   );
 
   useEffect(() => {
     fetchPendingTasks();
   }, [fetchPendingTasks]);
 
-  console.log("pendingTasks", pendingTasks, pendingTaskActionDetails);
   const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
     () => ({
       pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
@@ -178,20 +337,30 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, userInfoType 
           />
         </LabelFieldPair>
       </div>
-      <div className="task-section">
-        <PendingTaskAccordion
-          pendingTasks={pendingTaskDataInWeek}
-          accordionHeader={"Complete this week"}
-          t={t}
-          totalCount={pendingTaskDataInWeek?.length}
-          isHighlighted={true}
-          isAccordionOpen={true}
-        />
-      </div>
-      <div className="task-section">
-        <PendingTaskAccordion pendingTasks={allOtherPendingTask} accordionHeader={"All other tasks"} t={t} totalCount={allOtherPendingTask?.length} />
-      </div>
-      <div className="task-section"></div>
+      {searchCaseLoading && <Loader />}
+      {!searchCaseLoading && (
+        <React.Fragment>
+          <div className="task-section">
+            <PendingTaskAccordion
+              pendingTasks={pendingTaskDataInWeek}
+              accordionHeader={"Complete this week"}
+              t={t}
+              totalCount={pendingTaskDataInWeek?.length}
+              isHighlighted={true}
+              isAccordionOpen={true}
+            />
+          </div>
+          <div className="task-section">
+            <PendingTaskAccordion
+              pendingTasks={allOtherPendingTask}
+              accordionHeader={"All other tasks"}
+              t={t}
+              totalCount={allOtherPendingTask?.length}
+            />
+          </div>
+          <div className="task-section"></div>
+        </React.Fragment>
+      )}
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { ordersService } from "../../../../../orders/src/hooks/services";
 import CommentComponent from "../../../components/CommentComponent";
 import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
@@ -10,23 +9,25 @@ import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { Urls } from "../../../hooks";
 import { RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 import DocViewerWrapper from "../docViewerWrapper";
 
-const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast }) => {
+const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
   const history = useHistory();
-  const filingNumber = caseData.filingNumber;
-  const cnrNumber = caseData.cnrNumber;
+  const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
+  const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
-
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+  const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.userName;
-  // console.log();
-
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -43,8 +44,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const hideSubmit = useMemo(() => {
-    return !userRoles.includes("JUDGE_ROLE") || userRoles.includes("CITIZEN");
-  }, [userRoles]);
+    return (
+      !userRoles.includes("JUDGE_ROLE") ||
+      userRoles.includes("CITIZEN") ||
+      ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+    );
+  }, [documentSubmission, userRoles]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -62,20 +67,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
 
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
-    {
-      Individual: {
-        userUuid: documentSubmission?.map((docSubmission) => docSubmission.details.sender),
-      },
-    },
-    { tenantId, limit: 10, offset: 0 },
-    "DRISTI",
-    "",
-    true
-  );
-
   const reqCreate = {
-    url: Urls.dristi.submissionsUpdate,
+    url: `/application/v1/update`,
     params: {},
     body: {},
     config: {
@@ -128,23 +121,32 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "APPROVE",
+      action: SubmissionWorkflowAction.APPROVE,
     },
   };
 
   const rejectApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
     workflow: {
       ...documentSubmission?.[0]?.applicationList?.workflow,
-      action: "ABANDON",
+      action: SubmissionWorkflowAction.REJECT,
     },
   };
 
   const applicationCommentsPayload = (newComment) => {
     return {
       ...documentSubmission[0]?.applicationList,
+      statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
       comment: documentSubmission[0]?.applicationList.comment
         ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
         : JSON.stringify([newComment]),
@@ -156,19 +158,21 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const onSuccess = async (result) => {
-    setShow(false);
-    const details = showToast({
+    showToast({
       isError: false,
       message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
     });
     counterUpdate();
+    handleBack();
   };
   const onError = async (result) => {
-    setShow(false);
-    const details = showToast({
-      isError: true,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
-    });
+    if (modalType === "Documents") {
+      showToast({
+        isError: true,
+        message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+      });
+    }
+    handleBack();
   };
 
   const counterUpdate = () => {
@@ -225,31 +229,40 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const handleAcceptApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: acceptApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: acceptApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const handleRejectApplication = async () => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
-      params: {},
-      body: { application: rejectApplicationPayload },
-      config: {
-        enable: true,
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: rejectApplicationPayload },
+        config: {
+          enable: true,
+        },
       },
-    });
-    counterUpdate();
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const submitCommentApplication = async (newComment) => {
-    // console.log(applicationCommentsPayload(newComment), comments);
     await mutation.mutate({
       url: Urls.dristi.submissionsUpdate,
       params: {},
@@ -261,48 +274,79 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     counterUpdate();
   };
 
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
   const handleEvidenceAction = async () => {
     await handleMarkEvidence();
   };
 
+  const getOrderTypes = (applicationType, type) => {
+    switch (applicationType) {
+      case "RE_SCHEDULE":
+        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "APPROVAL_RESCHEDULE_REQUEST";
+      case "WITHDRAWAL":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
+      case "TRANSFER":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "CASE_TRANSFER";
+      case "SETTLEMENT":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "SETTLEMENT";
+      case "BAIL_BOND":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+      case "SURETY":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+      case "EXTENSION_SUBMISSION_DEADLINE":
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+      default:
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
+    }
+  };
+
+  const getOrderActionName = (applicationType, type) => {
+    switch (applicationType) {
+      case "RE_SCHEDULE":
+        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      case "WITHDRAWAL":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
+      case "TRANSFER":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_CASE_TRANSFER";
+      case "SETTLEMENT":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_SETTLEMENT";
+      case "BAIL_BOND":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+      case "SURETY":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      case "EXTENSION_SUBMISSION_DEADLINE":
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+      default:
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
+    }
+  };
+
   const handleApplicationAction = async (generateOrder) => {
     try {
-      const formdata =
-        showConfirmationModal?.type === "reject"
-          ? {
-              orderType: {
-                code: "REJECT_VOLUNTARY_SUBMISSIONS",
-                type: "REJECT_VOLUNTARY_SUBMISSIONS",
-                name: "ORDER_TYPE_REJECT_VOLUNTARY_SUBMISSIONS",
-              },
-              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-            }
-          : {
-              orderType: {
-                code: "APPROVE_VOLUNTARY_SUBMISSIONS",
-                type: "APPROVE_VOLUNTARY_SUBMISSIONS",
-                name: "ORDER_TYPE_APPROVE_VOLUNTARY_SUBMISSIONS",
-              },
-              refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-            };
+      let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
+      const formdata = {
+        orderType: {
+          code: orderType,
+          type: orderType,
+          name: `ORDER_TYPE_${orderType}`,
+        },
+        refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
+        ...(orderType === "BAIL" && { bailType: { type: documentSubmission?.[0]?.applicationList?.applicationType } }),
+      };
       if (generateOrder) {
         const reqbody = {
           order: {
-            createdDate: formatDate(new Date()),
+            createdDate: new Date().getTime(),
             tenantId,
             cnrNumber,
             filingNumber,
             statuteSection: {
               tenantId,
             },
-            orderType: showConfirmationModal?.type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS",
+            orderType,
             status: "",
             isActive: true,
             workflow: {
@@ -325,15 +369,39 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       } else {
         if (showConfirmationModal.type === "reject") {
           await handleRejectApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
-          // create a pending task to create Order with applicationNumber as reference ID
         }
+        const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
+        DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: t(name),
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${documentSubmission?.[0]?.applicationList?.applicationNumber}`,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber,
+            filingNumber,
+            isCompleted: false,
+            stateSla: null,
+            additionalDetails: { orderType },
+            tenantId,
+          },
+        });
+        setShowSuccessModal(true);
         setShowConfirmationModal(null);
       }
     } catch (error) {}
+  };
+
+  const handleBack = () => {
+    if (modalType === "Submissions") {
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
+    } else {
+      setShow(false);
+    }
   };
 
   const handleSubmitComment = async (newComment) => {
@@ -342,14 +410,11 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     }
   };
 
-  console.log(modalType === "Documents" && documentSubmission[0]?.artifactList.isEvidence);
-
-  if (isLoading) return <div></div>;
   return (
     <React.Fragment>
       {!showConfirmationModal && !showSuccessModal && (
         <Modal
-          headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
+          headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={() => {
             modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
@@ -362,13 +427,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           formId="modal-action"
           headerBarMain={
             <Heading
-              label={t("Document Submission")}
+              label={t("DOCUMENT_SUBMISSION")}
               status={
                 modalType === "Documents"
                   ? documentSubmission?.[0]?.artifactList?.isEvidence
                     ? "Accepeted"
                     : "Action Pending"
-                  : documentSubmission?.[0]?.status
+                  : t(documentSubmission?.[0]?.status)
               }
               isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
             />
@@ -382,15 +447,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                   <div className="application-info">
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Application Type</h3>
+                        <h3>{t("APPLICATION_TYPE")}</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{docSubmission?.details?.applicationType}</h3>
+                        <h3>{t(docSubmission?.details?.applicationType)}</h3>
                       </div>
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Application Sent On</h3>
+                        <h3>{t("APPLICATION_SENT_ON")}</h3>
                       </div>
                       <div className="info-value">
                         <h3>{docSubmission.details.applicationSentOn}</h3>
@@ -398,15 +463,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Sender</h3>
+                        <h3>{t("SENDER")}</h3>
                       </div>
                       <div className="info-value">
-                        <h3>{`${data.Individual[index]?.name?.givenName} ${data.Individual[index]?.name?.familyName}`}</h3>
+                        <h3>{docSubmission.details.sender}</h3>
                       </div>
                     </div>
                     <div className="info-row">
                       <div className="info-key">
-                        <h3>Additional Details</h3>
+                        <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
                       </div>
                       <div className="info-value">
                         {/* <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3> */}
@@ -434,7 +499,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             {modalType === "Submissions" && (
               <div className="application-comment">
                 <div className="comment-section">
-                  <h1 className="comment-xyzoo">Comments</h1>
+                  <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
                   <div className="comment-main">
                     {comments?.map((comment, index) => (
                       <CommentComponent key={index} comment={comment} />
@@ -495,14 +560,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           isEvidence={documentSubmission?.[0].artifactList.isEvidence}
         />
       )}
-      {showSuccessModal && modalType === "Submissions" && (
-        <SubmissionSuccessModal
-          t={t}
-          handleBack={() => {
-            setShow(false);
-          }}
-        />
-      )}
+      {showSuccessModal && modalType === "Submissions" && <SubmissionSuccessModal t={t} handleBack={handleBack} />}
     </React.Fragment>
   );
 };

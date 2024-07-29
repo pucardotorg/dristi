@@ -295,6 +295,9 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+
+  const prevCaseDetails = useMemo(() => structuredClone(caseDetails), [caseDetails]);
+
   const scrutinyObj = useMemo(() => {
     return caseDetails?.additionalDetails?.scrutiny?.data || {};
   }, [caseDetails]);
@@ -1418,6 +1421,7 @@ function EFilingCases({ path }) {
       updateCaseDetails({
         isCompleted: true,
         caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+        prevCaseDetails: prevCaseDetails,
         formdata,
         pageConfig,
         selected,
@@ -1457,7 +1461,17 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId, setErrorCaseDetails })
+    updateCaseDetails({
+      caseDetails,
+      prevCaseDetails: prevCaseDetails,
+      formdata,
+      setFormDataValue: setFormDataValue.current,
+      pageConfig,
+      selected,
+      setIsDisabled,
+      tenantId,
+      setErrorCaseDetails,
+    })
       .then(() => {
         refetchCaseData().then(() => {
           const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -1509,7 +1523,9 @@ function EFilingCases({ path }) {
     updateCaseDetails({
       isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+      prevCaseDetails: prevCaseDetails,
       formdata,
+      setFormDataValue: setFormDataValue.current,
       pageConfig,
       selected,
       setIsDisabled,
@@ -1550,7 +1566,6 @@ function EFilingCases({ path }) {
                 caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
               }`) ||
             caseDetails?.caseTitle,
-          filingDate: formatDate(new Date()),
           courtId: data?.court?.code,
           workflow: {
             ...caseDetails?.workflow,
@@ -1874,7 +1889,6 @@ function EFilingCases({ path }) {
                     cases: {
                       ...caseDetails,
                       litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
-                      filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
                         action: "DELETE_DRAFT",
@@ -1925,7 +1939,6 @@ function EFilingCases({ path }) {
                     cases: {
                       ...caseDetails,
                       litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
-                      filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
                         action: "SAVE_DRAFT",

@@ -19,6 +19,9 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
 
+const stateSla = {
+  SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
+};
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const history = useHistory();
@@ -28,9 +31,11 @@ function CaseFileAdmission({ t, path }) {
   const [submitModalInfo, setSubmitModalInfo] = useState(null);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const location = useLocation();
+  const todayDate = new Date().getTime();
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [caseAdmitLoader, setCaseADmitLoader] = useState(false);
   const { data: caseFetchResponse, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -81,7 +86,6 @@ function CaseFileAdmission({ t, path }) {
         cases: {
           ...newcasedetails,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
             action,
@@ -169,9 +173,97 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 1 });
     });
   };
-  const handleAdmitCase = () => {
+
+  const fetchBasicUserInfo = async () => {
+    const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          userUuid: [caseDetails?.auditDetails?.createdBy],
+        },
+      },
+      { tenantId, limit: 1000, offset: 0 },
+      "",
+      caseDetails?.auditDetails?.createdBy
+    );
+
+    return individualData?.Individual?.[0]?.individualId;
+  };
+
+  const handleAdmitCase = async () => {
+    setCaseADmitLoader(true);
+    const individualId = await fetchBasicUserInfo();
+    let documentList = [];
+    documentList = [
+      ...documentList,
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.bouncedChequeFileUpload?.document),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.depositChequeFileUpload?.document),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.returnMemoFileUpload?.document),
+      ...caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((form) => form?.data?.debtLiabilityFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.legalDemandNoticeFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfAcknowledgmentFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfDispatchFileUpload?.document),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfReplyFileUpload?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.memorandumOfComplaint?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.prayerForRelief?.document),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.swornStatement?.document),
+      ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((form) => form?.data?.inquiryAffidavitFileUpload?.document),
+      ...caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((form) => form?.data?.vakalatnamaFileUpload?.document),
+    ].flat();
+
+    await Promise.all(
+      documentList
+        ?.filter((data) => data)
+        ?.map(async (data) => {
+          await DRISTIService.createEvidence({
+            artifact: {
+              artifactType: "DOCUMENTARY",
+              sourceType: "COMPLAINANT",
+              sourceID: individualId,
+              caseId: caseDetails?.id,
+              filingNumber: caseDetails?.filingNumber,
+              tenantId,
+              comments: [],
+              file: {
+                documentType: data?.fileType || data?.documentType,
+                fileStore: data?.fileStore,
+                fileName: data?.fileName,
+                documentName: data?.documentName,
+              },
+              workflow: {
+                action: "TYPE DEPOSITION",
+                documents: [
+                  {
+                    documentType: data?.documentType,
+                    fileName: data?.fileName,
+                    documentName: data?.documentName,
+                    fileStoreId: data?.fileStore,
+                  },
+                ],
+              },
+            },
+          });
+        })
+    );
+
     updateCaseDetails("ADMIT", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
+      setCaseADmitLoader(false);
+      DRISTIService.customApiService(Urls.dristi.pendingTask, {
+        pendingTask: {
+          name: "Schedule Hearing",
+          entityType: "hearing",
+          referenceId: caseDetails?.filingNumber,
+          status: "SCHEDULE_HEARING",
+          assignedTo: [],
+          assignedRole: ["JUDGE_ROLE"],
+          cnrNumber: null,
+          filingNumber: caseDetails?.filingNumber,
+          isCompleted: false,
+          stateSla: todayDate + stateSla.SCHEDULE_HEARING,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
     });
   };
   const scheduleHearing = async ({ purpose, participant, date }) => {
@@ -251,7 +343,15 @@ function CaseFileAdmission({ t, path }) {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: {},
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              code: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+              type: OrderTypes.SCHEDULE_OF_HEARING_DATE,
+              name: `ORDER_TYPE_${OrderTypes.SCHEDULE_OF_HEARING_DATE}`,
+            },
+          },
+        },
       },
     };
     DRISTIService.customApiService(Urls.dristi.ordersCreate, reqBody, { tenantId })
@@ -359,6 +459,7 @@ function CaseFileAdmission({ t, path }) {
                   updatedConfig={updatedConfig}
                   tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
+                  caseAdmitLoader={caseAdmitLoader}
                 ></AdmissionActionModal>
               )}
             </div>

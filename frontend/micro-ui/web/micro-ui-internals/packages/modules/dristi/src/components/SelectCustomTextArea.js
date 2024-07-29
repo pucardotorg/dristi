@@ -62,13 +62,13 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       <div className="custom-text-area-main-div" style={input?.style}>
         <div className="custom-text-area-header-div">
           {input.textAreaHeader && (
-            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px" }}>
+            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px 0px 8px" }}>
               {t(input?.textAreaHeader)}
             </h1>
           )}
           {!config?.disableScrutinyHeader && (
             <span>
-              <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+              <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px 0px 8px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
               </p>

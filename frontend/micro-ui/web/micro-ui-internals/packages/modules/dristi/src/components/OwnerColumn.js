@@ -16,7 +16,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     details: {
       applicationType: rowData?.applicationType,
       applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
-      sender: rowData?.createdBy,
+      sender: rowData?.owner,
       additionalDetails: rowData?.additionalDetails,
       applicationId: rowData?.id,
       auditDetails: rowData?.auditDetails,
@@ -31,7 +31,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       details: {
         applicationType: rowData?.applicationType,
         applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
-        sender: rowData?.createdBy,
+        sender: rowData?.owner,
         additionalDetails: rowData?.additionalDetails,
         applicationId: rowData?.id,
         auditDetails: rowData?.auditDetails,
@@ -49,10 +49,28 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     };
   }) || [defaultObj];
 
+  const showDoc =
+    rowData?.status === "PENDINGPAYMENT" ||
+    rowData?.status === "PENDINGREVIEW" ||
+    rowData?.status === "PENDINGAPPROVAL" ||
+    rowData?.status === "PENDINGESIGN" ||
+    rowData?.status === "COMPLETED";
+
   return (
     <React.Fragment>
-      <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
-        {showAsHeading ? <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{value}</div> : <FactCheckIcon />}
+      <div className="fack-check-icon" onClick={() => (showDoc ? colData?.clickFunc(docObj) : null)}>
+        {showAsHeading ? (
+          <div
+            style={{
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            {t(value)}
+          </div>
+        ) : (
+          showDoc && <FactCheckIcon />
+        )}
       </div>
     </React.Fragment>
   );

@@ -97,7 +97,7 @@ export const UICustomizations = {
             action: (history) => {
               const requestBody = {
                 order: {
-                  createdDate: formatDate(new Date()),
+                  createdDate: new Date().getTime(),
                   tenantId: Digit.ULBService.getCurrentTenantId(),
                   cnrNumber: row.cnrNumber,
                   filingNumber: row.filingNumber,
