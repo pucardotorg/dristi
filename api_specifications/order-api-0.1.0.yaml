@@ -235,7 +235,7 @@ components:
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
       type: object
-      required: [ tenantId, createdDate, orderType, status, isActive ]
+      required: [ tenantId, createdDate, orderType, isActive ]
       properties:
         id:
           type: string
