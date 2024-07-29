@@ -66,6 +66,7 @@ public class HearingRepository {
                 log.info("Post Pagination Query :: {}", hearingQuery);
             }
             if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(HEARING_SEARCH_EXCEPTION, "Arg and ArgType size mismatch");
             }
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
@@ -85,6 +86,7 @@ public class HearingRepository {
             hearingDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtListArgDoc);
             log.info("Final document query: {}", hearingDocumentQuery);
             if(preparedStmtListDoc.size()!=preparedStmtListArgDoc.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtListArgDoc.size());
                 throw new CustomException(HEARING_SEARCH_EXCEPTION, "Arg and ArgType size mismatch for document search");
             }
             Map<UUID, List<Document>> hearingDocumentMap = jdbcTemplate.query(hearingDocumentQuery, preparedStmtListDoc.toArray(),preparedStmtListArgDoc.stream().mapToInt(Integer::intValue).toArray(), hearingDocumentRowMapper);

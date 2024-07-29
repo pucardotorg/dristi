@@ -104,6 +104,7 @@ public class CaseRepository {
                     casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination(),preparedStmtArgList);
                 }
                 if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                    log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                     throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
                 }
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray() ,rowMapper);

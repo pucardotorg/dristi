@@ -62,6 +62,7 @@ public class OrderRepository {
                 orderQuery = queryBuilder.addPaginationQuery(orderQuery, pagination, preparedStmtList, preparedStmtArgList);
             }
             if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(ORDER_SEARCH_EXCEPTION, "Arg and ArgType size mismatch");
             }
             List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
@@ -85,6 +86,7 @@ public class OrderRepository {
             statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt,preparedStmtStSecArgList);
             log.info("Final statue and sections query :: {}", statueAndSectionQuery);
             if(preparedStmtListSt.size()!=preparedStmtStSecArgList.size()){
+                log.info("Statute Arg size :: {}, and ArgType size :: {}", preparedStmtListSt.size(),preparedStmtStSecArgList.size());
                 throw new CustomException(ORDER_SEARCH_EXCEPTION, "Arg and ArgType size mismatch for statute ");
             }
             Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), preparedStmtStSecArgList.stream().mapToInt(Integer::intValue).toArray(),statuteSectionRowMapper);
@@ -102,6 +104,7 @@ public class OrderRepository {
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtDocArgList);
             log.info("Final document query :: {}", documentQuery);
             if(preparedStmtListDoc.size()!=preparedStmtDocArgList.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtDocArgList.size());
                 throw new CustomException(ORDER_SEARCH_EXCEPTION, "Arg and ArgType size mismatch for document search");
             }
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtDocArgList.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);

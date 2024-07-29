@@ -56,6 +56,7 @@ public class ApplicationRepository {
                 applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
             }
             if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch");
             }
             List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
@@ -79,6 +80,7 @@ public class ApplicationRepository {
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
             if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtArgListDoc.size());
                 throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch for document search");
             }
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(),preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);

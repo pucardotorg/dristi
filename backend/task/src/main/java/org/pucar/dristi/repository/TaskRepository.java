@@ -59,6 +59,7 @@ public class TaskRepository {
             String taskQuery = "";
             taskQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList,preparedStmtArgList);
             if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(SEARCH_TASK_ERR, "Args and ArgTypes size mismatch");
             }
             log.info("Final Task query :: {}", taskQuery);
@@ -79,6 +80,7 @@ public class TaskRepository {
             amountQuery = queryBuilder.getAmountSearchQuery(ids, preparedStmtAm, preparedStmtArgAm);
             log.info("Final Amount query :: {}", amountQuery);
             if(preparedStmtAm.size()!=preparedStmtArgAm.size()){
+                log.info("Amount Arg size :: {}, and ArgType size :: {}", preparedStmtAm.size(),preparedStmtArgAm.size());
                 throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for amount search");
             }
             Map<UUID, Amount> amountMap = jdbcTemplate.query(amountQuery, preparedStmtAm.toArray(),preparedStmtArgAm.stream().mapToInt(Integer::intValue).toArray(), amountRowMapper);
@@ -91,6 +93,7 @@ public class TaskRepository {
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtDc,preparedStmtArgDc);
             log.info("Final document query :: {}", documentQuery);
             if(preparedStmtDc.size()!=preparedStmtArgDc.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtDc.size(),preparedStmtArgDc.size());
                 throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for document search");
             }
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtDc.toArray(),preparedStmtArgDc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);

@@ -67,6 +67,7 @@ public class EvidenceRepository {
             }
 
             if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch");
             }
             List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(),evidenceRowMapper);
@@ -85,6 +86,7 @@ public class EvidenceRepository {
             String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom, preparedStmtArgListCom);
             log.info("Final comment query: {}", commentQuery);
             if(preparedStmtListCom.size()!=preparedStmtArgListCom.size()){
+                log.info("Comment Arg size :: {}, and ArgType size :: {}", preparedStmtListCom.size(),preparedStmtArgListCom.size());
                 throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for comment search");
             }
             Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), preparedStmtArgListCom.stream().mapToInt(Integer::intValue).toArray(), commentRowMapper);
@@ -100,6 +102,7 @@ public class EvidenceRepository {
             String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc, preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
             if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtArgListDoc.size());
                 throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for document search");
             }
             Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
