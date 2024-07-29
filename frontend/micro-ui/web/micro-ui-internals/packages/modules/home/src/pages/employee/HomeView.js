@@ -2,13 +2,16 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
+import { rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { HomeService, Urls } from "../../hooks/services";
 import LitigantHomePage from "./LitigantHomePage";
+import { TabLitigantSearchConfig } from "../../configs/LitigantHomeConfig";
+import ReviewCard from "../../components/ReviewCard";
+import { InboxIcon, DocumentIcon } from "../../../homeIcon";
 
 const defaultSearchValues = {
   filingNumber: "",
@@ -39,6 +42,7 @@ const HomeView = () => {
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState(state?.taskType || { code: "case", name: "Case" });
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
+  const isCourtRoomRole = useMemo(() => roles?.includes("COURT_ROOM"), [roles]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
@@ -242,6 +246,21 @@ const HomeView = () => {
     history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
   }
 
+  const data = [
+    {
+      logo: <InboxIcon />,
+      title: "Review summons, notices & warrants",
+      pendingAction: 40,
+      actionLink: "/review-summon-notices-warrants",
+    },
+    {
+      logo: <DocumentIcon />,
+      title: "View issued orders",
+      pendingAction: 11,
+      actionLink: "/view-issued-orders",
+    },
+  ];
+
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
@@ -249,7 +268,10 @@ const HomeView = () => {
       ) : (
         <React.Fragment>
           <div className="left-side">
-            <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
+            <div className="home-header-wrapper">
+              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
+              {isCourtRoomRole && <ReviewCard data={data} />}
+            </div>
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>
