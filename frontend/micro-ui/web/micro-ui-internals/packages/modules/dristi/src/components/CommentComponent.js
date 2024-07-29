@@ -9,9 +9,11 @@ function CommentComponent({ key, comment }) {
         </div>
       </div>
       <div className="comment-details">
-        <h3 className="comment-header">
-          {comment?.author} <br />
-          <span className="times-stamp">{comment?.timestamp} </span>
+        <h3 className="comment-header" style={{ marginTop: "5px" }}>
+          {comment?.author}
+          <span className="times-stamp" style={{ color: "#77787B", marginLeft: "10px" }}>
+            {comment?.timestamp}{" "}
+          </span>
         </h3>
         <p className="comment-text">{comment?.text}</p>
       </div>

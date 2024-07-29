@@ -128,7 +128,7 @@ export const UICustomizations = {
         case "Case Name":
           return (
             <span className="case-name-on-hover">
-              {row?.caseTitle ? (row?.caseTitle?.trim().endsWith("vs") ? `${row?.caseTitle} _______` : row?.caseTitle) : "CASE_UNTITLED"}
+              {row?.caseTitle ? (row?.caseTitle?.trim().endsWith("vs") ? `${row?.caseTitle} _______` : row?.caseTitle) : t("CASE_UNTITLED")}
             </span>
           );
         case "Case Type":
