@@ -120,6 +120,10 @@ public class ServiceConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 
+	//	Models for encryption decryption in MDMS
+	public static final String COURT_CASE_ENCRYPT = "CourtCase";
+	public static final String CASE_DECRYPT_SELF = "CaseDecryptSelf";
+	public static final String CASE_DECRYPT_OTHER = "CaseDecryptOther";
 	public static final String ENCRYPTION_SERVICE_ERROR = "Error occurred while calling Encryption Service";
 
 	public static final String PURPOSE = "purpose";

@@ -69,11 +69,11 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(body);
 
-            body.setCases(encryptionDecryptionUtil.encryptObject(body.getCases(), "CourtCase", CourtCase.class));
+            body.setCases(encryptionDecryptionUtil.encryptObject(body.getCases(), COURT_CASE_ENCRYPT, CourtCase.class));
 
             producer.push(config.getCaseCreateTopic(), body);
 
-            CourtCase cases = encryptionDecryptionUtil.decryptObject(body.getCases(), "CaseDecryptSelf",CourtCase.class,body.getRequestInfo());
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(body.getCases(), CASE_DECRYPT_SELF,CourtCase.class,body.getRequestInfo());
             cases.setAccessCode(null);
 
             return cases;
