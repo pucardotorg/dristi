@@ -167,9 +167,12 @@ public class OrderQueryBuilder {
         }
     }
 
-    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList, List<Integer> preparedStatementArgList) {
         preparedStatementList.add(pagination.getLimit());
+        preparedStatementArgList.add(Types.DOUBLE);
+
         preparedStatementList.add(pagination.getOffSet());
+        preparedStatementArgList.add(Types.DOUBLE);
         return query + " LIMIT ? OFFSET ?";
     }
 

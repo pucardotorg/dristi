@@ -694,7 +694,7 @@ class CaseQueryBuilderTest {
         pagination.setOffSet(0d);
         List<Object> prepareList = new ArrayList<>();
 
-        String paginatedQuery = queryBuilder.addPaginationQuery(query,prepareList, pagination);
+        String paginatedQuery = queryBuilder.addPaginationQuery(query,prepareList, pagination, new ArrayList<>());
 
         String expectedQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111' LIMIT ? OFFSET ?";
 

@@ -1,18 +1,17 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * Holds a logical grouping of cases
@@ -24,20 +23,22 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseGroup   {
-        @JsonProperty("id")
+public class CaseGroup {
+	@JsonProperty("id")
 
-        @Size(min=2,max=128)         private String id = null;
+	@Size(min = 2, max = 128)
+	private String id = null;
 
-        @JsonProperty("caseIds")
-          @NotNull
+	@JsonProperty("caseIds")
+	@NotNull
 
-        @Size(min=1)         private List<String> caseIds = new ArrayList<>();
+	@Size(min = 1)
+	private List<String> caseIds = new ArrayList<>();
 
 
-        public CaseGroup addCaseIdsItem(String caseIdsItem) {
-        this.caseIds.add(caseIdsItem);
-        return this;
-        }
+	public CaseGroup addCaseIdsItem(String caseIdsItem) {
+		this.caseIds.add(caseIdsItem);
+		return this;
+	}
 
 }

@@ -58,9 +58,10 @@ class HearingQueryBuilderTest {
         String cnrNumber = "CNR123";
         String applicationNumber = "APP456";
         String hearingId = "HEARING789";
+        String hearingType = "type1";
         String filingNumber = "FILE123";
         String tenantId = "tenant1";
-
+        String attendeeIndividualId = "Ind-01";
         HearingCriteria criteria = HearingCriteria.builder()
                 .cnrNumber(cnrNumber)
                 .applicationNumber(applicationNumber)
@@ -69,6 +70,8 @@ class HearingQueryBuilderTest {
                 .tenantId(tenantId)
                 .fromDate(System.currentTimeMillis())
                 .toDate(System.currentTimeMillis())
+                .hearingType(hearingType)
+                .attendeeIndividualId(attendeeIndividualId)
                 .build();
 
         // Act
@@ -83,12 +86,18 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
         assertTrue(query.contains("AND startTime <= ?"));
-        assertEquals(7, preparedStmtList.size());
+        assertTrue(query.contains("AND hearingtype = ?"));
+        assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
+        assertEquals(9, preparedStmtList.size());
         assertEquals("[\"CNR123\"]", preparedStmtList.get(0));
         assertEquals("[\"APP456\"]", preparedStmtList.get(1));
         assertEquals("HEARING789", preparedStmtList.get(2));
-        assertEquals("[\"FILE123\"]", preparedStmtList.get(3));
-        assertEquals("tenant1", preparedStmtList.get(4));
+        assertEquals(hearingType, preparedStmtList.get(3));
+        assertEquals("[\"FILE123\"]", preparedStmtList.get(4));
+        assertEquals("tenant1", preparedStmtList.get(5));
+        assertEquals(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(6));
+        assertEquals(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(7));
+        assertEquals(attendeeIndividualId, preparedStmtList.get(8));
     }
 
     @Test

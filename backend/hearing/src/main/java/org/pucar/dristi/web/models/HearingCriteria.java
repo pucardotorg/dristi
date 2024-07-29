@@ -37,4 +37,7 @@ public class HearingCriteria {
     @JsonProperty("toDate")
     private Long toDate;
 
+    @JsonProperty("attendeeIndividualId")
+    private String attendeeIndividualId;
+
 }

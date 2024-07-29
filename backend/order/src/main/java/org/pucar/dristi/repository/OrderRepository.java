@@ -60,7 +60,7 @@ public class OrderRepository {
                 Integer totalRecords = getTotalCountOrders(orderQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 pagination.setTotalCount(Double.valueOf(totalRecords));
-                orderQuery = queryBuilder.addPaginationQuery(orderQuery, pagination, preparedStmtList);
+                orderQuery = queryBuilder.addPaginationQuery(orderQuery, pagination, preparedStmtList, preparedStmtArgList);
             }
 
             List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
