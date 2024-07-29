@@ -1,12 +1,10 @@
 package org.pucar.dristi.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Artifact;
-import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,44 +13,33 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_SEARCH_QUERY_EXCEPTION;
 
 @Slf4j
 @Repository
-public class EvidenceRepository {
+public class    EvidenceRepository {
 
     private final EvidenceQueryBuilder queryBuilder;
     private final JdbcTemplate jdbcTemplate;
     private final EvidenceRowMapper evidenceRowMapper;
-    private final DocumentRowMapper documentRowMapper;
-    private final CommentRowMapper commentRowMapper;
 
     @Autowired
     public EvidenceRepository(
             EvidenceQueryBuilder queryBuilder,
             JdbcTemplate jdbcTemplate,
-            EvidenceRowMapper evidenceRowMapper,
-            DocumentRowMapper documentRowMapper,
-            CommentRowMapper commentRowMapper
+            EvidenceRowMapper evidenceRowMapper
+
     ) {
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.evidenceRowMapper = evidenceRowMapper;
-        this.documentRowMapper = documentRowMapper;
-        this.commentRowMapper = commentRowMapper;
     }
 
     public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Integer> preparedStmtArgList = new ArrayList<>();
-            List<Object> preparedStmtListCom = new ArrayList<>();
-            List<Integer> preparedStmtArgListCom = new ArrayList<>();
-            List<Object> preparedStmtListDoc = new ArrayList<>();
-            List<Integer> preparedStmtArgListDoc = new ArrayList<>();
 
             // Artifact query building
             String artifactQuery = queryBuilder.getArtifactSearchQuery(preparedStmtList,preparedStmtArgList,evidenceSearchCriteria);
@@ -80,38 +67,6 @@ public class EvidenceRepository {
             }
             if (artifactIds.isEmpty()) {
                 return artifactList;
-            }
-
-            // Fetch associated comments
-            String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom, preparedStmtArgListCom);
-            log.info("Final comment query: {}", commentQuery);
-            if(preparedStmtListCom.size()!=preparedStmtArgListCom.size()){
-                log.info("Comment Arg size :: {}, and ArgType size :: {}", preparedStmtListCom.size(),preparedStmtArgListCom.size());
-                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for comment search");
-            }
-            Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), preparedStmtArgListCom.stream().mapToInt(Integer::intValue).toArray(), commentRowMapper);
-            log.info("DB comment map :: {}", commentMap);
-
-            if (commentMap != null) {
-                artifactList.forEach(artifact -> {
-                    artifact.setComments(commentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                });
-            }
-
-            // Fetch associated documents
-            String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc, preparedStmtArgListDoc);
-            log.info("Final document query: {}", documentQuery);
-            if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
-                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtArgListDoc.size());
-                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for document search");
-            }
-            Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
-            log.info("DB document map :: {}", documentMap);
-
-            if (documentMap != null) {
-                artifactList.forEach(artifact -> {
-                    artifact.setFile(documentMap.get(UUID.fromString(String.valueOf(artifact.getId()))));
-                });
             }
 
             return artifactList;
