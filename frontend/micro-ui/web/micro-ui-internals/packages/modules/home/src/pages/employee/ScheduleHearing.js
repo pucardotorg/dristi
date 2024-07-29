@@ -232,7 +232,7 @@ function ScheduleHearing({
   };
 
   const handleClose = () => {
-    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "hearing", name: "Hearing" } });
+    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "case", name: "Case" } });
   };
 
   const handleSubmit = (data) => {
@@ -260,7 +260,9 @@ function ScheduleHearing({
         documents: [],
         additionalDetails: {
           formdata: {
-            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+              dateArr[0] < 9 ? `0${dateArr[0]}` : dateArr[0]
+            }`,
             hearingPurpose: data.purpose,
             orderType: {
               code: "SCHEDULE_OF_HEARING_DATE",
@@ -272,10 +274,27 @@ function ScheduleHearing({
       },
     };
     HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
-      .then((res) => {
+      .then(async (res) => {
+        await HomeService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: "Schedule Hearing",
+            entityType: "case",
+            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+            status: "SCHEDULE_HEARING",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: null,
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: true,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
         history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log("err", err);
+      });
   };
 
   if (isLoading) {
@@ -356,6 +375,7 @@ function ScheduleHearing({
             onSubmit={() => handleSubmit(scheduleHearingParams)}
             className="primary-label-btn select-participant-submit"
             label={t("GENERATE_ORDERS_LINK")}
+            disabled={!scheduleHearingParams?.date}
           ></SubmitBar>
         </div>
 
