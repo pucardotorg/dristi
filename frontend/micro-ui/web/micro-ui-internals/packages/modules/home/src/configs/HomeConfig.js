@@ -1695,6 +1695,14 @@ export const pendingTaskCaseActions = {
       ],
     },
   },
+  SCHEDULE_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
 };
 
 export const pendingTaskHearingActions = {
@@ -1779,7 +1787,7 @@ export const pendingTaskSubmissionWithResponseActions = {
   CREATE_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Mandatory Submission of Documents",
-    customFunction: "handleCreateOrder",
+    customFunction: "handleReviewOrder",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [
@@ -1813,6 +1821,18 @@ export const pendingTaskSubmissionWithResponseActions = {
 };
 
 export const pendingTaskSubmissionWithoutResponseActions = {
+  CREATE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Mandatory Submission of Documents",
+    customFunction: "handleReviewOrder",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
   MAKE_PAYMENT_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Payment for Submission",

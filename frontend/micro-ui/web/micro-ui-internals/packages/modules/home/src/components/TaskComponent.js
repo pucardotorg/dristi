@@ -14,6 +14,7 @@ export const CaseWorkflowAction = {
   ESIGN: "E-SIGN",
   ABANDON: "ABANDON",
 };
+const dayInMillisecond = 1000 * 3600 * 24;
 
 const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
@@ -102,9 +103,12 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
 
   const handleReviewOrder = useCallback(
     async ({ filingNumber, caseId, referenceId }) => {
-      const orderDetails = await getOrderDetail();
+      const orderDetails = await getOrderDetail(referenceId);
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`, {
+        orderObj: orderDetails,
+      });
     },
-    [getOrderDetail]
+    [getOrderDetail, history, userType]
   );
 
   const handleReviewSubmission = useCallback(
@@ -257,7 +261,11 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
-          const dayCount = stateSla ? Number(stateSla) - todayDate : dueInSec ? Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24))) : null;
+          const dayCount = stateSla
+            ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
+            : dueInSec
+            ? Math.abs(Math.ceil(dueInSec / dayInMillisecond))
+            : null;
           const additionalDetails = pendingTaskActions?.[status]?.additionalDetailsKeys?.reduce((result, current) => {
             result[current] = data?.fields?.find((field) => field.key === `additionalDetails.${current}`)?.value;
             return result;
@@ -274,8 +282,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
-            due: dayCount > 1 ? `Due in ${dayCount} Days` : `Due today`,
-            dayCount,
+            due: dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`,
+            dayCount: dayCount ? dayCount : dayCount === 0 ? 0 : Infinity,
             isCompleted,
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
@@ -304,14 +312,23 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
 
   const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
     () => ({
-      pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
-      allOtherPendingTask: pendingTasks.filter((data) => data?.dayCount >= 7 && !data?.isCompleted).map((data) => data) || [],
+      pendingTaskDataInWeek:
+        pendingTasks
+          .filter((data) => data?.dayCount < 7 && !data?.isCompleted)
+          .map((data) => data)
+          .sort((data) => data?.dayCount) || [],
+      allOtherPendingTask:
+        pendingTasks
+          .filter((data) => data?.dayCount >= 7 && !data?.isCompleted)
+          .map((data) => data)
+          .sort((data) => data?.dayCount) || [],
     }),
     [pendingTasks]
   );
   if (isLoading) {
     return <Loader />;
   }
+  console.log("pendingTaskDataInWeek", pendingTaskDataInWeek);
   return (
     <div className="tasks-component">
       <h2>Your Tasks</h2>
