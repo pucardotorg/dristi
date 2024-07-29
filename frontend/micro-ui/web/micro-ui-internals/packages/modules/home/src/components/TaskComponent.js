@@ -102,9 +102,12 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
 
   const handleReviewOrder = useCallback(
     async ({ filingNumber, caseId, referenceId }) => {
-      const orderDetails = await getOrderDetail();
+      const orderDetails = await getOrderDetail(referenceId);
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`, {
+        orderObj: orderDetails,
+      });
     },
-    [getOrderDetail]
+    [getOrderDetail, history, userType]
   );
 
   const handleReviewSubmission = useCallback(

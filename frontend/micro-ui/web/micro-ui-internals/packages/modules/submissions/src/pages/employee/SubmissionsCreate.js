@@ -433,6 +433,11 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
+    !isExtension &&
+      createPendingTask({
+        refId: orderNumber,
+        isCompleted: true,
+      });
     createPendingTask({
       name: t("ESIGN_THE_SUBMISSION"),
       status: "ESIGN_THE_SUBMISSION",
