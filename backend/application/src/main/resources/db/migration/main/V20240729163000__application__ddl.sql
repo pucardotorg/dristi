@@ -1,4 +1,3 @@
 
-ALTER TABLE dristi_application
-ALTER COLUMN comment TYPE jsonb
-USING comment::jsonb;
+ALTER TABLE dristi_application DROP COLUMN comment;
+ALTER TABLE dristi_application ADD COLUMN comment jsonb;

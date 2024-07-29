@@ -287,11 +287,11 @@ components:
         status:
           type: string
           description: workflow status
-        comment:
+         comments:
           type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific application.
           items:
-            type: object
-            description: can be used to store any comments on application approval, rejection or otherwise
+            $ref: '#/components/schemas/Comment'
         isActive:
           type: boolean
           description: to handle soft delete
