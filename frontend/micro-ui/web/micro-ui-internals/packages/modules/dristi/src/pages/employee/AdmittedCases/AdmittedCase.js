@@ -21,7 +21,7 @@ import ViewAllSubmissions from "./ViewAllSubmissions";
 
 const defaultSearchValues = {};
 
-const AdmittedCases = ({ isJudge = true }) => {
+const AdmittedCases = () => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   const urlParams = new URLSearchParams(window.location.search);
@@ -66,6 +66,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   );
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0].status === "CASE_ADMITTED";
 
   const statue = useMemo(
     () =>
@@ -644,7 +645,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
-          {isJudge && (
+          {showTakeAction && (
             <div className="judge-action-block" style={{ display: "flex" }}>
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
@@ -756,12 +757,14 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
           {isCitizen && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
-              <div
-                onClick={handleMakeSubmission}
-                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-              >
-                {t("MAKE_SUBMISSION")}
-              </div>
+              {showMakeSubmission && (
+                <div
+                  onClick={handleMakeSubmission}
+                  style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+                >
+                  {t("MAKE_SUBMISSION")}
+                </div>
+              )}
 
               <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}

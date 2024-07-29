@@ -503,7 +503,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                 </div>
               ))}
             </div>
-            {modalType === "Submissions" && (
+            {modalType === "Submissions" && userRoles.includes("SUBMISSION_RESPONDER") && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>

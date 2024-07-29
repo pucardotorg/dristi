@@ -43,7 +43,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
     true
   );
 
-  console.log(advocateDetails);
+  // console.log(advocateDetails);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -84,12 +84,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
     history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
   };
 
-  const orderList =
-    userRoles.includes("CITIZEN") && !userRoles.includes("ADVOCATE_ROLE")
-      ? ordersRes?.list.filter((order) => order.status === "PUBLISHED")
-      : userRoles.includes("ADVOCATE_ROLE")
-      ? ordersRes?.list?.filter((order) => order.status === "ABATED" || order.status === "PUBLISHED")
-      : ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS");
+  const orderList = userRoles.includes("CITIZEN")
+    ? ordersRes?.list.filter((order) => order.status === "PUBLISHED")
+    : ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS");
 
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
