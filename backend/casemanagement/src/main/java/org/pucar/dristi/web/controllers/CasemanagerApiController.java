@@ -2,9 +2,13 @@ package org.pucar.dristi.web.controllers;
 
 
 import java.io.IOException;
+import java.util.List;
 
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CaseManagerService;
 import org.pucar.dristi.service.ServiceUrlMapperVCService;
 import org.pucar.dristi.service.ServiceUrlMappingPdfService;
+import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,12 +42,18 @@ public class CasemanagerApiController {
 
     private final ServiceUrlMapperVCService serviceUrlMapperVCService;
 
+    private final CaseManagerService caseManagerService;
+
+    private final ResponseInfoFactory responseInfoFactory;
+
     @Autowired
-    public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService) {
+    public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService, CaseManagerService caseManagerService, ResponseInfoFactory responseInfoFactory) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.serviceUrlMapperVCService = serviceUrlMapperVCService;
         this.serviceUrlMappingPdfService = serviceUrlMappingPdfService;
+        this.caseManagerService = caseManagerService;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     @RequestMapping(value = "/casemanager/case/v1/_group", method = RequestMethod.POST)
@@ -62,16 +72,10 @@ public class CasemanagerApiController {
 
     @RequestMapping(value = "/casemanager/case/v1/_history", method = RequestMethod.POST)
     public ResponseEntity<CaseFileResponse> casemanagerCaseV1HistoryPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all updatable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CaseFileResponse>(HttpStatus.NOT_IMPLEMENTED);
-            } catch (Exception e) {
-                return new ResponseEntity<CaseFileResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CaseFileResponse>(HttpStatus.NOT_IMPLEMENTED);
+        List<CaseFile> caseFiles = caseManagerService.getCaseFiles(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseFileResponse caseFileResponse = CaseFileResponse.builder().caseFiles(caseFiles).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(caseFileResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/casemanager/case/v1/_summary", method = RequestMethod.POST)

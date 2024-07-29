@@ -120,4 +120,39 @@ public class Configuration {
     @Value("${dristi.dev.task.search.url}")
     private String taskSearchPath;
 
+    //ElasticSearch Config
+    @Value("${egov.infra.indexer.host}")
+    private String esHostUrl;
+
+    @Value("${egov.indexer.es.username}")
+    private String esUsername;
+
+    @Value("${egov.indexer.es.password}")
+    private String esPassword;
+
+    @Value("${dristi.case.index}")
+    private String caseIndex;
+
+    @Value("${dristi.hearing.index}")
+    private String hearingIndex;
+
+    @Value("${dristi.witness.index}")
+    private String witnessIndex;
+
+    @Value("${dristi.order.index}")
+    private String orderIndex;
+
+    @Value("${dristi.task.index}")
+    private String taskIndex;
+
+    @Value("${dristi.application.index}")
+    private String applicationIndex;
+
+    @Value("${dristi.artifact.index}")
+    private String artifactIndex;
+
+    @Value("${dristi.search.index.path}")
+    private String searchPath;
+
+
 }
