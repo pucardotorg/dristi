@@ -7,7 +7,7 @@ on:
       - 'frontend/verifierapp/**'
   pull_request:
     branches:
-      - develop
+      - main
     paths:
       - 'frontend/verifierapp/**'
   workflow_dispatch:
