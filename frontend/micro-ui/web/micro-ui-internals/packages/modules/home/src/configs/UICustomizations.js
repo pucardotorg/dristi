@@ -224,7 +224,7 @@ export const UICustomizations = {
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-          return <span style={{ color: differenceInDays > 30 && "#9E400A", fontWeight: differenceInDays > 30 ? 500 : 400 }}>{differenceInDays}</span>;
+          return <span style={{ color: differenceInDays > 2 && "#9E400A", fontWeight: differenceInDays > 2 ? 500 : 400 }}>{differenceInDays}</span>;
         default:
           return t("ES_COMMON_NA");
       }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Dropdown } from "@egovernments/digit-ui-components";
+import { CardLabel, Dropdown } from "@egovernments/digit-ui-components";
 import { LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { useGetPendingTask } from "../hooks/useGetPendingTask";
@@ -334,6 +334,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
       <h2>Your Tasks</h2>
       <div className="task-filters">
         <LabelFieldPair>
+          <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
           <Dropdown
             option={[{ name: "NIA S138", code: "NIA S138" }]}
             selected={{ name: "NIA S138", code: "NIA S138" }}
@@ -343,6 +344,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           />
         </LabelFieldPair>
         <LabelFieldPair>
+          <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
           <Dropdown
             option={taskTypes}
             optionKey={"name"}

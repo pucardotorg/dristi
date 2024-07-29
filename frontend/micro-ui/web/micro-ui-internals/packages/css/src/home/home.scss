@@ -26,6 +26,13 @@
   }
 }
 
+.home-header-wrapper {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .digit-dropdown-select-wrap {
   margin-bottom: 24px;
   position: relative;
