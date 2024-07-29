@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -19,23 +18,14 @@ public class EvidenceQueryBuilder {
             "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
             "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
             "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-            "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
+            "art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
             "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
             "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime ";
 
-    private static final String DOCUMENT_SELECT_QUERY = "SELECT doc.id as id, doc.fileStore as fileStore, doc.documentUid as documentUid, " +
-            "doc.documentType as documentType, doc.artifactId as artifactId, doc.additionalDetails as additionalDetails ";
-
-    private static final String COMMENT_SELECT_QUERY = "SELECT com.id as id, com.tenantId as tenantId, com.artifactId as artifactId, " +
-            "com.individualId as individualId, com.comment as comment, com.isActive as isActive, com.additionalDetails as additionalDetails, " +
-            "com.createdBy as createdBy, com.lastModifiedBy as lastModifiedBy, com.createdTime as createdTime, com.lastModifiedTime as lastModifiedTime ";
     private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
     private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY art.createdtime DESC ";
     private static final String ORDERBY_CLAUSE = " ORDER BY art.{orderBy} {sortingOrder} ";
     private static final String FROM_ARTIFACTS_TABLE = " FROM dristi_evidence_artifact art";
-    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_evidence_document doc";
-    private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
-
     public String getArtifactSearchQuery(List<Object> preparedStmtList, EvidenceSearchCriteria criteria) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
@@ -108,23 +98,6 @@ public class EvidenceQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-        try {
-            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
-            query.append(FROM_DOCUMENTS_TABLE);
-            if (!ids.isEmpty()) {
-                query.append(" WHERE doc.artifactId IN (")
-                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(ids);
-            }
-
-            return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.toString());
-        }
-    }
     public String addOrderByQuery(String query, Pagination pagination) {
         if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
             return query + DEFAULT_ORDERBY_CLAUSE;
@@ -138,30 +111,6 @@ public class EvidenceQueryBuilder {
         preparedStatementList.add(pagination.getLimit());
         preparedStatementList.add(pagination.getOffSet());
         return query + " LIMIT ? OFFSET ?";
-    }
-
-    public String getCommentSearchQuery(List<String> artifactIds, List<Object> preparedStmtList) {
-        try {
-            StringBuilder query = new StringBuilder(COMMENT_SELECT_QUERY);
-            query.append(FROM_COMMENTS_TABLE);
-
-            if (artifactIds != null && !artifactIds.isEmpty()) {
-                query.append(" WHERE com.artifactId IN (");
-                for (int i = 0; i < artifactIds.size(); i++) {
-                    query.append("?");
-                    preparedStmtList.add(artifactIds.get(i));
-                    if (i < artifactIds.size() - 1) {
-                        query.append(",");
-                    }
-                }
-                query.append(")");
-            }
-
-            return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building comment search query", e);
-            throw new CustomException(COMMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the comment search query: " + e.toString());
-        }
     }
 
 

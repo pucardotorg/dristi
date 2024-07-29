@@ -46,7 +46,7 @@ public class EvidenceQueryBuilderTest {
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
                 "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
                 "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
+                "art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.artifactType = ? AND art.isEvidence = ? AND art.filingNumber = ? " +
@@ -81,7 +81,7 @@ public class EvidenceQueryBuilderTest {
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
                 "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
                 "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
+                "art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art";
@@ -152,26 +152,7 @@ public class EvidenceQueryBuilderTest {
     }
 
 
-    @Test
-    public void testGetDocumentSearchQuery_exception() {
-        List<String> ids = new ArrayList<>();
-        ids.add("testId1");
-        ids.add("testId2");
 
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        // Inject a scenario that causes an exception
-        EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
-        doThrow(new RuntimeException("Test Exception")).when(spyQueryBuilder).getDocumentSearchQuery(anyList(), anyList());
-
-        // Execute the method and assert that the RuntimeException is thrown
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            spyQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
-        });
-
-        // Verify that the correct exception is thrown with the expected message
-        assertTrue(exception.getMessage().contains("Test Exception"));
-    }
 
     @Test
     void testGetArtifactSearchQueryWithNullValues() {
