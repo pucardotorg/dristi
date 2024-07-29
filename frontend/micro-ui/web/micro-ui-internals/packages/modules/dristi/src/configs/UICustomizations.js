@@ -596,7 +596,7 @@ export const UICustomizations = {
             return { [key]: requestCriteria.state.searchForm[key] };
           }
         })
-        .filter((filter) => filter)
+        ?.filter((filter) => filter)
         .reduce(
           (fieldObj, item) => ({
             ...fieldObj,
@@ -626,9 +626,9 @@ export const UICustomizations = {
             // if (requestCriteria.url.split("/").includes("order")) {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
-              ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
               : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
-              ? { ...data, applicationList: data.applicationList.filter((application) => application.status != "PENDINGPAYMENT") }
+              ? { ...data, applicationList: data.applicationList?.filter((application) => application.status != "PENDINGPAYMENT") }
               : data;
             // }
           },
@@ -874,7 +874,7 @@ export const UICustomizations = {
               // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
                 ? data.caseFiles[0]?.orders
-                    .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                    ?.filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
                     .map((order) => {
                       return {
                         instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
