@@ -20,7 +20,7 @@ const ProjectBreadCrumb = ({ location }) => {
       show: true,
     },
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}`,
       content: t(location.pathname.split("/").pop()),
       show: true,
     },

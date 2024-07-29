@@ -453,7 +453,7 @@ const SubmissionsCreate = () => {
   };
 
   const handleBack = () => {
-    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+    history.replace(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
   const handleAddSignature = () => {
