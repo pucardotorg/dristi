@@ -700,7 +700,7 @@ export const UICustomizations = {
             action: (history) => {
               const requestBody = {
                 order: {
-                  createdDate: formatDate(new Date()),
+                  createdDate: new Date().getTime(),
                   tenantId: row.tenantId,
                   filingNumber: row.filingNumber[0],
                   statuteSection: {

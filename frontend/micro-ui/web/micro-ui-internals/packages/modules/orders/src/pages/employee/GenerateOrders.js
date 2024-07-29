@@ -40,6 +40,7 @@ import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
+import { getAllAssignees } from "../../utils/caseUtils";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -109,7 +110,7 @@ const GenerateOrders = () => {
         return {
           code: item?.additionalDetails?.fullName,
           name: item?.additionalDetails?.fullName,
-          uuid: item?.additionalDetails?.uuid,
+          uuid: getAllAssignees(caseDetails, true, false),
         };
       }) || []
     );
@@ -169,7 +170,7 @@ const GenerateOrders = () => {
 
   const defaultOrderData = useMemo(
     () => ({
-      createdDate: formatDate(new Date()),
+      createdDate: new Date().getTime(),
       tenantId,
       cnrNumber,
       filingNumber,
@@ -469,16 +470,25 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async (order) => {
+    let create = false;
+    const formdata = order?.additionalDetails?.formdata;
+    let assignees = formdata?.submissionParty
+      ?.filter((item) => item?.uuid && item)
+      .map((item) => item?.uuid?.map((uuid) => ({ uuid })))
+      .flat();
+
+    let entityType =
+      formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
+    let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
-      const formdata = order?.additionalDetails?.formdata;
-      let entityType = formdata?.isResponseRequired?.code === "Yes" ? "asynsubmissionwithresponse" : "asyncsubmissionwithoutresponse";
-      let status = "CREATE_SUBMISSION";
-      let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
-      await ordersService.customApiService(Urls.orders.pendingTask, {
+      create = true;
+    }
+    create &&
+      (await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
           name: "Submit Documents",
           entityType,
-          referenceId: order?.orderNumber,
+          referenceId: `MANUAL_${order?.orderNumber}`,
           status,
           assignedTo: assignees,
           assignedRole: [],
@@ -489,8 +499,7 @@ const GenerateOrders = () => {
           additionalDetails: {},
           tenantId,
         },
-      });
-    }
+      }));
     return;
   };
 

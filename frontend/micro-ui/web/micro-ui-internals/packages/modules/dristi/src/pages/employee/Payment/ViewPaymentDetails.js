@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { useToast } from "../../../components/Toast/useToast";
+import { DRISTIService } from "../../../services";
+import { Urls } from "../../../hooks";
 
 const paymentCalculation = [
   { key: "Amount Due", value: 600, currency: "Rs" },
@@ -120,6 +122,20 @@ const ViewPaymentDetails = ({ location, match }) => {
           totalAmountPaid: 2000,
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
+        },
+      });
+      await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+        pendingTask: {
+          name: "Pending Payment",
+          entityType: "case",
+          referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+          status: "PAYMENT_PENDING",
+          cnrNumber: null,
+          filingNumber: caseDetails?.filingNumber,
+          isCompleted: true,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
         },
       });
       history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, {

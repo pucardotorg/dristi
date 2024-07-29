@@ -15,6 +15,9 @@ import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import { Urls } from "../../../hooks";
 
+const stateSla = {
+  SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
+};
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const history = useHistory();
@@ -24,6 +27,7 @@ function CaseFileAdmission({ t, path }) {
   const [submitModalInfo, setSubmitModalInfo] = useState(null);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const location = useLocation();
+  const todayDate = new Date().getTime();
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -240,20 +244,22 @@ function CaseFileAdmission({ t, path }) {
     updateCaseDetails("ADMIT", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
       setCaseADmitLoader(false);
-      DRISTIService.customApiService(Urls.dristi.pendingTask, {pendingTask: {
-        name: "Schedule Hearing",
-        entityType: "hearing",
-        referenceId: caseDetails?.filingNumber,
-        status: "SCHEDULE_HEARING",
-        assignedTo: [],
-        assignedRole: ["JUDGE_ROLE"],
-        cnrNumber: null,
-        filingNumber: caseDetails?.filingNumber,
-        isCompleted: false,
-        stateSla: null,
-        additionalDetails: {},
-        tenantId,
-      },})
+      DRISTIService.customApiService(Urls.dristi.pendingTask, {
+        pendingTask: {
+          name: "Schedule Hearing",
+          entityType: "case",
+          referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+          status: "SCHEDULE_HEARING",
+          assignedTo: [],
+          assignedRole: ["JUDGE_ROLE"],
+          cnrNumber: null,
+          filingNumber: caseDetails?.filingNumber,
+          isCompleted: false,
+          stateSla: todayDate + stateSla.SCHEDULE_HEARING,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
     });
   };
   const handleScheduleCase = (props) => {
@@ -275,7 +281,7 @@ function CaseFileAdmission({ t, path }) {
   const handleScheduleNextHearing = () => {
     const reqBody = {
       order: {
-        createdDate: formatDate(new Date()),
+        createdDate: new Date().getTime(),
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,

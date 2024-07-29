@@ -11,13 +11,14 @@ const DRISTICard = () => {
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
   const isCourtOfficer = useMemo(() => roles.some((role) => role.code === "HEARING_CREATOR"), [roles]);
+  const isBenchClerk = useMemo(() => roles.some((role) => role.code === "BENCH_CLERK"), [roles]); // need to change BENCH _Cleark
   const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
     if (!res) return res;
     res = roles.some((role) => role.code === curr);
     return res;
   }, true);
 
-  if (isScrutiny || isJudge || isCourtOfficer) {
+  if (isScrutiny || isJudge || isCourtOfficer || isBenchClerk) {
     history.push("/digit-ui/employee/home/home-pending-task");
   }
 

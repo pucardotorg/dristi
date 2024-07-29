@@ -136,31 +136,33 @@ const HomeView = () => {
   );
 
   useEffect(() => {
-    if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
-      const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
-      const tabConfig = rolesToConfigMappingData.config;
-      const rowClickData = rolesToConfigMappingData.onRowClickRoute;
-      setOnRowClickData(rowClickData);
-      setConfig(tabConfig?.TabSearchConfig?.[0]);
-      setTabConfig(tabConfig);
-      getTotalCountForTab(tabConfig);
-    } else {
-      const rolesToConfigMappingData =
-        rolesToConfigMapping?.find((item) =>
-          item.roles?.reduce((res, curr) => {
-            if (!res) return res;
-            res = roles.some((role) => role.code === curr);
-            return res;
-          }, true)
-        ) || TabLitigantSearchConfig;
-      const tabConfig = rolesToConfigMappingData?.config;
-      const rowClickData = rolesToConfigMappingData?.onRowClickRoute;
-      setOnRowClickData(rowClickData);
-      setConfig(tabConfig?.TabSearchConfig?.[0]);
-      setTabConfig(tabConfig);
-      getTotalCountForTab(tabConfig);
+    if (individualId) {
+      if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
+        const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
+        const tabConfig = rolesToConfigMappingData.config;
+        const rowClickData = rolesToConfigMappingData.onRowClickRoute;
+        setOnRowClickData(rowClickData);
+        setConfig(tabConfig?.TabSearchConfig?.[0]);
+        setTabConfig(tabConfig);
+        getTotalCountForTab(tabConfig);
+      } else {
+        const rolesToConfigMappingData =
+          rolesToConfigMapping?.find((item) =>
+            item.roles?.reduce((res, curr) => {
+              if (!res) return res;
+              res = roles.some((role) => role.code === curr);
+              return res;
+            }, true)
+          ) || TabLitigantSearchConfig;
+        const tabConfig = rolesToConfigMappingData?.config;
+        const rowClickData = rolesToConfigMappingData?.onRowClickRoute;
+        setOnRowClickData(rowClickData);
+        setConfig(tabConfig?.TabSearchConfig?.[0]);
+        setTabConfig(tabConfig);
+        getTotalCountForTab(tabConfig);
+      }
     }
-  }, [additionalDetails, getTotalCountForTab, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, individualId, roles, state, tenantId]);
 
   // calling case api for tab's count
   useEffect(() => {
@@ -249,7 +251,7 @@ const HomeView = () => {
       ) : (
         <React.Fragment>
           <div className="left-side">
-            <UpcomingHearings handleNavigate={handleNavigate} />
+            <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>

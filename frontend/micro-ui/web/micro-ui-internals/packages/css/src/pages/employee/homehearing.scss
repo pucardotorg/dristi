@@ -1,17 +1,26 @@
 .home-view-hearing-container {
   display: flex;
   border-top: 1px #e8e8e8 solid;
+  width: 100vw;
   /* Adjust the gap between left-side and right-side if needed */
 }
 
 .left-side {
-  width: 70%;
+  width: 70vw;
   padding: 48px 64px;
   flex: 5;
+
+  tr:hover {
+    td {
+      .case-name-on-hover {
+        font-weight: 700;
+      }
+    }
+  }
 }
 
 .right-side {
-  width: 30%;
+  width: 30vw;
   /* Adjust flex ratio as needed */
   background-color: #fff;
   margin-left: 16px;

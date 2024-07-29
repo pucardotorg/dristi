@@ -115,6 +115,18 @@ export const UICustomizations = {
     },
   },
 
+  minTodayDateValidation: () => {
+    return {
+      min: new Date().toISOString().split("T")[0],
+    };
+  },
+  
+  maxTodayDateValidation: () => {
+    return {
+      max: new Date().toISOString().split("T")[0],
+    };
+  },
+
   alphaNumericValidation: () => {
     return {
       pattern: /[^a-zA-Z0-9\s]/g,
