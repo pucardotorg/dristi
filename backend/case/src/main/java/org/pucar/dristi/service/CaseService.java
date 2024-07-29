@@ -177,6 +177,12 @@ public class CaseService {
 
             AuditDetails auditDetails = AuditDetails.builder().lastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             addWitnessRequest.setAuditDetails(auditDetails);
+            CourtCase caseObj = CourtCase.builder()
+                    .filingNumber(addWitnessRequest.getCaseFilingNumber())
+                    .additionalDetails(addWitnessRequest.getAdditionalDetails())
+                    .build();
+            caseObj = encryptionDecryptionUtil.encryptObject(caseObj, COURT_CASE_ENCRYPT, CourtCase.class);
+            addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
 
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
