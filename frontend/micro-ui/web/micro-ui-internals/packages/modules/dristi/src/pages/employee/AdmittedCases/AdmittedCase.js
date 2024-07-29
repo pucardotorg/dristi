@@ -577,7 +577,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     const date = new Date(dateArr.join(" "));
     const reqBody = {
       order: {
-        createdDate: formatDate(new Date()),
+        createdDate: new Date().getTime(),
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,
