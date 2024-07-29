@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @Slf4j
 @Repository
