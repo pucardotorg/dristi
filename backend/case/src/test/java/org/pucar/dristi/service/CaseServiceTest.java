@@ -294,6 +294,10 @@ public class CaseServiceTest {
 
         when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         // Call the method
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
 
@@ -326,6 +330,9 @@ public class CaseServiceTest {
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
         when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
