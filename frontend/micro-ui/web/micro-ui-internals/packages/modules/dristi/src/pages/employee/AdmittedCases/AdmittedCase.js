@@ -44,10 +44,12 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [submissionsViewList, setSubmissionsViewList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
+  const isAdvocate = userRoles.includes("ADVOCATE_ROLE");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
-
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -91,6 +93,10 @@ const AdmittedCases = ({ isJudge = true }) => {
     };
   });
 
+  const isAdvocatePresent = useMemo(() => Boolean(Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0), [
+    caseDetails,
+  ]);
+
   const caseRelatedData = useMemo(
     () => ({
       caseId,
@@ -105,14 +111,13 @@ const AdmittedCases = ({ isJudge = true }) => {
     [caseDetails, caseId, cnrNumber, filingNumber, statue]
   );
 
-  console.log(caseRelatedData);
-
   const showMakeSubmission = useMemo(() => {
     return (
+      (isAdvocatePresent ? isAdvocate : true) &&
       userRoles.includes("APPLICATION_CREATOR") &&
       [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
     );
-  }, [userRoles, caseDetails]);
+  }, [isAdvocatePresent, userRoles, caseDetails?.status, isAdvocate]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
@@ -456,6 +461,13 @@ const AdmittedCases = ({ isJudge = true }) => {
   }, [history.location]);
 
   useEffect(() => {
+    if (history.location?.state?.orderObj && !showOrderReviewModal) {
+      setCurrentOrder(history.location?.state?.orderObj);
+      setShowOrderReviewModal(true);
+    }
+  }, [history.location?.state?.orderObj, OrderReviewModal, showOrderReviewModal]);
+
+  useEffect(() => {
     if (history.location?.state?.applicationDocObj && !show) {
       setDocumentSubmission(history.location?.state?.applicationDocObj);
       setShow(true);
@@ -545,6 +557,10 @@ const AdmittedCases = ({ isJudge = true }) => {
   const handleDownload = () => {
     setShowOrderReviewModal(false);
   };
+  const handleOrdersTab = () => {
+    history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
+  };
+
   const handleExtensionRequest = (orderNumber) => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${orderNumber}&isExtension=true`);
   };
@@ -561,7 +577,7 @@ const AdmittedCases = ({ isJudge = true }) => {
     const date = new Date(dateArr.join(" "));
     const reqBody = {
       order: {
-        createdDate: formatDate(new Date()),
+        createdDate: new Date().getTime(),
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,
@@ -800,11 +816,11 @@ const AdmittedCases = ({ isJudge = true }) => {
         <PublishedOrderModal
           t={t}
           order={currentOrder}
-          setShowReviewModal={setShowOrderReviewModal}
           handleDownload={handleDownload}
           handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
-          showSubmissionButtons={isCitizen}
+          showSubmissionButtons={showMakeSubmission}
+          handleOrdersTab={handleOrdersTab}
         />
       )}
 

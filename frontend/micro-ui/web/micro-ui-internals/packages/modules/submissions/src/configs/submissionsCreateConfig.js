@@ -609,20 +609,11 @@ export const configsExtensionSubmissionDeadline = [
           styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "DOCUMENT_TYPE_1",
-              name: "DOCUMENT_TYPE_1",
-            },
-            {
-              code: "DOCUMENT_TYPE_2",
-              name: "DOCUMENT_TYPE_2",
-            },
-            {
-              code: "DOCUMENT_TYPE_3",
-              name: "DOCUMENT_TYPE_3",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Submission",
+            masterName: "DocumentType",
+            localePrefix: "",
+          },
         },
       },
       {
@@ -679,21 +670,61 @@ export const configsExtensionSubmissionDeadline = [
           ],
         },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "EXTENSION_BENEFIT",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "extensionBenefit",
-        type: "textarea",
-        populators: { name: "extensionBenefit" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "EXTENSION_BENEFIT",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "COMMENTS",
+              headerClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },

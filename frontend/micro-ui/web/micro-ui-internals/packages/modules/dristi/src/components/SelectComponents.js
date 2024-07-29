@@ -38,9 +38,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
   };
 
   function setValue(value, input) {
-    if (typeof value === "string") {
-      value = value.trim();
-    }
     if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
