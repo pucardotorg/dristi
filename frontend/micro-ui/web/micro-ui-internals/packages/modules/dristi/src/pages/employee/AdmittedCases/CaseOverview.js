@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
-import { OrderWorkflowAction, OrderWorkflowState } from "../../../Utils/orderWorkflow";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import PublishedOrderModal from "./PublishedOrderModal";
 import TasksComponent from "../../../../../home/src/components/TaskComponent";
 import NextHearingCard from "./NextHearingCard";
 
-const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest, showSubmissionButtons }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -269,10 +269,13 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
               <PublishedOrderModal
                 t={t}
                 order={currentOrder}
-                setShowReviewModal={setShowReviewModal}
                 handleDownload={handleDownload}
-                handleRequestLabel={handleRequestLabel}
+                handleRequestLabel={handleExtensionRequest}
                 handleSubmitDocument={handleSubmitDocument}
+                showSubmissionButtons={showSubmissionButtons}
+                handleOrdersTab={() => {
+                  setShowReviewModal(false);
+                }}
               />
             )}
           </div>

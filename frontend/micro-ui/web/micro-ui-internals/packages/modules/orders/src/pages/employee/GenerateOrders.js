@@ -40,7 +40,7 @@ import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
-import { getAllAssignees } from "../../utils/caseUtils";
+import { getAdvocates } from "../../utils/caseUtils";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -71,7 +71,6 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const userInfo = Digit.UserService.getUser()?.info || {};
   const history = useHistory();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
@@ -103,27 +102,35 @@ const GenerateOrders = () => {
     [caseData]
   );
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
 
   const complainants = useMemo(() => {
     return (
-      caseDetails?.litigants?.map((item) => {
-        return {
-          code: item?.additionalDetails?.fullName,
-          name: item?.additionalDetails?.fullName,
-          uuid: getAllAssignees(caseDetails, true, false),
-        };
-      }) || []
+      caseDetails?.litigants
+        ?.filter((item) => item?.partyType?.includes("complainant"))
+        .map((item) => {
+          return {
+            code: item?.additionalDetails?.fullName,
+            name: item?.additionalDetails?.fullName,
+            uuid: allAdvocates[item?.additionalDetails?.uuid],
+          };
+        }) || []
     );
-  }, [caseDetails]);
+  }, [caseDetails, allAdvocates]);
 
   const respondants = useMemo(() => {
-    // return caseDetails?.litigants
-    //   ?.filter((item) => item?.partyType === "respondant.primary")
-    //   .map((item) => {
-    //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
-    //   });
-    return [{ code: "Respondent", name: "Respondent" }];
-  }, []);
+    return (
+      caseDetails?.litigants
+        ?.filter((item) => item?.partyType?.includes("respondent"))
+        .map((item) => {
+          return {
+            code: item?.additionalDetails?.fullName,
+            name: item?.additionalDetails?.fullName,
+            uuid: allAdvocates[item?.additionalDetails?.uuid],
+          };
+        }) || []
+    );
+  }, [caseDetails, allAdvocates]);
 
   const {
     data: ordersData,
@@ -160,13 +167,6 @@ const GenerateOrders = () => {
   const defaultIndex = useMemo(() => {
     return formList.findIndex((order) => order.orderNumber === orderNumber);
   }, [formList, orderNumber]);
-
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
 
   const defaultOrderData = useMemo(
     () => ({
@@ -420,7 +420,7 @@ const GenerateOrders = () => {
       updatedFormdata.originalHearingDate = applicationDetails?.additionalDetails?.formdata?.initialHearingDate;
     }
     return updatedFormdata;
-  }, [currentOrder, applicationDetails, orderType]);
+  }, [currentOrder, orderType, applicationDetails, t]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
@@ -474,10 +474,7 @@ const GenerateOrders = () => {
   const createPendingTask = async (order) => {
     let create = false;
     const formdata = order?.additionalDetails?.formdata;
-    let assignees = formdata?.submissionParty
-      ?.filter((item) => item?.uuid && item)
-      .map((item) => item?.uuid?.map((uuid) => ({ uuid })))
-      .flat();
+    let assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
 
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
@@ -494,7 +491,7 @@ const GenerateOrders = () => {
           status,
           assignedTo: assignees,
           assignedRole: [],
-          cnrNumber: null,
+          cnrNumber: cnrNumber,
           filingNumber: filingNumber,
           isCompleted: false,
           stateSla: null,

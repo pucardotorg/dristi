@@ -43,23 +43,39 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       </div>
     );
   };
+  const respondingUuids = useMemo(() => {
+    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+  }, [documentSubmission]);
+
   const hideSubmit = useMemo(() => {
-    return (
-      !userRoles.includes("JUDGE_ROLE") ||
-      userRoles.includes("CITIZEN") ||
-      ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
-    );
-  }, [documentSubmission, userRoles]);
+    if (userType === "employee") {
+      return (
+        !userRoles.includes("JUDGE_ROLE") ||
+        userRoles.includes("CITIZEN") ||
+        ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+      );
+    } else {
+      return (
+        (documentSubmission?.[0]?.referenceId ? !respondingUuids?.includes(userInfo?.uuid) : false) ||
+        ![SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) ||
+        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy
+      );
+    }
+  }, [documentSubmission, userRoles, userType, userInfo, respondingUuids]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
     if (modalType === "Submissions") {
-      label = t("Approve");
+      if (userType === "employee") {
+        label = t("Approve");
+      } else {
+        label = t("RESPOND");
+      }
     } else {
       label = !documentSubmission?.[0]?.artifactList.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
     }
     return label;
-  }, [documentSubmission, modalType, t]);
+  }, [documentSubmission, modalType, t, userType]);
 
   const actionCancelLabel = useMemo(() => {
     return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
@@ -118,6 +134,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   //     },
   //   },
   // };
+
+  const respondApplicationPayload = {
+    ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
+    workflow: {
+      ...documentSubmission?.[0]?.applicationList?.workflow,
+      action: SubmissionWorkflowAction.RESPOND,
+    },
+  };
 
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
@@ -226,6 +254,23 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         }
       );
     }
+  };
+
+  const handleRespondApplication = async () => {
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: respondApplicationPayload },
+        config: {
+          enable: true,
+        },
+      },
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const handleAcceptApplication = async () => {
@@ -378,7 +423,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          await handleAcceptApplication();
+          // await handleAcceptApplication();
         }
         const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
@@ -416,6 +461,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentApplication(newComment);
     }
   };
+  const actionSaveOnSubmit = async () => {
+    if (userType === "employee") {
+      modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
+    } else {
+      await handleRespondApplication();
+      ///show a toast message
+      counterUpdate();
+      setShow(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -423,9 +478,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         <Modal
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
-          actionSaveOnSubmit={() => {
-            modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
-          }}
+          actionSaveOnSubmit={actionSaveOnSubmit}
           hideSubmit={hideSubmit}
           actionCancelLabel={actionCancelLabel}
           actionCancelOnSubmit={() => {
