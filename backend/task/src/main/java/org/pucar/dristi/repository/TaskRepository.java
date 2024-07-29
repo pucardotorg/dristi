@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.EXIST_TASK_ERR;
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_TASK_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @Slf4j
 @Repository
@@ -59,6 +59,9 @@ public class TaskRepository {
 
             String taskQuery = "";
             taskQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList,preparedStmtArgList);
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                throw new CustomException(SEARCH_TASK_ERR, "Args and ArgTypes size mismatch");
+            }
             log.info("Final Task query :: {}", taskQuery);
             List<Task> list = jdbcTemplate.query(taskQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB task list :: {}", list);
@@ -76,6 +79,9 @@ public class TaskRepository {
             String amountQuery = "";
             amountQuery = queryBuilder.getAmountSearchQuery(ids, preparedStmtAm, preparedStmtArgAm);
             log.info("Final Amount query :: {}", amountQuery);
+            if(preparedStmtAm.size()!=preparedStmtArgAm.size()){
+                throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for amount search");
+            }
             Map<UUID, Amount> amountMap = jdbcTemplate.query(amountQuery, preparedStmtAm.toArray(),preparedStmtArgAm.stream().mapToInt(Integer::intValue).toArray(), amountRowMapper);
             log.info("DB Amount map :: {}", amountMap);
             if (amountMap != null) {
@@ -85,6 +91,9 @@ public class TaskRepository {
             String documentQuery = "";
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtDc,preparedStmtArgDc);
             log.info("Final document query :: {}", documentQuery);
+            if(preparedStmtDc.size()!=preparedStmtArgDc.size()){
+                throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for document search");
+            }
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtDc.toArray(),preparedStmtArgDc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {

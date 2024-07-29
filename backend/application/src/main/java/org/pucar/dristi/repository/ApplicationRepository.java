@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Slf4j
 @Repository
@@ -56,7 +55,9 @@ public class ApplicationRepository {
                 applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
                 applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
             }
-
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch");
+            }
             List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
@@ -77,6 +78,9 @@ public class ApplicationRepository {
             List<Integer> preparedStmtArgListDoc = new ArrayList<>();
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
+            if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
+                throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch for document search");
+            }
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(),preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {

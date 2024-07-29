@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_SEARCH_QUERY_EXCEPTION;
+
 @Slf4j
 @Repository
 public class EvidenceRepository {
@@ -64,6 +66,9 @@ public class EvidenceRepository {
                 artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList,preparedStmtArgList);
             }
 
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch");
+            }
             List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(),evidenceRowMapper);
             log.info("DB artifact list :: {}", artifactList);
 
@@ -79,6 +84,9 @@ public class EvidenceRepository {
             // Fetch associated comments
             String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom, preparedStmtArgListCom);
             log.info("Final comment query: {}", commentQuery);
+            if(preparedStmtListCom.size()!=preparedStmtArgListCom.size()){
+                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for comment search");
+            }
             Map<UUID, List<Comment>> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), preparedStmtArgListCom.stream().mapToInt(Integer::intValue).toArray(), commentRowMapper);
             log.info("DB comment map :: {}", commentMap);
 
@@ -91,6 +99,9 @@ public class EvidenceRepository {
             // Fetch associated documents
             String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc, preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
+            if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
+                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch for document search");
+            }
             Map<UUID, Document> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
 

@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.HEARING_SEARCH_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.HEARING_UPDATE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Slf4j
@@ -66,6 +65,9 @@ public class HearingRepository {
                 hearingQuery = queryBuilder.addPaginationQuery(hearingQuery, hearingSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
                 log.info("Post Pagination Query :: {}", hearingQuery);
             }
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                throw new CustomException(HEARING_SEARCH_EXCEPTION, "Arg and ArgType size mismatch");
+            }
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             if (list != null) {
                 hearingList.addAll(list);
@@ -82,6 +84,9 @@ public class HearingRepository {
             String hearingDocumentQuery;
             hearingDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtListArgDoc);
             log.info("Final document query: {}", hearingDocumentQuery);
+            if(preparedStmtListDoc.size()!=preparedStmtListArgDoc.size()){
+                throw new CustomException(HEARING_SEARCH_EXCEPTION, "Arg and ArgType size mismatch for document search");
+            }
             Map<UUID, List<Document>> hearingDocumentMap = jdbcTemplate.query(hearingDocumentQuery, preparedStmtListDoc.toArray(),preparedStmtListArgDoc.stream().mapToInt(Integer::intValue).toArray(), hearingDocumentRowMapper);
             if (hearingDocumentMap != null) {
                 hearingList.forEach(hearing -> hearing.setDocuments(hearingDocumentMap.get(hearing.getId())));
