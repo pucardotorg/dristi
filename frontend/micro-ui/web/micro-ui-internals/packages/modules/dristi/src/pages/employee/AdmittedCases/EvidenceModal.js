@@ -13,6 +13,14 @@ import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 
+const stateSla = {
+  RE_SCHEDULE: 2,
+  CHECKOUT_REQUEST: 2,
+  SAVE_DRAFT: 2,
+};
+
+const dayInMillisecond = 24 * 3600 * 1000;
+
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
@@ -28,6 +36,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const todayDate = new Date().getTime();
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -437,7 +446,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             cnrNumber,
             filingNumber,
             isCompleted: false,
-            stateSla: null,
+            stateSla: stateSla.SAVE_DRAFT * dayInMillisecond + todayDate,
             additionalDetails: { orderType },
             tenantId,
           },

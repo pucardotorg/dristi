@@ -132,6 +132,7 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+  const todayDate = new Date().getTime();
 
   const setFormErrors = useRef(null);
   const resetFormData = useRef(null);
@@ -1593,7 +1594,7 @@ function EFilingCases({ path }) {
           cnrNumber: null,
           filingNumber: caseDetails?.filingNumber,
           isCompleted: false,
-          stateSla: stateSla.PAYMENT_PENDING * dayInMillisecond,
+          stateSla: stateSla.PAYMENT_PENDING * dayInMillisecond + todayDate,
           additionalDetails: {},
           tenantId,
         },

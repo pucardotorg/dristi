@@ -344,7 +344,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           />
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
+          <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
           <Dropdown
             option={taskTypes}
             optionKey={"name"}

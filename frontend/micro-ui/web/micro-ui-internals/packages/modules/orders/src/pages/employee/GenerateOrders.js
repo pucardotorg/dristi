@@ -40,7 +40,7 @@ import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
-import { getAdvocates } from "../../utils/caseUtils";
+import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -58,6 +58,32 @@ const OutlinedInfoIcon = () => (
   </svg>
 );
 
+const stateSla = {
+  SECTION_202_CRPC: 3,
+  MANDATORY_SUBMISSIONS_RESPONSES: 3,
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: 3,
+  REFERRAL_CASE_TO_ADR: 3,
+  SCHEDULE_OF_HEARING_DATE: 3,
+  RESCHEDULE_OF_HEARING_DATE: 3,
+  REJECTION_RESCHEDULE_REQUEST: 3,
+  APPROVAL_RESCHEDULE_REQUEST: 3,
+  INITIATING_RESCHEDULING_OF_HEARING_DATE: 1,
+  ASSIGNING_DATE_RESCHEDULED_HEARING: 3,
+  ASSIGNING_NEW_HEARING_DATE: 3,
+  CASE_TRANSFER: 3,
+  SETTLEMENT: 3,
+  SUMMONS: 3,
+  BAIL: 3,
+  WARRANT: 3,
+  WITHDRAWAL: 3,
+  OTHERS: configsOthers,
+  APPROVE_VOLUNTARY_SUBMISSIONS: 3,
+  REJECT_VOLUNTARY_SUBMISSIONS: 3,
+  JUDGEMENT: 3,
+};
+
+const dayInMillisecond = 24 * 3600 * 1000;
+
 const GenerateOrders = () => {
   const { t } = useTranslation();
   const { orderNumber, filingNumber } = Digit.Hooks.useQueryParams();
@@ -72,6 +98,7 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
+  const todayDate = new Date().getTime();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -473,6 +500,7 @@ const GenerateOrders = () => {
 
   const createPendingTask = async (order) => {
     let create = false;
+    let name = "Submit Documents";
     const formdata = order?.additionalDetails?.formdata;
     let assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
 
@@ -482,10 +510,17 @@ const GenerateOrders = () => {
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
     }
+    if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
+      create = true;
+      status = "OPTOUT";
+      assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
+      name = "Reschedule Hearing Date";
+      entityType = "hearing";
+    }
     create &&
       (await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
-          name: "Submit Documents",
+          name,
           entityType,
           referenceId: `MANUAL_${order?.orderNumber}`,
           status,
@@ -494,7 +529,7 @@ const GenerateOrders = () => {
           cnrNumber: cnrNumber,
           filingNumber: filingNumber,
           isCompleted: false,
-          stateSla: null,
+          stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
           additionalDetails: {},
           tenantId,
         },

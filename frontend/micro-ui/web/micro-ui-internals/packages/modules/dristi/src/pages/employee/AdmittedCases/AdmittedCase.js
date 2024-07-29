@@ -95,7 +95,10 @@ const AdmittedCases = () => {
   });
 
   const allAdvocates = useMemo(() => getAdvocates(caseDetails)[userInfo?.uuid], [caseDetails, userInfo]);
-  const isAdvocatePresent = useMemo(() => allAdvocates?.includes(userInfo?.uuid), [allAdvocates, userInfo?.uuid]);
+  const isAdvocatePresent = useMemo(
+    () => (userInfo?.roles?.some((role) => role?.code === "ADVOCATE_ROLE") ? true : allAdvocates?.includes(userInfo?.uuid)),
+    [allAdvocates, userInfo?.roles, userInfo?.uuid]
+  );
 
   const caseRelatedData = useMemo(
     () => ({
@@ -810,6 +813,7 @@ const AdmittedCases = () => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
+
       {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
