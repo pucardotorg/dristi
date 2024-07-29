@@ -432,6 +432,8 @@ const GenerateOrders = () => {
             ? item
             : {
                 ...item,
+                comments:
+                  formData?.comments?.text || formData?.additionalComments?.text || formData?.otherDetails?.text || formData?.sentence?.text || "",
                 orderType: formData?.orderType?.code,
                 additionalDetails: { ...item.order?.additionalDetails, formdata: updatedFormData },
               };

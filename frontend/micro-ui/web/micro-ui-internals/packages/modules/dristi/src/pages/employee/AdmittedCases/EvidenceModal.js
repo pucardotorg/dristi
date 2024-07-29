@@ -449,59 +449,61 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         >
           <div className="evidence-modal-main">
             <div className={modalType === "Submissions" ? "application-details" : "evidence-details"}>
-              {documentSubmission?.map((docSubmission, index) => (
-                <div>
-                  <div className="application-info">
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("APPLICATION_TYPE")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{t(docSubmission?.details?.applicationType)}</h3>
-                      </div>
+              <div>
+                <div className="application-info">
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("APPLICATION_TYPE")}</h3>
                     </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("APPLICATION_SENT_ON")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{docSubmission.details.applicationSentOn}</h3>
-                      </div>
+                    <div className="info-value">
+                      <h3>{t(documentSubmission[0]?.details?.applicationType)}</h3>
                     </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("SENDER")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{docSubmission.details.sender}</h3>
-                      </div>
-                    </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
-                      </div>
-                      <div className="info-value">
-                        {/* <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3> */}
-                        <h3>N/A</h3>
-                      </div>
-                    </div>
-                    {docSubmission.applicationContent && (
-                      <div className="application-view">
-                        <DocViewerWrapper
-                          key={docSubmission.applicationContent.fileStoreId}
-                          fileStoreId={docSubmission.applicationContent.fileStoreId}
-                          displayFilename={docSubmission.applicationContent.fileName}
-                          tenantId={docSubmission.applicationContent.tenantId}
-                          docWidth="100%"
-                          docHeight="unset"
-                          showDownloadOption={false}
-                          documentName={docSubmission.applicationContent.fileName}
-                        />
-                      </div>
-                    )}
                   </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("APPLICATION_SENT_ON")}</h3>
+                    </div>
+                    <div className="info-value">
+                      <h3>{documentSubmission[0]?.details.applicationSentOn}</h3>
+                    </div>
+                  </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("SENDER")}</h3>
+                    </div>
+                    <div className="info-value">
+                      <h3>{documentSubmission[0]?.details.sender}</h3>
+                    </div>
+                  </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
+                    </div>
+                    <div className="info-value">
+                      {/* <h3>{JSON.stringify(documentSubmission[0]?.details.additionalDetails)}</h3> */}
+                      <h3>N/A</h3>
+                    </div>
+                  </div>
+                  {documentSubmission?.map((docSubmission, index) => (
+                    <React.Fragment>
+                      {docSubmission.applicationContent && (
+                        <div className="application-view">
+                          <DocViewerWrapper
+                            key={docSubmission.applicationContent.fileStoreId}
+                            fileStoreId={docSubmission.applicationContent.fileStoreId}
+                            displayFilename={docSubmission.applicationContent.fileName}
+                            tenantId={docSubmission.applicationContent.tenantId}
+                            docWidth="100%"
+                            docHeight="unset"
+                            showDownloadOption={false}
+                            documentName={docSubmission.applicationContent.fileName}
+                          />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
             {modalType === "Submissions" && (
               <div className="application-comment">
