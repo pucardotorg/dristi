@@ -39,7 +39,7 @@ function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleActi
         />
       }
       headerBarMain={<Heading label={header} />}
-      actionCancelLabel={"CS_COMMON_BACK"}
+      actionCancelLabel={t("CS_COMMON_BACK")}
       actionSaveLabel={actionSaveLabel}
       actionCancelOnSubmit={() => {
         setShowConfirmationModal(null);
@@ -50,7 +50,10 @@ function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleActi
     >
       <div>
         <div style={{ marginTop: 10 }}>{t("REJECT_ACCEPT_SUBMISSION_TEXT")}</div>
-        {!generateOrder && type === "reject" && <TextArea name={t("PURPOSE_OF_REJECTION")} />}
+        {!generateOrder && type === "reject" && <h1 style={{ margin: "10px 0px 3px 0px" }}>{t("PURPOSE_OF_REJECTION")}</h1>}
+        {!generateOrder && type === "reject" && (
+          <TextArea style={{ marginTop: "0px" }} placeholder={t("TYPE_HERE_PLACEHOLDER")} name={t("PURPOSE_OF_REJECTION")} />
+        )}
         <div>
           <CheckBox
             onChange={() => {
