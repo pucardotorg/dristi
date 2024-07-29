@@ -859,7 +859,7 @@ export const UICustomizations = {
                   status: application.status,
                 };
               });
-              console.log(data.caseFiles[0]?.evidence, "applicationHistory");
+              // console.log(data.caseFiles[0]?.evidence, "applicationHistory");
               const evidenceHistory = data.caseFiles[0]?.evidence.map((evidence) => {
                 return {
                   instance: evidence.artifactType,
@@ -867,11 +867,11 @@ export const UICustomizations = {
                   status: evidence.status,
                 };
               });
-              console.log(evidenceHistory, "evidenceHistory");
+              // console.log(evidenceHistory, "evidenceHistory");
               const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
                 return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
               });
-              console.log(hearingHistory, "hearingHistory");
+              // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
                 ? data.caseFiles[0]?.orders
                     .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
@@ -891,9 +891,9 @@ export const UICustomizations = {
                       status: order.order.status,
                     };
                   });
-              console.log(orderHistory, "orderHistory");
+              // console.log(orderHistory, "orderHistory");
               const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
-              console.log(historyList, "historyList");
+              // console.log(historyList, "historyList");
               return { ...data, history: historyList };
             } else {
               return { ...data, history: [] };
