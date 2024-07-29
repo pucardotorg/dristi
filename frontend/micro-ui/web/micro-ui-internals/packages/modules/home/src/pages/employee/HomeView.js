@@ -140,7 +140,7 @@ const HomeView = () => {
   );
 
   useEffect(() => {
-    if (individualId) {
+    if (individualId || !userType) {
       if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
         const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
         const tabConfig = rolesToConfigMappingData.config;
@@ -205,6 +205,7 @@ const HomeView = () => {
   };
 
   const onRowClick = (row) => {
+    debugger;
     const searchParams = new URLSearchParams();
     if (
       onRowClickData?.urlDependentOn && onRowClickData?.urlDependentValue && Array.isArray(onRowClickData?.urlDependentValue)
