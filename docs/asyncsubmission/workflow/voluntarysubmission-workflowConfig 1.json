@@ -2,24 +2,74 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "application",
-      "businessService": "application-managelifecycle",
+      "business": "async-voluntary-submission",
+      "businessService": "async-voluntary-submission-managelifecycle",
       "businessServiceSla": 30,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "CREATE",
+              "nextState": "PENDINGESIGN",
+              "roles": [
+                "SUBMISSION_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDINGESIGN",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
+              "roles": [
+                "SUBMISSION_RESPONDER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDINGPAYMENT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "PAY",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "APPLICATION_CREATOR"
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             }
           ]
@@ -28,134 +78,83 @@
           "sla": null,
           "state": "PENDINGREVIEW",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "REQUESTFILERESPONSE",
-              "nextState": "PENDINGRESPONSEAPPROVAL",
+              "action": "AUTOESCALATE",
+              "nextState": "PENDINGAPPROVAL",
               "roles": [
-                "APPLICATION_RESPONDER"
+                "WORKFLOW_AUTOAPPROVE"
               ]
             },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "APPLICATION_DELETE"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 5,
-          "state": "PENDINGRESPONSEAPPROVAL",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
             {
               "action": "APPROVE",
-              "nextState": "PENDINGRESPONSE",
+              "nextState": "COMPLETED",
               "roles": [
-                "APPLICATION_APPROVER"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "DELETE",
               "nextState": "DELETED",
               "roles": [
-                "APPLICATION_DELETE"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "PENDINGREVIEW",
-              "roles": [
-                "APPLICATION_APPROVER"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "PENDINGRESPONSE",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "RESPOND",
-              "nextState": "RESPONSESUBMITTED",
-              "roles": [
-                "SYSTEM_ADMIN"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "APPLICATION_DELETE"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON",
-                "SYSTEM_ADMIN"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "RESPONSESUBMITTED",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "APPROVE",
-              "nextState": "CLOSED",
-              "roles": [
-                "APPLICATION_APPROVER"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "APPLICATION_DELETE"
+                "SUBMISSION_DELETE"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "APPLICATION_APPROVER"
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "RESPOND",
+              "nextState": "PENDINGAPPROVAL",
+              "roles": [
+                "SUBMISSION_RESPONDER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "PENDINGAPPROVAL",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "SUBMISSION_APPROVER"
               ]
             },
             {
@@ -169,7 +168,7 @@
         },
         {
           "sla": 5,
-          "state": "CLOSED",
+          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -178,7 +177,7 @@
         },
         {
           "sla": 5,
-          "state": "REJECTED",
+          "state": "DELETED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -187,7 +186,7 @@
         },
         {
           "sla": 5,
-          "state": "DELETED",
+          "state": "REJECTED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

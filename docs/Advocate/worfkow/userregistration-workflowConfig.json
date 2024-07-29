@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task-warrant",
-      "business": "task-warrant-services",
+      "businessService": "advocate",
+      "business": "advocate-services",
       "businessServiceSla": 30,
       "states": [
         {
@@ -16,17 +16,15 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "CREATE",
-              "nextState": "ISSUEWARRANT",
-              "roles": [
-                "TASK_CREATOR"
-              ]
+              "action": "REGISTER",
+              "nextState": "USERREGISTRATIONREQUESTED",
+              "roles": ["USER_REGISTER"]
             }
           ]
         },
         {
           "sla": null,
-          "state": "ISSUEWARRANT",
+          "state": "USERREGISTRATIONREQUESTED",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": true,
@@ -34,31 +32,20 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "DELIVERED",
-              "nextState": "COMPLETED",
-              "roles": [
-                "TASK_UPDATOR"
-              ]
+              "action": "APPROVE",
+              "nextState": "USERREGISTERED",
+              "roles": ["USER_APPROVER"]
             },
             {
-              "action": "NOT DELIVERED",
-              "nextState": "COMPLETED",
-              "roles": [
-                "TASK_UPDATOR"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
+              "action": "REJECT",
+              "nextState": "USER_REJECTED",
+              "roles": ["USER_APPROVER"]
             }
           ]
         },
         {
           "sla": 5,
-          "state": "COMPLETED",
+          "state": "USERREGISTERED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -67,7 +54,7 @@
         },
         {
           "sla": 5,
-          "state": "ABATED",
+          "state": "USER_REJECTED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
