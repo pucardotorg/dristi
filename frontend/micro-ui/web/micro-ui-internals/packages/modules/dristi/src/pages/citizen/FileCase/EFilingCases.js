@@ -1580,7 +1580,7 @@ function EFilingCases({ path }) {
         pendingTask: {
           name: "Pending Payment",
           entityType: "case",
-          referenceId: caseDetails?.filingNumber,
+          referenceId: `MANUAL_${caseDetails?.filingNumber}`,
           status: "PAYMENT_PENDING",
           assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
           assignedRole: ["CASE_CREATOR"],

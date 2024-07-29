@@ -1695,6 +1695,14 @@ export const pendingTaskCaseActions = {
       ],
     },
   },
+  SCHEDULE_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
 };
 
 export const pendingTaskHearingActions = {
