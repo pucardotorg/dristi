@@ -61,7 +61,7 @@ public class EvidenceRepository {
                 Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 pagination.setTotalCount(Double.valueOf(totalRecords));
-                artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
+                artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList,preparedStmtArgList);
             }
 
             List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(),evidenceRowMapper);

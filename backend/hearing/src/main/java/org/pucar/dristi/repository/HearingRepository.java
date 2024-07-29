@@ -63,7 +63,7 @@ public class HearingRepository {
                 Integer totalRecords = getTotalCountHearing(hearingQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 hearingSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                hearingQuery = queryBuilder.addPaginationQuery(hearingQuery, hearingSearchRequest.getPagination(), preparedStmtList);
+                hearingQuery = queryBuilder.addPaginationQuery(hearingQuery, hearingSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
                 log.info("Post Pagination Query :: {}", hearingQuery);
             }
             List<Hearing> list = jdbcTemplate.query(hearingQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);

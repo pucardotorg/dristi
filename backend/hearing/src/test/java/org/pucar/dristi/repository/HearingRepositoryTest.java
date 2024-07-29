@@ -66,7 +66,7 @@ class HearingRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(hearingQuery);
         when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), any(Object[].class))).thenReturn(5);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(hearingQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(hearingQuery);
         // Test method call
         List<Hearing> result = hearingRepository.getHearings(hearingSearchRequest);
 
@@ -95,7 +95,7 @@ class HearingRepositoryTest {
 
         when(queryBuilder.getHearingSearchQuery(anyList(), any(HearingCriteria.class),any())).thenReturn(hearingQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(hearingQuery);
-        when(queryBuilder.addPaginationQuery(anyString(),any(Pagination.class),anyList())).thenReturn(hearingQuery);
+        when(queryBuilder.addPaginationQuery(anyString(),any(Pagination.class),anyList(),anyList())).thenReturn(hearingQuery);
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(HearingRowMapper.class))).thenReturn(expectedHearings);
         when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),anyList())).thenReturn(hearingDocumentQuery);
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
@@ -111,7 +111,7 @@ class HearingRepositoryTest {
         assertEquals(expectedHearings, result);
         assertEquals(20.0, hearingSearchRequest.getPagination().getTotalCount());
         verify(queryBuilder).getHearingSearchQuery(anyList(), any(HearingCriteria.class),any());
-        verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList());
         verify(jdbcTemplate).query(anyString(), any(Object[].class), any(), any(HearingRowMapper.class));
         verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList(),anyList());
         verify(jdbcTemplate).query(anyString(), any(Object[].class), any(), any(HearingDocumentRowMapper.class));
@@ -172,7 +172,7 @@ class HearingRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(HearingDocumentRowMapper.class))).thenReturn(hearingDocumentMap);
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(hearingQuery);
         when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), any(Object[].class))).thenReturn(5);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(hearingQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(hearingQuery);
 
         // Test method call
         List<Hearing> result = hearingRepository.checkHearingsExist(hearing);

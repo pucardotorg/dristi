@@ -451,7 +451,7 @@ class ApplicationQueryBuilderTest {
         pagination.setLimit(2d);
         pagination.setOffSet(0d);
         List<Object> preparedStmtList = new ArrayList<>();
-        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList);
+        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList,new ArrayList<>());
 
         String expectedQuery = "SELECT * FROM dristi_application app WHERE app.id = '111' LIMIT ? OFFSET ?";
 

@@ -2,7 +2,6 @@ package org.pucar.dristi.repository.querybuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.Hearing;
@@ -56,7 +55,7 @@ public class HearingQueryBuilder {
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList,preparedStmtArgList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList,preparedStmtArgList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList,preparedStmtArgList);
-            addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList, attendeeIndividualId);
+            addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList,preparedStmtArgList, attendeeIndividualId);
 
             return query.toString();
         } catch (Exception e) {
@@ -138,9 +137,11 @@ public class HearingQueryBuilder {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
 
-    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList, List<Integer> preparedStatementArgList) {
         preparedStatementList.add(pagination.getLimit());
+        preparedStatementArgList.add(Types.DOUBLE);
         preparedStatementList.add(pagination.getOffSet());
+        preparedStatementArgList.add(Types.DOUBLE);
         return query + " LIMIT ? OFFSET ?";
     }
 }

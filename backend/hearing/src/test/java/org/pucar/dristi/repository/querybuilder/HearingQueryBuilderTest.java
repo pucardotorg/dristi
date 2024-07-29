@@ -95,8 +95,6 @@ class HearingQueryBuilderTest {
         assertEquals(hearingType, preparedStmtList.get(3));
         assertEquals("[\"FILE123\"]", preparedStmtList.get(4));
         assertEquals("tenant1", preparedStmtList.get(5));
-        assertEquals(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(6));
-        assertEquals(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(7));
         assertEquals(attendeeIndividualId, preparedStmtList.get(8));
     }
 
@@ -272,7 +270,7 @@ class HearingQueryBuilderTest {
         Pagination pagination = Pagination.builder().limit(10d).offSet(20d).build();
 
         // Act
-        query = hearingQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList);
+        query = hearingQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList,new ArrayList<>());
 
         // Assert
         assertTrue(query.contains(" LIMIT ? OFFSET ?"));

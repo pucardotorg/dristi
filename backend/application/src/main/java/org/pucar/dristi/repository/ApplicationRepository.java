@@ -54,7 +54,7 @@ public class ApplicationRepository {
                 Integer totalRecords = getTotalCountApplication(applicationQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList);
+                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
             }
 
             List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);

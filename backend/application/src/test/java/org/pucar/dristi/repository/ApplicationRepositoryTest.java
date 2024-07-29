@@ -89,7 +89,7 @@ class ApplicationRepositoryTest {
                 .thenReturn(applicationQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
                 .thenReturn(applicationQuery + " ORDER BY createdTime");
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList()))
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),any()))
                 .thenReturn(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0");
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
 
@@ -109,7 +109,7 @@ class ApplicationRepositoryTest {
 
         verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList(),anyList());
         verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
-        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList(),any());
         verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
 
         verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class),any(), eq(rowMapper));

@@ -68,7 +68,7 @@ class EvidenceRepositoryTest {
         // Mock responses
         when(queryBuilder.getArtifactSearchQuery(anyList(),any(), any(EvidenceSearchCriteria.class))).thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(artifactQuery);
         when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn(documentQuery);
         when(queryBuilder.getCommentSearchQuery(anyList(), anyList(),any())).thenReturn(commentQuery);
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
@@ -113,7 +113,7 @@ class EvidenceRepositoryTest {
         // Verify method interactions
         verify(queryBuilder).getArtifactSearchQuery(anyList(),anyList(), any(EvidenceSearchCriteria.class));
         verify(queryBuilder).addOrderByQuery(anyString(), any(Pagination.class));
-        verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(queryBuilder).addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList());
         verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList(),any());
         verify(queryBuilder).getCommentSearchQuery(anyList(), anyList(),any());
         verify(queryBuilder).getTotalCountQuery(anyString());
@@ -133,7 +133,7 @@ class EvidenceRepositoryTest {
         when(queryBuilder.getArtifactSearchQuery(anyList(),anyList(), any(EvidenceSearchCriteria.class)))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(artifactQuery);
         when(jdbcTemplate.query(eq(artifactQuery), any(Object[].class),any(), eq(evidenceRowMapper))).thenThrow(new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error"));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
@@ -153,7 +153,7 @@ class EvidenceRepositoryTest {
         when(queryBuilder.getArtifactSearchQuery(anyList(),anyList(), any(EvidenceSearchCriteria.class)))
                 .thenReturn(artifactQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(artifactQuery);
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList())).thenReturn(artifactQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(artifactQuery);
 
         // Mock JDBC query to throw a RuntimeException
         when(jdbcTemplate.query(eq(artifactQuery), any(Object[].class),any(), eq(evidenceRowMapper)))

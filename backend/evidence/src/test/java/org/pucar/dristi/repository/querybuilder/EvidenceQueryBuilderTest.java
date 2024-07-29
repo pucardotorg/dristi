@@ -120,7 +120,7 @@ public class EvidenceQueryBuilderTest {
 
         String query = "SELECT * FROM table";
         List<Object> preparedStatementList = new ArrayList<>();
-        String paginatedQuery = evidenceQueryBuilder.addPaginationQuery(query, pagination, preparedStatementList);
+        String paginatedQuery = evidenceQueryBuilder.addPaginationQuery(query, pagination, preparedStatementList,new ArrayList<>());
 
         assertNotNull(paginatedQuery);
         assertTrue(paginatedQuery.contains("LIMIT ? OFFSET ?"));
