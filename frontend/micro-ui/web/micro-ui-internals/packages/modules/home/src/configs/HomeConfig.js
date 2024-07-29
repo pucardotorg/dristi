@@ -206,6 +206,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Case Name",
                 jsonPath: "caseTitle",
+                additionalCustomization: true,
               },
               {
                 label: "Stage",
@@ -320,6 +321,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "Draft Name",
                 jsonPath: "caseTitle",
+                additionalCustomization: true,
               },
               {
                 label: "Case ID",
@@ -392,20 +394,6 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
-              {
                 label: "Outcome",
                 isMandatory: false,
                 key: "outcome",
@@ -420,6 +408,20 @@ export const TabLitigantSearchConfig = {
                   },
                   optionsCustomStyle: {
                     overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
                   },
                 },
               },
@@ -991,6 +993,272 @@ export const TabJudgeSearchConfig = {
   ],
 };
 
+export const TabBenchSearchConfig = {
+  tenantId: "pg",
+  moduleName: "homeJudgeUIConfig",
+  showTab: true,
+  TabSearchConfig: [
+    {
+      label: "Ongoing",
+      type: "search",
+      apiDetails: {
+        serviceName: "/case/v1/_search",
+        requestParam: {},
+        requestBody: {
+          tenantId: "pg",
+          criteria: [
+            {
+              stage: "Trial",
+            },
+          ],
+        },
+        masterName: "commonUiConfig",
+        moduleName: "homeJudgeUIConfig",
+        minParametersForSearchForm: 0,
+        tableFormJsonPath: "requestBody",
+        filterFormJsonPath: "requestBody",
+        searchFormJsonPath: "requestBody",
+      },
+      sections: {
+        search: {
+          uiConfig: {
+            formClassName: "custom-both-clear-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: defaultSearchValues, // Set default values for search fields
+            fields: [
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Stage",
+                isMandatory: false,
+                key: "stage",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "substage",
+                  options: subStageOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+            ],
+          },
+
+          show: true,
+        },
+        searchResult: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          uiConfig: {
+            columns: [
+              {
+                label: "Case Name",
+                jsonPath: "caseTitle",
+              },
+              {
+                label: "Stage",
+                jsonPath: "substage",
+              },
+              {
+                label: "Case ID",
+                jsonPath: "filingNumber",
+              },
+              {
+                label: "Case Type",
+                jsonPath: "",
+                additionalCustomization: true,
+              },
+              {
+                label: "Filing Date",
+                jsonPath: "filingDate",
+                additionalCustomization: true,
+              },
+            ],
+
+            enableColumnSort: true,
+            resultsJsonPath: "criteria[0].responseList",
+          },
+          show: true,
+        },
+      },
+    },
+    {
+      label: "Closed",
+      type: "search",
+      apiDetails: {
+        serviceName: "/case/v1/_search",
+        requestParam: {},
+        requestBody: {
+          tenantId: "pg",
+          criteria: [
+            {
+              stage: "Post-Trial",
+            },
+          ],
+        },
+        masterName: "commonUiConfig",
+        moduleName: "homeJudgeUIConfig",
+        minParametersForSearchForm: 0,
+        tableFormJsonPath: "requestBody",
+        filterFormJsonPath: "requestBody",
+        searchFormJsonPath: "requestBody",
+      },
+      sections: {
+        search: {
+          uiConfig: {
+            formClassName: "custom-both-clear-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: defaultSearchValues,
+            fields: [
+              {
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Closed:",
+                key: "sortCaseListByDate",
+                sortBy: "createdtime",
+                ascText: "new first",
+                descText: "old first",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "UpDownArrowIcon",
+                populators: {},
+              },
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["NIA S138"],
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Outcome",
+                isMandatory: false,
+                key: "outcome",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "outcome",
+                  options: outcomesOptions,
+                  styles: {
+                    maxWidth: "250px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+            ],
+          },
+
+          show: true,
+        },
+        searchResult: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          uiConfig: {
+            columns: [
+              {
+                label: "Case Name",
+                jsonPath: "caseTitle",
+              },
+              {
+                label: "Outcome",
+                jsonPath: "outcome",
+              },
+              {
+                label: "Case ID",
+                jsonPath: "filingNumber",
+              },
+              {
+                label: "Case Type",
+                jsonPath: "",
+                additionalCustomization: true,
+              },
+              {
+                label: "Filing Date",
+                jsonPath: "filingDate",
+                additionalCustomization: true,
+              },
+            ],
+
+            enableColumnSort: true,
+            resultsJsonPath: "criteria[0].responseList",
+          },
+          show: true,
+        },
+      },
+      additionalDetails: {
+        sortBy: "sortCaseListByDate",
+      },
+    },
+  ],
+};
+
 export const TabFSOSearchConfig = {
   tenantId: "pg",
   moduleName: "homeFSOUiConfig",
@@ -1006,7 +1274,7 @@ export const TabFSOSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Pre-Trial",
+              status: "UNDER_SCRUTINY",
             },
           ],
         },
@@ -1345,6 +1613,20 @@ export const rolesToConfigMapping = [
       params: [{ key: "caseId", value: "id" }],
     },
   },
+  {
+    roles: ["BENCH_CLERK"],
+    config: TabBenchSearchConfig,
+    isCourtOfficer: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/admission",
+      urlDependentOn: "status",
+      urlDependentValue: "PENDING_ADMISSION",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
+  },
 ];
 
 export const taskTypes = [
@@ -1352,9 +1634,9 @@ export const taskTypes = [
   { code: "hearing", name: "Hearing" },
   { code: "order", name: "Order" },
   { code: "order-judgement", name: "Order of Judgement" },
-  { code: "async-voluntary-submission-services", name: "Voluntary Submission" },
-  { code: "asynsubmissionwithresponse", name: "Submission With Response" },
-  { code: "asyncsubmissionwithoutresponse", name: "Submission Without Response" },
+  { code: "async-voluntary-submission-managelifecycle", name: "Voluntary Submission" },
+  { code: "async-submission-with-response-managelifecycle", name: "Submission With Response" },
+  { code: "async-order-submission-managelifecycle", name: "Submission Without Response" },
 ];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
@@ -1431,6 +1713,7 @@ export const pendingTaskOrderActions = {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     customFunction: "handleCreateOrder",
+    additionalDetailsKeys: ["orderType"],
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
@@ -1447,6 +1730,41 @@ export const pendingTaskVoluntarySubmissionActions = {
   MAKE_PAYMENT_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PENDINGREVIEW: {
+    actorName: ["JUDGE"],
+    actionName: "Review the submission",
+    customFunction: "handleReviewSubmission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PENDINGAPPROVAL: {
+    actorName: ["JUDGE"],
+    actionName: "Review the submission",
+    customFunction: "handleReviewSubmission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [
@@ -1481,12 +1799,34 @@ export const pendingTaskSubmissionWithResponseActions = {
       ],
     },
   },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskSubmissionWithoutResponseActions = {
   MAKE_PAYMENT_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [
@@ -1502,7 +1842,7 @@ export const selectTaskType = {
   hearing: pendingTaskHearingActions,
   order: pendingTaskOrderActions,
   "order-judgement": pendingTaskOrderOfJudgementActions,
-  "async-voluntary-submission-services": pendingTaskVoluntarySubmissionActions,
-  asynsubmissionwithresponse: pendingTaskSubmissionWithResponseActions,
-  asyncsubmissionwithoutresponse: pendingTaskSubmissionWithoutResponseActions,
+  "async-voluntary-submission-managelifecycle": pendingTaskVoluntarySubmissionActions,
+  "async-submission-with-response-managelifecycle": pendingTaskSubmissionWithResponseActions,
+  "async-order-submission-managelifecycle": pendingTaskSubmissionWithoutResponseActions,
 };

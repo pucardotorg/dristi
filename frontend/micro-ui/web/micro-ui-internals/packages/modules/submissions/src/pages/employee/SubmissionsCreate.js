@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBail,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -11,6 +10,7 @@ import {
   configsOthers,
   configsProductionOfDocuments,
   configsRescheduleRequest,
+  configsSettlement,
   configsSurety,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
@@ -18,7 +18,6 @@ import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
-import { configsCaseSettlement } from "../../../../orders/src/configs/ordersCreateConfig";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { submissionService } from "../../hooks/services";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -30,6 +29,13 @@ import { Urls } from "../../hooks/services/Urls";
 import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
 
 const fieldStyle = { marginRight: 0 };
+
+const stateSla = {
+  RE_SCHEDULE: 2 * 24 * 3600 * 1000,
+  CHECKOUT_REQUEST: 2 * 24 * 3600 * 1000,
+  ESIGN_THE_SUBMISSION: 2 * 24 * 3600 * 1000,
+  MAKE_PAYMENT_SUBMISSION: 2 * 24 * 3600 * 1000,
+};
 
 const SubmissionsCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -48,7 +54,7 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
-  const individualId = localStorage.getItem("individualId");
+  const todayDate = new Date().getTime();
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -102,7 +108,7 @@ const SubmissionsCreate = () => {
       PRODUCTION_DOCUMENTS: configsProductionOfDocuments,
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
-      SETTLEMENT: configsCaseSettlement,
+      SETTLEMENT: configsSettlement,
       BAIL_BOND: configsBailBond,
       SURETY: configsSurety,
       CHECKOUT_REQUEST: configsCheckoutRequest,
@@ -135,8 +141,7 @@ const SubmissionsCreate = () => {
         };
       });
       return updatedConfig;
-    }
-    else {
+    } else {
       return [];
     }
   }, [applicationType]);
@@ -268,6 +273,12 @@ const SubmissionsCreate = () => {
     if (applicationType && !["OTHERS", "SETTLEMENT", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
+    if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
+      setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
+    }
+    // if (applicationType && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
+    //   setValue("initialHearingDate", );
+    // }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -276,6 +287,41 @@ const SubmissionsCreate = () => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
+
+  const createPendingTask = async ({
+    name,
+    status,
+    isCompleted = false,
+    refId = applicationNumber,
+    stateSla = null,
+    isAssignedRole = false,
+    assignedRole = [],
+  }) => {
+    let entityType = "async-voluntary-submission-managelifecycle";
+    if (orderNumber) {
+      entityType =
+        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
+          ? "async-submission-with-response-managelifecycle"
+          : "async-order-submission-managelifecycle";
+    }
+    const assignes = !isAssignedRole ? getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [] : [];
+    await submissionService.customApiService(Urls.application.pendingTask, {
+      pendingTask: {
+        name,
+        entityType,
+        referenceId: `MANUAL_${refId}`,
+        status,
+        assignedTo: assignes?.map((uuid) => ({ uuid })),
+        assignedRole: assignedRole,
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber: filingNumber,
+        isCompleted,
+        stateSla,
+        additionalDetails: {},
+        tenantId,
+      },
+    });
   };
 
   const createSubmission = async () => {
@@ -355,32 +401,6 @@ const SubmissionsCreate = () => {
       return null;
     }
   };
-  const createPendingTask = async () => {
-    const assignes = getAllAssignees(caseDetails, Boolean(orderNumber)) || [];
-    let entityType = "async-voluntary-submission-services";
-    if (orderNumber) {
-      entityType =
-        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
-          ? "asynsubmissionwithresponse"
-          : "asyncsubmissionwithoutresponse";
-    }
-    await submissionService.customApiService(Urls.application.pendingTask, {
-      pendingTask: {
-        name: t("MAKE_PAYMENT_SUBMISSION"),
-        entityType,
-        referenceId: `MANUAL_${applicationNumber}`,
-        status: "MAKE_PAYMENT_SUBMISSION",
-        assignedTo: assignes?.map((uuid) => ({ uuid })),
-        assignedRole: [],
-        cnrNumber: caseDetails?.cnrNumber,
-        filingNumber: filingNumber,
-        isCompleted: false,
-        stateSla: null,
-        additionalDetails: {},
-        tenantId,
-      },
-    });
-  };
 
   const updateSubmission = async (action) => {
     try {
@@ -393,7 +413,12 @@ const SubmissionsCreate = () => {
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
-      createPendingTask();
+      createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
+      createPendingTask({
+        name: t("MAKE_PAYMENT_SUBMISSION"),
+        status: "MAKE_PAYMENT_SUBMISSION",
+        stateSla: todayDate + stateSla.MAKE_PAYMENT_SUBMISSION,
+      });
       applicationRefetch();
       setShowPaymentModal(true);
     } catch (error) {
@@ -407,6 +432,12 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
+    createPendingTask({
+      name: t("ESIGN_THE_SUBMISSION"),
+      status: "ESIGN_THE_SUBMISSION",
+      refId: newapplicationNumber,
+      stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
+    });
     if (newapplicationNumber) {
       history.push(
         orderNumber
@@ -438,10 +469,21 @@ const SubmissionsCreate = () => {
   const handleMakePayment = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
+    createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
+    const applicationType = applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.applicationType;
+    if (["RE_SCHEDULE", "CHECKOUT_REQUEST"].includes(applicationType)) {
+      createPendingTask({
+        name: t(`PENDING_TASK_${applicationType}`),
+        status: applicationType,
+        isAssignedRole: true,
+        assignedRole: ["JUDGE_ROLE"],
+        stateSla: new Date().getTime() + stateSla[applicationType],
+      });
+    }
   };
 
   const handleDownloadSubmission = () => {
-    history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
+    // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
 
   if (

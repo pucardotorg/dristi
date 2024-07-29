@@ -271,7 +271,7 @@ function AdmissionActionModal({
           }
           actionCancelLabel={t(submitModalInfo?.backButtonText)}
           actionCancelOnSubmit={() => {
-            history.push(`/employee`);
+            history.push(`/${window?.contextPath}/employee`);
           }}
           actionSaveOnSubmit={() => {
             if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
