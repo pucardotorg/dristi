@@ -17,6 +17,7 @@ const stateSla = {
   RE_SCHEDULE: 2,
   CHECKOUT_REQUEST: 2,
   SAVE_DRAFT: 2,
+  DRAFT_IN_PROGRESS: 2,
 };
 
 const dayInMillisecond = 24 * 3600 * 1000;
@@ -87,7 +88,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   }, [documentSubmission, modalType, t, userType]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
+    return userRoles.includes("WORKFLOW_ABANDON") &&
+      [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) &&
+      modalType === "Submissions"
       ? t("REJECT")
       : null;
   }, [documentSubmission, modalType, t, userRoles]);
@@ -384,6 +387,25 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
   };
+  const isMandatoryOrderCreation = useMemo(() => {
+    const applicationType = documentSubmission?.[0]?.applicationList?.applicationType;
+    const type = showConfirmationModal?.type;
+    const acceptedApplicationTypes = [
+      "RE_SCHEDULE",
+      "WITHDRAWAL",
+      "TRANSFER",
+      "SETTLEMENT",
+      "BAIL_BOND",
+      "SURETY",
+      "CHECKOUT_REQUEST",
+      "EXTENSION_SUBMISSION_DEADLINE",
+    ];
+    if (type === "reject") {
+      return false;
+    } else {
+      return acceptedApplicationTypes.includes(applicationType);
+    }
+  }, [documentSubmission, showConfirmationModal?.type]);
 
   const handleApplicationAction = async (generateOrder) => {
     try {
@@ -423,6 +445,23 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         };
         try {
           const res = await ordersService.createOrder(reqbody, { tenantId });
+          const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
+          DRISTIService.customApiService(Urls.dristi.pendingTask, {
+            pendingTask: {
+              name: t(name),
+              entityType: "order-managelifecycle",
+              referenceId: `MANUAL_${res?.order?.orderNumber}`,
+              status: "DRAFT_IN_PROGRESS",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber,
+              filingNumber,
+              isCompleted: false,
+              stateSla: stateSla.DRAFT_IN_PROGRESS * dayInMillisecond + todayDate,
+              additionalDetails: { orderType },
+              tenantId,
+            },
+          });
           history.push(
             `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
           );
@@ -434,23 +473,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
         }
-        const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
-        DRISTIService.customApiService(Urls.dristi.pendingTask, {
-          pendingTask: {
-            name: t(name),
-            entityType: "order-managelifecycle",
-            referenceId: `MANUAL_${documentSubmission?.[0]?.applicationList?.applicationNumber}`,
-            status: "SAVE_DRAFT",
-            assignedTo: [],
-            assignedRole: ["JUDGE_ROLE"],
-            cnrNumber,
-            filingNumber,
-            isCompleted: false,
-            stateSla: stateSla.SAVE_DRAFT * dayInMillisecond + todayDate,
-            additionalDetails: { orderType },
-            tenantId,
-          },
-        });
+
         setShowSuccessModal(true);
         setShowConfirmationModal(null);
       }
@@ -622,6 +645,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleApplicationAction}
+          disableCheckBox={isMandatoryOrderCreation}
         />
       )}
       {showConfirmationModal && !showSuccessModal && modalType === "Documents" && (

@@ -524,22 +524,24 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async (order) => {
-    let create = false;
-    let name = "Submit Documents";
     const formdata = order?.additionalDetails?.formdata;
-    let assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
+    let create = false;
+    let name = "";
+    let assignees = [];
 
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
+      name = t("MAKE_MANDATORY_SUBMISSION");
+      assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
     }
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
       status = "OPTOUT";
       assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
-      name = "Reschedule Hearing Date";
+      name = t("RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing";
     }
     create &&
@@ -560,6 +562,28 @@ const GenerateOrders = () => {
         },
       }));
     return;
+  };
+
+  const closeManualPendingTask = (order) => {
+    try {
+      order?.additionalDetails?.formdata?.refApplicationId &&
+        ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: {
+            name: "Completed",
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${order?.orderNumber}`,
+            status: "DRAFT_IN_PROGRESS",
+            assignedTo: [],
+            assignedRole: [],
+            cnrNumber: cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: true,
+            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+    } catch (error) {}
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
@@ -628,6 +652,7 @@ const GenerateOrders = () => {
       }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
       createPendingTask(currentOrder);
+      closeManualPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
