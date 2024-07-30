@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
@@ -93,18 +94,31 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
     }
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
         ObjectMapper objectMapper = new ObjectMapper();
-        if (json == null || json.trim().isEmpty()) {
-            try {
-                return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
-            } catch (IOException e) {
-                throw new CustomException("Failed to create an empty instance of " + typeRef.getType(), e.getMessage());
-            }
-        }
+        log.info("Converting JSON to type: {}", typeRef.getType());
+        log.info("JSON content: {}", json);
+
         try {
+            if (json == null || json.trim().isEmpty()) {
+                // Handle null or empty JSON
+                if (isListType(typeRef)) {
+                    return (T) new ArrayList<>(); // Return an empty list for list types
+                } else {
+                    return objectMapper.readValue("{}", typeRef); // Return an empty object
+                }
+            }
+
+            // Parse the JSON
             return objectMapper.readValue(json, typeRef);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("Failed to convert JSON to {}", typeRef.getType(), e);
             throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
         }
+    }
+
+    private <T> boolean isListType(TypeReference<T> typeRef) {
+        // Extract the raw type from the TypeReference
+        Class<?> rawClass = TypeFactory.defaultInstance().constructType(typeRef.getType()).getRawClass();
+        return List.class.isAssignableFrom(rawClass);
     }
 }
 
