@@ -1,21 +1,44 @@
-import { Button, SVG } from "@egovernments/digit-ui-components";
-import React, { useState } from "react";
+import { Button } from "@egovernments/digit-ui-components";
 import { Header, Menu } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { VideoIcon } from "./CustomSVGs";
-import { useHistory } from "react-router-dom";
 
-const EvidenceHearingHeader = ({ setActiveTab, activeTab }) => {
+const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, activeTab, onAddParty }) => {
   const [showMenu, setShowMenu] = useState(false);
-  const history = useHistory();
+  const { t } = useTranslation();
 
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+  const userType = Digit.UserService.getUser()?.info?.type === "CITIZEN" ? "citizen" : "employee";
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
   };
 
   const handleSelect = (option) => {
-    if (option == "Generate Order(s)") {
-      const contextPath = window?.contextPath || "";
-      history.push(`/${contextPath}/employee/orders/orders-create?orderType=SCHEDULE`);
+    if (option === t("GENERATE_ORDER_HOME")) {
+      const searchParams = new URLSearchParams({
+        hearingId: hearing.hearingId,
+        filingNumber,
+      });
+      window.open(`${window.location.origin}/${window.contextPath}/${userType}/${"orders/generate-orders"}?${searchParams.toString()}`, "_blank");
+      return;
+    }
+
+    if (option === t("MAKE_SUBMISSION")) {
+      const searchParams = new URLSearchParams({
+        hearingId: hearing.hearingId,
+        filingNumber,
+      });
+      window.open(
+        `${window.location.origin}/${window.contextPath}/${userType}/${"submissions/submissions-create"}?${searchParams.toString()}`,
+        "_blank"
+      );
+      return;
+    }
+
+    if (option === t("CASE_ADD_PARTY")) {
+      onAddParty();
+      return;
     }
   };
 
@@ -23,7 +46,7 @@ const EvidenceHearingHeader = ({ setActiveTab, activeTab }) => {
     <div className="evidence-header-wrapper">
       <div className="evidence-hearing-header">
         <div className="title-section">
-          <Header className={"evidence-header"}>Evidence Hearing</Header>
+          <Header className={"evidence-header"}>{t(`HEARING_TYPE_${hearing.hearingType}`)}</Header>
           <div className="case-details">
             <div className="text">Aparna vs. Subarna</div>
             <div className="breakline"></div>
@@ -34,14 +57,29 @@ const EvidenceHearingHeader = ({ setActiveTab, activeTab }) => {
         </div>
         <div className="evidence-actions">
           <Button variation={"teritiary"} label={"Share"} icon={"Share"} iconFill={"#007E7E"}></Button>
-          <Button
-            variation={"primary"}
-            label={"Take Action"}
-            icon={showMenu ? "ExpandLess" : "ExpandMore"}
-            isSuffix={true}
-            onClick={handleTakeAction}
-          ></Button>
-          {showMenu && <Menu options={["Generate Order(s)", "Add Party"]} onSelect={(option) => handleSelect(option)}></Menu>}
+          {userRoles.includes("EMPLOYEE") ? (
+            <React.Fragment>
+              <Button
+                variation={"primary"}
+                label={t("TAKE_ACTION_LABEL")}
+                icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                isSuffix={true}
+                onClick={handleTakeAction}
+              ></Button>
+              {showMenu && (
+                <Menu
+                  options={
+                    userRoles.includes("JUDGE_ROLE")
+                      ? [t("GENERATE_ORDER_HOME"), t("CASE_ADD_PARTY")]
+                      : [t("GENERATE_ORDER_HOME"), t("MAKE_SUBMISSION"), t("CASE_ADD_PARTY")]
+                  }
+                  onSelect={(option) => handleSelect(option)}
+                ></Menu>
+              )}
+            </React.Fragment>
+          ) : (
+            <Button variation={"primary"} label={t("MAKE_SUBMISSION")} onClick={() => handleSelect(t("MAKE_SUBMISSION"))}></Button>
+          )}
         </div>
       </div>
       <div className="join-video-conference">
@@ -49,7 +87,13 @@ const EvidenceHearingHeader = ({ setActiveTab, activeTab }) => {
           <VideoIcon></VideoIcon>
           <span>You can join this hearing online if you are not present in court.</span>
         </div>
-        <Button variation={"teritiary"} label={"Join Video Conference"}></Button>
+        <Button
+          variation={"tertiary"}
+          label={t("JOIN_VIDEO_CONFERENCE")}
+          onButtonClick={() => {
+            window.open(hearing.vcLink, "_blank");
+          }}
+        ></Button>
       </div>
       <div className="tabs-component">
         <div className="tab" onClick={() => setActiveTab("Transcript/Summary")}>
