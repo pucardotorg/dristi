@@ -567,7 +567,11 @@ const AdmittedCases = () => {
     setShowOrderReviewModal(false);
   };
   const handleOrdersTab = () => {
-    history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
+    if (history.location?.state?.orderObj) {
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
+    } else {
+      setShowOrderReviewModal(true);
+    }
   };
 
   const handleExtensionRequest = (orderNumber) => {

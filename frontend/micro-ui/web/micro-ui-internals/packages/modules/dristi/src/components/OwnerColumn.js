@@ -4,6 +4,7 @@ import { SubmissionWorkflowState } from "../Utils/submissionWorkflow";
 
 export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
   const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const getDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
@@ -57,6 +58,8 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
   const respondingUuids = rowData?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
 
   const showDoc =
+    ([SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.COMPLETED].includes(rowData?.status) &&
+      userRoles.includes("JUDGE_ROLE")) ||
     userInfo?.uuid === createdByUuid ||
     (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(
       rowData?.status
