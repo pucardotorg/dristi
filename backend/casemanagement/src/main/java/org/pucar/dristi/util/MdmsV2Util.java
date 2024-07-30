@@ -22,14 +22,22 @@ import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM
 @Component
 @Slf4j
 public class MdmsV2Util {
-	@Autowired
-	private RestTemplate restTemplate;
+
+	private final RestTemplate restTemplate;
+
+	private final ObjectMapper mapper;
+
+	private final Configuration configs;
 
 	@Autowired
-	private ObjectMapper mapper;
+	public MdmsV2Util(RestTemplate restTemplate,
+					  ObjectMapper mapper,
+					  Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
 
-	@Autowired
-	private Configuration configs;
+	}
 
 
 	public List<Mdms> fetchMdmsV2Data(RequestInfo requestInfo, String tenantId, Set<String> ids, Set<String> uniqueIdentifiers, String schemaCode, Boolean isActive) {
@@ -48,7 +56,7 @@ public class MdmsV2Util {
 		return mdmsResponseV2.getMdms();
 	}
 
-	private MdmsCriteriaReqV2 getMdmsV2Request(RequestInfo requestInfo, String tenantId, Set<String> ids, Set<String> uniqueIdentifiers, String schemaCode, Boolean isActive) {
+	public MdmsCriteriaReqV2 getMdmsV2Request(RequestInfo requestInfo, String tenantId, Set<String> ids, Set<String> uniqueIdentifiers, String schemaCode, Boolean isActive) {
 		MdmsCriteriaV2 mdmsCriteriaV2 = new MdmsCriteriaV2();
 
 		if (tenantId != null) mdmsCriteriaV2.setTenantId(tenantId);
