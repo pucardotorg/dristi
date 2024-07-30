@@ -399,7 +399,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: orderDetails?.id || null,
+          referenceId: isExtension ? null : orderDetails?.id || null,
           createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
@@ -415,7 +415,7 @@ const SubmissionsCreate = () => {
               orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
                 respondingParty: orderDetails?.additionalDetails?.formdata?.respondingParty,
               }),
-            isResponseRequired: orderDetails ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
+            isResponseRequired: orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
