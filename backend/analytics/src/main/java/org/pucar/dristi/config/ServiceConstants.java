@@ -57,6 +57,8 @@ public class ServiceConstants {
 	public static final String FILING_NUMBER_PATH = "$.filingNumber";
 	public static final String ERRORS_PATH = "$.errors";
 	public static final String ORDER_TYPE_PATH = "$.orderType";
+	public static final String ORDER_FINDINGS_PATH = "$.additionalDetails.formdata.findings.code";
+
 
 
 	public static final String RES_MSG_ID = "uief87324";

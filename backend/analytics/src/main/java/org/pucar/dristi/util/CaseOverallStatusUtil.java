@@ -10,6 +10,8 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.pucar.dristi.web.models.CaseStageSubStage;
+import org.pucar.dristi.web.models.CaseOutcome;
+import org.pucar.dristi.web.models.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +38,7 @@ public class CaseOverallStatusUtil {
         this.producer = producer;
 		this.mapper = mapper;
     }
+
 	public Object checkCaseOverAllStatus(String entityType, String referenceId, String status, String action, String tenantId, JSONObject requestInfo) {
 		try {
 			JSONObject request = new JSONObject();
@@ -62,6 +65,7 @@ public class CaseOverallStatusUtil {
 		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
 		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
 		publishToCaseOverallStatus(determineOrderStage(filingNumber, tenantId, orderType, status),request);
+		publishToCaseOutcome(determineCaseOutcome(filingNumber, tenantId, orderType, status, orderObject),request);
 		return orderObject;
 	}
 
@@ -140,13 +144,59 @@ public class CaseOverallStatusUtil {
 				AuditDetails auditDetails = new AuditDetails();
 				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
 				auditDetails.setLastModifiedTime(System.currentTimeMillis());
-				caseOverallStatus.setAuditdetails(auditDetails);
+				caseOverallStatus.setAuditDetails(auditDetails);
 				CaseStageSubStage caseStageSubStage = new CaseStageSubStage(requestInfo,caseOverallStatus);
 				log.info("Publishing to kafka topic: {}, caseStageSubstage: {}",config.getCaseOverallStatusTopic(), caseStageSubStage);
 				producer.push(config.getCaseOverallStatusTopic(), caseStageSubStage);
 			}
 		} catch (Exception e) {
 			log.error("Error in publishToCaseOverallStatus method", e);
+		}
+	}
+
+	private Outcome determineCaseOutcome(String filingNumber, String tenantId, String orderType, String status, Object orderObject) {
+
+		if (!status.equalsIgnoreCase("published"))
+			return null;
+
+		if (orderType.equalsIgnoreCase("WITHDRAWAL"))
+			return new Outcome(filingNumber, tenantId, "Withdrawn");
+
+		if (orderType.equalsIgnoreCase("SETTLEMENT"))
+			return new Outcome(filingNumber, tenantId, "Settled");
+
+		if (orderType.equalsIgnoreCase("CASE_TRANSFER"))
+			return new Outcome(filingNumber, tenantId, "Transferred");
+
+		if (orderType.equalsIgnoreCase("Abated"))
+			return new Outcome(filingNumber, tenantId, "Abated");
+
+		if (orderType.equalsIgnoreCase("JUDGEMENT"))
+            return new Outcome(filingNumber, tenantId, JsonPath.read(orderObject.toString(), ORDER_FINDINGS_PATH));
+
+		return null;
+	}
+
+	private void publishToCaseOutcome(Outcome outcome, JSONObject request) {
+		try {
+			if(outcome==null){
+				log.info("Case outcome update not eligible");
+			}
+			else if(outcome.getFilingNumber()==null){
+				log.error("Filing number not present for case outcome update");
+			}
+			else{
+				RequestInfo requestInfo = mapper.readValue(request.getJSONObject("RequestInfo").toString(), RequestInfo.class);
+				AuditDetails auditDetails = new AuditDetails();
+				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+				auditDetails.setLastModifiedTime(System.currentTimeMillis());
+				outcome.setAuditDetails(auditDetails);
+				CaseOutcome caseOutcome = new CaseOutcome(requestInfo,outcome);
+				log.info("Publishing to kafka topic: {}, caseOutcome: {}",config.getCaseOutcomeTopic(), caseOutcome);
+				producer.push(config.getCaseOutcomeTopic(), caseOutcome);
+			}
+		} catch (Exception e) {
+			log.error("Error in publishToCaseOutcome method", e);
 		}
 	}
 }

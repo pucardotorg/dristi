@@ -32,6 +32,9 @@ public class Configuration {
 	@Value("${egov.case.overall.status.topic}")
 	private String caseOverallStatusTopic;
 
+	@Value("${egov.case.outcome.topic}")
+	private String caseOutcomeTopic;
+
 	@Value("${egov.bulk.index.path}")
 	private String bulkPath;
 

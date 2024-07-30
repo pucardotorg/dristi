@@ -17,7 +17,7 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseOverallStatus {
+public class Outcome {
 
     @JsonProperty("filingNumber")
     private String filingNumber = null;
@@ -25,21 +25,17 @@ public class CaseOverallStatus {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
-    @JsonProperty("stage")
-    private String stage = null;
-
-    @JsonProperty("substage")
-    private String substage = null;
+    @JsonProperty("outcome")
+    private String outcome = null;
 
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
 
-    public CaseOverallStatus(String filingNumber, String tenantId, String stage, String substage) {
+    public Outcome(String filingNumber, String tenantId, String outcome) {
         this.filingNumber = filingNumber;
         this.tenantId = tenantId;
-        this.stage = stage;
-        this.substage = substage;
+        this.outcome = outcome;
     }
 
 }
