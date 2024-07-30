@@ -447,7 +447,8 @@ const GenerateOrders = () => {
         "INITIATING_RESCHEDULING_OF_HEARING_DATE",
       ].includes(orderType)
     ) {
-      updatedFormdata.originalHearingDate = applicationDetails?.additionalDetails?.formdata?.initialHearingDate;
+      updatedFormdata.originalHearingDate =
+        applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t]);

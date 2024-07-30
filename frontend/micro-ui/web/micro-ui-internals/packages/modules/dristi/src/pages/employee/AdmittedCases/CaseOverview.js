@@ -289,6 +289,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
           uuid={userInfo?.uuid}
           userInfoType={userInfoType}
           filingNumber={filingNumber}
+          inCase={true}
         />
       </div>
     </div>

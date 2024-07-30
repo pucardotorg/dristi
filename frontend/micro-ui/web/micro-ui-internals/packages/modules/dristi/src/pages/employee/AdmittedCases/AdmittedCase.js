@@ -312,6 +312,7 @@ const AdmittedCases = () => {
                 ...tabConfig.apiDetails.requestBody,
                 criteria: {
                   caseId: caseId,
+                  filingNumber: filingNumber,
                   tenantId: tenantId,
                 },
               },
