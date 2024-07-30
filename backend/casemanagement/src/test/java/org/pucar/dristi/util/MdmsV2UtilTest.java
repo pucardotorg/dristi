@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-public class MdmsV2UtilTest {
+class MdmsV2UtilTest {
 
 	@Mock
 	private RestTemplate restTemplate;
@@ -44,7 +44,7 @@ public class MdmsV2UtilTest {
 	}
 
 	@Test
-	public void testFetchMdmsV2Data_Success() {
+	void testFetchMdmsV2Data_Success() {
 		// Arrange
 		RequestInfo requestInfo = new RequestInfo();
 		String tenantId = "tenantId";
@@ -74,7 +74,7 @@ public class MdmsV2UtilTest {
 
 
 	@Test
-	public void testGetMdmsV2Request_AllParameters() {
+	void testGetMdmsV2Request_AllParameters() {
 		// Arrange
 		RequestInfo requestInfo = new RequestInfo();
 		String tenantId = "tenantId";
@@ -105,7 +105,7 @@ public class MdmsV2UtilTest {
 	}
 
 	@Test
-	public void testGetMdmsV2Request_NoParameters() {
+	void testGetMdmsV2Request_NoParameters() {
 		// Arrange
 		RequestInfo requestInfo = new RequestInfo();
 
