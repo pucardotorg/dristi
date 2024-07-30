@@ -30,8 +30,8 @@ public class ApplicationRowMapperTest {
     @Test
     public void testExtractData() throws SQLException {
         String issuedByJson = "{\"benchId\": \"benchId\", \"courtId\": \"courtId\", \"judgeId\": [\"e7f39394-5b04-4f25-a901-8f369e73c758\", \"85b10177-cce5-4db1-bbe5-875a03f8a24c\"]}";
-        String commentJson1 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440000\", \"tenantId\":\"tenant1\", \"artifactId\":\"artifact1\", \"individualId\":\"indiv1\", \"comment\":\"Hello\", \"isActive\":true, \"auditdetails\":null}]";
-        String commentJson2 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440001\", \"tenantId\":\"tenant2\", \"artifactId\":\"artifact2\", \"individualId\":\"indiv2\", \"comment\":\"Another comment\", \"isActive\":true, \"auditdetails\":null}]";
+        String commentJson1 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440000\", \"tenantId\":\"tenant1\", \"individualId\":\"indiv1\", \"comment\":\"Hello\", \"isActive\":true, \"auditdetails\":null}]";
+        String commentJson2 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440001\", \"tenantId\":\"tenant2\", \"individualId\":\"indiv2\", \"comment\":\"Another comment\", \"isActive\":true, \"auditdetails\":null}]";
 
         when(resultSet.next()).thenReturn(true, true, false);
         when(resultSet.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440000", "123e4567-e89b-12d3-a456-556642440001");
@@ -70,12 +70,10 @@ public class ApplicationRowMapperTest {
         // Asserting comment fields
         assertEquals("Hello", applications.get(0).getComment().get(0).getComment());
         assertEquals("tenant1", applications.get(0).getComment().get(0).getTenantId());
-        assertEquals("artifact1", applications.get(0).getComment().get(0).getArtifactId());
         assertEquals("indiv1", applications.get(0).getComment().get(0).getIndividualId());
 
         assertEquals("Another comment", applications.get(1).getComment().get(0).getComment());
         assertEquals("tenant2", applications.get(1).getComment().get(0).getTenantId());
-        assertEquals("artifact2", applications.get(1).getComment().get(0).getArtifactId());
         assertEquals("indiv2", applications.get(1).getComment().get(0).getIndividualId());
     }
 
