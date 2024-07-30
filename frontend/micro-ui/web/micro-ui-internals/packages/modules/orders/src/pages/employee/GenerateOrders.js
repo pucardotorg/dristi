@@ -42,6 +42,14 @@ import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
 
+function applyMultiSelectDropdownFix(setValue, formData, keys) {
+  keys.forEach((key) => {
+    if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
+      setValue(key, undefined);
+    }
+  });
+}
+
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -412,6 +420,18 @@ const GenerateOrders = () => {
     return updatedConfig;
   }, [complainants, currentOrder, orderType, respondants, t]);
 
+  const multiSelectDropdownKeys = useMemo(() => {
+    const foundKeys = [];
+    modifiedFormConfig.forEach((config) => {
+      config.body.forEach((field) => {
+        if (field.type === "dropdown" && field.populators.allowMultiSelect) {
+          foundKeys.push(field.key);
+        }
+      });
+    });
+    return foundKeys;
+  }, [modifiedFormConfig]);
+
   const defaultValue = useMemo(() => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
@@ -454,6 +474,7 @@ const GenerateOrders = () => {
   }, [currentOrder, orderType, applicationDetails, t]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
       const updatedFormData =
         currentOrder?.additionalDetails?.formdata?.orderType?.code !== formData?.orderType?.code ? { orderType: formData.orderType } : formData;
