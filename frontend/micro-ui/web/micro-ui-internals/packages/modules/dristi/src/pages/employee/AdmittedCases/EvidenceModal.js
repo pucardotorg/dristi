@@ -432,7 +432,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          // await handleAcceptApplication();
+          await handleAcceptApplication();
         }
         const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
@@ -458,7 +458,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const handleBack = () => {
-    if (modalType === "Submissions") {
+    if (modalType === "Submissions" && history.location?.state?.applicationDocObj) {
       history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     } else {
       setShow(false);
