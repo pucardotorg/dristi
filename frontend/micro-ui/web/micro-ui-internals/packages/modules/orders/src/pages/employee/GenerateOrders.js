@@ -40,6 +40,7 @@ import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
+import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -57,6 +58,32 @@ const OutlinedInfoIcon = () => (
   </svg>
 );
 
+const stateSla = {
+  SECTION_202_CRPC: 3,
+  MANDATORY_SUBMISSIONS_RESPONSES: 3,
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: 3,
+  REFERRAL_CASE_TO_ADR: 3,
+  SCHEDULE_OF_HEARING_DATE: 3,
+  RESCHEDULE_OF_HEARING_DATE: 3,
+  REJECTION_RESCHEDULE_REQUEST: 3,
+  APPROVAL_RESCHEDULE_REQUEST: 3,
+  INITIATING_RESCHEDULING_OF_HEARING_DATE: 1,
+  ASSIGNING_DATE_RESCHEDULED_HEARING: 3,
+  ASSIGNING_NEW_HEARING_DATE: 3,
+  CASE_TRANSFER: 3,
+  SETTLEMENT: 3,
+  SUMMONS: 3,
+  BAIL: 3,
+  WARRANT: 3,
+  WITHDRAWAL: 3,
+  OTHERS: configsOthers,
+  APPROVE_VOLUNTARY_SUBMISSIONS: 3,
+  REJECT_VOLUNTARY_SUBMISSIONS: 3,
+  JUDGEMENT: 3,
+};
+
+const dayInMillisecond = 24 * 3600 * 1000;
+
 const GenerateOrders = () => {
   const { t } = useTranslation();
   const { orderNumber, filingNumber } = Digit.Hooks.useQueryParams();
@@ -70,8 +97,8 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const userInfo = Digit.UserService.getUser()?.info || {};
   const history = useHistory();
+  const todayDate = new Date().getTime();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -102,27 +129,35 @@ const GenerateOrders = () => {
     [caseData]
   );
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
 
   const complainants = useMemo(() => {
     return (
-      caseDetails?.litigants?.map((item) => {
-        return {
-          code: item?.additionalDetails?.fullName,
-          name: item?.additionalDetails?.fullName,
-          uuid: item?.additionalDetails?.uuid,
-        };
-      }) || []
+      caseDetails?.litigants
+        ?.filter((item) => item?.partyType?.includes("complainant"))
+        .map((item) => {
+          return {
+            code: item?.additionalDetails?.fullName,
+            name: item?.additionalDetails?.fullName,
+            uuid: allAdvocates[item?.additionalDetails?.uuid],
+          };
+        }) || []
     );
-  }, [caseDetails]);
+  }, [caseDetails, allAdvocates]);
 
   const respondants = useMemo(() => {
-    // return caseDetails?.litigants
-    //   ?.filter((item) => item?.partyType === "respondant.primary")
-    //   .map((item) => {
-    //     return { code: item?.additionalDetails?.fullName || "Respondent", name: item?.additionalDetails?.fullName || "Respondent" };
-    //   });
-    return [{ code: "Respondent", name: "Respondent" }];
-  }, []);
+    return (
+      caseDetails?.litigants
+        ?.filter((item) => item?.partyType?.includes("respondent"))
+        .map((item) => {
+          return {
+            code: item?.additionalDetails?.fullName,
+            name: item?.additionalDetails?.fullName,
+            uuid: allAdvocates[item?.additionalDetails?.uuid],
+          };
+        }) || []
+    );
+  }, [caseDetails, allAdvocates]);
 
   const {
     data: ordersData,
@@ -159,13 +194,6 @@ const GenerateOrders = () => {
   const defaultIndex = useMemo(() => {
     return formList.findIndex((order) => order.orderNumber === orderNumber);
   }, [formList, orderNumber]);
-
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
 
   const defaultOrderData = useMemo(
     () => ({
@@ -276,7 +304,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: [...complainants, ...respondants],
                   },
                 };
               }
@@ -304,7 +332,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: [...complainants, ...respondants],
                   },
                 };
               }
@@ -419,7 +447,7 @@ const GenerateOrders = () => {
       updatedFormdata.originalHearingDate = applicationDetails?.additionalDetails?.formdata?.initialHearingDate;
     }
     return updatedFormdata;
-  }, [currentOrder, applicationDetails, orderType]);
+  }, [currentOrder, orderType, applicationDetails, t]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
@@ -431,6 +459,8 @@ const GenerateOrders = () => {
             ? item
             : {
                 ...item,
+                comments:
+                  formData?.comments?.text || formData?.additionalComments?.text || formData?.otherDetails?.text || formData?.sentence?.text || "",
                 orderType: formData?.orderType?.code,
                 additionalDetails: { ...item.order?.additionalDetails, formdata: updatedFormData },
               };
@@ -470,27 +500,36 @@ const GenerateOrders = () => {
 
   const createPendingTask = async (order) => {
     let create = false;
+    let name = "Submit Documents";
     const formdata = order?.additionalDetails?.formdata;
-    let assignees = formdata?.submissionParty?.filter((item) => item?.uuid && item).map((item) => ({ uuid: item?.uuid }));
+    let assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
+
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
     }
+    if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
+      create = true;
+      status = "OPTOUT";
+      assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
+      name = "Reschedule Hearing Date";
+      entityType = "hearing";
+    }
     create &&
       (await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
-          name: "Submit Documents",
+          name,
           entityType,
-          referenceId: order?.orderNumber,
+          referenceId: `MANUAL_${order?.orderNumber}`,
           status,
           assignedTo: assignees,
           assignedRole: [],
-          cnrNumber: null,
+          cnrNumber: cnrNumber,
           filingNumber: filingNumber,
           isCompleted: false,
-          stateSla: null,
+          stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
           additionalDetails: {},
           tenantId,
         },

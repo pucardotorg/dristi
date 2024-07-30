@@ -55,7 +55,7 @@ import CustomCalendar from "./components/CustomCalendar";
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
   const history = useHistory();
-  const moduleCode = ["DRISTI", "CASE", "ORDERS"];
+  const moduleCode = ["DRISTI", "CASE", "ORDERS", "SUBMISSIONS"];
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Dropdown } from "@egovernments/digit-ui-components";
+import { CardLabel, Dropdown } from "@egovernments/digit-ui-components";
 import { LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { useGetPendingTask } from "../hooks/useGetPendingTask";
@@ -14,6 +14,7 @@ export const CaseWorkflowAction = {
   ESIGN: "E-SIGN",
   ABANDON: "ABANDON",
 };
+const dayInMillisecond = 1000 * 3600 * 24;
 
 const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
@@ -102,9 +103,12 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
 
   const handleReviewOrder = useCallback(
     async ({ filingNumber, caseId, referenceId }) => {
-      const orderDetails = await getOrderDetail();
+      const orderDetails = await getOrderDetail(referenceId);
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`, {
+        orderObj: orderDetails,
+      });
     },
-    [getOrderDetail]
+    [getOrderDetail, history, userType]
   );
 
   const handleReviewSubmission = useCallback(
@@ -257,7 +261,11 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
-          const dayCount = stateSla ? Number(stateSla) - todayDate : dueInSec ? Math.abs(Math.ceil(dueInSec / (1000 * 3600 * 24))) : null;
+          const dayCount = stateSla
+            ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
+            : dueInSec
+            ? Math.abs(Math.ceil(dueInSec / dayInMillisecond))
+            : null;
           const additionalDetails = pendingTaskActions?.[status]?.additionalDetailsKeys?.reduce((result, current) => {
             result[current] = data?.fields?.find((field) => field.key === `additionalDetails.${current}`)?.value;
             return result;
@@ -274,8 +282,8 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
-            due: dayCount > 1 ? `Due in ${dayCount} Days` : `Due today`,
-            dayCount,
+            due: dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`,
+            dayCount: dayCount ? dayCount : dayCount === 0 ? 0 : Infinity,
             isCompleted,
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
@@ -304,8 +312,16 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
 
   const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
     () => ({
-      pendingTaskDataInWeek: pendingTasks.filter((data) => data?.dayCount < 7 && !data?.isCompleted).map((data) => data) || [],
-      allOtherPendingTask: pendingTasks.filter((data) => data?.dayCount >= 7 && !data?.isCompleted).map((data) => data) || [],
+      pendingTaskDataInWeek:
+        pendingTasks
+          .filter((data) => data?.dayCount < 7 && !data?.isCompleted)
+          .map((data) => data)
+          .sort((data) => data?.dayCount) || [],
+      allOtherPendingTask:
+        pendingTasks
+          .filter((data) => data?.dayCount >= 7 && !data?.isCompleted)
+          .map((data) => data)
+          .sort((data) => data?.dayCount) || [],
     }),
     [pendingTasks]
   );
@@ -314,9 +330,10 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
   }
   return (
     <div className="tasks-component">
-      <h2>Your Tasks</h2>
+      <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
       <div className="task-filters">
         <LabelFieldPair>
+          <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
           <Dropdown
             option={[{ name: "NIA S138", code: "NIA S138" }]}
             selected={{ name: "NIA S138", code: "NIA S138" }}
@@ -326,6 +343,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           />
         </LabelFieldPair>
         <LabelFieldPair>
+          <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
           <Dropdown
             option={taskTypes}
             optionKey={"name"}
@@ -337,28 +355,45 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           />
         </LabelFieldPair>
       </div>
-      {searchCaseLoading && <Loader />}
-      {!searchCaseLoading && (
+      {pendingTaskDataInWeek.length === 0 && allOtherPendingTask.length === 0 ? (
+        <div
+          style={{
+            fontSize: "20px",
+            fontStyle: "italic",
+            lineHeight: "23.44px",
+            fontWeight: "500",
+            font: "Roboto",
+            color: "#77787B",
+          }}
+        >
+          {!isLitigant ? "NO_TASK_TEXT" : t("NO_PENDING_TASK_TEXT")}
+        </div>
+      ) : (
         <React.Fragment>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={pendingTaskDataInWeek}
-              accordionHeader={"Complete this week"}
-              t={t}
-              totalCount={pendingTaskDataInWeek?.length}
-              isHighlighted={true}
-              isAccordionOpen={true}
-            />
-          </div>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={allOtherPendingTask}
-              accordionHeader={"All other tasks"}
-              t={t}
-              totalCount={allOtherPendingTask?.length}
-            />
-          </div>
-          <div className="task-section"></div>
+          {searchCaseLoading && <Loader />}
+          {!searchCaseLoading && (
+            <React.Fragment>
+              <div className="task-section">
+                <PendingTaskAccordion
+                  pendingTasks={pendingTaskDataInWeek}
+                  accordionHeader={"Complete this week"}
+                  t={t}
+                  totalCount={pendingTaskDataInWeek?.length}
+                  isHighlighted={true}
+                  isAccordionOpen={true}
+                />
+              </div>
+              <div className="task-section">
+                <PendingTaskAccordion
+                  pendingTasks={allOtherPendingTask}
+                  accordionHeader={"All other tasks"}
+                  t={t}
+                  totalCount={allOtherPendingTask?.length}
+                />
+              </div>
+              <div className="task-section"></div>
+            </React.Fragment>
+          )}
         </React.Fragment>
       )}
     </div>

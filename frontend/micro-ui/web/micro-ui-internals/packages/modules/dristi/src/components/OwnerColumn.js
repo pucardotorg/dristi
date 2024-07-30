@@ -1,7 +1,10 @@
 import React from "react";
 import { FactCheckIcon } from "../icons/svgIndex";
+import { SubmissionWorkflowState } from "../Utils/submissionWorkflow";
 
 export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const getDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
@@ -20,9 +23,10 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       additionalDetails: rowData?.additionalDetails,
       applicationId: rowData?.id,
       auditDetails: rowData?.auditDetails,
+      referenceId: rowData?.referenceId,
     },
     applicationContent: null,
-    comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+    comments: rowData?.comment || [],
     applicationList: rowData,
   };
   const docObj = rowData?.documents?.map((doc) => {
@@ -35,6 +39,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         additionalDetails: rowData?.additionalDetails,
         applicationId: rowData?.id,
         auditDetails: rowData?.auditDetails,
+        referenceId: rowData?.referenceId,
       },
       applicationContent: {
         tenantId: rowData?.tenantId,
@@ -44,17 +49,22 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         documentUid: doc.documentUid,
         additionalDetails: doc.additionalDetails,
       },
-      comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+      comments: rowData?.comment || [],
       applicationList: rowData,
     };
   }) || [defaultObj];
 
+  const createdByUuid = rowData.statuteSection?.auditdetails?.createdBy;
+  const respondingUuids = rowData?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+
   const showDoc =
-    rowData?.status === "PENDINGPAYMENT" ||
-    rowData?.status === "PENDINGREVIEW" ||
-    rowData?.status === "PENDINGAPPROVAL" ||
-    rowData?.status === "PENDINGESIGN" ||
-    rowData?.status === "COMPLETED";
+    ([SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.COMPLETED].includes(rowData?.status) &&
+      userRoles.includes("JUDGE_ROLE")) ||
+    userInfo?.uuid === createdByUuid ||
+    (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(
+      rowData?.status
+    ) &&
+      respondingUuids?.includes(userInfo?.uuid));
 
   return (
     <React.Fragment>

@@ -2,13 +2,16 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { TabLitigantSearchConfig, rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
+import { rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import TasksComponent from "../../components/TaskComponent";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { HomeService, Urls } from "../../hooks/services";
 import LitigantHomePage from "./LitigantHomePage";
+import { TabLitigantSearchConfig } from "../../configs/LitigantHomeConfig";
+import ReviewCard from "../../components/ReviewCard";
+import { InboxIcon, DocumentIcon } from "../../../homeIcon";
 
 const defaultSearchValues = {
   filingNumber: "",
@@ -39,6 +42,7 @@ const HomeView = () => {
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState(state?.taskType || { code: "case", name: "Case" });
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
+  const isCourtRoomRole = useMemo(() => roles?.some((role) => role?.code === "COURT_ADMIN"), [roles]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
@@ -136,31 +140,33 @@ const HomeView = () => {
   );
 
   useEffect(() => {
-    if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
-      const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
-      const tabConfig = rolesToConfigMappingData.config;
-      const rowClickData = rolesToConfigMappingData.onRowClickRoute;
-      setOnRowClickData(rowClickData);
-      setConfig(tabConfig?.TabSearchConfig?.[0]);
-      setTabConfig(tabConfig);
-      getTotalCountForTab(tabConfig);
-    } else {
-      const rolesToConfigMappingData =
-        rolesToConfigMapping?.find((item) =>
-          item.roles?.reduce((res, curr) => {
-            if (!res) return res;
-            res = roles.some((role) => role.code === curr);
-            return res;
-          }, true)
-        ) || TabLitigantSearchConfig;
-      const tabConfig = rolesToConfigMappingData?.config;
-      const rowClickData = rolesToConfigMappingData?.onRowClickRoute;
-      setOnRowClickData(rowClickData);
-      setConfig(tabConfig?.TabSearchConfig?.[0]);
-      setTabConfig(tabConfig);
-      getTotalCountForTab(tabConfig);
+    if (individualId || !userType) {
+      if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
+        const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
+        const tabConfig = rolesToConfigMappingData.config;
+        const rowClickData = rolesToConfigMappingData.onRowClickRoute;
+        setOnRowClickData(rowClickData);
+        setConfig(tabConfig?.TabSearchConfig?.[0]);
+        setTabConfig(tabConfig);
+        getTotalCountForTab(tabConfig);
+      } else {
+        const rolesToConfigMappingData =
+          rolesToConfigMapping?.find((item) =>
+            item.roles?.reduce((res, curr) => {
+              if (!res) return res;
+              res = roles.some((role) => role.code === curr);
+              return res;
+            }, true)
+          ) || TabLitigantSearchConfig;
+        const tabConfig = rolesToConfigMappingData?.config;
+        const rowClickData = rolesToConfigMappingData?.onRowClickRoute;
+        setOnRowClickData(rowClickData);
+        setConfig(tabConfig?.TabSearchConfig?.[0]);
+        setTabConfig(tabConfig);
+        getTotalCountForTab(tabConfig);
+      }
     }
-  }, [additionalDetails, getTotalCountForTab, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, individualId, roles, state, tenantId]);
 
   // calling case api for tab's count
   useEffect(() => {
@@ -242,6 +248,21 @@ const HomeView = () => {
     history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
   }
 
+  const data = [
+    {
+      logo: <InboxIcon />,
+      title: "REVIEW_SUMMON_NOTICE_WARRANTS_TEXT",
+      pendingAction: 40,
+      actionLink: "orders/Summons&Notice",
+    },
+    {
+      logo: <DocumentIcon />,
+      title: "VIEW_ISSUED_ORDERS",
+      pendingAction: 11,
+      actionLink: "",
+    },
+  ];
+
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
@@ -249,7 +270,10 @@ const HomeView = () => {
       ) : (
         <React.Fragment>
           <div className="left-side">
-            <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
+            <div className="home-header-wrapper">
+              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} userInfoType={userInfoType} t={t} />
+              {isCourtRoomRole && <ReviewCard data={data} userInfoType={userInfoType} />}
+            </div>
             <div className="content-wrapper">
               <div className="header-class">
                 <div className="header">{t("CS_YOUR_CASE")}</div>

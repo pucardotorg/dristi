@@ -251,8 +251,8 @@ function CaseFileAdmission({ t, path }) {
       DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
           name: "Schedule Hearing",
-          entityType: "hearing",
-          referenceId: caseDetails?.filingNumber,
+          entityType: "case",
+          referenceId: `MANUAL_${caseDetails?.filingNumber}`,
           status: "SCHEDULE_HEARING",
           assignedTo: [],
           assignedRole: ["JUDGE_ROLE"],
@@ -325,7 +325,7 @@ function CaseFileAdmission({ t, path }) {
   const handleScheduleNextHearing = () => {
     const reqBody = {
       order: {
-        createdDate: formatDate(new Date()),
+        createdDate: new Date().getTime(),
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,

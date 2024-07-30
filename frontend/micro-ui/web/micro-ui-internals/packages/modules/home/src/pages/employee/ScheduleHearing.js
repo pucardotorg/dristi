@@ -1,20 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  CardLabel,
-  CardText,
-  CustomDropdown,
-  DateRange,
-  EventCalendar,
-  SubmitBar,
-  TextInput,
-  Toast,
-  Modal,
-} from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
+import { Button, CardText, CustomDropdown, SubmitBar, TextInput, Toast, Modal, Loader } from "@egovernments/digit-ui-react-components";
 import { formatDateInMonth } from "../../utils";
 import { useTranslation } from "react-i18next";
-import { PopUp } from "@egovernments/digit-ui-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import useSearchCaseService from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useSearchCaseService";
+import { HomeService, Urls } from "../../hooks/services";
 
 const hearingTypeOptions = [
   {
@@ -149,7 +139,6 @@ function ScheduleHearing({
   disabled = true,
   isCaseAdmitted = false,
   showPurposeOfHearing = false,
-  caseAdmittedSubmit = () => {},
 }) {
   const getNextNDates = (n) => {
     const today = new Date();
@@ -174,9 +163,10 @@ function ScheduleHearing({
   const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
   const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
   const CustomCalendar = Digit.ComponentRegistryService.getComponent("CustomCalendar") || <React.Fragment></React.Fragment>;
-  const { filingNumber } = Digit.Hooks.useQueryParams();
+  const { filingNumber, status } = Digit.Hooks.useQueryParams();
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const { t } = useTranslation();
   const history = useHistory();
   const shortCaseInfo = useMemo(() => {
@@ -192,6 +182,23 @@ function ScheduleHearing({
   }, [filingNumber, submitModalInfo?.shortCaseInfo]);
 
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
+  const { data: caseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          filingNumber: filingNumber,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    filingNumber,
+    filingNumber
+  );
+  const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -224,10 +231,79 @@ function ScheduleHearing({
     setSelectedCustomDate(date);
   };
 
-  const handleSubmit = (props) => {};
   const handleClose = () => {
-    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "hearing", name: "Hearing" } });
+    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "case", name: "Case" } });
   };
+
+  const handleSubmit = (data) => {
+    const dateArr = data.date.split(" ").map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date));
+    const date = new Date(dateArr.join(" "));
+    const reqBody = {
+      order: {
+        createdDate: new Date().getTime(),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "SCHEDULE_OF_HEARING_DATE",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {
+          formdata: {
+            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+              dateArr[0] < 9 ? `0${dateArr[0]}` : dateArr[0]
+            }`,
+            hearingPurpose: data.purpose,
+            orderType: {
+              code: "SCHEDULE_OF_HEARING_DATE",
+              type: "SCHEDULE_OF_HEARING_DATE",
+              name: "ORDER_TYPE_SCHEDULE_OF_HEARING_DATE",
+            },
+          },
+        },
+      },
+    };
+    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
+      .then(async (res) => {
+        if (status && status !== "OPTOUT") {
+          await HomeService.customApiService(Urls.pendingTask, {
+            pendingTask: {
+              name: "Schedule Hearing",
+              entityType: "case",
+              referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+              status: "SCHEDULE_HEARING",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber: null,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: true,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+        } else if (status && status === "OPTOUT") {
+          handleClose();
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <Modal
@@ -300,9 +376,10 @@ function ScheduleHearing({
           <Button variation="secondary" onButtonClick={handleClose} className="primary-label-btn back-from-schedule" label={"Close"}></Button>
           <SubmitBar
             variation="primary"
-            onSubmit={handleSubmit}
+            onSubmit={() => handleSubmit(scheduleHearingParams)}
             className="primary-label-btn select-participant-submit"
             label={t("GENERATE_ORDERS_LINK")}
+            disabled={!scheduleHearingParams?.date}
           ></SubmitBar>
         </div>
 
