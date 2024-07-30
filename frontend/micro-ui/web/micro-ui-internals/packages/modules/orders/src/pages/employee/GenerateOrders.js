@@ -304,7 +304,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: [...complainants, ...respondants],
                   },
                 };
               }
@@ -332,7 +332,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: complainants,
+                    options: [...complainants, ...respondants],
                   },
                 };
               }
