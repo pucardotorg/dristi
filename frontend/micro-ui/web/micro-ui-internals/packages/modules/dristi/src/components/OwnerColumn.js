@@ -26,7 +26,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       referenceId: rowData?.referenceId,
     },
     applicationContent: null,
-    comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+    comments: rowData?.comment || [],
     applicationList: rowData,
   };
   const docObj = rowData?.documents?.map((doc) => {
@@ -49,7 +49,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         documentUid: doc.documentUid,
         additionalDetails: doc.additionalDetails,
       },
-      comments: rowData?.comment ? JSON.parse(rowData?.comment) : [],
+      comments: rowData?.comment || [],
       applicationList: rowData,
     };
   }) || [defaultObj];
