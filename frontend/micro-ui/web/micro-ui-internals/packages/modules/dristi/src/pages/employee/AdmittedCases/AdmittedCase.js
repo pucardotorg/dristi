@@ -18,10 +18,11 @@ import ScheduleHearing from "./ScheduleHearing";
 import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
 import PublishedOrderModal from "./PublishedOrderModal";
 import ViewAllSubmissions from "./ViewAllSubmissions";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 
 const defaultSearchValues = {};
 
-const AdmittedCases = ({ isJudge = true }) => {
+const AdmittedCases = () => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   const urlParams = new URLSearchParams(window.location.search);
@@ -44,7 +45,6 @@ const AdmittedCases = ({ isJudge = true }) => {
   const [submissionsViewList, setSubmissionsViewList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
-  const isAdvocate = userRoles.includes("ADVOCATE_ROLE");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
@@ -66,6 +66,7 @@ const AdmittedCases = ({ isJudge = true }) => {
   );
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0].status === "CASE_ADMITTED";
 
   const statue = useMemo(
     () =>
@@ -93,9 +94,11 @@ const AdmittedCases = ({ isJudge = true }) => {
     };
   });
 
-  const isAdvocatePresent = useMemo(() => Boolean(Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0), [
-    caseDetails,
-  ]);
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails)[userInfo?.uuid], [caseDetails, userInfo]);
+  const isAdvocatePresent = useMemo(
+    () => (userInfo?.roles?.some((role) => role?.code === "ADVOCATE_ROLE") ? true : allAdvocates?.includes(userInfo?.uuid)),
+    [allAdvocates, userInfo?.roles, userInfo?.uuid]
+  );
 
   const caseRelatedData = useMemo(
     () => ({
@@ -113,11 +116,16 @@ const AdmittedCases = ({ isJudge = true }) => {
 
   const showMakeSubmission = useMemo(() => {
     return (
-      (isAdvocatePresent ? isAdvocate : true) &&
-      userRoles.includes("APPLICATION_CREATOR") &&
+      isAdvocatePresent &&
+      userRoles?.includes("APPLICATION_CREATOR") &&
       [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
     );
-  }, [isAdvocatePresent, userRoles, caseDetails?.status, isAdvocate]);
+  }, [userRoles, caseDetails?.status, isAdvocatePresent]);
+
+  const showSubmissionButtons = useMemo(() => {
+    const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
+    return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
+  }, [currentOrder, userInfo?.uuid, userRoles]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
@@ -138,14 +146,15 @@ const AdmittedCases = ({ isJudge = true }) => {
     const docSetFunc = (docObj) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
+      const createdByUuid = docObj?.[0]?.applicationList?.statuteSection?.auditdetails?.createdBy;
       if (isCitizen) {
         if (
           [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
         ) {
-          /// if createdBy is same user as logged in
-          history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+          if (createdByUuid === userInfo?.uuid) {
+            history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+          }
         } else {
-          /// if user only has respondant then open the modal
           setDocumentSubmission(docObj);
           setShow(true);
         }
@@ -644,7 +653,7 @@ const AdmittedCases = ({ isJudge = true }) => {
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
             {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
           </div>
-          {isJudge && (
+          {showTakeAction && (
             <div className="judge-action-block" style={{ display: "flex" }}>
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
@@ -756,12 +765,14 @@ const AdmittedCases = ({ isJudge = true }) => {
           )}
           {isCitizen && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
-              <div
-                onClick={handleMakeSubmission}
-                style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
-              >
-                {t("MAKE_SUBMISSION")}
-              </div>
+              {showMakeSubmission && (
+                <div
+                  onClick={handleMakeSubmission}
+                  style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
+                >
+                  {t("MAKE_SUBMISSION")}
+                </div>
+              )}
 
               <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}
@@ -791,6 +802,9 @@ const AdmittedCases = ({ isJudge = true }) => {
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
             showToast={showToast}
+            t={t}
+            order={currentOrder}
+            showSubmissionButtons={showSubmissionButtons}
           />
         </div>
       )}
@@ -799,6 +813,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
+
       {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
@@ -819,7 +834,7 @@ const AdmittedCases = ({ isJudge = true }) => {
           handleDownload={handleDownload}
           handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
-          showSubmissionButtons={showMakeSubmission}
+          showSubmissionButtons={showSubmissionButtons}
           handleOrdersTab={handleOrdersTab}
         />
       )}

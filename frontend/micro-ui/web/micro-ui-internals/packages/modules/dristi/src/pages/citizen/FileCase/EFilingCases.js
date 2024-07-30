@@ -118,6 +118,12 @@ const getTotalCountFromSideMenuConfig = (sideMenuConfig, selected) => {
   return countObj;
 };
 
+const stateSla = {
+  PAYMENT_PENDING: 2,
+};
+
+const dayInMillisecond = 24 * 3600 * 1000;
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const { t } = useTranslation();
@@ -126,6 +132,7 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+  const todayDate = new Date().getTime();
 
   const setFormErrors = useRef(null);
   const resetFormData = useRef(null);
@@ -1587,7 +1594,7 @@ function EFilingCases({ path }) {
           cnrNumber: null,
           filingNumber: caseDetails?.filingNumber,
           isCompleted: false,
-          stateSla: null,
+          stateSla: stateSla.PAYMENT_PENDING * dayInMillisecond + todayDate,
           additionalDetails: {},
           tenantId,
         },

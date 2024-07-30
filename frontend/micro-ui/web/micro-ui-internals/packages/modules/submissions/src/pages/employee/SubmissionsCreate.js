@@ -306,7 +306,7 @@ const SubmissionsCreate = () => {
           ? "async-submission-with-response-managelifecycle"
           : "async-order-submission-managelifecycle";
     }
-    const assignes = !isAssignedRole ? getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [] : [];
+    const assignes = !isAssignedRole ? [userInfo?.uuid] || [] : [];
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
         name,
@@ -370,7 +370,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: orderDetails?.orderId || null,
+          referenceId: orderDetails?.id || null,
           createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
@@ -382,6 +382,11 @@ const SubmissionsCreate = () => {
             ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
             onBehalOfName: userInfo.name,
             partyType: "complainant.primary",
+            ...(orderDetails &&
+              orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
+                respondingParty: orderDetails?.additionalDetails?.formdata?.respondingParty,
+              }),
+            isResponseRequired: orderDetails ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
@@ -434,9 +439,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     !isExtension &&
+      orderNumber &&
       createPendingTask({
         refId: orderNumber,
         isCompleted: true,
+        status: "Completed",
       });
     createPendingTask({
       name: t("ESIGN_THE_SUBMISSION"),
@@ -476,22 +483,20 @@ const SubmissionsCreate = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
-    const applicationType = applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.applicationType;
-    if (["RE_SCHEDULE", "CHECKOUT_REQUEST"].includes(applicationType)) {
-      createPendingTask({
-        name: t(`PENDING_TASK_${applicationType}`),
-        status: applicationType,
-        isAssignedRole: true,
-        assignedRole: ["JUDGE_ROLE"],
-        stateSla: new Date().getTime() + stateSla[applicationType],
-      });
-    }
   };
 
   const handleDownloadSubmission = () => {
     // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-
+  if (
+    applicationDetails?.status &&
+    ![SubmissionWorkflowState.PENDINGSUBMISSION, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGPAYMENT].includes(
+      applicationDetails?.status
+    ) &&
+    caseDetails?.id
+  ) {
+    handleBack();
+  }
   if (
     loader ||
     isOrdersLoading ||

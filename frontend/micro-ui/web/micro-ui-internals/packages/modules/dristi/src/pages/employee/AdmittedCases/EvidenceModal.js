@@ -13,6 +13,14 @@ import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 
+const stateSla = {
+  RE_SCHEDULE: 2,
+  CHECKOUT_REQUEST: 2,
+  SAVE_DRAFT: 2,
+};
+
+const dayInMillisecond = 24 * 3600 * 1000;
+
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
@@ -28,6 +36,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const todayDate = new Date().getTime();
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -43,23 +52,39 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       </div>
     );
   };
+  const respondingUuids = useMemo(() => {
+    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+  }, [documentSubmission]);
+
   const hideSubmit = useMemo(() => {
-    return (
-      !userRoles.includes("JUDGE_ROLE") ||
-      userRoles.includes("CITIZEN") ||
-      ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
-    );
-  }, [documentSubmission, userRoles]);
+    if (userType === "employee") {
+      return (
+        !userRoles.includes("JUDGE_ROLE") ||
+        userRoles.includes("CITIZEN") ||
+        ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+      );
+    } else {
+      return (
+        (documentSubmission?.[0]?.referenceId ? !respondingUuids?.includes(userInfo?.uuid) : false) ||
+        ![SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) ||
+        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy
+      );
+    }
+  }, [documentSubmission, userRoles, userType, userInfo, respondingUuids]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
     if (modalType === "Submissions") {
-      label = t("Approve");
+      if (userType === "employee") {
+        label = t("Approve");
+      } else {
+        label = t("RESPOND");
+      }
     } else {
       label = !documentSubmission?.[0]?.artifactList.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
     }
     return label;
-  }, [documentSubmission, modalType, t]);
+  }, [documentSubmission, modalType, t, userType]);
 
   const actionCancelLabel = useMemo(() => {
     return userRoles.includes("WORKFLOW_ABANDON") && documentSubmission?.[0]?.status === "PENDINGREVIEW" && modalType === "Submissions"
@@ -118,6 +143,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   //     },
   //   },
   // };
+
+  const respondApplicationPayload = {
+    ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
+    workflow: {
+      ...documentSubmission?.[0]?.applicationList?.workflow,
+      action: SubmissionWorkflowAction.RESPOND,
+    },
+  };
 
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
@@ -226,6 +263,23 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         }
       );
     }
+  };
+
+  const handleRespondApplication = async () => {
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: respondApplicationPayload },
+        config: {
+          enable: true,
+        },
+      },
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const handleAcceptApplication = async () => {
@@ -378,7 +432,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          await handleAcceptApplication();
+          // await handleAcceptApplication();
         }
         const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal.type);
         DRISTIService.customApiService(Urls.dristi.pendingTask, {
@@ -392,7 +446,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             cnrNumber,
             filingNumber,
             isCompleted: false,
-            stateSla: null,
+            stateSla: stateSla.SAVE_DRAFT * dayInMillisecond + todayDate,
             additionalDetails: { orderType },
             tenantId,
           },
@@ -416,6 +470,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentApplication(newComment);
     }
   };
+  const actionSaveOnSubmit = async () => {
+    if (userType === "employee") {
+      modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
+    } else {
+      await handleRespondApplication();
+      ///show a toast message
+      counterUpdate();
+      setShow(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -423,9 +487,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         <Modal
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
-          actionSaveOnSubmit={() => {
-            modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
-          }}
+          actionSaveOnSubmit={actionSaveOnSubmit}
           hideSubmit={hideSubmit}
           actionCancelLabel={actionCancelLabel}
           actionCancelOnSubmit={() => {
@@ -449,61 +511,63 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         >
           <div className="evidence-modal-main">
             <div className={modalType === "Submissions" ? "application-details" : "evidence-details"}>
-              {documentSubmission?.map((docSubmission, index) => (
-                <div>
-                  <div className="application-info">
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("APPLICATION_TYPE")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{t(docSubmission?.details?.applicationType)}</h3>
-                      </div>
+              <div>
+                <div className="application-info">
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("APPLICATION_TYPE")}</h3>
                     </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("APPLICATION_SENT_ON")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{docSubmission.details.applicationSentOn}</h3>
-                      </div>
+                    <div className="info-value">
+                      <h3>{t(documentSubmission[0]?.details?.applicationType)}</h3>
                     </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("SENDER")}</h3>
-                      </div>
-                      <div className="info-value">
-                        <h3>{docSubmission.details.sender}</h3>
-                      </div>
-                    </div>
-                    <div className="info-row">
-                      <div className="info-key">
-                        <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
-                      </div>
-                      <div className="info-value">
-                        {/* <h3>{JSON.stringify(docSubmission.details.additionalDetails)}</h3> */}
-                        <h3>N/A</h3>
-                      </div>
-                    </div>
-                    {docSubmission.applicationContent && (
-                      <div className="application-view">
-                        <DocViewerWrapper
-                          key={docSubmission.applicationContent.fileStoreId}
-                          fileStoreId={docSubmission.applicationContent.fileStoreId}
-                          displayFilename={docSubmission.applicationContent.fileName}
-                          tenantId={docSubmission.applicationContent.tenantId}
-                          docWidth="100%"
-                          docHeight="unset"
-                          showDownloadOption={false}
-                          documentName={docSubmission.applicationContent.fileName}
-                        />
-                      </div>
-                    )}
                   </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("APPLICATION_SENT_ON")}</h3>
+                    </div>
+                    <div className="info-value">
+                      <h3>{documentSubmission[0]?.details.applicationSentOn}</h3>
+                    </div>
+                  </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("SENDER")}</h3>
+                    </div>
+                    <div className="info-value">
+                      <h3>{documentSubmission[0]?.details.sender}</h3>
+                    </div>
+                  </div>
+                  <div className="info-row">
+                    <div className="info-key">
+                      <h3>{t("EVIDENCE_ADDITIONAL_DETAILS")}</h3>
+                    </div>
+                    <div className="info-value">
+                      {/* <h3>{JSON.stringify(documentSubmission[0]?.details.additionalDetails)}</h3> */}
+                      <h3>N/A</h3>
+                    </div>
+                  </div>
+                  {documentSubmission?.map((docSubmission, index) => (
+                    <React.Fragment>
+                      {docSubmission.applicationContent && (
+                        <div className="application-view">
+                          <DocViewerWrapper
+                            key={docSubmission.applicationContent.fileStoreId}
+                            fileStoreId={docSubmission.applicationContent.fileStoreId}
+                            displayFilename={docSubmission.applicationContent.fileName}
+                            tenantId={docSubmission.applicationContent.tenantId}
+                            docWidth="100%"
+                            docHeight="unset"
+                            showDownloadOption={false}
+                            documentName={docSubmission.applicationContent.fileName}
+                          />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-            {modalType === "Submissions" && (
+            {modalType === "Submissions" && userRoles.includes("SUBMISSION_RESPONDER") && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>

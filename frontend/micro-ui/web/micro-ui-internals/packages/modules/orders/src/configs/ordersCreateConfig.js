@@ -3133,13 +3133,28 @@ export const configsJudgement = [
           isMandatory: true,
           options: [
             {
-              code: "GUILTY",
-              name: "GUILTY",
+              code: "DISMISSED",
+              name: "DISMISSED",
               isEnabled: true,
             },
             {
-              code: "NOTGUILTY",
-              name: "NOTGUILTY",
+              code: "ALLOWED",
+              name: "ALLOWED",
+              isEnabled: true,
+            },
+            {
+              code: "PARTIALLYALLOWED",
+              name: "PARTIALLYALLOWED",
+              isEnabled: true,
+            },
+            {
+              code: "CONVICTED",
+              name: "CONVICTED",
+              isEnabled: true,
+            },
+            {
+              code: "PARTIALLYCONVICTED",
+              name: "PARTIALLYCONVICTED",
               isEnabled: true,
             },
           ],
