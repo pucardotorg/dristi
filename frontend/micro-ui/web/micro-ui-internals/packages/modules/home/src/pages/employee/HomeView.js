@@ -271,7 +271,7 @@ const HomeView = () => {
         <React.Fragment>
           <div className="left-side">
             <div className="home-header-wrapper">
-              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
+              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} userInfoType={userInfoType} t={t} />
               {isCourtRoomRole && <ReviewCard data={data} userInfoType={userInfoType} />}
             </div>
             <div className="content-wrapper">

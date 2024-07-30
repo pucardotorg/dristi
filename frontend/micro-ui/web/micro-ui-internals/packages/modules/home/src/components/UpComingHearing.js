@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { CalenderIcon } from "../../homeIcon";
 
-const UpcomingHearings = (props) => {
+const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const userName = Digit.SessionStorage.get("User");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -106,23 +106,31 @@ const UpcomingHearings = (props) => {
                 <div className="time-hearing-type">
                   <div className="timeText">{curHr < 12 ? time : curHr < 18 ? "1:00pm-3:00pm" : "4:00pm-6:00pm"}</div>
                   <div style={{ display: "flex", gap: "8px" }}>
-                    {hearingCaseList?.map((hearing, index) => (
+                    {userInfoType === "citizen" ? (
                       <React.Fragment>
-                        {index < 2 && (
+                        {hearingCaseList?.map((hearing, index) => (
                           <React.Fragment>
-                            <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                              {hearing?.caseName}
-                            </Link>
-                            {index !== hearingCaseList.length - 1 && <span>,</span>}
+                            {index < 2 && (
+                              <React.Fragment>
+                                <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                                  {hearing?.caseName}
+                                </Link>
+                                {index !== hearingCaseList.length - 1 && <span>,</span>}
+                              </React.Fragment>
+                            )}
+                            {index === 2 && (
+                              <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                                {`+ ${hearingCaseList?.length - 2} more`}
+                              </Link>
+                            )}
                           </React.Fragment>
-                        )}
-                        {index === 2 && (
-                          <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                            {`+ ${hearingCaseList?.length - 2} more`}
-                          </Link>
-                        )}
+                        ))}
                       </React.Fragment>
-                    ))}
+                    ) : (
+                      <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                        {hearingType} ({hearingCount})
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -132,7 +140,7 @@ const UpcomingHearings = (props) => {
             <div className="no-hearing">
               <CalenderIcon />
               <p>
-                t("YOU_DONT_HAVE_ANY") <span>t("HEARING_SCHEDULED")</span>
+                {t("YOU_DONT_HAVE_ANY")} <span>{t("HEARING_SCHEDULED")}</span>
               </p>
             </div>
           )}
