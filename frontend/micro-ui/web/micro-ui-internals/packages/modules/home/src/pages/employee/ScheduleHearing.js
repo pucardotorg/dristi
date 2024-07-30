@@ -163,7 +163,7 @@ function ScheduleHearing({
   const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
   const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
   const CustomCalendar = Digit.ComponentRegistryService.getComponent("CustomCalendar") || <React.Fragment></React.Fragment>;
-  const { filingNumber } = Digit.Hooks.useQueryParams();
+  const { filingNumber, status } = Digit.Hooks.useQueryParams();
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -275,22 +275,26 @@ function ScheduleHearing({
     };
     HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
       .then(async (res) => {
-        await HomeService.customApiService(Urls.pendingTask, {
-          pendingTask: {
-            name: "Schedule Hearing",
-            entityType: "case",
-            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-            status: "SCHEDULE_HEARING",
-            assignedTo: [],
-            assignedRole: ["JUDGE_ROLE"],
-            cnrNumber: null,
-            filingNumber: caseDetails?.filingNumber,
-            isCompleted: true,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+        if (status && status !== "OPTOUT") {
+          await HomeService.customApiService(Urls.pendingTask, {
+            pendingTask: {
+              name: "Schedule Hearing",
+              entityType: "case",
+              referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+              status: "SCHEDULE_HEARING",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber: null,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: true,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+        } else if (status && status === "OPTOUT") {
+          handleClose();
+        }
       })
       .catch((err) => {
         console.log("err", err);

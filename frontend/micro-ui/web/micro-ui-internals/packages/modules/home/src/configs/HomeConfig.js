@@ -293,11 +293,14 @@ export const pendingTaskHearingActions = {
     },
   },
   OPTOUT: {
-    actorName: ["JUDGE"],
+    actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Schedule admission hearing",
     redirectDetails: {
       url: "/home/home-pending-task/home-schedule-hearing",
-      params: [{ key: "filingNumber", value: "filingNumber" }],
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "status", defaultValue: "OPTOUT" },
+      ],
     },
   },
 };
