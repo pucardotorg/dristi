@@ -104,7 +104,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   <div className="dayText">{day}</div>
                 </div>
                 <div className="time-hearing-type">
-                  <div className="timeText">{curHr < 12 ? time : curHr < 18 ? "1:00pm-3:00pm" : "4:00pm-6:00pm"}</div>
+                  <div className="timeText">{time}</div>
                   <div style={{ display: "flex", gap: "8px" }}>
                     {userInfoType === "citizen" ? (
                       <React.Fragment>
