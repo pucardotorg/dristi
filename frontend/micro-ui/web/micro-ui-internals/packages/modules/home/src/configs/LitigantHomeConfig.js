@@ -295,20 +295,6 @@ export const TabLitigantSearchConfig = {
                   },
                 },
               },
-              {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
             ],
           },
 
@@ -394,7 +380,7 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "Outcome",
+                label: "Stage",
                 isMandatory: false,
                 key: "outcome",
                 type: "dropdown",
@@ -439,7 +425,7 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "OutCome",
+                label: "Stage",
                 jsonPath: "outcome",
               },
               {

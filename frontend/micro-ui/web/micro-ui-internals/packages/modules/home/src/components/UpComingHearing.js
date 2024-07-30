@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@egovernments/digit-ui-components";
 import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import { CalenderIcon } from "../../homeIcon";
 
 const UpcomingHearings = (props) => {
   const userName = Digit.SessionStorage.get("User");
@@ -10,6 +11,7 @@ const UpcomingHearings = (props) => {
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isFSO = roles.some((role) => role.code === "FSO_ROLE");
+  const [hearingCaseList, setHearingCaseList] = useState([]);
 
   // Get the current date
   const today = useMemo(() => new Date(), []);
@@ -43,13 +45,46 @@ const UpcomingHearings = (props) => {
     }),
     [dateRange.end, dateRange.start, props?.attendeeIndividualId, tenantId]
   );
+  const searchCase = async (HearingList) => {
+    debugger;
+    const hearingCaseList = await Promise.all(
+      HearingList?.map(async (hearing) => {
+        const response = await window?.Digit?.DRISTIService.searchCaseService(
+          {
+            criteria: [
+              {
+                filingNumber: hearing?.filingNumber?.[0],
+              },
+            ],
+            tenantId,
+          },
+          {}
+        );
+        if (response?.criteria[0]?.responseList?.length === 1) {
+          return {
+            caseName: response?.criteria[0]?.responseList[0].caseTitle,
+            filingNumber: response?.criteria[0]?.responseList[0].filingNumber,
+          };
+        }
+      }) || []
+    );
+    setHearingCaseList(hearingCaseList);
+  };
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
     dateRange.start && dateRange.end
   );
-  const hearingCount = useMemo(() => hearingResponse?.TotalCount, [hearingResponse]);
+  useEffect(() => {
+    searchCase(hearingResponse?.HearingList);
+  }, [hearingResponse]);
+  const hearingCount = useMemo(() => {
+    console.log("hearingResponse", hearingResponse);
+    // searchCase(hearingResponse?.HearingList);
+    return hearingResponse?.TotalCount;
+  }, [hearingResponse]);
+
   if (isLoading) {
     return <Loader />;
   }
@@ -58,22 +93,49 @@ const UpcomingHearings = (props) => {
       <div className="header">
         {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
       </div>
-      {!isFSO && hearingCount > 0 && (
+      {!isFSO && (
         <div className="hearingCard">
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <div className="hearingDate">
-              <div className="dateText">{date.split(" ")[0]}</div>
-              <div className="dateNumber">{date.split(" ")[1]}</div>
-              <div className="dayText">{day}</div>
+          {hearingCount > 0 ? (
+            <React.Fragment>
+              <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                <div className="hearingDate">
+                  <div className="dateText">{date.split(" ")[0]}</div>
+                  <div className="dateNumber">{date.split(" ")[1]}</div>
+                  <div className="dayText">{day}</div>
+                </div>
+                <div className="time-hearing-type">
+                  <div className="timeText">{curHr < 12 ? time : curHr < 18 ? "1:00pm-3:00pm" : "4:00pm-6:00pm"}</div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {hearingCaseList?.map((hearing, index) => (
+                      <React.Fragment>
+                        {index < 2 && (
+                          <React.Fragment>
+                            <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                              {hearing?.caseName}
+                            </Link>
+                            {index !== hearingCaseList.length - 1 && <span>,</span>}
+                          </React.Fragment>
+                        )}
+                        {index === 2 && (
+                          <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
+                            {`+ ${hearingCaseList?.length - 2} more`}
+                          </Link>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
+            </React.Fragment>
+          ) : (
+            <div className="no-hearing">
+              <CalenderIcon />
+              <p>
+                t("YOU_DONT_HAVE_ANY") <span>t("HEARING_SCHEDULED")</span>
+              </p>
             </div>
-            <div className="time-hearing-type">
-              <div className="timeText">{time}</div>
-              <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                {hearingType} ({hearingCount})
-              </Link>
-            </div>
-          </div>
-          <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
+          )}
         </div>
       )}
     </div>

@@ -48,6 +48,10 @@ export const SummonsTabsConfig = {
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
+                  },
                 },
               },
               {
@@ -61,6 +65,10 @@ export const SummonsTabsConfig = {
                   options: ["Signed", "Sign Pending"],
                   optionsCustomStyle: {
                     overflowX: "hidden",
+                  },
+                  styles: {
+                    maxWidth: "200px",
+                    minWidth: "150px",
                   },
                 },
               },
@@ -90,6 +98,7 @@ export const SummonsTabsConfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Case Name & ID",

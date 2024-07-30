@@ -137,3 +137,23 @@ $button-color: white;
 .info-banner-wrap.doc-banner {
   display: none;
 }
+
+.no-hearing {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  p {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #231f20;
+
+    span {
+      font-weight: 700;
+    }
+  }
+}

@@ -42,31 +42,29 @@ const ReviewSummonsNoticeAndWarrant = () => {
   };
 
   return (
-    <div style={{ width: "1,440px", height: "1,227px", padding: "48px 64px" }}>
-      <div>
-        <div style={{ display: "flex", gap: "20px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("Review Summons, Notices & Warrants")}</Header>
-        </div>
+    <div className="review-summon-warrant">
+      <div className="header-wraper">
+        <Header>{t("REVIEW_SUMMON_NOTICE_WARRANTS_TEXT")}</Header>
+      </div>
 
-        <div className="inbox-search-wrapper">
-          {/* Pass defaultValues as props to InboxSearchComposer */}
-          <InboxSearchComposer
-            configs={config}
-            defaultValues={defaultValues}
-            showTab={true}
-            tabData={tabData}
-            onTabChange={onTabChange}
-            additionalConfig={{
-              resultsTable: {
-                onClickRow: (props) => {
-                  handleOpen(props);
-                },
+      <div className="inbox-search-wrapper pucar-home home-view">
+        {/* Pass defaultValues as props to InboxSearchComposer */}
+        <InboxSearchComposer
+          configs={config}
+          defaultValues={defaultValues}
+          showTab={true}
+          tabData={tabData}
+          onTabChange={onTabChange}
+          additionalConfig={{
+            resultsTable: {
+              onClickRow: (props) => {
+                handleOpen(props);
               },
-            }}
-          ></InboxSearchComposer>
-          {openUnsigned && <PrintAndSendDocumentModal handleClose={handleClose} />}
-          {openSigned && <ReviewDocumentModal handleClose={handleClose} />}
-        </div>
+            },
+          }}
+        ></InboxSearchComposer>
+        {openUnsigned && <PrintAndSendDocumentModal handleClose={handleClose} />}
+        {openSigned && <ReviewDocumentModal handleClose={handleClose} />}
       </div>
     </div>
   );

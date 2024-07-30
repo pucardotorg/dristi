@@ -192,7 +192,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["COURT_ROOM"],
+    roles: ["HEARING_CREATOR"],
     config: TabCourtRoomSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {
