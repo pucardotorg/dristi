@@ -69,7 +69,7 @@ const InsideHearingMainPage = () => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
-    !userHasRole("HEARING_VIEWER"),
+    !!userHasRole("HEARING_VIEWER"),
     10 * SECOND
   );
 
@@ -177,6 +177,8 @@ const InsideHearingMainPage = () => {
   const handleEndHearingModal = () => {
     setEndHearingModalOpen(!endHearingModalOpen);
   };
+
+  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
 
   return (
     <div style={{ display: "flex" }}>
@@ -295,7 +297,7 @@ const InsideHearingMainPage = () => {
         </div>
       </Card>
       <Card>
-        <HearingSideCard></HearingSideCard>
+        <HearingSideCard hearingId={hearingId} caseId={caseDataResponse?.criteria?.[0]?.responseList?.[0]?.id} filingNumber={filingNumber} ></HearingSideCard>
         {adjournHearing && <AdjournHearing hearing={hearing} tenantID={tenantId} />}
       </Card>
       <ActionBar>
@@ -326,7 +328,7 @@ const InsideHearingMainPage = () => {
                 width: "100%",
               }}
             >
-              Attendance: <strong>03</strong>
+              Attendance: <strong>{attendanceCount}</strong>
             </button>
             <Button
               label={"Mark Attendance"}

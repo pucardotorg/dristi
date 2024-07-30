@@ -7,7 +7,7 @@ const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+  return `${year}-${month}-${day}`;
 };
 
 export const UICustomizations = {
@@ -128,9 +128,7 @@ export const UICustomizations = {
                           code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                           name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         },
-                        originalHearingDate: `${date.getFullYear()}-${
-                          date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                        }-${date.getDate()}`,
+                        originalHearingDate: formatDate(date),
                       },
                     },
                   },
@@ -211,40 +209,10 @@ export const UICustomizations = {
               label: "Request for Reschedule",
               id: "reschedule",
               action: (history) => {
-                const requestBody = {
-                  order: {
-                    createdDate: new Date().getTime(),
-                    tenantId: Digit.ULBService.getCurrentTenantId(),
-                    cnrNumber: row.cnrNumber,
-                    filingNumber: row.filingNumber,
-                    statuteSection: {
-                      tenantId: Digit.ULBService.getCurrentTenantId(),
-                    },
-                    orderType: "Bail",
-                    status: "",
-                    isActive: true,
-                    workflow: {
-                      action: OrderWorkflowAction.SAVE_DRAFT,
-                      comments: "Creating order",
-                      assignes: null,
-                      rating: null,
-                      documents: [{}],
-                    },
-                    documents: [],
-                    additionalDetails: {},
-                  },
-                };
-                ordersService
-                  .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
-                  .then(() => {
-                    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}`, {
-                      caseId: row.caseId,
-                      tab: "Orders",
-                    });
-                  })
-                  .catch((err) => {});
+                searchParams.set("hearingId", row.hearingId);
+                searchParams.set("applicationType", "RE_SCHEDULE");
                 searchParams.set("filingNumber", row.filingNumber);
-                history.push({ pathname: `/${window.contextPath}/${userType}/orders/generate-orders`, search: searchParams.toString() });
+                history.push({ pathname: `/${window.contextPath}/${userType}/submissions/submissions-create`, search: searchParams.toString() });
               },
             },
           ];
