@@ -52,6 +52,7 @@ const SubmissionsCreate = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const hearingId = urlParams.get("hearingId");
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
@@ -175,6 +176,20 @@ const SubmissionsCreate = () => {
     applicationNumber
   );
 
+  const { data: hearingsData, refetch } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+        hearingId: hearingId,
+      },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    "dristi",
+    true
+  );
+
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
@@ -271,15 +286,29 @@ const SubmissionsCreate = () => {
   }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (applicationType && !["OTHERS", "SETTLEMENT"].includes(applicationType) && !formData?.applicationDate) {
+    if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
     if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
       setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
     }
-    // if (applicationType && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
-    //   setValue("initialHearingDate", );
-    // }
+    if (applicationType && hearingId && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
+      setValue("initialHearingDate", formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime)));
+    }
+    if (
+      applicationType &&
+      ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) &&
+      formData?.initialHearingDate &&
+      formData?.changedHearingDate
+    ) {
+      if (new Date(formData?.initialHearingDate).getTime() >= new Date(formData?.changedHearingDate).getTime()) {
+        setValue("changedHearingDate", "");
+        setError("changedHearingDate", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_INITIAL_DATE") });
+      } else if (Object.keys(formState?.errors).includes("changedHearingDate")) {
+        setValue("changedHearingDate", formData?.changedHearingDate);
+        clearErrors("changedHearingDate");
+      }
+    }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -502,7 +531,8 @@ const SubmissionsCreate = () => {
     isOrdersLoading ||
     isApplicationLoading ||
     (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
-    (orderNumber ? !orderDetails?.orderType : false)
+    (orderNumber ? !orderDetails?.orderType : false) ||
+    (hearingId ? (hearingsData?.HearingList?.[0]?.startTime ? false : true) : false)
   ) {
     return <Loader />;
   }
