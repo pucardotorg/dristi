@@ -1856,6 +1856,7 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "advocateDetails") {
+    const advocateDetails = {};
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
@@ -1877,6 +1878,16 @@ export const updateCaseDetails = async ({
               })
             );
           }
+          const advocateDetail = await DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
+            criteria: [
+              {
+                barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
+              },
+            ],
+            tenantId,
+          });
+          advocateDetails[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId] =
+            advocateDetail?.advocates?.[0]?.responseList?.[0]?.auditDetails?.createdBy;
           return {
             ...data,
             data: {
@@ -1929,7 +1940,7 @@ export const updateCaseDetails = async ({
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-              uuid: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateUuid,
+              uuid: advocateDetails?.[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId],
             },
             tenantId,
           };

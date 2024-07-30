@@ -42,7 +42,7 @@ const HomeView = () => {
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState(state?.taskType || { code: "case", name: "Case" });
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
-  const isCourtRoomRole = useMemo(() => roles?.includes("COURT_ROOM"), [roles]);
+  const isCourtRoomRole = useMemo(() => roles?.some((role) => role?.code === "COURT_ADMIN"), [roles]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
@@ -140,7 +140,7 @@ const HomeView = () => {
   );
 
   useEffect(() => {
-    if (individualId || !userType) {
+    if (!(isLoading && isFetching && isSearchLoading && isFetchCaseLoading)) {
       if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
         const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
         const tabConfig = rolesToConfigMappingData.config;
@@ -166,7 +166,7 @@ const HomeView = () => {
         getTotalCountForTab(tabConfig);
       }
     }
-  }, [additionalDetails, getTotalCountForTab, individualId, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, isFetchCaseLoading, isFetching, isLoading, isSearchLoading, roles, state, tenantId]);
 
   // calling case api for tab's count
   useEffect(() => {
@@ -251,15 +251,15 @@ const HomeView = () => {
   const data = [
     {
       logo: <InboxIcon />,
-      title: "Review summons, notices & warrants",
+      title: "REVIEW_SUMMON_NOTICE_WARRANTS_TEXT",
       pendingAction: 40,
-      actionLink: "/review-summon-notices-warrants",
+      actionLink: "orders/Summons&Notice",
     },
     {
       logo: <DocumentIcon />,
-      title: "View issued orders",
+      title: "VIEW_ISSUED_ORDERS",
       pendingAction: 11,
-      actionLink: "/view-issued-orders",
+      actionLink: "",
     },
   ];
 
@@ -271,8 +271,8 @@ const HomeView = () => {
         <React.Fragment>
           <div className="left-side">
             <div className="home-header-wrapper">
-              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} />
-              {isCourtRoomRole && <ReviewCard data={data} />}
+              <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} userInfoType={userInfoType} t={t} />
+              {isCourtRoomRole && <ReviewCard data={data} userInfoType={userInfoType} />}
             </div>
             <div className="content-wrapper">
               <div className="header-class">

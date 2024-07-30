@@ -40,7 +40,7 @@ export const getAdvocates = (caseDetails) => {
         return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
       })
       .map((item) => item?.additionalDetails?.uuid);
-    if (list.length > 0) {
+    if (list?.length > 0) {
       litigants[litigant?.additionalDetails?.uuid] = list;
     } else {
       litigants[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];

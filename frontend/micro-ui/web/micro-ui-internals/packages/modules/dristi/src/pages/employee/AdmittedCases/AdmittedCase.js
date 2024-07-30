@@ -571,7 +571,7 @@ const AdmittedCases = () => {
     if (history.location?.state?.orderObj) {
       history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
     } else {
-      setShowOrderReviewModal(true);
+      setShowOrderReviewModal(false);
     }
   };
 
