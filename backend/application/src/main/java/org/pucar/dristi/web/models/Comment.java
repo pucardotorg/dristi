@@ -35,11 +35,6 @@ public class Comment {
 
     private String tenantId = null;
 
-    @JsonProperty("artifactId")
-    @NotNull
-
-    private String artifactId = null;
-
     @JsonProperty("individualId")
     @NotNull
 
