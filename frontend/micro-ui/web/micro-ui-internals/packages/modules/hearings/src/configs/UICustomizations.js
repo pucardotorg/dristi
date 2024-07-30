@@ -40,7 +40,7 @@ export const UICustomizations = {
         case "Actions":
           return (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              {row.hearing.status === "SCHEDULED" && (
+              {row.hearing.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
                 <Button
                   variation={"secondary"}
                   label={""}
@@ -53,6 +53,9 @@ export const UICustomizations = {
                 >
                   <strong>{t(`START_HEARING`)}</strong>
                 </Button>
+              )}
+              {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+                <span>{t("HEARING_AWAITING_START")}</span>
               )}
               {row.hearing.status === "INPROGRESS" && (
                 <Button
@@ -79,7 +82,80 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
-      if (true || userInfo.roles.includes("JUDGE_ROLE")) {
+      const future = row.hearing.startTime > Date.now();
+      if (userInfo.roles.map((role) => role.code).includes("EMPLOYEE")) {
+        if (future) {
+          return [
+            {
+              label: "View Case",
+              id: "view_case",
+              action: (history) => {
+                searchParams.set("caseId", row.caseId);
+                searchParams.set("filingNumber", row.filingNumber);
+
+                history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+              },
+            },
+            {
+              label: "Reschedule hearing",
+              id: "reschedule",
+              action: (history) => {
+                const date = new Date(row.hearing.startTime);
+                const requestBody = {
+                  order: {
+                    createdDate: new Date().getTime(),
+                    tenantId: Digit.ULBService.getCurrentTenantId(),
+                    filingNumber: row.filingNumber,
+                    statuteSection: {
+                      tenantId: Digit.ULBService.getCurrentTenantId(),
+                    },
+                    orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                    status: "",
+                    isActive: true,
+                    workflow: {
+                      action: OrderWorkflowAction.SAVE_DRAFT,
+                      comments: "Creating order",
+                      assignes: null,
+                      rating: null,
+                      documents: [{}],
+                    },
+                    documents: [],
+                    additionalDetails: {
+                      formdata: {
+                        orderType: {
+                          type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                          isactive: true,
+                          code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                          name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        },
+                        originalHearingDate: `${date.getFullYear()}-${
+                          date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+                        }-${date.getDate()}`,
+                      },
+                    },
+                  },
+                };
+                ordersService
+                  .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+                  .then((res) => {
+                    searchParams.set("filingNumber", row.filingNumber);
+                    searchParams.set("orderNumber", res.order.orderNumber);
+                    history.push({
+                      pathname: `/${window.contextPath}/${userType}/orders/generate-orders`,
+                      search: searchParams.toString(),
+                      state: {
+                        caseId: row.caseId,
+                        tab: "Orders",
+                      },
+                    });
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                  });
+              },
+            },
+          ];
+        }
         return [
           {
             label: "View Case",
@@ -89,46 +165,6 @@ export const UICustomizations = {
               searchParams.set("filingNumber", row.filingNumber);
 
               history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
-            },
-          },
-          {
-            label: "Reschedule hearing",
-            id: "reschedule",
-            action: (history) => {
-              const requestBody = {
-                order: {
-                  createdDate: new Date().getTime(),
-                  tenantId: Digit.ULBService.getCurrentTenantId(),
-                  cnrNumber: row.cnrNumber,
-                  filingNumber: row.filingNumber,
-                  statuteSection: {
-                    tenantId: Digit.ULBService.getCurrentTenantId(),
-                  },
-                  orderType: "Bail",
-                  status: "",
-                  isActive: true,
-                  workflow: {
-                    action: OrderWorkflowAction.SAVE_DRAFT,
-                    comments: "Creating order",
-                    assignes: null,
-                    rating: null,
-                    documents: [{}],
-                  },
-                  documents: [],
-                  additionalDetails: {},
-                },
-              };
-              ordersService
-                .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
-                .then(() => {
-                  history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}`, {
-                    caseId: row.caseId,
-                    tab: "Orders",
-                  });
-                })
-                .catch((err) => {});
-              searchParams.set("filingNumber", row.filingNumber);
-              history.push({ pathname: `/${window.contextPath}/${userType}/orders/generate-orders`, search: searchParams.toString() });
             },
           },
           {
@@ -157,6 +193,100 @@ export const UICustomizations = {
           },
         ];
       }
+
+      if (userInfo.roles.map((role) => role.code).includes("CITIZEN")) {
+        if (future) {
+          return [
+            {
+              label: "View Case",
+              id: "view_case",
+              action: (history) => {
+                searchParams.set("caseId", row.caseId);
+                searchParams.set("filingNumber", row.filingNumber);
+
+                history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+              },
+            },
+            {
+              label: "Request for Reschedule",
+              id: "reschedule",
+              action: (history) => {
+                const requestBody = {
+                  order: {
+                    createdDate: new Date().getTime(),
+                    tenantId: Digit.ULBService.getCurrentTenantId(),
+                    cnrNumber: row.cnrNumber,
+                    filingNumber: row.filingNumber,
+                    statuteSection: {
+                      tenantId: Digit.ULBService.getCurrentTenantId(),
+                    },
+                    orderType: "Bail",
+                    status: "",
+                    isActive: true,
+                    workflow: {
+                      action: OrderWorkflowAction.SAVE_DRAFT,
+                      comments: "Creating order",
+                      assignes: null,
+                      rating: null,
+                      documents: [{}],
+                    },
+                    documents: [],
+                    additionalDetails: {},
+                  },
+                };
+                ordersService
+                  .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+                  .then(() => {
+                    history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber}`, {
+                      caseId: row.caseId,
+                      tab: "Orders",
+                    });
+                  })
+                  .catch((err) => {});
+                searchParams.set("filingNumber", row.filingNumber);
+                history.push({ pathname: `/${window.contextPath}/${userType}/orders/generate-orders`, search: searchParams.toString() });
+              },
+            },
+          ];
+        }
+        return [
+          {
+            label: "View Case",
+            id: "view_case",
+            action: (history) => {
+              searchParams.set("caseId", row.caseId);
+              searchParams.set("filingNumber", row.filingNumber);
+
+              history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+      return [];
     },
   },
 };

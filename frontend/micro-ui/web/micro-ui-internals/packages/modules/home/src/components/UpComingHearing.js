@@ -144,7 +144,6 @@ const UpcomingHearings = (props) => {
                 {latestHearing.hearings[0].hearingType} ({hearingCount})
               </Link>
             </div>
-            <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
           </div>
           <Button className={"view-hearing-button"} label={"View Hearings"} variation={"primary"} onClick={props.handleNavigate} />
         </div>

@@ -705,7 +705,7 @@ export const UICustomizations = {
                   statuteSection: {
                     tenantId: row.tenantId,
                   },
-                  orderType: "RESCHEDULE_OF_HEARING_DATE",
+                  orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                   status: "",
                   isActive: true,
                   workflow: {
@@ -719,10 +719,10 @@ export const UICustomizations = {
                   additionalDetails: {
                     formdata: {
                       orderType: {
-                        type: "RESCHEDULE_OF_HEARING_DATE",
+                        type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         isactive: true,
-                        code: "RESCHEDULE_OF_HEARING_DATE",
-                        name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
+                        code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
                       originalHearingDate: `${date.getDate()}-${
                         date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
