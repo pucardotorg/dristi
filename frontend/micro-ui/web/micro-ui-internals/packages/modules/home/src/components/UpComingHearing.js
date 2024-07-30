@@ -4,6 +4,45 @@ import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import { CalenderIcon } from "../../homeIcon";
 
+function timeInMillisToDateTime(timeInMillis) {
+  if (!timeInMillis || typeof timeInMillis !== "number") {
+    throw new Error("Invalid Time");
+  }
+
+  const date = new Date(timeInMillis);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const dateTimeObject = {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}:${seconds}`,
+  };
+
+  return dateTimeObject;
+}
+
+class HearingSlot {
+  hearings = [];
+  slotName = "";
+  slotStartTime = "";
+  slotEndTime = "";
+  constructor(slotName, slotStartTime, slotEndTime) {
+    this.slotName = slotName;
+    this.slotStartTime = slotStartTime;
+    this.slotEndTime = slotEndTime;
+  }
+
+  addHearingIfApplicable(hearing) {
+    const hearingTime = timeInMillisToDateTime(hearing.startTime).time;
+    if (this.slotStartTime <= hearingTime && hearingTime <= this.slotEndTime) {
+      this.hearings.push(hearing);
+    }
+  }
+}
+
 const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const userName = Digit.SessionStorage.get("User");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
@@ -45,8 +84,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     }),
     [dateRange.end, dateRange.start, props?.attendeeIndividualId, tenantId]
   );
+
+  const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
+
   const searchCase = async (HearingList) => {
-    debugger;
     const hearingCaseList = await Promise.all(
       HearingList?.map(async (hearing) => {
         const response = await window?.Digit?.DRISTIService.searchCaseService(
@@ -70,18 +111,36 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     );
     setHearingCaseList(hearingCaseList);
   };
+
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
     dateRange.start && dateRange.end
   );
+
   useEffect(() => {
     searchCase(hearingResponse?.HearingList);
   }, [hearingResponse]);
+
+  /**
+   * @type {HearingSlot[]}
+   */
+  const hearingSlots = useMemo(() => {
+    if (!hearingSlotsResponse || !hearingResponse) {
+      return [];
+    }
+    console.debug({ hearingResponse, hearingSlotsResponse });
+    const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
+    hearingResponse.HearingList.forEach((hearing) => {
+      hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
+    });
+    return hearingSlots;
+  }, [hearingResponse, hearingSlotsResponse]);
+
+  const latestHearing = hearingSlots.filter((slot) => slot.hearings.length).sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime))[0];
+
   const hearingCount = useMemo(() => {
-    console.log("hearingResponse", hearingResponse);
-    // searchCase(hearingResponse?.HearingList);
     return hearingResponse?.TotalCount;
   }, [hearingResponse]);
 
@@ -104,7 +163,9 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   <div className="dayText">{day}</div>
                 </div>
                 <div className="time-hearing-type">
-                  <div className="timeText">{time}</div>
+                  <div className="timeText">
+                    {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
+                  </div>
                   <div style={{ display: "flex", gap: "8px" }}>
                     {userInfoType === "citizen" ? (
                       <React.Fragment>
