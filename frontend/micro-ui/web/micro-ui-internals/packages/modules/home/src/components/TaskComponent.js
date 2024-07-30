@@ -366,7 +366,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
             color: "#77787B",
           }}
         >
-          {!isLitigant ? "NO_TASK_TEXT" : t("NO_PENDING_TASK_TEXT")}
+          {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
         </div>
       ) : (
         <React.Fragment>

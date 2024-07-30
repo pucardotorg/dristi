@@ -195,7 +195,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   </div>
                 </div>
               </div>
-              <Button className={"view-hearing-button"} label={"View Hearing"} variation={"primary"} onClick={props.handleNavigate} />
+              <Button className={"view-hearing-button"} label={t("VIEW_HEARINGS")} variation={"primary"} onClick={props.handleNavigate} />
             </React.Fragment>
           ) : (
             <div className="no-hearing">

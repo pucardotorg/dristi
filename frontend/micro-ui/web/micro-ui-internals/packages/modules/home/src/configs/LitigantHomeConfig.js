@@ -221,11 +221,11 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "",
                 additionalCustomization: true,
               },
-              {
-                label: "Filing Date",
-                jsonPath: "filingDate",
-                additionalCustomization: true,
-              },
+              // {
+              //   label: "Filing Date",
+              //   jsonPath: "filingDate",
+              //   additionalCustomization: true,
+              // },
             ],
 
             enableColumnSort: true,
@@ -309,10 +309,10 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "caseTitle",
                 additionalCustomization: true,
               },
-              {
-                label: "Case ID",
-                jsonPath: "filingNumber",
-              },
+              // {
+              //   label: "Case ID",
+              //   jsonPath: "filingNumber",
+              // },
               {
                 label: "Case Type",
                 jsonPath: "",

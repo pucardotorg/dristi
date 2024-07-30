@@ -99,6 +99,8 @@ const GenerateOrders = () => {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
   const todayDate = new Date().getTime();
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const canESign = roles.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -140,6 +142,7 @@ const GenerateOrders = () => {
             code: item?.additionalDetails?.fullName,
             name: item?.additionalDetails?.fullName,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
+            individualId: item?.individualId,
           };
         }) || []
     );
@@ -620,7 +623,7 @@ const GenerateOrders = () => {
               status: true,
               attendees: [
                 ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
-                  return { name: attendee.name, individualId: attendee.individualId };
+                  return { name: attendee.name, individualId: attendee.individualId, type: "Complainant" };
                 }),
                 ...advocateData,
               ],
@@ -767,6 +770,7 @@ const GenerateOrders = () => {
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleSaveDraft={() => {}}
+          showActions={canESign}
         />
       )}
       {showsignatureModal && (

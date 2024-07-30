@@ -80,7 +80,7 @@ export const UICustomizations = {
       const { createdFrom, createdTo } = data;
       if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-      else if (!data?.filingNumber.trim() && !data?.caseType?.trim()) return { label: "PlEASE_APPLY_FILTER_CASE_ID", error: true };
+      else if (!data?.filingNumber?.trim() && !data?.caseType?.trim()) return { label: "PlEASE_APPLY_FILTER_CASE_ID", error: true };
       return false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
