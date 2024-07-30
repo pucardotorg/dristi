@@ -42,6 +42,14 @@ import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
 
+function applyMultiSelectDropdownFix(setValue, formData, keys) {
+  keys.forEach((key) => {
+    if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
+      setValue(key, undefined);
+    }
+  });
+}
+
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -99,6 +107,8 @@ const GenerateOrders = () => {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
   const todayDate = new Date().getTime();
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const canESign = roles.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -140,6 +150,7 @@ const GenerateOrders = () => {
             code: item?.additionalDetails?.fullName,
             name: item?.additionalDetails?.fullName,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
+            individualId: item?.individualId,
           };
         }) || []
     );
@@ -409,6 +420,18 @@ const GenerateOrders = () => {
     return updatedConfig;
   }, [complainants, currentOrder, orderType, respondants, t]);
 
+  const multiSelectDropdownKeys = useMemo(() => {
+    const foundKeys = [];
+    modifiedFormConfig.forEach((config) => {
+      config.body.forEach((field) => {
+        if (field.type === "dropdown" && field.populators.allowMultiSelect) {
+          foundKeys.push(field.key);
+        }
+      });
+    });
+    return foundKeys;
+  }, [modifiedFormConfig]);
+
   const defaultValue = useMemo(() => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
@@ -444,12 +467,14 @@ const GenerateOrders = () => {
         "INITIATING_RESCHEDULING_OF_HEARING_DATE",
       ].includes(orderType)
     ) {
-      updatedFormdata.originalHearingDate = applicationDetails?.additionalDetails?.formdata?.initialHearingDate;
+      updatedFormdata.originalHearingDate =
+        applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
       const updatedFormData =
         currentOrder?.additionalDetails?.formdata?.orderType?.code !== formData?.orderType?.code ? { orderType: formData.orderType } : formData;
@@ -499,22 +524,24 @@ const GenerateOrders = () => {
   };
 
   const createPendingTask = async (order) => {
-    let create = false;
-    let name = "Submit Documents";
     const formdata = order?.additionalDetails?.formdata;
-    let assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
+    let create = false;
+    let name = "";
+    let assignees = [];
 
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = "CREATE_SUBMISSION";
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
+      name = t("MAKE_MANDATORY_SUBMISSION");
+      assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
     }
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
       status = "OPTOUT";
       assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
-      name = "Reschedule Hearing Date";
+      name = t("RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing";
     }
     create &&
@@ -535,6 +562,28 @@ const GenerateOrders = () => {
         },
       }));
     return;
+  };
+
+  const closeManualPendingTask = (order) => {
+    try {
+      order?.additionalDetails?.formdata?.refApplicationId &&
+        ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: {
+            name: "Completed",
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${order?.orderNumber}`,
+            status: "DRAFT_IN_PROGRESS",
+            assignedTo: [],
+            assignedRole: [],
+            cnrNumber: cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: true,
+            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+    } catch (error) {}
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
@@ -603,6 +652,7 @@ const GenerateOrders = () => {
       }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
       createPendingTask(currentOrder);
+      closeManualPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -620,7 +670,7 @@ const GenerateOrders = () => {
               status: true,
               attendees: [
                 ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
-                  return { name: attendee.name, individualId: attendee.individualId };
+                  return { name: attendee.name, individualId: attendee.individualId, type: "Complainant" };
                 }),
                 ...advocateData,
               ],
@@ -767,6 +817,7 @@ const GenerateOrders = () => {
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleSaveDraft={() => {}}
+          showActions={canESign}
         />
       )}
       {showsignatureModal && (

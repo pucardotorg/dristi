@@ -319,6 +319,18 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
+  DRAFT_IN_PROGRESS: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    additionalDetailsKeys: ["orderType"],
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskOrderOfJudgementActions = {};

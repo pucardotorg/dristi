@@ -140,7 +140,7 @@ const HomeView = () => {
   );
 
   useEffect(() => {
-    if (individualId || !userType) {
+    if (!(isLoading && isFetching && isSearchLoading && isFetchCaseLoading)) {
       if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
         const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
         const tabConfig = rolesToConfigMappingData.config;
@@ -166,7 +166,7 @@ const HomeView = () => {
         getTotalCountForTab(tabConfig);
       }
     }
-  }, [additionalDetails, getTotalCountForTab, individualId, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, isFetchCaseLoading, isFetching, isLoading, isSearchLoading, roles, state, tenantId]);
 
   // calling case api for tab's count
   useEffect(() => {

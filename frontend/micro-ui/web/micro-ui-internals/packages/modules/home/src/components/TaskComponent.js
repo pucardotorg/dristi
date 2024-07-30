@@ -16,7 +16,7 @@ export const CaseWorkflowAction = {
 };
 const dayInMillisecond = 1000 * 3600 * 24;
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber, inCase = false }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -34,18 +34,18 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
-          ...(filingNumber && { filingNumber: filingNumber }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
+          ...(inCase && { filingNumber: filingNumber }),
         },
         limit: 10000,
         offset: 0,
       },
     },
     params: { tenantId },
-    key: taskType?.code,
-    config: { enable: Boolean(taskType.code && tenantId) },
+    key: `${taskType?.code}-${filingNumber}`,
+    config: { enabled: Boolean(taskType.code && tenantId) },
   });
 
   useEffect(() => {
@@ -333,7 +333,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
       <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
       <div className="task-filters">
         <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
+          <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
           <Dropdown
             option={[{ name: "NIA S138", code: "NIA S138" }]}
             selected={{ name: "NIA S138", code: "NIA S138" }}
@@ -343,7 +343,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           />
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
+          <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
           <Dropdown
             option={taskTypes}
             optionKey={"name"}
@@ -366,7 +366,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
             color: "#77787B",
           }}
         >
-          {!isLitigant ? "NO_TASK_TEXT" : t("NO_PENDING_TASK_TEXT")}
+          {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
         </div>
       ) : (
         <React.Fragment>

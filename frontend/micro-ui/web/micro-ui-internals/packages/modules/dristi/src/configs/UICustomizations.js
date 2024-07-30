@@ -725,9 +725,6 @@ export const UICustomizations = {
                         code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
-                      originalHearingDate: `${date.getDate()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getFullYear()}`,
                       originalHearingDate: `${date.getFullYear()}-${
                         date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
                       }-${date.getDate()}`,

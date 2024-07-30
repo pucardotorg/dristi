@@ -36,6 +36,8 @@ function CaseFileAdmission({ t, path }) {
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [caseAdmitLoader, setCaseADmitLoader] = useState(false);
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isCaseApprover = roles.some((role) => role.code === "CASE_APPROVER");
   const { data: caseFetchResponse, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -421,7 +423,7 @@ function CaseFileAdmission({ t, path }) {
               </div>
               <CustomCaseInfoDiv t={t} data={caseInfo} style={{ margin: "24px 0px" }} />
               <FormComposerV2
-                label={t("CS_ADMIT_CASE")}
+                label={isCaseApprover ? t("CS_ADMIT_CASE") : undefined}
                 config={formConfig}
                 onSubmit={onSubmit}
                 // defaultValues={}
