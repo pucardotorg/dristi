@@ -328,56 +328,73 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
   if (isLoading) {
     return <Loader />;
   }
-  console.log("pendingTaskDataInWeek", pendingTaskDataInWeek);
   return (
     <div className="tasks-component">
-      <h2>Your Tasks</h2>
-      <div className="task-filters">
-        <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
-          <Dropdown
-            option={[{ name: "NIA S138", code: "NIA S138" }]}
-            selected={{ name: "NIA S138", code: "NIA S138" }}
-            optionKey={"code"}
-            select={(value) => {}}
-            placeholder={t("CS_CASE_TYPE")}
-          />
-        </LabelFieldPair>
-        <LabelFieldPair>
-          <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
-          <Dropdown
-            option={taskTypes}
-            optionKey={"name"}
-            selected={taskType}
-            select={(value) => {
-              setTaskType(value);
-            }}
-            placeholder={t("CS_CASE_TYPE")}
-          />
-        </LabelFieldPair>
-      </div>
-      {searchCaseLoading && <Loader />}
-      {!searchCaseLoading && (
+      <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
+
+      {pendingTaskDataInWeek.length === 0 && allOtherPendingTask.length === 0 ? (
+        <div
+          style={{
+            fontSize: "20px",
+            fontStyle: "italic",
+            lineHeight: "23.44px",
+            fontWeight: "500",
+            font: "Roboto",
+            color: "#77787B",
+          }}
+        >
+          {!isLitigant ? "NO_TASK_TEXT" : t("NO_PENDING_TASK_TEXT")}
+        </div>
+      ) : (
         <React.Fragment>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={pendingTaskDataInWeek}
-              accordionHeader={"Complete this week"}
-              t={t}
-              totalCount={pendingTaskDataInWeek?.length}
-              isHighlighted={true}
-              isAccordionOpen={true}
-            />
+          <div className="task-filters">
+            <LabelFieldPair>
+              <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
+              <Dropdown
+                option={[{ name: "NIA S138", code: "NIA S138" }]}
+                selected={{ name: "NIA S138", code: "NIA S138" }}
+                optionKey={"code"}
+                select={(value) => {}}
+                placeholder={t("CS_CASE_TYPE")}
+              />
+            </LabelFieldPair>
+            <LabelFieldPair>
+              <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
+              <Dropdown
+                option={taskTypes}
+                optionKey={"name"}
+                selected={taskType}
+                select={(value) => {
+                  setTaskType(value);
+                }}
+                placeholder={t("CS_CASE_TYPE")}
+              />
+            </LabelFieldPair>
           </div>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={allOtherPendingTask}
-              accordionHeader={"All other tasks"}
-              t={t}
-              totalCount={allOtherPendingTask?.length}
-            />
-          </div>
-          <div className="task-section"></div>
+          {searchCaseLoading && <Loader />}
+          {!searchCaseLoading && (
+            <React.Fragment>
+              <div className="task-section">
+                <PendingTaskAccordion
+                  pendingTasks={pendingTaskDataInWeek}
+                  accordionHeader={"Complete this week"}
+                  t={t}
+                  totalCount={pendingTaskDataInWeek?.length}
+                  isHighlighted={true}
+                  isAccordionOpen={true}
+                />
+              </div>
+              <div className="task-section">
+                <PendingTaskAccordion
+                  pendingTasks={allOtherPendingTask}
+                  accordionHeader={"All other tasks"}
+                  t={t}
+                  totalCount={allOtherPendingTask?.length}
+                />
+              </div>
+              <div className="task-section"></div>
+            </React.Fragment>
+          )}
         </React.Fragment>
       )}
     </div>

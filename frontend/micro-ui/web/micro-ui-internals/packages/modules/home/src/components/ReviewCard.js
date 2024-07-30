@@ -2,7 +2,7 @@ import { ArrowRightInbox } from "@egovernments/digit-ui-components";
 import React from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const ReviewCard = ({ data }) => {
+const ReviewCard = ({ data, userInfoType }) => {
   const history = useHistory();
   return (
     <div className="review-card-main">
@@ -15,7 +15,7 @@ const ReviewCard = ({ data }) => {
           <div className="review-card-action-main">
             <div className="review-card-action-count">{row?.pendingAction} new</div>
             <div className="review-card-action-arrow">
-              <span onClick={() => history.push(row?.actionLink)}>
+              <span onClick={() => history.push(`/${window?.contextPath}/${userInfoType}/${row?.actionLink}`)}>
                 <ArrowRightInbox />
               </span>
             </div>
