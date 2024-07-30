@@ -210,7 +210,7 @@ export const rolesToConfigMapping = [
 export const taskTypes = [
   { code: "case", name: "Case" },
   { code: "hearing", name: "Hearing" },
-  { code: "order", name: "Order" },
+  { code: "order-managelifecycle", name: "Order" },
   { code: "order-judgement", name: "Order of Judgement" },
   { code: "async-voluntary-submission-managelifecycle", name: "Voluntary Submission" },
   { code: "async-submission-with-response-managelifecycle", name: "Submission With Response" },
@@ -285,6 +285,14 @@ export const pendingTaskCaseActions = {
 
 export const pendingTaskHearingActions = {
   SCHEDULE_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  OPTOUT: {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     redirectDetails: {
@@ -438,7 +446,7 @@ export const pendingTaskSubmissionWithoutResponseActions = {
 export const selectTaskType = {
   case: pendingTaskCaseActions,
   hearing: pendingTaskHearingActions,
-  order: pendingTaskOrderActions,
+  "order-managelifecycle": pendingTaskOrderActions,
   "order-judgement": pendingTaskOrderOfJudgementActions,
   "async-voluntary-submission-managelifecycle": pendingTaskVoluntarySubmissionActions,
   "async-submission-with-response-managelifecycle": pendingTaskSubmissionWithResponseActions,

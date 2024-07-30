@@ -18,6 +18,7 @@ import ScheduleHearing from "./ScheduleHearing";
 import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
 import PublishedOrderModal from "./PublishedOrderModal";
 import ViewAllSubmissions from "./ViewAllSubmissions";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 
 const defaultSearchValues = {};
 
@@ -44,7 +45,6 @@ const AdmittedCases = () => {
   const [submissionsViewList, setSubmissionsViewList] = useState([]);
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
-  const isAdvocate = userRoles.includes("ADVOCATE_ROLE");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
@@ -94,9 +94,11 @@ const AdmittedCases = () => {
     };
   });
 
-  const isAdvocatePresent = useMemo(() => Boolean(Array.isArray(caseDetails?.representatives || []) && caseDetails?.representatives?.length > 0), [
-    caseDetails,
-  ]);
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails)[userInfo?.uuid], [caseDetails, userInfo]);
+  const isAdvocatePresent = useMemo(
+    () => (userInfo?.roles?.some((role) => role?.code === "ADVOCATE_ROLE") ? true : allAdvocates?.includes(userInfo?.uuid)),
+    [allAdvocates, userInfo?.roles, userInfo?.uuid]
+  );
 
   const caseRelatedData = useMemo(
     () => ({
@@ -114,11 +116,16 @@ const AdmittedCases = () => {
 
   const showMakeSubmission = useMemo(() => {
     return (
-      (isAdvocatePresent ? isAdvocate : true) &&
-      userRoles.includes("APPLICATION_CREATOR") &&
+      isAdvocatePresent &&
+      userRoles?.includes("APPLICATION_CREATOR") &&
       [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
     );
-  }, [isAdvocatePresent, userRoles, caseDetails?.status, isAdvocate]);
+  }, [userRoles, caseDetails?.status, isAdvocatePresent]);
+
+  const showSubmissionButtons = useMemo(() => {
+    const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
+    return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
+  }, [currentOrder, userInfo?.uuid, userRoles]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
@@ -139,14 +146,15 @@ const AdmittedCases = () => {
     const docSetFunc = (docObj) => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
+      const createdByUuid = docObj?.[0]?.applicationList?.statuteSection?.auditdetails?.createdBy;
       if (isCitizen) {
         if (
           [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
         ) {
-          /// if createdBy is same user as logged in
-          history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+          if (createdByUuid === userInfo?.uuid) {
+            history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+          }
         } else {
-          /// if user only has respondant then open the modal
           setDocumentSubmission(docObj);
           setShow(true);
         }
@@ -559,7 +567,11 @@ const AdmittedCases = () => {
     setShowOrderReviewModal(false);
   };
   const handleOrdersTab = () => {
-    history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
+    if (history.location?.state?.orderObj) {
+      history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`);
+    } else {
+      setShowOrderReviewModal(true);
+    }
   };
 
   const handleExtensionRequest = (orderNumber) => {
@@ -794,6 +806,9 @@ const AdmittedCases = () => {
             caseData={caseRelatedData}
             setUpdateCounter={setUpdateCounter}
             showToast={showToast}
+            t={t}
+            order={currentOrder}
+            showSubmissionButtons={showSubmissionButtons}
           />
         </div>
       )}
@@ -802,6 +817,7 @@ const AdmittedCases = () => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
+
       {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
@@ -822,7 +838,7 @@ const AdmittedCases = () => {
           handleDownload={handleDownload}
           handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
-          showSubmissionButtons={showMakeSubmission}
+          showSubmissionButtons={showSubmissionButtons}
           handleOrdersTab={handleOrdersTab}
         />
       )}
