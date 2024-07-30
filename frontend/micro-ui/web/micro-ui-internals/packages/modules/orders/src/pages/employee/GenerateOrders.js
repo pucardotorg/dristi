@@ -99,6 +99,8 @@ const GenerateOrders = () => {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
   const todayDate = new Date().getTime();
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const canESign = roles.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -767,6 +769,7 @@ const GenerateOrders = () => {
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleSaveDraft={() => {}}
+          showActions={canESign}
         />
       )}
       {showsignatureModal && (
