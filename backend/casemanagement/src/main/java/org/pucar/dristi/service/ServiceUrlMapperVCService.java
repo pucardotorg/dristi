@@ -52,6 +52,8 @@ public class ServiceUrlMapperVCService {
                 String signedHashValue = fileDownloadService.downloadAndExtractSignature(vcCredentialRequest);
                 CredentialRequest credentialRequest = serviceUrlEntityRequestService.getEntityDetails(signedHashValue, vcCredentialRequest);
                 producer.push(configuration.getCreateVc(), credentialRequest);
+            } else {
+                throw new CustomException("UNEXCEPTED_MODULE_NAME", "The module name " + vcCredentialRequest.getModuleName() + " is not excepted.");
             }
         } else {
             throw new CustomException("INVALID_MODULE_NAME", "The module name " + vcCredentialRequest.getModuleName() + " is not recognized.");
