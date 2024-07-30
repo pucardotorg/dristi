@@ -34,6 +34,9 @@ public class CaseCriteria {
     @JsonProperty("filingNumber")
     private String filingNumber = null;
 
+    @JsonProperty("outcome")
+    private String outcome = null;
+
     @JsonProperty("courtCaseNumber")
     private String courtCaseNumber = null;
 

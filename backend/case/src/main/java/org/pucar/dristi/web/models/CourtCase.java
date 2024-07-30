@@ -75,6 +75,9 @@ public class CourtCase {
 	@JsonProperty("accessCode")
 	private String accessCode = null;
 
+	@JsonProperty("outcome")
+	private List<String> outcome = null;
+
 	@JsonProperty("courtId")
 	//@Size(min = 2, max = 64)
 	private String courtId = null;
