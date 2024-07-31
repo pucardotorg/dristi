@@ -1,49 +1,49 @@
 openapi: 3.0.1
 info:
-  title: Note API Documentation
-  description: This draft API specification defines the Note registries.
+  title: Annotation API Documentation
+  description: This draft API specification defines the annotation registries.
   version: 1.0.0
 tags:
-  - name: Note
-    description: APIs to create, update and search case notes.
+  - name: Annotation
+    description: APIs to create, update and search annotations.
 paths:
-  /note/v1/create:
+  /annotation/v1/create:
     post:
       tags:
-        - Note
-      summary: Create new note in the registry
+        - Annotation
+      summary: Create new document annotation in the registry
       requestBody:
-        description: Details for the new note + RequestInfo meta data.
+        description: Details for the new annotation + RequestInfo meta data.
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/NoteRequest'
+              $ref: '#/components/schemas/AnnotationRequest'
         required: true
       responses:
         '201':
-          description: RequestInfo with note details created successfully
+          description: RequestInfo with annotation details created successfully
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/NoteResponse'
+                $ref: '#/components/schemas/AnnotationResponse'
         '400':
-          description: Note creation failed
+          description: Annotation creation failed
           content:
             '*/*':
               schema:
                 $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /note/v1/update:
+  /annotation/v1/update:
     post:
       tags:
-        - Note
-      summary: Update/edit a note
-      description: API to update the note value.
+        - Annotation
+      summary: Update/edit a annotation
+      description: API to update the annotation.
       requestBody:
-        description: Details for updating fields in the note + RequestInfo meta data.
+        description: Details for updating fields in the annotation + RequestInfo meta data.
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/NoteRequest'
+              $ref: '#/components/schemas/AnnotationRequest'
         required: true
       responses:
         '200':
@@ -51,71 +51,99 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/NoteResponse'
+                $ref: '#/components/schemas/AnnotationResponse'
         '400':
-          description: note updation failed
+          description: Annotation updation failed
           content:
             '*/*':
               schema:
                 $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /note/v1/search:
+  /annotation/v1/search:
     post:
       tags:
-        - Note
-      summary: Search for notes
+        - Annotation
+      summary: Search for Annotation
       requestBody:
         description: Search criteria + RequestInfo meta data.
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/NoteSearchRequest'
+              $ref: '#/components/schemas/AnnotationSearchRequest'
         required: true
       responses:
         '200':
-          description: ResponseInfo with note matching search criteria
+          description: ResponseInfo with annotation matching search criteria
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/NoteListResponse'
+                $ref: '#/components/schemas/AnnotationListResponse'
         '400':
-          description: Note search failed. Refer to response body for specifics.
+          description: Annotation search failed. Refer to response body for specifics.
           content:
             '*/*':
               schema:
                 $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
-    Note:
-      description: Note registry
+    Annotation:
+      description: Annotation registry
       required:
-        - note
-        - caseId
-        - tenantId
-        - submittedById
+        - docId
+        - annotation
+        - content
+        - createdBy
+        - pageNumber
+        - positionWidth
+        - positionHeight
+        - positionX1
+        - positionX2
+        - positionY1
+        - positionY2
       type: object
       properties:
         id:
           type: string
           readOnly: true
-        note:
+        docId:
           type: string
-        caseId:
+        annotation:
           type: string
-        hearingId:
+        content:
           type: string
+        createdBy:
+          type: string
+          description: This is userId where annotation created by the user.
+          minLength: 2
+          maxLength: 64
+        pageNumber:
+          type: integer
+          format: int32
+        createdDate:
+          type: integer
+          format: int64
+        positionWidth:
+          type: number
+          format: double
+        positionHeight:
+          type: number
+          format: double
+        positionX1:
+          type: number
+          format: double
+        positionX2:
+          type: number
+          format: double
+        positionY1:
+          type: number
+          format: double
+        positionY2:
+          type: number
+          format: double
         tenantId:
           type: string
           description: This is tenantId where the system is implemented.
           minLength: 2
           maxLength: 64
-        createdDate:
-          type: integer
-          format: int64
-        modifiedDate:
-          type: integer
-          format: int64
-        submittedById:
-          type: string
         workflow:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
@@ -123,62 +151,30 @@ components:
           description: This field is meant to hold any extra information that we want to store for a note.
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-    ConstituteElementRequest:
+    AnnotationRequest:
       type: object
-      description: Constitute element request
-      required:
-        - constituentelementId
-        - noteId
-        - isChecked
-      properties:
-        constituentelementId:
-          type: string
-          description: This is id from constituent element master table id.
-          minLength: 2
-          maxLength: 64
-        noteId:
-          type: string
-          description: This is noteId where the constitute element have checked/unchecked value to a note.
-          minLength: 2
-          maxLength: 64
-        value:
-          type: string
-          description: This is constituent element string value
-        isChecked:
-          type: boolean
-          description: checked/unchecked value for constitute element to a note 
-    NoteRequest:
-      type: object
-      required:
-        - note
       properties:
         RequestInfo:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        note:
-          $ref: '#/components/schemas/Note'
-        constituentelements:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstituteElementRequest'
-    NoteResponse:
+        annotation:
+          $ref: '#/components/schemas/Annotation'
+    AnnotationResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        notes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Note'
-    NoteSearchRequest:
+        annotation:
+          $ref: '#/components/schemas/Annotation'
+    AnnotationSearchRequest:
       type: object
       properties:
         RequestInfo:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-          $ref: '#/components/schemas/NoteCriteria'
+          $ref: '#/components/schemas/AnnotationCriteria'
         pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    NoteListResponse:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
+    AnnotationListResponse:
       type: object
       properties:
         ResponseInfo:
@@ -186,24 +182,31 @@ components:
         list:
           type: array
           items:
-            $ref: '#/components/schemas/Note'
+            $ref: '#/components/schemas/Annotation'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
-    NoteCriteria:
+    AnnotationCriteria:
       type: object
       properties:
-        caseId:
+        docId:
           type: string
-        noteId:
+        createdBy:
           type: string
-        note:
-          type: string
+        contents:
+          type: array
+          items:
+            type: string
+        annotations:
+          type: array
+          items:
+            type: string
         defaultFields:
           type: boolean
         createdFromDate:
           type: integer
           format: int64
-          description: search note within created date range. if only createdFromDate is specified, then notes for this filing date will be retrieved
+          description: search annotation within created date range. if only createdFromDate is specified, then annotation for this filing date will be retrieved
         createdToDate:
           type: integer
           format: int64
+          
