@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import { CheckBox, CloseSvg, TextArea } from "@egovernments/digit-ui-react-components";
 
-function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleAction }) {
-  const [generateOrder, setGenerateOrder] = useState(false);
+function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleAction, disableCheckBox }) {
+  const [generateOrder, setGenerateOrder] = useState(true);
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -60,6 +60,8 @@ function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleActi
               setGenerateOrder((prev) => !prev);
             }}
             label={checkBoxLabel}
+            checked={generateOrder}
+            disable={disableCheckBox}
           />
         </div>
       </div>

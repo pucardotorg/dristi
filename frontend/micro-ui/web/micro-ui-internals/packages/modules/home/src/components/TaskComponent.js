@@ -16,7 +16,7 @@ export const CaseWorkflowAction = {
 };
 const dayInMillisecond = 1000 * 3600 * 24;
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
+const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber, inCase = false }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -34,18 +34,18 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
           entityType: taskType?.code || "case",
-          ...(filingNumber && { filingNumber: filingNumber }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
+          ...(inCase && { filingNumber: filingNumber }),
         },
         limit: 10000,
         offset: 0,
       },
     },
     params: { tenantId },
-    key: taskType?.code,
-    config: { enable: Boolean(taskType.code && tenantId) },
+    key: `${taskType?.code}-${filingNumber}`,
+    config: { enabled: Boolean(taskType.code && tenantId) },
   });
 
   useEffect(() => {
