@@ -1455,6 +1455,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setIsSignedParty(false);
     setAdvocateDetailForm({});
     setReplaceAdvocateDocuments({});
+    setAdovacteVakalatnama({});
   };
 
   const submitJoinCase = async (data) => {
