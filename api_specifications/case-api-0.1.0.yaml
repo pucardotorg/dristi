@@ -334,15 +334,15 @@ components:
           type: string
         stage:
           type: string
+          description: the main/primary stage of the case
+          example: Pre-Trial, Trial, Post-Trial
         subStage:
           type: string
+          description: the secondary level of stage within the primary stage
+          example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
         benchId:
           type: string
-          description: >-
-            The bench a case is assigned to. A court has multiple benches and
-            each bench can comprise of one or more arbitrators. The
-            relationships to be defined in master data. The unique master data
-            ID for a bench is stored here. 
+          description: The bench a case is assigned to. A court has multiple benches and each bench can comprise of one or more arbitrators. The relationships to be defined in master data. The unique master data ID for a bench is stored here.
           minLength: 2
           maxLength: 64
         linkedCases:
@@ -560,15 +560,11 @@ components:
           description: Refers to the case ID
         partyCategory:
           type: string
-          description: >-
-            Is Individual or organisation or something else. Master data ID to
-            be stored here.
+          description: Is Individual or organisation or something else. Master data ID to be stored here.
           example: INDIVIDUAL, ORGANISATION
         organisationID:
           type: string
-          description: >-
-            If the party is an organisation, refers to the org ID which will
-            contain details of the org
+          description: If the party is an organisation, refers to the org ID which will contain details of the org
         individualId:
           type: string
           description: >-
@@ -578,24 +574,18 @@ components:
             contact etc..
         partyType:
           type: string
-          description: >-
-            This field holds imformation about type of party (name spaced Master
-            Data).
+          description: This field holds information about type of party (name spaced Master Data).
           example:
             - complainant.primary
             - complainant.additional
             - respondent.primary
         isActive:
           type: boolean
-          description: >-
-            Field used for soft delete of records. Will be false if this entity
-            is not active within the system.
+          description: Field used for soft delete of records. Will be false if this entity is not active within the system.
           default: true
         documents:
           type: array
-          description: >-
-            This can be used to store the Vakalathnama and other agreements
-            between advocate and party.
+          description: This can be used to store the Vakalathnama and other agreements between advocate and party.
           items:
             $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
@@ -741,14 +731,15 @@ components:
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-  AddWitnessResponse:
-    type: object
-    properties:
-      ResponseInfo:
-        $ref: >-
-          https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-      addWitnessRequest:
-        $ref: '#/components/schemas/AddWitnessRequest'          
+
+    AddWitnessResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        addWitnessRequest:
+          $ref: '#/components/schemas/AddWitnessRequest'
             
     JoinCaseRequest:
       type: object
@@ -828,8 +819,7 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
     
     CaseExists:
       type: object

@@ -272,9 +272,9 @@ components:
           maxLength: 256
           description: Linked orderNumber for reissue of orders (for summons and warrants et)
         createdDate:
-          type: string
-          format: date
-          description: the date on which the order was created. Can be treated as the start date also
+          type: integer
+          format: int64
+          description: the date on which the order was created in epoch time (milliseconds). Can be treated as the start date also
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
         orderType:
