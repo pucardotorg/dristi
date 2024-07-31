@@ -206,6 +206,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [advocateDetailForm, setAdvocateDetailForm] = useState({});
   const [replaceAdvocateDocuments, setReplaceAdvocateDocuments] = useState({});
   const [primaryAdvocateDetail, setPrimaryAdvocateDetail] = useState([]);
+  const [isSearchingCase, setIsSearchingCase] = useState(false);
 
   const [party, setParty] = useState("");
   const [validationCode, setValidationCode] = useState("");
@@ -372,6 +373,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   };
 
   const searchCase = async (caseNumber) => {
+    setIsSearchingCase(true);
     if (caseNumber && !caseDetails?.filingNumber) {
       const response = await DRISTIService.searchCaseService(
         {
@@ -413,6 +415,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           });
       }
     }
+    setIsSearchingCase(false);
   };
 
   const searchLitigantInRepresentives = useCallback(() => {
@@ -534,13 +537,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
     isSignedParty,
   ]);
 
-  useEffect(() => {
-    const getData = setTimeout(() => {
-      searchCase(caseNumber);
-    }, 1000);
-    return () => clearTimeout(getData);
-  }, [caseNumber]);
-
   const fetchBasicUserInfo = async () => {
     const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
       {
@@ -610,6 +606,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
 
   useEffect(() => {
     fetchBasicUserInfo();
+    setIsDisabled(true);
+    setIsSearchingCase(false);
   }, [show]);
 
   const paymentCalculation = [
@@ -646,7 +644,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   }
                 }}
               />
-              <div className="icon-div">
+              <div
+                className="icon-div"
+                onClick={() => {
+                  if (!isSearchingCase) searchCase(caseNumber);
+                }}
+              >
                 <SearchIcon />
               </div>
             </div>
