@@ -1,13 +1,11 @@
 openapi: 3.0.1
 info:
-  title: Note And Constitute Element API Documentation
-  description: This draft API specification defines the Note and Constitute element registries.
+  title: Note API Documentation
+  description: This draft API specification defines the Note registries.
   version: 1.0.0
 tags:
   - name: Note
     description: APIs to create, update, search to a case note.
-  - name: Constitute Element
-    description: APIs related to search constitute element to a case type.
 paths:
   /note/v1/create:
     post:
@@ -39,9 +37,9 @@ paths:
       tags:
         - Note
       summary: Update/edit a note
-      description: API to update the note. Updates can include constitute element, note.
+      description: API to update the note value.
       requestBody:
-        description: Details for updating all editable fields in the note + RequestInfo meta data.
+        description: Details for updating fields in the note + RequestInfo meta data.
         content:
           '*/*':
             schema:
@@ -85,31 +83,6 @@ paths:
             '*/*':
               schema:
                 $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /element/v1/search:
-    post:
-      tags:
-        - Element
-      summary: Search for constitute elements by case type
-      requestBody:
-        description: Search criteria + RequestInfo meta data.
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/ConstituteElementSearchRequest'
-        required: true
-      responses:
-        '200':
-          description: ResponseInfo with element matching search criteria
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ConstituteElementListResponse'
-        '400':
-          description: Constitute Element search failed. Refer to response body for specifics.
-          content:
-            '*/*':
-              schema:
-                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
     Note:
@@ -123,6 +96,7 @@ components:
       properties:
         id:
           type: string
+          readOnly: true
         note:
           type: string
         caseId:
@@ -149,30 +123,28 @@ components:
           description: This field is meant to hold any extra information that we want to store for a note.
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-        constituteElements:
-          type: array
-          description: This field is meant to hold the element list to note by the case type
-          items:
-            $ref: '#/components/schemas/ConstituteElement'
-    ConstituteElement:
+    ConstituteElementRequest:
       type: object
-      description: Constitute element registory
+      description: Constitute element request
       required:
-        - id
+        - constituentelementId
         - noteId
-        - caseType
-        - value
+        - isCheked
       properties:
-        id:
+        constituentelementId:
           type: string
-        caseType:
-          type: string
+          description: This is id from constituent element master table id.
+          minLength: 2
+          maxLength: 64
         noteId:
           type: string
           description: This is noteId where the constitute element have checked/unchecked value to a note.
           minLength: 2
           maxLength: 64
         value:
+          type: string
+          description: This is constituent element string value
+        isCheked:
           type: boolean
           description: checked/unchecked value for constitute element to a note 
     NoteRequest:
@@ -182,6 +154,10 @@ components:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         note:
           $ref: '#/components/schemas/Note'
+        constituentelement:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstituteElementRequest'
     NoteResponse:
       type: object
       properties:
@@ -211,30 +187,12 @@ components:
             $ref: '#/components/schemas/Note'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
-    ConstituteElementSearchRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        criteria:
-          $ref: '#/components/schemas/ConstituteElementCriteria'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'  
-    ConstituteElementListResponse:
-      type: object
-      properties:
-        ResponseInfo:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        list:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstituteElement'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     NoteCriteria:
       type: object
       properties:
         caseId:
+          type: string
+        noteId:
           type: string
         note:
           type: string
@@ -247,10 +205,3 @@ components:
         createdToDate:
           type: integer
           format: int64
-    ConstituteElementCriteria:
-      type: object
-      properties:
-        caseType:
-          type: string
-        defaultFields:
-          type: boolean
