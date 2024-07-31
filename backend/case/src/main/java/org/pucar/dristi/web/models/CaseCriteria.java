@@ -76,7 +76,7 @@ public class CaseCriteria {
 
     @JsonProperty("status")
     @Valid
-    private String status = null;
+    private List<String> status = null;
 
     @JsonProperty("responseList")
     @Valid
