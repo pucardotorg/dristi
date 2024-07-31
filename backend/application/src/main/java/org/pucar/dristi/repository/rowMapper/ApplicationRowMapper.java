@@ -65,7 +65,6 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .status(rs.getString("status"))
                             .comment(getObjectFromJson(rs.getString("comment"), new TypeReference<List<Comment>>() {
                             }))
-                            .additionalDetails(rs.getString("additionaldetails"))
                             .statuteSection(getObjectFromJson(rs.getString("statuteSection"), new TypeReference<StatuteSection>(){}))
                             .issuedBy(getObjectFromJson(rs.getString("issuedby"), new TypeReference<IssuedBy>(){}))
                             .auditDetails(auditdetails)
