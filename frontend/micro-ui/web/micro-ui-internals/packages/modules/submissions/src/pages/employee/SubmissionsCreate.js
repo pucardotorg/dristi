@@ -87,7 +87,7 @@ const SubmissionsCreate = () => {
                   mdmsConfig: {
                     ...input?.populators?.mdmsConfig,
                     select:
-                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
                   },
                 },
               };
@@ -234,6 +234,18 @@ const SubmissionsCreate = () => {
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
       return applicationDetails?.additionalDetails?.formdata;
+    } else if (hearingId && hearingsData?.HearingList?.[0]?.startTime) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: "RE_SCHEDULE",
+          isactive: true,
+          name: "APPLICATION_TYPE_RE_SCHEDULE",
+        },
+      };
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
         if (isExtension) {
@@ -283,7 +295,7 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber, hearingId, hearingsData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
@@ -353,7 +365,7 @@ const SubmissionsCreate = () => {
       },
     });
   };
-
+  console.debug(defaultFormValue);
   const createSubmission = async () => {
     try {
       let documentsList = [];
