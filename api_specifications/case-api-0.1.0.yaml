@@ -820,7 +820,9 @@ components:
         advocateId:
           type: string
         status:
-          type: string
+          type: array
+          items:
+            type: string
         filingFromDate:
           type: integer
           format: int64
