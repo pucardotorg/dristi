@@ -62,7 +62,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       return (
         !userRoles.includes("JUDGE_ROLE") ||
         userRoles.includes("CITIZEN") ||
-        ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+        (modalType !== "Documents" &&
+          ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status))
       );
     } else {
       return (
@@ -71,7 +72,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy
       );
     }
-  }, [documentSubmission, userRoles, userType, userInfo, respondingUuids]);
+  }, [userType, userRoles, modalType, documentSubmission, respondingUuids, userInfo?.uuid]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
