@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-settlement.json",
+  "$comment": "definition of the schema for issuing a settlement order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "settlementMechanism": {
+      "type" : "string",
+      "description": "settlement mechanism"
+    },
+    "settlementDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of settlement"
+    },
+    "isSettlementImplemented": {
+      "type" : "string",
+      "description": "has settlement already been implemented (YES/NO)"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-referral-case-to-adr.json",
+  "$comment": "definition of the schema for issuing a referral case to adr order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "adrMode": {
+      "type" : "string",
+      "description": "mode od ADR"
+    }
+  }
+}

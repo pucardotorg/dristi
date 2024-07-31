@@ -93,6 +93,9 @@ public class Order {
     @Valid
     private List<Document> documents = null;
 
+    @JsonProperty("orderDetails")
+    private Object orderDetails = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 

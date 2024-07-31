@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-reschedule-hearing.json",
+  "$comment": "definition of the schema for issuing reschedule of hearing order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "refApplicationId": {
+      "type" : "string",
+      "description": "alphanumeric string representing the reference application ID"
+    },
+    "hearingDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of new hearing"
+    },
+    "originalHearingDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of original nearing"
+    }
+  }
+}

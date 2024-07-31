@@ -76,6 +76,10 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                 if(pgObject2!=null)
                     order.setAdditionalDetails(objectMapper.readTree(pgObject2.getValue()));
 
+                PGobject pgObject3 = (PGobject) rs.getObject("orderDetails");
+                if(pgObject3!=null)
+                    order.setOrderDetails(objectMapper.readTree(pgObject3.getValue()));
+
                 orderMap.put(uuid, order);
             }
         }

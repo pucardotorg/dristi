@@ -46,6 +46,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.statuteSection
               - inJsonPath: $.issuedBy
                 outJsonPath: $.Data.orderDetails.issuedBy
+              - inJsonPath: $.orderDetails
+                outJsonPath: $.Data.orderDetails.orderDetails
               - inJsonPath: $.isActive
                 outJsonPath: $.Data.orderDetails.isActive
               - inJsonPath: $.auditDetails.createdBy
@@ -101,6 +103,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.orderType
               - inJsonPath: $.orderCategory
                 outJsonPath: $.Data.orderDetails.orderCategory
+              - inJsonPath: $.orderDetails
+                outJsonPath: $.Data.orderDetails.orderDetails
               - inJsonPath: $.createdDate
                 outJsonPath: $.Data.orderDetails.createdDate
               - inJsonPath: $.status
