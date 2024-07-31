@@ -80,6 +80,10 @@
     }
     .digit-dropdown-employee-select-wrap {
       margin-bottom: 0px;
+
+      .main-option {
+        height: unset !important;
+      }
     }
   }
 }

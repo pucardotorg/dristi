@@ -30,7 +30,7 @@ export const paymentInboxConfig = {
         defaultValues: {
           filingNumber: "",
           isActive: false,
-          stage: "",
+          stage: [],
         },
         fields: [
           {

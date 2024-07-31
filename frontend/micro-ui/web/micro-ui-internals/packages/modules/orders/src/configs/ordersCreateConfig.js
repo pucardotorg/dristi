@@ -498,13 +498,15 @@ export const configsOrderMandatorySubmissions = [
         label: "SUBMISSION_PARTY",
         isMandatory: true,
         key: "submissionParty",
-        type: "multiselectdropdown",
+        type: "dropdown",
         populators: {
+          allowMultiSelect: true,
           name: "submissionParty",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",
@@ -598,13 +600,15 @@ export const configsOrderMandatorySubmissions = [
         label: "RESPONDING_PARTY",
         isMandatory: true,
         key: "respondingParty",
-        type: "multiselectdropdown",
+        type: "dropdown",
         populators: {
           name: "respondingParty",
+          allowMultiSelect: true,
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",
@@ -1031,6 +1035,7 @@ export const configsScheduleHearingDate = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",

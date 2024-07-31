@@ -128,7 +128,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "",
+              stage: ["Pre-Trial", "Trial", "Post-Trial"],
             },
           ],
         },
@@ -248,7 +248,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Trial",
+              stage: ["Trial"],
             },
           ],
         },
@@ -368,7 +368,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
             },
           ],
         },
@@ -507,7 +507,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
             },
           ],
         },

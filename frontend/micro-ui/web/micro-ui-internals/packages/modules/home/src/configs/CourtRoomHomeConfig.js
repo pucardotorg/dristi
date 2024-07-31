@@ -121,7 +121,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "",
+              stage: [],
             },
           ],
         },
@@ -241,7 +241,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Trial",
+              stage: ["Trial"],
             },
           ],
         },
@@ -361,7 +361,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
             },
           ],
         },
@@ -499,7 +499,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
             },
           ],
         },

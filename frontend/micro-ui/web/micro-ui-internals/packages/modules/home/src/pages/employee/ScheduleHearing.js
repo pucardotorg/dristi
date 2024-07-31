@@ -275,7 +275,7 @@ function ScheduleHearing({
     };
     HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
       .then(async (res) => {
-        if (status && status !== "OPTOUT") {
+        if (status !== "OPTOUT") {
           await HomeService.customApiService(Urls.pendingTask, {
             pendingTask: {
               name: "Schedule Hearing",
