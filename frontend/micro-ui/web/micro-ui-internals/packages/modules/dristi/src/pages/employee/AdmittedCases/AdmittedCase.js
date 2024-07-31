@@ -333,7 +333,7 @@ const AdmittedCases = () => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
+                          return { code: party.name, name: party.name, value: party.individualId };
                         }),
                       },
                     },
