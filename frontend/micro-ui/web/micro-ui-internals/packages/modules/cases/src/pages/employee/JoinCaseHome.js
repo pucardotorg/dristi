@@ -2097,9 +2097,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
     (event) => {
       if (event.key === "Enter") {
         if (!isDisabled) onProceed();
+        if (step === 0) searchCase(caseNumber);
       }
     },
-    [onProceed, isDisabled]
+    [isDisabled, onProceed, step, caseDetails?.caseNumber, caseNumber]
   );
 
   useEffect(() => {
