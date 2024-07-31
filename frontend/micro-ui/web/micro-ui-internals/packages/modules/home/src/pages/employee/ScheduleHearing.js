@@ -159,6 +159,7 @@ function ScheduleHearing({
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
   const [selectedCustomDate, setSelectedCustomDate] = useState(new Date());
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
   const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
@@ -273,9 +274,10 @@ function ScheduleHearing({
         },
       },
     };
-    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
-      .then(async (res) => {
-        if (status !== "OPTOUT") {
+    if (status !== "OPTOUT") {
+      setIsSubmitDisabled(true);
+      HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
+        .then(async (res) => {
           await HomeService.customApiService(Urls.pendingTask, {
             pendingTask: {
               name: "Schedule Hearing",
@@ -292,13 +294,15 @@ function ScheduleHearing({
             },
           });
           history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
-        } else if (status && status === "OPTOUT") {
-          handleClose();
-        }
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
+          setIsSubmitDisabled(false);
+        })
+        .catch((err) => {
+          setIsSubmitDisabled(false);
+          console.log("err", err);
+        });
+    } else if (status && status === "OPTOUT") {
+      handleClose();
+    }
   };
 
   if (isLoading) {
@@ -379,7 +383,7 @@ function ScheduleHearing({
             onSubmit={() => handleSubmit(scheduleHearingParams)}
             className="primary-label-btn select-participant-submit"
             label={t("GENERATE_ORDERS_LINK")}
-            disabled={!scheduleHearingParams?.date}
+            disabled={!scheduleHearingParams?.date || isSubmitDisabled}
           ></SubmitBar>
         </div>
 

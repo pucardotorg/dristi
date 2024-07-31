@@ -122,6 +122,7 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: [],
+              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
             },
           ],
         },
@@ -242,6 +243,7 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: ["Trial"],
+              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
             },
           ],
         },
@@ -362,6 +364,7 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: ["Post-Trial"],
+              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
             },
           ],
         },
@@ -500,6 +503,7 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: ["Post-Trial"],
+              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
             },
           ],
         },
