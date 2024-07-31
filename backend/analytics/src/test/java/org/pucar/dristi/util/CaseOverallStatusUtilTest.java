@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.web.models.CaseOutcome;
 import org.pucar.dristi.web.models.CaseStageSubStage;
 import static org.mockito.Mockito.*;
 
@@ -131,12 +132,12 @@ class CaseOverallStatusUtilTest {
 
         JSONObject orderObject = new JSONObject();
         orderObject.put("filingNumber","filingNumber");
-        orderObject.put("orderType","judgement");
+        orderObject.put("orderType","WITHDRAWAL");
         // Mock configuration
         when(config.getOrderBusinessServiceList()).thenReturn(List.of("order"));
         when(orderUtil.getOrder(any(), eq(referenceId), any())).thenReturn(orderObject);
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
-        when(config.getCaseOverallStatusTopic()).thenReturn("topic");
+        when(config.getCaseOutcomeTopic()).thenReturn("topic");
 
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfoJson);
@@ -145,7 +146,7 @@ class CaseOverallStatusUtilTest {
         assertNotNull(result); // processOrderOverallStatus returns the orderObject
 
         // Verify publishToCaseOverallStatus method is called with correct arguments
-        verify(producer, times(1)).push(anyString(), any(CaseStageSubStage.class));
+        verify(producer, times(1)).push(anyString(), any(CaseOutcome.class));
     }
 
     @Test

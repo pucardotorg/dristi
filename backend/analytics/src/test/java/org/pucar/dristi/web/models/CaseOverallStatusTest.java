@@ -14,7 +14,7 @@ class CaseOverallStatusTest {
         assertNull(caseOverallStatus.getTenantId());
         assertNull(caseOverallStatus.getStage());
         assertNull(caseOverallStatus.getSubstage());
-        assertNull(caseOverallStatus.getAuditdetails());
+        assertNull(caseOverallStatus.getAuditDetails());
     }
 
     @Test
@@ -25,7 +25,7 @@ class CaseOverallStatusTest {
         assertEquals("tenant", caseOverallStatus.getTenantId());
         assertEquals("stage1", caseOverallStatus.getStage());
         assertEquals("substage1", caseOverallStatus.getSubstage());
-        assertEquals(auditDetails, caseOverallStatus.getAuditdetails());
+        assertEquals(auditDetails, caseOverallStatus.getAuditDetails());
     }
 
     @Test
@@ -35,7 +35,7 @@ class CaseOverallStatusTest {
         assertEquals("tenant", caseOverallStatus.getTenantId());
         assertEquals("stage1", caseOverallStatus.getStage());
         assertEquals("substage1", caseOverallStatus.getSubstage());
-        assertNull(caseOverallStatus.getAuditdetails());
+        assertNull(caseOverallStatus.getAuditDetails());
     }
 
     @Test
@@ -46,14 +46,14 @@ class CaseOverallStatusTest {
                 .tenantId("tenant")
                 .stage("stage1")
                 .substage("substage1")
-                .auditdetails(auditDetails)
+                .auditDetails(auditDetails)
                 .build();
 
         assertEquals("123", caseOverallStatus.getFilingNumber());
         assertEquals("tenant", caseOverallStatus.getTenantId());
         assertEquals("stage1", caseOverallStatus.getStage());
         assertEquals("substage1", caseOverallStatus.getSubstage());
-        assertEquals(auditDetails, caseOverallStatus.getAuditdetails());
+        assertEquals(auditDetails, caseOverallStatus.getAuditDetails());
     }
 
     @Test
@@ -64,12 +64,12 @@ class CaseOverallStatusTest {
         caseOverallStatus.setStage("stage1");
         caseOverallStatus.setSubstage("substage1");
         AuditDetails auditDetails = new AuditDetails();
-        caseOverallStatus.setAuditdetails(auditDetails);
+        caseOverallStatus.setAuditDetails(auditDetails);
 
         assertEquals("123", caseOverallStatus.getFilingNumber());
         assertEquals("tenant", caseOverallStatus.getTenantId());
         assertEquals("stage1", caseOverallStatus.getStage());
         assertEquals("substage1", caseOverallStatus.getSubstage());
-        assertEquals(auditDetails, caseOverallStatus.getAuditdetails());
+        assertEquals(auditDetails, caseOverallStatus.getAuditDetails());
     }
 }
