@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.rowmapper;
 
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
@@ -26,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     public List<CourtCase> extractData(ResultSet rs) {
         Map<String, CourtCase> caseMap = new LinkedHashMap<>();
 
@@ -59,6 +64,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .cnrNumber(rs.getString("cnrnumber"))
                             .courtCaseNumber(rs.getString("courtcaseNumber"))
                             .accessCode(rs.getString("accesscode"))
+                            .outcome(rs.getString("outcome"))
                             .courtId(rs.getString("courtid"))
                             .benchId(rs.getString("benchid"))
                             .judgeId(rs.getString("judgeid"))
@@ -93,7 +99,31 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         }
         return new ArrayList<>(caseMap.values());
     }
+        public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
+            log.info("Converting JSON to type: {}", typeRef.getType());
+            log.info("JSON content: {}", json);
 
+            try {
+                if (json == null || json.trim().isEmpty()) {
+                    if (isListType(typeRef)) {
+                        return (T) new ArrayList<>(); // Return an empty list for list types
+                    } else {
+                        return objectMapper.readValue("{}", typeRef); // Return an empty object for other types
+                    }
+                }
+
+                // Attempt to parse the JSON
+                return objectMapper.readValue(json, typeRef);
+            } catch (IOException e) {
+                log.error("Failed to convert JSON to {}", typeRef.getType(), e);
+                throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
+            }
+        }
+
+        private <T> boolean isListType(TypeReference<T> typeRef) {
+            Class<?> rawClass = TypeFactory.defaultInstance().constructType(typeRef.getType()).getRawClass();
+            return List.class.isAssignableFrom(rawClass);
+        }
     private LocalDate stringToLocalDate(String str) {
         LocalDate localDate = null;
         try {
