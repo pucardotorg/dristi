@@ -263,9 +263,10 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
+          const entityType = data?.fields?.find((field) => field.key === "entityType")?.value;
           const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
-          const pendingTaskActions = selectTaskType?.[taskTypeCode];
+          const pendingTaskActions = selectTaskType?.[entityType || taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
           const dayCount = stateSla
             ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
