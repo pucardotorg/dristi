@@ -725,9 +725,9 @@ export const UICustomizations = {
                         code: "RESCHEDULE_OF_HEARING_DATE",
                         name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
                       },
-                      originalHearingDate: `${date.getFullYear()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getDate()}`,
+                      originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                      }`,
                     },
                   },
                 },
@@ -778,7 +778,7 @@ export const UICustomizations = {
             label: "Request for Reschedule hearing",
             id: "reschedule",
             action: (history) => {
-              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}`);
             },
           },
           {
