@@ -188,9 +188,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return {
       ...documentSubmission[0]?.applicationList,
       statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
-      comment: documentSubmission[0]?.applicationList.comment
-        ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
-        : JSON.stringify([newComment]),
+      comment: documentSubmission[0]?.applicationList.comment ? [...documentSubmission[0]?.applicationList.comment, newComment] : [newComment],
       workflow: {
         ...documentSubmission[0]?.applicationList?.workflow,
         action: "RESPOND",
@@ -591,7 +589,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                 </div>
               </div>
             </div>
-            {modalType === "Submissions" && userRoles.includes("SUBMISSION_RESPONDER") && (
+            {modalType === "Submissions" && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
@@ -601,39 +599,43 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                <div className="comment-send">
-                  <div className="comment-input-wrapper">
-                    <TextInput
-                      placeholder={"Type here..."}
-                      value={currentComment}
-                      onChange={(e) => {
-                        setCurrentComment(e.target.value);
-                      }}
-                    />
-                    <div
-                      className="send-comment-btn"
-                      onClick={() => {
-                        const newComment = {
-                          text: currentComment,
-                          author: user,
-                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                            year: "2-digit",
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          }),
-                        };
-                        setComments((prev) => [...prev, newComment]);
-                        setCurrentComment("");
-                        handleSubmitComment(newComment);
-                      }}
-                    >
-                      <RightArrow />
+                {!hideSubmit && (
+                  <div className="comment-send">
+                    <div className="comment-input-wrapper">
+                      <TextInput
+                        placeholder={"Type here..."}
+                        value={currentComment}
+                        onChange={(e) => {
+                          setCurrentComment(e.target.value);
+                        }}
+                      />
+                      <div
+                        className="send-comment-btn"
+                        onClick={() => {
+                          const newComment = {
+                            comment: currentComment,
+                            additionalDetails: {
+                              author: user,
+                              timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                year: "2-digit",
+                                month: "short",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }),
+                            },
+                          };
+                          setComments((prev) => [...prev, newComment]);
+                          setCurrentComment("");
+                          handleSubmitComment(newComment);
+                        }}
+                      >
+                        <RightArrow />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
