@@ -5,6 +5,7 @@ export const SubmissionWorkflowAction = {
   REJECT: "REJECT",
   ABANDON: "ABANDON",
   APPROVE: "APPROVE",
+  DELETE: "DELETE",
 };
 export const SubmissionWorkflowState = {
   PENDINGSUBMISSION: "PENDINGSUBMISSION",
@@ -14,4 +15,6 @@ export const SubmissionWorkflowState = {
   PENDINGAPPROVAL: "PENDINGAPPROVAL",
   PENDINGRESPONSE: "PENDINGRESPONSE",
   COMPLETED: "COMPLETED",
+  DELETED: "DELETED",
+  ABATED: "ABATED",
 };

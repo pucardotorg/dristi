@@ -365,7 +365,7 @@ const SubmissionsCreate = () => {
       },
     });
   };
-  console.debug(defaultFormValue);
+
   const createSubmission = async () => {
     try {
       let documentsList = [];

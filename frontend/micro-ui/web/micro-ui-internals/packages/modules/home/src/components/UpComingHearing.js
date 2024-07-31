@@ -196,7 +196,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     if (!hearingSlotsResponse || !hearingResponse) {
       return [];
     }
-    console.debug({ hearingResponse, hearingSlotsResponse });
+
     const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
     hearingResponse.HearingList.forEach((hearing) => {
       hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));

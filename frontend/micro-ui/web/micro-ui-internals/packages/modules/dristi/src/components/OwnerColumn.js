@@ -66,6 +66,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     ].includes(rowData?.status) &&
       userRoles.includes("JUDGE_ROLE")) ||
     userInfo?.uuid === createdByUuid ||
+    !rowData?.referenceId ||
     (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(
       rowData?.status
     ) &&

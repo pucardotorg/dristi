@@ -12,6 +12,7 @@ import DocViewerWrapper from "../docViewerWrapper";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 
 const stateSla = {
   RE_SCHEDULE: 2,
@@ -30,12 +31,17 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const history = useHistory();
   const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
   const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
+  const allAdvocates = useMemo(() => {
+    getAdvocates(caseData);
+  }, [caseData]);
+
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
+  const isLitigent = useMemo(() => !userInfo?.roles?.some((role) => ["ADVOCATE_ROLE", "ADVOCATE_CLERK"].includes(role?.code)), [userInfo?.roles]);
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const todayDate = new Date().getTime();
   const CloseBtn = (props) => {
@@ -54,7 +60,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const respondingUuids = useMemo(() => {
-    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat() || [];
   }, [documentSubmission]);
 
   const hideSubmit = useMemo(() => {
@@ -66,13 +72,25 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status))
       );
     } else {
+      if (
+        isLitigent &&
+        allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy) &&
+        [SubmissionWorkflowState.COMPLETED, SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(documentSubmission?.[0]?.status)
+      ) {
+        return false;
+      }
+      if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
+        return false;
+      }
+      if (isLitigent && !allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid)) {
+        return true;
+      }
       return (
-        (documentSubmission?.[0]?.referenceId ? !respondingUuids?.includes(userInfo?.uuid) : false) ||
-        ![SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) ||
-        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy
+        (respondingUuids?.length > 0 ? !respondingUuids?.includes(userInfo?.uuid) : false) &&
+        ![SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(documentSubmission?.[0]?.status)
       );
     }
-  }, [userType, userRoles, modalType, documentSubmission, respondingUuids, userInfo?.uuid]);
+  }, [userType, userRoles, modalType, documentSubmission, isLitigent, allAdvocates, userInfo?.uuid, respondingUuids]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -80,21 +98,46 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (userType === "employee") {
         label = t("Approve");
       } else {
-        label = t("RESPOND");
+        if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
+          label = t("DOWNLOAD_SUBMISSION");
+        } else if (
+          (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.referenceId) &&
+          [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+        ) {
+          label = t("RESPOND");
+        }
       }
     } else {
-      label = !documentSubmission?.[0]?.artifactList.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
+      label = !documentSubmission?.[0]?.artifactList?.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
     }
     return label;
-  }, [documentSubmission, modalType, t, userType]);
+  }, [documentSubmission, modalType, respondingUuids, t, userInfo?.uuid, userType]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") &&
+    if (
+      userRoles.includes("SUBMISSION_APPROVER") &&
       [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) &&
       modalType === "Submissions"
-      ? t("REJECT")
-      : null;
-  }, [documentSubmission, modalType, t, userRoles]);
+    ) {
+      return t("REJECT");
+    }
+    if (userType === "citizen") {
+      if (isLitigent && !allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid)) {
+        return null;
+      }
+      if (
+        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy &&
+        userRoles?.includes("SUBMISSION_DELETE") &&
+        !documentSubmission?.[0]?.details?.referenceId &&
+        ![SubmissionWorkflowState.COMPLETED, SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(
+          documentSubmission?.[0]?.status
+        )
+      ) {
+        return t("CANCEL_SUBMISSION");
+      }
+    }
+    return null;
+  }, [allAdvocates, documentSubmission, isLitigent, modalType, t, userInfo?.uuid, userRoles, userType]);
 
   const reqCreate = {
     url: `/application/v1/update`,
@@ -160,6 +203,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     },
   };
 
+  const deleteApplicationPayload = {
+    ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
+    workflow: {
+      ...documentSubmission?.[0]?.applicationList?.workflow,
+      action: SubmissionWorkflowAction.DELETE,
+    },
+  };
+
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
     statuteSection: {
@@ -198,19 +253,36 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     };
   };
 
-  const onSuccess = async (result) => {
-    const details = showToast({
+  const onSuccess = async () => {
+    let message = "";
+    if (modalType === "Documents") {
+      message = documentSubmission?.[0].artifactList?.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE";
+    } else {
+      if (showConfirmationModal?.type === "reject") {
+        message = "SUCCESSFULLY_REJECTED_APPLICATION_MESSAGE";
+      }
+      if (showConfirmationModal?.type === "accept") {
+        message = "SUCCESSFULLY_ACCEPTED_APPLICATION_MESSAGE";
+      }
+      if (actionSaveLabel === t("RESPOND")) {
+        message = "SUCCESSFULLY_RESPONDED_APPLICATION_MESSAGE";
+      } else {
+        message = "SUCCESSFULLY_CANCELED_APPLICATION_MESSAGE";
+      }
+    }
+    showToast({
       isError: false,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+      message,
     });
     counterUpdate();
     handleBack();
   };
+
   const onError = async (result) => {
     if (modalType === "Documents") {
-      const details = showToast({
+      showToast({
         isError: true,
-        message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+        message: documentSubmission?.[0].artifactList?.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
       });
     }
     handleBack();
@@ -229,7 +301,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           body: {
             artifact: {
               ...documentSubmission?.[0].artifactList,
-              isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              isEvidence: !documentSubmission?.[0]?.artifactList?.isEvidence,
               workflow: {
                 ...documentSubmission?.[0].artifactList.workflow,
                 action: "SIGN DEPOSITION",
@@ -253,7 +325,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           body: {
             artifact: {
               ...documentSubmission?.[0].artifactList,
-              isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              isEvidence: !documentSubmission?.[0]?.artifactList?.isEvidence,
               filingNumber: filingNumber,
             },
           },
@@ -275,6 +347,23 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         url: Urls.dristi.submissionsUpdate,
         params: {},
         body: { application: respondApplicationPayload },
+        config: {
+          enable: true,
+        },
+      },
+      {
+        onSuccess,
+        onError,
+      }
+    );
+  };
+
+  const handleDeleteApplication = async () => {
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: deleteApplicationPayload },
         config: {
           enable: true,
         },
@@ -474,7 +563,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
         }
-
+        counterUpdate();
         setShowSuccessModal(true);
         setShowConfirmationModal(null);
       }
@@ -486,6 +575,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     } else {
       setShow(false);
+      setShowSuccessModal(false);
     }
   };
 
@@ -498,10 +588,27 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (userType === "employee") {
       modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
     } else {
-      await handleRespondApplication();
+      if (actionSaveLabel === t("RESPOND")) {
+        try {
+        } catch (error) {}
+        await handleRespondApplication();
+      }
       ///show a toast message
       counterUpdate();
       setShow(false);
+      counterUpdate();
+    }
+  };
+
+  const actionCancelOnSubmit = async () => {
+    if (userType === "employee") {
+      setShowConfirmationModal({ type: "reject" });
+    } else {
+      try {
+        await handleDeleteApplication();
+        setShow(false);
+        counterUpdate();
+      } catch (error) {}
     }
   };
 
@@ -514,9 +621,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           actionSaveOnSubmit={actionSaveOnSubmit}
           hideSubmit={hideSubmit}
           actionCancelLabel={actionCancelLabel}
-          actionCancelOnSubmit={() => {
-            setShowConfirmationModal({ type: "reject" });
-          }}
+          actionCancelOnSubmit={actionCancelOnSubmit}
           formId="modal-action"
           headerBarMain={
             <Heading
@@ -656,7 +761,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission?.[0].artifactList.isEvidence}
+          isEvidence={documentSubmission?.[0]?.artifactList?.isEvidence}
         />
       )}
       {showSuccessModal && modalType === "Submissions" && <SubmissionSuccessModal t={t} handleBack={handleBack} />}
