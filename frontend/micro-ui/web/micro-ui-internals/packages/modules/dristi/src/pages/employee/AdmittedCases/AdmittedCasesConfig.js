@@ -453,74 +453,73 @@ export const TabSearchconfig = {
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
             defaultValues: defaultSearchValues,
-            fields: [],
-            // fields: [
-            //   {
-            //     label: "Type",
-            //     isMandatory: false,
-            //     key: "artifactType",
-            //     type: "dropdown",
-            //     populators: {
-            //       name: "artifactType",
-            //       optionsKey: "name",
-            //       mdmsConfig: {
-            //         masterName: "EvidenceType",
-            //         moduleName: "Evidence",
-            //         localePrefix: "EVIDENCE_TYPE",
-            //         select:
-            //           "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
-            //         // localePrefix: "SUBMISSION_TYPE",
-            //       },
-            //     },
-            //   },
-            //   // customDefaultPagination: {
-            //   //   searchForm: {},
-            //   //   filterForm: {},
-            //   //   tableForm: {
-            //   //     limit: 10,
-            //   //     offset: 0,
-            //   //   },
-            //   // },
-            //   // {
-            //   //   label: "Stage",
-            //   //   isMandatory: false,
-            //   //   key: "stage",
-            //   //   type: "dropdown",
-            //   //   populators: {
-            //   //     name: "stage",
-            //   //     optionsKey: "value",
-            //   //     mdmsConfig: {
-            //   //       masterName: "Stage",
-            //   //       moduleName: "case",
-            //   //       // localePrefix: "SUBMISSION_TYPE",
-            //   //     },
-            //   //   },
-            //   // },
-            //   // {
-            //   //   label: "Status",
-            //   //   isMandatory: false,
-            //   //   key: "status",
-            //   //   type: "dropdown",
-            //   //   populators: {
-            //   //     name: "status",
-            //   //     optionsKey: "value",
-            //   //     mdmsConfig: {
-            //   //       masterName: "Status",
-            //   //       moduleName: "case",
-            //   //       // localePrefix: "SUBMISSION_TYPE",
-            //   //     },
-            //   //   },
-            //   // },
-            //   {
-            //     label: "Search Artifact Number",
-            //     isMandatory: false,
-            //     key: "artifactNumber",
-            //     type: "text",
-            //     populators: {
-            //       name: "artifactNumber",
-            //     },
-            //   },
-            // ],
+            fields: [
+              {
+                label: "Type",
+                isMandatory: false,
+                key: "artifactType",
+                type: "dropdown",
+                populators: {
+                  name: "artifactType",
+                  optionsKey: "name",
+                  mdmsConfig: {
+                    masterName: "EvidenceType",
+                    moduleName: "Evidence",
+                    localePrefix: "EVIDENCE_TYPE",
+                    select:
+                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              // customDefaultPagination: {
+              //   searchForm: {},
+              //   filterForm: {},
+              //   tableForm: {
+              //     limit: 10,
+              //     offset: 0,
+              //   },
+              // },
+              // {
+              //   label: "Stage",
+              //   isMandatory: false,
+              //   key: "stage",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "stage",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Stage",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
+              // {
+              //   label: "Status",
+              //   isMandatory: false,
+              //   key: "status",
+              //   type: "dropdown",
+              //   populators: {
+              //     name: "status",
+              //     optionsKey: "value",
+              //     mdmsConfig: {
+              //       masterName: "Status",
+              //       moduleName: "case",
+              //       // localePrefix: "SUBMISSION_TYPE",
+              //     },
+              //   },
+              // },
+              {
+                label: "Search Artifact Number",
+                isMandatory: false,
+                key: "artifactNumber",
+                type: "text",
+                populators: {
+                  name: "artifactNumber",
+                },
+              },
+            ],
           },
 
           show: true,
