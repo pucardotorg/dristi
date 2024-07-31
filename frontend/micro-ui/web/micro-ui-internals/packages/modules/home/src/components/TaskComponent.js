@@ -334,24 +334,17 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber,
       <div className="task-filters">
         <LabelFieldPair>
           <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
-          <Dropdown
-            option={[{ name: "NIA S138", code: "NIA S138" }]}
-            selected={{ name: "NIA S138", code: "NIA S138" }}
-            optionKey={"code"}
-            select={(value) => {}}
-            placeholder={t("CS_CASE_TYPE")}
-          />
+          <Dropdown option={[{ name: "NIA S138", code: "NIA S138" }]} optionKey={"code"} select={(value) => {}} placeholder={t("CS_CASE_TYPE")} />
         </LabelFieldPair>
         <LabelFieldPair>
           <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
           <Dropdown
             option={taskTypes}
             optionKey={"name"}
-            selected={taskType}
             select={(value) => {
               setTaskType(value);
             }}
-            placeholder={t("CS_CASE_TYPE")}
+            placeholder={t("CS_TASK_TYPE")}
           />
         </LabelFieldPair>
       </div>
