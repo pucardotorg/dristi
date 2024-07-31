@@ -32,7 +32,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
   const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
   const allAdvocates = useMemo(() => {
-    getAdvocates(caseData);
+    return getAdvocates(caseData?.case);
   }, [caseData]);
 
   const { t } = useTranslation();
@@ -63,34 +63,35 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat() || [];
   }, [documentSubmission]);
 
-  const hideSubmit = useMemo(() => {
+  const showSubmit = useMemo(() => {
     if (userType === "employee") {
-      return (
-        !userRoles.includes("JUDGE_ROLE") ||
-        userRoles.includes("CITIZEN") ||
-        (modalType !== "Documents" &&
-          ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status))
-      );
-    } else {
-      if (
-        isLitigent &&
-        allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy) &&
-        [SubmissionWorkflowState.COMPLETED, SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(documentSubmission?.[0]?.status)
-      ) {
-        return false;
-      }
-      if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
-        return false;
-      }
-      if (isLitigent && !allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid)) {
+      if (modalType !== "Documents") {
         return true;
       }
       return (
-        (respondingUuids?.length > 0 ? !respondingUuids?.includes(userInfo?.uuid) : false) &&
-        ![SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(documentSubmission?.[0]?.status)
+        userRoles.includes("JUDGE_ROLE") &&
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
       );
+    } else {
+      if (modalType !== "Documents") {
+        return false;
+      }
+      if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
+        return true;
+      }
+      if (isLitigent && allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy)) {
+        if ([SubmissionWorkflowState.COMPLETED].includes(documentSubmission?.[0]?.status)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (!isLitigent || (isLitigent && allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid))) {
+        return [SubmissionWorkflowState?.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(documentSubmission?.[0]?.status);
+      }
+      return false;
     }
-  }, [userType, userRoles, modalType, documentSubmission, isLitigent, allAdvocates, userInfo?.uuid, respondingUuids]);
+  }, [isLitigent, allAdvocates, userRoles, userInfo, userType, documentSubmission, respondingUuids, modalType]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -101,7 +102,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
           label = t("DOWNLOAD_SUBMISSION");
         } else if (
-          (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.referenceId) &&
+          isLitigent &&
+          allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy) &&
+          [SubmissionWorkflowState.COMPLETED].includes(documentSubmission?.[0]?.status)
+        ) {
+          label = t("DOWNLOAD_SUBMISSION");
+        } else if (
+          (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.details?.referenceId) &&
           [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
         ) {
           label = t("RESPOND");
@@ -619,7 +626,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={actionSaveOnSubmit}
-          hideSubmit={hideSubmit}
+          hideSubmit={!showSubmit}
           actionCancelLabel={actionCancelLabel}
           actionCancelOnSubmit={actionCancelOnSubmit}
           formId="modal-action"
