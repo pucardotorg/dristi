@@ -58,7 +58,12 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
   const respondingUuids = rowData?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
 
   const showDoc =
-    ([SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.COMPLETED].includes(rowData?.status) &&
+    ([
+      SubmissionWorkflowState.PENDINGREVIEW,
+      SubmissionWorkflowState.PENDINGAPPROVAL,
+      SubmissionWorkflowState.COMPLETED,
+      SubmissionWorkflowState.PENDINGRESPONSE,
+    ].includes(rowData?.status) &&
       userRoles.includes("JUDGE_ROLE")) ||
     userInfo?.uuid === createdByUuid ||
     (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(

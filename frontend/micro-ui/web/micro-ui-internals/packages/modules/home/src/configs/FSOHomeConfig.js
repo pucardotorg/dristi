@@ -121,7 +121,7 @@ export const TabFSOSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "UNDER_SCRUTINY",
+              status: ["UNDER_SCRUTINY"],
             },
           ],
         },
@@ -264,7 +264,7 @@ export const TabFSOSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "UNDER_SCRUTINY",
+              status: ["UNDER_SCRUTINY"],
             },
           ],
         },

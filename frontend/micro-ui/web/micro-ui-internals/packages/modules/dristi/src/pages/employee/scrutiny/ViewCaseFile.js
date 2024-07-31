@@ -217,7 +217,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
-            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: getAllAssignees(caseDetails) }),
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: [caseDetails.auditDetails.createdBy] }),
           },
         },
         tenantId,
