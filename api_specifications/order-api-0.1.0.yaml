@@ -284,6 +284,9 @@ components:
           type: string
           description: Master data ID
           example: Intermediate, Judgement
+        orderDetails:
+          type: object
+          description: schema to define fields that required to creation of ORDER PDFs. will be used to validate the fields before creating the PDF
         status:
           type: string
           description: workflow status
