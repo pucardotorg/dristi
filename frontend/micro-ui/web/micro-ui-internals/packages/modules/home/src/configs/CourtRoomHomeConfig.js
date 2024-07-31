@@ -122,7 +122,7 @@ export const TabCourtRoomSearchConfig = {
           criteria: [
             {
               stage: [],
-              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -243,7 +243,7 @@ export const TabCourtRoomSearchConfig = {
           criteria: [
             {
               stage: ["Trial"],
-              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -364,7 +364,7 @@ export const TabCourtRoomSearchConfig = {
           criteria: [
             {
               stage: ["Post-Trial"],
-              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -503,7 +503,7 @@ export const TabCourtRoomSearchConfig = {
           criteria: [
             {
               stage: ["Post-Trial"],
-              status: ["PENDING_ADMISSION", "CASE_ADMITTED"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },

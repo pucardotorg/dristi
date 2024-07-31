@@ -245,7 +245,7 @@ export const TabLitigantSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "DRAFT_IN_PROGRESS",
+              status: ["DRAFT_IN_PROGRESS"],
             },
           ],
         },
