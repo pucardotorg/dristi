@@ -207,6 +207,8 @@ export const rolesToConfigMapping = [
   },
 ];
 
+export const caseTypes = [{ name: "NIA S138", code: "NIA S138" }];
+
 export const taskTypes = [
   { code: "case", name: "Case" },
   { code: "hearing", name: "Hearing" },
