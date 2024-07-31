@@ -121,7 +121,9 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addCriteria(criteria.getJudgeId(), query, firstCriteria, "cases.judgeid = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getStage(), query, firstCriteria, "cases.stage = ?",preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addListCriteria(criteria.getStage(), query, firstCriteria, "cases.stage", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+
+                firstCriteria = addListCriteria(criteria.getOutcome(), query, firstCriteria, "cases.outcome", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
                 firstCriteria = addCriteria(criteria.getSubstage(), query, firstCriteria, "cases.substage = ?",preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
@@ -140,6 +142,25 @@ public class CaseQueryBuilder {
         } catch (Exception e) {
             log.error("Error while building case search query :: {}",e.toString());
             throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the case search query: " + e.getMessage());
+        }
+    }
+
+    private boolean addListCriteria(List<String> itemList, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, int varchar) {
+        if (itemList != null && !itemList.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            prepareStatementAndArgumentForListCriteria(itemList, query, str , preparedStmtList, preparedStmtArgList, varchar);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, int varchar) {
+        if (!itemList.isEmpty()) {
+            query.append(str).append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            preparedStmtList.addAll(itemList);
+            itemList.forEach(i->preparedStmtArgList.add(varchar));
         }
     }
 

@@ -57,7 +57,7 @@ class CaseRowMapperTest {
         when(rs.getString("natureofpleading")).thenReturn("pleading");
         when(rs.getString("status")).thenReturn("status1");
         when(rs.getString("remarks")).thenReturn("remarks");
-        when(rs.getString("outcome")).thenReturn("[\"outcome1\", \"outcome2\"]");
+        when(rs.getString("outcome")).thenReturn("outcome");
 
         when(rs.getLong("lastmodifiedtime")).thenReturn(123456789L);
         when(rs.getString("createdby")).thenReturn("user1");
@@ -73,7 +73,7 @@ class CaseRowMapperTest {
         assertEquals(1, cases.size());
         assertEquals("tenant1", cases.get(0).getTenantId());
         assertEquals("user1", cases.get(0).getAuditdetails().getCreatedBy());
-        assertEquals(List.of("outcome1", "outcome2"), cases.get(0).getOutcome());
+        assertEquals("outcome", cases.get(0).getOutcome());
 
         verify(rs, times(2)).getString("id"); // Adjusted to match the actual number of invocations
     }

@@ -35,7 +35,7 @@ public class CaseCriteria {
     private String filingNumber = null;
 
     @JsonProperty("outcome")
-    private String outcome = null;
+    private List<String> outcome = null;
 
     @JsonProperty("courtCaseNumber")
     private String courtCaseNumber = null;
@@ -61,7 +61,7 @@ public class CaseCriteria {
     private String judgeId = null;
 
     @JsonProperty("stage")
-    private String stage = null;
+    private List<String> stage = null;
 
     @JsonProperty("substage")
     private String substage = null;

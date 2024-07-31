@@ -412,6 +412,9 @@ components:
           description: This field can hold any other additional remarks about the case
         outcome:
           type: string
+          description: >-
+            The outcome of the case. This can be a judgement, a settlement or
+            any other outcome.
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
@@ -803,7 +806,13 @@ components:
         judgeId:
           type: string
         stage:
-          type: string
+          type: array
+          items:
+            type: string
+        outcome:
+          type: array
+          items:
+            type: string
         substage:
           type: string
         courtCaseNumber:

@@ -64,7 +64,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .cnrNumber(rs.getString("cnrnumber"))
                             .courtCaseNumber(rs.getString("courtcaseNumber"))
                             .accessCode(rs.getString("accesscode"))
-                            .outcome(getObjectFromJson(rs.getString("outcome"), new TypeReference<List<String>>() {}))
+                            .outcome(rs.getString("outcome"))
                             .courtId(rs.getString("courtid"))
                             .benchId(rs.getString("benchid"))
                             .judgeId(rs.getString("judgeid"))
