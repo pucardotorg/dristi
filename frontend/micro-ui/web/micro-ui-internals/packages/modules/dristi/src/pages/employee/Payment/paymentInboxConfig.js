@@ -8,7 +8,7 @@ export const paymentInboxConfig = {
       criteria: [
         {
           defaultValues: true,
-          status: "PAYMENT_PENDING",
+          status: ["PAYMENT_PENDING"],
           filingNumber: "",
         },
       ],
