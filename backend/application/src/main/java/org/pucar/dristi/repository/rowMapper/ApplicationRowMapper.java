@@ -63,6 +63,8 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .id(toUUID(rs.getString("id")))
                             .isActive(rs.getBoolean("isactive"))
                             .status(rs.getString("status"))
+                            .onBehalfOf(getObjectFromJson(rs.getString("onbehalfof"), new TypeReference<List<UUID>>() {
+                            }))
                             .comment(getObjectFromJson(rs.getString("comment"), new TypeReference<List<Comment>>() {
                             }))
                             .statuteSection(getObjectFromJson(rs.getString("statuteSection"), new TypeReference<StatuteSection>(){}))
