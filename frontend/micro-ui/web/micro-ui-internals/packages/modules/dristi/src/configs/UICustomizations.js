@@ -869,7 +869,7 @@ export const UICustomizations = {
               });
               // console.log(evidenceHistory, "evidenceHistory");
               const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
-                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
+                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
               });
               // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
@@ -878,7 +878,7 @@ export const UICustomizations = {
                     .map((order) => {
                       return {
                         instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                        stage: "",
+                        stage: [],
                         date: order.order.auditDetails.createdTime,
                         status: order.order.status,
                       };
@@ -886,7 +886,7 @@ export const UICustomizations = {
                 : data.caseFiles[0]?.orders.map((order) => {
                     return {
                       instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                      stage: "",
+                      stage: [],
                       date: order.order.auditDetails.createdTime,
                       status: order.order.status,
                     };

@@ -263,7 +263,13 @@ export const TabLitigantSearchConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: {
+              ...defaultSearchValues,
+              sortCaseListByDate: {
+                sortBy: "lastModifiedTime",
+                order: "asc",
+              },
+            },
             fields: [
               {
                 type: "component",
@@ -343,7 +349,7 @@ export const TabLitigantSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{ stage: "Post-Trial" }],
+          criteria: [{ stage: ["Post-Trial"] }],
         },
         masterName: "commonUiConfig",
         moduleName: "homeLitigantUiConfig",
