@@ -247,9 +247,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return {
       ...documentSubmission[0]?.applicationList,
       statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
-      comment: documentSubmission[0]?.applicationList.comment
-        ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
-        : JSON.stringify([newComment]),
+      comment: documentSubmission[0]?.applicationList.comment ? [...documentSubmission[0]?.applicationList.comment, newComment] : [newComment],
       workflow: {
         ...documentSubmission[0]?.applicationList?.workflow,
         action: "RESPOND",
@@ -350,7 +348,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       {
         url: Urls.dristi.submissionsUpdate,
         params: {},
-        body: { application: respondApplicationPayload },
+        body: {
+          application: {
+            ...respondApplicationPayload,
+            comment: comments,
+          },
+        },
         config: {
           enable: true,
         },
@@ -446,7 +449,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
@@ -594,6 +597,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       counterUpdate();
       setShow(false);
       counterUpdate();
+      history.replace(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     }
   };
 
@@ -732,7 +736,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                           };
                           setComments((prev) => [...prev, newComment]);
                           setCurrentComment("");
-                          handleSubmitComment(newComment);
+                          // handleSubmitComment(newComment);
                         }}
                       >
                         <RightArrow />
