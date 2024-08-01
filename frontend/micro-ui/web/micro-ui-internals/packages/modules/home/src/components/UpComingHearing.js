@@ -213,13 +213,27 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   }
 
   if (!latestHearing) {
-    return <div>{t("NO_HEARINGS_SCHEDULED")}</div>;
+    return (
+      <div className="upcoming-hearing-container">
+        <div className="header">
+          {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
+        </div>
+        <div className="hearingCard">
+          <div className="no-hearing">
+            <CalenderIcon />
+            <p>
+              {t("YOU_DONT_HAVE_ANY")} <span>{t("HEARING_SCHEDULED")}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const hearingSearchParams = new URLSearchParams();
   hearingSearchParams.set("from-date", dateRange.start);
   hearingSearchParams.set("to-date", dateRange.end);
-  hearingSearchParams.set("slot", latestHearing.slotName);
+  hearingSearchParams.set("slot", latestHearing?.slotName);
 
   return (
     <div className="upcoming-hearing-container">
@@ -229,7 +243,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
       {!isFSO && (
         <div className="hearing-card-wrapper">
           <div className="hearingCard">
-            {hearingCount > 0 ? (
+            {hearingCount > 0 && (
               <React.Fragment>
                 <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                   <div className="hearingDate">
@@ -258,13 +272,6 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                 </div>
                 <Button className={"view-hearing-button"} label={t("VIEW_HEARINGS")} variation={"primary"} onClick={props.handleNavigate} />
               </React.Fragment>
-            ) : (
-              <div className="no-hearing">
-                <CalenderIcon />
-                <p>
-                  {t("YOU_DONT_HAVE_ANY")} <span>{t("HEARING_SCHEDULED")}</span>
-                </p>
-              </div>
             )}
           </div>
           {ongoingMonthHearingCount > 0 && userInfoType === "citizen" && isAdvocate && (

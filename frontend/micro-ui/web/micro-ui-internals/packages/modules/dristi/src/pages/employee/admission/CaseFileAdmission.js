@@ -119,7 +119,7 @@ function CaseFileAdmission({ t, path }) {
     },
     {
       key: "SUBMITTED_ON",
-      value: caseDetails?.filingDate,
+      value: formatDate(new Date(caseDetails?.filingDate)),
     },
   ];
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {

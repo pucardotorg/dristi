@@ -284,14 +284,16 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const redirectUrl = isCustomFunction
             ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
             : `/${window?.contextPath}/${userType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
+          const due = dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
-            due: dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`,
+            due: due,
             dayCount: dayCount ? dayCount : dayCount === 0 ? 0 : Infinity,
             isCompleted,
+            dueDateColor: due === "Due today" ? "#9E400A" : "",
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
             isCustomFunction,

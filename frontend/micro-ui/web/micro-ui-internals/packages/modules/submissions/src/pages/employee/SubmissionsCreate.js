@@ -51,6 +51,7 @@ const SubmissionsCreate = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [makePaymentLabel, setMakePaymentLabel] = useState(false);
   const hearingId = urlParams.get("hearingId");
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
@@ -532,11 +533,13 @@ const SubmissionsCreate = () => {
   };
 
   const handleSkipPayment = () => {
+    setMakePaymentLabel(true);
     setShowPaymentModal(false);
     setShowSuccessModal(true);
   };
 
   const handleMakePayment = () => {
+    setMakePaymentLabel(false);
     setShowPaymentModal(false);
     setShowSuccessModal(true);
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
@@ -597,11 +600,12 @@ const SubmissionsCreate = () => {
         <SuccessModal
           t={t}
           isPaymentDone={applicationDetails?.status === SubmissionWorkflowState.PENDINGPAYMENT}
-          handleCloseSuccessModal={handleBack}
+          handleCloseSuccessModal={makePaymentLabel ? handleMakePayment : handleBack}
           actionCancelLabel={"DOWNLOAD_SUBMISSION"}
           actionCancelOnSubmit={handleDownloadSubmission}
           applicationNumber={applicationNumber}
           createdDate={applicationDetails?.createdDate}
+          makePayment={makePaymentLabel}
         />
       )}
     </div>

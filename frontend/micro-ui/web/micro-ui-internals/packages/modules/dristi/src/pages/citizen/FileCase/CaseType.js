@@ -1,6 +1,6 @@
 import { Loader } from "@egovernments/digit-ui-components";
 import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Button from "../../../components/Button";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
@@ -10,6 +10,7 @@ import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import SelectCustomNote from "../../../components/SelectCustomNote";
 import _ from "lodash";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 
 const customNoteConfig = {
   populators: {
@@ -125,12 +126,7 @@ function CaseType({ t }) {
       return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
-    const { isLoading: mdmsLoading, data: statuteData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "Statute" }], {
-      select: (data) => {
-        const optionsData = _.get(data, `${"case"}.${"Statute"}`, []);
-        return optionsData.filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true)).map((opt) => ({ ...opt }));
-      },
-    });
+    const { isLoading: mdmsLoading, data: statuteData } = useGetStatuteSection();
 
     if (isLoading || isFetching || isSearchLoading || mdmsLoading) {
       return <Loader />;
