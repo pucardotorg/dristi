@@ -315,8 +315,7 @@ components:
           example: CC/023443/2024
         cnrNumber:
           type: string
-          description: >-
-            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
+          description: This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
           minLength: 2
           maxLength: 32
           example: PBJL01-123556-2024
@@ -335,15 +334,15 @@ components:
           type: string
         stage:
           type: string
-        substage:
+          description: the main/primary stage of the case
+          example: Pre-Trial, Trial, Post-Trial
+        subStage:
           type: string
+          description: the secondary level of stage within the primary stage
+          example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
         benchId:
           type: string
-          description: >-
-            The bench a case is assigned to. A court has multiple benches and
-            each bench can comprise of one or more arbitrators. The
-            relationships to be defined in master data. The unique master data
-            ID for a bench is stored here. 
+          description: The bench a case is assigned to. A court has multiple benches and each bench can comprise of one or more arbitrators. The relationships to be defined in master data. The unique master data ID for a bench is stored here.
           minLength: 2
           maxLength: 64
         linkedCases:
@@ -354,18 +353,16 @@ components:
         filingDate:
           type: integer
           format: int64
-          description: >-
-            Date of case filing in epoch time. This is the date when the case
-            entered the judicial system.
+          description: Date of case filing in epoch time (milliseconds). This is the date when the case entered the judicial system.
           example: 1709542147
         judgementDate:
           type: integer
           format: int64
-          description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
+          description: date of judgement (will mostly also mean closure of case) in epoch time (milliseconds). this will be same as judgement hearing date
         registrationDate:
           type: integer
           format: int64
-          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
+          description: Date when case was admitted by the judge in epoch time (milliseconds). Can also be derived from a WF state change
         caseDetails:
           type: object
           description: Field to store all case type specific details. These can vary depending on case type.
@@ -383,9 +380,7 @@ components:
           maxLength: 64
         statutesAndSections:
           type: array
-          description: >-
-            The legal provisions -- acts/sections/subsections -- under which a
-            case is filed
+          description: The legal provisions -- acts/sections/subsections, under which a case is filed
           items:
             $ref: '#/components/schemas/StatuteSection'
         litigants:
@@ -399,9 +394,11 @@ components:
             $ref: '#/components/schemas/AdvocateMapping'
         status:
           type: string
-          description: >-
-            The current status of the case as pulled from the Workflow service.
-            Workflow service will hold the entire history of hte case.
+          description: The current status of the case as pulled from the Workflow service. Workflow service will hold the entire history of the case.
+        outcome:
+          type: string
+          format: uuid
+          description: case outcome from master data like Withdrawn, Settled, Transferred, Dismissed, Convicted, etc.
         documents:
           type: array
           items:
@@ -563,15 +560,11 @@ components:
           description: Refers to the case ID
         partyCategory:
           type: string
-          description: >-
-            Is Individual or organisation or something else. Master data ID to
-            be stored here.
+          description: Is Individual or organisation or something else. Master data ID to be stored here.
           example: INDIVIDUAL, ORGANISATION
         organisationID:
           type: string
-          description: >-
-            If the party is an organisation, refers to the org ID which will
-            contain details of the org
+          description: If the party is an organisation, refers to the org ID which will contain details of the org
         individualId:
           type: string
           description: >-
@@ -581,24 +574,18 @@ components:
             contact etc..
         partyType:
           type: string
-          description: >-
-            This field holds imformation about type of party (name spaced Master
-            Data).
+          description: This field holds information about type of party (name spaced Master Data).
           example:
             - complainant.primary
             - complainant.additional
             - respondent.primary
         isActive:
           type: boolean
-          description: >-
-            Field used for soft delete of records. Will be false if this entity
-            is not active within the system.
+          description: Field used for soft delete of records. Will be false if this entity is not active within the system.
           default: true
         documents:
           type: array
-          description: >-
-            This can be used to store the Vakalathnama and other agreements
-            between advocate and party.
+          description: This can be used to store the Vakalathnama and other agreements between advocate and party.
           items:
             $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
@@ -744,14 +731,15 @@ components:
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-  AddWitnessResponse:
-    type: object
-    properties:
-      ResponseInfo:
-        $ref: >-
-          https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-      addWitnessRequest:
-        $ref: '#/components/schemas/AddWitnessRequest'          
+
+    AddWitnessResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        addWitnessRequest:
+          $ref: '#/components/schemas/AddWitnessRequest'
             
     JoinCaseRequest:
       type: object
@@ -831,8 +819,7 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
     
     CaseExists:
       type: object

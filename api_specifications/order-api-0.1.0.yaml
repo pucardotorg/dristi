@@ -235,7 +235,7 @@ components:
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
       type: object
-      required: [ tenantId, createdDate, orderType, status, isActive ]
+      required: [ tenantId, createdDate, orderType, isActive ]
       properties:
         id:
           type: string
@@ -272,9 +272,9 @@ components:
           maxLength: 256
           description: Linked orderNumber for reissue of orders (for summons and warrants et)
         createdDate:
-          type: string
-          format: date
-          description: the date on which the order was created. Can be treated as the start date also
+          type: integer
+          format: int64
+          description: the date on which the order was created in epoch time (milliseconds). Can be treated as the start date also
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
         orderType:
@@ -284,6 +284,9 @@ components:
           type: string
           description: Master data ID
           example: Intermediate, Judgement
+        orderDetails:
+          type: object
+          description: schema to define fields that required to creation of ORDER PDFs. will be used to validate the fields before creating the PDF
         status:
           type: string
           description: workflow status
