@@ -1,18 +1,12 @@
 package org.pucar.dristi.service;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.State;
-import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,10 +17,10 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.web.models.*;
 
-public class PaymentUpdateServiceTest {
+import java.util.Collections;
+import java.util.Map;
 
-    @InjectMocks
-    private PaymentUpdateService paymentUpdateService;
+class PaymentUpdateServiceTest {
 
     @Mock
     private WorkflowService workflowService;
@@ -43,79 +37,123 @@ public class PaymentUpdateServiceTest {
     @Mock
     private Configuration configuration;
 
-    @Mock
-    private ApplicationSearchRequest applicationSearchRequest;
+    @InjectMocks
+    private PaymentUpdateService paymentUpdateService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Set up mock configurations
+        when(configuration.getAsyncOrderSubBusinessServiceName()).thenReturn("async-order-submission-managelifecycle");
+        when(configuration.getAsyncOrderSubWithResponseBusinessServiceName()).thenReturn("async-submission-with-response-managelifecycle");
+        when(configuration.getAsyncVoluntarySubBusinessServiceName()).thenReturn("async-voluntary-submission-managelifecycle");
+
+        when(configuration.getAsyncOrderSubBusinessName()).thenReturn("async-order-submission");
+        when(configuration.getAsyncOrderSubWithResponseBusinessName()).thenReturn("async-order-submission-with-response");
+        when(configuration.getAsyncVoluntarySubBusinessName()).thenReturn("async-voluntary-submission");
+        when(configuration.getApplicationUpdateStatusTopic()).thenReturn("update-application-status-application");
     }
 
     @Test
-    void testProcessSuccessful() {
-        // Arrange
+    void testProcess_ValidBusinessService_Success() {
+        // Given
         PaymentRequest paymentRequest = new PaymentRequest();
         RequestInfo requestInfo = new RequestInfo();
-        paymentRequest.setRequestInfo(requestInfo);
-
         PaymentDetail paymentDetail = new PaymentDetail();
         Bill bill = new Bill();
         bill.setConsumerCode("12345");
         paymentDetail.setBill(bill);
-
+        paymentDetail.setBusinessService("async-order-submission-managelifecycle");
+        paymentRequest.setRequestInfo(requestInfo);
         paymentRequest.setPayment(new Payment());
         paymentRequest.getPayment().setPaymentDetails(Collections.singletonList(paymentDetail));
-        paymentRequest.getPayment().setTenantId("tenant1");
+        paymentRequest.getPayment().setTenantId("tenantId");
 
         Application application = new Application();
-        application.setStatus("Pending");
-        AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setLastModifiedBy("admin");
-        auditDetails.setLastModifiedTime(System.currentTimeMillis());
-        application.setAuditDetails(auditDetails);
+        application.setStatus("PENDING");
+        application.setApplicationNumber("12345");
 
-        ApplicationCriteria criteria = ApplicationCriteria.builder()
-                .filingNumber("12345")
-                .build();
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(requestInfo);
+        applicationSearchRequest.setCriteria(ApplicationCriteria.builder()
+                .applicationNumber("12345")
+                .build());
 
-        List<Application> applications = Arrays.asList(application);
-
+        // Mock behavior
         when(mapper.convertValue(any(Map.class), eq(PaymentRequest.class))).thenReturn(paymentRequest);
-        when(configuration.getAsyncOrderSubBusinessServiceName()).thenReturn("order");
-        when(configuration.getAsyncOrderSubWithResponseBusinessServiceName()).thenReturn("orderResponse");
-        when(configuration.getAsyncVoluntarySubBusinessServiceName()).thenReturn("voluntary");
-        when(repository.getApplications(any(ApplicationSearchRequest.class))).thenReturn(applications);
+        when(repository.getApplications(applicationSearchRequest)).thenReturn(Collections.singletonList(application));
 
-        ProcessInstanceRequest wfRequest = new ProcessInstanceRequest();
+        ProcessInstanceRequest processInstanceRequest = new ProcessInstanceRequest();
         when(workflowService.getProcessInstanceForApplicationPayment(any(ApplicationSearchRequest.class), anyString(), anyString()))
-                .thenReturn(wfRequest);
+                .thenReturn(processInstanceRequest);
 
         State state = new State();
-        state.setState("Approved");
-        when(workflowService.callWorkFlow(any(ProcessInstanceRequest.class))).thenReturn(state);
+        state.setState("APPROVED");
+        when(workflowService.callWorkFlow(processInstanceRequest)).thenReturn(state);
 
-        // Act
+        // When
         paymentUpdateService.process(Collections.emptyMap());
 
+        // Then
+        // Verify that producer.push is not called with specific parameters
+        verify(producer, never()).push(eq("update-application-status-application"), any(Application.class));
+
+        // Ensure no more interactions with mocks
+        verifyNoMoreInteractions(repository, workflowService, producer);
     }
+
+
+
+
+
+
     @Test
-    void testUpdateWorkflowForApplicationPaymentException() {
-        // Arrange
+    void testProcess_InvalidBusinessService() {
+        // Given
+        PaymentRequest paymentRequest = new PaymentRequest();
         RequestInfo requestInfo = new RequestInfo();
         PaymentDetail paymentDetail = new PaymentDetail();
         Bill bill = new Bill();
         bill.setConsumerCode("12345");
         paymentDetail.setBill(bill);
+        paymentDetail.setBusinessService("invalid-business-service");
+        paymentRequest.setRequestInfo(requestInfo);
+        paymentRequest.setPayment(new Payment());
+        paymentRequest.getPayment().setPaymentDetails(Collections.singletonList(paymentDetail));
+        paymentRequest.getPayment().setTenantId("tenantId");
 
-        ApplicationCriteria criteria = ApplicationCriteria.builder()
-                .filingNumber("12345")
-                .build();
+        when(mapper.convertValue(any(Map.class), eq(PaymentRequest.class))).thenReturn(paymentRequest);
 
-        when(repository.getApplications(any(ApplicationSearchRequest.class))).thenThrow(new RuntimeException("Database error"));
+        // When
+        paymentUpdateService.process(Collections.emptyMap());
 
-        // Act
-        paymentUpdateService.updateWorkflowForApplicationPayment(requestInfo, "tenant1", paymentDetail);
+        // Then
+        verifyNoInteractions(repository, workflowService, producer);
+    }
 
+
+    @Test
+    void testUpdateWorkflowForApplicationPayment_Exception() {
+        // Given
+        RequestInfo requestInfo = new RequestInfo();
+        PaymentDetail paymentDetail = new PaymentDetail();
+        Bill bill = new Bill();
+        bill.setConsumerCode("12345");
+        paymentDetail.setBill(bill);
+        paymentDetail.setBusinessService("async-order-submission-managelifecycle");
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(requestInfo);
+        applicationSearchRequest.setCriteria(ApplicationCriteria.builder()
+                .applicationNumber("12345")
+                .build());
+
+        when(repository.getApplications(applicationSearchRequest)).thenThrow(new RuntimeException("DB error"));
+
+        // When
+        paymentUpdateService.updateWorkflowForApplicationPayment(requestInfo, "tenantId", paymentDetail);
+
+        // Then
+        verifyNoInteractions(workflowService, producer);
     }
 }
-
