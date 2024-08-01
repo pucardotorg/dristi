@@ -239,6 +239,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "INITIAL_HEARING_DATE",
+        disable: true,
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
@@ -302,14 +303,15 @@ export const configsRescheduleRequest = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -418,6 +420,7 @@ export const configsCheckoutRequest = [
       {
         inline: true,
         label: "INITIAL_HEARING_DATE",
+        disable: true,
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
@@ -479,15 +482,16 @@ export const configsCheckoutRequest = [
       {
         type: "component",
         component: "SelectCustomTextArea",
-        key: "applicationDetails",
-        isMandatory: true,
+        key: "comments",
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -707,14 +711,15 @@ export const configsExtensionSubmissionDeadline = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -891,14 +896,15 @@ export const configsProductionOfDocuments = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -1040,14 +1046,15 @@ export const configsCaseWithdrawal = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -1190,14 +1197,15 @@ export const configsCaseTransfer = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -1305,13 +1313,34 @@ export const configsSettlement = [
         type: "text",
         populators: { name: "representedBy", hideInForm: true },
       },
+    ],
+  },
+  {
+    body: [
       {
         inline: true,
-        label: "COMMENTS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
         key: "comments",
-        type: "textarea",
-        populators: { name: "comments" },
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1415,15 +1444,33 @@ export const configsBailBond = [
         isMandatory: true,
         key: "placeOfDetention",
         type: "text",
-        populators: { name: "placeOfDetention" },
+        populators: {
+          name: "placeOfDetention",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
       },
       {
         inline: true,
         label: "BAIL_AMOUNT",
         isMandatory: true,
         key: "bailAmount",
-        type: "number",
-        populators: { name: "bailAmount" },
+        type: "text",
+        populators: {
+          name: "bailAmount",
+          error: "CS_VALID_AMOUNT_DECIMAL",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "twoDecimalNumericValidation",
+            },
+          },
+        },
       },
     ],
   },
@@ -1714,14 +1761,15 @@ export const configsBail = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: true,
+        isMandatory: false,
         populators: {
           inputs: [
             {
               name: "text",
-              textAreaHeader: "COMMENTS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "COMMENTS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -1769,8 +1817,8 @@ export const configsOthers = [
           inputs: [
             {
               name: "text",
-              textAreaHeader: "DETAILS",
-              headerClassName: "dristi-font-big-bold",
+              textAreaSubHeader: "DETAILS",
+              subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
               type: "TextAreaComponent",
             },

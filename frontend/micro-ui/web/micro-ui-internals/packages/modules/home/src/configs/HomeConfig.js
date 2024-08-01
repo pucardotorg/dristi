@@ -53,6 +53,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -75,6 +76,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -102,6 +104,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -127,6 +130,7 @@ export const rolesToConfigMapping = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     config: TabLitigantSearchConfig,
     isLitigant: true,
@@ -192,7 +196,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["COURT_ROOM"],
+    roles: ["HEARING_CREATOR"],
     config: TabCourtRoomSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {
@@ -207,10 +211,12 @@ export const rolesToConfigMapping = [
   },
 ];
 
+export const caseTypes = [{ name: "NIA S138", code: "NIA S138" }];
+
 export const taskTypes = [
   { code: "case", name: "Case" },
   { code: "hearing", name: "Hearing" },
-  { code: "order", name: "Order" },
+  { code: "order-managelifecycle", name: "Order" },
   { code: "order-judgement", name: "Order of Judgement" },
   { code: "async-voluntary-submission-managelifecycle", name: "Voluntary Submission" },
   { code: "async-submission-with-response-managelifecycle", name: "Submission With Response" },
@@ -292,6 +298,17 @@ export const pendingTaskHearingActions = {
       params: [{ key: "filingNumber", value: "filingNumber" }],
     },
   },
+  OPTOUT: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Schedule admission hearing",
+    redirectDetails: {
+      url: "/home/home-pending-task/home-schedule-hearing",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "status", defaultValue: "OPTOUT" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskOrderActions = {
@@ -305,6 +322,18 @@ export const pendingTaskOrderActions = {
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  DRAFT_IN_PROGRESS: {
+    actorName: ["JUDGE"],
+    actionName: "Schedule admission hearing",
+    additionalDetailsKeys: ["orderType"],
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
       ],
     },
   },
@@ -438,7 +467,7 @@ export const pendingTaskSubmissionWithoutResponseActions = {
 export const selectTaskType = {
   case: pendingTaskCaseActions,
   hearing: pendingTaskHearingActions,
-  order: pendingTaskOrderActions,
+  "order-managelifecycle": pendingTaskOrderActions,
   "order-judgement": pendingTaskOrderOfJudgementActions,
   "async-voluntary-submission-managelifecycle": pendingTaskVoluntarySubmissionActions,
   "async-submission-with-response-managelifecycle": pendingTaskSubmissionWithResponseActions,

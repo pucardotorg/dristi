@@ -159,11 +159,12 @@ function ScheduleHearing({
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
   const [selectedCustomDate, setSelectedCustomDate] = useState(new Date());
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
   const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
   const CustomCalendar = Digit.ComponentRegistryService.getComponent("CustomCalendar") || <React.Fragment></React.Fragment>;
-  const { filingNumber } = Digit.Hooks.useQueryParams();
+  const { filingNumber, status } = Digit.Hooks.useQueryParams();
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -232,7 +233,7 @@ function ScheduleHearing({
   };
 
   const handleClose = () => {
-    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "hearing", name: "Hearing" } });
+    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "case", name: "Case" } });
   };
 
   const handleSubmit = (data) => {
@@ -260,7 +261,9 @@ function ScheduleHearing({
         documents: [],
         additionalDetails: {
           formdata: {
-            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+              dateArr[0] < 9 ? `0${dateArr[0]}` : dateArr[0]
+            }`,
             hearingPurpose: data.purpose,
             orderType: {
               code: "SCHEDULE_OF_HEARING_DATE",
@@ -271,11 +274,35 @@ function ScheduleHearing({
         },
       },
     };
-    HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
-      .then((res) => {
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
-      })
-      .catch((err) => {});
+    if (status !== "OPTOUT") {
+      setIsSubmitDisabled(true);
+      HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId })
+        .then(async (res) => {
+          await HomeService.customApiService(Urls.pendingTask, {
+            pendingTask: {
+              name: "Schedule Hearing",
+              entityType: "case",
+              referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+              status: "SCHEDULE_HEARING",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber: null,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: true,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+          setIsSubmitDisabled(false);
+        })
+        .catch((err) => {
+          setIsSubmitDisabled(false);
+          console.log("err", err);
+        });
+    } else if (status && status === "OPTOUT") {
+      handleClose();
+    }
   };
 
   if (isLoading) {
@@ -356,6 +383,7 @@ function ScheduleHearing({
             onSubmit={() => handleSubmit(scheduleHearingParams)}
             className="primary-label-btn select-participant-submit"
             label={t("GENERATE_ORDERS_LINK")}
+            disabled={!scheduleHearingParams?.date || isSubmitDisabled}
           ></SubmitBar>
         </div>
 

@@ -51,7 +51,7 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
   console.log(hearing, "lll");
   const getCaseDetails = async () => {
     try {
-      const response = await DRISTIService.searchCaseService(
+      const response = await window?.Digit?.DRISTIService.searchCaseService(
         {
           criteria: [
             {

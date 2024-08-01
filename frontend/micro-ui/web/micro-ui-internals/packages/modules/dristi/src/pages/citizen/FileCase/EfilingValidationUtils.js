@@ -891,6 +891,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "ORDER_VIEWER",
             "SUBMISSION_CREATOR",
             "SUBMISSION_RESPONDER",
+            "SUBMISSION_DELETE",
           ]?.map((role) => ({
             code: role,
             name: role,
@@ -980,6 +981,25 @@ export const getAllAssignees = (caseDetails, getAdvocates = true, getLitigent = 
       ?.flat();
   }
   return null;
+};
+
+export const getAdvocates = (caseDetails) => {
+  let litigants = {};
+  let list = [];
+
+  caseDetails?.litigants?.forEach((litigant) => {
+    list = caseDetails?.representatives
+      ?.filter((item) => {
+        return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+      })
+      .map((item) => item?.additionalDetails?.uuid);
+    if (list?.length > 0) {
+      litigants[litigant?.additionalDetails?.uuid] = list;
+    } else {
+      litigants[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+    }
+  });
+  return litigants;
 };
 
 const documentUploadHandler = async (document, index, prevCaseDetails, data, pageConfig, key, selected, tenantId) => {
@@ -1837,6 +1857,7 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "advocateDetails") {
+    const advocateDetails = {};
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
@@ -1858,6 +1879,16 @@ export const updateCaseDetails = async ({
               })
             );
           }
+          const advocateDetail = await DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
+            criteria: [
+              {
+                barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
+              },
+            ],
+            tenantId,
+          });
+          advocateDetails[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId] =
+            advocateDetail?.advocates?.[0]?.responseList?.[0]?.auditDetails?.createdBy;
           return {
             ...data,
             data: {
@@ -1910,7 +1941,7 @@ export const updateCaseDetails = async ({
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-              uuid: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateUuid,
+              uuid: advocateDetails?.[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId],
             },
             tenantId,
           };

@@ -53,6 +53,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -75,6 +76,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -102,6 +104,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -221,11 +224,11 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "",
                 additionalCustomization: true,
               },
-              {
-                label: "Filing Date",
-                jsonPath: "filingDate",
-                additionalCustomization: true,
-              },
+              // {
+              //   label: "Filing Date",
+              //   jsonPath: "filingDate",
+              //   additionalCustomization: true,
+              // },
             ],
 
             enableColumnSort: true,
@@ -245,7 +248,7 @@ export const TabLitigantSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "DRAFT_IN_PROGRESS",
+              status: ["DRAFT_IN_PROGRESS"],
             },
           ],
         },
@@ -263,7 +266,13 @@ export const TabLitigantSearchConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: {
+              ...defaultSearchValues,
+              sortCaseListByDate: {
+                sortBy: "lastModifiedTime",
+                order: "asc",
+              },
+            },
             fields: [
               {
                 type: "component",
@@ -295,20 +304,6 @@ export const TabLitigantSearchConfig = {
                   },
                 },
               },
-              {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
             ],
           },
 
@@ -323,10 +318,10 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "caseTitle",
                 additionalCustomization: true,
               },
-              {
-                label: "Case ID",
-                jsonPath: "filingNumber",
-              },
+              // {
+              //   label: "Case ID",
+              //   jsonPath: "filingNumber",
+              // },
               {
                 label: "Case Type",
                 jsonPath: "",
@@ -357,7 +352,7 @@ export const TabLitigantSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{ stage: "Post-Trial" }],
+          criteria: [{ stage: ["Post-Trial"] }],
         },
         masterName: "commonUiConfig",
         moduleName: "homeLitigantUiConfig",
@@ -394,7 +389,7 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "Outcome",
+                label: "Stage",
                 isMandatory: false,
                 key: "outcome",
                 type: "dropdown",
@@ -439,7 +434,7 @@ export const TabLitigantSearchConfig = {
                 jsonPath: "caseTitle",
               },
               {
-                label: "OutCome",
+                label: "Stage",
                 jsonPath: "outcome",
               },
               {

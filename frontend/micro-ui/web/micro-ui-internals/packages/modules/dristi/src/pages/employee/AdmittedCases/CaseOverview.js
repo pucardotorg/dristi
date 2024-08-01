@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import useGetIndividualAdvocate from "../../../hooks/dristi/useGetIndividualAdvocate";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
-import { OrderWorkflowAction, OrderWorkflowState } from "../../../Utils/orderWorkflow";
+import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import PublishedOrderModal from "./PublishedOrderModal";
 import TasksComponent from "../../../../../home/src/components/TaskComponent";
 import NextHearingCard from "./NextHearingCard";
 
-const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleRequestLabel, handleSubmitDocument }) => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest, showSubmissionButtons }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -21,7 +21,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
-  const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
+  const [taskType, setTaskType] = useState({});
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
 
@@ -43,7 +43,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
     true
   );
 
-  console.log(advocateDetails);
+  // console.log(advocateDetails);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -84,12 +84,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
     history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
   };
 
-  const orderList =
-    userRoles.includes("CITIZEN") && !userRoles.includes("ADVOCATE_ROLE")
-      ? ordersRes?.list.filter((order) => order.status === "PUBLISHED")
-      : userRoles.includes("ADVOCATE_ROLE")
-      ? ordersRes?.list?.filter((order) => order.status === "ABATED" || order.status === "PUBLISHED")
-      : ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS");
+  const orderList = userRoles.includes("CITIZEN")
+    ? ordersRes?.list.filter((order) => order.status === "PUBLISHED")
+    : ordersRes?.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS");
 
   const handleMakeSubmission = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
@@ -272,10 +269,13 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
               <PublishedOrderModal
                 t={t}
                 order={currentOrder}
-                setShowReviewModal={setShowReviewModal}
                 handleDownload={handleDownload}
-                handleRequestLabel={handleRequestLabel}
+                handleRequestLabel={handleExtensionRequest}
                 handleSubmitDocument={handleSubmitDocument}
+                showSubmissionButtons={showSubmissionButtons}
+                handleOrdersTab={() => {
+                  setShowReviewModal(false);
+                }}
               />
             )}
           </div>
@@ -289,6 +289,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleReque
           uuid={userInfo?.uuid}
           userInfoType={userInfoType}
           filingNumber={filingNumber}
+          inCase={true}
         />
       </div>
     </div>

@@ -67,10 +67,10 @@ export const preHearingConfig = {
               optionsKey: "stage",
               options: [
                 {
-                  stage: "Pre-Trial",
+                  stage: ["Pre-Trial"],
                 },
                 {
-                  stage: "Inquiry",
+                  stage: ["Inquiry"],
                 },
               ],
             },

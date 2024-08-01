@@ -1,13 +1,23 @@
 // default values of search input component
-const defaultSearchValues = {};
+const defaultSearchValues = {
+  owner: {},
+  parties: {},
+  hearingType: {},
+  orderType: {},
+  status: {},
+  orderNumber: "",
+  applicationType: {},
+  applicationNumber: "",
+  artifactType: {},
+  artifactNumber: "",
+};
 
 //config for tab search sceeen
 export const TabSearchconfig = {
   tenantId: "mz",
   moduleName: "commonCampaignUiConfig",
-  showTab: true, // setting true will enable tab screen
+  showTab: true,
   TabSearchconfig: [
-    // all tab config should be added in json array
     {
       label: "Overview",
       type: "search",
@@ -15,12 +25,6 @@ export const TabSearchconfig = {
     {
       label: "Complaints",
       type: "search",
-      // sections: {
-      //   searchResult: {
-      //     uiConfig: {},
-      //   },
-      //   show: true,
-      // },
     },
     {
       label: "Hearings",
@@ -50,7 +54,7 @@ export const TabSearchconfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
               {
                 label: "Type",
@@ -177,7 +181,7 @@ export const TabSearchconfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
               {
                 label: "Type",
@@ -310,7 +314,7 @@ export const TabSearchconfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
               {
                 label: "Type",
@@ -448,7 +452,7 @@ export const TabSearchconfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: defaultSearchValues,
             fields: [
               {
                 label: "Type",
@@ -582,42 +586,42 @@ export const TabSearchconfig = {
         searchFormJsonPath: "requestBody.Individual",
       },
       sections: {
-        search: {
-          uiConfig: {
-            formClassName: "custom-both-clear-search",
-            primaryLabel: "ES_COMMON_SEARCH",
-            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-            minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
-            fields: [
-              // {
-              //   label: "Stage",
-              //   isMandatory: false,
-              //   key: "stage",
-              //   type: "dropdown",
-              //   populators: {
-              //     name: "stage",
-              //     optionsKey: "value",
-              //     mdmsConfig: {
-              //       masterName: "Stage",
-              //       moduleName: "case",
-              //       // localePrefix: "SUBMISSION_TYPE",
-              //     },
-              //   },
-              // },
-              {
-                label: "Owner",
-                isMandatory: false,
-                key: "owner",
-                type: "dropdown",
-                populators: {
-                  name: "owner",
-                },
-              },
-            ],
-          },
-          show: false,
-        },
+        // search: {
+        //   uiConfig: {
+        //     formClassName: "custom-both-clear-search",
+        //     primaryLabel: "ES_COMMON_SEARCH",
+        //     secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+        //     minReqFields: 0,
+        //     defaultValues: defaultSearchValues,
+        //     fields: [
+        //       // {
+        //       //   label: "Stage",
+        //       //   isMandatory: false,
+        //       //   key: "stage",
+        //       //   type: "dropdown",
+        //       //   populators: {
+        //       //     name: "stage",
+        //       //     optionsKey: "value",
+        //       //     mdmsConfig: {
+        //       //       masterName: "Stage",
+        //       //       moduleName: "case",
+        //       //       // localePrefix: "SUBMISSION_TYPE",
+        //       //     },
+        //       //   },
+        //       // },
+        //       {
+        //         label: "Owner",
+        //         isMandatory: false,
+        //         key: "owner",
+        //         type: "dropdown",
+        //         populators: {
+        //           name: "owner",
+        //         },
+        //       },
+        //     ],
+        //   },
+        //   show: false,
+        // },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           uiConfig: {
@@ -639,6 +643,7 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
             ],
             enableColumnSort: true,

@@ -24,9 +24,9 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
-import { getAllAssignees } from "../../utils/caseUtils";
 import { Urls } from "../../hooks/services/Urls";
 import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
+import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -51,6 +51,7 @@ const SubmissionsCreate = () => {
   const [showsignatureModal, setShowsignatureModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const hearingId = urlParams.get("hearingId");
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
@@ -64,7 +65,7 @@ const SubmissionsCreate = () => {
       APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
-      if (orderNumber) {
+      if (orderNumber || hearingId) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
@@ -85,7 +86,7 @@ const SubmissionsCreate = () => {
                   mdmsConfig: {
                     ...input?.populators?.mdmsConfig,
                     select:
-                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
                   },
                 },
               };
@@ -98,7 +99,7 @@ const SubmissionsCreate = () => {
   }, [orderNumber, submissionType]);
 
   const applicationType = useMemo(() => {
-    return formdata?.applicationType?.type;
+    return formdata?.applicationType?.type || urlParams.get("applicationType");
   }, [formdata?.applicationType?.type]);
 
   const applicationFormConfig = useMemo(() => {
@@ -174,6 +175,20 @@ const SubmissionsCreate = () => {
     applicationNumber
   );
 
+  const { data: hearingsData, refetch } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+        hearingId: hearingId,
+      },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    "dristi",
+    true
+  );
+
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
   useEffect(() => {
     if (applicationDetails) {
@@ -206,7 +221,11 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const onBehalfOf = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+  ]);
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -218,6 +237,18 @@ const SubmissionsCreate = () => {
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
       return applicationDetails?.additionalDetails?.formdata;
+    } else if (hearingId && hearingsData?.HearingList?.[0]?.startTime) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: "RE_SCHEDULE",
+          isactive: true,
+          name: "APPLICATION_TYPE_RE_SCHEDULE",
+        },
+      };
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
         if (isExtension) {
@@ -259,6 +290,19 @@ const SubmissionsCreate = () => {
           },
         };
       }
+    } else if (applicationType) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: applicationType,
+          name: `APPLICATION_TYPE_${applicationType}`,
+          isActive: true,
+        },
+        applicationDate: formatDate(new Date()),
+      };
     } else {
       return {
         submissionType: {
@@ -267,18 +311,32 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber, hearingId, hearingsData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (applicationType && !["OTHERS", "SETTLEMENT", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
+    if (applicationType && !["OTHERS", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
     if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
       setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
     }
-    // if (applicationType && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
-    //   setValue("initialHearingDate", );
-    // }
+    if (applicationType && hearingId && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
+      setValue("initialHearingDate", formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime)));
+    }
+    if (
+      applicationType &&
+      ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) &&
+      formData?.initialHearingDate &&
+      formData?.changedHearingDate
+    ) {
+      if (new Date(formData?.initialHearingDate).getTime() >= new Date(formData?.changedHearingDate).getTime()) {
+        setValue("changedHearingDate", "");
+        setError("changedHearingDate", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_INITIAL_DATE") });
+      } else if (Object.keys(formState?.errors).includes("changedHearingDate")) {
+        setValue("changedHearingDate", formData?.changedHearingDate);
+        clearErrors("changedHearingDate");
+      }
+    }
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
@@ -305,7 +363,7 @@ const SubmissionsCreate = () => {
           ? "async-submission-with-response-managelifecycle"
           : "async-order-submission-managelifecycle";
     }
-    const assignes = !isAssignedRole ? getAllAssignees(caseDetails, true, entityType === "async-voluntary-submission-managelifecycle") || [] : [];
+    const assignes = !isAssignedRole ? [userInfo?.uuid] || [] : [];
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
         name,
@@ -369,7 +427,7 @@ const SubmissionsCreate = () => {
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
-          referenceId: orderDetails?.orderId || null,
+          referenceId: isExtension ? null : orderDetails?.id || null,
           createdDate: formatDate(new Date(), "DD-MM-YYYY"),
           applicationType,
           status: caseDetails?.status,
@@ -381,6 +439,11 @@ const SubmissionsCreate = () => {
             ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
             onBehalOfName: userInfo.name,
             partyType: "complainant.primary",
+            ...(orderDetails &&
+              orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
+                respondingParty: orderDetails?.additionalDetails?.formdata?.respondingParty,
+              }),
+            isResponseRequired: orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
@@ -433,9 +496,11 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     !isExtension &&
+      orderNumber &&
       createPendingTask({
         refId: orderNumber,
         isCompleted: true,
+        status: "Completed",
       });
     createPendingTask({
       name: t("ESIGN_THE_SUBMISSION"),
@@ -475,28 +540,27 @@ const SubmissionsCreate = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
-    const applicationType = applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.applicationType;
-    if (["RE_SCHEDULE", "CHECKOUT_REQUEST"].includes(applicationType)) {
-      createPendingTask({
-        name: t(`PENDING_TASK_${applicationType}`),
-        status: applicationType,
-        isAssignedRole: true,
-        assignedRole: ["JUDGE_ROLE"],
-        stateSla: new Date().getTime() + stateSla[applicationType],
-      });
-    }
   };
 
   const handleDownloadSubmission = () => {
     // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-
+  if (
+    applicationDetails?.status &&
+    ![SubmissionWorkflowState.PENDINGSUBMISSION, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGPAYMENT].includes(
+      applicationDetails?.status
+    ) &&
+    caseDetails?.id
+  ) {
+    handleBack();
+  }
   if (
     loader ||
     isOrdersLoading ||
     isApplicationLoading ||
     (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
-    (orderNumber ? !orderDetails?.orderType : false)
+    (orderNumber ? !orderDetails?.orderType : false) ||
+    (hearingId ? (hearingsData?.HearingList?.[0]?.startTime ? false : true) : false)
   ) {
     return <Loader />;
   }

@@ -55,7 +55,7 @@ const InsideHearingMainPage = () => {
   };
 
   // if (!userHasRole("HEARING_VIEWER")) {
-  //   history.push(`/${window.contextPath}/${userType}/home`);
+  //   history.push(`/${window.contextPath}/${userType}/home/home-pending-task`);
   // }
 
   const reqBody = {
@@ -69,7 +69,7 @@ const InsideHearingMainPage = () => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
-    !userHasRole("HEARING_VIEWER"),
+    !!userHasRole("HEARING_VIEWER"),
     10 * SECOND
   );
 
@@ -178,11 +178,20 @@ const InsideHearingMainPage = () => {
     setEndHearingModalOpen(!endHearingModalOpen);
   };
 
+  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
+
   return (
     <div style={{ display: "flex" }}>
       <Card>
         <div style={{ border: "1px", padding: "40px, 40px", gap: "32px" }}>
-          <EvidenceHearingHeader setActiveTab={setActiveTab} activeTab={activeTab}></EvidenceHearingHeader>
+          <EvidenceHearingHeader
+            caseData={caseData}
+            hearing={hearing}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+            filingNumber={filingNumber}
+            onAddParty={onClickAddWitness}
+          ></EvidenceHearingHeader>
         </div>
         {activeTab === "Witness Deposition" && (
           <div style={{ width: "100%", marginTop: "15px", marginBottom: "10px" }}>
@@ -295,7 +304,7 @@ const InsideHearingMainPage = () => {
         </div>
       </Card>
       <Card>
-        <HearingSideCard></HearingSideCard>
+        <HearingSideCard hearingId={hearingId} caseId={caseData?.criteria?.[0]?.responseList?.[0]?.id} filingNumber={filingNumber}></HearingSideCard>
         {adjournHearing && <AdjournHearing hearing={hearing} tenantID={tenantId} />}
       </Card>
       <ActionBar>
@@ -326,7 +335,7 @@ const InsideHearingMainPage = () => {
                 width: "100%",
               }}
             >
-              Attendance: <strong>03</strong>
+              Attendance: <strong>{attendanceCount}</strong>
             </button>
             <Button
               label={"Mark Attendance"}

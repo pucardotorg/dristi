@@ -584,7 +584,7 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    preProcess: (requestCriteria, additionalDetails) => {
+    preProcess: (requestCriteria, additionalDetails) => {      
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
@@ -595,7 +595,7 @@ export const UICustomizations = {
             return { [key]: requestCriteria.state.searchForm[key] };
           }
         })
-        .filter((filter) => filter)
+        ?.filter((filter) => filter)
         .reduce(
           (fieldObj, item) => ({
             ...fieldObj,
@@ -625,9 +625,9 @@ export const UICustomizations = {
             // if (requestCriteria.url.split("/").includes("order")) {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
-              ? { ...data, list: data.list.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
               : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
-              ? { ...data, applicationList: data.applicationList.filter((application) => application.status != "PENDINGPAYMENT") }
+              ? { ...data, applicationList: data.applicationList?.filter((application) => application.status != "PENDINGPAYMENT") }
               : data;
             // }
           },
@@ -645,7 +645,7 @@ export const UICustomizations = {
         case "Document":
           return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
         case "File":
-          return showDocument ? <Evidence rowData={row} colData={column} t={t} /> : "";
+          return showDocument ? <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} /> : "";
         case "Date Added":
         case "Date":
           const date = new Date(value);
@@ -666,7 +666,7 @@ export const UICustomizations = {
         case "Submission Type":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Document Type":
-          return <Evidence rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+          return <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         case "Hearing Type":
         case "Source":
         case "Status":
@@ -705,7 +705,7 @@ export const UICustomizations = {
                   statuteSection: {
                     tenantId: row.tenantId,
                   },
-                  orderType: "RESCHEDULE_OF_HEARING_DATE",
+                  orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                   status: "",
                   isActive: true,
                   workflow: {
@@ -719,17 +719,14 @@ export const UICustomizations = {
                   additionalDetails: {
                     formdata: {
                       orderType: {
-                        type: "RESCHEDULE_OF_HEARING_DATE",
+                        type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         isactive: true,
-                        code: "RESCHEDULE_OF_HEARING_DATE",
-                        name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
+                        code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
-                      originalHearingDate: `${date.getDate()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getFullYear()}`,
-                      originalHearingDate: `${date.getFullYear()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getDate()}`,
+                      originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                      }`,
                     },
                   },
                 },
@@ -780,7 +777,7 @@ export const UICustomizations = {
             label: "Request for Reschedule hearing",
             id: "reschedule",
             action: (history) => {
-              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}`);
             },
           },
           {
@@ -843,52 +840,60 @@ export const UICustomizations = {
   },
   HistoryConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      // console.log(userRoles);
       return {
         ...requestCriteria,
         config: {
           ...requestCriteria.config,
           select: (data) => {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
-            const applicationHistory = data.caseFiles[0].applications.map((application) => {
-              return {
-                instance: `APPLICATION_TYPE_${application.applicationType}`,
-                stage: "",
-                date: application.auditDetails.createdTime,
-                status: application.status,
-              };
-            });
-            const evidenceHistory = data.caseFiles[0].evidence.map((evidence) => {
-              return {
-                instance: `ARTIFACT_TYPE_${evidence.artifactType}`,
-                stage: "",
-                date: evidence.auditDetails.createdTime,
-                status: evidence.status,
-              };
-            });
-            const hearingHistory = data.caseFiles[0].hearings.map((hearing) => {
-              return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
-            });
-            const orderHistory = userRoles.includes("CITIZEN")
-              ? data.caseFiles[0].orders
-                  .filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
-                  .map((order) => {
+            if (data.caseFiles.length) {
+              const applicationHistory = data.caseFiles[0]?.applications.map((application) => {
+                return {
+                  instance: `APPLICATION_TYPE_${application.applicationType}`,
+                  date: application.auditDetails.createdTime,
+                  status: application.status,
+                };
+              });
+              // console.log(data.caseFiles[0]?.evidence, "applicationHistory");
+              const evidenceHistory = data.caseFiles[0]?.evidence.map((evidence) => {
+                return {
+                  instance: evidence.artifactType,
+                  date: evidence.auditdetails.createdTime,
+                  status: evidence.status,
+                };
+              });
+              // console.log(evidenceHistory, "evidenceHistory");
+              const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
+                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
+              });
+              // console.log(hearingHistory, "hearingHistory");
+              const orderHistory = userRoles.includes("CITIZEN")
+                ? data.caseFiles[0]?.orders
+                    ?.filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                    .map((order) => {
+                      return {
+                        instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                        stage: [],
+                        date: order.order.auditDetails.createdTime,
+                        status: order.order.status,
+                      };
+                    })
+                : data.caseFiles[0]?.orders.map((order) => {
                     return {
                       instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                      stage: "",
+                      stage: [],
                       date: order.order.auditDetails.createdTime,
                       status: order.order.status,
                     };
-                  })
-              : data.caseFiles[0].orders.map((order) => {
-                  return {
-                    instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                    stage: "",
-                    date: order.order.auditDetails.createdTime,
-                    status: order.order.status,
-                  };
-                });
-            const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
-            return { ...data, history: historyList };
+                  });
+              // console.log(orderHistory, "orderHistory");
+              const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
+              // console.log(historyList, "historyList");
+              return { ...data, history: historyList };
+            } else {
+              return { ...data, history: [] };
+            }
           },
         },
       };
@@ -904,6 +909,8 @@ export const UICustomizations = {
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
+        case "Status":
+          return t(value);
         default:
           break;
       }

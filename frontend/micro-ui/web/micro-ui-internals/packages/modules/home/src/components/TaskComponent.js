@@ -6,7 +6,7 @@ import { useGetPendingTask } from "../hooks/useGetPendingTask";
 import { useTranslation } from "react-i18next";
 import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService, Urls } from "../hooks/services";
-import { selectTaskType, taskTypes } from "../configs/HomeConfig";
+import { caseTypes, selectTaskType, taskTypes } from "../configs/HomeConfig";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const CaseWorkflowAction = {
@@ -16,7 +16,7 @@ export const CaseWorkflowAction = {
 };
 const dayInMillisecond = 1000 * 3600 * 24;
 
-const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber }) => {
+const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitigant, uuid, filingNumber, inCase = false }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -26,6 +26,7 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
   const [searchCaseLoading, setSearchCaseLoading] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const todayDate = useMemo(() => new Date().getTime(), []);
+  const [totalPendingTask, setTotalPendingTask] = useState(0);
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
@@ -33,26 +34,31 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: taskType?.code || "case",
-          ...(filingNumber && { filingNumber: filingNumber }),
+          ...(taskType?.code && { entityType: taskType?.code }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
+          ...(inCase && { filingNumber: filingNumber }),
         },
         limit: 10000,
         offset: 0,
       },
     },
     params: { tenantId },
-    key: taskType?.code,
-    config: { enable: Boolean(taskType.code && tenantId) },
+    key: `${taskType?.code}-${filingNumber}`,
+    config: { enabled: Boolean(taskType.code && tenantId) },
   });
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  const pendingTaskActionDetails = useMemo(() => (isLoading ? [] : pendingTaskDetails?.data || []), [pendingTaskDetails, isLoading]);
+  const pendingTaskActionDetails = useMemo(() => {
+    if (!totalPendingTask) {
+      setTotalPendingTask(pendingTaskDetails?.data?.length);
+    }
+    return isLoading ? [] : pendingTaskDetails?.data || [];
+  }, [totalPendingTask, isLoading, pendingTaskDetails?.data]);
 
   const getCaseDetailByFilingNumber = useCallback(
     async (payload) => {
@@ -257,9 +263,10 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
           const isCompleted = data?.fields?.find((field) => field.key === "isCompleted")?.value;
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
+          const entityType = data?.fields?.find((field) => field.key === "entityType")?.value;
           const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
-          const pendingTaskActions = selectTaskType?.[taskTypeCode];
+          const pendingTaskActions = selectTaskType?.[entityType || taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
           const dayCount = stateSla
             ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
@@ -328,57 +335,78 @@ const TasksComponent = ({ taskType, setTaskType, isLitigant, uuid, filingNumber 
   if (isLoading) {
     return <Loader />;
   }
-  console.log("pendingTaskDataInWeek", pendingTaskDataInWeek);
   return (
     <div className="tasks-component">
-      <h2>Your Tasks</h2>
-      <div className="task-filters">
-        <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Case Type`}</CardLabel>
-          <Dropdown
-            option={[{ name: "NIA S138", code: "NIA S138" }]}
-            selected={{ name: "NIA S138", code: "NIA S138" }}
-            optionKey={"code"}
-            select={(value) => {}}
-            placeholder={t("CS_CASE_TYPE")}
-          />
-        </LabelFieldPair>
-        <LabelFieldPair>
-          <CardLabel className={"card-label"}>{`Task Type`}</CardLabel>
-          <Dropdown
-            option={taskTypes}
-            optionKey={"name"}
-            selected={taskType}
-            select={(value) => {
-              setTaskType(value);
-            }}
-            placeholder={t("CS_CASE_TYPE")}
-          />
-        </LabelFieldPair>
-      </div>
-      {searchCaseLoading && <Loader />}
-      {!searchCaseLoading && (
+      <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
+      {totalPendingTask !== undefined && totalPendingTask > 0 ? (
         <React.Fragment>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={pendingTaskDataInWeek}
-              accordionHeader={"Complete this week"}
-              t={t}
-              totalCount={pendingTaskDataInWeek?.length}
-              isHighlighted={true}
-              isAccordionOpen={true}
-            />
+          <div className="task-filters">
+            <LabelFieldPair>
+              <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
+              <Dropdown
+                option={caseTypes}
+                selected={caseType}
+                optionKey={"name"}
+                select={(value) => {
+                  setCaseType(value);
+                }}
+                placeholder={t("CS_CASE_TYPE")}
+              />
+            </LabelFieldPair>
+            <LabelFieldPair>
+              <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
+              <Dropdown
+                option={taskTypes}
+                optionKey={"name"}
+                selected={taskType}
+                select={(value) => {
+                  setTaskType(value);
+                }}
+                placeholder={t("CS_TASK_TYPE")}
+              />
+            </LabelFieldPair>
           </div>
-          <div className="task-section">
-            <PendingTaskAccordion
-              pendingTasks={allOtherPendingTask}
-              accordionHeader={"All other tasks"}
-              t={t}
-              totalCount={allOtherPendingTask?.length}
-            />
-          </div>
-          <div className="task-section"></div>
+
+          <React.Fragment>
+            {searchCaseLoading && <Loader />}
+            {!searchCaseLoading && (
+              <React.Fragment>
+                <div className="task-section">
+                  <PendingTaskAccordion
+                    pendingTasks={pendingTaskDataInWeek}
+                    accordionHeader={"Complete this week"}
+                    t={t}
+                    totalCount={pendingTaskDataInWeek?.length}
+                    isHighlighted={true}
+                    isAccordionOpen={true}
+                  />
+                </div>
+                <div className="task-section">
+                  <PendingTaskAccordion
+                    pendingTasks={allOtherPendingTask}
+                    accordionHeader={"All other tasks"}
+                    t={t}
+                    totalCount={allOtherPendingTask?.length}
+                  />
+                </div>
+                <div className="task-section"></div>
+              </React.Fragment>
+            )}
+          </React.Fragment>
         </React.Fragment>
+      ) : (
+        <div
+          style={{
+            fontSize: "20px",
+            fontStyle: "italic",
+            lineHeight: "23.44px",
+            fontWeight: "500",
+            font: "Roboto",
+            color: "#77787B",
+          }}
+        >
+          {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
+        </div>
       )}
     </div>
   );

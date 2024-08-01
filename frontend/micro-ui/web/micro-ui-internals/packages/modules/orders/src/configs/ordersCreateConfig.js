@@ -498,13 +498,15 @@ export const configsOrderMandatorySubmissions = [
         label: "SUBMISSION_PARTY",
         isMandatory: true,
         key: "submissionParty",
-        type: "multiselectdropdown",
+        type: "dropdown",
         populators: {
+          allowMultiSelect: true,
           name: "submissionParty",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",
@@ -572,7 +574,6 @@ export const configsOrderMandatorySubmissions = [
     body: [
       {
         label: "IS_RESPONSE_REQUIRED",
-        isMandatory: true,
         key: "isResponseRequired",
         type: "radio",
         populators: {
@@ -596,15 +597,16 @@ export const configsOrderMandatorySubmissions = [
       },
       {
         label: "RESPONDING_PARTY",
-        isMandatory: true,
         key: "respondingParty",
-        type: "multiselectdropdown",
+        type: "dropdown",
         populators: {
           name: "respondingParty",
+          allowMultiSelect: true,
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",
@@ -1031,6 +1033,7 @@ export const configsScheduleHearingDate = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
+          selectedText: "party(s)",
           options: [
             {
               code: "PARTY_1",
@@ -1083,7 +1086,7 @@ export const configsRejectRescheduleHeadingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "originalHearingDate",
         disable: true,
         type: "date",
@@ -3157,13 +3160,28 @@ export const configsJudgement = [
           isMandatory: true,
           options: [
             {
-              code: "GUILTY",
-              name: "GUILTY",
+              code: "DISMISSED",
+              name: "DISMISSED",
               isEnabled: true,
             },
             {
-              code: "NOTGUILTY",
-              name: "NOTGUILTY",
+              code: "ALLOWED",
+              name: "ALLOWED",
+              isEnabled: true,
+            },
+            {
+              code: "PARTIALLYALLOWED",
+              name: "PARTIALLYALLOWED",
+              isEnabled: true,
+            },
+            {
+              code: "CONVICTED",
+              name: "CONVICTED",
+              isEnabled: true,
+            },
+            {
+              code: "PARTIALLYCONVICTED",
+              name: "PARTIALLYCONVICTED",
               isEnabled: true,
             },
           ],

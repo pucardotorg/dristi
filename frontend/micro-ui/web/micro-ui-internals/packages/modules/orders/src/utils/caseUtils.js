@@ -29,3 +29,22 @@ export const getAllAssignees = (caseDetails, getAdvocates = true, getLitigent = 
   }
   return null;
 };
+
+export const getAdvocates = (caseDetails) => {
+  let litigants = {};
+  let list = [];
+
+  caseDetails?.litigants?.forEach((litigant) => {
+    list = caseDetails?.representatives
+      ?.filter((item) => {
+        return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+      })
+      .map((item) => item?.additionalDetails?.uuid);
+    if (list?.length > 0) {
+      litigants[litigant?.additionalDetails?.uuid] = list;
+    } else {
+      litigants[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+    }
+  });
+  return litigants;
+};

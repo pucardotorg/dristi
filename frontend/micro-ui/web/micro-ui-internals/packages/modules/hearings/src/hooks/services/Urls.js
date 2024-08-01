@@ -3,5 +3,6 @@ export const Urls = {
   hearing: {
     hearingUpdate: "/hearing/v1/update_transcript_additional_attendees",
     searchHearings: "/hearing/v1/search",
+    updateHearings: "/hearing/v1/update"
   },
 };

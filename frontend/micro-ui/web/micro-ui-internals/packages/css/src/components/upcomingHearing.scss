@@ -137,3 +137,30 @@ $button-color: white;
 .info-banner-wrap.doc-banner {
   display: none;
 }
+
+.ongoing-month-hearing,
+.no-hearing {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  p {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #231f20;
+
+    span {
+      font-weight: 700;
+    }
+  }
+}
+
+.ongoing-month-hearing {
+  border: 1px #0000001a solid;
+  border-radius: 4px;
+  padding: 12px 16px;
+}
