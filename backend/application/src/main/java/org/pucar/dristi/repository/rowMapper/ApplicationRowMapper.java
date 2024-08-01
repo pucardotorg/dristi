@@ -2,11 +2,13 @@ package org.pucar.dristi.repository.rowMapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.IssuedBy;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -23,6 +25,8 @@ import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 @Component
 @Slf4j
 public class ApplicationRowMapper implements ResultSetExtractor<List<Application>> {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     public List<Application> extractData(ResultSet rs) throws SQLException {
         Map<String, Application> applicationMap = new LinkedHashMap<>();
 
@@ -59,8 +63,10 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .id(toUUID(rs.getString("id")))
                             .isActive(rs.getBoolean("isactive"))
                             .status(rs.getString("status"))
-                            .comment(rs.getString("comment"))
-                            .additionalDetails(rs.getString("additionaldetails"))
+                            .onBehalfOf(getObjectFromJson(rs.getString("onbehalfof"), new TypeReference<List<UUID>>() {
+                            }))
+                            .comment(getObjectFromJson(rs.getString("comment"), new TypeReference<List<Comment>>() {
+                            }))
                             .statuteSection(getObjectFromJson(rs.getString("statuteSection"), new TypeReference<StatuteSection>(){}))
                             .issuedBy(getObjectFromJson(rs.getString("issuedby"), new TypeReference<IssuedBy>(){}))
                             .auditDetails(auditdetails)
@@ -88,19 +94,29 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
     }
 
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        if (json == null || json.trim().isEmpty()) {
-            try {
-                return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
-            } catch (IOException e) {
-                throw new CustomException("Failed to create an empty instance of " + typeRef.getType(), e.getMessage());
-            }
-        }
+        log.info("Converting JSON to type: {}", typeRef.getType());
+        log.info("JSON content: {}", json);
+
         try {
+            if (json == null || json.trim().isEmpty()) {
+                if (isListType(typeRef)) {
+                    return (T) new ArrayList<>(); // Return an empty list for list types
+                } else {
+                    return objectMapper.readValue("{}", typeRef); // Return an empty object for other types
+                }
+            }
+
+            // Attempt to parse the JSON
             return objectMapper.readValue(json, typeRef);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("Failed to convert JSON to {}", typeRef.getType(), e);
             throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
         }
+    }
+
+    private <T> boolean isListType(TypeReference<T> typeRef) {
+        Class<?> rawClass = TypeFactory.defaultInstance().constructType(typeRef.getType()).getRawClass();
+        return List.class.isAssignableFrom(rawClass);
     }
     public List<Integer> stringToList(String str) {
         ObjectMapper objectMapper = new ObjectMapper();

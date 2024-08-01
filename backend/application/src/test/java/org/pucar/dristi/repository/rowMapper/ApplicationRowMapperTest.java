@@ -29,7 +29,10 @@ public class ApplicationRowMapperTest {
     }
     @Test
     public void testExtractData() throws SQLException {
+        String onBehalfOfUuidArray = "[\"550e8400-e29b-41d4-a716-446655440000\", \"550e8400-e29b-41d4-a716-446655440001\"]";
         String issuedByJson = "{\"benchId\": \"benchId\", \"courtId\": \"courtId\", \"judgeId\": [\"e7f39394-5b04-4f25-a901-8f369e73c758\", \"85b10177-cce5-4db1-bbe5-875a03f8a24c\"]}";
+        String commentJson1 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440000\", \"tenantId\":\"tenant1\", \"individualId\":\"indiv1\", \"comment\":\"Hello\", \"isActive\":true, \"auditdetails\":null}]";
+        String commentJson2 = "[{\"id\":\"123e4567-e89b-12d3-a456-556642440001\", \"tenantId\":\"tenant2\", \"individualId\":\"indiv2\", \"comment\":\"Another comment\", \"isActive\":true, \"auditdetails\":null}]";
 
         when(resultSet.next()).thenReturn(true, true, false);
         when(resultSet.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440000", "123e4567-e89b-12d3-a456-556642440001");
@@ -49,7 +52,8 @@ public class ApplicationRowMapperTest {
         when(resultSet.getBoolean("isactive")).thenReturn(true, false);
         when(resultSet.getString("issuedby")).thenReturn(issuedByJson);
         when(resultSet.getString("status")).thenReturn("Pending", "Approved");
-        when(resultSet.getString("comment")).thenReturn("Test comment 1", "Test comment 2");
+        when(resultSet.getString("comment")).thenReturn(commentJson1, commentJson2);
+        when(resultSet.getString("onbehalfof")).thenReturn(onBehalfOfUuidArray);
 
         // Creating ApplicationRowMapper instance
         ApplicationRowMapper rowMapper = new ApplicationRowMapper();
@@ -64,7 +68,21 @@ public class ApplicationRowMapperTest {
         assertEquals("benchId", applications.get(0).getIssuedBy().getBenchId());
         assertEquals("courtId", applications.get(0).getIssuedBy().getCourtId());
         assertEquals("e7f39394-5b04-4f25-a901-8f369e73c758", applications.get(0).getIssuedBy().getJudgeId().get(0).toString());
+
+        // Asserting comment fields
+        assertEquals("Hello", applications.get(0).getComment().get(0).getComment());
+        assertEquals("tenant1", applications.get(0).getComment().get(0).getTenantId());
+        assertEquals("indiv1", applications.get(0).getComment().get(0).getIndividualId());
+
+        assertEquals("Another comment", applications.get(1).getComment().get(0).getComment());
+        assertEquals("tenant2", applications.get(1).getComment().get(0).getTenantId());
+        assertEquals("indiv2", applications.get(1).getComment().get(0).getIndividualId());
+
+        // assert onBehalfOf field
+        assertEquals(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"), applications.get(0).getOnBehalfOf().get(0));
+        assertEquals(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"), applications.get(0).getOnBehalfOf().get(1));
     }
+
     @Test
     public void testExtractDataWithSQLException() throws SQLException {
         // Simulate SQLException

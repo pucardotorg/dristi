@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.egov.common.contract.models.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.Comment;
+import org.egov.tracer.model.CustomException;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -25,7 +27,6 @@ class EvidenceRowMapperTest {
 
     @Mock
     private ResultSet rs;
-
 
     private void mockResultSet() throws Exception {
         when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -152,5 +153,50 @@ class EvidenceRowMapperTest {
         assertTrue(artifact1.getIsEvidence());
         assertEquals("status1", artifact1.getStatus());
         assertEquals("description1", artifact1.getDescription());
+    }
+
+    @Test
+    void testGetObjectFromJsonWithValidJson() {
+        String json = "[\"applicable1\", \"applicable2\"]";
+        TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
+        List<String> result = evidenceRowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("applicable1", result.get(0));
+        assertEquals("applicable2", result.get(1));
+    }
+
+    @Test
+    void testGetObjectFromJsonWithEmptyJsonForList() {
+        String json = "[]";
+        TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
+        List<String> result = evidenceRowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetObjectFromJsonWithEmptyJsonForObject() {
+        String json = "{}";
+        TypeReference<Document> typeRef = new TypeReference<Document>() {};
+        Document result = evidenceRowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetObjectFromJsonWithNullJson() {
+        String json = null;
+        TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
+        List<String> result = evidenceRowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+
+    @Test
+    void testGetObjectFromJsonWithInvalidJson() {
+        String json = "invalid_json";
+        TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
+        assertThrows(CustomException.class, () -> evidenceRowMapper.getObjectFromJson(json, typeRef));
     }
 }

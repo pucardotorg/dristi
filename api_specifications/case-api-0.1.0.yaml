@@ -410,6 +410,11 @@ components:
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
+        outcome:
+          type: string
+          description: >-
+            The outcome of the case. This can be a judgement, a settlement or
+            any other outcome.
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
@@ -744,39 +749,37 @@ components:
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-  AddWitnessResponse:
-    type: object
-    properties:
-      ResponseInfo:
-        $ref: >-
-          https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-      addWitnessRequest:
-        $ref: '#/components/schemas/AddWitnessRequest'          
-            
-    JoinCaseRequest:
+    AddWitnessResponse:
       type: object
       properties:
-        RequestInfo:
+        ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        accessCode:
-          type: string
-        caseFilingNumber:
-          type: string
-        representative:
-          type: object
-          $ref: '#/components/schemas/AdvocateMapping'
-        litigant:
-          type: object
-          $ref: '#/components/schemas/Party'
-        additionalDetails:
-          type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
-        auditDetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+           https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        addWitnessRequest:
+          $ref: '#/components/schemas/AddWitnessRequest'          
+            
+    JoinCaseRequest:
+        type: object
+        properties:
+          RequestInfo:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+          accessCode:
+            type: string
+          caseFilingNumber:
+            type: string
+          representative:
+            $ref: '#/components/schemas/AdvocateMapping'
+          litigant:
+            $ref: '#/components/schemas/Party'
+          additionalDetails:
+            type: object
+            description: >-
+              Any extra fields that are not captured as first class fields can be
+              stored here as key/value pairs. Implementation specific.
+          auditDetails:
+            $ref: >-
+               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
 
     JoinCaseResponse:
       type: object
@@ -801,7 +804,13 @@ components:
         judgeId:
           type: string
         stage:
-          type: string
+          type: array
+          items:
+            type: string
+        outcome:
+          type: array
+          items:
+            type: string
         substage:
           type: string
         courtCaseNumber:
@@ -811,7 +820,9 @@ components:
         advocateId:
           type: string
         status:
-          type: string
+          type: array
+          items:
+            type: string
         filingFromDate:
           type: integer
           format: int64
@@ -832,8 +843,8 @@ components:
             $ref: '#/components/schemas/CourtCase'
         pagination:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
-    
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+            
     CaseExists:
       type: object
       properties:

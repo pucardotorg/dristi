@@ -1,17 +1,14 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +34,7 @@ class CaseRowMapperTest {
 
     @Test
     void testExtractData() throws Exception {
-        when(rs.next()).thenReturn(true, false);  // Two rows
+        when(rs.next()).thenReturn(true, false);  // One row
         when(rs.getString("id")).thenReturn(UUID.randomUUID().toString());
         when(rs.getString("tenantid")).thenReturn("tenant1");
         when(rs.getString("resolutionmechanism")).thenReturn("mechanism");
@@ -60,6 +57,7 @@ class CaseRowMapperTest {
         when(rs.getString("natureofpleading")).thenReturn("pleading");
         when(rs.getString("status")).thenReturn("status1");
         when(rs.getString("remarks")).thenReturn("remarks");
+        when(rs.getString("outcome")).thenReturn("outcome");
 
         when(rs.getLong("lastmodifiedtime")).thenReturn(123456789L);
         when(rs.getString("createdby")).thenReturn("user1");
@@ -75,9 +73,11 @@ class CaseRowMapperTest {
         assertEquals(1, cases.size());
         assertEquals("tenant1", cases.get(0).getTenantId());
         assertEquals("user1", cases.get(0).getAuditdetails().getCreatedBy());
+        assertEquals("outcome", cases.get(0).getOutcome());
 
-        verify(rs, times(2)).getString("id");
+        verify(rs, times(2)).getString("id"); // Adjusted to match the actual number of invocations
     }
+
 
     @Test
     void testExtractData_Exception() throws Exception {
@@ -92,5 +92,42 @@ class CaseRowMapperTest {
 
         assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
     }
-}
 
+    @Test
+    void testGetObjectFromJsonWithValidJson() {
+        String json = "[\"value1\", \"value2\"]";
+        TypeReference<List<String>> typeRef = new TypeReference<>() {};
+        List<String> result = rowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("value1", result.get(0));
+        assertEquals("value2", result.get(1));
+    }
+
+    @Test
+    void testGetObjectFromJsonWithEmptyJson() {
+        String json = "[]";
+        TypeReference<List<String>> typeRef = new TypeReference<>() {};
+        List<String> result = rowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetObjectFromJsonWithNullJson() {
+        String json = null;
+        TypeReference<List<String>> typeRef = new TypeReference<>() {};
+        List<String> result = rowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetObjectFromJsonWithEmptyStringJson() {
+        String json = "";
+        TypeReference<List<String>> typeRef = new TypeReference<>() {};
+        List<String> result = rowMapper.getObjectFromJson(json, typeRef);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+}

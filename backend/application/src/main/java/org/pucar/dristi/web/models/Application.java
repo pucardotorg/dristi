@@ -89,7 +89,7 @@ public class Application   {
 
         @JsonProperty("comment")
 
-                private String comment = null;
+                private List<Comment> comment = null;
 
         @JsonProperty("isActive")
           @NotNull
