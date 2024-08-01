@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.config.PendingTaskMapConfig;
+import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.http.*;
@@ -59,7 +59,7 @@ public class IndexerUtilsTest {
     private ObjectMapper mapper;
 
     @Mock
-    private PendingTaskMapConfig pendingTaskMapConfig;
+    private MdmsDataConfig mdmsDataConfig;
 
     @Mock
     private CaseOverallStatusUtil caseOverallStatusUtil;
@@ -67,7 +67,7 @@ public class IndexerUtilsTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(indexerUtils, "pendingTaskMapConfig", pendingTaskMapConfig);
+        ReflectionTestUtils.setField(indexerUtils, "mdmsDataConfig", mdmsDataConfig);
 
     }
 
@@ -217,7 +217,7 @@ public class IndexerUtilsTest {
         PendingTaskType pendingTaskType = PendingTaskType.builder().pendingTask("name").state("status").triggerAction(List.of("action")).build();
         Map<String,List<PendingTaskType>> map = new HashMap<>();
         map.put("entityType",List.of(pendingTaskType));
-        when(pendingTaskMapConfig.getPendingTaskTypeMap()).thenReturn(map);
+        when(mdmsDataConfig.getPendingTaskTypeMap()).thenReturn(map);
 
         String result = indexerUtils.buildPayload(jsonItem, requestInfo);
         assertEquals(expected, result);
