@@ -23,17 +23,21 @@ class AdvocateQueryBuilderTest {
     }
 
     @Test
-    void getAdvocateSearchQuery_NoCriteria() {
+    void testGetAdvocateSearchQuery() {
+        testGetAdvocateSearchQuery_NoCriteria();
+        testGetAdvocateSearchQuery_WithCriteria();
+    }
+
+    private void testGetAdvocateSearchQuery_NoCriteria() {
         // Arrange
         AdvocateSearchCriteria criteria = null;
-
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -44,8 +48,7 @@ class AdvocateQueryBuilderTest {
         assertEquals(0, preparedStmtList.get(1));
     }
 
-    @Test
-    void getAdvocateSearchQuery_WithCriteria() {
+    private void testGetAdvocateSearchQuery_WithCriteria() {
         // Arrange
         AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
         criteria.setId("123");
@@ -58,7 +61,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -69,7 +72,12 @@ class AdvocateQueryBuilderTest {
     }
 
     @Test
-    void getAdvocateSearchQueryByStatus_NoStatusOrTenantId() {
+    void testGetAdvocateSearchQueryByStatus() {
+        testGetAdvocateSearchQueryByStatus_NoStatusOrTenantId();
+        testGetAdvocateSearchQueryByStatus_WithStatusAndTenantId();
+    }
+
+    private void testGetAdvocateSearchQueryByStatus_NoStatusOrTenantId() {
         // Arrange
         String status = null;
         List<Object> preparedStmtList = new ArrayList<>();
@@ -78,7 +86,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -86,8 +94,7 @@ class AdvocateQueryBuilderTest {
         assertEquals(2, preparedStmtList.size());
     }
 
-    @Test
-    void getAdvocateSearchQueryByStatus_WithStatusAndTenantId() {
+    private void testGetAdvocateSearchQueryByStatus_WithStatusAndTenantId() {
         // Arrange
         String status = "active";
         List<Object> preparedStmtList = new ArrayList<>();
@@ -96,7 +103,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -108,7 +115,12 @@ class AdvocateQueryBuilderTest {
     }
 
     @Test
-    void getAdvocateSearchQueryByApplicationNumber_NoApplicationNumberOrTenantId() {
+    void testGetAdvocateSearchQueryByApplicationNumber() {
+        testGetAdvocateSearchQueryByApplicationNumber_NoApplicationNumberOrTenantId();
+        testGetAdvocateSearchQueryByApplicationNumber_WithApplicationNumberAndTenantId();
+    }
+
+    private void testGetAdvocateSearchQueryByApplicationNumber_NoApplicationNumberOrTenantId() {
         // Arrange
         String applicationNumber = null;
         List<Object> preparedStmtList = new ArrayList<>();
@@ -117,7 +129,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -125,8 +137,7 @@ class AdvocateQueryBuilderTest {
         assertEquals(2, preparedStmtList.size());
     }
 
-    @Test
-    void getAdvocateSearchQueryByApplicationNumber_WithApplicationNumberAndTenantId() {
+    private void testGetAdvocateSearchQueryByApplicationNumber_WithApplicationNumberAndTenantId() {
         // Arrange
         String applicationNumber = "123456";
         List<Object> preparedStmtList = new ArrayList<>();
@@ -135,7 +146,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -151,7 +162,7 @@ class AdvocateQueryBuilderTest {
         List<String> ids = List.of("doc1", "doc2");
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
+        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList, new ArrayList<>());
 
         assertNotNull(query);
         assertTrue(query.contains("WHERE doc.advocateid IN (?,?)"));
@@ -162,20 +173,20 @@ class AdvocateQueryBuilderTest {
 
     @Test
     void testGetDocumentSearchQueryThrowsCustomException() {
-
         assertThrows(CustomException.class, this::invokeSearchException);
     }
+
     private void invokeSearchException() {
         List<String> ids = null; // Setting to null to force an exception
         List<Object> preparedStmtList = new ArrayList<>();
-        advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
+        advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList, new ArrayList<>());
     }
 
     @Test
-    void getAdvocateSearchQuery_Exception() {
-        // Act and Assert
+    void testGetAdvocateSearchQuery_Exception() {
         assertThrows(CustomException.class, this::invokeSearch);
     }
+
     private void invokeSearch() {
         AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
         criteria.setId("123");
@@ -186,111 +197,62 @@ class AdvocateQueryBuilderTest {
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-        advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
-    void getAdvocateSearchQueryByStatus_Exception() {
-        // Act and Assert
+    void testGetAdvocateSearchQueryByStatus_Exception() {
         assertThrows(CustomException.class, this::invokeStatusSearch);
     }
+
     private void invokeStatusSearch() {
         String status = "active";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-        advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
-    void getAdvocateSearchQueryByAppMumber_Exception() {
-
-        // Act and Assert
-        assertThrows(CustomException.class,this::invokeAppSearch );
+    void testGetAdvocateSearchQueryByApplicationNumber_Exception() {
+        assertThrows(CustomException.class, this::invokeAppSearch);
     }
+
     private void invokeAppSearch() {
         String appNumber = "appNumber";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-        advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+        advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
-    void testAddClauseIfRequired_FirstCriteria() {
+    void testAddClauseIfRequired() {
+        testAddClauseIfRequired_FirstCriteria();
+        testAddClauseIfRequired_NotFirstCriteria();
+    }
+
+    private void testAddClauseIfRequired_FirstCriteria() {
         // Arrange
         StringBuilder query = new StringBuilder();
         boolean isFirstCriteria = true;
 
         // Act
-        new AdvocateQueryBuilder().addClauseIfRequired(query, isFirstCriteria);
+        advocateQueryBuilder.addClauseIfRequired(query, isFirstCriteria);
 
         // Assert
         assertEquals(" WHERE ", query.toString());
     }
 
-    @Test
-    void testAddClauseIfRequired_NotFirstCriteria() {
+    private void testAddClauseIfRequired_NotFirstCriteria() {
         // Arrange
         StringBuilder query = new StringBuilder("InitialQuery ");
         boolean isFirstCriteria = false;
 
         // Act
-        new AdvocateQueryBuilder().addClauseIfRequired(query, isFirstCriteria);
-
-        // Assert
-        assertEquals("InitialQuery  AND ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForStatus_FirstCriteria() {
-        // Arrange
-        StringBuilder query = new StringBuilder();
-        boolean isFirstCriteria = true;
-
-        // Act
-        new AdvocateQueryBuilder().addClauseIfRequiredForStatus(query, isFirstCriteria);
-
-        // Assert
-        assertEquals(" WHERE ( ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForStatus_NotFirstCriteria() {
-        // Arrange
-        StringBuilder query = new StringBuilder("InitialQuery ");
-        boolean isFirstCriteria = false;
-
-        // Act
-        new AdvocateQueryBuilder().addClauseIfRequiredForStatus(query, isFirstCriteria);
-
-        // Assert
-        assertEquals("InitialQuery  AND ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForTenantId_FirstCriteria() {
-        // Arrange
-        StringBuilder query = new StringBuilder();
-        boolean isFirstCriteria = true;
-
-        // Act
-        new AdvocateQueryBuilder().addClauseIfRequiredForTenantId(query, isFirstCriteria);
-
-        // Assert
-        assertEquals(" WHERE ", query.toString());
-    }
-
-    @Test
-    void testAddClauseIfRequiredForTenantId_NotFirstCriteria() {
-        // Arrange
-        StringBuilder query = new StringBuilder("InitialQuery ");
-        boolean isFirstCriteria = false;
-
-        // Act
-        new AdvocateQueryBuilder().addClauseIfRequiredForTenantId(query, isFirstCriteria);
+        advocateQueryBuilder.addClauseIfRequired(query, isFirstCriteria);
 
         // Assert
         assertEquals("InitialQuery  AND ", query.toString());
