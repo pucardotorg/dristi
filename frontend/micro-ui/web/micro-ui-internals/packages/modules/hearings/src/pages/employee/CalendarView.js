@@ -2,26 +2,42 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
+import TasksComponent from "../../../../home/src/components/TaskComponent";
+import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
   const history = useHistory();
+  const { t } = useTranslation();
+  const calendarRef = useRef(null);
+  const getCurrentViewType = () => {
+    const calendarApi = calendarRef.current.getApi();
+    const currentViewType = calendarApi.view.type;
+    return currentViewType;
+  };
 
   const [dateRange, setDateRange] = useState({});
+  const [taskType, setTaskType] = useState({});
+  const [caseType, setCaseType] = useState({});
+
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
 
   const search = window.location.search;
-  const { fromDate, toDate, slot } = useMemo(() => {
+  const { fromDate, toDate, slot, initialView } = useMemo(() => {
     const searchParams = new URLSearchParams(search);
     const fromDate = searchParams.get("from-date") || null;
     const toDate = searchParams.get("to-date") || null;
     const slot = searchParams.get("slot") || null;
-    return { fromDate, toDate, slot };
+    const initialView = searchParams.get("view") || "dayGridMonth";
+    return { fromDate, toDate, slot, initialView };
   }, [search]);
 
   const reqBody = {
@@ -96,16 +112,29 @@ const MonthlyCalendar = () => {
     return eventsArray;
   }, [hearingDetails, events.slots]);
 
+  const getEachHearingType = (hearingList) => {
+    return [...new Set(hearingList.map((hearing) => hearing.hearingType))];
+  };
+
+  const hearingCount = (hearingList) => {
+    const hearingTypeList = getEachHearingType(hearingList);
+    return hearingTypeList.map((type) => {
+      return {
+        type: type,
+        frequency: hearingList.filter((hearing) => hearing.hearingType === type).length,
+      };
+    });
+  };
+
   const handleEventClick = (arg) => {
     const fromDate = new Date(arg.event.extendedProps.date);
     const toDate = new Date(fromDate);
     toDate.setDate(fromDate.getDate() + 1);
-
     const searchParams = new URLSearchParams(search);
     searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
     searchParams.set("to-date", toDate.toISOString().split("T")[0]);
     searchParams.set("slot", arg.event.extendedProps.slot);
-
+    searchParams.set("view", getCurrentViewType());
     history.replace({ search: searchParams.toString() });
   };
 
@@ -114,6 +143,7 @@ const MonthlyCalendar = () => {
     searchParams.delete("from-date");
     searchParams.delete("to-date");
     searchParams.delete("slot");
+    searchParams.delete("view");
     history.replace({ search: searchParams.toString() });
   };
 
@@ -126,27 +156,52 @@ const MonthlyCalendar = () => {
   );
 
   return (
-    <div>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          start: "prev",
-          center: "title",
-          end: "next, dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        height={"85vh"}
-        events={Calendar_events}
-        eventContent={(arg) => {
-          return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
-        }}
-        eventClick={handleEventClick}
-        datesSet={(dateInfo) => {
-          setDateRange({ start: dateInfo.start, end: dateInfo.end });
-        }}
-      />
+    <div style={{ display: "flex" }}>
+      <div style={{ width: "70%" }}>
+        <div>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView={initialView}
+            headerToolbar={{
+              start: "prev",
+              center: "title",
+              end: "next, dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            height={"85vh"}
+            events={Calendar_events}
+            eventContent={(arg) => {
+              return (
+                <div>
+                  <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>
+                  {hearingCount(arg.event.extendedProps.hearings).map((hearingFrequency) => (
+                    <div>
+                      {hearingFrequency.frequency} - {t(hearingFrequency.type)}
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
+            eventClick={handleEventClick}
+            datesSet={(dateInfo) => {
+              setDateRange({ start: dateInfo.start, end: dateInfo.end });
+            }}
+            ref={calendarRef}
+          />
 
-      {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
+          {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
+        </div>
+      </div>
+      <div className="right-side">
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          caseType={caseType}
+          setCaseType={setCaseType}
+          isLitigant={Boolean(userInfoType === "citizen")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+        />
+      </div>
     </div>
   );
 };

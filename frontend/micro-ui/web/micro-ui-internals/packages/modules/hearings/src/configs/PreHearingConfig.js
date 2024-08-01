@@ -1,6 +1,8 @@
 const defaultSearchValues = {
   stage: "",
-  type: "",
+  type: {
+    type: "NIA S138",
+  },
   caseNameOrId: "",
 };
 
