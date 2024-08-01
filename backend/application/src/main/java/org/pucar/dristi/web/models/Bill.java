@@ -128,41 +128,11 @@ public class Bill {
             return String.valueOf(value);
         }
 
-        public static boolean contains(String test) {
-            for (StatusEnum val : StatusEnum.values()) {
-                if (val.name().equalsIgnoreCase(test)) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
-        @JsonCreator
-        public static StatusEnum fromValue(String text) {
-            for (StatusEnum b : StatusEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
 
     }
 
-    public Boolean addBillDetail(BillDetail billDetail) {
 
-        if (CollectionUtils.isEmpty(billDetails)) {
-
-            billDetails = new ArrayList<>();
-            return billDetails.add(billDetail);
-        } else {
-
-            if (!billDetails.contains(billDetail))
-                return billDetails.add(billDetail);
-            else
-                return false;
-        }
-    }
 
 
 }
