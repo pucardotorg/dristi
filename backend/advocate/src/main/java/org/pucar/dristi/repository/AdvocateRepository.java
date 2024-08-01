@@ -93,7 +93,11 @@ public class AdvocateRepository {
         List<Integer> preparedStmtArgList = new ArrayList<>();
         String advocateQuery = queryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, preparedStmtArgList,tenantId, limit, offset);
         log.info(ADVOCATE_LIST_QUERY, advocateQuery);
-        return jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
+        if(preparedStmtList.size()!=preparedStmtArgList.size()){
+            log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, "Arg and ArgType size mismatch");
+        }
+        return jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
     }
 
     private List<Advocate> performAdvocateQueryByStatus(String status, String tenantId, Integer limit, Integer offset) {
@@ -101,6 +105,10 @@ public class AdvocateRepository {
         List<Integer> preparedStmtArgList = new ArrayList<>();
         String advocateQuery = queryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, preparedStmtArgList,tenantId, limit, offset);
         log.info(ADVOCATE_LIST_QUERY, advocateQuery);
+        if(preparedStmtList.size()!=preparedStmtArgList.size()){
+            log.info("Search by status Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, "Search by status Arg and ArgType size mismatch");
+        }
         return jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
     }
 
@@ -109,6 +117,10 @@ public class AdvocateRepository {
         List<Integer> preparedStmtArgList = new ArrayList<>();
         String advocateQuery = queryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, preparedStmtArgList,tenantId, limit, offset);
         log.info(ADVOCATE_LIST_QUERY, advocateQuery);
+        if(preparedStmtList.size()!=preparedStmtArgList.size()){
+            log.info("Search by App num Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, "Search by App num Arg and ArgType size mismatch");
+        }
         return jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
     }
 
@@ -122,6 +134,10 @@ public class AdvocateRepository {
             List<Integer> preparedStmtArgDocList = new ArrayList<>();
             String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgDocList);
             log.info(DOCUMENT_LIST_QUERY, advocateDocumentQuery);
+            if(preparedStmtListDoc.size()!=preparedStmtArgDocList.size()){
+                log.info("Doc search Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtArgDocList.size());
+                throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, "Doc search Arg and ArgType size mismatch");
+            }
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(),preparedStmtArgDocList.stream().mapToInt(Integer::intValue).toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
                 advocates.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
