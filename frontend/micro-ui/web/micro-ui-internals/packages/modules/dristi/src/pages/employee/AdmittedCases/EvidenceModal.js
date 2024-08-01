@@ -31,10 +31,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const history = useHistory();
   const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
   const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
-  const allAdvocates = useMemo(() => {
-    return getAdvocates(caseData?.case);
-  }, [caseData]);
-
+  const allAdvocates = useMemo(() => getAdvocates(caseData?.case), [caseData]);
+  const createdBy = useMemo(() => documentSubmission?.[0]?.details?.auditDetails?.createdBy, [documentSubmission]);
+  const applicationStatus = useMemo(() => documentSubmission?.[0]?.status, [documentSubmission]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -65,33 +64,32 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
 
   const showSubmit = useMemo(() => {
     if (userType === "employee") {
-      if (modalType !== "Documents") {
+      if (modalType === "Documents") {
         return true;
       }
       return (
         userRoles.includes("JUDGE_ROLE") &&
-        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
       );
     } else {
-      if (modalType !== "Documents") {
+      if (modalType === "Documents") {
         return false;
       }
-      if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
+      if (userInfo?.uuid === createdBy) {
+        return [SubmissionWorkflowState.DELETED].includes(applicationStatus) ? false : true;
+      }
+      if (isLitigent && [...allAdvocates?.[userInfo?.uuid], userInfo?.uuid]?.includes(createdBy)) {
+        return [SubmissionWorkflowState.DELETED].includes(applicationStatus) ? false : true;
+      }
+      if (!isLitigent && allAdvocates?.[createdBy]?.includes(userInfo?.uuid)) {
         return true;
       }
-      if (isLitigent && allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy)) {
-        if ([SubmissionWorkflowState.COMPLETED].includes(documentSubmission?.[0]?.status)) {
-          return true;
-        } else {
-          return false;
-        }
-      }
       if (!isLitigent || (isLitigent && allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid))) {
-        return [SubmissionWorkflowState?.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(documentSubmission?.[0]?.status);
+        return [SubmissionWorkflowState?.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(applicationStatus);
       }
       return false;
     }
-  }, [isLitigent, allAdvocates, userRoles, userInfo, userType, documentSubmission, respondingUuids, modalType]);
+  }, [userType, modalType, userRoles, applicationStatus, userInfo?.uuid, createdBy, isLitigent, allAdvocates]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -99,17 +97,13 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (userType === "employee") {
         label = t("Approve");
       } else {
-        if (userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy) {
+        if (userInfo?.uuid === createdBy) {
           label = t("DOWNLOAD_SUBMISSION");
-        } else if (
-          isLitigent &&
-          allAdvocates?.[userInfo?.uuid]?.includes(documentSubmission?.[0]?.details?.auditDetails?.createdBy) &&
-          [SubmissionWorkflowState.COMPLETED].includes(documentSubmission?.[0]?.status)
-        ) {
+        } else if (isLitigent && [...allAdvocates?.[userInfo?.uuid], userInfo?.uuid]?.includes(createdBy)) {
           label = t("DOWNLOAD_SUBMISSION");
         } else if (
           (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.details?.referenceId) &&
-          [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status)
+          [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
         ) {
           label = t("RESPOND");
         }
@@ -118,12 +112,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       label = !documentSubmission?.[0]?.artifactList?.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
     }
     return label;
-  }, [documentSubmission, modalType, respondingUuids, t, userInfo?.uuid, userType]);
+  }, [allAdvocates, applicationStatus, createdBy, documentSubmission, isLitigent, modalType, respondingUuids, t, userInfo?.uuid, userType]);
 
   const actionCancelLabel = useMemo(() => {
     if (
       userRoles.includes("SUBMISSION_APPROVER") &&
-      [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) &&
+      [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus) &&
       modalType === "Submissions"
     ) {
       return t("REJECT");
@@ -133,18 +127,21 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return null;
       }
       if (
-        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy &&
+        userInfo?.uuid === createdBy &&
         userRoles?.includes("SUBMISSION_DELETE") &&
         !documentSubmission?.[0]?.details?.referenceId &&
-        ![SubmissionWorkflowState.COMPLETED, SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(
-          documentSubmission?.[0]?.status
-        )
+        ![
+          SubmissionWorkflowState.COMPLETED,
+          SubmissionWorkflowState.DELETED,
+          SubmissionWorkflowState.ABATED,
+          SubmissionWorkflowState.REJECTED,
+        ].includes(applicationStatus)
       ) {
         return t("CANCEL_SUBMISSION");
       }
     }
     return null;
-  }, [allAdvocates, documentSubmission, isLitigent, modalType, t, userInfo?.uuid, userRoles, userType]);
+  }, [allAdvocates, applicationStatus, createdBy, documentSubmission, isLitigent, modalType, t, userInfo?.uuid, userRoles, userType]);
 
   const reqCreate = {
     url: `/application/v1/update`,
@@ -428,13 +425,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     counterUpdate();
   };
 
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
   const handleEvidenceAction = async () => {
     await handleMarkEvidence();
   };
@@ -638,9 +628,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                   ? documentSubmission?.[0]?.artifactList?.isEvidence
                     ? "Accepeted"
                     : "Action Pending"
-                  : t(documentSubmission?.[0]?.status)
+                  : t(applicationStatus)
               }
-              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
+              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : applicationStatus}
             />
           }
           className="evidence-modal"
@@ -713,39 +703,43 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                <div className="comment-send">
-                  <div className="comment-input-wrapper">
-                    <TextInput
-                      placeholder={"Type here..."}
-                      value={currentComment}
-                      onChange={(e) => {
-                        setCurrentComment(e.target.value);
-                      }}
-                    />
-                    <div
-                      className="send-comment-btn"
-                      onClick={() => {
-                        const newComment = {
-                          text: currentComment,
-                          author: user,
-                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                            year: "2-digit",
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          }),
-                        };
-                        setComments((prev) => [...prev, newComment]);
-                        setCurrentComment("");
-                        handleSubmitComment(newComment);
-                      }}
-                    >
-                      <RightArrow />
+                {actionSaveLabel === t("RESPOND") && showSubmit && (
+                  <div className="comment-send">
+                    <div className="comment-input-wrapper">
+                      <TextInput
+                        placeholder={"Type here..."}
+                        value={currentComment}
+                        onChange={(e) => {
+                          setCurrentComment(e.target.value);
+                        }}
+                      />
+                      <div
+                        className="send-comment-btn"
+                        onClick={() => {
+                          const newComment = {
+                            comment: currentComment,
+                            additionalDetails: {
+                              author: user,
+                              timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                year: "2-digit",
+                                month: "short",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }),
+                            },
+                          };
+                          setComments((prev) => [...prev, newComment]);
+                          setCurrentComment("");
+                          handleSubmitComment(newComment);
+                        }}
+                      >
+                        <RightArrow />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBail,
   configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
@@ -26,8 +25,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
-import { getAllAssignees } from "../../utils/caseUtils";
 import { Urls } from "../../hooks/services/Urls";
+import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -66,7 +65,7 @@ const SubmissionsCreate = () => {
       APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
-      if (orderNumber) {
+      if (orderNumber || hearingId) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
@@ -222,7 +221,11 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const onBehalfOf = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+  ]);
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },

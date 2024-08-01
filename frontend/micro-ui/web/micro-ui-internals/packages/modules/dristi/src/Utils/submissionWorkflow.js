@@ -17,4 +17,5 @@ export const SubmissionWorkflowState = {
   COMPLETED: "COMPLETED",
   DELETED: "DELETED",
   ABATED: "ABATED",
+  REJECTED: "REJECTED",
 };
