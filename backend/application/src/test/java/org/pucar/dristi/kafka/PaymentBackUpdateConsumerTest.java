@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.PaymentUpdateService;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentBackUpdateConsumerTest {
+ class PaymentBackUpdateConsumerTest {
 
     @Mock
     private PaymentUpdateService paymentUpdateService;
