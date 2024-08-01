@@ -17,8 +17,19 @@ class AdvocateQueryBuilderTest {
     @InjectMocks
     private AdvocateQueryBuilder advocateQueryBuilder;
 
+    Integer limit;
+    Integer offset;
+    private AdvocateSearchCriteria criteria;
     @BeforeEach
     void setUp() {
+         limit = 10;
+         offset = 0;
+        criteria = new AdvocateSearchCriteria();
+        criteria.setId("123");
+        criteria.setBarRegistrationNumber("BAR123");
+        criteria.setApplicationNumber("APP456");
+        criteria.setIndividualId("IND789");
+
         MockitoAnnotations.openMocks(this);
     }
 
@@ -33,9 +44,6 @@ class AdvocateQueryBuilderTest {
         AdvocateSearchCriteria criteria = null;
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
-
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
@@ -49,17 +57,8 @@ class AdvocateQueryBuilderTest {
     }
 
     private void testGetAdvocateSearchQuery_WithCriteria() {
-        // Arrange
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-        criteria.setId("123");
-        criteria.setBarRegistrationNumber("BAR123");
-        criteria.setApplicationNumber("APP456");
-        criteria.setIndividualId("IND789");
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
-
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
@@ -82,8 +81,6 @@ class AdvocateQueryBuilderTest {
         String status = null;
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = null;
-        Integer limit = 10;
-        Integer offset = 0;
 
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
@@ -99,8 +96,6 @@ class AdvocateQueryBuilderTest {
         String status = "active";
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
 
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
@@ -125,8 +120,6 @@ class AdvocateQueryBuilderTest {
         String applicationNumber = null;
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = null;
-        Integer limit = 10;
-        Integer offset = 0;
 
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
@@ -142,8 +135,6 @@ class AdvocateQueryBuilderTest {
         String applicationNumber = "123456";
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
 
         // Act
         String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
@@ -188,15 +179,8 @@ class AdvocateQueryBuilderTest {
     }
 
     private void invokeSearch() {
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-        criteria.setId("123");
-        criteria.setBarRegistrationNumber("BAR123");
-        criteria.setApplicationNumber("APP456");
-        criteria.setIndividualId("IND789");
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
         advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
     }
 
@@ -223,8 +207,6 @@ class AdvocateQueryBuilderTest {
         String appNumber = "appNumber";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
         advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
     }
 

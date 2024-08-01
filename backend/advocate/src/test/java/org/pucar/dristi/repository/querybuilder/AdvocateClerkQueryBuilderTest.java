@@ -18,9 +18,20 @@ import static org.mockito.Mockito.doThrow;
 class AdvocateClerkQueryBuilderTest {
 
     private AdvocateClerkQueryBuilder queryBuilder;
+    Integer limit;
+    Integer offset;
+    private AdvocateClerkSearchCriteria criteria;
 
     @BeforeEach
     public void setUp() {
+         limit = 10;
+         offset = 0;
+        criteria = new AdvocateClerkSearchCriteria();
+        criteria.setId("123");
+        criteria.setStateRegnNumber("456");
+        criteria.setApplicationNumber("4567");
+        criteria.setIndividualId("indivID");
+
         MockitoAnnotations.openMocks(this);
         queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
     }
@@ -28,12 +39,6 @@ class AdvocateClerkQueryBuilderTest {
     @Test
     void testGetAdvocateClerkSearchQuery() {
         testQuery(null, null, "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc ORDER BY advc.createdtime DESC  LIMIT ? OFFSET ?", List.of(10, 0));
-
-        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
-        criteria.setId("123");
-        criteria.setStateRegnNumber("456");
-        criteria.setApplicationNumber("4567");
-        criteria.setIndividualId("indivID");
 
         testQuery(criteria, "tenant1", "SELECT advc.id as id", List.of("123", "456", "4567", "indivID", "tenant1", 10, 0));
     }
@@ -56,8 +61,6 @@ class AdvocateClerkQueryBuilderTest {
 
     private void testQuery(AdvocateClerkSearchCriteria criteria, String tenantId, String expectedQuery, List<Object> expectedPreparedStmtList) {
         List<Object> preparedStmtList = new ArrayList<>();
-        Integer limit = 10;
-        Integer offset = 0;
         String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         assertNotNull(query);
@@ -68,8 +71,6 @@ class AdvocateClerkQueryBuilderTest {
 
     private void testStatusQuery(String status, String tenantId, int expectedSize) {
         List<Object> preparedStmtList = new ArrayList<>();
-        Integer limit = 10;
-        Integer offset = 0;
         String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         assertNotNull(query);
@@ -79,8 +80,6 @@ class AdvocateClerkQueryBuilderTest {
 
     private void testAppNumberQuery(String applicationNumber, String tenantId, int expectedSize) {
         List<Object> preparedStmtList = new ArrayList<>();
-        Integer limit = 10;
-        Integer offset = 0;
         String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, new ArrayList<>(), tenantId, limit, offset);
 
         assertNotNull(query);
@@ -100,11 +99,6 @@ class AdvocateClerkQueryBuilderTest {
     }
 
     private void invokeGetClerkException() {
-        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
-        criteria.setId("123");
-        criteria.setStateRegnNumber("456");
-        criteria.setApplicationNumber("4567");
-        criteria.setIndividualId("indivID");
         List<Object> preparedStmtList = new ArrayList<>();
         queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, new ArrayList<>(), "tenant1", 10, 0);
     }
