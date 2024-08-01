@@ -433,9 +433,15 @@ function CaseFileAdmission({ t, path }) {
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
-                secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-                showSecondaryLabel={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
-                actionClassName="case-file-admission-action-bar"
+                secondaryLabel={
+                  caseDetails?.status === CaseWorkflowState.ADMISSION_HEARING_SCHEDULED
+                    ? t("HEARING_IS_SCHEDULED")
+                    : t("CS_SCHEDULE_ADMISSION_HEARING")
+                }
+                showSecondaryLabel={true}
+                actionClassName={`case-file-admission-action-bar ${
+                  caseDetails?.status === CaseWorkflowState.ADMISSION_HEARING_SCHEDULED && "hearing-scheduled"
+                }`}
                 showSkip={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 onSkip={onSendBack}
                 skiplabel={t("SEND_BACK_FOR_CORRECTION")}
