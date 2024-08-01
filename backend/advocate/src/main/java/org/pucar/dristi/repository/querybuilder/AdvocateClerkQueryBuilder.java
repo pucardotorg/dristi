@@ -6,7 +6,6 @@ import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.stereotype.Component;
 
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,21 +51,13 @@ public class AdvocateClerkQueryBuilder {
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(LIMIT_OFFSET);
-                preparedStmtList.add(limit);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-                preparedStmtList.add(offset);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-            }
+            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
 
             return query.toString();
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
+            log.error("Error while building advocate clerk search query :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION, ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION + e.getMessage());
         }
     }
@@ -119,20 +110,12 @@ public class AdvocateClerkQueryBuilder {
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(LIMIT_OFFSET);
-                preparedStmtList.add(limit);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-                preparedStmtList.add(offset);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-            }
+            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
 
             return query.toString();
         }
         catch (Exception e) {
-            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
+            log.error("Error while building advocate clerk search by status query :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
@@ -160,20 +143,12 @@ public class AdvocateClerkQueryBuilder {
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(LIMIT_OFFSET);
-                preparedStmtList.add(limit);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-                preparedStmtList.add(offset);
-                preparedStmtArgList.add(Types.DOUBLE);
-
-            }
+            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
 
             return query.toString();
         }
         catch (Exception e) {
-            log.error(ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION,e.toString());
+            log.error("Error while building advocate clerk search by app num query :: {}",e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,ADVOCATE_CLERK_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
@@ -183,6 +158,18 @@ public class AdvocateClerkQueryBuilder {
             query.append(" WHERE ");
         }else{
             query.append(AND);
+        }
+    }
+
+    private void addPagination(List<Object> preparedStmtList,List<Integer> preparedStmtArgList, Integer limit, Integer offset, StringBuilder query){
+        if (limit != null && offset != null) {
+            query.append(LIMIT_OFFSET);
+            preparedStmtList.add(limit);
+            preparedStmtArgList.add(Types.DOUBLE);
+
+            preparedStmtList.add(offset);
+            preparedStmtArgList.add(Types.DOUBLE);
+
         }
     }
 

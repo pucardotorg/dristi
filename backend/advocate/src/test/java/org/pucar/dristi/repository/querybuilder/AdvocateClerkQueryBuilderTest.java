@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.Pagination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
- class AdvocateClerkQueryBuilderTest {
+class AdvocateClerkQueryBuilderTest {
 
     private AdvocateClerkQueryBuilder queryBuilder;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-         queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
+        queryBuilder = Mockito.spy(new AdvocateClerkQueryBuilder());
     }
 
     @Test
@@ -156,7 +157,7 @@ import static org.mockito.Mockito.doThrow;
     }
 
     @Test
-     void testGetAdvocateClerkSearchQuery_withNullCriteria() {
+    void testGetAdvocateClerkSearchQuery_withNullCriteria() {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
         Integer limit = 10;
@@ -169,33 +170,36 @@ import static org.mockito.Mockito.doThrow;
         assertEquals(expectedQuery, actualQuery);
         assertEquals(List.of(10, 0), preparedStmtList);
     }
+
     @Test
     void testGetAdvocateClerkSearchQuery_CustomException() {
-        // Arrange
-        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
-        criteria.setId("123");
-        criteria.setStateRegnNumber("456");
-        criteria.setApplicationNumber("4567");
-        criteria.setIndividualId("indivID");
-        List<Object> preparedStmtList = new ArrayList<>();
-        String tenantId = "tenant1";
-        Integer limit = 10;
-        Integer offset = 0;
 
         doThrow(new CustomException("Error", "Simulated Exception"))
                 .when(queryBuilder)
                 .getAdvocateClerkSearchQuery(any(), any(), any(),any(),any(),any());
 
         // Act and Assert
-        CustomException thrown = assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        CustomException thrown = assertThrows(CustomException.class, this::invokeGetClerkException);
 
         assertEquals("Error", thrown.getCode());
         assertEquals("Simulated Exception", thrown.getMessage());
     }
+    private void invokeGetClerkException() {
+        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
+        criteria.setId("123");
+        criteria.setStateRegnNumber("456");
+        criteria.setApplicationNumber("4567");
+        criteria.setIndividualId("indivID");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+        queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
+    }
+
     @Test
-     void testGetDocumentSearchQuery_withValidIds() {
+    void testGetDocumentSearchQuery_withValidIds() {
         List<String> ids = List.of("clerk1", "clerk2");
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -207,7 +211,7 @@ import static org.mockito.Mockito.doThrow;
         assertEquals(List.of("clerk1", "clerk2"), preparedStmtList);
     }
     @Test
-     void testGetDocumentSearchQuery_withEmptyIds() {
+    void testGetDocumentSearchQuery_withEmptyIds() {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -221,6 +225,11 @@ import static org.mockito.Mockito.doThrow;
 
     @Test
     void getAdvocateClerkSearchQuery_Exception() {
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeGetAdvocateClerk);
+    }
+
+    private void invokeGetAdvocateClerk() {
         AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
         criteria.setId("123");
         criteria.setStateRegnNumber("456");
@@ -231,50 +240,53 @@ import static org.mockito.Mockito.doThrow;
         Integer limit = 10;
         Integer offset = 0;
 
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
     void getAdvocateClerkSearchQueryByStatus_Exception() {
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeStatusSearch);
+    }
+
+    private void invokeStatusSearch() {
         String status = "active";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
     void getAdvocateClerkSearchQueryByAppMumber_Exception() {
+
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeAppNumSearch);
+    }
+
+    private void invokeAppNumSearch() {
         String appNumber = "appNumber";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
 
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQueryByAppNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        queryBuilder.getAdvocateClerkSearchQueryByAppNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
     void getDocumentSearchQuery_Exception() {
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeDocSearch);
+    }
+
+    private void invokeDocSearch() {
         List<String> ids = List.of("clerk1", "clerk2");
         List<Object> preparedStmtList = null;
-
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
-        });
+        queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
     }
+
     @Test
     void testAddClauseIfRequired_EmptyList() {
         // Arrange

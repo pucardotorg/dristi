@@ -162,16 +162,21 @@ class AdvocateQueryBuilderTest {
 
     @Test
     void testGetDocumentSearchQueryThrowsCustomException() {
+
+        assertThrows(CustomException.class, this::invokeSearchException);
+    }
+    private void invokeSearchException() {
         List<String> ids = null; // Setting to null to force an exception
         List<Object> preparedStmtList = new ArrayList<>();
-
-        assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
-        });
+        advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
     }
 
     @Test
     void getAdvocateSearchQuery_Exception() {
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeSearch);
+    }
+    private void invokeSearch() {
         AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
         criteria.setId("123");
         criteria.setBarRegistrationNumber("BAR123");
@@ -181,40 +186,38 @@ class AdvocateQueryBuilderTest {
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
     void getAdvocateSearchQueryByStatus_Exception() {
+        // Act and Assert
+        assertThrows(CustomException.class, this::invokeStatusSearch);
+    }
+    private void invokeStatusSearch() {
         String status = "active";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
 
     @Test
     void getAdvocateSearchQueryByAppMumber_Exception() {
+
+        // Act and Assert
+        assertThrows(CustomException.class,this::invokeAppSearch );
+    }
+    private void invokeAppSearch() {
         String appNumber = "appNumber";
         List<Object> preparedStmtList = null;
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
-
-        // Act and Assert
-        assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
-        });
+        advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
     }
+
     @Test
     void testAddClauseIfRequired_FirstCriteria() {
         // Arrange
