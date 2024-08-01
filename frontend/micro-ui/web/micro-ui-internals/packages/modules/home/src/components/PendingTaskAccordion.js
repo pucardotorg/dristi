@@ -1,3 +1,4 @@
+import { InfoBannerIcon } from "@egovernments/digit-ui-components";
 import { CustomArrowUpIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -47,8 +48,19 @@ function PendingTaskAccordion({
             fontWeight: "700",
             lineHeight: "18.75px",
             textAlign: "left",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
-        >{`${t(accordionHeader)}${totalCount ? ` (${totalCount})` : ""}`}</span>
+          className="accordion-header"
+        >
+          {isHighlighted && (
+            <span>
+              <InfoBannerIcon fill="#9E400A" />
+            </span>
+          )}
+          <span>{`${t(accordionHeader)}${totalCount ? ` (${totalCount})` : ""}`}</span>
+        </span>
         <div
           className="icon"
           style={{
@@ -78,7 +90,8 @@ function PendingTaskAccordion({
                   {item?.actionName} : {item?.caseTitle}
                 </span>
                 <span className="task-info">
-                  {item?.caseType} - {item?.filingNumber} - {item?.due}
+                  {item?.caseType} - {item?.filingNumber} -{" "}
+                  <span style={{ ...(item?.dueDateColor && { color: item?.dueDateColor }) }}>{item?.due}</span>
                 </span>
               </div>
             </div>

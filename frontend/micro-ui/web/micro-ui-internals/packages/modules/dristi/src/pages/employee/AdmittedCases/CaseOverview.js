@@ -9,7 +9,7 @@ import PublishedOrderModal from "./PublishedOrderModal";
 import TasksComponent from "../../../../../home/src/components/TaskComponent";
 import NextHearingCard from "./NextHearingCard";
 
-const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest, showSubmissionButtons }) => {
+const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest }) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -24,9 +24,12 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   const [taskType, setTaskType] = useState({});
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
-
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
   const isCitizen = userRoles.includes("CITIZEN");
+  const showSubmissionButtons = useMemo(() => {
+    const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
+    return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
+  }, [currentOrder, userInfo?.uuid, userRoles]);
   const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
       id: representative?.advocateId,
