@@ -309,7 +309,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
     },
     {
       key: "SUBMITTED_ON",
-      value: caseDetails?.filingDate,
+      value: formatDate(new Date(caseDetails?.filingDate)),
     },
   ];
 
