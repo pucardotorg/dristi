@@ -71,7 +71,7 @@ public class AdvocateClerkQueryBuilder {
         addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, preparedStmtArgList,hasPreviousClause);
     }
 
-    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, boolean hasPreviousClause) {
+    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList,List<Integer> preparedStmtArgsList, boolean hasPreviousClause) {
         if (value != null && !value.isEmpty()) {
             if (hasPreviousClause) {
                 query.append(" AND ");
@@ -81,13 +81,13 @@ public class AdvocateClerkQueryBuilder {
             }
             query.append(column).append(" = ? ");
             preparedStmtList.add(value);
-            preparedStmtArgList.add(Types.VARCHAR);
+            preparedStmtArgsList.add(Types.VARCHAR);
         }
         return hasPreviousClause;
     }
 
 
-    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList,List<Integer> preparedStmtArguList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -97,20 +97,20 @@ public class AdvocateClerkQueryBuilder {
                 query.append("LOWER(advc.status) = LOWER(?)")
                         .append(")");
                 preparedStmtList.add(status.toLowerCase());
-                preparedStmtArgList.add(Types.VARCHAR);
+                preparedStmtArguList.add(Types.VARCHAR);
             }
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
                 query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
-                preparedStmtArgList.add(Types.VARCHAR);
+                preparedStmtArguList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
+            addPagination(preparedStmtList,preparedStmtArguList,limit,offset,query);
 
             return query.toString();
         }
@@ -120,7 +120,7 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, List<Integer> preparedStmtArgumentList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -130,20 +130,20 @@ public class AdvocateClerkQueryBuilder {
                 query.append("LOWER(advc.applicationnumber) = LOWER(?)")
                         .append(")");
                 preparedStmtList.add(applicationNumber.toLowerCase());
-                preparedStmtArgList.add(Types.VARCHAR);
+                preparedStmtArgumentList.add(Types.VARCHAR);
             }
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
                 query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
-                preparedStmtArgList.add(Types.VARCHAR);
+                preparedStmtArgumentList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
+            addPagination(preparedStmtList,preparedStmtArgumentList,limit,offset,query);
 
             return query.toString();
         }
@@ -161,14 +161,14 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addPagination(List<Object> preparedStmtList,List<Integer> preparedStmtArgList, Integer limit, Integer offset, StringBuilder query){
+    private void addPagination(List<Object> preparedStmtList,List<Integer> preparedStmtArgssList, Integer limit, Integer offset, StringBuilder query){
         if (limit != null && offset != null) {
             query.append(LIMIT_OFFSET);
             preparedStmtList.add(limit);
-            preparedStmtArgList.add(Types.DOUBLE);
+            preparedStmtArgssList.add(Types.DOUBLE);
 
             preparedStmtList.add(offset);
-            preparedStmtArgList.add(Types.DOUBLE);
+            preparedStmtArgssList.add(Types.DOUBLE);
 
         }
     }
@@ -194,7 +194,7 @@ public class AdvocateClerkQueryBuilder {
      * @param preparedStmtList
      * @return
      */
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtArgDocList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -203,7 +203,7 @@ public class AdvocateClerkQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
-                ids.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
+                ids.forEach(i->preparedStmtArgDocList.add(Types.VARCHAR));
             }
 
             return query.toString();
