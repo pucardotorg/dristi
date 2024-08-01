@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@egovernments/digit-ui-components";
-import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { CalenderIcon } from "../../homeIcon";
 
 function timeInMillisToDateTime(timeInMillis) {
@@ -63,11 +63,6 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const dayOptions = { weekday: "short" };
   const date = today.toLocaleDateString("en-US", dateOptions); // e.g., "Jun 15"
   const day = today.toLocaleDateString("en-US", dayOptions); // e.g., "Tue"
-  const time = "9:30am-12:00pm"; // Static time for demonstration purposes
-  const hearingType = "Admission Hearings";
-  const pendingTasks = 4;
-  const upcomingHearings = 2;
-  // [TODO: Time, Hearing Type, Pending Tasks, upcoming hearings need to be integrated with actual data]
   const curHr = today.getHours();
   const dateRange = useMemo(
     () => ({
@@ -196,7 +191,6 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     if (!hearingSlotsResponse || !hearingResponse) {
       return [];
     }
-
     const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
     hearingResponse.HearingList.forEach((hearing) => {
       hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
@@ -217,6 +211,16 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   if (isLoading && isLoadingMonthly && isAdvocateLoading && isCaseLoading) {
     return <Loader />;
   }
+
+  if (!latestHearing) {
+    return <div>{t("NO_HEARINGS_SCHEDULED")}</div>;
+  }
+
+  const hearingSearchParams = new URLSearchParams();
+  hearingSearchParams.set("from-date", dateRange.start);
+  hearingSearchParams.set("to-date", dateRange.end);
+  hearingSearchParams.set("slot", latestHearing.slotName);
+
   return (
     <div className="upcoming-hearing-container">
       <div className="header">
@@ -238,31 +242,17 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                       {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
                     </div>
                     <div style={{ display: "flex", gap: "8px" }}>
-                      {userInfoType === "citizen" ? (
-                        <React.Fragment>
-                          {hearingCaseList?.map((hearing, index) => (
-                            <React.Fragment>
-                              {index < 2 && (
-                                <React.Fragment>
-                                  <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                    {hearing?.caseName}
-                                  </Link>
-                                  {index !== hearingCaseList.length - 1 && <span>,</span>}
-                                </React.Fragment>
-                              )}
-                              {index === 2 && (
-                                <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                  {`+ ${hearingCaseList?.length - 2} more`}
-                                </Link>
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </React.Fragment>
-                      ) : (
-                        <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                          {hearingType} ({hearingCount})
-                        </Link>
-                      )}
+                      <Link
+                        className="hearingType"
+                        to={{ pathname: `/${window.contextPath}/${userType}/hearings`, search: hearingSearchParams.toString() }}
+                      >
+                        {userInfoType === "citizen"
+                          ? hearingCaseList
+                              .slice(0, 2)
+                              .map((hearing) => hearing.caseName)
+                              .join(", ") + (hearingCaseList.length >= 2 ? ` +${hearingCaseList.length - 2} more` : "")
+                          : `${latestHearing.hearings[0].hearingType} ${hearingCount}`}
+                      </Link>
                     </div>
                   </div>
                 </div>

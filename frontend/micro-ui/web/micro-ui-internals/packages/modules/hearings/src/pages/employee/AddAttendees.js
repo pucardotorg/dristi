@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
 import { hearingService } from "../../../../hearings/src/hooks/services/index";
-import AddParty from "./AddParty";
+
 const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
   const [formError, setFormError] = useState("");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();

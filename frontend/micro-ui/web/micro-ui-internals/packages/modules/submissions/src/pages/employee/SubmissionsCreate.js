@@ -99,7 +99,7 @@ const SubmissionsCreate = () => {
   }, [orderNumber, submissionType]);
 
   const applicationType = useMemo(() => {
-    return formdata?.applicationType?.type;
+    return formdata?.applicationType?.type || urlParams.get("applicationType");
   }, [formdata?.applicationType?.type]);
 
   const applicationFormConfig = useMemo(() => {
@@ -290,6 +290,19 @@ const SubmissionsCreate = () => {
           },
         };
       }
+    } else if (applicationType) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: applicationType,
+          name: `APPLICATION_TYPE_${applicationType}`,
+          isActive: true,
+        },
+        applicationDate: formatDate(new Date()),
+      };
     } else {
       return {
         submissionType: {

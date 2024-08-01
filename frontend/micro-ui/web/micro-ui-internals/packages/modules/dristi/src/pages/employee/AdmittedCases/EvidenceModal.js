@@ -7,12 +7,12 @@ import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
-import { RightArrow } from "../../../icons/svgIndex";
-import DocViewerWrapper from "../docViewerWrapper";
-import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
+import { RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
+import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
   RE_SCHEDULE: 2,
@@ -271,7 +271,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (actionSaveLabel === t("ADD_COMMENT")) {
         message = "SUCCESSFULLY_RESPONDED_APPLICATION_MESSAGE";
       } else {
-        message = "SUCCESSFULLY_CANCELED_APPLICATION_MESSAGE";
+        message = "";
       }
     }
     showToast({
