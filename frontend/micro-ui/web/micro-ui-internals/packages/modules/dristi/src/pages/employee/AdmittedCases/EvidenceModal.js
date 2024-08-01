@@ -449,7 +449,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
