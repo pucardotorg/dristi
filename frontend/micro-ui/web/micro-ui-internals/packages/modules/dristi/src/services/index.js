@@ -170,4 +170,12 @@ export const DRISTIService = {
       data,
       params,
     }),
+  addWitness: (data, params) =>
+    Request({
+      url: Urls.case.addWitness,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBail,
   configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
@@ -26,8 +25,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
-import { getAllAssignees } from "../../utils/caseUtils";
 import { Urls } from "../../hooks/services/Urls";
+import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -66,7 +65,7 @@ const SubmissionsCreate = () => {
       APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
-      if (orderNumber) {
+      if (orderNumber || hearingId) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
@@ -87,7 +86,7 @@ const SubmissionsCreate = () => {
                   mdmsConfig: {
                     ...input?.populators?.mdmsConfig,
                     select:
-                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
                   },
                 },
               };
@@ -100,7 +99,7 @@ const SubmissionsCreate = () => {
   }, [orderNumber, submissionType]);
 
   const applicationType = useMemo(() => {
-    return formdata?.applicationType?.type;
+    return formdata?.applicationType?.type || urlParams.get("applicationType");
   }, [formdata?.applicationType?.type]);
 
   const applicationFormConfig = useMemo(() => {
@@ -222,7 +221,11 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const onBehalfOf = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+  ]);
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -234,6 +237,18 @@ const SubmissionsCreate = () => {
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
       return applicationDetails?.additionalDetails?.formdata;
+    } else if (hearingId && hearingsData?.HearingList?.[0]?.startTime) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: "RE_SCHEDULE",
+          isactive: true,
+          name: "APPLICATION_TYPE_RE_SCHEDULE",
+        },
+      };
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
         if (isExtension) {
@@ -275,6 +290,19 @@ const SubmissionsCreate = () => {
           },
         };
       }
+    } else if (applicationType) {
+      return {
+        submissionType: {
+          code: "APPLICATION",
+          name: "APPLICATION",
+        },
+        applicationType: {
+          type: applicationType,
+          name: `APPLICATION_TYPE_${applicationType}`,
+          isActive: true,
+        },
+        applicationDate: formatDate(new Date()),
+      };
     } else {
       return {
         submissionType: {
@@ -283,7 +311,7 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber]);
+  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber, hearingId, hearingsData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {

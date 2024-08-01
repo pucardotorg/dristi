@@ -239,6 +239,7 @@ export const configsRescheduleRequest = [
       {
         inline: true,
         label: "INITIAL_HEARING_DATE",
+        disable: true,
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",
@@ -419,6 +420,7 @@ export const configsCheckoutRequest = [
       {
         inline: true,
         label: "INITIAL_HEARING_DATE",
+        disable: true,
         isMandatory: true,
         key: "initialHearingDate",
         type: "date",

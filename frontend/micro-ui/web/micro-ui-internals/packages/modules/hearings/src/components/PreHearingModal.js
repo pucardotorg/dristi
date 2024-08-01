@@ -1,12 +1,11 @@
-import React, { useContext, useMemo, useState } from "react";
-import Modal from "../../../dristi/src/components/Modal";
 import { Button, CloseSvg, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import Modal from "../../../dristi/src/components/Modal";
 import { preHearingConfig } from "../configs/PreHearingConfig";
 
 function PreHearingModal({ onCancel, hearingData }) {
   const { t } = useTranslation();
-  const [config, setConfig] = useState(preHearingConfig);
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -28,8 +27,8 @@ function PreHearingModal({ onCancel, hearingData }) {
       toDate: hearingData.toDate,
       slot: hearingData.slot,
     };
-    setConfig(configCopy);
-  }, [preHearingConfig, hearingData?.fromDate, , hearingData.toDate, hearingData?.slot]);
+    return configCopy;
+  }, [hearingData.fromDate, hearingData.toDate, hearingData.slot]);
 
   const popUpStyle = {
     width: "70%",
@@ -55,8 +54,8 @@ function PreHearingModal({ onCancel, hearingData }) {
         display: "none",
       }}
     >
-      <div style={{ minHeight: "35rem" }}>
-        <InboxSearchComposer configs={config} />
+      <div style={{ minHeight: "80vh" }}>
+        <InboxSearchComposer configs={updatedConfig} />
       </div>
       <div
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}

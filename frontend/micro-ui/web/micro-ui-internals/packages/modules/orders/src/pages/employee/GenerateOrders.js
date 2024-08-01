@@ -239,8 +239,10 @@ const GenerateOrders = () => {
   }, [ordersData, defaultOrderData]);
 
   useEffect(() => {
-    refetchOrdersData();
-  }, [refetchOrdersData]);
+    if (Boolean(filingNumber && cnrNumber)) {
+      refetchOrdersData();
+    }
+  }, [cnrNumber, filingNumber, refetchOrdersData]);
 
   useEffect(() => {
     if (showErrorToast) {

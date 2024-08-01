@@ -5,7 +5,7 @@ import { SubmissionWorkflowState } from "../Utils/submissionWorkflow";
 export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
   const userInfo = Digit.UserService.getUser()?.info;
   const userRoles = userInfo?.roles?.map((role) => role.code);
-  const getDate = (value) => {
+  const formatDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
@@ -18,7 +18,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     status: rowData?.status,
     details: {
       applicationType: rowData?.applicationType,
-      applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
+      applicationSentOn: formatDate(parseInt(rowData?.auditDetails.createdTime)),
       sender: rowData?.owner,
       additionalDetails: rowData?.additionalDetails,
       applicationId: rowData?.id,
@@ -34,7 +34,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       status: rowData?.status,
       details: {
         applicationType: rowData?.applicationType,
-        applicationSentOn: getDate(parseInt(rowData?.auditDetails.createdTime)),
+        applicationSentOn: formatDate(parseInt(rowData?.auditDetails.createdTime)),
         sender: rowData?.owner,
         additionalDetails: rowData?.additionalDetails,
         applicationId: rowData?.id,
@@ -54,17 +54,25 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     };
   }) || [defaultObj];
 
-  const createdByUuid = rowData.statuteSection?.auditdetails?.createdBy;
-  const respondingUuids = rowData?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+  // const createdByUuid = rowData.statuteSection?.auditdetails?.createdBy;
+  // const respondingUuids = rowData?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
 
-  const showDoc =
-    ([SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.COMPLETED].includes(rowData?.status) &&
-      userRoles.includes("JUDGE_ROLE")) ||
-    userInfo?.uuid === createdByUuid ||
-    (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(
-      rowData?.status
-    ) &&
-      respondingUuids?.includes(userInfo?.uuid));
+  const showDoc = userRoles.includes("JUDGE_ROLE")
+    ? [
+        SubmissionWorkflowState.PENDINGREVIEW,
+        SubmissionWorkflowState.PENDINGAPPROVAL,
+        SubmissionWorkflowState.COMPLETED,
+        SubmissionWorkflowState.REJECTED,
+        SubmissionWorkflowState.PENDINGRESPONSE,
+      ].includes(rowData?.status)
+    : true;
+  //   ||
+  // userInfo?.uuid === createdByUuid ||
+  // (!rowData?.referenceId && [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(rowData?.status)) ||
+  // (![SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(
+  //   rowData?.status
+  // ) &&
+  //   respondingUuids?.includes(userInfo?.uuid));
 
   return (
     <React.Fragment>

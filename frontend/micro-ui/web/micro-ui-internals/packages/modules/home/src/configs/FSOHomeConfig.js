@@ -46,6 +46,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -68,6 +69,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -95,6 +97,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -121,7 +124,7 @@ export const TabFSOSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "UNDER_SCRUTINY",
+              status: ["UNDER_SCRUTINY"],
             },
           ],
         },
@@ -264,7 +267,7 @@ export const TabFSOSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              status: "UNDER_SCRUTINY",
+              status: ["UNDER_SCRUTINY"],
             },
           ],
         },

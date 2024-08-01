@@ -584,8 +584,7 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria.state);
+    preProcess: (requestCriteria, additionalDetails) => {      
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
@@ -706,7 +705,7 @@ export const UICustomizations = {
                   statuteSection: {
                     tenantId: row.tenantId,
                   },
-                  orderType: "RESCHEDULE_OF_HEARING_DATE",
+                  orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                   status: "",
                   isActive: true,
                   workflow: {
@@ -720,14 +719,14 @@ export const UICustomizations = {
                   additionalDetails: {
                     formdata: {
                       orderType: {
-                        type: "RESCHEDULE_OF_HEARING_DATE",
+                        type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         isactive: true,
-                        code: "RESCHEDULE_OF_HEARING_DATE",
-                        name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
+                        code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
-                      originalHearingDate: `${date.getFullYear()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getDate()}`,
+                      originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                      }`,
                     },
                   },
                 },
@@ -778,7 +777,7 @@ export const UICustomizations = {
             label: "Request for Reschedule hearing",
             id: "reschedule",
             action: (history) => {
-              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}`);
             },
           },
           {

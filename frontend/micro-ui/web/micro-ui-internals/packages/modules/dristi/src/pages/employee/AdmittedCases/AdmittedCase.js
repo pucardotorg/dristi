@@ -333,7 +333,7 @@ const AdmittedCases = () => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
+                          return { code: party.name, name: party.name, value: party.individualId };
                         }),
                       },
                     },
@@ -536,6 +536,48 @@ const AdmittedCases = () => {
                 type: "REFERRAL_CASE_TO_ADR",
                 code: "REFERRAL_CASE_TO_ADR",
                 name: "ORDER_TYPE_REFERRAL_CASE_TO_ADR",
+              },
+            },
+          },
+        },
+      };
+      ordersService
+        .createOrder(reqBody, { tenantId })
+        .then((res) => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
+            caseId: caseId,
+            tab: activeTab,
+          });
+        })
+        .catch((err) => {});
+      return;
+    } else if (option === t("MANDATORY_SUBMISSIONS_RESPONSES")) {
+      const reqBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "MANDATORY_SUBMISSIONS_RESPONSES",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                type: "MANDATORY_SUBMISSIONS_RESPONSES",
+                code: "MANDATORY_SUBMISSIONS_RESPONSES",
+                name: "ORDER_TYPE_MANDATORY_SUBMISSIONS_RESPONSES",
               },
             },
           },
@@ -758,7 +800,7 @@ const AdmittedCases = () => {
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
               <div
-                // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                onClick={() => handleSelect(t("MANDATORY_SUBMISSIONS_RESPONSES"))}
                 style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
               >
                 {t("REQUEST_DOCUMENTS_LINK")}

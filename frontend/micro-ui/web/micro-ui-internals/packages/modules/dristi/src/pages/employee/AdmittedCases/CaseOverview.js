@@ -21,7 +21,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   const [currentOrder, setCurrentOrder] = useState({});
   const user = localStorage.getItem("user-info");
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
-  const [taskType, setTaskType] = useState({ code: "case", name: "Case" });
+  const [taskType, setTaskType] = useState({});
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
 

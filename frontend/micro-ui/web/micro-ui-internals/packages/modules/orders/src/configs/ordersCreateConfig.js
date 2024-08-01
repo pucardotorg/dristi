@@ -574,7 +574,6 @@ export const configsOrderMandatorySubmissions = [
     body: [
       {
         label: "IS_RESPONSE_REQUIRED",
-        isMandatory: true,
         key: "isResponseRequired",
         type: "radio",
         populators: {
@@ -598,7 +597,6 @@ export const configsOrderMandatorySubmissions = [
       },
       {
         label: "RESPONDING_PARTY",
-        isMandatory: true,
         key: "respondingParty",
         type: "dropdown",
         populators: {
@@ -1088,7 +1086,7 @@ export const configsRejectRescheduleHeadingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "originalHearingDate",
         disable: true,
         type: "date",
