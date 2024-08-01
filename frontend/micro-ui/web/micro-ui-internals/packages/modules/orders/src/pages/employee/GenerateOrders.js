@@ -254,10 +254,10 @@ const GenerateOrders = () => {
   }, [showErrorToast]);
 
   useEffect(() => {
-    if (defaultIndex && defaultIndex !== -1 && defaultIndex !== selectedOrder) {
+    if (defaultIndex && defaultIndex !== -1 && orderNumber && defaultIndex !== selectedOrder) {
       setSelectedOrder(defaultIndex);
     }
-  }, [defaultIndex, selectedOrder]);
+  }, [defaultIndex, selectedOrder, orderNumber]);
 
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
