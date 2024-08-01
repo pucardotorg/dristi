@@ -105,7 +105,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.details?.referenceId) &&
           [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
         ) {
-          label = t("RESPOND");
+          label = t("ADD_COMMENT");
         }
       }
     } else {
@@ -268,7 +268,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (showConfirmationModal?.type === "accept") {
         message = "SUCCESSFULLY_ACCEPTED_APPLICATION_MESSAGE";
       }
-      if (actionSaveLabel === t("RESPOND")) {
+      if (actionSaveLabel === t("ADD_COMMENT")) {
         message = "SUCCESSFULLY_RESPONDED_APPLICATION_MESSAGE";
       } else {
         message = "SUCCESSFULLY_CANCELED_APPLICATION_MESSAGE";
@@ -585,7 +585,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (userType === "employee") {
       modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
     } else {
-      if (actionSaveLabel === t("RESPOND")) {
+      if (actionSaveLabel === t("ADD_COMMENT")) {
         try {
         } catch (error) {}
         await handleRespondApplication();
@@ -703,7 +703,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                {actionSaveLabel === t("RESPOND") && showSubmit && (
+                {actionSaveLabel === t("ADD_COMMENT") && showSubmit && (
                   <div className="comment-send">
                     <div className="comment-input-wrapper">
                       <TextInput
