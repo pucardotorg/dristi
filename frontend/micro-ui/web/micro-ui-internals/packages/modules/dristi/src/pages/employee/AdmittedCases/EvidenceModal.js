@@ -7,11 +7,11 @@ import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
-import { RightArrow } from "../../../icons/svgIndex";
-import DocViewerWrapper from "../docViewerWrapper";
-import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
+import { RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
+import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
   RE_SCHEDULE: 2,
@@ -199,7 +199,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const onSuccess = async (result) => {
-    const details = showToast({
+    showToast({
       isError: false,
       message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
     });
@@ -208,7 +208,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
   const onError = async (result) => {
     if (modalType === "Documents") {
-      const details = showToast({
+      showToast({
         isError: true,
         message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
       });
@@ -330,13 +330,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       },
     });
     counterUpdate();
-  };
-
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   const handleEvidenceAction = async () => {

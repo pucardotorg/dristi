@@ -1,32 +1,16 @@
-import { Button, SVG } from "@egovernments/digit-ui-components";
+import { Button } from "@egovernments/digit-ui-components";
 import React from "react";
-import { useHistory } from "react-router-dom";
 
-
-const HearingSideCard = () => {
-
-  const history = useHistory();
-  
-  const handleNavigate = (path) => {
-    const contextPath = window?.contextPath || "";
-    history.push(`/${contextPath}${path}`);
+const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
+  const handleNavigate = (path, extraSearchParams) => {
+    const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+    const searchParams = new URLSearchParams({ hearingId, caseId, filingNumber, ...extraSearchParams });
+    window.open(`${window.location.origin}/${window.contextPath}/${userType}/${path}?${searchParams.toString()}`, "_blank");
   };
 
   return (
     <div className="hearing-side-card">
-      <div className="hearing-warning-card">
-        <SVG.ErrorOutline width={"24px"} height={"24px"} fill={"#BB2C2F"}></SVG.ErrorOutline>
-        <div className="hearing-warning-textwrap">
-          <span className="hearing-warning-text">There are 2 last minute rescheduling requests for this hearing</span>
-          <Button
-            label={"View Requests"}
-            variation={"teritiary"}
-            onClick={() => handleNavigate("/employee/hearings/view-requests")}
-            style={{ padding: "0px" }}
-          ></Button>
-        </div>
-      </div>
-
       <div className="hearing-details">
         <div className="hearing-title">Case Details</div>
         <div className="hearing-buttons">
@@ -35,7 +19,7 @@ const HearingSideCard = () => {
             variation={"default"}
             style={{ width: "100%", justifyContent: "center" }}
             iconFill={"#1C1B1F"}
-            onClick={() => handleNavigate("/employee/orders/orders-home")}
+            onClick={() => handleNavigate("dristi/home/view-case", { tab: "Orders" })}
           />
           <Button
             label={"Submissions"}
@@ -43,7 +27,7 @@ const HearingSideCard = () => {
             style={{ width: "100%", justifyContent: "center" }}
             icon={""}
             iconFill={"#1C1B1F"}
-            onClick={() => handleNavigate("/employee/submissions/submissions-create")}
+            onClick={() => handleNavigate("dristi/home/view-case", { tab: "Submissions" })}
           />
           <Button
             label={"Case History"}
@@ -51,7 +35,7 @@ const HearingSideCard = () => {
             style={{ width: "100%", justifyContent: "center" }}
             icon={""}
             iconFill={"#1C1B1F"}
-            onClick={() => handleNavigate("/employee/hearings/case-history")}
+            onClick={() => handleNavigate("dristi/home/view-case", { tab: "History" })}
           />
           <Button
             label={"Parties"}
@@ -59,7 +43,7 @@ const HearingSideCard = () => {
             style={{ width: "100%", justifyContent: "center" }}
             icon={"Person"}
             iconFill={"#1C1B1F"}
-            onClick={() => handleNavigate("/employee/hearings/parties")}
+            onClick={() => handleNavigate("dristi/home/view-case", { tab: "Parties" })}
           />
         </div>
       </div>

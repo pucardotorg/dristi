@@ -3,7 +3,7 @@ import utils from "../utils";
 import useUpdateHearingsService from "./hearings/useUpdateHearingsService";
 import useGetHearings from "./hearings/useGetHearings";
 import usePreHearingModalData from "./usePreHearingModalData";
-import useGetHearingSlotMetaData from "./services/useGetHearingSlotMetaData";
+import useGetHearingSlotMetaData from "./useGetHearingSlotMetaData";
 
 const hearings = {
   useIndividualView,
