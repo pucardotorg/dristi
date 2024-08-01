@@ -125,7 +125,6 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     if (!hearingSlotsResponse || !hearingResponse) {
       return [];
     }
-    console.debug({ hearingResponse, hearingSlotsResponse });
     const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
     hearingResponse.HearingList.forEach((hearing) => {
       hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
@@ -142,13 +141,12 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   if (isLoading) {
     return <Loader />;
   }
-  if (!latestHearing) {
-    return null;
-  }
+
   const hearingSearchParams = new URLSearchParams();
   hearingSearchParams.set("from-date", dateRange.start);
   hearingSearchParams.set("to-date", dateRange.end);
   hearingSearchParams.set("slot", latestHearing.slotName);
+
   return (
     <div className="upcoming-hearing-container">
       <div className="header">
@@ -169,31 +167,17 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                     {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
                   </div>
                   <div style={{ display: "flex", gap: "8px" }}>
-                    {userInfoType === "citizen" ? (
-                      <React.Fragment>
-                        {hearingCaseList?.map((hearing, index) => (
-                          <React.Fragment>
-                            {index < 2 && (
-                              <React.Fragment>
-                                <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                  {hearing?.caseName}
-                                </Link>
-                                {index !== hearingCaseList.length - 1 && <span>,</span>}
-                              </React.Fragment>
-                            )}
-                            {index === 2 && (
-                              <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                {`+ ${hearingCaseList?.length - 2} more`}
-                              </Link>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </React.Fragment>
-                    ) : (
-                      <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                        {latestHearing.hearings[0].hearingType} ({hearingCount})
-                      </Link>
-                    )}
+                    <Link
+                      className="hearingType"
+                      to={{ pathname: `/${window.contextPath}/${userType}/hearings`, search: hearingSearchParams.toString() }}
+                    >
+                      {userInfoType === "citizen"
+                        ? hearingCaseList
+                            .slice(0, 2)
+                            .map((hearing) => hearing.caseName)
+                            .join(", ") + (hearingCaseList.length >= 2 ? ` +${hearingCaseList.length - 2} more` : "")
+                        : `${latestHearing.hearings[0].hearingType} ${hearingCount}`}
+                    </Link>
                   </div>
                 </div>
               </div>
