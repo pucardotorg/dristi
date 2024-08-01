@@ -8,18 +8,13 @@ import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
 import TasksComponent from "../../components/TaskComponentCalander";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
   const history = useHistory();
-  const location = useLocation();
-  const { state } = location;
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
-  const [taskType, setTaskType] = useState(state?.taskType || {});
-  const [caseType, setCaseType] = useState(state?.caseType || {});
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
@@ -83,10 +78,6 @@ const MonthlyCalendar = () => {
 
     return dateTimeObject;
   }
-
-  useEffect(() => {
-    state && state.taskType && setTaskType(state.taskType);
-  }, [state]);
 
   const Calendar_events = useMemo(() => {
     const calendarEvents = {};
@@ -178,10 +169,6 @@ const MonthlyCalendar = () => {
       </div>
       <div style={{ flexBasis: "380px", maxWidth: "380px" }}>
         <TasksComponent
-          taskType={taskType}
-          setTaskType={setTaskType}
-          caseType={caseType}
-          setCaseType={setCaseType}
           isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
           uuid={userInfo?.uuid}
           userInfoType={userInfoType}

@@ -18,7 +18,7 @@ const Accordian = ({ groupedData, caseDataDetails }) => {
       >
         <span
           style={{
-            color: "black",
+            color: "#231F20",
             fontFamily: "Roboto",
             fontSize: "16px",
             fontWeight: "700",

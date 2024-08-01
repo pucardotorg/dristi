@@ -40,7 +40,7 @@ const groupByFilingNumber = (data) => {
     }));
 };
 
-const TaskComponentCalander = ({ taskType, setTaskType, caseType, setCaseType, isLitigant, uuid, filingNumber, inCase = false }) => {
+const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
   const todayDate = getFormattedDate();
@@ -54,7 +54,6 @@ const TaskComponentCalander = ({ taskType, setTaskType, caseType, setCaseType, i
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          ...(taskType?.code && { entityType: taskType?.code }),
           isCompleted: false,
           ...(isLitigant && { assignedTo: uuid }),
           ...(!isLitigant && { assignedRole: [...roles] }),
@@ -65,8 +64,8 @@ const TaskComponentCalander = ({ taskType, setTaskType, caseType, setCaseType, i
       },
     },
     params: { tenantId },
-    key: `${taskType?.code}-${filingNumber}`,
-    config: { enabled: Boolean(taskType.code && tenantId) },
+    key: `${filingNumber}`,
+    config: { enabled: Boolean(tenantId) },
   });
 
   useEffect(() => {
@@ -132,7 +131,7 @@ const TaskComponentCalander = ({ taskType, setTaskType, caseType, setCaseType, i
         <div style={{ fontWeight: 700, fontSize: "24px", color: "#231F20" }}>{todayDate}</div>
         <button
           style={{
-            width: "300px",
+            width: "330px",
             height: "60px",
             borderRadius: "4px",
             border: "1px solid #E8E8E8",
@@ -140,7 +139,7 @@ const TaskComponentCalander = ({ taskType, setTaskType, caseType, setCaseType, i
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
-            padding: "16px 12px 16px 12px",
+            padding: "16px 12px 16px 20px",
             marginTop: "18px",
           }}
           onClick={handleDownload}
