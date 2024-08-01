@@ -492,7 +492,12 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "documentName",
         type: "text",
-        populators: { name: "documentName" },
+        populators: {
+          name: "documentName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+        },
       },
       {
         label: "SUBMISSION_PARTY",
@@ -575,6 +580,7 @@ export const configsOrderMandatorySubmissions = [
       {
         label: "IS_RESPONSE_REQUIRED",
         key: "isResponseRequired",
+        isMandatory: true,
         type: "radio",
         populators: {
           name: "isResponseRequired",
@@ -625,7 +631,7 @@ export const configsOrderMandatorySubmissions = [
       },
       {
         label: "RESPONSE_DEADLINE",
-        isMandatory: true,
+        isMandatory: false,
         key: "responseDeadline",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
