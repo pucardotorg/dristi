@@ -198,7 +198,7 @@ const HomeView = () => {
 
   const handleNavigate = () => {
     const contextPath = window?.contextPath || "";
-    history.push(`/${contextPath}/${userInfoType}/hearings/view-hearing`);
+    history.push(`/${contextPath}/${userInfoType}/hearings/`);
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 

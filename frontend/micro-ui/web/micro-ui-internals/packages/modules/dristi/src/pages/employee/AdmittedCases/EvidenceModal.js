@@ -7,11 +7,12 @@ import ConfirmEvidenceAction from "../../../components/ConfirmEvidenceAction";
 import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction";
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
-import { RightArrow } from "../../../icons/svgIndex";
-import DocViewerWrapper from "../docViewerWrapper";
-import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
+import { RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
+import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
   RE_SCHEDULE: 2,
@@ -30,12 +31,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const history = useHistory();
   const filingNumber = useMemo(() => caseData?.filingNumber, [caseData]);
   const cnrNumber = useMemo(() => caseData?.cnrNumber, [caseData]);
+  const allAdvocates = useMemo(() => getAdvocates(caseData?.case), [caseData]);
+  const createdBy = useMemo(() => documentSubmission?.[0]?.details?.auditDetails?.createdBy, [documentSubmission]);
+  const applicationStatus = useMemo(() => documentSubmission?.[0]?.status, [documentSubmission]);
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
+  const isLitigent = useMemo(() => !userInfo?.roles?.some((role) => ["ADVOCATE_ROLE", "ADVOCATE_CLERK"].includes(role?.code)), [userInfo?.roles]);
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
   const todayDate = new Date().getTime();
   const CloseBtn = (props) => {
@@ -54,25 +59,37 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     );
   };
   const respondingUuids = useMemo(() => {
-    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat();
+    return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid.map((uuid) => uuid)).flat() || [];
   }, [documentSubmission]);
 
-  const hideSubmit = useMemo(() => {
+  const showSubmit = useMemo(() => {
     if (userType === "employee") {
+      if (modalType === "Documents") {
+        return true;
+      }
       return (
-        !userRoles.includes("JUDGE_ROLE") ||
-        userRoles.includes("CITIZEN") ||
-        (modalType !== "Documents" &&
-          ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status))
+        userRoles.includes("JUDGE_ROLE") &&
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
       );
     } else {
-      return (
-        (documentSubmission?.[0]?.referenceId ? !respondingUuids?.includes(userInfo?.uuid) : false) ||
-        ![SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) ||
-        userInfo?.uuid === documentSubmission?.[0]?.details?.auditDetails?.createdBy
-      );
+      if (modalType === "Documents") {
+        return false;
+      }
+      if (userInfo?.uuid === createdBy) {
+        return [SubmissionWorkflowState.DELETED].includes(applicationStatus) ? false : true;
+      }
+      if (isLitigent && [...allAdvocates?.[userInfo?.uuid], userInfo?.uuid]?.includes(createdBy)) {
+        return [SubmissionWorkflowState.DELETED].includes(applicationStatus) ? false : true;
+      }
+      if (!isLitigent && allAdvocates?.[createdBy]?.includes(userInfo?.uuid)) {
+        return true;
+      }
+      if (!isLitigent || (isLitigent && allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid))) {
+        return [SubmissionWorkflowState?.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(applicationStatus);
+      }
+      return false;
     }
-  }, [userType, userRoles, modalType, documentSubmission, respondingUuids, userInfo?.uuid]);
+  }, [userType, modalType, userRoles, applicationStatus, userInfo?.uuid, createdBy, isLitigent, allAdvocates]);
 
   const actionSaveLabel = useMemo(() => {
     let label = "";
@@ -80,21 +97,51 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (userType === "employee") {
         label = t("Approve");
       } else {
-        label = t("RESPOND");
+        if (userInfo?.uuid === createdBy) {
+          label = t("DOWNLOAD_SUBMISSION");
+        } else if (isLitigent && [...allAdvocates?.[userInfo?.uuid], userInfo?.uuid]?.includes(createdBy)) {
+          label = t("DOWNLOAD_SUBMISSION");
+        } else if (
+          (respondingUuids?.includes(userInfo?.uuid) || !documentSubmission?.[0]?.details?.referenceId) &&
+          [SubmissionWorkflowState.PENDINGRESPONSE, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
+        ) {
+          label = t("ADD_COMMENT");
+        }
       }
     } else {
-      label = !documentSubmission?.[0]?.artifactList.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
+      label = !documentSubmission?.[0]?.artifactList?.isEvidence ? t("MARK_AS_EVIDENCE") : t("UNMARK_AS_EVIDENCE");
     }
     return label;
-  }, [documentSubmission, modalType, t, userType]);
+  }, [allAdvocates, applicationStatus, createdBy, documentSubmission, isLitigent, modalType, respondingUuids, t, userInfo?.uuid, userType]);
 
   const actionCancelLabel = useMemo(() => {
-    return userRoles.includes("WORKFLOW_ABANDON") &&
-      [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(documentSubmission?.[0]?.status) &&
+    if (
+      userRoles.includes("SUBMISSION_APPROVER") &&
+      [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus) &&
       modalType === "Submissions"
-      ? t("REJECT")
-      : null;
-  }, [documentSubmission, modalType, t, userRoles]);
+    ) {
+      return t("REJECT");
+    }
+    if (userType === "citizen") {
+      if (isLitigent && !allAdvocates?.[userInfo?.uuid]?.includes(userInfo?.uuid)) {
+        return null;
+      }
+      if (
+        userInfo?.uuid === createdBy &&
+        userRoles?.includes("SUBMISSION_DELETE") &&
+        !documentSubmission?.[0]?.details?.referenceId &&
+        ![
+          SubmissionWorkflowState.COMPLETED,
+          SubmissionWorkflowState.DELETED,
+          SubmissionWorkflowState.ABATED,
+          SubmissionWorkflowState.REJECTED,
+        ].includes(applicationStatus)
+      ) {
+        return t("CANCEL_SUBMISSION");
+      }
+    }
+    return null;
+  }, [allAdvocates, applicationStatus, createdBy, documentSubmission, isLitigent, modalType, t, userInfo?.uuid, userRoles, userType]);
 
   const reqCreate = {
     url: `/application/v1/update`,
@@ -160,6 +207,18 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     },
   };
 
+  const deleteApplicationPayload = {
+    ...documentSubmission?.[0]?.applicationList,
+    statuteSection: {
+      ...documentSubmission?.[0]?.applicationList?.statuteSection,
+      tenantId: tenantId,
+    },
+    workflow: {
+      ...documentSubmission?.[0]?.applicationList?.workflow,
+      action: SubmissionWorkflowAction.DELETE,
+    },
+  };
+
   const acceptApplicationPayload = {
     ...documentSubmission?.[0]?.applicationList,
     statuteSection: {
@@ -198,19 +257,36 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     };
   };
 
-  const onSuccess = async (result) => {
-    const details = showToast({
+  const onSuccess = async () => {
+    let message = "";
+    if (modalType === "Documents") {
+      message = documentSubmission?.[0].artifactList?.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE";
+    } else {
+      if (showConfirmationModal?.type === "reject") {
+        message = "SUCCESSFULLY_REJECTED_APPLICATION_MESSAGE";
+      }
+      if (showConfirmationModal?.type === "accept") {
+        message = "SUCCESSFULLY_ACCEPTED_APPLICATION_MESSAGE";
+      }
+      if (actionSaveLabel === t("ADD_COMMENT")) {
+        message = "SUCCESSFULLY_RESPONDED_APPLICATION_MESSAGE";
+      } else {
+        message = "";
+      }
+    }
+    showToast({
       isError: false,
-      message: documentSubmission?.[0].artifactList.isEvidence ? "SUCCESSFULLY_UNMARKED_MESSAGE" : "SUCCESSFULLY_MARKED_MESSAGE",
+      message,
     });
     counterUpdate();
     handleBack();
   };
+
   const onError = async (result) => {
     if (modalType === "Documents") {
-      const details = showToast({
+      showToast({
         isError: true,
-        message: documentSubmission?.[0].artifactList.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
+        message: documentSubmission?.[0].artifactList?.isEvidence ? "UNSUCCESSFULLY_UNMARKED_MESSAGE" : "UNSUCCESSFULLY_MARKED_MESSAGE",
       });
     }
     handleBack();
@@ -229,7 +305,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           body: {
             artifact: {
               ...documentSubmission?.[0].artifactList,
-              isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              isEvidence: !documentSubmission?.[0]?.artifactList?.isEvidence,
               workflow: {
                 ...documentSubmission?.[0].artifactList.workflow,
                 action: "SIGN DEPOSITION",
@@ -253,7 +329,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           body: {
             artifact: {
               ...documentSubmission?.[0].artifactList,
-              isEvidence: !documentSubmission?.[0].artifactList.isEvidence,
+              isEvidence: !documentSubmission?.[0]?.artifactList?.isEvidence,
               filingNumber: filingNumber,
             },
           },
@@ -275,6 +351,23 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         url: Urls.dristi.submissionsUpdate,
         params: {},
         body: { application: respondApplicationPayload },
+        config: {
+          enable: true,
+        },
+      },
+      {
+        onSuccess,
+        onError,
+      }
+    );
+  };
+
+  const handleDeleteApplication = async () => {
+    await mutation.mutate(
+      {
+        url: Urls.dristi.submissionsUpdate,
+        params: {},
+        body: { application: deleteApplicationPayload },
         config: {
           enable: true,
         },
@@ -330,13 +423,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       },
     });
     counterUpdate();
-  };
-
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   const handleEvidenceAction = async () => {
@@ -474,7 +560,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         if (showConfirmationModal.type === "accept") {
           await handleAcceptApplication();
         }
-
+        counterUpdate();
         setShowSuccessModal(true);
         setShowConfirmationModal(null);
       }
@@ -486,6 +572,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     } else {
       setShow(false);
+      setShowSuccessModal(false);
     }
   };
 
@@ -498,10 +585,27 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     if (userType === "employee") {
       modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
     } else {
-      await handleRespondApplication();
+      if (actionSaveLabel === t("ADD_COMMENT")) {
+        try {
+        } catch (error) {}
+        await handleRespondApplication();
+      }
       ///show a toast message
       counterUpdate();
       setShow(false);
+      counterUpdate();
+    }
+  };
+
+  const actionCancelOnSubmit = async () => {
+    if (userType === "employee") {
+      setShowConfirmationModal({ type: "reject" });
+    } else {
+      try {
+        await handleDeleteApplication();
+        setShow(false);
+        counterUpdate();
+      } catch (error) {}
     }
   };
 
@@ -512,11 +616,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={actionSaveOnSubmit}
-          hideSubmit={hideSubmit}
+          hideSubmit={!showSubmit}
           actionCancelLabel={actionCancelLabel}
-          actionCancelOnSubmit={() => {
-            setShowConfirmationModal({ type: "reject" });
-          }}
+          actionCancelOnSubmit={actionCancelOnSubmit}
           formId="modal-action"
           headerBarMain={
             <Heading
@@ -526,9 +628,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                   ? documentSubmission?.[0]?.artifactList?.isEvidence
                     ? "Accepeted"
                     : "Action Pending"
-                  : t(documentSubmission?.[0]?.status)
+                  : t(applicationStatus)
               }
-              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : documentSubmission?.[0]?.status}
+              isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : applicationStatus}
             />
           }
           className="evidence-modal"
@@ -601,39 +703,43 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                <div className="comment-send">
-                  <div className="comment-input-wrapper">
-                    <TextInput
-                      placeholder={"Type here..."}
-                      value={currentComment}
-                      onChange={(e) => {
-                        setCurrentComment(e.target.value);
-                      }}
-                    />
-                    <div
-                      className="send-comment-btn"
-                      onClick={() => {
-                        const newComment = {
-                          text: currentComment,
-                          author: user,
-                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                            year: "2-digit",
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          }),
-                        };
-                        setComments((prev) => [...prev, newComment]);
-                        setCurrentComment("");
-                        handleSubmitComment(newComment);
-                      }}
-                    >
-                      <RightArrow />
+                {actionSaveLabel === t("ADD_COMMENT") && showSubmit && (
+                  <div className="comment-send">
+                    <div className="comment-input-wrapper">
+                      <TextInput
+                        placeholder={"Type here..."}
+                        value={currentComment}
+                        onChange={(e) => {
+                          setCurrentComment(e.target.value);
+                        }}
+                      />
+                      <div
+                        className="send-comment-btn"
+                        onClick={() => {
+                          const newComment = {
+                            comment: currentComment,
+                            additionalDetails: {
+                              author: user,
+                              timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                year: "2-digit",
+                                month: "short",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }),
+                            },
+                          };
+                          setComments((prev) => [...prev, newComment]);
+                          setCurrentComment("");
+                          handleSubmitComment(newComment);
+                        }}
+                      >
+                        <RightArrow />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
@@ -656,7 +762,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleEvidenceAction}
-          isEvidence={documentSubmission?.[0].artifactList.isEvidence}
+          isEvidence={documentSubmission?.[0]?.artifactList?.isEvidence}
         />
       )}
       {showSuccessModal && modalType === "Submissions" && <SubmissionSuccessModal t={t} handleBack={handleBack} />}

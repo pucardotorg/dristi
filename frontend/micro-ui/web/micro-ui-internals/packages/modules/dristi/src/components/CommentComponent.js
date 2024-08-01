@@ -5,7 +5,7 @@ function CommentComponent({ key, comment }) {
     <div className="comment-body" key={key}>
       <div className="name-logo">
         <div className="comment-avatar">
-          <span>{comment?.author[0]}</span>
+          <span>{comment?.author?.[0]}</span>
         </div>
       </div>
       <div className="comment-details">

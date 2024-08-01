@@ -48,6 +48,7 @@ import CustomErrorTooltip from "./components/CustomErrorTooltip";
 import Button from "./components/Button";
 import MultiUploadWrapper from "./components/MultiUploadWrapper";
 import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
+import { DRISTIService } from "./services";
 import CustomChooseDate from "./components/CustomChooseDate";
 import CustomCalendar from "./components/CustomCalendar";
 
@@ -122,6 +123,7 @@ const componentsToRegister = {
   MultiUploadWrapper,
   Button,
   CustomCopyTextDiv,
+  DRISTIService,
   CustomChooseDate,
   CustomCalendar,
 };
