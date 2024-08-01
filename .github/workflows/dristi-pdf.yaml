@@ -1,0 +1,31 @@
+name: advocate workflow
+on:
+  push:
+    branches:
+      - dristi-order-pdf
+jobs:
+  docker_image-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Azure Container Registry
+        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+
+      - name: Build and Push Docker image for advocate
+        run: |
+          docker build --build-arg WORK_DIR="utilities/dristi-pdf" -t pucardev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }} -f utilities/dristi-pdf/Dockerfile .
+          docker push pucardev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }}
+          
+      - name: Trigger Deployment Pipeline
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+          -d '{"ref":"Dev-0"}'
