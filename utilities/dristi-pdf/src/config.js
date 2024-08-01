@@ -27,7 +27,7 @@ module.exports = {
   DB_PORT: process.env.DB_PORT || 5432,
 
   pdf: {
-    issue_of_summon:"summons-issue",
+    issue_of_summon: process.env.PROJECT_DETAILS_TEMPLATE || "summons-issue",
   },
 
   app: {
