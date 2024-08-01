@@ -5,6 +5,7 @@ import { default as EmployeeApp } from "./pages/employee";
 import HearingsCard from "./components/HearingsCard";
 import { overrideHooks, updateCustomConfigs } from "./utils";
 import MonthlyCalendar from "./pages/employee/CalendarView";
+import SummonsAndWarrantsModal from "./pages/employee/SummonsAndWarrantsModal";
 
 export const HearingsModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
@@ -27,6 +28,7 @@ const componentsToRegister = {
   HearingsCalendar: MonthlyCalendar,
   HearingsModule,
   HearingsCard,
+  SummonsAndWarrantsModal,
 };
 
 export const initHearingsComponents = () => {

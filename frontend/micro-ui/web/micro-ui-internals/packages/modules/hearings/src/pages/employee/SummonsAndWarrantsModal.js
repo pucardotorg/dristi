@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import { Modal, CloseSvg, Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { summonsConfig } from "../../configs/SummonsNWarrantConfig";
@@ -19,22 +19,47 @@ const modalPopup = {
   overflowY: "scroll",
 };
 
-const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
+const SummonsAndWarrantsModal = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { filingNumber, cnrNumber, applicationNumber } = caseData;
+  // const { filingNumber } = Digit.Hooks.useQueryParams();
+  const filingNumber = "F-C.1973.002-2024-001383";
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
+    {
+      criteria: [
+        {
+          filingNumber: filingNumber,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    filingNumber,
+    Boolean(filingNumber)
+  );
+
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+
+  const { cnrNumber } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "" }), [caseDetails]);
+
   const handleCloseModal = () => {
-    setShowModal(false);
+    history.goBack();
   };
 
   const handleNavigate = () => {
-    const contextPath = window?.contextPath || '';
+    const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}/employee/orders/orders-create`);
   };
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
-    { criteria: { tenantId: tenantId, filingNumber, applicationNumber, cnrNumber } },
+    { criteria: { tenantId: tenantId, filingNumber } },
     { tenantId },
     filingNumber,
     Boolean(filingNumber)
@@ -60,7 +85,7 @@ const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const [config, setConfig] = useState(summonsConfig({ filingNumber}));
+  const [config, setConfig] = useState(summonsConfig({ filingNumber }));
 
   const CloseButton = (props) => {
     return (
@@ -72,20 +97,16 @@ const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
 
   const ModalHeading = ({ label }) => {
     return (
-      <h1 className="modal-heading">
+      <h1 className="modal-heading" style={{ padding: 8 }}>
         <span className="heading-m">{label}</span>
-        <span
-          className="heading-xs"
-        >
-          Failed 2 times
-        </span>
+        <span className="heading-xs">Failed 2 times</span>
       </h1>
     );
   };
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={true}
       headerBarEnd={<CloseButton onClick={handleCloseModal} />}
       popupStyles={modalPopup}
       popupModuleActionBarStyles={{
@@ -103,7 +124,9 @@ const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
         </div>
 
         <div className="case-info-column">
-          <span className="case-info-value">Aparna vs Vikram, PB-PT-2023</span>
+          <span className="case-info-value">
+            {caseDetails?.caseTitle}, {filingNumber}
+          </span>
           <span className="case-info-value">Vikram Singh (Respondent 1)</span>
           <span className="case-info-value">04/07/2024</span>
           <span className="case-info-value">23/05/2024 (Round 3)</span>
@@ -123,13 +146,9 @@ const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
 
       <h1 className="heading-m">{t("Rounds Of Delivery")}</h1>
       <div></div>
-      <div className="rounds-of-delivery" >
+      <div className="rounds-of-delivery" style={{ cursor: "pointer" }}>
         {orderList.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => setActiveIndex(index)}
-            className={`round-item ${index === activeIndex ? "active" : ""}`}
-          >
+          <div key={index} onClick={() => setActiveIndex(index)} className={`round-item ${index === activeIndex ? "active" : ""}`}>
             {`${orderList.length - index} (${item?.orderType})`}
           </div>
         ))}
@@ -143,10 +162,18 @@ const SummonsAndWarrantsModal = ({ isOpen, setShowModal, caseData }) => {
           className="action-button"
           label={t("Issue Warrant")}
           labelClassName={"secondary-label-selector"}
-          onButtonClick={() => {handleNavigate()}}
+          onButtonClick={() => {
+            handleNavigate();
+          }}
           style={{ marginRight: "1rem", fontWeight: "900" }}
         />
-        <Button label={t("Re-Issue Summon")} onButtonClick={() => {handleNavigate()}} className="action-button" />
+        <Button
+          label={t("Re-Issue Summon")}
+          onButtonClick={() => {
+            handleNavigate();
+          }}
+          className="action-button"
+        />
       </div>
     </Modal>
   );
