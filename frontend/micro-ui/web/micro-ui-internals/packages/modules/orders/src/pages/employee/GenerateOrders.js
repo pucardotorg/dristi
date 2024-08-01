@@ -85,7 +85,7 @@ const stateSla = {
   BAIL: 3,
   WARRANT: 3,
   WITHDRAWAL: 3,
-  OTHERS: configsOthers,
+  OTHERS: 3,
   APPROVE_VOLUNTARY_SUBMISSIONS: 3,
   REJECT_VOLUNTARY_SUBMISSIONS: 3,
   JUDGEMENT: 3,
@@ -157,7 +157,7 @@ const GenerateOrders = () => {
     );
   }, [caseDetails, allAdvocates]);
 
-  const respondants = useMemo(() => {
+  const respondents = useMemo(() => {
     return (
       caseDetails?.litigants
         ?.filter((item) => item?.partyType?.includes("respondent"))
@@ -230,7 +230,15 @@ const GenerateOrders = () => {
     }),
     [cnrNumber, filingNumber, tenantId]
   );
-
+  const formatDate = (date, format) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    if (format === "DD-MM-YYYY") {
+      return `${day}-${month}-${year}`;
+    }
+    return `${year}-${month}-${day}`;
+  };
   useEffect(() => {
     if (!ordersData?.list || ordersData?.list.length < 1) {
       setFormList([defaultOrderData]);
@@ -278,6 +286,22 @@ const GenerateOrders = () => {
     referenceId
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
+  const hearingId = useMemo(() => "HEARING-ID-2024-08-01-000221", []);
+  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+        hearingId,
+      },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    hearingId,
+    Boolean(hearingId)
+  );
+  const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
+  const hearingDate = useMemo(() => formatDate(new Date(hearingDetails?.startTime)), [hearingDetails]);
 
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
@@ -318,7 +342,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondants],
+                    options: [...complainants, ...respondents],
                   },
                 };
               }
@@ -327,7 +351,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: respondants,
+                    options: respondents,
                   },
                 };
               }
@@ -346,7 +370,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondants],
+                    options: [...complainants, ...respondents],
                   },
                 };
               }
@@ -365,7 +389,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondants],
+                    options: [...complainants, ...respondents],
                   },
                 };
               }
@@ -374,7 +398,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondants],
+                    options: [...complainants, ...respondents],
                   },
                 };
               }
@@ -421,7 +445,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondants, t]);
+  }, [complainants, currentOrder, orderType, respondents, t]);
 
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];
@@ -526,12 +550,14 @@ const GenerateOrders = () => {
     setSelectedOrder(formList?.length);
   };
 
-  const createPendingTask = async (order) => {
+  const createPendingTask = async (order, refId = null, isAssignedRole = false) => {
     const formdata = order?.additionalDetails?.formdata;
     let create = false;
     let name = "";
     let assignees = [];
-
+    let referenceId = refId || order?.orderNumber;
+    let assignedRole = [];
+    let additionalDetails = {};
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = "CREATE_SUBMISSION";
@@ -547,20 +573,32 @@ const GenerateOrders = () => {
       name = t("RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing";
     }
+    if (isAssignedRole) {
+      assignees = [];
+      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE") {
+        create = true;
+        status = "CREATE_DRAFT_IN_PROGRESS";
+        assignedRole = ["JUDGE_ROLE"];
+        name = t("CREATE_ORDERS_FOR_SUMMONS");
+        entityType = "order-managelifecycle";
+        additionalDetails = { ...additionalDetails, orderType: "SUMMONS" };
+      }
+    }
+
     create &&
       (await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
           name,
           entityType,
-          referenceId: `MANUAL_${order?.orderNumber}`,
+          referenceId: `MANUAL_${referenceId}`,
           status,
           assignedTo: assignees,
-          assignedRole: [],
+          assignedRole,
           cnrNumber: cnrNumber,
           filingNumber: filingNumber,
           isCompleted: false,
           stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
-          additionalDetails: {},
+          additionalDetails: additionalDetails,
           tenantId,
         },
       }));
@@ -664,7 +702,7 @@ const GenerateOrders = () => {
             type: "Advocate",
           };
         });
-        DRISTIService.createHearings(
+        const hearingres = await DRISTIService.createHearings(
           {
             hearing: {
               tenantId: tenantId,
@@ -691,6 +729,8 @@ const GenerateOrders = () => {
           },
           { tenantId: tenantId }
         );
+        const newhearingId = hearingres?.hearing?.hearingId;
+        createPendingTask(currentOrder, newhearingId, true, ["JUDGE_ROLE"]);
       }
       setShowSuccessModal(true);
     } catch (error) {

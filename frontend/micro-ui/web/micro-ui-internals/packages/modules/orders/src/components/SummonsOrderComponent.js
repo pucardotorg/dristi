@@ -1,15 +1,14 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import useSearchCaseService from "../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
-import { DRISTIService } from "../../../dristi/src/services";
 import AddParty from "../../../hearings/src/pages/employee/AddParty";
 const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedChannels, setSelectedChannels] = useState(formData[config.key]?.["selectedChannels"] || []);
-  const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs, t]);
+  const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs]);
 
   const { data: caseData } = useSearchCaseService(
     {
@@ -21,11 +20,25 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
     filingNumber,
     filingNumber
   );
-
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+  // caseDetails?.litigants
+  // ?.filter((item) => item?.partyType?.includes("respondent"))
+  // .map((item) => {
+  //   return {
+  //     code: item?.additionalDetails?.fullName,
+  //     name: item?.additionalDetails?.fullName,
+  //     uuid: allAdvocates[item?.additionalDetails?.uuid],
+  //   };
+  // }) || []
   const userList = useMemo(() => {
     let users = [];
-    if (caseData?.criteria?.[0]?.responseList?.[0]?.additionalDetails) {
-      const respondentData = caseData.criteria[0].responseList[0]?.additionalDetails?.respondentDetails?.formdata || [];
+    if (caseDetails?.additionalDetails) {
+      const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata || [];
       const updatedRespondentData = respondentData.map((item) => ({
         ...item,
         data: {
@@ -46,7 +59,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
       users = [...updatedRespondentData];
     }
     return users;
-  }, [caseData]);
+  }, [caseDetails]);
 
   const handleDropdownChange = (selectedOption) => {
     const isEqual = _.isEqual(selectedOption.value.data, formData[config.key]?.party.data);
@@ -145,7 +158,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
           value: formData[config.key]?.party,
         }
       : null;
-  }, [formData]);
+  }, [config.key, formData]);
+
   const [isPartyModalOpen, setIsPartyModalOpen] = useState(false);
   const handleAddParty = () => {
     setIsPartyModalOpen(!isPartyModalOpen);

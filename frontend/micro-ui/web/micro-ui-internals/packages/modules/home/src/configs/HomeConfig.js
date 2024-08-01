@@ -328,12 +328,24 @@ export const pendingTaskOrderActions = {
   DRAFT_IN_PROGRESS: {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
-    additionalDetailsKeys: ["orderType"],
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+  CREATE_DRAFT_IN_PROGRESS: {
+    actorName: ["JUDGE"],
+    actionName: "Create Order and Save Draft Pending task",
+    customFunction: "handleCreateOrderDraft",
+    additionalDetailsKeys: ["orderType"],
+    redirectDetails: {
+      url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
       ],
     },
   },

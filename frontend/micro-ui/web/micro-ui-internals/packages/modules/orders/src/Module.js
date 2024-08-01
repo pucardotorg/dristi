@@ -10,7 +10,7 @@ import { ordersService } from "./hooks/services";
 import OrderReviewModal from "./pageComponents/OrderReviewModal";
 import AddSubmissionDocument from "./components/AddSubmissionDocument";
 import CustomInfo from "./components/CustomInfo";
-import SummonsOrderComponent from "./components/SummonOrderComponent";
+import SummonsOrderComponent from "./components/SummonsOrderComponent";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
