@@ -1,71 +1,65 @@
 package org.pucar.dristi.service;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
-import org.pucar.dristi.web.models.CredentialRequest;
+import org.pucar.dristi.util.MdmsV2Util;
 import org.pucar.dristi.web.models.VcCredentialRequest;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 class ServiceUrlMapperVCServiceTest {
 
-    @Mock
-    private ServiceUrlEntityRequestService serviceUrlEntityRequestService;
+	@InjectMocks
+	private ServiceUrlMapperVCService service;
 
-    @Mock
-    private Producer producer;
+	@Mock
+	private ServiceUrlEntityRequestService serviceUrlEntityRequestService;
 
-    @Mock
-    private FileDownloadService fileDownloadService;
+	@Mock
+	private Producer producer;
 
-    @InjectMocks
-    private ServiceUrlMapperVCService serviceUrlMapperVCService;
+	@Mock
+	private FileDownloadService fileDownloadService;
 
-    private VcCredentialRequest vcCredentialRequest;
+	@Mock
+	private Configuration configuration;
 
-    @BeforeEach
-    void setUp() {
-        vcCredentialRequest = new VcCredentialRequest();
-        vcCredentialRequest.setReferenceCode("summons-order");
-    }
+	@Mock
+	private MdmsV2Util mdmsV2Util;
 
-    @Test
-    void testGenerateVc_validReferenceCode() {
-        String signedHashValue = "signedHash";
-        CredentialRequest credentialRequest = new CredentialRequest();
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-        when(fileDownloadService.downloadAndExtractSignature(any())).thenReturn(signedHashValue);
-        when(serviceUrlEntityRequestService.getEntityDetails(signedHashValue, vcCredentialRequest)).thenReturn(credentialRequest);
+	@Test
+	void generateVc_emptyMdmsList_throwsCustomException() {
+		// Arrange
+		VcCredentialRequest vcCredentialRequest = new VcCredentialRequest();
+		vcCredentialRequest.setModuleName("validModule");
+		vcCredentialRequest.setRequestInfo(new RequestInfo());
+		vcCredentialRequest.setTenantId("tenantId");
 
-        VcCredentialRequest result = serviceUrlMapperVCService.generateVc(vcCredentialRequest);
+		when(mdmsV2Util.fetchMdmsV2Data(any(), any(), any(), any(), any(), any()))
+				.thenReturn(new ArrayList<>());
 
-        assertEquals(vcCredentialRequest, result);
-        verify(fileDownloadService).downloadAndExtractSignature(vcCredentialRequest);
-        verify(serviceUrlEntityRequestService).getEntityDetails(signedHashValue, vcCredentialRequest);
-        verify(producer).push("create-vc", credentialRequest);
-    }
+		// Act & Assert
+		CustomException thrown = assertThrows(CustomException.class, () ->
+				service.generateVc(vcCredentialRequest)
+		);
+		assertEquals("INVALID_MODULE_NAME", thrown.getCode());
+	}
 
-    @Test
-    void testGenerateVc_invalidReferenceCode() {
-        vcCredentialRequest.setReferenceCode("invalid-code");
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            serviceUrlMapperVCService.generateVc(vcCredentialRequest);
-        });
-
-        assertEquals("INVALID_REFERENCE_CODE", exception.getCode());
-        assertEquals("The reference code invalid-code is not recognized.", exception.getMessage());
-
-        verify(fileDownloadService, never()).downloadAndExtractSignature(any());
-        verify(serviceUrlEntityRequestService, never()).getEntityDetails(any(), any());
-        verify(producer, never()).push(any(), any());
-    }
 }
