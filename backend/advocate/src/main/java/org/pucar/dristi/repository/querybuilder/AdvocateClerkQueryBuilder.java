@@ -5,6 +5,8 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,18 +33,19 @@ public class AdvocateClerkQueryBuilder {
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset) {
+    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList,String tenantId, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
 
             if (criteria != null) {
-                addCriteriaToQuery(criteria, query, preparedStmtList);
+                addCriteriaToQuery(criteria, query, preparedStmtList,preparedStmtArgList);
 
                 if (tenantId != null && !tenantId.isEmpty()) {
                     addClauseIfRequiredForTenantId(query, preparedStmtList);
                     query.append(ADV_TENANT_ID_QUERY);
                     preparedStmtList.add(tenantId.toLowerCase());
+                    preparedStmtArgList.add(Types.VARCHAR);
                 }
             }
 
@@ -52,7 +55,11 @@ public class AdvocateClerkQueryBuilder {
             if (limit != null && offset != null) {
                 query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
+                preparedStmtArgList.add(Types.DOUBLE);
+
                 preparedStmtList.add(offset);
+                preparedStmtArgList.add(Types.DOUBLE);
+
             }
 
             return query.toString();
@@ -64,16 +71,16 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addCriteriaToQuery(AdvocateClerkSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList) {
+    private void addCriteriaToQuery(AdvocateClerkSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
         boolean hasPreviousClause = false;
 
-        hasPreviousClause = addSingleCriteria(criteria.getId(), "advc.id", query, preparedStmtList, hasPreviousClause);
-        hasPreviousClause = addSingleCriteria(criteria.getStateRegnNumber(), "advc.stateregnnumber", query, preparedStmtList, hasPreviousClause);
-        hasPreviousClause = addSingleCriteria(criteria.getApplicationNumber(), "advc.applicationNumber", query, preparedStmtList, hasPreviousClause);
-        addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, hasPreviousClause);
+        hasPreviousClause = addSingleCriteria(criteria.getId(), "advc.id", query, preparedStmtList, preparedStmtArgList,hasPreviousClause);
+        hasPreviousClause = addSingleCriteria(criteria.getStateRegnNumber(), "advc.stateregnnumber", query, preparedStmtList, preparedStmtArgList,hasPreviousClause);
+        hasPreviousClause = addSingleCriteria(criteria.getApplicationNumber(), "advc.applicationNumber", query, preparedStmtList,preparedStmtArgList, hasPreviousClause);
+        addSingleCriteria(criteria.getIndividualId(), "advc.individualId", query, preparedStmtList, preparedStmtArgList,hasPreviousClause);
     }
 
-    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList, boolean hasPreviousClause) {
+    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, boolean hasPreviousClause) {
         if (value != null && !value.isEmpty()) {
             if (hasPreviousClause) {
                 query.append(" AND ");
@@ -83,12 +90,13 @@ public class AdvocateClerkQueryBuilder {
             }
             query.append(column).append(" = ? ");
             preparedStmtList.add(value);
+            preparedStmtArgList.add(Types.VARCHAR);
         }
         return hasPreviousClause;
     }
 
 
-    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -98,12 +106,14 @@ public class AdvocateClerkQueryBuilder {
                 query.append("LOWER(advc.status) = LOWER(?)")
                         .append(")");
                 preparedStmtList.add(status.toLowerCase());
+                preparedStmtArgList.add(Types.VARCHAR);
             }
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
                 query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
+                preparedStmtArgList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
@@ -112,7 +122,11 @@ public class AdvocateClerkQueryBuilder {
             if (limit != null && offset != null) {
                 query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
+                preparedStmtArgList.add(Types.DOUBLE);
+
                 preparedStmtList.add(offset);
+                preparedStmtArgList.add(Types.DOUBLE);
+
             }
 
             return query.toString();
@@ -123,7 +137,7 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -133,12 +147,14 @@ public class AdvocateClerkQueryBuilder {
                 query.append("LOWER(advc.applicationnumber) = LOWER(?)")
                         .append(")");
                 preparedStmtList.add(applicationNumber.toLowerCase());
+                preparedStmtArgList.add(Types.VARCHAR);
             }
 
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, preparedStmtList);
                 query.append(ADV_TENANT_ID_QUERY);
                 preparedStmtList.add(tenantId.toLowerCase());
+                preparedStmtArgList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
@@ -147,7 +163,11 @@ public class AdvocateClerkQueryBuilder {
             if (limit != null && offset != null) {
                 query.append(LIMIT_OFFSET);
                 preparedStmtList.add(limit);
+                preparedStmtArgList.add(Types.DOUBLE);
+
                 preparedStmtList.add(offset);
+                preparedStmtArgList.add(Types.DOUBLE);
+
             }
 
             return query.toString();
@@ -187,7 +207,7 @@ public class AdvocateClerkQueryBuilder {
      * @param preparedStmtList
      * @return
      */
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -196,6 +216,7 @@ public class AdvocateClerkQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
             }
 
             return query.toString();

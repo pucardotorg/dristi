@@ -34,7 +34,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -83,7 +83,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -101,7 +101,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -124,7 +124,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -142,7 +142,7 @@ import static org.mockito.Mockito.doThrow;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -164,7 +164,7 @@ import static org.mockito.Mockito.doThrow;
 
         String expectedQuery = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc ORDER BY advc.createdtime DESC  LIMIT ? OFFSET ?";
 
-        String actualQuery = queryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList, tenantId, limit, offset);
+        String actualQuery = queryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(List.of(10, 0), preparedStmtList);
@@ -184,11 +184,11 @@ import static org.mockito.Mockito.doThrow;
 
         doThrow(new CustomException("Error", "Simulated Exception"))
                 .when(queryBuilder)
-                .getAdvocateClerkSearchQuery(any(), any(), any(),any(),any());
+                .getAdvocateClerkSearchQuery(any(), any(), any(),any(),any(),any());
 
         // Act and Assert
         CustomException thrown = assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
 
         assertEquals("Error", thrown.getCode());
@@ -201,7 +201,7 @@ import static org.mockito.Mockito.doThrow;
 
         String expectedQuery = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id  FROM dristi_document doc WHERE doc.clerk_id IN (?,?)";
 
-        String actualQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String actualQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(List.of("clerk1", "clerk2"), preparedStmtList);
@@ -213,7 +213,7 @@ import static org.mockito.Mockito.doThrow;
 
         String expectedQuery = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id  FROM dristi_document doc";
 
-        String actualQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String actualQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(new ArrayList<>(), preparedStmtList);
@@ -233,7 +233,7 @@ import static org.mockito.Mockito.doThrow;
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
 
@@ -247,7 +247,7 @@ import static org.mockito.Mockito.doThrow;
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+            queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
 
@@ -261,7 +261,7 @@ import static org.mockito.Mockito.doThrow;
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            queryBuilder.getAdvocateClerkSearchQueryByAppNumber(appNumber, preparedStmtList, tenantId, limit, offset);
+            queryBuilder.getAdvocateClerkSearchQueryByAppNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
 
@@ -272,7 +272,7 @@ import static org.mockito.Mockito.doThrow;
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+            queryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
         });
     }
     @Test

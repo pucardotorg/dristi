@@ -33,7 +33,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -58,7 +58,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -78,7 +78,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -96,7 +96,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -117,7 +117,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -135,7 +135,7 @@ class AdvocateQueryBuilderTest {
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -151,7 +151,7 @@ class AdvocateQueryBuilderTest {
         List<String> ids = List.of("doc1", "doc2");
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
 
         assertNotNull(query);
         assertTrue(query.contains("WHERE doc.advocateid IN (?,?)"));
@@ -166,7 +166,7 @@ class AdvocateQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+            advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,new ArrayList<>());
         });
     }
 
@@ -184,7 +184,7 @@ class AdvocateQueryBuilderTest {
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+            advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
 
@@ -198,7 +198,7 @@ class AdvocateQueryBuilderTest {
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+            advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
 
@@ -212,7 +212,7 @@ class AdvocateQueryBuilderTest {
 
         // Act and Assert
         assertThrows(CustomException.class, () -> {
-            advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, tenantId, limit, offset);
+            advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList,new ArrayList<>(), tenantId, limit, offset);
         });
     }
     @Test

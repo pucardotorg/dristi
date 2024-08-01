@@ -42,9 +42,10 @@ public class AdvocateClerkRepository {
             List<AdvocateClerk> advocateClerkList = new ArrayList<>();
             for (AdvocateClerkSearchCriteria advocateSearchCriteria : searchCriteria) {
                 List<Object> preparedStmtList = new ArrayList<>();
-                String query = queryBuilder.getAdvocateClerkSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
+                List<Integer> preparedStmtArgList = new ArrayList<>();
+                String query = queryBuilder.getAdvocateClerkSearchQuery(advocateSearchCriteria, preparedStmtList, preparedStmtArgList,tenantId, limit, offset);
                 log.info(FINAL_QUERY, query);
-                List<AdvocateClerk> processedList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+                List<AdvocateClerk> processedList = jdbcTemplate.query(query, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
                 if (processedList != null) {
                     advocateSearchCriteria.setResponseList(processedList);
                     fetchDocumentsForAdvocateClerks(processedList);
@@ -63,9 +64,10 @@ public class AdvocateClerkRepository {
     public List<AdvocateClerk> getApplicationsByStatus(String status, String tenantId, Integer limit, Integer offset) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+            String query = queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList,preparedStmtArgList, tenantId, limit, offset);
             log.info(FINAL_QUERY, query);
-            List<AdvocateClerk> advocateClerkList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            List<AdvocateClerk> advocateClerkList = jdbcTemplate.query(query, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             if (!advocateClerkList.isEmpty()) {
                 fetchDocumentsForAdvocateClerks(advocateClerkList);
             }
@@ -81,9 +83,10 @@ public class AdvocateClerkRepository {
     public List<AdvocateClerk> getApplicationsByAppNumber(String applicationNumber, String tenantId, Integer limit, Integer offset) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+            String query = queryBuilder.getAdvocateClerkSearchQueryByAppNumber(applicationNumber, preparedStmtList, preparedStmtArgList,tenantId, limit, offset);
             log.info(FINAL_QUERY, query);
-            List<AdvocateClerk> advocateClerkList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            List<AdvocateClerk> advocateClerkList = jdbcTemplate.query(query, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             if (!advocateClerkList.isEmpty()) {
                 fetchDocumentsForAdvocateClerks(advocateClerkList);
             }
@@ -103,9 +106,10 @@ public class AdvocateClerkRepository {
         }
         if (!ids.isEmpty()) {
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            List<Integer> preparedStmtArgListDoc = new ArrayList<>();
+            String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgListDoc);
             log.info(FINAL_QUERY_DOCUMENT, advocateDocumentQuery);
-            Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(),documentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateClerkList.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
             }
