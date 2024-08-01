@@ -231,7 +231,7 @@ const HomeView = () => {
           );
         } else if (row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
           history.push(
-            `/${window?.contextPath}/${userInfoType}/dristi/admission?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}`
+            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaints`
           );
         } else {
           history.push(
