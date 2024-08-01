@@ -7,11 +7,36 @@ import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
+import TasksComponent from "../../components/TaskComponentCalander";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
   const history = useHistory();
+  const location = useLocation();
+  const { state } = location;
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  const [taskType, setTaskType] = useState(state?.taskType || {});
+  const [caseType, setCaseType] = useState(state?.caseType || {});
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "Home",
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
+  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData?.Individual,
+  ]);
 
   const [dateRange, setDateRange] = useState({});
 
@@ -58,6 +83,10 @@ const MonthlyCalendar = () => {
 
     return dateTimeObject;
   }
+
+  useEffect(() => {
+    state && state.taskType && setTaskType(state.taskType);
+  }, [state]);
 
   const Calendar_events = useMemo(() => {
     const calendarEvents = {};
@@ -126,25 +155,38 @@ const MonthlyCalendar = () => {
   );
 
   return (
-    <div>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          start: "prev",
-          center: "title",
-          end: "next, dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        height={"85vh"}
-        events={Calendar_events}
-        eventContent={(arg) => {
-          return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
-        }}
-        eventClick={handleEventClick}
-        datesSet={(dateInfo) => {
-          setDateRange({ start: dateInfo.start, end: dateInfo.end });
-        }}
-      />
+    <div style={{ display: "flex", width: "100%" }}>
+      <div style={{ flexGrow: 1 }}>
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          headerToolbar={{
+            start: "prev",
+            center: "title",
+            end: "next, dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          height={"85vh"}
+          events={Calendar_events}
+          eventContent={(arg) => {
+            return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
+          }}
+          eventClick={handleEventClick}
+          datesSet={(dateInfo) => {
+            setDateRange({ start: dateInfo.start, end: dateInfo.end });
+          }}
+        />
+      </div>
+      <div style={{ flexBasis: "380px", maxWidth: "380px" }}>
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          caseType={caseType}
+          setCaseType={setCaseType}
+          isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+        />
+      </div>
 
       {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
     </div>
