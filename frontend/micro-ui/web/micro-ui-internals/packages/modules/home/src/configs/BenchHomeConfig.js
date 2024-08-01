@@ -121,7 +121,8 @@ export const TabBenchSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "",
+              stage: [],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -241,7 +242,8 @@ export const TabBenchSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Trial",
+              stage: ["Trial"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -361,7 +363,8 @@ export const TabBenchSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
@@ -499,7 +502,8 @@ export const TabBenchSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: "Post-Trial",
+              stage: ["Post-Trial"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },

@@ -40,7 +40,9 @@ const HomeView = () => {
   const [callRefetch, SetCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
-  const [taskType, setTaskType] = useState(state?.taskType || { code: "case", name: "Case" });
+  const [taskType, setTaskType] = useState(state?.taskType || {});
+  const [caseType, setCaseType] = useState(state?.caseType || {});
+
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const isCourtRoomRole = useMemo(() => roles?.some((role) => role?.code === "COURT_ADMIN"), [roles]);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
@@ -322,6 +324,8 @@ const HomeView = () => {
             <TasksComponent
               taskType={taskType}
               setTaskType={setTaskType}
+              caseType={caseType}
+              setCaseType={setCaseType}
               isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
               uuid={userInfo?.uuid}
               userInfoType={userInfoType}

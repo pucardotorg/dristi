@@ -725,9 +725,9 @@ export const UICustomizations = {
                         code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
-                      originalHearingDate: `${date.getFullYear()}-${
-                        date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-                      }-${date.getDate()}`,
+                      originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                      }`,
                     },
                   },
                 },
@@ -778,7 +778,7 @@ export const UICustomizations = {
             label: "Request for Reschedule hearing",
             id: "reschedule",
             action: (history) => {
-              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}`);
+              history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}`);
             },
           },
           {
@@ -866,7 +866,7 @@ export const UICustomizations = {
               });
               // console.log(evidenceHistory, "evidenceHistory");
               const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
-                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: "", date: hearing.startTime, status: hearing.status };
+                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
               });
               // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
@@ -875,7 +875,7 @@ export const UICustomizations = {
                     .map((order) => {
                       return {
                         instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                        stage: "",
+                        stage: [],
                         date: order.order.auditDetails.createdTime,
                         status: order.order.status,
                       };
@@ -883,7 +883,7 @@ export const UICustomizations = {
                 : data.caseFiles[0]?.orders.map((order) => {
                     return {
                       instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
-                      stage: "",
+                      stage: [],
                       date: order.order.auditDetails.createdTime,
                       status: order.order.status,
                     };

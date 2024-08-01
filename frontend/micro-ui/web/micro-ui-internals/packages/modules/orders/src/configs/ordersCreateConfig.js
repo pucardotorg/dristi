@@ -1088,7 +1088,7 @@ export const configsRejectRescheduleHeadingDate = [
       },
       {
         label: "ORIGINAL_HEARING_DATE",
-        isMandatory: false,
+        isMandatory: true,
         key: "originalHearingDate",
         disable: true,
         type: "date",
