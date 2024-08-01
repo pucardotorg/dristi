@@ -131,7 +131,7 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addAdvocateCriteria(criteria,preparedStmtList, preparedStmtArgList, requestInfo, query, firstCriteria);
 
-                firstCriteria = addCriteria(criteria.getStatus(), query, firstCriteria, "cases.status = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addListCriteria(criteria.getStatus(), query, firstCriteria, "cases.status", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
                 firstCriteria = addFilingDateCriteria(criteria, firstCriteria, query);
 
