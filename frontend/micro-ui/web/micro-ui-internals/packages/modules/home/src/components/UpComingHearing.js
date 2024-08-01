@@ -212,6 +212,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     return <Loader />;
   }
 
+  if (!latestHearing) {
+    return <div>{t("NO_HEARINGS_SCHEDULED")}</div>;
+  }
+
   const hearingSearchParams = new URLSearchParams();
   hearingSearchParams.set("from-date", dateRange.start);
   hearingSearchParams.set("to-date", dateRange.end);
