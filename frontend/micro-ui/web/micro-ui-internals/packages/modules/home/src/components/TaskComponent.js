@@ -139,7 +139,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           auditDetails: applicationDetails?.auditDetails,
         },
         applicationContent: null,
-        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        comments: applicationDetails?.comment ? applicationDetails?.comment : [],
         applicationList: applicationDetails,
       };
 
@@ -162,7 +162,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
             documentUid: doc.documentUid,
             additionalDetails: doc.additionalDetails,
           },
-          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          comments: applicationDetails?.comment ? applicationDetails?.comment : [],
           applicationList: applicationDetails,
         };
       }) || [defaultObj];

@@ -15,6 +15,8 @@ export const applicationTypeConfig = [
             moduleName: "Order",
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
+            select:
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },
@@ -492,7 +494,12 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "documentName",
         type: "text",
-        populators: { name: "documentName" },
+        populators: {
+          name: "documentName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+        },
       },
       {
         label: "SUBMISSION_PARTY",
@@ -575,6 +582,7 @@ export const configsOrderMandatorySubmissions = [
       {
         label: "IS_RESPONSE_REQUIRED",
         key: "isResponseRequired",
+        isMandatory: true,
         type: "radio",
         populators: {
           name: "isResponseRequired",
@@ -625,7 +633,7 @@ export const configsOrderMandatorySubmissions = [
       },
       {
         label: "RESPONSE_DEADLINE",
-        isMandatory: true,
+        isMandatory: false,
         key: "responseDeadline",
         type: "date",
         labelChildren: "OutlinedInfoIcon",

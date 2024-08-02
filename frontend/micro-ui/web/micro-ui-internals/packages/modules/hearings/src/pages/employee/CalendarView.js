@@ -7,10 +7,10 @@ import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
-import TasksComponent from "../../../../home/src/components/TaskComponent";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { ReschedulingPurpose } from "./ReschedulingPurpose";
+import TasksComponent from "../../components/TaskComponentCalander";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
@@ -26,13 +26,29 @@ const MonthlyCalendar = () => {
   const { data: courtData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
     cacheTime: 0,
   });
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "Home",
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
+  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData?.Individual,
+  ]);
 
   const [dateRange, setDateRange] = useState({});
   const [taskType, setTaskType] = useState({});
   const [caseType, setCaseType] = useState({});
-
-  const userInfo = Digit.UserService.getUser()?.info;
-  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const initial = userInfoType === "citizen" ? "timeGridDay" : "dayGridMonth";
 
   const search = window.location.search;

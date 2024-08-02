@@ -47,7 +47,7 @@ export const applicationTypeConfig = [
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
             select:
-              "(data) => {return data['Application'].ApplicationType?.map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
         },
       },

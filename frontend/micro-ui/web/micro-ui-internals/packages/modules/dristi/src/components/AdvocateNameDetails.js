@@ -74,7 +74,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   const isApprovalPending = useMemo(() => {
     return (
-      userType !== "LITIGANT" &&
+      userType !== "LITIGANT" && userType !== "ADVOCATE_CLERK" &&
       Array.isArray(searchResult) &&
       searchResult?.length > 0 &&
       searchResult?.[0]?.isActive === false &&
