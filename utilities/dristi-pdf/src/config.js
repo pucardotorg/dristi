@@ -28,6 +28,13 @@ module.exports = {
 
   pdf: {
     issue_of_summon: process.env.PROJECT_DETAILS_TEMPLATE || "summons-issue-qr",
+    reschedule_request_judge:"reschedule-request-judge",
+    new_hearing_date_after_reschedule: "new-hearing-date-after-rescheduling",
+    schedule_hearing_date: "schedule-hearing-date",
+    accept_rescheduling_request: "accept-reschedule-request",
+    reject_rescheduling_request:"reject-reschedule-request",
+    accept_adr_application : "accept-adr-application",
+    reject_adr_application: "reject-adr-application"
   },
 
   app: {
@@ -37,15 +44,17 @@ module.exports = {
   },
 
   host: {
-    mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8081',
+    mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8071',
     pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8070',
     user: process.env.EGOV_USER_HOST || HOST,
-    case: process.env.DRISTI_CASE_HOST || 'http://localhost:8091',
-    order: process.env.DRISTI_ORDER_HOST || 'http://localhost:8092',
-    hrms: process.env.EGOV_HRMS_HOST || 'http://localhost:8082',
-    individual: process.env.EGOV_INDIVIDUAL_HOST || 'http://localhost:8085',
-    hearing: process.env.DRISTI_HEARING_HOST || 'http://localhost:8093',
-    sunbirdrc_credential_service: process.env.EGOV_SUNBIRDRC_CREDENTIAL_HOST || 'http://localhost:8095',
+    case:'http://localhost:8092',
+    order: 'http://localhost:8091',
+    hrms:'http://localhost:8082',
+    individual: 'http://localhost:8085',
+    hearing: 'http://localhost:8093',
+    application: 'http://localhost:8081',
+    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8083',
+    filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8084',
   },
 
   paths: {
@@ -54,6 +63,7 @@ module.exports = {
     order_search: "/order/v1/search",
     hearing_search: "/hearing/v1/search",
     hrms_search:"/egov-hrms/employees/_search",
+    application_search: "/application/v1/search",
     individual_search:"/individual/v1/_search",
     mdms_search: "/egov-mdms-service/v2/_search",
     sunbirdrc_credential_service_search: "/sunbirdrc-credential-service/qrcode/_get",

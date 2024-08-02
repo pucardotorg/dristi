@@ -6,6 +6,13 @@ var logger = require("morgan");
 var config = require("./config");
 
 const issueOfSummon = require("./routes/issueOfSummon");
+const rescheduleRequestJudge = require("./routes/rescheduleRequestJudge");
+const newHearingDateAfterReschedule = require("./routes/newHearingDateAfterRescheduling");
+const scheduleHearingDate =require("./routes/scheduleHearingDate");
+const acceptReschedulingRequest=require("./routes/acceptReschedulingRequest");
+const rejectReschedulingRequest=require("./routes/rejectReschedulingRequest");
+const acceeptAdrApplication = require("./routes/acceptAdrApplication");
+const rejectAdrApplication = require("./routes/rejectAdrApplication");
 
 
 
@@ -28,6 +35,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(config.app.contextPath + "/download/issueOfSummon", issueOfSummon);
+app.use(config.app.contextPath + "/download/rescheduleRequestJudge", rescheduleRequestJudge);
+app.use(config.app.contextPath + "/download/newHearingDateAfterReschedule", newHearingDateAfterReschedule);
+app.use(config.app.contextPath + "/download/scheduleHearingDate", scheduleHearingDate);
+app.use(config.app.contextPath + "/download/acceptReschedulingRequest", acceptReschedulingRequest);
+app.use(config.app.contextPath + "/download/rejectReschedulingRequest", rejectReschedulingRequest);
+app.use(config.app.contextPath + "/download/acceeptAdrApplication", acceeptAdrApplication);
+app.use(config.app.contextPath + "/download/rejectAdrApplication", rejectAdrApplication);
 
 
 
