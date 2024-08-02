@@ -326,7 +326,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: respondants,
+                    options: [...complainants, ...respondants],
                   },
                 };
               }
