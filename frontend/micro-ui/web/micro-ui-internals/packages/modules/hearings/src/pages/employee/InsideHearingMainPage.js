@@ -1,5 +1,5 @@
 import { Button, TextArea } from "@egovernments/digit-ui-components";
-import { ActionBar, Card } from "@egovernments/digit-ui-react-components";
+import { ActionBar, Card, CardLabel, Dropdown, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import debounce from "lodash/debounce";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -181,9 +181,9 @@ const InsideHearingMainPage = () => {
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
 
   return (
-    <div style={{ display: "flex" }}>
-      <Card>
-        <div style={{ border: "1px", padding: "40px, 40px", gap: "32px" }}>
+    <div className="admitted-case" style={{ display: "flex" }}>
+      <div className="left-side" style={{ padding: "24px 40px" }}>
+        <React.Fragment>
           <EvidenceHearingHeader
             caseData={caseData}
             hearing={hearing}
@@ -192,14 +192,26 @@ const InsideHearingMainPage = () => {
             filingNumber={filingNumber}
             onAddParty={onClickAddWitness}
           ></EvidenceHearingHeader>
-        </div>
+        </React.Fragment>
         {activeTab === "Witness Deposition" && (
           <div style={{ width: "100%", marginTop: "15px", marginBottom: "10px" }}>
-            <label htmlFor="dropdown">Select Witness</label>
+            <LabelFieldPair className="case-label-field-pair">
+              <CardLabel className="case-input-label">{`Select Witness`}</CardLabel>
+              <Dropdown
+                option={options}
+                // selected={party}
+                optionKey={"label"}
+                onChange={handleDropdownChange}
+                freeze={true}
+                disable={false}
+                style={{ width: "100%", height: "40px", fontSize: "16px" }}
+              />
+            </LabelFieldPair>
+            {/* <label htmlFor="dropdown">Select Witness</label>
             <select
               id="dropdown"
               onChange={handleDropdownChange}
-              style={{ width: "940px", height: "40px", border: "1px solid #3D3C3C", fontSize: "16px" }}
+              style={{ width: "100%", height: "40px", border: "1px solid #3D3C3C", fontSize: "16px" }}
               // disabled={!checkUserApproval("HEARING_SCHEDULER")} // Disable if user doesn't have approval
             >
               {options.map((option) => (
@@ -207,7 +219,7 @@ const InsideHearingMainPage = () => {
                   &nbsp;{option.label}
                 </option>
               ))}
-            </select>
+            </select> */}
             <div style={{ width: "151px", height: "19px", fontSize: "13px", color: "#007E7E", marginTop: "2px" }}>
               <button
                 style={{
@@ -302,11 +314,11 @@ const InsideHearingMainPage = () => {
             </div>
           )}
         </div>
-      </Card>
-      <Card>
+      </div>
+      <div className="right-side">
         <HearingSideCard hearingId={hearingId} caseId={caseData?.criteria?.[0]?.responseList?.[0]?.id} filingNumber={filingNumber}></HearingSideCard>
         {adjournHearing && <AdjournHearing hearing={hearing} tenantID={tenantId} />}
-      </Card>
+      </div>
       <ActionBar>
         <div
           style={{
