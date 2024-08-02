@@ -34,6 +34,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.cnrNumber
               - inJsonPath: $.orderCategory
                 outJsonPath: $.Data.orderDetails.orderCategory
+              - inJsonPath: $.orderDetails
+                outJsonPath: $.Data.orderDetails.orderDetails
               - inJsonPath: $.createdDate
                 outJsonPath: $.Data.orderDetails.createdDate
               - inJsonPath: $.status
@@ -48,6 +50,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.issuedBy
               - inJsonPath: $.isActive
                 outJsonPath: $.Data.orderDetails.isActive
+              - inJsonPath: $.workflow
+                outJsonPath: $.Data.orderDetails.workflow
               - inJsonPath: $.auditDetails.createdBy
                 outJsonPath: $.Data.orderDetails.createdBy
               - inJsonPath: $.auditDetails.lastModifiedBy
@@ -101,6 +105,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.orderType
               - inJsonPath: $.orderCategory
                 outJsonPath: $.Data.orderDetails.orderCategory
+              - inJsonPath: $.orderDetails
+                outJsonPath: $.Data.orderDetails.orderDetails
               - inJsonPath: $.createdDate
                 outJsonPath: $.Data.orderDetails.createdDate
               - inJsonPath: $.status
@@ -115,6 +121,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.issuedBy
               - inJsonPath: $.isActive
                 outJsonPath: $.Data.orderDetails.isActive
+              - inJsonPath: $.workflow
+                outJsonPath: $.Data.orderDetails.workflow
               - inJsonPath: $.auditDetails.createdBy
                 outJsonPath: $.Data.orderDetails.createdBy
               - inJsonPath: $.auditDetails.lastModifiedBy
