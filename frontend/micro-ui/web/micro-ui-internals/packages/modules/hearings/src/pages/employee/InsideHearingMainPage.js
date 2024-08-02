@@ -10,6 +10,7 @@ import EndHearing from "./EndHearing";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
 import MarkAttendance from "./MarkAttendance";
+import { useTranslation } from "react-i18next";
 
 const SECOND = 1000;
 
@@ -32,6 +33,7 @@ const InsideHearingMainPage = () => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId } = Digit.Hooks.useQueryParams();
   const [filingNumber, setFilingNumber] = useState("");
+  const { t } = useTranslation();
 
   const onCancel = () => {
     setAddPartyModal(false);
@@ -41,14 +43,14 @@ const InsideHearingMainPage = () => {
     setAddPartyModal(true);
   };
 
+  const userType = Digit?.UserService?.getType?.();
+
   if (!hearingId) {
     const contextPath = window?.contextPath || "";
-    history.push(`/${contextPath}/employee/hearings/home`);
+    history.push(`/${contextPath}/${userType}/home/pending-task`);
   }
 
-  const userDetails = JSON.parse(localStorage.getItem("user-info"));
-  const userRoles = userDetails.roles;
-  const userType = userDetails.type === "CITIZEN" ? "citizen" : "employee";
+  const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
 
   const userHasRole = (userRole) => {
     return userRoles.some((role) => role.code === userRole);
@@ -73,10 +75,10 @@ const InsideHearingMainPage = () => {
     10 * SECOND
   );
 
-  const { mutate: _updateTranscriptRequest } = Digit.Hooks.useCustomAPIMutationHook({
+  const { mutateAsync: _updateTranscriptRequest } = Digit.Hooks.useCustomAPIMutationHook({
     url: Urls.hearing.hearingUpdate,
     params: { applicationNumber: "", cnrNumber: "" },
-    body: { tenantId, hearing, hearingType: "", status: "" },
+    body: { tenantId, hearingType: "", status: "" },
     config: {
       mutationKey: "updateTranscript",
     },
@@ -84,7 +86,7 @@ const InsideHearingMainPage = () => {
 
   const updateTranscriptRequest = useMemo(() => debounce(_updateTranscriptRequest, 1000), [_updateTranscriptRequest]);
 
-  const { data: caseDataResponse } = Digit.Hooks.dristi.useSearchCaseService(
+  const { data: caseDataResponse, refetch: refetchCase } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -118,15 +120,16 @@ const InsideHearingMainPage = () => {
       const responseList = caseDataResponse?.criteria?.[0]?.responseList?.[0];
       setAdditionalDetails(responseList?.additionalDetails);
       setOptions(
-        responseList?.additionalDetails?.witnessDetails?.formdata?.map((data) => ({
-          label: `${data.data.firstName} ${data.data.lastName}`,
-          value: `${data.data.firstName} ${data.data.lastName}`,
+        responseList?.additionalDetails?.witnessDetails?.formdata?.map((witness) => ({
+          label: `${witness.data.firstName} ${witness.data.lastName}`,
+          value: witness.data.uuid,
         }))
       );
-      setSelectedWitness(responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {});
-      setWitnessDepositionText(responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data?.deposition || "");
+      const selectedWitness = responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {};
+      setSelectedWitness(selectedWitness);
+      setWitnessDepositionText(hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition);
     }
-  }, [caseDataResponse]);
+  }, [caseDataResponse, hearing]);
 
   const handleModal = () => {
     setIsOpen(!isOpen);
@@ -138,40 +141,59 @@ const InsideHearingMainPage = () => {
       setWitnessDepositionText(newText);
     } else {
       setTranscriptText(newText);
-      setHearing((prevHearing) => {
-        if (Object.keys(prevHearing).length === 0) {
-          console.warn("Hearing object is empty");
-          return prevHearing;
-        }
 
-        const updatedHearing = structuredClone(prevHearing);
+      if (Object.keys(hearing).length === 0) {
+        console.warn("Hearing object is empty");
+        return hearing;
+      }
 
-        if (activeTab === "Witness Deposition") {
-          if (!updatedHearing?.additionalDetails?.witnesses) {
-            updatedHearing.additionalDetails.witnesses = [];
-          }
-          const newWitness = {
-            uuid: selectedWitness?.data?.uuid,
-            name: selectedWitness?.data?.name,
-            depositionText: newText,
-          };
-          updatedHearing.additionalDetails.witnesses.push(newWitness);
-        } else {
-          updatedHearing.transcript[0] = newText;
+      const updatedHearing = structuredClone(hearing);
+
+      if (activeTab === "Witness Deposition") {
+        if (!updatedHearing?.additionalDetails?.witnesses) {
+          updatedHearing.additionalDetails.witnesses = [];
         }
-        if (userHasRole("EMPLOYEE") || userHasRole("JUDGE")) {
-          updateTranscriptRequest(updatedHearing);
-        }
-        return updatedHearing;
-      });
+        const newWitness = {
+          uuid: selectedWitness?.data?.uuid,
+          name: selectedWitness?.data?.name,
+          depositionText: newText,
+        };
+        updatedHearing.additionalDetails.witnesses.push(newWitness);
+      } else {
+        updatedHearing.transcript[0] = newText;
+      }
+      if (userHasRole("EMPLOYEE")) {
+        updateTranscriptRequest({ body: { hearing: updatedHearing } });
+      }
     }
   };
 
+  const isDepositionSaved = Boolean(
+    hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition
+  );
+
+  const saveWitnessDeposition = () => {
+    const updatedHearing = structuredClone(hearing);
+    updatedHearing.additionalDetails = updatedHearing.additionalDetails || {};
+    updatedHearing.additionalDetails.witnessDepositions = updatedHearing.additionalDetails.witnessDepositions || [];
+    if (isDepositionSaved) {
+      return;
+    }
+    updatedHearing.additionalDetails.witnessDepositions.push({
+      ...selectedWitness,
+      deposition: witnessDepositionText,
+    });
+    _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then(console.debug);
+  };
+
   const handleDropdownChange = (event) => {
-    const selectedName = event.target.value;
-    const selectedWitness = additionalDetails?.witnessDetails?.formdata?.find((w) => w.data.name === selectedName);
+    const selectedUUID = event.target.value;
+    const selectedWitness = additionalDetails?.witnessDetails?.formdata?.find((w) => w.data.uuid === selectedUUID)?.data || {};
     setSelectedWitness(selectedWitness);
-    setWitnessDepositionText(selectedWitness?.data?.deposition || "");
+    console.debug(hearing, selectedWitness);
+    setWitnessDepositionText(
+      hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition || ""
+    );
   };
 
   const handleEndHearingModal = () => {
@@ -229,19 +251,19 @@ const InsideHearingMainPage = () => {
         )}
         <div style={{ padding: "40px, 40px", gap: "16px" }}>
           <div style={{ minWidth: "940px", minHeight: "277px", gap: "16px", border: "1px solid", marginTop: "2px" }}>
-            {userHasRole("EMPLOYEE") || userHasRole("JUDGE") ? (
+            {userHasRole("EMPLOYEE") ? (
               <TextArea
                 ref={textAreaRef}
                 style={{ minWidth: "940px", minHeight: "453px" }}
                 value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
                 onChange={handleChange}
-                disabled={selectedWitness.isSigned}
+                disabled={activeTab === "Witness Deposition" && isDepositionSaved}
               />
             ) : (
               <TextArea
                 style={{ minWidth: "940px", minHeight: "453px", cursor: "default", backgroundColor: "#E8E8E8", color: "#3D3C3C" }}
                 value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
-                readOnly
+                disabled
               />
             )}
           </div>
@@ -249,56 +271,13 @@ const InsideHearingMainPage = () => {
         <div style={{ marginTop: "10px", marginBottom: "50px" }}>
           {activeTab === "Witness Deposition" && (
             <div>
-              {selectedWitness.isSigned ? (
-                <div
-                  style={{
-                    marginTop: "10px",
-                    color: "#007E7E",
-                    fontWeight: "bold",
-                    width: "180px",
-                    height: "24px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    <circle cx="12" cy="12" r="12" fill="#007E7E" />
-                    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  Signature Added
-                </div>
-              ) : (
-                <button
-                  style={{
-                    border: "1px solid #007E7E",
-                    backgroundColor: userHasRole("CASE_VIEWER") ? "#FFFFFF" : "#E0E0E0",
-                    color: userHasRole("CASE_VIEWER") ? "#007E7E" : "#A0A0A0",
-                    fontWeight: 700,
-                    padding: "8px 24px 8px 24px",
-                    cursor: userHasRole("CASE_VIEWER") ? "pointer" : "default",
-                    display: "inline-block",
-                    fontSize: "16px",
-                    width: "175px",
-                    height: "40px",
-                    marginTop: "10px",
-                  }}
-                  disabled={!userHasRole("CASE_VIEWER")}
-                  // onClick={() => console.log(witnessDepositionText)}  // for modal for add signature
-                >
-                  Add Signature
-                </button>
-              )}
+              <Button
+                label={t("SAVE_WITNESS_DEPOSITION")}
+                isDisabled={isDepositionSaved}
+                onClick={() => {
+                  saveWitnessDeposition();
+                }}
+              ></Button>
             </div>
           )}
         </div>
@@ -376,7 +355,15 @@ const InsideHearingMainPage = () => {
 
       <div>
         {addPartyModal && (
-          <AddParty onCancel={onCancel} onDismiss={onCancel} caseData={caseData} tenantId={tenantId} hearingId={hearingId}></AddParty>
+          <AddParty
+            onCancel={onCancel}
+            onAddSuccess={() => {
+              refetchCase();
+            }}
+            caseData={caseData}
+            tenantId={tenantId}
+            hearingId={hearingId}
+          ></AddParty>
         )}
       </div>
       {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} hearing={hearing} />}
