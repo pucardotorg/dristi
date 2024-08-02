@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 import { ReschedulingPurpose } from "./ReschedulingPurpose";
 import TasksComponent from "../../components/TaskComponentCalander";
 
-const tenantId = window.localStorage.getItem("tenant-id");
+const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
 const MonthlyCalendar = () => {
   const history = useHistory();
