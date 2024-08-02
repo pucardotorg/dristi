@@ -1,7 +1,13 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { hearingService } from "../../../../hearings/src/hooks/services/index";
+import { useTranslation } from "react-i18next";
 
-const AddAttendees = ({ attendees = [], setAddPartyModal, handleModal, formError, form, setForm, setIsDisabled }) => {
+const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
+  const [formError, setFormError] = useState("");
+  const { t } = useTranslation();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);

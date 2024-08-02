@@ -9,7 +9,7 @@ import MonthlyCalendar from "./pages/employee/CalendarView";
 export const HearingsModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["hearings", "common", "workflow"];
+  const moduleCode = ["hearings", "case", "common", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,

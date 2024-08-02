@@ -1,9 +1,9 @@
 import { FormComposerV2 } from "@egovernments/digit-ui-components";
-import { Modal } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import NextHearingModal from "../../components/NextHearingModal";
 import SummaryModal from "../../components/SummaryModal";
+import Modal from "@egovernments/digit-ui-module-dristi/src/components/Modal";
 
 const AdjournHearing = (props) => {
   const { hearing } = props;
@@ -101,9 +101,9 @@ const AdjournHearing = (props) => {
     <div>
       {stepper === 1 && (
         <Modal
-          headerBarMain={<Heading label={"Are you sure you wish to adjourn this hearing?"} />}
+          headerBarMain={<Heading label={"ARE_SURE_ADJOURN_HEARING"} />}
           headerBarEnd={<CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />}
-          actionSaveLabel="Adjourn Hearing"
+          actionSaveLabel="ADJOURN_HEARING"
           actionSaveOnSubmit={onSubmit}
           style={{ marginTop: "5px" }}
           isDisabled={disable}
