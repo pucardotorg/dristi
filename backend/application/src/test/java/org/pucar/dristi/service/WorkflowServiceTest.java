@@ -21,7 +21,9 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.ApplicationCriteria;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.ApplicationSearchRequest;
 
 
 import java.util.Collections;
@@ -262,5 +264,57 @@ public class WorkflowServiceTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void testGetProcessInstanceForApplicationPayment_ValidBusinessService() {
+        // Arrange
+        String tenantId = "tenant-id";
+        String businessService = "orderSubBusinessService";
+        String businessName = "Order Sub Business";
+        ApplicationSearchRequest updateRequest = new ApplicationSearchRequest();
+        updateRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria criteria = ApplicationCriteria.builder()
+                .applicationNumber("12345")
+                .build();
+        updateRequest.setCriteria(criteria);
 
+        when(config.getAsyncOrderSubBusinessServiceName()).thenReturn("orderSubBusinessService");
+        when(config.getAsyncOrderSubBusinessName()).thenReturn(businessName);
+
+        // Act
+        ProcessInstanceRequest processInstanceRequest = workflowService.getProcessInstanceForApplicationPayment(updateRequest, tenantId, businessService);
+
+        // Assert
+        assertNotNull(processInstanceRequest);
+        assertEquals(1, processInstanceRequest.getProcessInstances().size());
+        ProcessInstance processInstance = processInstanceRequest.getProcessInstances().get(0);
+        assertEquals(businessService, processInstance.getBusinessService());
+        assertEquals(criteria.getApplicationNumber(), processInstance.getBusinessId());
+        assertEquals("Payment for Application processed", processInstance.getComment());
+        assertEquals(businessName, processInstance.getModuleName());
+        assertEquals(tenantId, processInstance.getTenantId());
+        assertEquals("PAY", processInstance.getAction());
+    }
+
+    @Test
+    void testGetProcessInstanceForApplicationPayment_InvalidBusinessService() {
+        // Arrange
+        String tenantId = "tenant-id";
+        String businessService = "invalidBusinessService";
+        ApplicationSearchRequest updateRequest = new ApplicationSearchRequest();
+        updateRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria criteria = ApplicationCriteria.builder()
+                .filingNumber("12345")
+                .build();
+        updateRequest.setCriteria(criteria);
+
+        when(config.getAsyncOrderSubBusinessServiceName()).thenReturn("orderSubBusinessService");
+        when(config.getAsyncOrderSubWithResponseBusinessServiceName()).thenReturn("orderSubWithResponseBusinessService");
+        when(config.getAsyncVoluntarySubBusinessServiceName()).thenReturn("voluntarySubBusinessService");
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () ->
+                workflowService.getProcessInstanceForApplicationPayment(updateRequest, tenantId, businessService)
+        );
+        assertEquals("No business name found for the business service: " + businessService, exception.getMessage());
+    }
 }

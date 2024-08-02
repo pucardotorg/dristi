@@ -69,6 +69,7 @@ public class ServiceUrlEntityRequestService {
                 .respondentName(respondentName)
                 .id(referenceId)
                 .module(vcCredentialRequest.getModuleName())
+                .document(referenceId)
                 .build();
 
     }

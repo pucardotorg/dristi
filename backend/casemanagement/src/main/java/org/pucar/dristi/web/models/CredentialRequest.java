@@ -48,4 +48,8 @@ public class CredentialRequest {
     @Valid
     private String orderPdfSignature;
 
+    @JsonProperty("document")
+    @Valid
+    private String document;
+
 }
