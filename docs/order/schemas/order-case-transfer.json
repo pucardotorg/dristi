@@ -10,13 +10,13 @@
       "description": "alphanumeric string representing the reference application ID"
     },
     "hearingDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of new hearing"
     },
     "originalHearingDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of original nearing"
     }
   }

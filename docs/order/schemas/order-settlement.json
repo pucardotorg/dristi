@@ -10,8 +10,8 @@
       "description": "settlement mechanism"
     },
     "settlementDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of settlement"
     },
     "isSettlementImplemented": {

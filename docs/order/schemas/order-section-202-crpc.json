@@ -18,8 +18,8 @@
       "description": "section of law to FIR"
     },
     "responseRequiredByDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "response required by date"
     }
   }

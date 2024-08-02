@@ -14,8 +14,8 @@
       "description": "name of parties"
     },
     "hearingDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of hearing"
     }
   }

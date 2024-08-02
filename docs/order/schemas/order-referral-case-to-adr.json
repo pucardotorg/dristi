@@ -6,8 +6,8 @@
   "orderDetails":
   {
     "adrMode": {
-      "type" : "string",
-      "description": "mode od ADR"
+      "type" : "integer",
+      "description": "mode od ADR master data ID"
     }
   }
 }

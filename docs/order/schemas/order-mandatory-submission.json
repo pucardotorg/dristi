@@ -5,11 +5,13 @@
   "$version": "0.1.0",
   "orderDetails":
   {
-    "documentType": {
+    "documentType":
+    [{
       "type" : "string",
       "description": "document type"
-    },
-    "documentName": {
+    }],
+    "documentName":
+    {
       "type" : "string",
       "description": "document name"
     },
@@ -19,26 +21,28 @@
     }
   },
   "partyDetails":
-  {
+   {
     "partyToMakeSubmission": {
       "type" : "string",
       "description": "parties to make submission"
     },
-    "partyToRespond": {
+    "partiesToRespond":[
+      {
       "type": "string",
       "description": "parties to response"
-    }
-  },
+      }
+    ]
+   },
   "dates":
   {
     "submissionDeadlineDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "deadline for submission"
     },
     "responseDeadlineDate": {
-      "type": "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "deadline for response"
     }
   }

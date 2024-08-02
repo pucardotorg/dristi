@@ -14,8 +14,8 @@
       "description": "plea details"
     },
     "issueDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of judgement/sentence"
     }
   },
@@ -69,48 +69,48 @@
   "dates":
   {
     "occurrenceDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of cheque return memo"
     },
     "complaintDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of filing of complaint before the court"
     },
     "apprehensionDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of first appearance of the accused/respondent"
     },
     "lastHearingDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of last hearing"
     },
     "bailDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of grant of bail"
     },
     "sentenceDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of sentence order"
     },
     "judgementIssueDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of judgement issue"
     },
     "trailCommencementDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of first hearing"
     },
     "trailClosureDate": {
-      "type" : "string",
-      "format": "date",
+      "type": "integer",
+      "format": "int64",
       "description": "date of last hearing before judgement hearing"
     }
   },
