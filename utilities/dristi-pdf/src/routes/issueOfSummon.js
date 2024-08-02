@@ -4,12 +4,10 @@ const cheerio = require('cheerio');
 const url = require("url");
 const config = require("../config");
 
-const { search_estimateDetails, search_case, search_order, search_hearing, search_mdms_order, search_hrms, search_individual, search_sunbirdrc_credential_service, create_pdf } = require("../api");
+const { search_case, search_order, search_hearing, search_mdms_order, search_hrms, search_individual, search_sunbirdrc_credential_service, create_pdf } = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
-const { pdf } = require("../config");
 const { logger } = require("../logger");
-const { transformIssueOfSummon } = require("../utils/transformIssueOfSummon");
 
 function renderError(res, errorMessage, errorCode, errorObject) {
     if (errorCode == undefined) errorCode = 500;
