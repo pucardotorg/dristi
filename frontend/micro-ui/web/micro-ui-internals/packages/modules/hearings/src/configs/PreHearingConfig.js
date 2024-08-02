@@ -1,6 +1,8 @@
 const defaultSearchValues = {
   stage: "",
-  type: "",
+  type: {
+    type: "NIA S138",
+  },
   caseNameOrId: "",
 };
 
@@ -35,26 +37,6 @@ export const preHearingConfig = {
           marginLeft: "auto",
         },
         fields: [
-          {
-            label: "Type",
-            isMandatory: false,
-            key: "type",
-            type: "dropdown",
-            populators: {
-              styles: { width: "150px" },
-              name: "type",
-              error: "Required",
-              optionsKey: "type",
-              options: [
-                {
-                  type: "NIA S138",
-                },
-                {
-                  type: "CIA S138",
-                },
-              ],
-            },
-          },
           {
             label: "Stage",
             isMandatory: false,
