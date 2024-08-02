@@ -62,20 +62,5 @@ public class StatuteSection {
 	@JsonProperty("strSubsections")
 	private String strSubsections = null;
 
-	public StatuteSection addSectionsItem(String sectionsItem) {
-		if (this.sections == null) {
-			this.sections = new ArrayList<>();
-		}
-		this.sections.add(sectionsItem);
-		return this;
-	}
-
-	public StatuteSection addSubsectionsItem(String subsectionsItem) {
-		if (this.subsections == null) {
-			this.subsections = new ArrayList<>();
-		}
-		this.subsections.add(subsectionsItem);
-		return this;
-	}
 
 }

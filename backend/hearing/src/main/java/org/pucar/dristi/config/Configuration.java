@@ -136,4 +136,11 @@ public class Configuration {
 
     @Value("${verify.attendee.individual.id}")
     private Boolean verifyAttendeeIndividualId;
+
+    //MDMS validation
+    @Value("${mdms.hearing.type.path}")
+    private String hearingTypePath;
+
+    @Value("${mdms.hearing.module.name}")
+    private String hearingModule;
 }

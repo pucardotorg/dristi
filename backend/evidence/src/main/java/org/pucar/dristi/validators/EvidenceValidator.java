@@ -1,9 +1,11 @@
 package org.pucar.dristi.validators;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.util.*;
 import org.pucar.dristi.web.models.*;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -25,22 +28,23 @@ public class EvidenceValidator {
 
     private final OrderUtil orderUtil;
     private final HearingUtil hearingUtil;
+    private final MdmsUtil mdmsUtil;
+    private final Configuration configuration;
 
 
     @Autowired
-    public EvidenceValidator(EvidenceRepository repository, CaseUtil caseUtil, ApplicationUtil applicationUtil,OrderUtil orderUtil,HearingUtil hearingUtil) {
+    public EvidenceValidator(EvidenceRepository repository, CaseUtil caseUtil, ApplicationUtil applicationUtil,OrderUtil orderUtil,HearingUtil hearingUtil,MdmsUtil mdmsUtil, Configuration configuration) {
         this.repository = repository;
         this.caseUtil = caseUtil;
         this.applicationUtil = applicationUtil;
         this.orderUtil = orderUtil;
         this.hearingUtil = hearingUtil;
+        this.mdmsUtil = mdmsUtil;
+        this.configuration = configuration;
     }
 
     public void validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
 
-        if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getFilingNumber())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId, caseId and filing number are mandatory for creating advocate");
-        }
         if (evidenceRequest.getRequestInfo().getUserInfo() == null) {
             throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
         }
@@ -71,6 +75,9 @@ public class EvidenceValidator {
                 throw new CustomException(HEARING_EXCEPTION, "hearing does not exist");
             }
         }
+
+        // MDMS validation
+        validateMdms(evidenceRequest);
     }
 
     public Artifact validateEvidenceExistence(EvidenceRequest evidenceRequest) {
@@ -149,4 +156,35 @@ public class EvidenceValidator {
         hearingExistsRequest.setOrder(hearingExists);
         return hearingExistsRequest;
     }
+
+    private void validateMdms(EvidenceRequest evidenceRequest){
+        String mdmsData = mdmsUtil.fetchMdmsData(evidenceRequest.getRequestInfo(), evidenceRequest.getArtifact().getTenantId(), configuration.getEvidenceModule(), createMasterDetails());
+
+        String artifactType = evidenceRequest.getArtifact().getArtifactType();
+        List<Map<String, Object>> artifactTypeResults = JsonPath.read(mdmsData, configuration.getArtifactTypePath().replace("{}",artifactType));
+        if (artifactTypeResults.isEmpty()) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid ArtifactType");
+        }
+
+        String sourceType = evidenceRequest.getArtifact().getSourceType();
+        List<Map<String, Object>> sourceTypeResults = JsonPath.read(mdmsData, configuration.getSourceTypePath().replace("{}",sourceType));
+        if (sourceTypeResults.isEmpty()) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid SourceType");
+        }
+
+        String mediaType = evidenceRequest.getArtifact().getMediaType();
+        List<Map<String, Object>> mediaTypeResults = JsonPath.read(mdmsData, configuration.getMediaTypePath().replace("{}",mediaType));
+        if (mediaTypeResults.isEmpty()) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid MediaType");
+        }
+    }
+
+    private List<String> createMasterDetails() {
+        List<String> masterList = new ArrayList<>();
+        masterList.add("ArtifactType");
+        masterList.add("SourceType");
+        masterList.add("MediaType");
+        return masterList;
+    }
+
 }

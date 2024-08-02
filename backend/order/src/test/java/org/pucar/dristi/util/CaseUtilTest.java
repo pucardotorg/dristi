@@ -83,7 +83,7 @@ public class CaseUtilTest {
         responseMap.put("criteria", Collections.singletonList(caseDetails));
 
         CaseExistsResponse caseExistsResponse = new CaseExistsResponse();
-        CaseExists caseExists = new CaseExists();
+        CaseExists caseExists = CaseExists.builder().build();
         caseExists.setExists(true);
         caseExistsResponse.setCriteria(Collections.singletonList(caseExists));
 

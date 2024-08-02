@@ -28,30 +28,5 @@ public class EvidenceSearchResponse {
     @JsonProperty("pagination")
     @Valid
     private Pagination pagination = null;
-
-    // Getters and setters
-    public ResponseInfo getResponseInfo() {
-        return responseInfo;
-    }
-
-    public void setResponseInfo(ResponseInfo responseInfo) {
-        this.responseInfo = responseInfo;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public List<Artifact> getArtifacts() {
-        return artifacts;
-    }
-
-    public void setArtifacts(List<Artifact> artifacts) {
-        this.artifacts = artifacts;
-    }
 }
 

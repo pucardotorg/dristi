@@ -110,7 +110,7 @@ public class OrderRepositoryTest {
     @Test
     void testCheckOrderExists_Success() {
         List<OrderExists> orderExistsRequest = new ArrayList<>();
-        OrderExists orderExists = new OrderExists();
+        OrderExists orderExists = OrderExists.builder().build();
         orderExists.setOrderNumber("orderNumber");
         orderExistsRequest.add(orderExists);
 
@@ -124,7 +124,7 @@ public class OrderRepositoryTest {
     @Test
     void testCheckOrderExists_CustomException() {
         List<OrderExists> orderExistsRequest = new ArrayList<>();
-        OrderExists orderExists = new OrderExists();
+        OrderExists orderExists = OrderExists.builder().build();
         orderExists.setOrderNumber("orderNumber");
         orderExistsRequest.add(orderExists);
 
@@ -135,7 +135,7 @@ public class OrderRepositoryTest {
     @Test
     void testCheckOrderExists_Exception() {
         List<OrderExists> orderExistsRequest = new ArrayList<>();
-        OrderExists orderExists = new OrderExists();
+        OrderExists orderExists = OrderExists.builder().build();
         orderExists.setOrderNumber("orderNumber");
         orderExistsRequest.add(orderExists);
 

@@ -1,6 +1,7 @@
 package org.pucar.dristi.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
@@ -20,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.MDMS_DATA_NOT_FOUND;
 
 @Component
 @Slf4j
@@ -66,37 +68,30 @@ public class HearingRegistrationValidator {
         if(config.getVerifyAttendeeIndividualId())
             validateIndividualExistence(requestInfo, hearing);
 
-        // Validating Hearing Type
-        validateHearingType(requestInfo, hearing);
-
         // Validate cnrNumbers and filingNumbers
         validateCaseExistence(requestInfo, hearing);
 
         // Validate applicationNumbers
         validateApplicationExistence(requestInfo, hearing);
 
+        // Validating Hearing Type
+        validateMdms(requestInfo, hearing);
+
     }
 
     private void baseValidations(RequestInfo requestInfo, Hearing hearing){
         if (requestInfo.getUserInfo() == null || requestInfo.getUserInfo().getTenantId() == null)
             throw new CustomException(VALIDATION_EXCEPTION, "User info not found!!!");
-
-        if (ObjectUtils.isEmpty(hearing.getTenantId()) || ObjectUtils.isEmpty(hearing.getHearingType())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId and hearing type are mandatory for creating hearing");
-        }
     }
 
-    private void validateHearingType(RequestInfo requestInfo, Hearing hearing){
-        JSONArray hearingTypeList = mdmsUtil.fetchMdmsData(requestInfo,requestInfo.getUserInfo().getTenantId(),config.getMdmsHearingModuleName(),Collections.singletonList(config.getMdmsHearingTypeMasterName()))
-                .get(config.getMdmsHearingModuleName()).get(config.getMdmsHearingTypeMasterName());
+    private void validateMdms(RequestInfo requestInfo, Hearing hearing){
+        String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, hearing.getTenantId(), config.getHearingModule(), createMasterDetails());
 
-        boolean validateHearingType = false;
-        for (Object o : hearingTypeList) {
-            HearingType hearingType = mapper.convertValue(o, HearingType.class);
-            if (hearingType.getType().equals(hearing.getHearingType())) validateHearingType = true;
+        String hearingType = hearing.getHearingType();
+        List<Map<String, Object>> applicationTypeResults = JsonPath.read(mdmsData, config.getHearingTypePath().replace("{}",hearingType));
+        if (applicationTypeResults.isEmpty()) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid HearingType");
         }
-        if (!validateHearingType)
-            throw new CustomException(VALIDATION_EXCEPTION, "Could not validate Hearing Type!!!");
     }
 
     private void validateIndividualExistence(RequestInfo requestInfo, Hearing hearing){
@@ -140,6 +135,7 @@ public class HearingRegistrationValidator {
      * @throws CustomException VALIDATION_EXCEPTION -> if hearing is not present
      */
     public Hearing validateHearingExistence(RequestInfo requestInfo,Hearing hearing) {
+
         //checking if hearing exist or not
         List<Hearing> existingHearings = repository.checkHearingsExist(hearing);
         log.info("Existing Hearing :: {}", existingHearings);
@@ -148,6 +144,8 @@ public class HearingRegistrationValidator {
 
         if(config.getVerifyAttendeeIndividualId())
             validateIndividualExistence(requestInfo, hearing);
+
+        validateMdms(requestInfo,hearing);
 
         return existingHearings.get(0);
     }
@@ -182,4 +180,9 @@ public class HearingRegistrationValidator {
         return applicationExistsRequest;
     }
 
+    private List<String> createMasterDetails() {
+        List<String> masterList = new ArrayList<>();
+        masterList.add("HearingType");
+        return masterList;
+    }
 }
