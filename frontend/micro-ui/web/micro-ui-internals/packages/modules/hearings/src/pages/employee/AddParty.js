@@ -1,8 +1,11 @@
-import { Button, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
+import { Button, CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useState } from "react";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
+import { useTranslation } from "react-i18next";
+import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote.js";
 
 const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
+  const { t } = useTranslation();
   const DRISTIService = Digit?.ComponentRegistryService?.getComponent("DRISTIService");
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
@@ -15,11 +18,8 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
 
   const CloseBtn = (props) => {
     return (
-      <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
-        <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
-          {" "}
-          <Close />{" "}
-        </div>
+      <div onClick={props.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+        <CloseSvg />
       </div>
     );
   };
@@ -139,13 +139,30 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
 
   return (
     <Modal
-      headerBarMain={<h1 className="heading-m">Add New Party</h1>}
+      headerBarMain={<h1 className="heading-m">{t("ADD_NEW_PARTY")}</h1>}
       headerBarEnd={<CloseBtn onClick={onDismiss} />}
-      actionCancelLabel="Back"
+      actionCancelLabel={t("HEARING_BACK")}
       actionCancelOnSubmit={onCancel}
-      actionSaveLabel="Add"
+      actionSaveLabel={t("HEARING_ADD")}
       actionSaveOnSubmit={handleSubmit}
     >
+      <div style={{ padding: "16px 24px" }}>
+        <SelectCustomNote
+          config={{
+            populators: {
+              inputs: [
+                {
+                  infoHeader: "CS_PLEASE_COMMON_NOTE",
+                  infoText: "NEW_PARTY_NOTE",
+                  infoTooltipMessage: "Tooltip",
+                  type: "InfoComponent",
+                },
+              ],
+            },
+          }}
+          t={t}
+        />
+      </div>
       {formConfigs.map((config, index) => (
         <FormComposerV2
           key={index}
@@ -153,11 +170,12 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
           onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
             onFormValueChange(formData, index);
           }}
+          fieldStyle={{ width: "100%" }}
         />
       ))}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
-        <Button onButtonClick={handleAddParty} label="Add Party" />
-        <Button onButtonClick={handleRemoveParty} label="Remove Party" />
+        <Button onButtonClick={handleAddParty} label={t("CASE_ADD_PARTY")} />
+        <Button onButtonClick={handleRemoveParty} label={t("REMOVE_PARTY")} />
       </div>
     </Modal>
   );

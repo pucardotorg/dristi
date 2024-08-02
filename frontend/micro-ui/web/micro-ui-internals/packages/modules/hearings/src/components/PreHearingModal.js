@@ -1,11 +1,14 @@
 import { Button, CloseSvg, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../../dristi/src/components/Modal";
 import { preHearingConfig } from "../configs/PreHearingConfig";
+import { hearingService } from "../hooks/services";
 
 function PreHearingModal({ onCancel, hearingData }) {
   const { t } = useTranslation();
+  const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
+  const [totalCount, setTotalCount] = useState(null);
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -30,6 +33,35 @@ function PreHearingModal({ onCancel, hearingData }) {
     return configCopy;
   }, [hearingData.fromDate, hearingData.toDate, hearingData.slot]);
 
+  const getTotalCount = useCallback(
+    async function () {
+      const response = await hearingService
+        .searchHearings(
+          {
+            criteria: {
+              ...updatedConfig?.apiDetails?.requestBody?.criteria?.[0],
+              tenantId,
+              fromDate: hearingData.fromDate,
+              toDate: hearingData.toDate,
+              slot: hearingData.slot,
+            },
+          },
+          {
+            tenantId: tenantId,
+          }
+        )
+        .catch(() => {
+          return {};
+        });
+      setTotalCount(response?.TotalCount);
+    },
+    [updatedConfig, tenantId]
+  );
+
+  useEffect(() => {
+    getTotalCount();
+  }, [updatedConfig, tenantId]);
+
   const popUpStyle = {
     width: "70%",
     height: "fit-content",
@@ -41,13 +73,16 @@ function PreHearingModal({ onCancel, hearingData }) {
     window.location.href = `/${contextPath}/employee/hearings/reschedule-hearing`;
   };
 
+  if (!totalCount && totalCount !== 0) {
+    return null;
+  }
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} />}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("Reschedule All Hearings")}
       formId="modal-action"
-      headerBarMain={<Heading label={t("Admission Hearings (34)")} />}
+      headerBarMain={<Heading label={totalCount ? t("ADMISSION_HEARINGS") + ` (${totalCount})` : t("ADMISSION_HEARINGS")} />}
       className="pre-hearings"
       popupStyles={popUpStyle}
       popupModuleActionBarStyles={{

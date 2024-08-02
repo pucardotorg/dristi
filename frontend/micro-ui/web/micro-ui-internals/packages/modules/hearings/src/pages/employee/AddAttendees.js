@@ -1,9 +1,11 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { hearingService } from "../../../../hearings/src/hooks/services/index";
+import { useTranslation } from "react-i18next";
 
 const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
   const [formError, setFormError] = useState("");
+  const {t} = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const onClickAddWitness = () => {
@@ -20,7 +22,12 @@ const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingDa
     const duplicateIds = onlineIds.filter((id) => offlineIds.includes(id));
 
     if (duplicateIds.length > 0) {
-      setFormError("Attendees cannot be selected for both online and offline.");
+      setFormError(t("BOTH_CANT_BE_SELECTED"));
+      return;
+    }
+
+    if (onlineIds.length == 0 || offlineIds.length == 0) {
+      setFormError(t("SELECT_ANY_ONE_ATTENDEES"));
       return;
     }
 
