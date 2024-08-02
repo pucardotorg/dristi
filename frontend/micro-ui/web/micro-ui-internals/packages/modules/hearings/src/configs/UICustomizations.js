@@ -5,7 +5,7 @@ import { hearingService } from "../hooks/services";
 
 export const UICustomizations = {
   PreHearingsConfig: {
-    preProcess: (requestCriteria) => {
+    preProcess: (requestCriteria, additionalDetails) => {
       const updatedCriteria = {
         pagination: {
           limit: 5,
@@ -16,6 +16,7 @@ export const UICustomizations = {
         limit: 5,
         fromDate: requestCriteria?.params.fromDate,
         toDate: requestCriteria?.params.toDate,
+        attendeeIndividualId: additionalDetails?.attendeeIndividualId ? additionalDetails?.attendeeIndividualId : "",
       };
 
       return {

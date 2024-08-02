@@ -1,4 +1,4 @@
-import { Button, CloseSvg, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { Button, CloseSvg, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../../dristi/src/components/Modal";
@@ -6,7 +6,7 @@ import { preHearingConfig } from "../configs/PreHearingConfig";
 import { hearingService } from "../hooks/services";
 import { ReschedulingPurpose } from "../pages/employee/ReschedulingPurpose";
 
-function PreHearingModal({ onCancel, hearingData, courtData }) {
+function PreHearingModal({ onCancel, hearingData, courtData, individualId = "", userType }) {
   const { t } = useTranslation();
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const [totalCount, setTotalCount] = useState(null);
@@ -38,6 +38,9 @@ function PreHearingModal({ onCancel, hearingData, courtData }) {
       toDate: hearingData.toDate,
       slot: hearingData.slot,
     };
+    configCopy.additionalDetails = {
+      attendeeIndividualId: userType === "LITIGANT" && individualId,
+    };
     configCopy.sections.searchResult.uiConfig.columns = [
       ...configCopy.sections.searchResult.uiConfig.columns.map((column) => {
         return column.label === "Actions"
@@ -62,6 +65,7 @@ function PreHearingModal({ onCancel, hearingData, courtData }) {
               fromDate: hearingData.fromDate,
               toDate: hearingData.toDate,
               slot: hearingData.slot,
+              attendeeIndividualId: individualId,
             },
           },
           {
@@ -98,6 +102,10 @@ function PreHearingModal({ onCancel, hearingData, courtData }) {
 
   if (!totalCount && totalCount !== 0) {
     return null;
+  }
+
+  if (userType === "LITIGANT" && !individualId) {
+    return <Loader />;
   }
   return (
     <Modal
