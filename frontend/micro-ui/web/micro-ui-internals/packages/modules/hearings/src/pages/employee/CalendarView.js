@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 import { ReschedulingPurpose } from "./ReschedulingPurpose";
 import TasksComponent from "../../components/TaskComponentCalander";
 
-const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
   const history = useHistory();
@@ -177,44 +177,54 @@ const MonthlyCalendar = () => {
   );
 
   return (
-    <React.Fragment>
-      <div style={{ height: "70px", padding: "16px 20px" }}>
-        <div style={{ height: "38px", fontWeight: 700, fontSize: "32px" }}>Your Hearings</div>
-      </div>
-      <div style={{ display: "flex", width: "100%" }}>
-        <div style={{ flexGrow: 1 }}>
-          <div>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="dayGridMonth"
-              headerToolbar={{
-                start: "prev",
-                center: "title",
-                end: "next, dayGridMonth,timeGridWeek,timeGridDay",
-              }}
-              height={"85vh"}
-              events={Calendar_events}
-              eventContent={(arg) => {
-                return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
-              }}
-              eventClick={handleEventClick}
-              datesSet={(dateInfo) => {
-                setDateRange({ start: dateInfo.start, end: dateInfo.end });
-              }}
-            />
-          </div>
-        </div>
-        <div style={{ flexBasis: "380px", maxWidth: "380px" }}>
-          <TasksComponent
-            isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
-            uuid={userInfo?.uuid}
-            userInfoType={userInfoType}
+    <div style={{ display: "flex" }}>
+      <div style={{ width: "70%" }}>
+        <div>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView={initialView}
+            headerToolbar={{
+              start: "prev",
+              center: "title",
+              end: "next, dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            height={"85vh"}
+            events={Calendar_events}
+            eventContent={(arg) => {
+              return (
+                <div>
+                  <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>
+                  {hearingCount(arg.event.extendedProps.hearings).map((hearingFrequency) => (
+                    <div>
+                      {hearingFrequency.frequency} - {t(hearingFrequency.type)}
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
+            eventClick={handleEventClick}
+            datesSet={(dateInfo) => {
+              setDateRange({ start: dateInfo.start, end: dateInfo.end });
+            }}
+            ref={calendarRef}
           />
+          {fromDate && toDate && slot && (
+            <PreHearingModal courtData={courtData?.["common-masters"]?.Court_Rooms} onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />
+          )}
         </div>
-
-        {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
       </div>
-    </React.Fragment>
+      <div className="right-side">
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          caseType={caseType}
+          setCaseType={setCaseType}
+          isLitigant={Boolean(userInfoType === "citizen")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+        />
+      </div>
+    </div>
   );
 };
 

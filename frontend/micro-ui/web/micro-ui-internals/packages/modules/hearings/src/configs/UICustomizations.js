@@ -10,8 +10,6 @@ export const UICustomizations = {
         pagination: {
           limit: 5,
           offset: 0,
-          order: requestCriteria?.state?.searchForm?.sortCaseListByStartDate?.order || "asc",
-          sortBy: "startTime",
         },
         limit: 5,
         fromDate: requestCriteria?.params.fromDate,
