@@ -2,6 +2,7 @@ const defaultSearchValues = {
   stage: "",
   type: "",
   caseNameOrId: "",
+  sortCaseListByStartDate: "",
 };
 
 export const preHearingConfig = {
@@ -35,6 +36,21 @@ export const preHearingConfig = {
           marginLeft: "auto",
         },
         fields: [
+          {
+            type: "component",
+            component: "CustomSortComponent",
+            isMandatory: false,
+            disable: false,
+            name: "Newest",
+            key: "sortCaseListByStartDate",
+            sortBy: "startDate",
+            ascText: "First",
+            descText: "Last",
+            showAdditionalText: true,
+            showIcon: true,
+            icon: "UpDownArrowIcon",
+            populators: {},
+          },
           {
             label: "Type",
             isMandatory: false,
