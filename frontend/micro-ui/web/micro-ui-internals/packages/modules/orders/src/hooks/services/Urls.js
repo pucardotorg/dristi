@@ -5,5 +5,7 @@ export const Urls = {
     orderUpdate: "/order/v1/update",
     orderSearch: "/order/v1/search",
     pendingTask: "/analytics/pending_task/v1/create",
+    createHearings: "/hearing/v1/create",
+    updateHearings: "/hearing/v1/update",
   },
 };

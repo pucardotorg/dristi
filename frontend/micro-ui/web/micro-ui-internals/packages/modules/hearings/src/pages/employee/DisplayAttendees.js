@@ -1,6 +1,7 @@
 import { Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { SVG } from "@egovernments/digit-ui-components";
 
 const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttendees = [], handleAttendees, handleModal }) => {
   const { t } = useTranslation();
@@ -48,9 +49,14 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
       {onlineAttendees.length + offlineAttendees.length === 0 && (
         <div style={{ textAlign: "left", marginTop: "12px" }}>{t("NO_MARKED_ATTENDEES")}</div>
       )}
-      <Button label={"Add Attendees"} onButtonClick={handleAttendees} />
+      <Button
+        label={"+ Add Attendees"}
+        onButtonClick={handleAttendees}
+        variation={"teritiary"}
+        style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
+      />
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px", padding: "4px" }}>
-        <Button label={"Share Link"}></Button>
+        <Button variation={"teritiary"} label={" Share Link"} icon={<SVG.Share />} iconFill={"#007E7E"}></Button>
         <Button label={"Done"} onButtonClick={handleModal}></Button>
       </div>
     </div>
