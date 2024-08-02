@@ -367,7 +367,7 @@ const InsideHearingMainPage = () => {
               handleModal={handleModal}
               attendees={attendees}
               setAttendees={setAttendees}
-              hearing={hearing}
+              hearingData={hearing}
               setAddPartyModal={setAddPartyModal}
             />
           )}
