@@ -39,8 +39,8 @@ public class Attendee {
 
     private Boolean wasPresent = null;
 
-    @JsonProperty("isRequiredOffline")
+    @JsonProperty("isOnline")
 
-    private Boolean isRequiredOffline = null;
+    private Boolean isOnline = null;
 
 }
