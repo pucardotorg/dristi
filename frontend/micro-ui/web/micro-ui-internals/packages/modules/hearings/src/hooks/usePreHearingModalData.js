@@ -15,6 +15,9 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
       ...body.criteria,
       filingNumber: caseNameOrId,
     };
+    body.pagination = {
+      ...body.criteria?.pagination,
+    };
   }
 
   const fetchCombinedData = async () => {
