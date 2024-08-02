@@ -35,12 +35,12 @@ import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
 import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
-import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
+import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   keys.forEach((key) => {
@@ -257,7 +257,7 @@ const GenerateOrders = () => {
     if (defaultIndex && defaultIndex !== -1 && orderNumber && defaultIndex !== selectedOrder) {
       setSelectedOrder(defaultIndex);
     }
-  }, [defaultIndex, selectedOrder, orderNumber]);
+  }, [defaultIndex]);
 
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
@@ -278,6 +278,22 @@ const GenerateOrders = () => {
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
+  const hearingId = useMemo(() => applicationDetails?.additionalDetails?.hearingId, [applicationDetails]);
+  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+        hearingId,
+      },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    hearingId,
+    Boolean(hearingId)
+  );
+  const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
+
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
       SECTION_202_CRPC: configsOrderSection202CRPC,
@@ -287,7 +303,6 @@ const GenerateOrders = () => {
       SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
-      APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
       INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
       ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
       ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
@@ -519,9 +534,6 @@ const GenerateOrders = () => {
     setFormList((prev) => {
       return [...prev, defaultOrderData];
     });
-    if (orderNumber) {
-      history.push(`?filingNumber=${filingNumber}`);
-    }
     setSelectedOrder(formList?.length);
   };
 
@@ -644,17 +656,31 @@ const GenerateOrders = () => {
     }
   };
 
+  const handleUpdateHearing = async ({ startTime, endTime, action }) => {
+    try {
+      await ordersService.updateHearings(
+        {
+          hearing: {
+            ...hearingDetails,
+            ...(startTime && { startTime }),
+            ...(endTime && { endTime }),
+            documents: hearingDetails?.documents || [],
+            workflow: {
+              action: action,
+              assignes: [],
+              comments: "Update Hearing",
+              documents: [{}],
+            },
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {}
+  };
+
   const handleIssueOrder = async () => {
     try {
       setPrevOrder(currentOrder);
-      const applicationStatus = await handleApplicationAction(currentOrder);
-      if (!applicationStatus) {
-        // Show toast with submission approval failed and return
-        return;
-      }
-      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
-      createPendingTask(currentOrder);
-      closeManualPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -663,7 +689,7 @@ const GenerateOrders = () => {
             type: "Advocate",
           };
         });
-        DRISTIService.createHearings(
+        await ordersService.createHearings(
           {
             hearing: {
               tenantId: tenantId,
@@ -691,6 +717,20 @@ const GenerateOrders = () => {
           { tenantId: tenantId }
         );
       }
+      if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
+        await handleUpdateHearing({ action: HearingWorkflowAction.SETDATE });
+      }
+      if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
+        await handleUpdateHearing({
+          action: HearingWorkflowAction.RESCHEDULE,
+          startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+          endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+        });
+      }
+      await handleApplicationAction(currentOrder);
+      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
+      createPendingTask(currentOrder);
+      closeManualPendingTask(currentOrder);
       setShowSuccessModal(true);
     } catch (error) {
       //show toast of API failed
@@ -708,7 +748,7 @@ const GenerateOrders = () => {
         history.push(`?filingNumber=${filingNumber}`);
       }
       setSelectedOrder((prev) => {
-        return deleteOrderIndex <= prev ? prev - 1 : prev;
+        return deleteOrderIndex <= prev ? (prev - 1 >= 0 ? prev - 1 : 0) : prev;
       });
     } catch (error) {
       //show toast of API failed
@@ -722,9 +762,6 @@ const GenerateOrders = () => {
     setShowReviewModal(true);
   };
   const handleOrderChange = (index) => {
-    if (orderNumber) {
-      history.push(`?filingNumber=${filingNumber}`);
-    }
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {

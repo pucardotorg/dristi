@@ -41,18 +41,13 @@ const SubmissionsCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  const urlParams = new URLSearchParams(window.location.search);
-  const filingNumber = urlParams.get("filingNumber");
-  const orderNumber = urlParams.get("orderNumber");
-  const applicationNumber = urlParams.get("applicationNumber");
-  const isExtension = urlParams.get("isExtension");
+  const { orderNumber, filingNumber, applicationNumber, isExtension, hearingId, applicationType: applicationTypeUrl } = Digit.Hooks.useQueryParams();
   const [formdata, setFormdata] = useState({});
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showsignatureModal, setShowsignatureModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [makePaymentLabel, setMakePaymentLabel] = useState(false);
-  const hearingId = urlParams.get("hearingId");
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
@@ -76,32 +71,15 @@ const SubmissionsCreate = () => {
           };
         });
       } else {
-        return submissionConfigKeys[submissionType]?.map((item) => {
-          return {
-            ...item,
-            body: item?.body?.map((input) => {
-              return {
-                ...input,
-                populators: {
-                  ...input?.populators,
-                  mdmsConfig: {
-                    ...input?.populators?.mdmsConfig,
-                    select:
-                      "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
-                  },
-                },
-              };
-            }),
-          };
-        });
+        return submissionConfigKeys[submissionType];
       }
     }
     return [];
-  }, [orderNumber, submissionType]);
+  }, [hearingId, orderNumber, submissionType]);
 
   const applicationType = useMemo(() => {
-    return formdata?.applicationType?.type || urlParams.get("applicationType");
-  }, [formdata?.applicationType?.type]);
+    return formdata?.applicationType?.type || applicationTypeUrl;
+  }, [formdata?.applicationType?.type, applicationTypeUrl]);
 
   const applicationFormConfig = useMemo(() => {
     const applicationConfigKeys = {
@@ -176,7 +154,7 @@ const SubmissionsCreate = () => {
     applicationNumber
   );
 
-  const { data: hearingsData, refetch } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
       criteria: {
@@ -312,7 +290,15 @@ const SubmissionsCreate = () => {
         },
       };
     }
-  }, [applicationDetails?.additionalDetails?.formdata, isExtension, orderDetails, orderNumber, hearingId, hearingsData]);
+  }, [
+    applicationDetails?.additionalDetails?.formdata,
+    hearingId,
+    hearingsData?.HearingList,
+    orderNumber,
+    applicationType,
+    orderDetails,
+    isExtension,
+  ]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
@@ -445,6 +431,7 @@ const SubmissionsCreate = () => {
                 respondingParty: orderDetails?.additionalDetails?.formdata?.respondingParty,
               }),
             isResponseRequired: orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
+            ...(hearingId && { hearingId }),
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
