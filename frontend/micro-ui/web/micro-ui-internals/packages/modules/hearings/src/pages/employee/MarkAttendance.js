@@ -6,8 +6,9 @@ import { hearingService } from "../../hooks/services";
 
 const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData = {}, setAddPartyModal }) => {
   const partiesToAttend = attendees.length;
-  const onlineAttendees = attendees.filter((attendee) => attendee.type === "ONLINE");
-  const offlineAttendees = attendees.filter((attendee) => attendee.type === "OFFLINE");
+  const onlineAttendees = attendees.filter((attendee) => attendee.isOnline && attendee.wasPresent);
+  const offlineAttendees = attendees.filter((attendee) => !attendee.isOnline && attendee.wasPresent );
+  
   const [isAddingAttendees, setIsAddingAttendee] = useState(false);
   const [formError, setFormError] = useState("");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -32,12 +33,12 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
 
     const updatedAttendees = attendees.map((attendee) => {
       if (onlineIds.includes(attendee.individualId)) {
-        return { ...attendee, type: "ONLINE", wasPresent: true };
+        return { ...attendee, isOnline: true, wasPresent: true };
       }
       if (offlineIds.includes(attendee.individualId)) {
-        return { ...attendee, type: "OFFLINE", wasPresent: true };
+        return { ...attendee, isOnline: false, wasPresent: true };
       }
-      return { ...attendee, type: "", wasPresent: false };
+      return { ...attendee, wasPresent: false };
     });
     try {
       const hearing = { ...hearingData, attendees: updatedAttendees };
