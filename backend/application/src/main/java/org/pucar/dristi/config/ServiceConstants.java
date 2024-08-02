@@ -3,6 +3,8 @@ package org.pucar.dristi.config;
 
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 
 @Component
 public class ServiceConstants {
@@ -60,6 +62,13 @@ public class ServiceConstants {
     public static final String APPLICATION_EXIST_EXCEPTION = "APPLICATION_EXIST_EXCEPTION";
     public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
     public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+    public static final String ERROR_WHILE_CREATING_DEMAND_FOR_CASE = "ERROR_WHILE_CREATING_DEMAND_FOR_APPLICATION";
+    public static final Long TAX_PERIOD_FROM = 1680287400000l;
+    public static final Long TAX_PERIOD_TO = 1711909799000l;
+    public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
+    public static final String CREATE_DEMAND_STATUS = "PENDINGPAYMENT";
+
+    public static final String TAX_HEADMASTER_CODE = "APPLICATION_ADVANCE_CARRYFORWARD";
     public static final String VALIDATION_ERR = "VALIDATION_ERR";
     public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
     public static final String JSON_PARSE_ERROR = "JSON_PARSE_ERROR";

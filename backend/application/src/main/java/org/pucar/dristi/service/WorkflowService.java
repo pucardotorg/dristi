@@ -12,14 +12,13 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.util.UserUtil;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.RequestInfoWrapper;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -128,7 +127,39 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
+    public ProcessInstanceRequest getProcessInstanceForApplicationPayment(ApplicationSearchRequest updateRequest, String tenantId, String businessService) {
 
+        ApplicationCriteria criteria = updateRequest.getCriteria();
+
+        String businessName = getBusinessName(businessService);
+
+        ProcessInstance process = ProcessInstance.builder()
+                .businessService(businessService)
+                .businessId(criteria.getApplicationNumber())
+                .comment("Payment for Application processed")
+                .moduleName(businessName) // Use the retrieved business name
+                .tenantId(tenantId)
+                .action("PAY")
+                .build();
+
+        return ProcessInstanceRequest.builder()
+                .requestInfo(updateRequest.getRequestInfo())
+                .processInstances(Arrays.asList(process))
+                .build();
+    }
+
+    private String getBusinessName(String businessService) {
+        if (businessService.equals(config.getAsyncOrderSubBusinessServiceName())) {
+            return config.getAsyncOrderSubBusinessName();
+        } else if (businessService.equals(config.getAsyncOrderSubWithResponseBusinessServiceName())) {
+            return config.getAsyncOrderSubWithResponseBusinessName();
+        } else if (businessService.equals(config.getAsyncVoluntarySubBusinessServiceName())) {
+            return config.getAsyncVoluntarySubBusinessName();
+        } else {
+            throw new CustomException("INVALID_BUSINESS_SERVICE",
+                    "No business name found for the business service: " + businessService);
+        }
+    }
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());
