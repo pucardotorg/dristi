@@ -15,6 +15,8 @@ export const applicationTypeConfig = [
             moduleName: "Order",
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
+            select:
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },
@@ -492,7 +494,12 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "documentName",
         type: "text",
-        populators: { name: "documentName" },
+        populators: {
+          name: "documentName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+        },
       },
       {
         label: "SUBMISSION_PARTY",
@@ -575,6 +582,7 @@ export const configsOrderMandatorySubmissions = [
       {
         label: "IS_RESPONSE_REQUIRED",
         key: "isResponseRequired",
+        isMandatory: true,
         type: "radio",
         populators: {
           name: "isResponseRequired",
@@ -625,7 +633,7 @@ export const configsOrderMandatorySubmissions = [
       },
       {
         label: "RESPONSE_DEADLINE",
-        isMandatory: true,
+        isMandatory: false,
         key: "responseDeadline",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
@@ -877,20 +885,11 @@ export const configsOrderTranferToADR = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "MODE_1",
-              name: "MODE_1",
-            },
-            {
-              code: "MODE_2",
-              name: "MODE_2",
-            },
-            {
-              code: "MODE_3",
-              name: "MODE_3",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "ADRMode",
+            select: "(data) => {return data['Order'].ADRMode?.map((item) => {return item;});}",
+          },
         },
       },
       {
@@ -2003,20 +2002,11 @@ export const configsCaseSettlement = [
           styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "MECHANISM_1",
-              name: "MECHANISM_1",
-            },
-            {
-              code: "MECHANISM_2",
-              name: "MECHANISM_2",
-            },
-            {
-              code: "MECHANISM_3",
-              name: "MECHANISM_3",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "SettlementMechanism",
+            select: "(data) => {return data['Order'].SettlementMechanism?.map((item) => {return item;});}",
+          },
         },
       },
       {
@@ -3158,33 +3148,11 @@ export const configsJudgement = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "DISMISSED",
-              name: "DISMISSED",
-              isEnabled: true,
-            },
-            {
-              code: "ALLOWED",
-              name: "ALLOWED",
-              isEnabled: true,
-            },
-            {
-              code: "PARTIALLYALLOWED",
-              name: "PARTIALLYALLOWED",
-              isEnabled: true,
-            },
-            {
-              code: "CONVICTED",
-              name: "CONVICTED",
-              isEnabled: true,
-            },
-            {
-              code: "PARTIALLYCONVICTED",
-              name: "PARTIALLYCONVICTED",
-              isEnabled: true,
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "Findings",
+            select: "(data) => {return data['Order'].Findings?.map((item) => {return item;});}",
+          },
         },
       },
     ],

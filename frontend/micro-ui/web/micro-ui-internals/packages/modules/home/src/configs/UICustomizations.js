@@ -4,6 +4,7 @@ import _ from "lodash";
 import { Button } from "@egovernments/digit-ui-react-components";
 import OverlayDropdown from "../components/custom_dropdown";
 import { formatDateDifference } from "../../../orders/src/utils";
+import { formatDate } from "../../../cases/src/utils";
 
 const customColumnStyle = { whiteSpace: "nowrap" };
 
@@ -137,12 +138,7 @@ export const UICustomizations = {
         case "Stage":
           return t(row?.status);
         case "Filing Date":
-          const date = new Date(value);
-          const day = date.getDate().toString().padStart(2, "0");
-          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
-          const year = date.getFullYear();
-          const formattedDate = `${day}-${month}-${year}`;
-          return <span>{formattedDate}</span>;
+          return <span>{formatDate(new Date(value))}</span>;
         case "Last Edited":
           const createdAt = new Date(value);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
@@ -293,12 +289,7 @@ export const UICustomizations = {
         case "Case Type":
           return <span>NIA S138</span>;
         case "Filing Date":
-          const date = new Date(value);
-          const day = date.getDate().toString().padStart(2, "0");
-          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
-          const year = date.getFullYear();
-          const formattedDate = `${day}-${month}-${year}`;
-          return <span>{formattedDate}</span>;
+          return <span>{formatDate(new Date(value))}</span>;
         case "Stage":
           return t(row?.status);
         default:

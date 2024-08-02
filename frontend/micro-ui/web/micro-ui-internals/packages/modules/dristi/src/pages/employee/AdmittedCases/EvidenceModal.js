@@ -15,9 +15,6 @@ import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
-  RE_SCHEDULE: 2,
-  CHECKOUT_REQUEST: 2,
-  SAVE_DRAFT: 2,
   DRAFT_IN_PROGRESS: 2,
 };
 
@@ -247,9 +244,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return {
       ...documentSubmission[0]?.applicationList,
       statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
-      comment: documentSubmission[0]?.applicationList.comment
-        ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
-        : JSON.stringify([newComment]),
+      comment: documentSubmission[0]?.applicationList.comment ? [...documentSubmission[0]?.applicationList.comment, newComment] : [newComment],
       workflow: {
         ...documentSubmission[0]?.applicationList?.workflow,
         action: "RESPOND",
@@ -350,7 +345,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       {
         url: Urls.dristi.submissionsUpdate,
         params: {},
-        body: { application: respondApplicationPayload },
+        body: {
+          application: {
+            ...respondApplicationPayload,
+            comment: comments,
+          },
+        },
         config: {
           enable: true,
         },
@@ -432,7 +432,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderTypes = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
       case "TRANSFER":
@@ -443,10 +443,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
       case "SURETY":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
@@ -455,7 +453,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderActionName = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "ORDER_FOR_INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
       case "TRANSFER":
@@ -466,10 +464,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
       case "SURETY":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_EXTENSION_SUBMISSION_DEADLINE";
       default:
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
@@ -477,16 +473,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const isMandatoryOrderCreation = useMemo(() => {
     const applicationType = documentSubmission?.[0]?.applicationList?.applicationType;
     const type = showConfirmationModal?.type;
-    const acceptedApplicationTypes = [
-      "RE_SCHEDULE",
-      "WITHDRAWAL",
-      "TRANSFER",
-      "SETTLEMENT",
-      "BAIL_BOND",
-      "SURETY",
-      "CHECKOUT_REQUEST",
-      "EXTENSION_SUBMISSION_DEADLINE",
-    ];
+    const acceptedApplicationTypes = ["RE_SCHEDULE", "WITHDRAWAL", "TRANSFER", "SETTLEMENT", "BAIL_BOND", "SURETY", "EXTENSION_SUBMISSION_DEADLINE"];
     if (type === "reject") {
       return false;
     } else {
@@ -594,6 +581,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       counterUpdate();
       setShow(false);
       counterUpdate();
+      history.replace(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     }
   };
 
@@ -732,7 +720,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                           };
                           setComments((prev) => [...prev, newComment]);
                           setCurrentComment("");
-                          handleSubmitComment(newComment);
+                          // handleSubmitComment(newComment);
                         }}
                       >
                         <RightArrow />

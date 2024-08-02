@@ -18,6 +18,7 @@ import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { formatDate } from "../../utils";
 
 const CloseBtn = (props) => {
   return (
@@ -1369,7 +1370,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
         {
           key: "SUBMITTED_ON",
-          value: caseDetails?.filingDate,
+          value: formatDate(new Date(caseDetails?.filingDate)),
         },
         {
           key: "CASE_STAGE",

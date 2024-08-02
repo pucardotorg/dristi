@@ -47,7 +47,7 @@ export const applicationTypeConfig = [
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
             select:
-              "(data) => {return data['Application'].ApplicationType?.map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
         },
       },
@@ -261,20 +261,11 @@ export const configsRescheduleRequest = [
           styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "conflict",
-              name: "Conflict",
-            },
-            {
-              code: "illness",
-              name: "Illness",
-            },
-            {
-              code: "other",
-              name: "Other",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Application",
+            masterName: "ReschedulingReason",
+            select: "(data) => {return data['Application'].ReschedulingReason?.map((item) => {return item;});}",
+          },
         },
       },
       {
@@ -442,20 +433,11 @@ export const configsCheckoutRequest = [
           styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "conflict",
-              name: "Conflict",
-            },
-            {
-              code: "illness",
-              name: "Illness",
-            },
-            {
-              code: "other",
-              name: "Other",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Application",
+            masterName: "ReschedulingReason",
+            select: "(data) => {return data['Application'].ReschedulingReason?.map((item) => {return item;});}",
+          },
         },
       },
       {
@@ -654,24 +636,11 @@ export const configsExtensionSubmissionDeadline = [
           styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
-          options: [
-            {
-              code: "conflict",
-              name: "Conflict",
-            },
-            {
-              code: "illness",
-              name: "Illness",
-            },
-            {
-              code: "unavailability",
-              name: "Unavailability",
-            },
-            {
-              code: "other",
-              name: "Other",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Application",
+            masterName: "ExtensionReason",
+            select: "(data) => {return data['Application'].ExtensionReason?.map((item) => {return item;});}",
+          },
         },
       },
     ],
@@ -1025,16 +994,11 @@ export const configsCaseWithdrawal = [
           required: true,
           isMandatory: true,
           styles: { maxWidth: "100%" },
-          options: [
-            {
-              code: "REASON_1",
-              name: "REASON_1",
-            },
-            {
-              code: "REASON_2",
-              name: "REASON_2",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Application",
+            masterName: "ReasonForWithdrawal",
+            select: "(data) => {return data['Application'].ReasonForWithdrawal?.map((item) => {return item;});}",
+          },
         },
       },
     ],

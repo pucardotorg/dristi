@@ -139,7 +139,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           auditDetails: applicationDetails?.auditDetails,
         },
         applicationContent: null,
-        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        comments: applicationDetails?.comment ? applicationDetails?.comment : [],
         applicationList: applicationDetails,
       };
 
@@ -162,7 +162,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
             documentUid: doc.documentUid,
             additionalDetails: doc.additionalDetails,
           },
-          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          comments: applicationDetails?.comment ? applicationDetails?.comment : [],
           applicationList: applicationDetails,
         };
       }) || [defaultObj];
@@ -172,6 +172,81 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
       });
     },
     [getApplicationDetail, history, userType]
+  );
+
+  const handleCreateOrderDraft = useCallback(
+    async ({ cnrNumber, filingNumber, orderType = "SUMMONS", referenceId }) => {
+      const reqBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: orderType,
+          status: "",
+          isActive: true,
+          workflow: {
+            action: CaseWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            ...(orderType === "SUMMONS" && { hearingId: referenceId }),
+            formdata: {
+              orderType: {
+                code: orderType,
+                type: orderType,
+                name: `ORDER_TYPE_${orderType}`,
+              },
+              refApplicationId: referenceId,
+            },
+          },
+        },
+      };
+      try {
+        const res = await HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId });
+        HomeService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: "Order Created",
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${referenceId}`,
+            status: "SAVE_DRAFT",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: null,
+            filingNumber: filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+        HomeService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: `${t("ORDER_DRAFT_IN_PRGORESS")} : ${t(orderType)}`,
+            entityType: "order-managelifecycle",
+            referenceId: `MANUAL_${res?.order?.orderNumber}`,
+            status: "DRAFT_IN_PROGRESS",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: null,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+      } catch (error) {}
+    },
+    [history, t, tenantId]
   );
 
   const handleCreateOrder = useCallback(
@@ -250,6 +325,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
         handleCreateOrder,
         handleReviewSubmission,
         handleReviewOrder,
+        handleCreateOrderDraft,
       };
 
       const tasks = await Promise.all(
@@ -284,14 +360,16 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const redirectUrl = isCustomFunction
             ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
             : `/${window?.contextPath}/${userType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
+          const due = dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
-            due: dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`,
+            due: due,
             dayCount: dayCount ? dayCount : dayCount === 0 ? 0 : Infinity,
             isCompleted,
+            dueDateColor: due === "Due today" ? "#9E400A" : "",
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
             isCustomFunction,
@@ -303,6 +381,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     [
       getCaseDetailByFilingNumber,
       handleCreateOrder,
+      handleCreateOrderDraft,
       handleReviewOrder,
       handleReviewSubmission,
       isLoading,

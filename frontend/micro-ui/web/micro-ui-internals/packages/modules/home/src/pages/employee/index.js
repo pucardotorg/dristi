@@ -34,6 +34,8 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {
+  const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
+
   return (
     <Switch>
       <AppContainer className="ground-container">
@@ -44,6 +46,10 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute
           path={`${path}/home-pending-task/e-filing-payment-breakdown`}
           component={() => <EfilingPaymentBreakdown></EfilingPaymentBreakdown>}
+        />
+        <PrivateRoute
+          path={`${path}/home-pending-task/summons-warrants-modal`}
+          component={() => <SummonsAndWarrantsModal></SummonsAndWarrantsModal>}
         />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
