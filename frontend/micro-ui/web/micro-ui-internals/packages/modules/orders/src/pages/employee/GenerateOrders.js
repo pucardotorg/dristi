@@ -106,6 +106,7 @@ const GenerateOrders = () => {
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [createdHearingId, setCreatedHearingId] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -550,12 +551,12 @@ const GenerateOrders = () => {
     setSelectedOrder(formList?.length);
   };
 
-  const createPendingTask = async (order, refId = null, isAssignedRole = false) => {
+  const createPendingTask = async ({ order, refId = null, isAssignedRole = false }) => {
     const formdata = order?.additionalDetails?.formdata;
     let create = false;
     let name = "";
     let assignees = [];
-    let referenceId = refId || order?.orderNumber;
+    let referenceId = order?.orderNumber;
     let assignedRole = [];
     let additionalDetails = {};
     let entityType =
@@ -575,7 +576,8 @@ const GenerateOrders = () => {
     }
     if (isAssignedRole) {
       assignees = [];
-      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE") {
+      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId) {
+        referenceId = refId;
         create = true;
         status = "CREATE_DRAFT_IN_PROGRESS";
         assignedRole = ["JUDGE_ROLE"];
@@ -692,7 +694,7 @@ const GenerateOrders = () => {
         return;
       }
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
-      createPendingTask(currentOrder);
+      createPendingTask({ order: currentOrder });
       closeManualPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
@@ -730,7 +732,8 @@ const GenerateOrders = () => {
           { tenantId: tenantId }
         );
         const newhearingId = hearingres?.hearing?.hearingId;
-        createPendingTask(currentOrder, newhearingId, true, ["JUDGE_ROLE"]);
+        setCreatedHearingId(newhearingId);
+        await createPendingTask({ order: currentOrder, refId: newhearingId, isAssignedRole: true });
       }
       setShowSuccessModal(true);
     } catch (error) {
@@ -757,6 +760,12 @@ const GenerateOrders = () => {
     }
     setDeleteOrderIndex(null);
   };
+  const successModalActionSaveLabel = useMemo(() => {
+    if (createdHearingId) {
+      return t("ISSUE_SUMMONS_BUTTON");
+    }
+    return t("CS_COMMON_CLOSE");
+  }, [createdHearingId, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
@@ -776,10 +785,15 @@ const GenerateOrders = () => {
   };
 
   const handleClose = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
-      from: "orderSuccessModal",
-    });
-    setShowSuccessModal(false);
+    if (successModalActionSaveLabel === t("CS_COMMON_CLOSE")) {
+      history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+        from: "orderSuccessModal",
+      });
+      setShowSuccessModal(false);
+      return;
+    }
+    if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
+    }
   };
 
   if (!filingNumber) {
@@ -866,7 +880,15 @@ const GenerateOrders = () => {
       {showsignatureModal && (
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
-      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
+      {showSuccessModal && (
+        <OrderSucessModal
+          t={t}
+          order={prevOrder}
+          handleDownloadOrders={handleDownloadOrders}
+          handleClose={handleClose}
+          actionSaveLabel={successModalActionSaveLabel}
+        />
+      )}
       {showErrorToast && (
         <Toast
           style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}
