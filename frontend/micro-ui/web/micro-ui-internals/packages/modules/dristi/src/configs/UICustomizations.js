@@ -584,7 +584,7 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    preProcess: (requestCriteria, additionalDetails) => {      
+    preProcess: (requestCriteria, additionalDetails) => {
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
