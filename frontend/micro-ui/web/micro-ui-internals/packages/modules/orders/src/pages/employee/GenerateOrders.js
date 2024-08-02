@@ -104,7 +104,8 @@ const GenerateOrders = () => {
   const [formList, setFormList] = useState([]);
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(null);
+  const [loader, setLoader] = useState(false);
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -114,7 +115,7 @@ const GenerateOrders = () => {
   };
 
   const closeToast = () => {
-    setShowErrorToast(false);
+    setShowErrorToast(null);
   };
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
@@ -247,7 +248,7 @@ const GenerateOrders = () => {
   useEffect(() => {
     if (showErrorToast) {
       const timer = setTimeout(() => {
-        setShowErrorToast(false);
+        setShowErrorToast(null);
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -601,6 +602,9 @@ const GenerateOrders = () => {
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
+    if (showReviewModal) {
+      setLoader(true);
+    }
     let count = 0;
     const promises = formList.map(async (order) => {
       if (order?.orderType) {
@@ -615,13 +619,16 @@ const GenerateOrders = () => {
       }
     });
     const responsesList = await Promise.all(promises);
+    if (showReviewModal) {
+      setLoader(false);
+    }
     setFormList(
       responsesList.map((res) => {
         return res?.order;
       })
     );
     if (!showReviewModal) {
-      setShowErrorToast(true);
+      setShowErrorToast({ label: t("DRAFT_SAVED_SUCCESSFULLY"), error: false });
     }
     if (selectedOrder >= count) {
       setSelectedOrder(0);
@@ -632,9 +639,6 @@ const GenerateOrders = () => {
   };
 
   const handleApplicationAction = async (order) => {
-    if (!referenceId || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
-      return true;
-    }
     try {
       return await ordersService.customApiService(
         `/application/v1/update`,
@@ -727,7 +731,7 @@ const GenerateOrders = () => {
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
       }
-      await handleApplicationAction(currentOrder);
+      referenceId && (await handleApplicationAction(currentOrder));
       await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
       createPendingTask(currentOrder);
       closeManualPendingTask(currentOrder);
@@ -771,6 +775,19 @@ const GenerateOrders = () => {
     // });
   };
 
+  const handleReviewOrderClick = () => {
+    if (referenceId && ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
+      setShowErrorToast({
+        label: SubmissionWorkflowState.COMPLETED === advocateDetails?.status ? t("SUBMISSION_ALREADY_ACCEPTED") : t("SUBMISSION_ALREADY_REJECTED"),
+        error: true,
+      });
+      setShowReviewModal(false);
+      setShowsignatureModal(false);
+      return;
+    }
+    handleSaveDraft({ showReviewModal: true });
+  };
+
   const handleClose = () => {
     history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
       from: "orderSuccessModal",
@@ -782,7 +799,7 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
+  if (loader || isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
     return <Loader />;
   }
 
@@ -827,9 +844,7 @@ const GenerateOrders = () => {
             config={modifiedFormConfig}
             defaultValues={defaultValue}
             onFormValueChange={onFormValueChange}
-            onSubmit={() => {
-              handleSaveDraft({ showReviewModal: true });
-            }}
+            onSubmit={handleReviewOrderClick}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}
@@ -855,7 +870,6 @@ const GenerateOrders = () => {
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
-          handleSaveDraft={() => {}}
           showActions={canESign}
         />
       )}
@@ -863,15 +877,7 @@ const GenerateOrders = () => {
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
       {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
-      {showErrorToast && (
-        <Toast
-          style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}
-          error={true}
-          label={t("DRAFT_SAVED_SUCCESSFULLY")}
-          isDleteBtn={true}
-          onClose={closeToast}
-        />
-      )}
+      {showErrorToast && <Toast error={showErrorToast?.error} label={showErrorToast?.label} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 };
