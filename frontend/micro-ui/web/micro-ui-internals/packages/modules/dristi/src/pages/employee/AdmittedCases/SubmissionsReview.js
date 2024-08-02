@@ -39,7 +39,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         auditDetails: application?.auditDetails,
       },
       applicationContent: null,
-      comments: application?.comment ? JSON.parse(application?.comment) : [],
+      comments: application?.comment ? application?.comment : [],
       applicationList: application,
     };
     const docObj = application?.documents?.map((doc) => {
@@ -61,7 +61,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
           documentUid: doc.documentUid,
           additionalDetails: doc.additionalDetails,
         },
-        comments: application?.comment ? JSON.parse(application?.comment) : [],
+        comments: application?.comment ? application?.comment : [],
         applicationList: application,
       };
     }) || [defaultObj];

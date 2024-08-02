@@ -2,20 +2,33 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
+import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
+import { ReschedulingPurpose } from "./ReschedulingPurpose";
 import TasksComponent from "../../components/TaskComponentCalander";
 
 const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
 const MonthlyCalendar = () => {
   const history = useHistory();
+  const { t } = useTranslation();
+  const calendarRef = useRef(null);
+  const getCurrentViewType = () => {
+    const calendarApi = calendarRef.current.getApi();
+    const currentViewType = calendarApi.view.type;
+    return currentViewType;
+  };
+  const { data: courtData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
+    cacheTime: 0,
+  });
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit.UserService.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -34,14 +47,18 @@ const MonthlyCalendar = () => {
   ]);
 
   const [dateRange, setDateRange] = useState({});
+  const [taskType, setTaskType] = useState({});
+  const [caseType, setCaseType] = useState({});
+  const initial = userInfoType === "citizen" ? "timeGridDay" : "dayGridMonth";
 
   const search = window.location.search;
-  const { fromDate, toDate, slot } = useMemo(() => {
+  const { fromDate, toDate, slot, initialView } = useMemo(() => {
     const searchParams = new URLSearchParams(search);
     const fromDate = searchParams.get("from-date") || null;
     const toDate = searchParams.get("to-date") || null;
     const slot = searchParams.get("slot") || null;
-    return { fromDate, toDate, slot };
+    const initialView = searchParams.get("view") || initial;
+    return { fromDate, toDate, slot, initialView };
   }, [search]);
 
   const reqBody = {
@@ -116,16 +133,29 @@ const MonthlyCalendar = () => {
     return eventsArray;
   }, [hearingDetails, events.slots]);
 
+  const getEachHearingType = (hearingList) => {
+    return [...new Set(hearingList.map((hearing) => hearing.hearingType))];
+  };
+
+  const hearingCount = (hearingList) => {
+    const hearingTypeList = getEachHearingType(hearingList);
+    return hearingTypeList.map((type) => {
+      return {
+        type: type,
+        frequency: hearingList.filter((hearing) => hearing.hearingType === type).length,
+      };
+    });
+  };
+
   const handleEventClick = (arg) => {
     const fromDate = new Date(arg.event.extendedProps.date);
     const toDate = new Date(fromDate);
     toDate.setDate(fromDate.getDate() + 1);
-
     const searchParams = new URLSearchParams(search);
     searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
     searchParams.set("to-date", toDate.toISOString().split("T")[0]);
     searchParams.set("slot", arg.event.extendedProps.slot);
-
+    searchParams.set("view", getCurrentViewType());
     history.replace({ search: searchParams.toString() });
   };
 
@@ -134,6 +164,7 @@ const MonthlyCalendar = () => {
     searchParams.delete("from-date");
     searchParams.delete("to-date");
     searchParams.delete("slot");
+    searchParams.delete("view");
     history.replace({ search: searchParams.toString() });
   };
 
