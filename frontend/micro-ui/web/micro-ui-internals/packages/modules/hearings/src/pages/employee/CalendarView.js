@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { ReschedulingPurpose } from "./ReschedulingPurpose";
 import TasksComponent from "../../components/TaskComponentCalander";
+import { formatDate } from "../../utils";
 
 const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
@@ -62,7 +63,11 @@ const MonthlyCalendar = () => {
   }, [search]);
 
   const reqBody = {
-    criteria: { tenantId, fromDate: dateRange.start?.toISOString().split("T")[0], toDate: dateRange.end?.toISOString().split("T")[0] },
+    criteria: {
+      tenantId,
+      fromDate: dateRange.start ? formatDate(dateRange.start) : null,
+      toDate: dateRange.end ? formatDate(dateRange.end) : null,
+    },
   };
 
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
@@ -152,8 +157,8 @@ const MonthlyCalendar = () => {
     const toDate = new Date(fromDate);
     toDate.setDate(fromDate.getDate() + 1);
     const searchParams = new URLSearchParams(search);
-    searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
-    searchParams.set("to-date", toDate.toISOString().split("T")[0]);
+    searchParams.set("from-date", formatDate(fromDate));
+    searchParams.set("to-date", formatDate(toDate));
     searchParams.set("slot", arg.event.extendedProps.slot);
     searchParams.set("view", getCurrentViewType());
     history.replace({ search: searchParams.toString() });
