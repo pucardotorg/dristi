@@ -5,7 +5,13 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var config = require("./config");
 
-const issueOfSummon = require("./routes/issueOfSummon");
+const summonsIssue = require("./routes/summonsIssue");
+const orderGeneric = require("./routes/orderGeneric");
+const caseTransfer = require("./routes/caseTransfer");
+const caseSettlementAcceptance = require("./routes/caseSettlementAcceptance");
+const caseSettlementRejection = require("./routes/caseSettlementRejection");
+const adrCaseReferral = require("./routes/adrCaseReferral");
+const mandatoryAsyncSubmissionsResponses = require("./routes/mandatoryAsyncSubmissionsResponses");
 
 
 
@@ -27,7 +33,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(config.app.contextPath + "/download/issueOfSummon", issueOfSummon);
+app.use(config.app.contextPath + "/download/summonsIssue", summonsIssue);
+app.use(config.app.contextPath + "/download/orderGeneric", orderGeneric);
+app.use(config.app.contextPath + "/download/caseTransfer", caseTransfer);
+app.use(config.app.contextPath + "/download/caseSettlementAcceptance", caseSettlementAcceptance);
+app.use(config.app.contextPath + "/download/caseSettlementRejection", caseSettlementRejection);
+app.use(config.app.contextPath + "/download/adrCaseReferral", adrCaseReferral);
+app.use(config.app.contextPath + "/download/mandatoryAsyncSubmissionsResponses", mandatoryAsyncSubmissionsResponses);
 
 
 

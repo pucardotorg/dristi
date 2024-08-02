@@ -27,7 +27,20 @@ module.exports = {
   DB_PORT: process.env.DB_PORT || 5432,
 
   pdf: {
-    issue_of_summon: process.env.PROJECT_DETAILS_TEMPLATE || "summons-issue-qr",
+    summons_issue: process.env.SUMMONS_ISSUE || "summons-issue",
+    summons_issue_qr: process.env.SUMMONS_ISSUE_QR || "summons-issue-qr",
+    order_generic: process.env.ORDER_GENERIC || "order-generic",
+    order_generic_qr: process.env.ORDER_GENERIC_QR || "order-generic-qr",
+    case_transfer: process.env.CASE_TRANSFER || "case-transfer",
+    case_transfer_qr: process.env.CASE_TRANSFER_QR || "case-transfer-qr",
+    case_settlement_acceptance: process.env.CASE_SETTLEMENT_ACCEPTANCE || "case-settlement-acceptance",
+    case_settlement_acceptance_qr: process.env.CASE_SETTLEMENT_ACCEPTANCE_QR || "case-settlement-acceptance-qr",
+    case_settlement_rejection: process.env.CASE_SETTLEMENT_REJECTION || "case-settlement-rejection",
+    case_settlement_rejection_qr: process.env.CASE_SETTLEMENT_REJECTION_QR || "case-settlement-rejection-qr",
+    adr_case_referral: process.env.ADR_CASE_REFERRAL || "adr-case-referral",
+    adr_case_referral_qr: process.env.ADR_CASE_REFERRAL_QR || "adr-case-referral-qr",
+    mandatory_async_submissions_responses: process.env.MANDATORY_ASYNC_SUBMISSIONS_RESPONSES || "mandatory-async-submissions-responses",
+    mandatory_async_submissions_responses_qr: process.env.MANDATORY_ASYNC_SUBMISSIONS_RESPONSES_QR || "mandatory-async-submissions-responses-qr",
   },
 
   app: {

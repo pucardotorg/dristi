@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const cheerio = require('cheerio');
-const url = require("url");
 const config = require("../config");
 
 const { search_case, search_order, search_hearing, search_mdms_order, search_hrms, search_individual, search_sunbirdrc_credential_service, create_pdf } = require("../api");
@@ -16,29 +15,32 @@ function renderError(res, errorMessage, errorCode, errorObject) {
 }
 
 router.post(
-    "/issue-summon",
+    "",
     asyncMiddleware(async function (req, res, next) {
         const cnrNumber = req.query.cnrNumber;
         const orderId = req.query.orderId;
+        const qrCode = req.query.qrCode;
         const taskId = req.query.taskId;
         const code = req.query.code;
         const tenantId = req.query.tenantId;
         const requestInfo = req.body;
 
         if (!cnrNumber) {
-            return renderError(res, "cnrNumber is mandatory to generate the receipt", 400);
+            return renderError(res, "cnrNumber is mandatory to generate the PDF", 400);
         }
         if (!orderId) {
-            return renderError(res, "orderId is mandatory to generate the receipt", 400);
+            return renderError(res, "orderId is mandatory to generate the PDF", 400);
         }
         if (!tenantId) {
-            return renderError(res, "tenantId is mandatory to generate the receipt", 400);
+            return renderError(res, "tenantId is mandatory to generate the PDF", 400);
         }
-        if (!taskId) {
-            return renderError(res, "taskId is mandatory to generate the receipt", 400);
-        }
-        if (!code) {
-            return renderError(res, "code is mandatory to generate the receipt", 400);
+        if(qrCode) {
+            if (!taskId) {
+                return renderError(res, "taskId is mandatory to generate the PDF", 400);
+            }
+            if (!code) {
+                return renderError(res, "code is mandatory to generate the PDF", 400);
+            }
         }
         if (requestInfo == undefined) {
             return renderError(res, "requestInfo cannot be null", 400);
@@ -94,9 +96,6 @@ router.post(
             }
             var hearing = resHearing.data.HearingList[0];
 
-            // const hearingDate = formatDate(new Date(hearing.startTime));
-
-
             // Filter litigants to find the respondent.primary
             const respondentParty = courtCase.litigants.find(party => party.partyType === 'respondent.primary');
             if (!respondentParty) {
@@ -111,19 +110,20 @@ router.post(
             }
             var individual = resIndividual.data.Individual[0];
 
-            var resCredential;
-            try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
-            } catch (ex) {
-                return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
-            }
-            // Load the response HTML into cheerio
-             const $ = cheerio.load(resCredential.data);
+            let base64Url = "";
+            if (qrCode) {
+                var resCredential;
+                try {
+                    resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                } catch (ex) {
+                    return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
+                }
+                // Load the response HTML into cheerio
+                const $ = cheerio.load(resCredential.data);
     
-            // Extract the base64 URL from the img tag
-            const base64Url = $('img').attr('src');
-
-
+                // Extract the base64 URL from the img tag
+                base64Url = $('img').attr('src');
+            }
 
             let year;
             if (typeof courtCase.filingDate === 'string') {
@@ -149,7 +149,7 @@ router.post(
                         "respondentName": `${individual.name.givenName} ${individual.name.familyName}`,
                         "date": order.createdDate,
                         "hearingDate": hearing.startTime,
-                        "additionalComments": "Please ensure all relevant documents are submitted prior to the hearing date.",
+                        "additionalComments": order.comments,
                         "judgeSignature": "Judge's Signature",
                         "judgeName": employee.user.name,
                         "courtSeal": "Court Seal",
@@ -159,7 +159,7 @@ router.post(
             };
 
             var pdfResponse;
-            const pdfKey = config.pdf.issue_of_summon;
+            const pdfKey = qrCode === 'true' ? config.pdf.summons_issue_qr : config.pdf.summons_issue;
             try {
                 pdfResponse = await create_pdf(
                     tenantId,
