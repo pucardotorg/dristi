@@ -82,7 +82,7 @@ router.post(
 
             var resOrder;
             try {
-                resOrder = await search_order(tenantId, cnrNumber, orderId, requestInfo);
+                resOrder = await search_order(tenantId, orderId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the order", 500, ex);
             }

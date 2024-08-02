@@ -27,7 +27,7 @@ module.exports = {
   DB_PORT: process.env.DB_PORT || 5432,
 
   pdf: {
-    issue_of_summon: process.env.PROJECT_DETAILS_TEMPLATE || "summons-issue",
+    issue_of_summon: process.env.PROJECT_DETAILS_TEMPLATE || "summons-issue-qr",
   },
 
   app: {
@@ -55,10 +55,8 @@ module.exports = {
     hearing_search: "/hearing/v1/search",
     hrms_search:"/egov-hrms/employees/_search",
     individual_search:"/individual/v1/_search",
-    user_search: "/user/_search",
     mdms_search: "/egov-mdms-service/v2/_search",
     sunbirdrc_credential_service_search: "/sunbirdrc-credential-service/qrcode/_get",
-    mdms_get: "/egov-mdms-service/v1/_get",
   },
 
   constraints: {
