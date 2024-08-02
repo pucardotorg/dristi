@@ -110,6 +110,9 @@ public class Configuration {
     @Value("${application.kafka.update.topic}")
     private String applicationUpdateTopic;
 
+    @Value("${application.kafka.status.update.topic}")
+    private String applicationUpdateStatusTopic;
+
     //Workflow
     @Value("${egov.workflow.async.order.submission.business.name}")
     private String asyncOrderSubBusinessName;

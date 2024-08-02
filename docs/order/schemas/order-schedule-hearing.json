@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-schedule-hearing.json",
+  "$comment": "definition of the schema for issuing schedule hearing order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "purposeOfHearing": {
+      "type" : "string",
+      "description": "purpose of hearing"
+    },
+    "partyName": {
+      "type" : "string",
+      "description": "name of parties"
+    },
+    "hearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of hearing"
+    }
+  }
+}
