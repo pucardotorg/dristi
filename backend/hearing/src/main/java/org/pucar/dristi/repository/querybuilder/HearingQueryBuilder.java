@@ -74,7 +74,7 @@ public class HearingQueryBuilder {
     void addCriteriaDate(LocalDate criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
         if (criteria != null) {
             query.append(str);
-            preparedStmtList.add(criteria.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
+            preparedStmtList.add(criteria.atStartOfDay(ZoneOffset.UTC).plusHours(5).plusMinutes(30).toEpochSecond() * 1000);
         }
     }
     public String addOrderByQuery(String query, Pagination pagination) {
