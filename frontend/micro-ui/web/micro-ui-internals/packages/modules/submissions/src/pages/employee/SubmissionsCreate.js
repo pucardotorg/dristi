@@ -464,8 +464,8 @@ const SubmissionsCreate = () => {
         tenantId,
       };
       await submissionService.updateApplication(reqBody, { tenantId });
-      createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
-      createPendingTask({
+      await createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
+      await createPendingTask({
         name: t("MAKE_PAYMENT_SUBMISSION"),
         status: "MAKE_PAYMENT_SUBMISSION",
         stateSla: todayDate + stateSla.MAKE_PAYMENT_SUBMISSION,
@@ -485,12 +485,12 @@ const SubmissionsCreate = () => {
     const newapplicationNumber = res?.application?.applicationNumber;
     !isExtension &&
       orderNumber &&
-      createPendingTask({
+      (await createPendingTask({
         refId: orderNumber,
         isCompleted: true,
         status: "Completed",
-      });
-    createPendingTask({
+      }));
+    await createPendingTask({
       name: t("ESIGN_THE_SUBMISSION"),
       status: "ESIGN_THE_SUBMISSION",
       refId: newapplicationNumber,
