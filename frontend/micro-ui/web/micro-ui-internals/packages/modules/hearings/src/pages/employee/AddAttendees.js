@@ -16,7 +16,7 @@ const AddAttendees = ({ attendees = [], setAddPartyModal, handleModal, formError
   const selectedOfflineAttendees = useMemo(
     () =>
       attendees
-        .filter((attendee) => attendee.type === "OFFLINE" && attendee.wasPresent)
+        .filter((attendee) => !attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
             value: attendee.individualId,
@@ -29,7 +29,7 @@ const AddAttendees = ({ attendees = [], setAddPartyModal, handleModal, formError
   const selectedOnlineAttendees = useMemo(
     () =>
       attendees
-        .filter((attendee) => attendee.type === "ONLINE" && attendee.wasPresent)
+        .filter((attendee) => attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
             value: attendee.individualId,
