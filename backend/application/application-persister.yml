@@ -103,3 +103,22 @@ serviceMaps:
             - jsonPath: $.application.auditDetails.lastModifiedBy
             - jsonPath: $.application.auditDetails.lastModifiedTime
             - jsonPath: $.application.id
+
+    - version: 1.0
+      description: Update application status in tables
+      fromTopic: update-application-status-application
+      isTransaction: true
+      isAuditEnabled: true
+      module: APPLICATION
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.applicationNumber
+      auditAttributeBasePath: $
+      queryMaps:
+        - query: UPDATE dristi_application SET status = ?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE applicationNumber=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.status
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.applicationNumber
