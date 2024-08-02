@@ -1,7 +1,7 @@
 import { CloseSvg } from "@egovernments/digit-ui-components";
 import React, { useEffect, useMemo, useState } from "react";
 import Modal from "../../../dristi/src/components/Modal";
-function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft, showActions = true }) {
+function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, showActions = true }) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -79,7 +79,6 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     <Modal
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
-      actionCancelOnSubmit={showActions && handleSaveDraft}
       actionSaveLabel={showActions && t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
         if (showActions) {

@@ -60,7 +60,7 @@ const OverlayDropdown = ({ column, row, master, module }) => {
                 style={{ padding: "10px", cursor: "pointer" }}
                 onClick={() => {
                   setIsDropdownOpen(false);
-                  return item.action(history);
+                  return item.action(history, column);
                 }}
               >
                 {item.label}

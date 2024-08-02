@@ -34,4 +34,20 @@ export const ordersService = {
       data,
       params,
     }),
+  createHearings: (data, params) =>
+    Request({
+      url: Urls.orders.createHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  updateHearings: (data, params) =>
+    Request({
+      url: Urls.orders.updateHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };
