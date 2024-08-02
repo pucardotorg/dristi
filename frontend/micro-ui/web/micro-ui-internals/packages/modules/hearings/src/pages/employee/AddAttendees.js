@@ -1,91 +1,115 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
-import { hearingService } from "../../../../hearings/src/hooks/services/index";
+import React, { useMemo } from "react";
 
-const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
-  const [formError, setFormError] = useState("");
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-
+const AddAttendees = ({ attendees = [], setAddPartyModal, handleModal, formError, form, setForm, setIsDisabled }) => {
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
   };
+  const attendeeOptions = Array.isArray(attendees)
+    ? attendees.map((attendee) => ({
+        value: attendee.individualId,
+        label: attendee.name,
+      }))
+    : [];
 
-  const onFormSubmit = async (data) => {
-    const onlineAttendees = data.onlineAttendees || [];
-    const offlineAttendees = data.offlineAttendees || [];
+  const selectedOfflineAttendees = useMemo(
+    () =>
+      attendees
+        .filter((attendee) => attendee.type === "OFFLINE" && attendee.wasPresent)
+        .map((attendee) => {
+          return {
+            value: attendee.individualId,
+            label: attendee.name,
+          };
+        }),
+    [attendees]
+  );
 
-    const onlineIds = onlineAttendees.map((a) => a.value);
-    const offlineIds = offlineAttendees.map((a) => a.value);
-    const duplicateIds = onlineIds.filter((id) => offlineIds.includes(id));
-
-    if (duplicateIds.length > 0) {
-      setFormError("Attendees cannot be selected for both online and offline.");
-      return;
-    }
-
-    const updatedAttendees = attendees.map((attendee) => {
-      if (onlineIds.includes(attendee.individualId)) {
-        return { ...attendee, type: "ONLINE", wasPresent: true };
-      }
-      if (offlineIds.includes(attendee.individualId)) {
-        return { ...attendee, type: "OFFLINE", wasPresent: true };
-      }
-      return attendee;
-    });
-    try {
-      const hearing = { ...hearingData, attendees: updatedAttendees };
-      hearingService.updateHearing({ tenantId, hearing, hearingType: "", status: "" }, "");
-    } catch (error) {
-      console.error("Error updating hearing:", error);
-    }
-    setAttendees(updatedAttendees);
-    handleAttendees();
-    setFormError("");
-  };
+  const selectedOnlineAttendees = useMemo(
+    () =>
+      attendees
+        .filter((attendee) => attendee.type === "ONLINE" && attendee.wasPresent)
+        .map((attendee) => {
+          return {
+            value: attendee.individualId,
+            label: attendee.name,
+          };
+        }),
+    [attendees]
+  );
 
   const formConfig = [
     {
+      label: "Select Online Attendees",
       isMandatory: true,
       key: "onlineAttendees",
-      type: "multiselectdropdown",
-      inline: false,
-      disable: false,
-      label: `Select online Attendees`,
-      defaultValue: [],
+      type: "dropdown",
       populators: {
         name: "onlineAttendees",
+        allowMultiSelect: true,
         optionsKey: "label",
+        error: "CORE_REQUIRED_FIELD_ERROR",
+        required: true,
+        isMandatory: true,
+        selectedText: "Attendee(s)",
         defaultText: "select attendees",
-        selectedText: "attendees",
-        options: attendees.map((attendee) => ({
-          value: attendee.individualId,
-          label: attendee.name,
-        })),
+        options: attendeeOptions,
         error: "Required",
       },
     },
     {
+      label: "Select Offline Attendees",
       isMandatory: true,
       key: "offlineAttendees",
-      type: "multiselectdropdown",
-      inline: false,
-      disable: false,
-      label: `Select Offline Attendees`,
-      defaultValue: [],
+      type: "dropdown",
       populators: {
         name: "offlineAttendees",
+        allowMultiSelect: true,
         optionsKey: "label",
+        error: "CORE_REQUIRED_FIELD_ERROR",
+        required: true,
+        isMandatory: true,
+        selectedText: "Attendee(s)",
         defaultText: "select attendees",
-        selectedText: "attendees",
-        options: attendees.map((attendee) => ({
-          value: attendee.individualId,
-          label: attendee.name,
-        })),
+        options: attendeeOptions,
         error: "Required",
       },
     },
   ];
+
+  function applyMultiSelectDropdownFix(setValue, formData, keys) {
+    {
+      Array.isArray(keys) &&
+        keys.forEach((key) => {
+          if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
+            setValue(key, undefined);
+          }
+        });
+    }
+  }
+  const multiSelectDropdownKeys = () => {
+    const foundKeys = [];
+    formConfig.forEach((field) => {
+      if (field.type === "dropdown" && field.populators.allowMultiSelect) {
+        foundKeys.push(field.key);
+      }
+    });
+    return foundKeys;
+  };
+
+  const onFormChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
+
+    if (formData.offlineAttendees.length === 0 && formData.onlineAttendees.length === 0) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+    if (JSON.stringify(formData) !== JSON.stringify(form)) {
+      setForm(formData);
+    }
+  };
 
   return (
     <div>
@@ -97,10 +121,23 @@ const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingDa
             body: formConfig,
           },
         ]}
-        onSubmit={onFormSubmit}
-        label="Submit"
+        defaultValues={{
+          offlineAttendees: selectedOfflineAttendees,
+          onlineAttendees: selectedOnlineAttendees,
+        }}
+        onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+          onFormChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
+        }}
+        children={
+          <Button
+            label={"+ Add New Parties to this Case"}
+            onButtonClick={onClickAddWitness}
+            variation={"teritiary"}
+            style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
+          ></Button>
+        }
+        childrenAtTheBottom={true}
       />
-      <Button label={"Add Party"} onButtonClick={onClickAddWitness}></Button>
     </div>
   );
 };

@@ -48,7 +48,6 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
     getCaseDetails();
   }, []);
 
-  console.log(hearing, "lll");
   const getCaseDetails = async () => {
     try {
       const response = await window?.Digit?.DRISTIService.searchCaseService(
@@ -62,19 +61,28 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
         },
         {}
       );
-      setCaseDetails(response);
+      setCaseDetails(response?.criteria[0]?.responseList[0]);
     } catch (error) {
-      const response = {
-        Case_Number: "FSM-29-04-23-898898",
-        Court_Name: "Kerala City Criminal Court",
-        Case_Type: "NIA S 138",
-      };
-      setCaseDetails(response);
+      console.log("error fetching case details", error);
     }
   };
 
   const { data: datesResponse, refetch: refetchGetAvailableDates } = useGetAvailableDates(true);
   const Dates = useMemo(() => datesResponse || [], [datesResponse]);
+
+  const { data: MdmsCourtList, isLoading: loading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "common-masters",
+    [{ name: "Court_Rooms" }],
+    {
+      cacheTime: 0,
+    }
+  );
+
+  const courtDetails = useMemo(() => {
+    if (!MdmsCourtList) return null;
+    return MdmsCourtList?.["common-masters"]?.Court_Rooms.find((court) => court.code === caseDetails?.courtId);
+  }, [MdmsCourtList, caseDetails?.courtId]);
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
@@ -109,15 +117,15 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
           <div className="case-card">
             <div className="case-details">
               Case Number:
-              <div> {caseDetails?.Case_Number} </div>
+              <div> {caseDetails?.caseNumber} </div>
             </div>
             <div className="case-details">
               Court Name:
-              <div> {caseDetails?.Court_Name} </div>
+              <div> {courtDetails?.name} </div>
             </div>
             <div className="case-details">
               Case Type:
-              <div> {caseDetails?.Case_Type} </div>
+              <div> {caseDetails?.Case_Type || "NIA S 138"} </div>
             </div>
           </div>
         </Card>
