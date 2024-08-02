@@ -40,7 +40,7 @@ export const Urls = {
     pendingTask: "/analytics/pending_task/v1/create",
   },
   case: {
-    addWitness: "/case/case/v1/add/witness",
+    addWitness: "/case/v1/add/witness",
   },
   FileFetchById: "/filestore/v1/files/id",
 };

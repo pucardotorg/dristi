@@ -2,7 +2,7 @@ import { Button, FormComposerV2, Modal } from "@egovernments/digit-ui-react-comp
 import React, { useCallback, useState } from "react";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
 
-const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
+const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
   const DRISTIService = Digit?.ComponentRegistryService?.getComponent("DRISTIService");
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
@@ -61,7 +61,6 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
             newData[newKey] = data[key];
           }
         });
-        newData.isSigned = false;
         newData.uuid = generateUUID();
         const errors = validateFormData(newData);
         if (Object.keys(errors).length > 0) {
@@ -73,8 +72,11 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       .filter(Boolean);
 
     if (cleanedData.length === aFormData.length) {
-      onAdd(cleanedData);
-      onDismiss();
+      onAdd(cleanedData)
+        .catch(console.error)
+        .then(() => {
+          onAddSuccess();
+        });
     }
   };
   const generateUUID = () => {
@@ -84,7 +86,7 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       return v.toString(16);
     });
   };
-  const onAdd = (cleanedData) => {
+  const onAdd = async (cleanedData) => {
     const newWitness = cleanedData.map((data) => {
       return {
         isenabled: true,
@@ -100,7 +102,6 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
           witnessAdditionalDetails: {
             text: data.additionalDetails,
           },
-          isSigned: false,
           uuid: data.uuid,
         },
       };
@@ -140,7 +141,7 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
   return (
     <Modal
       headerBarMain={<h1 className="heading-m">Add New Party</h1>}
-      headerBarEnd={<CloseBtn onClick={onDismiss} />}
+      headerBarEnd={<CloseBtn onClick={onCancel} />}
       actionCancelLabel="Back"
       actionCancelOnSubmit={onCancel}
       actionSaveLabel="Add"
