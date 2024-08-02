@@ -76,14 +76,14 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
       }}
       headerBarMain={
         <h1 className="heading-m" style={{ textAlign: "left" }}>
-          Add Attendance
+          {isAddingAttendees ? "Add Attendees" : "Mark Attendance"}
         </h1>
       }
       headerBarEnd={<CloseSvg onClick={handleModal} />}
       formId="modal-action"
       actionCancelLabel={"Back"}
       actionCancelOnSubmit={() => setIsAddingAttendee(!isAddingAttendees)}
-      actionSaveLabel={"Submit"}
+      actionSaveLabel={"Add"}
       actionSaveOnSubmit={() => onFormSubmit(form)}
       isDisabled={isDisabled}
     >
