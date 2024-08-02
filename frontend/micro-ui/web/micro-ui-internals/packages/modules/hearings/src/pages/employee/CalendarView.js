@@ -10,6 +10,7 @@ import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
 import TasksComponent from "../../../../home/src/components/TaskComponent";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { ReschedulingPurpose } from "./ReschedulingPurpose";
 
 const tenantId = window.localStorage.getItem("tenant-id");
 
@@ -22,6 +23,9 @@ const MonthlyCalendar = () => {
     const currentViewType = calendarApi.view.type;
     return currentViewType;
   };
+  const { data: courtData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
+    cacheTime: 0,
+  });
 
   const [dateRange, setDateRange] = useState({});
   const [taskType, setTaskType] = useState({});
@@ -29,6 +33,7 @@ const MonthlyCalendar = () => {
 
   const userInfo = Digit.UserService.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const initial = userInfoType === "citizen" ? "timeGridDay" : "dayGridMonth";
 
   const search = window.location.search;
   const { fromDate, toDate, slot, initialView } = useMemo(() => {
@@ -36,7 +41,7 @@ const MonthlyCalendar = () => {
     const fromDate = searchParams.get("from-date") || null;
     const toDate = searchParams.get("to-date") || null;
     const slot = searchParams.get("slot") || null;
-    const initialView = searchParams.get("view") || "dayGridMonth";
+    const initialView = searchParams.get("view") || initial;
     return { fromDate, toDate, slot, initialView };
   }, [search]);
 
@@ -187,8 +192,9 @@ const MonthlyCalendar = () => {
             }}
             ref={calendarRef}
           />
-
-          {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
+          {fromDate && toDate && slot && (
+            <PreHearingModal courtData={courtData?.["common-masters"]?.Court_Rooms} onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />
+          )}
         </div>
       </div>
       <div className="right-side">

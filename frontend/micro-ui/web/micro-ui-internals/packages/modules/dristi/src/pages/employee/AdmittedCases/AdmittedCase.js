@@ -653,7 +653,7 @@ const AdmittedCases = () => {
         documents: [],
         additionalDetails: {
           formdata: {
-            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingDate: formatDate(date).split("-").reverse().join("-"),
             hearingPurpose: data.purpose,
             orderType: {
               code: "SCHEDULE_OF_HEARING_DATE",

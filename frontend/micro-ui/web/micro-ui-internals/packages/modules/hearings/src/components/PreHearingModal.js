@@ -1,11 +1,14 @@
 import { Button, CloseSvg, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../../dristi/src/components/Modal";
 import { preHearingConfig } from "../configs/PreHearingConfig";
+import { ReschedulingPurpose } from "../pages/employee/ReschedulingPurpose";
 
-function PreHearingModal({ onCancel, hearingData }) {
+function PreHearingModal({ onCancel, hearingData, courtData }) {
   const { t } = useTranslation();
+  const [purposeModalOpen, setPurposeModalOpen] = useState(false);
+  const [purposeModalData, setPurposeModalData] = useState(false);
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -19,6 +22,11 @@ function PreHearingModal({ onCancel, hearingData }) {
     );
   };
 
+  const openRescheduleModal = (caseDetails) => {
+    setPurposeModalData(caseDetails);
+    setPurposeModalOpen(true);
+  };
+
   const updatedConfig = useMemo(() => {
     const configCopy = structuredClone(preHearingConfig);
     configCopy.apiDetails.requestParam = {
@@ -27,6 +35,16 @@ function PreHearingModal({ onCancel, hearingData }) {
       toDate: hearingData.toDate,
       slot: hearingData.slot,
     };
+    configCopy.sections.searchResult.uiConfig.columns = [
+      ...configCopy.sections.searchResult.uiConfig.columns.map((column) => {
+        return column.label === "Actions"
+          ? {
+              ...column,
+              openRescheduleDialog: openRescheduleModal,
+            }
+          : column;
+      }),
+    ];
     return configCopy;
   }, [hearingData.fromDate, hearingData.toDate, hearingData.slot]);
 
@@ -39,6 +57,11 @@ function PreHearingModal({ onCancel, hearingData }) {
   const onRescheduleAllClick = () => {
     const contextPath = window?.contextPath || "";
     window.location.href = `/${contextPath}/employee/hearings/reschedule-hearing`;
+  };
+
+  const closeFunc = () => {
+    setPurposeModalOpen(false);
+    setPurposeModalData({});
   };
 
   return (
@@ -70,6 +93,7 @@ function PreHearingModal({ onCancel, hearingData }) {
           variation={"secondary"}
         />
       </div>
+      {purposeModalOpen && <ReschedulingPurpose courtData={courtData} closeFunc={closeFunc} caseDetails={purposeModalData} />}
     </Modal>
   );
 }
