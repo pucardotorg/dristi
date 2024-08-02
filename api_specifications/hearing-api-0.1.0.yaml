@@ -346,6 +346,9 @@ components:
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
+              isRequiredOffline:
+                type: boolean
+                description: Set it true if attendance is required in Offline mode for the hearing.
         transcript:
           type: array
           items:
