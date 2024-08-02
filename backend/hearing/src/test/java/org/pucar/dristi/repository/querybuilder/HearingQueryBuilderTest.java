@@ -96,8 +96,8 @@ class HearingQueryBuilderTest {
         assertEquals(hearingType, preparedStmtList.get(3));
         assertEquals("[\"FILE123\"]", preparedStmtList.get(4));
         assertEquals("tenant1", preparedStmtList.get(5));
-        assertEquals(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(6));
-        assertEquals(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(7));
+        assertEquals(fromDate.atStartOfDay(ZoneOffset.UTC).plusHours(5).plusMinutes(30).toEpochSecond() * 1000, preparedStmtList.get(6));
+        assertEquals(toDate.atStartOfDay(ZoneOffset.UTC).plusHours(5).plusMinutes(30).toEpochSecond() * 1000, preparedStmtList.get(7));
         assertEquals(attendeeIndividualId, preparedStmtList.get(8));
     }
 
@@ -327,7 +327,7 @@ class HearingQueryBuilderTest {
         // Assert
         assertTrue(query.toString().contains("AND startTime >= ?"));
         assertEquals(1, preparedStmtList.size());
-        assertEquals(criteria.atStartOfDay().toEpochSecond(java.time.ZoneOffset.UTC) * 1000, preparedStmtList.get(0));
+        assertEquals(criteria.atStartOfDay(ZoneOffset.UTC).plusHours(5).plusMinutes(30).toEpochSecond() * 1000, preparedStmtList.get(0));
     }
 
     @Test
