@@ -55,7 +55,7 @@ public class HearingQueryBuilder {
             addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
-            addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
+            addCriteriaDate(toDate, query, " AND startTime < ?", preparedStmtList);
             addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList, attendeeIndividualId);
             return query.toString();
         } catch (Exception e) {

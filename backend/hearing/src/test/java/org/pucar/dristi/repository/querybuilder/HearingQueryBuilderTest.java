@@ -86,7 +86,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
-        assertTrue(query.contains("AND startTime <= ?"));
+        assertTrue(query.contains("AND startTime < ?"));
         assertTrue(query.contains("AND hearingtype = ?"));
         assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
         assertEquals(9, preparedStmtList.size());
