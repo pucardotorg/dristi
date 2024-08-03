@@ -139,7 +139,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           auditDetails: applicationDetails?.auditDetails,
         },
         applicationContent: null,
-        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        comments: applicationDetails?.comment ? applicationDetails?.comment : [],
         applicationList: applicationDetails,
       };
 
@@ -162,7 +162,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
             documentUid: doc.documentUid,
             additionalDetails: doc.additionalDetails,
           },
-          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          comments: applicationDetails?.comment ? applicationDetails?.comment : [],
           applicationList: applicationDetails,
         };
       }) || [defaultObj];
@@ -340,7 +340,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
           const entityType = data?.fields?.find((field) => field.key === "entityType")?.value;
-          const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
+          const updateReferenceId = referenceId.split("_").pop();
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[entityType || taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);

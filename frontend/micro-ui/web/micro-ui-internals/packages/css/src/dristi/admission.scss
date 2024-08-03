@@ -193,21 +193,6 @@
   }
 }
 
-.case-file-admission-action-bar.hearing-scheduled {
-  .previous-button {
-    display: flex;
-    align-items: center;
-    border: none;
-    margin-right: -15px;
-    pointer-events: none !important;
-    h2 {
-      padding-top: 5px;
-      font-size: 19px;
-      font-weight: 500;
-    }
-  }
-}
-
 .send-case-back-modal {
   width: 536px;
   border-radius: 5px;

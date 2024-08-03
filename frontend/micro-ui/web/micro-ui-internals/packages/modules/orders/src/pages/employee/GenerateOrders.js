@@ -36,12 +36,12 @@ import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
 import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
-import { DRISTIService } from "../../../../dristi/src/services";
 import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 import { getAdvocates, getAllAssignees } from "../../utils/caseUtils";
+import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   keys.forEach((key) => {
@@ -105,7 +105,9 @@ const GenerateOrders = () => {
   const [formList, setFormList] = useState([]);
   const [prevOrder, setPrevOrder] = useState();
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(null);
+  const [loader, setLoader] = useState(false);
+  const [createdHearing, setCreatedHearing] = useState({});
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -115,7 +117,7 @@ const GenerateOrders = () => {
   };
 
   const closeToast = () => {
-    setShowErrorToast(false);
+    setShowErrorToast(null);
   };
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
@@ -256,7 +258,7 @@ const GenerateOrders = () => {
   useEffect(() => {
     if (showErrorToast) {
       const timer = setTimeout(() => {
-        setShowErrorToast(false);
+        setShowErrorToast(null);
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -266,7 +268,7 @@ const GenerateOrders = () => {
     if (defaultIndex && defaultIndex !== -1 && orderNumber && defaultIndex !== selectedOrder) {
       setSelectedOrder(defaultIndex);
     }
-  }, [defaultIndex, selectedOrder, orderNumber]);
+  }, [defaultIndex]);
 
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
@@ -286,7 +288,8 @@ const GenerateOrders = () => {
     referenceId
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
-  const hearingId = useMemo(() => "HEARING-ID-2024-08-01-000221", []);
+
+  const hearingId = useMemo(() => applicationDetails?.additionalDetails?.hearingId, [applicationDetails]);
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
@@ -301,7 +304,6 @@ const GenerateOrders = () => {
     Boolean(hearingId)
   );
   const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
-  const hearingDate = useMemo(() => formatDate(new Date(hearingDetails?.startTime)), [hearingDetails]);
 
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
@@ -312,7 +314,6 @@ const GenerateOrders = () => {
       SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
-      APPROVAL_RESCHEDULE_REQUEST: configsRescheduleHearingDate,
       INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
       ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
       ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
@@ -351,7 +352,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: respondents,
+                    options: [...complainants, ...respondents],
                   },
                 };
               }
@@ -544,23 +545,27 @@ const GenerateOrders = () => {
     setFormList((prev) => {
       return [...prev, defaultOrderData];
     });
-    if (orderNumber) {
-      history.push(`?filingNumber=${filingNumber}`);
-    }
     setSelectedOrder(formList?.length);
   };
 
-  const createPendingTask = async (order, refId = null, isAssignedRole = false) => {
+  const createPendingTask = async ({
+    order,
+    refId = null,
+    isAssignedRole = false,
+    createTask = false,
+    taskStatus = "CREATE_SUBMISSION",
+    taskName = "",
+  }) => {
     const formdata = order?.additionalDetails?.formdata;
-    let create = false;
-    let name = "";
+    let create = createTask;
+    let name = taskName;
     let assignees = [];
-    let referenceId = refId || order?.orderNumber;
+    let referenceId = order?.orderNumber;
     let assignedRole = [];
     let additionalDetails = {};
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
-    let status = "CREATE_SUBMISSION";
+    let status = taskStatus;
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
       name = t("MAKE_MANDATORY_SUBMISSION");
@@ -569,16 +574,38 @@ const GenerateOrders = () => {
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
       status = "OPTOUT";
-      assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
-      name = t("RESCHEDULE_OF_HEARING_DATE");
+      assignees = Object.values(allAdvocates)
+        ?.flat()
+        ?.map((uuid) => ({ uuid }));
+      name = t("CHOOSE_DATES_FOR_RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing";
+      const promises = assignees.map(async (assignee) => {
+        return ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: {
+            name,
+            entityType,
+            referenceId: `MANUAL_${assignee?.uuid}_${order?.hearingNumber}`,
+            status,
+            assignedTo: [assignee],
+            assignedRole,
+            cnrNumber: cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+            additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+            tenantId,
+          },
+        });
+      });
+      return await Promise.all(promises);
     }
     if (isAssignedRole) {
       assignees = [];
-      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE") {
+      assignedRole = ["JUDGE_ROLE"];
+      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId) {
+        referenceId = refId;
         create = true;
         status = "CREATE_DRAFT_IN_PROGRESS";
-        assignedRole = ["JUDGE_ROLE"];
         name = t("CREATE_ORDERS_FOR_SUMMONS");
         entityType = "order-managelifecycle";
         additionalDetails = { ...additionalDetails, orderType: "SUMMONS" };
@@ -605,29 +632,31 @@ const GenerateOrders = () => {
     return;
   };
 
-  const closeManualPendingTask = (order) => {
+  const closeManualPendingTask = async (refId) => {
     try {
-      order?.additionalDetails?.formdata?.refApplicationId &&
-        ordersService.customApiService(Urls.orders.pendingTask, {
-          pendingTask: {
-            name: "Completed",
-            entityType: "order-managelifecycle",
-            referenceId: `MANUAL_${order?.orderNumber}`,
-            status: "DRAFT_IN_PROGRESS",
-            assignedTo: [],
-            assignedRole: [],
-            cnrNumber: cnrNumber,
-            filingNumber: filingNumber,
-            isCompleted: true,
-            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
+      await ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: "Completed",
+          entityType: "order-managelifecycle",
+          referenceId: `MANUAL_${refId}`,
+          status: "DRAFT_IN_PROGRESS",
+          assignedTo: [],
+          assignedRole: [],
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: true,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
     } catch (error) {}
   };
 
   const handleSaveDraft = async ({ showReviewModal }) => {
+    if (showReviewModal) {
+      setLoader(true);
+    }
     let count = 0;
     const promises = formList.map(async (order) => {
       if (order?.orderType) {
@@ -642,13 +671,16 @@ const GenerateOrders = () => {
       }
     });
     const responsesList = await Promise.all(promises);
+    if (showReviewModal) {
+      setLoader(false);
+    }
     setFormList(
       responsesList.map((res) => {
         return res?.order;
       })
     );
     if (!showReviewModal) {
-      setShowErrorToast(true);
+      setShowErrorToast({ label: t("DRAFT_SAVED_SUCCESSFULLY"), error: false });
     }
     if (selectedOrder >= count) {
       setSelectedOrder(0);
@@ -659,9 +691,6 @@ const GenerateOrders = () => {
   };
 
   const handleApplicationAction = async (order) => {
-    if (!referenceId || ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
-      return true;
-    }
     try {
       return await ordersService.customApiService(
         `/application/v1/update`,
@@ -683,17 +712,32 @@ const GenerateOrders = () => {
     }
   };
 
+  const handleUpdateHearing = async ({ startTime, endTime, action }) => {
+    try {
+      await ordersService.updateHearings(
+        {
+          hearing: {
+            ...hearingDetails,
+            ...(startTime && { startTime }),
+            ...(endTime && { endTime }),
+            documents: hearingDetails?.documents || [],
+            workflow: {
+              action: action,
+              assignes: [],
+              comments: "Update Hearing",
+              documents: [{}],
+            },
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {}
+  };
+
   const handleIssueOrder = async () => {
     try {
+      let newhearingId = "";
       setPrevOrder(currentOrder);
-      const applicationStatus = await handleApplicationAction(currentOrder);
-      if (!applicationStatus) {
-        // Show toast with submission approval failed and return
-        return;
-      }
-      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
-      createPendingTask(currentOrder);
-      closeManualPendingTask(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -702,7 +746,7 @@ const GenerateOrders = () => {
             type: "Advocate",
           };
         });
-        const hearingres = await DRISTIService.createHearings(
+        const hearingres = await await ordersService.createHearings(
           {
             hearing: {
               tenantId: tenantId,
@@ -729,9 +773,24 @@ const GenerateOrders = () => {
           },
           { tenantId: tenantId }
         );
-        const newhearingId = hearingres?.hearing?.hearingId;
-        createPendingTask(currentOrder, newhearingId, true, ["JUDGE_ROLE"]);
+        newhearingId = hearingres?.hearing?.hearingId;
+        setCreatedHearing({ hearingId: newhearingId, startDate: currentOrder?.additionalDetails?.formdata?.hearingDate });
+        await createPendingTask({ order: currentOrder, refId: newhearingId, isAssignedRole: true });
       }
+      if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
+        await handleUpdateHearing({ action: HearingWorkflowAction.SETDATE });
+      }
+      if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
+        await handleUpdateHearing({
+          action: HearingWorkflowAction.RESCHEDULE,
+          startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+          endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+        });
+      }
+      referenceId && (await handleApplicationAction(currentOrder));
+      await updateOrder({ ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId }) }, OrderWorkflowAction.ESIGN);
+      createPendingTask({ order: currentOrder });
+      currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
       setShowSuccessModal(true);
     } catch (error) {
       //show toast of API failed
@@ -749,7 +808,7 @@ const GenerateOrders = () => {
         history.push(`?filingNumber=${filingNumber}`);
       }
       setSelectedOrder((prev) => {
-        return deleteOrderIndex <= prev ? prev - 1 : prev;
+        return deleteOrderIndex <= prev ? (prev - 1 >= 0 ? prev - 1 : 0) : prev;
       });
     } catch (error) {
       //show toast of API failed
@@ -757,15 +816,18 @@ const GenerateOrders = () => {
     }
     setDeleteOrderIndex(null);
   };
+  const successModalActionSaveLabel = useMemo(() => {
+    if (createdHearing?.hearingId) {
+      return t("ISSUE_SUMMONS_BUTTON");
+    }
+    return t("CS_COMMON_CLOSE");
+  }, [createdHearing, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
     setShowReviewModal(true);
   };
   const handleOrderChange = (index) => {
-    if (orderNumber) {
-      history.push(`?filingNumber=${filingNumber}`);
-    }
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {
@@ -775,18 +837,90 @@ const GenerateOrders = () => {
     // });
   };
 
-  const handleClose = () => {
-    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
-      from: "orderSuccessModal",
-    });
-    setShowSuccessModal(false);
+  const handleReviewOrderClick = () => {
+    if (referenceId && ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
+      setShowErrorToast({
+        label:
+          SubmissionWorkflowState.COMPLETED === applicationDetails?.status
+            ? t("SUBMISSION_ALREADY_ACCEPTED")
+            : SubmissionWorkflowState.REJECTED === applicationDetails?.status
+            ? t("SUBMISSION_ALREADY_REJECTED")
+            : t("SUBMISSION_NO_LONGER_VALID"),
+        error: true,
+      });
+      setShowReviewModal(false);
+      setShowsignatureModal(false);
+      return;
+    }
+    handleSaveDraft({ showReviewModal: true });
+  };
+
+  const handleIssueSummonClick = async () => {
+    try {
+      const reqbody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "SUMMONS",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          hearingNumber: createdHearing?.hearingId,
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                code: "SUMMONS",
+                type: "SUMMONS",
+                name: "ORDER_TYPE_SUMMONS",
+              },
+              date: createdHearing?.startDate,
+            },
+          },
+        },
+      };
+      const res = await ordersService.createOrder(reqbody, { tenantId });
+      await closeManualPendingTask(createdHearing?.hearingId);
+      await createPendingTask({
+        order: res?.order,
+        isAssignedRole: true,
+        createTask: true,
+        taskStatus: "DRAFT_IN_PROGRESS",
+        taskName: t("DRAFT_IN_PROGRESS_ISSUE_SUMMONS"),
+      });
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
+    } catch (error) {}
+  };
+
+  const handleClose = async () => {
+    if (successModalActionSaveLabel === t("CS_COMMON_CLOSE")) {
+      history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+        from: "orderSuccessModal",
+      });
+      setShowSuccessModal(false);
+      return;
+    }
+    if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
+      await handleIssueSummonClick();
+    }
   };
 
   if (!filingNumber) {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
+  if (loader || isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list) {
     return <Loader />;
   }
 
@@ -831,9 +965,7 @@ const GenerateOrders = () => {
             config={modifiedFormConfig}
             defaultValues={defaultValue}
             onFormValueChange={onFormValueChange}
-            onSubmit={() => {
-              handleSaveDraft({ showReviewModal: true });
-            }}
+            onSubmit={handleReviewOrderClick}
             onSecondayActionClick={handleSaveDraft}
             secondaryLabel={t("SAVE_AS_DRAFT")}
             showSecondaryLabel={true}
@@ -859,23 +991,22 @@ const GenerateOrders = () => {
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
-          handleSaveDraft={() => {}}
           showActions={canESign}
         />
       )}
       {showsignatureModal && (
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
-      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
-      {showErrorToast && (
-        <Toast
-          style={{ backgroundColor: "#00703c", zIndex: "9999999999" }}
-          error={true}
-          label={t("DRAFT_SAVED_SUCCESSFULLY")}
-          isDleteBtn={true}
-          onClose={closeToast}
+      {showSuccessModal && (
+        <OrderSucessModal
+          t={t}
+          order={prevOrder}
+          handleDownloadOrders={handleDownloadOrders}
+          handleClose={handleClose}
+          actionSaveLabel={successModalActionSaveLabel}
         />
       )}
+      {showErrorToast && <Toast error={showErrorToast?.error} label={showErrorToast?.label} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 };

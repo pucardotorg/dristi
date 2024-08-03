@@ -15,9 +15,6 @@ import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
-  RE_SCHEDULE: 2,
-  CHECKOUT_REQUEST: 2,
-  SAVE_DRAFT: 2,
   DRAFT_IN_PROGRESS: 2,
 };
 
@@ -435,7 +432,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderTypes = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
       case "TRANSFER":
@@ -446,8 +443,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
       case "SURETY":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
@@ -458,7 +453,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderActionName = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "ORDER_FOR_INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
       case "TRANSFER":
@@ -469,10 +464,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
       case "SURETY":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_EXTENSION_SUBMISSION_DEADLINE";
       default:
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
@@ -480,16 +473,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const isMandatoryOrderCreation = useMemo(() => {
     const applicationType = documentSubmission?.[0]?.applicationList?.applicationType;
     const type = showConfirmationModal?.type;
-    const acceptedApplicationTypes = [
-      "RE_SCHEDULE",
-      "WITHDRAWAL",
-      "TRANSFER",
-      "SETTLEMENT",
-      "BAIL_BOND",
-      "SURETY",
-      "CHECKOUT_REQUEST",
-      "EXTENSION_SUBMISSION_DEADLINE",
-    ];
+    const acceptedApplicationTypes = ["RE_SCHEDULE", "WITHDRAWAL", "TRANSFER", "SETTLEMENT", "BAIL_BOND", "SURETY", "EXTENSION_SUBMISSION_DEADLINE"];
     if (type === "reject") {
       return false;
     } else {
@@ -530,7 +514,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               documents: [{}],
             },
             documents: [],
-            additionalDetails: { formdata },
+            additionalDetails: {
+              formdata,
+            },
+            ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
+              hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
+            }),
           },
         };
         try {
@@ -552,9 +541,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               tenantId,
             },
           });
-          history.push(
-            `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
-          );
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
         } catch (error) {}
       } else {
         if (showConfirmationModal.type === "reject") {

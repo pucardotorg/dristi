@@ -80,7 +80,6 @@ const MultiUploadWrapper = ({
   const [enableButton, setEnableButton] = useState(true);
 
   const uploadMultipleFiles = (state, payload) => {
-    debugger;
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
     const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
