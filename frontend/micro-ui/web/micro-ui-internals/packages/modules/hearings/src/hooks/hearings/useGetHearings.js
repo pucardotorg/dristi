@@ -17,10 +17,9 @@ function useGetHearings(data, params, keys, enabled, refetchInterval = false, at
             ...data,
             criteria: {
               ...data?.criteria,
-              attendeeIndividualId: attendeeIndividualId,
+              attendeeIndividualId: attendeeIndividualId || undefined,
             },
           },
-          data,
           params
         )
         .then((data) => data)

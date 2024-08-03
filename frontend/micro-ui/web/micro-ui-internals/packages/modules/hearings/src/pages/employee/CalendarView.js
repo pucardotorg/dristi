@@ -43,9 +43,7 @@ const MonthlyCalendar = () => {
     userInfo?.uuid && isUserLoggedIn
   );
   const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
-  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
-    individualData,
-  ]);
+  const userType = Digit.UserService.getType()
 
   const [dateRange, setDateRange] = useState({});
   const [taskType, setTaskType] = useState({});
@@ -74,9 +72,9 @@ const MonthlyCalendar = () => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start?.toISOString()}-${dateRange.end?.toISOString()}`,
-    Boolean(dateRange.start && dateRange.end && individualId),
+    Boolean(dateRange.start && dateRange.end && (userType === "citizen" ? individualId: true)),
     false,
-    userType === "LITIGANT" && individualId
+    userType === "citizen" && individualId
   );
   const { data: hearingSlots } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
@@ -215,7 +213,7 @@ const MonthlyCalendar = () => {
             }}
             ref={calendarRef}
           />
-          {fromDate && toDate && slot && individualId && (
+          {fromDate && toDate && slot && (
             <PreHearingModal
               courtData={courtData?.["common-masters"]?.Court_Rooms}
               onCancel={closeModal}

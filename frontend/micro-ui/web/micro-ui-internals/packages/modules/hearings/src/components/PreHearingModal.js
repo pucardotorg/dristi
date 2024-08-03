@@ -6,7 +6,7 @@ import { preHearingConfig } from "../configs/PreHearingConfig";
 import { hearingService } from "../hooks/services";
 import { ReschedulingPurpose } from "../pages/employee/ReschedulingPurpose";
 
-function PreHearingModal({ onCancel, hearingData, courtData, individualId = "", userType }) {
+function PreHearingModal({ onCancel, hearingData, courtData, individualId, userType }) {
   const { t } = useTranslation();
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const [totalCount, setTotalCount] = useState(null);
@@ -39,7 +39,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId = "", 
       slot: hearingData.slot,
     };
     configCopy.additionalDetails = {
-      attendeeIndividualId: userType === "LITIGANT" && individualId,
+      attendeeIndividualId: userType === "citizen" && individualId,
     };
     configCopy.sections.searchResult.uiConfig.columns = [
       ...configCopy.sections.searchResult.uiConfig.columns.map((column) => {
@@ -104,7 +104,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId = "", 
     return null;
   }
 
-  if (userType === "LITIGANT" && !individualId) {
+  if (userType === "citizen" && !individualId) {
     return <Loader />;
   }
   return (

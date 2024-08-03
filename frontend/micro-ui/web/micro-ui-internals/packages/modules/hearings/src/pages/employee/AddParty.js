@@ -76,6 +76,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
         .catch(console.error)
         .then(() => {
           onAddSuccess();
+          onCancel();
         });
     }
   };
@@ -141,7 +142,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
   return (
     <Modal
       headerBarMain={<h1 className="heading-m">{t("ADD_NEW_PARTY")}</h1>}
-      headerBarEnd={<CloseBtn onClick={onDismiss} />}
+      headerBarEnd={<CloseBtn onClick={onCancel} />}
       actionCancelLabel={t("HEARING_BACK")}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("HEARING_ADD")}

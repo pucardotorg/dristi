@@ -107,7 +107,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     [dayLeftInOngoingMonthRange, props?.attendeeIndividualId, tenantId]
   );
 
-  const { data: individualData, isIndividualDataLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+  const { data: individualData } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         userUuid: [userInfo?.uuid],
@@ -123,9 +123,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     return individualData?.Individual?.[0]?.individualId;
   }, [individualData]);
 
-  const individualUserType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
-    individualData,
-  ]);
+  const individualUserType = Digit.UserService.getType();
 
   const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
 
@@ -191,18 +189,18 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
-    Boolean(dateRange.start && dateRange.end && individualId),
+    Boolean(dateRange.start && dateRange.end && (individualUserType === "citizen" ? individualId : true)),
     false,
-    individualUserType === "LITIGANT" && individualId
+    individualUserType === "citizen" && individualId
   );
 
   const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
-    Boolean(dateRange.start && dateRange.end && individualId),
+    Boolean(dateRange.start && dateRange.end && (individualUserType === "citizen" ? individualId : true)),
     false,
-    individualUserType === "LITIGANT" && individualId
+    individualUserType === "citizen" && individualId
   );
 
   useEffect(() => {
