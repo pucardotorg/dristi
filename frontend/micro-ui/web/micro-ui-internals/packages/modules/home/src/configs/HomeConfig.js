@@ -327,7 +327,7 @@ export const pendingTaskOrderActions = {
   },
   DRAFT_IN_PROGRESS: {
     actorName: ["JUDGE"],
-    actionName: "Schedule admission hearing",
+    actionName: "Draft in Progress for Order",
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
