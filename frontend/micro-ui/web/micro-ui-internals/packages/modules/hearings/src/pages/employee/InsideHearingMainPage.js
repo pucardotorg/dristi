@@ -1,7 +1,8 @@
 import { Button, TextArea } from "@egovernments/digit-ui-components";
-import { ActionBar, Card, CardLabel, Dropdown, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { ActionBar, CardLabel, Dropdown, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import debounce from "lodash/debounce";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Urls } from "../../hooks/services/Urls";
 import AddParty from "./AddParty";
@@ -10,7 +11,6 @@ import EndHearing from "./EndHearing";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
 import MarkAttendance from "./MarkAttendance";
-import { useTranslation } from "react-i18next";
 
 const SECOND = 1000;
 
@@ -183,11 +183,13 @@ const InsideHearingMainPage = () => {
       ...selectedWitness,
       deposition: witnessDepositionText,
     });
-    _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then(console.debug);
+    _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then((res) => {
+      setHearing(res.hearing);
+    });
   };
 
-  const handleDropdownChange = (event) => {
-    const selectedUUID = event.target.value;
+  const handleDropdownChange = (selectedWitnessOption) => {
+    const selectedUUID = selectedWitnessOption.value;
     const selectedWitness = additionalDetails?.witnessDetails?.formdata?.find((w) => w.data.uuid === selectedUUID)?.data || {};
     setSelectedWitness(selectedWitness);
     console.debug(hearing, selectedWitness);
@@ -221,27 +223,13 @@ const InsideHearingMainPage = () => {
               <CardLabel className="case-input-label">{`Select Witness`}</CardLabel>
               <Dropdown
                 option={options}
-                // selected={party}
                 optionKey={"label"}
-                onChange={handleDropdownChange}
+                select={handleDropdownChange}
                 freeze={true}
                 disable={false}
                 style={{ width: "100%", height: "40px", fontSize: "16px" }}
               />
             </LabelFieldPair>
-            {/* <label htmlFor="dropdown">Select Witness</label>
-            <select
-              id="dropdown"
-              onChange={handleDropdownChange}
-              style={{ width: "100%", height: "40px", border: "1px solid #3D3C3C", fontSize: "16px" }}
-              // disabled={!checkUserApproval("HEARING_SCHEDULER")} // Disable if user doesn't have approval
-            >
-              {options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  &nbsp;{option.label}
-                </option>
-              ))}
-            </select> */}
             <div style={{ width: "151px", height: "19px", fontSize: "13px", color: "#007E7E", marginTop: "2px" }}>
               <button
                 style={{

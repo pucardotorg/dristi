@@ -16,6 +16,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
   };
 
   const handleSelect = (option) => {
+    setShowMenu(false);
     if (option === t("GENERATE_ORDER_HOME")) {
       const searchParams = new URLSearchParams({
         hearingId: hearing.hearingId,
