@@ -17,6 +17,7 @@ import org.pucar.dristi.validator.HearingRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -90,8 +91,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
+                .toDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
                 .build();
 
         User user = new User();
@@ -120,8 +121,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
+                .toDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
                 .build();
 
         User user = new User();

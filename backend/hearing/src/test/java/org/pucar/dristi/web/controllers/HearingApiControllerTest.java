@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,8 +81,8 @@ public class HearingApiControllerTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
+                .toDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
                 .build();
 
         User user = new User();
