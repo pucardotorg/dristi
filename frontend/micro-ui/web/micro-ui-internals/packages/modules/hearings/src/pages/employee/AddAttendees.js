@@ -1,13 +1,27 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
-import { hearingService } from "../../../../hearings/src/hooks/services/index";
-import { useTranslation } from "react-i18next";
+import React, { useMemo } from "react";
 
-const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingData, setAddPartyModal, handleModal }) => {
-  const [formError, setFormError] = useState("");
-  const { t } = useTranslation();
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+function applyMultiSelectDropdownFix(setValue, formData, keys) {
+  Array.isArray(keys) &&
+    keys.forEach((key) => {
+      if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
+        setValue(key, undefined);
+      }
+    });
+}
 
+const AddAttendees = ({
+  attendees = [],
+  setAttendees,
+  handleAttendees,
+  hearingData,
+  setAddPartyModal,
+  handleModal,
+  form,
+  formError,
+  setForm,
+  setIsDisabled,
+}) => {
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
@@ -61,7 +75,6 @@ const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingDa
         selectedText: "Attendee(s)",
         defaultText: "select attendees",
         options: attendeeOptions,
-        error: "Required",
       },
     },
     {
@@ -79,21 +92,10 @@ const AddAttendees = ({ attendees = [], setAttendees, handleAttendees, hearingDa
         selectedText: "Attendee(s)",
         defaultText: "select attendees",
         options: attendeeOptions,
-        error: "Required",
       },
     },
   ];
 
-  function applyMultiSelectDropdownFix(setValue, formData, keys) {
-    {
-      Array.isArray(keys) &&
-        keys.forEach((key) => {
-          if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
-            setValue(key, undefined);
-          }
-        });
-    }
-  }
   const multiSelectDropdownKeys = () => {
     const foundKeys = [];
     formConfig.forEach((field) => {
