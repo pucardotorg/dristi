@@ -346,6 +346,9 @@ components:
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
+              isOnline:
+                type: boolean
+                description: Set it true if attendee appears online for the hearing.
         transcript:
           type: array
           items:
