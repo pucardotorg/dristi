@@ -44,7 +44,7 @@ const MonthlyCalendar = () => {
   );
   const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
-    individualData?.Individual,
+    individualData,
   ]);
 
   const [dateRange, setDateRange] = useState({});
@@ -74,7 +74,9 @@ const MonthlyCalendar = () => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start?.toISOString()}-${dateRange.end?.toISOString()}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && individualId),
+    false,
+    userType === "LITIGANT" && individualId
   );
   const { data: hearingSlots } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
@@ -213,8 +215,14 @@ const MonthlyCalendar = () => {
             }}
             ref={calendarRef}
           />
-          {fromDate && toDate && slot && (
-            <PreHearingModal courtData={courtData?.["common-masters"]?.Court_Rooms} onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />
+          {fromDate && toDate && slot && individualId && (
+            <PreHearingModal
+              courtData={courtData?.["common-masters"]?.Court_Rooms}
+              onCancel={closeModal}
+              hearingData={{ fromDate, toDate, slot }}
+              individualId={individualId}
+              userType={userType}
+            />
           )}
         </div>
       </div>

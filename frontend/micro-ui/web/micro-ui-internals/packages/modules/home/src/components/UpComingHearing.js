@@ -45,6 +45,8 @@ class HearingSlot {
 
 const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const userName = Digit.SessionStorage.get("User");
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
@@ -104,6 +106,26 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     }),
     [dayLeftInOngoingMonthRange, props?.attendeeIndividualId, tenantId]
   );
+
+  const { data: individualData, isIndividualDataLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "Home",
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+
+  const individualId = useMemo(() => {
+    return individualData?.Individual?.[0]?.individualId;
+  }, [individualData]);
+
+  const individualUserType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData,
+  ]);
 
   const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
 
@@ -169,14 +191,18 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && individualId),
+    false,
+    individualUserType === "LITIGANT" && individualId
   );
 
   const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && individualId),
+    false,
+    individualUserType === "LITIGANT" && individualId
   );
 
   useEffect(() => {
