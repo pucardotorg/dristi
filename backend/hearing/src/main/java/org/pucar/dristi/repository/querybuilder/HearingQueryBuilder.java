@@ -10,8 +10,6 @@ import org.pucar.dristi.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,8 +41,8 @@ public class HearingQueryBuilder {
             String hearingType = criteria.getHearingType();
             String filingNumber = criteria.getFilingNumber();
             String tenantId = criteria.getTenantId();
-            LocalDate fromDate = criteria.getFromDate();
-            LocalDate toDate = criteria.getToDate();
+            Long fromDate = criteria.getFromDate();
+            Long toDate = criteria.getToDate();
             String attendeeIndividualId = criteria.getAttendeeIndividualId();
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
@@ -55,7 +53,7 @@ public class HearingQueryBuilder {
             addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
-            addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList);
+            addCriteriaDate(toDate, query, " AND startTime < ?", preparedStmtList);
             addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList, attendeeIndividualId);
             return query.toString();
         } catch (Exception e) {
@@ -71,10 +69,10 @@ public class HearingQueryBuilder {
         }
     }
 
-    void addCriteriaDate(LocalDate criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
+    void addCriteriaDate(Long criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
         if (criteria != null) {
             query.append(str);
-            preparedStmtList.add(criteria.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
+            preparedStmtList.add(criteria);
         }
     }
     public String addOrderByQuery(String query, Pagination pagination) {

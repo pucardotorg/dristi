@@ -59,8 +59,8 @@ class HearingQueryBuilderTest {
         String hearingType = "type1";
         String filingNumber = "FILE123";
         String tenantId = "tenant1";
-        LocalDate fromDate = LocalDate.of(2023, 1, 1);
-        LocalDate toDate = LocalDate.of(2023, 12, 31);
+        Long fromDate = LocalDate.of(2024, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        Long toDate = LocalDate.of(2025, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
         String attendeeIndividualId = "Ind-01";
 
         HearingCriteria criteria = HearingCriteria.builder()
@@ -86,7 +86,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
-        assertTrue(query.contains("AND startTime <= ?"));
+        assertTrue(query.contains("AND startTime < ?"));
         assertTrue(query.contains("AND hearingtype = ?"));
         assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
         assertEquals(9, preparedStmtList.size());
@@ -96,8 +96,8 @@ class HearingQueryBuilderTest {
         assertEquals(hearingType, preparedStmtList.get(3));
         assertEquals("[\"FILE123\"]", preparedStmtList.get(4));
         assertEquals("tenant1", preparedStmtList.get(5));
-        assertEquals(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(6));
-        assertEquals(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000, preparedStmtList.get(7));
+        assertEquals(fromDate, preparedStmtList.get(6));
+        assertEquals(toDate, preparedStmtList.get(7));
         assertEquals(attendeeIndividualId, preparedStmtList.get(8));
     }
 
@@ -321,7 +321,7 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
-        LocalDate criteria = LocalDate.of(2023, 1, 1);
+        Long criteria = LocalDate.of(2023, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
         String str = " AND startTime >= ?";
 
         // Act
@@ -330,7 +330,7 @@ class HearingQueryBuilderTest {
         // Assert
         assertTrue(query.toString().contains("AND startTime >= ?"));
         assertEquals(1, preparedStmtList.size());
-        assertEquals(criteria.atStartOfDay().toEpochSecond(java.time.ZoneOffset.UTC) * 1000, preparedStmtList.get(0));
+        assertEquals(criteria, preparedStmtList.get(0));
     }
 
     @Test
@@ -338,11 +338,10 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
-        LocalDate criteria = null;
         String str = " AND startTime >= ?";
 
         // Act
-        hearingQueryBuilder.addCriteriaDate(criteria, query, str, preparedStmtList);
+        hearingQueryBuilder.addCriteriaDate(null, query, str, preparedStmtList);
 
         // Assert
         assertFalse(query.toString().contains("AND startTime >= ?"));
