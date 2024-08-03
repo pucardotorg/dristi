@@ -2090,6 +2090,7 @@ export const configsIssueSummons = [
         label: "Date for Hearing",
         labelChildren: "OutlinedInfoIcon",
         isMandatory: true,
+        disable: true,
         populators: {
           name: "date",
           validation: {

@@ -107,7 +107,7 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [createdHearingId, setCreatedHearingId] = useState(null);
+  const [createdHearing, setCreatedHearing] = useState({});
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -548,17 +548,24 @@ const GenerateOrders = () => {
     setSelectedOrder(formList?.length);
   };
 
-  const createPendingTask = async ({ order, refId = null, isAssignedRole = false }) => {
+  const createPendingTask = async ({
+    order,
+    refId = null,
+    isAssignedRole = false,
+    createTask = false,
+    taskStatus = "CREATE_SUBMISSION",
+    taskName = "",
+  }) => {
     const formdata = order?.additionalDetails?.formdata;
-    let create = false;
-    let name = "";
+    let create = createTask;
+    let name = taskName;
     let assignees = [];
     let referenceId = order?.orderNumber;
     let assignedRole = [];
     let additionalDetails = {};
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
-    let status = "CREATE_SUBMISSION";
+    let status = taskStatus;
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
       name = t("MAKE_MANDATORY_SUBMISSION");
@@ -567,17 +574,38 @@ const GenerateOrders = () => {
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
       status = "OPTOUT";
-      assignees = [...getAllAssignees(caseDetails)?.map((uuid) => ({ uuid }))];
-      name = t("RESCHEDULE_OF_HEARING_DATE");
+      assignees = Object.values(allAdvocates)
+        ?.flat()
+        ?.map((uuid) => ({ uuid }));
+      name = t("CHOOSE_DATES_FOR_RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing";
+      const promises = assignees.map(async (assignee) => {
+        return ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: {
+            name,
+            entityType,
+            referenceId: `MANUAL_${assignee?.uuid}_${order?.hearingNumber}`,
+            status,
+            assignedTo: [assignee],
+            assignedRole,
+            cnrNumber: cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+            additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+            tenantId,
+          },
+        });
+      });
+      return await Promise.all(promises);
     }
     if (isAssignedRole) {
       assignees = [];
+      assignedRole = ["JUDGE_ROLE"];
       if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId) {
         referenceId = refId;
         create = true;
         status = "CREATE_DRAFT_IN_PROGRESS";
-        assignedRole = ["JUDGE_ROLE"];
         name = t("CREATE_ORDERS_FOR_SUMMONS");
         entityType = "order-managelifecycle";
         additionalDetails = { ...additionalDetails, orderType: "SUMMONS" };
@@ -604,25 +632,24 @@ const GenerateOrders = () => {
     return;
   };
 
-  const closeManualPendingTask = (order) => {
+  const closeManualPendingTask = async (refId) => {
     try {
-      order?.additionalDetails?.formdata?.refApplicationId &&
-        ordersService.customApiService(Urls.orders.pendingTask, {
-          pendingTask: {
-            name: "Completed",
-            entityType: "order-managelifecycle",
-            referenceId: `MANUAL_${order?.orderNumber}`,
-            status: "DRAFT_IN_PROGRESS",
-            assignedTo: [],
-            assignedRole: [],
-            cnrNumber: cnrNumber,
-            filingNumber: filingNumber,
-            isCompleted: true,
-            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
+      await ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: "Completed",
+          entityType: "order-managelifecycle",
+          referenceId: `MANUAL_${refId}`,
+          status: "DRAFT_IN_PROGRESS",
+          assignedTo: [],
+          assignedRole: [],
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: true,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
     } catch (error) {}
   };
 
@@ -709,6 +736,7 @@ const GenerateOrders = () => {
 
   const handleIssueOrder = async () => {
     try {
+      let newhearingId = "";
       setPrevOrder(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         const advocateData = advocateDetails.advocates.map((advocate) => {
@@ -745,8 +773,8 @@ const GenerateOrders = () => {
           },
           { tenantId: tenantId }
         );
-        const newhearingId = hearingres?.hearing?.hearingId;
-        setCreatedHearingId(newhearingId);
+        newhearingId = hearingres?.hearing?.hearingId;
+        setCreatedHearing({ hearingId: newhearingId, startDate: currentOrder?.additionalDetails?.formdata?.hearingDate });
         await createPendingTask({ order: currentOrder, refId: newhearingId, isAssignedRole: true });
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
@@ -760,9 +788,9 @@ const GenerateOrders = () => {
         });
       }
       referenceId && (await handleApplicationAction(currentOrder));
-      await updateOrder(currentOrder, OrderWorkflowAction.ESIGN);
-      createPendingTask(currentOrder);
-      closeManualPendingTask(currentOrder);
+      await updateOrder({ ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId }) }, OrderWorkflowAction.ESIGN);
+      createPendingTask({ order: currentOrder });
+      currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
       setShowSuccessModal(true);
     } catch (error) {
       //show toast of API failed
@@ -789,11 +817,11 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
   const successModalActionSaveLabel = useMemo(() => {
-    if (createdHearingId) {
+    if (createdHearing?.hearingId) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
     return t("CS_COMMON_CLOSE");
-  }, [createdHearingId, t]);
+  }, [createdHearing, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
@@ -812,7 +840,12 @@ const GenerateOrders = () => {
   const handleReviewOrderClick = () => {
     if (referenceId && ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
       setShowErrorToast({
-        label: SubmissionWorkflowState.COMPLETED === advocateDetails?.status ? t("SUBMISSION_ALREADY_ACCEPTED") : t("SUBMISSION_ALREADY_REJECTED"),
+        label:
+          SubmissionWorkflowState.COMPLETED === applicationDetails?.status
+            ? t("SUBMISSION_ALREADY_ACCEPTED")
+            : SubmissionWorkflowState.REJECTED === applicationDetails?.status
+            ? t("SUBMISSION_ALREADY_REJECTED")
+            : t("SUBMISSION_NO_LONGER_VALID"),
         error: true,
       });
       setShowReviewModal(false);
@@ -822,7 +855,55 @@ const GenerateOrders = () => {
     handleSaveDraft({ showReviewModal: true });
   };
 
-  const handleClose = () => {
+  const handleIssueSummonClick = async () => {
+    try {
+      const reqbody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "SUMMONS",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          hearingNumber: createdHearing?.hearingId,
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                code: "SUMMONS",
+                type: "SUMMONS",
+                name: "ORDER_TYPE_SUMMONS",
+              },
+              date: createdHearing?.startDate,
+            },
+          },
+        },
+      };
+      const res = await ordersService.createOrder(reqbody, { tenantId });
+      await closeManualPendingTask(createdHearing?.hearingId);
+      await createPendingTask({
+        order: res?.order,
+        isAssignedRole: true,
+        createTask: true,
+        taskStatus: "DRAFT_IN_PROGRESS",
+        taskName: t("DRAFT_IN_PROGRESS_ISSUE_SUMMONS"),
+      });
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
+    } catch (error) {}
+  };
+
+  const handleClose = async () => {
     if (successModalActionSaveLabel === t("CS_COMMON_CLOSE")) {
       history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
         from: "orderSuccessModal",
@@ -831,6 +912,7 @@ const GenerateOrders = () => {
       return;
     }
     if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
+      await handleIssueSummonClick();
     }
   };
 
@@ -915,7 +997,15 @@ const GenerateOrders = () => {
       {showsignatureModal && (
         <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} handleGoBackSignatureModal={handleGoBackSignatureModal} />
       )}
-      {showSuccessModal && <OrderSucessModal t={t} order={prevOrder} handleDownloadOrders={handleDownloadOrders} handleClose={handleClose} />}
+      {showSuccessModal && (
+        <OrderSucessModal
+          t={t}
+          order={prevOrder}
+          handleDownloadOrders={handleDownloadOrders}
+          handleClose={handleClose}
+          actionSaveLabel={successModalActionSaveLabel}
+        />
+      )}
       {showErrorToast && <Toast error={showErrorToast?.error} label={showErrorToast?.label} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );

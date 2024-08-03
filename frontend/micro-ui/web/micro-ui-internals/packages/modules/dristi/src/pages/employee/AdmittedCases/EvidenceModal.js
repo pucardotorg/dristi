@@ -514,7 +514,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               documents: [{}],
             },
             documents: [],
-            additionalDetails: { formdata },
+            additionalDetails: {
+              formdata,
+            },
+            ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
+              hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
+            }),
           },
         };
         try {
@@ -536,9 +541,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               tenantId,
             },
           });
-          history.push(
-            `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
-          );
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
         } catch (error) {}
       } else {
         if (showConfirmationModal.type === "reject") {
