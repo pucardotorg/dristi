@@ -1,4 +1,5 @@
 import { Button } from "@egovernments/digit-ui-components";
+
 import { Header, Menu } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
   };
 
   const handleSelect = (option) => {
+    setShowMenu(false);
     if (option === t("GENERATE_ORDER_HOME")) {
       const searchParams = new URLSearchParams({
         hearingId: hearing.hearingId,
@@ -43,47 +45,96 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
   };
 
   return (
-    <div className="evidence-header-wrapper">
-      <div className="evidence-hearing-header">
-        <div className="title-section">
-          <Header className={"evidence-header"}>{t(`HEARING_TYPE_${hearing.hearingType}`)}</Header>
-          <div className="case-details">
-            <div className="text">Aparna vs. Subarna</div>
-            <div className="breakline"></div>
-            <div className="text">NIA 138</div>
-            <div className="breakline"></div>
-            <div className="text">Trial</div>
-          </div>
+    <div className="admitted-case-header" style={{ padding: "0px", border: "none" }}>
+      <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Header>{t(`HEARING_TYPE_${hearing.hearingType}`)}</Header>
+          <div className="sub-details-text">Aparna vs. Subarna</div>
+          <div className="vertical-line"></div>
+          <div className="sub-details-text">NIA 138</div>
+          <div className="vertical-line"></div>
+          <div className="sub-details-text">Trial</div>
         </div>
-        <div className="evidence-actions">
-          <Button variation={"teritiary"} label={"Share"} icon={"Share"} iconFill={"#007E7E"}></Button>
+        <div className="judge-action-block">
+          <div className="evidence-header-wrapper">
+            <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+              <div className="evidence-actions">
+                <Button
+                  style={{
+                    backgroundColor: "#fff",
+                    "&.icon-label-container": {
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    },
+                  }}
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                    color: "#007E7E",
+                  }}
+                  variation={"tertiary"}
+                  label={"Share"}
+                  icon={"Share"}
+                  iconFill={"#007E7E"}
+                  className={"take-action-btn-class"}
+                ></Button>
+              </div>
+            </div>
+          </div>
           {userRoles.includes("EMPLOYEE") ? (
-            <React.Fragment>
-              <Button
-                variation={"primary"}
-                label={t("TAKE_ACTION_LABEL")}
-                icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                isSuffix={true}
-                onClick={handleTakeAction}
-              ></Button>
-              {showMenu && (
-                <Menu
-                  options={
-                    userRoles.includes("JUDGE_ROLE")
-                      ? [t("GENERATE_ORDER_HOME"), t("CASE_ADD_PARTY")]
-                      : [t("GENERATE_ORDER_HOME"), t("MAKE_SUBMISSION"), t("CASE_ADD_PARTY")]
-                  }
-                  onSelect={(option) => handleSelect(option)}
-                ></Menu>
-              )}
-            </React.Fragment>
+            <div className="evidence-header-wrapper">
+              <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                <div className="evidence-actions">
+                  <Button
+                    variation={"primary"}
+                    label={t("TAKE_ACTION_LABEL")}
+                    icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                    isSuffix={true}
+                    onClick={handleTakeAction}
+                    className={"take-action-btn-class"}
+                  ></Button>
+                  {showMenu && (
+                    <Menu
+                      options={
+                        userRoles.includes("JUDGE_ROLE")
+                          ? [t("GENERATE_ORDER_HOME"), t("CASE_ADD_PARTY")]
+                          : [t("GENERATE_ORDER_HOME"), t("MAKE_SUBMISSION"), t("CASE_ADD_PARTY")]
+                      }
+                      onSelect={(option) => handleSelect(option)}
+                    ></Menu>
+                  )}
+                </div>
+              </div>
+            </div>
           ) : (
             <Button variation={"primary"} label={t("MAKE_SUBMISSION")} onClick={() => handleSelect(t("MAKE_SUBMISSION"))}></Button>
           )}
         </div>
       </div>
-      <div className="join-video-conference">
-        <div className="conference-info">
+      <div
+        className="join-video-conference"
+        style={{
+          display: "flex",
+          padding: "12px 16px",
+          gap: "12px",
+          borderRadius: "4px 0 0 0",
+          border: "1px solid #0000001A",
+          backgroundColor: "#FFF8FD",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          className="conference-info"
+          style={{
+            display: "flex",
+            gap: "12px",
+          }}
+        >
           <VideoIcon></VideoIcon>
           <span>You can join this hearing online if you are not present in court.</span>
         </div>
@@ -93,16 +144,34 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           onButtonClick={() => {
             window.open(hearing.vcLink, "_blank");
           }}
+          style={{
+            backgroundColor: "transparent",
+          }}
+          textStyles={{
+            fontFamily: "Lato",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "19.2px",
+            textAlign: "left",
+            color: "#007E7E",
+            margin: "0px",
+          }}
         ></Button>
       </div>
-      <div className="tabs-component">
-        <div className="tab" onClick={() => setActiveTab("Transcript/Summary")}>
-          <span className={activeTab === "Transcript/Summary" ? "active" : ""}>Transcript/Summary</span>
-          {activeTab === "Transcript/Summary" && <div className="breakline"></div>}
-        </div>
-        <div className="tab" onClick={() => setActiveTab("Witness Deposition")}>
-          <span className={activeTab === "Witness Deposition" ? "active" : ""}>Witness Deposition</span>
-          {activeTab === "Witness Deposition" && <div className="breakline"></div>}
+      <div className="search-tabs-container" style={{ marginBottom: "24px" }}>
+        <div style={{ width: "100%" }}>
+          <button
+            className={activeTab === "Transcript/Summary" ? "search-tab-head-selected" : "search-tab-head"}
+            onClick={() => setActiveTab("Transcript/Summary")}
+          >
+            {t("Transcript/Summary")}
+          </button>
+          <button
+            className={activeTab === "Witness Deposition" ? "search-tab-head-selected" : "search-tab-head"}
+            onClick={() => setActiveTab("Witness Deposition")}
+          >
+            {t("Witness Deposition")}
+          </button>
         </div>
       </div>
     </div>

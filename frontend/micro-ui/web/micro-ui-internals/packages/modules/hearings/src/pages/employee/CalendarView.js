@@ -11,8 +11,9 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { ReschedulingPurpose } from "./ReschedulingPurpose";
 import TasksComponent from "../../components/TaskComponentCalander";
+import { formatDate } from "../../utils";
 
-const tenantId = window.localStorage.getItem("tenant-id");
+const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
 const MonthlyCalendar = () => {
   const history = useHistory();
@@ -42,9 +43,7 @@ const MonthlyCalendar = () => {
     userInfo?.uuid && isUserLoggedIn
   );
   const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
-  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
-    individualData?.Individual,
-  ]);
+  const userType = Digit.UserService.getType();
 
   const [dateRange, setDateRange] = useState({});
   const [taskType, setTaskType] = useState({});
@@ -62,14 +61,20 @@ const MonthlyCalendar = () => {
   }, [search]);
 
   const reqBody = {
-    criteria: { tenantId, fromDate: dateRange.start?.toISOString().split("T")[0], toDate: dateRange.end?.toISOString().split("T")[0] },
+    criteria: {
+      tenantId,
+      fromDate: dateRange.start ? formatDate(dateRange.start) : null,
+      toDate: dateRange.end ? formatDate(dateRange.end) : null,
+    },
   };
 
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start?.toISOString()}-${dateRange.end?.toISOString()}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && (userType === "citizen" ? individualId : true)),
+    false,
+    userType === "citizen" && individualId
   );
   const { data: hearingSlots } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
@@ -152,8 +157,8 @@ const MonthlyCalendar = () => {
     const toDate = new Date(fromDate);
     toDate.setDate(fromDate.getDate() + 1);
     const searchParams = new URLSearchParams(search);
-    searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
-    searchParams.set("to-date", toDate.toISOString().split("T")[0]);
+    searchParams.set("from-date", formatDate(fromDate));
+    searchParams.set("to-date", formatDate(toDate));
     searchParams.set("slot", arg.event.extendedProps.slot);
     searchParams.set("view", getCurrentViewType());
     history.replace({ search: searchParams.toString() });
@@ -209,7 +214,13 @@ const MonthlyCalendar = () => {
             ref={calendarRef}
           />
           {fromDate && toDate && slot && (
-            <PreHearingModal courtData={courtData?.["common-masters"]?.Court_Rooms} onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />
+            <PreHearingModal
+              courtData={courtData?.["common-masters"]?.Court_Rooms}
+              onCancel={closeModal}
+              hearingData={{ fromDate, toDate, slot }}
+              individualId={individualId}
+              userType={userType}
+            />
           )}
         </div>
       </div>
