@@ -51,13 +51,14 @@ const MonthlyCalendar = () => {
   const initial = userInfoType === "citizen" ? "timeGridDay" : "dayGridMonth";
 
   const search = window.location.search;
-  const { fromDate, toDate, slot, initialView } = useMemo(() => {
+  const { fromDate, toDate, slot, initialView, count } = useMemo(() => {
     const searchParams = new URLSearchParams(search);
     const fromDate = searchParams.get("from-date") || null;
     const toDate = searchParams.get("to-date") || null;
     const slot = searchParams.get("slot") || null;
     const initialView = searchParams.get("view") || initial;
-    return { fromDate, toDate, slot, initialView };
+    const count = searchParams.get("count") || 0;
+    return { fromDate, toDate, slot, initialView, count };
   }, [search]);
 
   const reqBody = {
@@ -154,6 +155,7 @@ const MonthlyCalendar = () => {
 
   const handleEventClick = (arg) => {
     const fromDate = new Date(arg.event.extendedProps.date);
+    const count = arg.event.extendedProps.count;
     const toDate = new Date(fromDate);
     toDate.setDate(fromDate.getDate() + 1);
     const searchParams = new URLSearchParams(search);
@@ -161,6 +163,7 @@ const MonthlyCalendar = () => {
     searchParams.set("to-date", formatDate(toDate));
     searchParams.set("slot", arg.event.extendedProps.slot);
     searchParams.set("view", getCurrentViewType());
+    searchParams.set("count", count);
     history.replace({ search: searchParams.toString() });
   };
 
@@ -217,7 +220,7 @@ const MonthlyCalendar = () => {
             <PreHearingModal
               courtData={courtData?.["common-masters"]?.Court_Rooms}
               onCancel={closeModal}
-              hearingData={{ fromDate, toDate, slot }}
+              hearingData={{ fromDate, toDate, slot, count }}
               individualId={individualId}
               userType={userType}
             />

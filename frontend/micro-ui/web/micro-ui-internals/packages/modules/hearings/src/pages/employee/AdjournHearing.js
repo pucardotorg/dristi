@@ -11,6 +11,7 @@ const AdjournHearing = (props) => {
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
   const [reasonFormData, setReasonFormData] = useState({});
+  const [transcript, setTranscript] = useState("");
 
   const history = useHistory();
 
@@ -133,9 +134,18 @@ const AdjournHearing = (props) => {
         </Modal>
       )}
       {stepper === 2 && (
-        <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} stepper={stepper} setStepper={setStepper} />
+        <SummaryModal
+          transcript={transcript}
+          setTranscript={setTranscript}
+          handleConfirmationModal={handleConfirmationModal}
+          hearingId={hearingId}
+          stepper={stepper}
+          setStepper={setStepper}
+        />
       )}
-      {stepper === 3 && <NextHearingModal hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />}
+      {stepper === 3 && (
+        <NextHearingModal transcript={transcript} hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />
+      )}
     </div>
   );
 };

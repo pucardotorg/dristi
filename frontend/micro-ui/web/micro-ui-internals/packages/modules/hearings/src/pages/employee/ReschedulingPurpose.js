@@ -3,7 +3,7 @@ import { CustomDropdown, Card, Modal } from "@egovernments/digit-ui-react-compon
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
+export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc, rescheduleAll = false }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [rescheduleReason, setReschduleReason] = useState("");
@@ -14,8 +14,7 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
 
-  const courtName = courtData.find((court) => court.code === caseDetails.courtId).name;
-
+  const courtName = courtData.find((court) => court.code === caseDetails.courtId)?.name;
   const rescheduleHearingOptions = [
     {
       id: 1,
@@ -67,6 +66,18 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
 
+  const AlertIcon = () => {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F3B8C" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+          fill="#0F3B8C"
+        />
+        <path d="M11 10h2v6h-2zm0-3h2v2h-2z" fill="#0F3B8C" />
+      </svg>
+    );
+  };
+
   const Close = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g>
@@ -101,7 +112,7 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
         statuteSection: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
-        orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+        orderType: rescheduleAll ? "RESCHEDULING_OF_MULTIPLE_HEARING" : "INITIATING_RESCHEDULING_OF_HEARING_DATE",
         status: "",
         isActive: true,
         workflow: {
@@ -115,10 +126,10 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
         additionalDetails: {
           formdata: {
             orderType: {
-              type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+              type: rescheduleAll ? "RESCHEDULING_OF_MULTIPLE_HEARING" : "INITIATING_RESCHEDULING_OF_HEARING_DATE",
               isactive: true,
-              code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-              name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+              code: rescheduleAll ? "RESCHEDULING_OF_MULTIPLE_HEARING" : "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+              name: rescheduleAll ? "ORDER_TYPE_RESCHEDULING_OF_MULTIPLE_HEARING" : "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
             },
             originalHearingDate: formatDate(date),
             reasonForRescheduling: rescheduleReason,
@@ -140,7 +151,7 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
 
   return (
     <Modal
-      headerBarMain={<Heading label={t("RESCHEDULE_HEARING")} />}
+      headerBarMain={<Heading label={t(rescheduleAll ? "RESCHEDULE_ALL_HEARING" : "RESCHEDULE_HEARING")} />}
       headerBarEnd={<CloseBtn onClick={closeFunc} />}
       actionSaveLabel="Generate Order"
       actionSaveOnSubmit={onGenerateOrder}
@@ -150,22 +161,41 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
       popupStyles={{ width: "50%", height: "auto" }}
       isDisabled={rescheduleReason === ""}
     >
-      <Card>
-        <div className="case-card">
-          <div className="case-details">
-            Case Number
-            <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.filingNumber} </div>
+      {rescheduleAll ? (
+        <Card>
+          <div className="case-card">
+            <div className="case-details">
+              Total Hearings
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.count} </div>
+            </div>
+            <div className="case-details">
+              Initial Hearing Date
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.fromDate.split("-").reverse().join("-")} </div>
+            </div>
+            <div className="case-details">
+              Slot
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.slot} </div>
+            </div>
           </div>
-          <div className="case-details">
-            Court Name
-            <div style={{ fontWeight: "700", marginTop: "5px" }}> {courtName} </div>
+        </Card>
+      ) : (
+        <Card>
+          <div className="case-card">
+            <div className="case-details">
+              Case Number
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.filingNumber} </div>
+            </div>
+            <div className="case-details">
+              Court Name
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {courtName} </div>
+            </div>
+            <div className="case-details">
+              Case Type
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.case_Type || "NIA S138"} </div>
+            </div>
           </div>
-          <div className="case-details">
-            Case Type
-            <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.case_Type || "NIA S138"} </div>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      )}
       <div style={{ marginBottom: "10px" }}>{t("RESCHEDULING_REASON")}</div>
       <CustomDropdown
         t={t}
@@ -175,6 +205,19 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc }) => {
         // value={userType}
         config={dropdownConfig}
       ></CustomDropdown>
+      {rescheduleAll && (
+        <div style={{ height: "80px", backgroundColor: "#ECF3FD", borderRadius: "4px" }}>
+          <div style={{ padding: 10, display: "flex", alignItems: "center" }}>
+            <div>
+              <AlertIcon />
+            </div>
+            <div style={{ fontWeight: 700, fontSize: "16px", lineHeight: "18.75px", color: "#0A0A0A", marginLeft: "5px" }}>Please Note</div>
+          </div>
+          <div style={{ color: "#3D3C3C", paddingLeft: 10 }}>
+            Dates will automatically be re-assigned to these {caseDetails?.count} hearings. All relevant parties will receive an order for the same.
+          </div>
+        </div>
+      )}
     </Modal>
   );
 };

@@ -11,7 +11,10 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const [totalCount, setTotalCount] = useState(null);
   const [purposeModalOpen, setPurposeModalOpen] = useState(false);
-  const [purposeModalData, setPurposeModalData] = useState(false);
+  const [purposeModalData, setPurposeModalData] = useState({});
+  const [rescheduleAll, setRescheduleAll] = useState(false);
+
+  console.log(hearingData);
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -91,8 +94,8 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
   };
 
   const onRescheduleAllClick = () => {
-    const contextPath = window?.contextPath || "";
-    window.location.href = `/${contextPath}/employee/hearings/reschedule-hearing`;
+    setRescheduleAll(true);
+    openRescheduleModal(hearingData);
   };
 
   const closeFunc = () => {
@@ -113,7 +116,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("Reschedule All Hearings")}
       formId="modal-action"
-      headerBarMain={<Heading label={totalCount ? t("ADMISSION_HEARINGS") + ` (${totalCount})` : t("ADMISSION_HEARINGS")} />}
+      headerBarMain={<Heading label={t(`TOTAL_HEARINGS (${hearingData.count})`)} />}
       className="pre-hearings"
       popupStyles={popUpStyle}
       popupModuleActionBarStyles={{
@@ -136,7 +139,9 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
           variation={"secondary"}
         />
       </div>
-      {purposeModalOpen && <ReschedulingPurpose courtData={courtData} closeFunc={closeFunc} caseDetails={purposeModalData} />}
+      {purposeModalOpen && (
+        <ReschedulingPurpose rescheduleAll={rescheduleAll} courtData={courtData} closeFunc={closeFunc} caseDetails={purposeModalData} />
+      )}
     </Modal>
   );
 }
