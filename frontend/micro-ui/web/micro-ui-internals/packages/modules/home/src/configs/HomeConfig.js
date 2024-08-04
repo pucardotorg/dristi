@@ -336,16 +336,28 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
-  CREATE_DRAFT_IN_PROGRESS: {
+  CREATE_SUMMONS_ORDER: {
     actorName: ["JUDGE"],
     actionName: "Create Order and Save Draft Pending task",
-    customFunction: "handleCreateOrderDraft",
+    customFunction: "handleCreateSummonsOrder",
     additionalDetailsKeys: ["orderType"],
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  REISSUE_SUMMON: {
+    actorName: ["JUDGE"],
+    actionName: "Reissue Summon",
+    redirectDetails: {
+      url: "/home/home-pending-task/reissue-summons-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "hearingId", value: "referenceId" },
+        { key: "cnrNumber", value: "cnrNumber" },
       ],
     },
   },

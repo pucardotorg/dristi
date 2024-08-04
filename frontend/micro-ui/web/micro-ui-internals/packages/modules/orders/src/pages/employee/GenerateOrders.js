@@ -34,7 +34,6 @@ import { ordersService } from "../../hooks/services";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 import { applicationTypes } from "../../utils/applicationTypes";
-import useGetIndividualAdvocate from "../../../../dristi/src/hooks/dristi/useGetIndividualAdvocate";
 import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
@@ -215,7 +214,7 @@ const GenerateOrders = () => {
     };
   });
 
-  const { data: advocateDetails } = useGetIndividualAdvocate(
+  const { data: advocateDetails } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
       criteria: advocateIds,
     },
@@ -293,7 +292,7 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
   const referenceId = useMemo(() => currentOrder?.additionalDetails?.formdata?.refApplicationId, [currentOrder]);
-  const hearingNumber = useMemo(() => currentOrder?.additionalDetails?.hearingId, [currentOrder]);
+  const hearingNumber = useMemo(() => currentOrder?.hearingNumber || currentOrder?.additionalDetails?.hearingId, [currentOrder]);
 
   const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
@@ -310,7 +309,7 @@ const GenerateOrders = () => {
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
-  const hearingId = useMemo(() => applicationDetails?.additionalDetails?.hearingId, [applicationDetails]);
+  const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId, [applicationDetails]);
   const { data: hearingsData, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
@@ -541,7 +540,7 @@ const GenerateOrders = () => {
                 comments:
                   formData?.comments?.text || formData?.additionalComments?.text || formData?.otherDetails?.text || formData?.sentence?.text || "",
                 orderType: formData?.orderType?.code,
-                additionalDetails: { ...item.order?.additionalDetails, formdata: updatedFormData },
+                additionalDetails: { ...item?.additionalDetails, formdata: updatedFormData },
               };
         });
       });
@@ -632,7 +631,6 @@ const GenerateOrders = () => {
           ?.flat()
           ?.map((uuid) => ({ uuid })),
       ];
-      debugger;
       if (Array.isArray(order?.formdata?.SummonsOrder?.selectedChannels)) {
         const promises = order?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
           return ordersService.customApiService(Urls.orders.pendingTask, {
@@ -662,10 +660,10 @@ const GenerateOrders = () => {
       if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId) {
         referenceId = refId;
         create = true;
-        status = "CREATE_DRAFT_IN_PROGRESS";
+        status = "CREATE_SUMMONS_ORDER";
         name = t("CREATE_ORDERS_FOR_SUMMONS");
         entityType = "order-managelifecycle";
-        additionalDetails = { ...additionalDetails, orderType: "SUMMONS" };
+        additionalDetails = { ...additionalDetails, orderType: "SUMMONS", hearingID: order?.hearingNumber };
       }
     }
 
@@ -935,6 +933,7 @@ const GenerateOrders = () => {
 
   const handleIssueOrder = async () => {
     try {
+      setLoader(true);
       let newhearingId = "";
       setPrevOrder(currentOrder);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
@@ -945,7 +944,7 @@ const GenerateOrders = () => {
             type: "Advocate",
           };
         });
-        const hearingres = await await ordersService.createHearings(
+        const hearingres = await ordersService.createHearings(
           {
             hearing: {
               tenantId: tenantId,
@@ -977,7 +976,17 @@ const GenerateOrders = () => {
         await createPendingTask({ order: currentOrder, refId: newhearingId, isAssignedRole: true });
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
-        await handleUpdateHearing({ action: HearingWorkflowAction.SETDATE });
+        await handleUpdateHearing({
+          action: HearingWorkflowAction.SETDATE,
+          startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+          endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+        });
+        if (currentOrder?.additionalDetails?.isReIssueSummons) {
+          setCreatedHearing({
+            hearingId: hearingId || hearingNumber,
+            startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
+          });
+        }
       }
       if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
         await handleUpdateHearing({
@@ -991,9 +1000,10 @@ const GenerateOrders = () => {
         { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) },
         OrderWorkflowAction.ESIGN
       );
-      createPendingTask({ order: currentOrder });
+      createPendingTask({ order: { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) } });
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
       createTask(orderType, caseDetails, orderResponse);
+      setLoader(false);
       setShowSuccessModal(true);
     } catch (error) {
       //show toast of API failed
@@ -1005,6 +1015,7 @@ const GenerateOrders = () => {
     try {
       if (formList[deleteOrderIndex]?.orderNumber) {
         await updateOrder(formList[deleteOrderIndex], OrderWorkflowAction.ABANDON);
+        closeManualPendingTask(formList[deleteOrderIndex]?.orderNumber);
       }
       setFormList((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
       if (orderNumber) {
@@ -1020,7 +1031,7 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
   const successModalActionSaveLabel = useMemo(() => {
-    if (createdHearing?.hearingId) {
+    if (createdHearing?.hearingId || (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
     return t("CS_COMMON_CLOSE");

@@ -174,7 +174,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     [getApplicationDetail, history, userType]
   );
 
-  const handleCreateOrderDraft = useCallback(
+  const handleCreateSummonsOrder = useCallback(
     async ({ cnrNumber, filingNumber, orderType = "SUMMONS", referenceId }) => {
       const reqBody = {
         order: {
@@ -325,7 +325,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
         handleCreateOrder,
         handleReviewSubmission,
         handleReviewOrder,
-        handleCreateOrderDraft,
+        handleCreateSummonsOrder,
       };
 
       const tasks = await Promise.all(
@@ -381,7 +381,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     [
       getCaseDetailByFilingNumber,
       handleCreateOrder,
-      handleCreateOrderDraft,
+      handleCreateSummonsOrder,
       handleReviewOrder,
       handleReviewSubmission,
       isLoading,

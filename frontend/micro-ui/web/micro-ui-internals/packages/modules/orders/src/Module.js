@@ -11,6 +11,7 @@ import OrderReviewModal from "./pageComponents/OrderReviewModal";
 import AddSubmissionDocument from "./components/AddSubmissionDocument";
 import CustomInfo from "./components/CustomInfo";
 import SummonsOrderComponent from "./components/SummonsOrderComponent";
+import ReIssueSummonsModal from "./components/ReIssueSummonsModal";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -39,6 +40,7 @@ const componentsToRegister = {
   AddSubmissionDocument,
   CustomInfo,
   SummonsOrderComponent,
+  ReIssueSummonsModal,
 };
 
 export const initOrdersComponents = () => {
