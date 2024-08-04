@@ -101,11 +101,23 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
-      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
-        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
-      }));
+
+      const filingNumberSet = new Set();
+      pendingTaskActionDetails?.forEach((data) => {
+        const filingNumber = data?.fields?.find((field) => field.key === "filingNumber")?.value;
+        if (filingNumber) {
+          filingNumberSet.add(filingNumber);
+        }
+      });
+
+      const criteriaList = [];
+
+      for (const filingNumber of filingNumberSet.values()) {
+        criteriaList.push({ filingNumber });
+      }
+
       const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
-        criteria: listOfFilingNumber,
+        criteria: criteriaList,
       });
       const caseDataDetailsArray =
         allPendingTaskCaseDetails?.criteria?.map((element) => ({

@@ -31,7 +31,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer className="ground-container hearing-action-block">
         <React.Fragment>
           <ProjectBreadCrumb location={window.location} />
         </React.Fragment>

@@ -7,12 +7,21 @@ import { hearingService } from "../services";
  * @param {number} refetchInterval
  * @returns data
  */
-function useGetHearings(data, params, keys, enabled, refetchInterval = false) {
+function useGetHearings(data, params, keys, enabled, refetchInterval = false, attendeeIndividualId = "") {
   const { isLoading, data: hearingResponse, isFetching, refetch, error } = useQuery(
     `GET_HEARING_${keys}`,
     () =>
       hearingService
-        .searchHearings(data, params)
+        .searchHearings(
+          {
+            ...data,
+            criteria: {
+              ...data?.criteria,
+              attendeeIndividualId: attendeeIndividualId || undefined,
+            },
+          },
+          params
+        )
         .then((data) => data)
         .catch(() => null),
     {
