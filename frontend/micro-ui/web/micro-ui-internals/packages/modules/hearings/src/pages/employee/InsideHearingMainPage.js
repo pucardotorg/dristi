@@ -284,7 +284,7 @@ const InsideHearingMainPage = () => {
       </div>
       <div className="right-side">
         <HearingSideCard hearingId={hearingId} caseId={caseData?.criteria?.[0]?.responseList?.[0]?.id} filingNumber={filingNumber}></HearingSideCard>
-        {adjournHearing && <AdjournHearing hearing={hearing} tenantID={tenantId} />}
+        {adjournHearing && <AdjournHearing hearing={hearing} updateTranscript={_updateTranscriptRequest} tenantID={tenantId} />}
       </div>
       <ActionBar>
         <div

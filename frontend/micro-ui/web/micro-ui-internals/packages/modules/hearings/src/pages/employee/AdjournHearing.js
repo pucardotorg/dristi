@@ -5,13 +5,12 @@ import NextHearingModal from "../../components/NextHearingModal";
 import SummaryModal from "../../components/SummaryModal";
 import Modal from "@egovernments/digit-ui-module-dristi/src/components/Modal";
 
-const AdjournHearing = (props) => {
-  const { hearing } = props;
+const AdjournHearing = ({ hearing, updateTranscript }) => {
   const { hearingId } = Digit.Hooks.useQueryParams();
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
   const [reasonFormData, setReasonFormData] = useState({});
-  const [transcript, setTranscript] = useState("");
+  const [transcript, setTranscript] = useState(hearing.transcript[0]);
 
   const history = useHistory();
 
@@ -139,8 +138,17 @@ const AdjournHearing = (props) => {
           setTranscript={setTranscript}
           handleConfirmationModal={handleConfirmationModal}
           hearingId={hearingId}
-          stepper={stepper}
-          setStepper={setStepper}
+          onSaveSummary={(updatedTranscriptText) => {
+            const updatedHearing = structuredClone(hearing);
+            updatedHearing.transcript[0] = updatedTranscriptText;
+            updateTranscript({ body: { hearing: updatedHearing } }).then(() => {
+              setStepper((stepper) => stepper + 1);
+            });
+          }}
+          onCancel={() => {
+            setTranscript(hearing.transcript[0]);
+            setStepper((stepper) => stepper - 1);
+          }}
         />
       )}
       {stepper === 3 && (
