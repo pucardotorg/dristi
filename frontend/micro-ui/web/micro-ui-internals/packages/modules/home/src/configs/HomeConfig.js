@@ -361,6 +361,28 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
+  SUMMON_WARRANT_STATUS: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/summons-warrants-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "hearingId", value: "referenceId" },
+      ],
+    },
+  },
+  PAYMENT_PENDING_POST: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/post-payment-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskOrderOfJudgementActions = {};

@@ -267,8 +267,25 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
-            console.log("summon", data);
-            return { ...data };
+            const taskData = data?.list
+              ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
+              ?.map((data) => {
+                const taskDetail = JSON.parse(data?.taskDetails || "{}");
+                const channelDetailsEnum = {
+                  SMS: "phone",
+                  Email: "email",
+                  Post: "address",
+                  Police: "address",
+                };
+                return {
+                  deliveryChannel: taskDetail?.deliveryChannels?.channelName,
+                  channelDetails: taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]],
+                  status: data?.status,
+                  remarks: taskDetail?.deliveryChannels?.status,
+                };
+              });
+            console.log("taskData", taskData);
+            return { list: taskData };
           },
         },
       };

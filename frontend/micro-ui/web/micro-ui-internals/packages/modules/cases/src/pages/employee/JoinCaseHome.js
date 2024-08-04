@@ -458,7 +458,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
           individualId: individualId,
         },
       },
-      { tenantId }
+      { tenantId, limit: 1000, offset: 0 }
     );
     setUserUUID(individualData?.Individual?.[0]?.userUuid);
   };

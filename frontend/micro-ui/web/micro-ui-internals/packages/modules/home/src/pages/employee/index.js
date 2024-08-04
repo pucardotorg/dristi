@@ -36,6 +36,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path, stateCode, userType, tenants }) => {
   const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
   const ReIssueSummonsModal = Digit.ComponentRegistryService.getComponent("ReIssueSummonsModal") || <React.Fragment></React.Fragment>;
+  const PaymentForSummonModal = Digit.ComponentRegistryService.getComponent("PaymentForSummonModal") || <React.Fragment></React.Fragment>;
 
   return (
     <Switch>
@@ -53,6 +54,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
           component={() => <SummonsAndWarrantsModal></SummonsAndWarrantsModal>}
         />
         <PrivateRoute path={`${path}/home-pending-task/reissue-summons-modal`} component={() => <ReIssueSummonsModal></ReIssueSummonsModal>} />
+        <PrivateRoute path={`${path}/home-pending-task/post-payment-modal`} component={() => <PaymentForSummonModal></PaymentForSummonModal>} />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
         <PrivateRoute path={`${path}/home-pending-task/home-schedule-hearing`} component={() => <ScheduleHearing />} />

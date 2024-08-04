@@ -4,6 +4,9 @@ import { Modal, CloseSvg, Button, InboxSearchComposer } from "@egovernments/digi
 import { useTranslation } from "react-i18next";
 import { summonsConfig } from "../../configs/SummonsNWarrantConfig";
 import useSearchOrdersService from "../../../../orders/src/hooks/orders/useSearchOrdersService";
+import { formatDate } from "../../utils";
+import { hearingService } from "../../hooks/services";
+import { Urls } from "../../hooks/services/Urls";
 
 const modalPopup = {
   height: "70%",
@@ -22,10 +25,10 @@ const modalPopup = {
 const SummonsAndWarrantsModal = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  // const { filingNumber } = Digit.Hooks.useQueryParams();
-  const filingNumber = "F-C.1973.002-2024-001383";
+  const { filingNumber, hearingId } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [orderNumber, setOrderNumber] = useState(null);
+  const [orderId, setOrderId] = useState(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const userType = Digit.UserService.getType();
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
@@ -43,6 +46,22 @@ const SummonsAndWarrantsModal = () => {
     Boolean(filingNumber)
   );
 
+  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+        hearingId: hearingId,
+      },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    hearingId,
+    Boolean(hearingId)
+  );
+
+  const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
+
   const caseDetails = useMemo(
     () => ({
       ...caseData?.criteria?.[0]?.responseList?.[0],
@@ -50,7 +69,14 @@ const SummonsAndWarrantsModal = () => {
     [caseData]
   );
 
-  const { caseId } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "", caseId: caseDetails?.id }), [caseDetails]);
+  const respondentName = useMemo(() => {
+    const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data;
+    return `${respondentData?.respondentFirstName || ""}${
+      respondentData?.respondentMiddleName ? " " + respondentData?.respondentMiddleName + " " : " "
+    }${respondentData?.respondentLastName || ""}`;
+  }, [caseDetails]);
+
+  const { caseId, cnrNumber } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "", caseId: caseDetails?.id }), [caseDetails]);
 
   const handleCloseModal = () => {
     history.goBack();
@@ -58,7 +84,62 @@ const SummonsAndWarrantsModal = () => {
 
   const handleNavigate = () => {
     const contextPath = window?.contextPath || "";
-    history.push(`/${contextPath}/employee/orders/orders-create`);
+    history.push(`/${contextPath}/employee/home/home-pending-task/reissue-summons-modal?filingNumber=${filingNumber}&hearingId=${hearingId}`);
+  };
+
+  const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
+    let reqBody = {
+      order: {
+        createdDate: new Date().getTime(),
+        tenantId,
+        cnrNumber,
+        filingNumber: filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: orderType,
+        status: "",
+        isActive: true,
+        workflow: {
+          action: "SAVE_DRAFT",
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              code: orderType,
+              type: orderType,
+              name: `ORDER_TYPE_${orderType}`,
+            },
+            hearingId: referenceId,
+          },
+        },
+      },
+    };
+    try {
+      const res = await hearingService.customApiService(Urls.order.createOrder, reqBody, { tenantId });
+      hearingService.customApiService(Urls.pendingTask, {
+        pendingTask: {
+          name: "Order Created",
+          entityType: "order-managelifecycle",
+          referenceId: `MANUAL_${referenceId}`,
+          status: "SAVE_DRAFT",
+          assignedTo: [],
+          assignedRole: ["JUDGE_ROLE"],
+          cnrNumber: null,
+          filingNumber: filingNumber,
+          isCompleted: true,
+          stateSla: null,
+          additionalDetails: {},
+          tenantId,
+        },
+      });
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
+    } catch (error) {}
   };
 
   const { data: ordersData } = useSearchOrdersService(
@@ -74,7 +155,7 @@ const SummonsAndWarrantsModal = () => {
     if (!ordersData?.list) return [];
 
     const filteredOrders = ordersData?.list?.filter(
-      (item) => (item.orderType === "SUMMONS" || item.orderType === "WARRANT") && item?.status === "PUBLISHED"
+      (item) => (item.orderType === "SUMMONS" || item.orderType === "WARRANT") && item?.status === "PUBLISHED" && item?.hearingNumber === hearingId
     );
 
     const sortedOrders = filteredOrders?.sort((a, b) => {
@@ -82,15 +163,16 @@ const SummonsAndWarrantsModal = () => {
     });
 
     return sortedOrders;
-  }, [ordersData]);
+  }, [hearingId, ordersData]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
     setOrderList(orderListFiltered || []);
     setOrderNumber(orderListFiltered?.[0]?.orderNumber);
+    setOrderId(orderListFiltered?.[0]?.id);
   }, [orderListFiltered]);
 
-  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber }), [orderNumber]);
+  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId }), [filingNumber, orderId, orderNumber]);
 
   const CloseButton = (props) => {
     return (
@@ -104,11 +186,10 @@ const SummonsAndWarrantsModal = () => {
     return (
       <h1 className="modal-heading" style={{ padding: 8 }}>
         <span className="heading-m">{label}</span>
-        <span className="heading-xs">Failed 2 times</span>
+        <span className="heading-xs">Failed {orderList.length - 1} times</span>
       </h1>
     );
   };
-
   return (
     <Modal
       isOpen={true}
@@ -132,9 +213,12 @@ const SummonsAndWarrantsModal = () => {
           <span className="case-info-value">
             {caseDetails?.caseTitle}, {filingNumber}
           </span>
-          <span className="case-info-value">Vikram Singh (Respondent 1)</span>
-          <span className="case-info-value">04/07/2024</span>
-          <span className="case-info-value">23/05/2024 (Round 3)</span>
+          <span className="case-info-value">{respondentName} (Respondent 1)</span>
+          <span className="case-info-value">{hearingDetails?.startTime && formatDate(new Date(hearingDetails?.startTime), "DD-MM-YYYY")}</span>
+          <span className="case-info-value">
+            {orderList[orderList.length - 1]?.createdDate && formatDate(new Date(orderList[orderList.length - 1]?.createdDate), "DD-MM-YYYY")} (Round{" "}
+            {orderList.length})
+          </span>
         </div>
 
         <div className="case-info-column">
@@ -165,6 +249,7 @@ const SummonsAndWarrantsModal = () => {
               setActiveIndex(index);
               setOrderLoading(true);
               setOrderNumber(item?.orderNumber);
+              setOrderId(item?.id);
               setTimeout(() => {
                 setOrderLoading((prev) => !prev);
               }, 0);
@@ -185,7 +270,12 @@ const SummonsAndWarrantsModal = () => {
           label={t("Issue Warrant")}
           labelClassName={"secondary-label-selector"}
           onButtonClick={() => {
-            handleNavigate();
+            handleIssueWarrant({
+              cnrNumber,
+              filingNumber,
+              orderType: "WARRANT",
+              hearingId,
+            });
           }}
           style={{ marginRight: "1rem", fontWeight: "900" }}
         />

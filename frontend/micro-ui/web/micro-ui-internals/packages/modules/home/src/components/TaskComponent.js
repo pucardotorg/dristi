@@ -400,16 +400,6 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     () => ({
       pendingTaskDataInWeek:
         [
-          {
-            filingNumber: "F-C.1973.002-2024-001383",
-            caseType: "NIA S138",
-            actionName: "Show Summon-Warrant Status",
-            redirectUrl: `/${window?.contextPath}/${userType}/home/home-pending-task/summons-warrants-modal?filingNumber=F-C.1973.002-2024-001383`,
-            due: "Due today",
-            caseTitle: "NA",
-            dueDateColor: "#9E400A",
-            isCustomFunction: false,
-          },
           ...pendingTasks
             .filter((data) => data?.dayCount < 7 && !data?.isCompleted)
             .map((data) => data)

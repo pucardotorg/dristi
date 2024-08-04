@@ -12,6 +12,7 @@ import AddSubmissionDocument from "./components/AddSubmissionDocument";
 import CustomInfo from "./components/CustomInfo";
 import SummonsOrderComponent from "./components/SummonsOrderComponent";
 import ReIssueSummonsModal from "./components/ReIssueSummonsModal";
+import PaymentForSummonModal from "./pages/employee/PaymentForSummonModal";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -41,6 +42,7 @@ const componentsToRegister = {
   CustomInfo,
   SummonsOrderComponent,
   ReIssueSummonsModal,
+  PaymentForSummonModal,
 };
 
 export const initOrdersComponents = () => {

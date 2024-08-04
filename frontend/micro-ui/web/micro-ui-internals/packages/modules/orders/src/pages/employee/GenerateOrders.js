@@ -92,7 +92,9 @@ const stateSla = {
 
 const channelTypeEnum = {
   Post: { code: "POST", type: "Post" },
+  SMS: { code: "SMS", type: "SMS" },
   "Via Police": { code: "POLICE", type: "Police" },
+  "E-mail": { code: "EMAIL", type: "Email" },
 };
 
 const dayInMillisecond = 24 * 3600 * 1000;
@@ -625,30 +627,32 @@ const GenerateOrders = () => {
       return await Promise.all(promises);
     }
     if (order?.orderType === "SUMMONS") {
-      assignees = [
-        ...complainants,
-        ...Object.values(allAdvocates)
-          ?.flat()
-          ?.map((uuid) => ({ uuid })),
-      ];
-      if (Array.isArray(order?.formdata?.SummonsOrder?.selectedChannels)) {
-        const promises = order?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
-          return ordersService.customApiService(Urls.orders.pendingTask, {
-            pendingTask: {
-              name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
-              entityType,
-              referenceId: `MANUAL_${orderNumber}`,
-              status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
-              assignedTo: assignees,
-              assignedRole,
-              cnrNumber: cnrNumber,
-              filingNumber: filingNumber,
-              isCompleted: false,
-              stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
-              additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
-              tenantId,
-            },
-          });
+      debugger;
+      assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
+      debugger;
+      if (Array.isArray(order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels)) {
+        entityType = "order-managelifecycle";
+        const promises = order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
+          if (channel?.type === "Post") {
+            return ordersService.customApiService(Urls.orders.pendingTask, {
+              pendingTask: {
+                name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
+                entityType,
+                referenceId: `MANUAL_${orderNumber}`,
+                status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
+                assignedTo: assignees,
+                assignedRole,
+                cnrNumber: cnrNumber,
+                filingNumber: filingNumber,
+                isCompleted: false,
+                stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+                additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+                tenantId,
+              },
+            });
+          }
+
+          return [];
         });
         return await Promise.all(promises);
       }
@@ -803,16 +807,16 @@ const GenerateOrders = () => {
           individualId: complainantIndividualId,
         },
       },
-      { tenantId }
+      { tenantId, limit: 1000, offset: 0 }
     );
 
     const orderData = orderDetails?.order;
     const orderFormData = orderDetails?.order?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
     const selectedChannel = orderData?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels;
     const respondentAddress = generateAddress({ ...orderFormData?.addressDetails?.[0]?.addressDetails });
-    const respondentName = `${orderFormData?.respondentFirstName}${
+    const respondentName = `${orderFormData?.respondentFirstName || ""}${
       orderFormData?.respondentMiddleName ? " " + orderFormData?.respondentMiddleName + " " : " "
-    }${orderFormData?.respondentLastName}`;
+    }${orderFormData?.respondentLastName || ""}`.trim();
 
     const respondentPhoneNo = orderFormData?.phonenumbers?.mobileNumber?.join(", ") || "";
     const respondentEmail = orderFormData?.emails?.email?.join(", ") || "";
@@ -826,9 +830,9 @@ const GenerateOrders = () => {
     const latitude = complainantDetails?.address[0]?.latitude || "";
     const longitude = complainantDetails?.address[0]?.longitude || "";
     const doorNo = complainantDetails?.address[0]?.doorNo || "";
-    const complainantName = `${complainantDetails?.name?.givenName}${
+    const complainantName = `${complainantDetails?.name?.givenName || ""}${
       complainantDetails?.name?.otherNames ? " " + complainantDetails?.name?.otherNames + " " : " "
-    }${complainantDetails?.name?.familyName}`;
+    }${complainantDetails?.name?.familyName || ""}`;
     const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
     const complainantAddress = generateAddress({
       pincode: pincode,
@@ -909,10 +913,31 @@ const GenerateOrders = () => {
           },
         };
         break;
+      case "BAIL":
+        payload = {
+          respondentDetails: {
+            name: respondentName,
+            address: respondentAddress,
+            phone: respondentPhoneNo,
+            email: respondentEmail,
+            age: "",
+            gender: "",
+          },
+          caseDetails: {
+            title: caseDetails?.caseTitle,
+            year: new Date(caseDetails).getFullYear(),
+            hearingDate: new Date(orderData?.additionalDetails?.formData?.date || "").getTime(),
+            judgeName: "",
+            courtName: courtDetails?.name,
+            courtAddress: courtDetails?.address,
+            courtPhone: courtDetails?.phone,
+          },
+        };
+        break;
       default:
         break;
     }
-    if (Object.keys(payload).length > 0 && Array.isArray(selectedChannel)) {
+    if (Object.keys(payload || {}).length > 0 && Array.isArray(selectedChannel)) {
       selectedChannel.forEach(async (item) => {
         if ("deliveryChannels" in payload) {
           payload.deliveryChannels = {
@@ -926,7 +951,38 @@ const GenerateOrders = () => {
             channelName: channelTypeEnum?.[item?.type]?.type,
           };
         }
-        await ordersService.customApiService(Urls.orders.taskCreate, payload);
+        await ordersService.customApiService(Urls.orders.taskCreate, {
+          task: {
+            taskDetails: payload,
+            workflow: {
+              action: "CREATE",
+              comments: orderType,
+              documents: [
+                {
+                  documentType: null,
+                  fileStore: null,
+                  documentUid: null,
+                  additionalDetails: {},
+                },
+              ],
+              assignes: null,
+              rating: null,
+            },
+            createdDate: formatDate(new Date(), "DD-MM-YYYY"),
+            orderId: orderData?.id,
+            filingNumber,
+            cnrNumber,
+            taskType: orderType,
+            status: "INPROGRESS",
+            tenantId,
+            amount: {
+              type: "FINE",
+              status: "DONE",
+              amount: "100",
+            },
+          },
+          tenantId,
+        });
       });
     }
   };
