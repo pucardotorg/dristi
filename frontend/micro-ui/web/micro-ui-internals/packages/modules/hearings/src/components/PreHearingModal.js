@@ -5,6 +5,7 @@ import Modal from "../../../dristi/src/components/Modal";
 import { preHearingConfig } from "../configs/PreHearingConfig";
 import { hearingService } from "../hooks/services";
 import { ReschedulingPurpose } from "../pages/employee/ReschedulingPurpose";
+import { formatDate } from "../utils";
 
 function PreHearingModal({ onCancel, hearingData, courtData, individualId, userType }) {
   const { t } = useTranslation();
@@ -116,7 +117,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("Reschedule All Hearings")}
       formId="modal-action"
-      headerBarMain={<Heading label={t(`TOTAL_HEARINGS (${hearingData.count})`)} />}
+      headerBarMain={<Heading label={`${t("TOTAL_HEARINGS")} (${hearingData.count})`} />}
       className="pre-hearings"
       popupStyles={popUpStyle}
       popupModuleActionBarStyles={{
@@ -130,7 +131,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
       >
         <div>
-          <strong>{hearingData.fromDate}</strong>, {hearingData.slot}
+          <strong>{formatDate(new Date(hearingData.fromDate))}</strong>, {hearingData.slot}
         </div>
         <Button
           className="border-none dristi-font-bold"

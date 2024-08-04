@@ -2,16 +2,13 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
+import TasksComponent from "../../components/TaskComponentCalander";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
 import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
-import { ReschedulingPurpose } from "./ReschedulingPurpose";
-import TasksComponent from "../../components/TaskComponentCalander";
-import { formatDate } from "../../utils";
 
 const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
@@ -31,7 +28,7 @@ const MonthlyCalendar = () => {
   const isUserLoggedIn = Boolean(token);
   const userInfo = Digit.UserService.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
-  const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+  const { data: individualData } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         userUuid: [userInfo?.uuid],
@@ -53,8 +50,8 @@ const MonthlyCalendar = () => {
   const search = window.location.search;
   const { fromDate, toDate, slot, initialView, count } = useMemo(() => {
     const searchParams = new URLSearchParams(search);
-    const fromDate = searchParams.get("from-date") || null;
-    const toDate = searchParams.get("to-date") || null;
+    const fromDate = Number(searchParams.get("from-date")) || null;
+    const toDate = Number(searchParams.get("to-date")) || null;
     const slot = searchParams.get("slot") || null;
     const initialView = searchParams.get("view") || initial;
     const count = searchParams.get("count") || 0;
@@ -64,8 +61,8 @@ const MonthlyCalendar = () => {
   const reqBody = {
     criteria: {
       tenantId,
-      fromDate: dateRange.start ? formatDate(dateRange.start) : null,
-      toDate: dateRange.end ? formatDate(dateRange.end) : null,
+      fromDate: dateRange.start ? dateRange.start.getTime() : null,
+      toDate: dateRange.end ? dateRange.end.getTime() : null,
     },
   };
 
@@ -153,14 +150,14 @@ const MonthlyCalendar = () => {
     });
   };
 
-  const handleEventClick = (arg) => {
-    const fromDate = new Date(arg.event.extendedProps.date);
+  const handleEventClick = (arg, ...rest) => {
+    console.log(arg, ...rest);
+    const fromDate = arg.event.start;
     const count = arg.event.extendedProps.count;
-    const toDate = new Date(fromDate);
-    toDate.setDate(fromDate.getDate() + 1);
+    const toDate = arg.event.end;
     const searchParams = new URLSearchParams(search);
-    searchParams.set("from-date", formatDate(fromDate));
-    searchParams.set("to-date", formatDate(toDate));
+    searchParams.set("from-date", fromDate.getTime());
+    searchParams.set("to-date", toDate.getTime());
     searchParams.set("slot", arg.event.extendedProps.slot);
     searchParams.set("view", getCurrentViewType());
     searchParams.set("count", count);
@@ -173,6 +170,7 @@ const MonthlyCalendar = () => {
     searchParams.delete("to-date");
     searchParams.delete("slot");
     searchParams.delete("view");
+    searchParams.delete("count");
     history.replace({ search: searchParams.toString() });
   };
 
