@@ -66,7 +66,7 @@ const AdmittedCases = () => {
   );
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
-  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0].status === "CASE_ADMITTED";
+  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED";
 
   const statue = useMemo(
     () =>
@@ -694,7 +694,7 @@ const AdmittedCases = () => {
             <hr className="vertical-line" />
             <div className="sub-details-text">{caseDetails?.stage}</div>
             <hr className="vertical-line" />
-            <div className="sub-details-text">Code: {caseData?.criteria[0].responseList[0].accessCode}</div>
+            <div className="sub-details-text">Code: {caseData?.criteria[0].responseList[0]?.accessCode}</div>
           </div>
           <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
