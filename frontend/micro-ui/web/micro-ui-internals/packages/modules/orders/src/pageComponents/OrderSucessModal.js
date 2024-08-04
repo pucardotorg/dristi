@@ -3,9 +3,8 @@ import Modal from "../../../dristi/src/components/Modal";
 import { FileDownloadIcon } from "../../../dristi/src/icons/svgIndex";
 import CustomCopyTextDiv from "../../../dristi/src/components/CustomCopyTextDiv";
 import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-function OrderSucessModal({ order, t, handleDownloadOrders, handleClose }) {
+function OrderSucessModal({ order, t, handleDownloadOrders, handleClose, actionSaveLabel }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -34,7 +33,7 @@ function OrderSucessModal({ order, t, handleDownloadOrders, handleClose }) {
     <Modal
       actionCancelLabel={t("DOWNLOAD_ORDER")}
       actionCancelOnSubmit={handleDownloadOrders}
-      actionSaveLabel={t("CS_COMMON_CLOSE")}
+      actionSaveLabel={actionSaveLabel}
       actionSaveOnSubmit={handleClose}
       className={"orders-success-modal"}
       cancelButtonBody={<FileDownloadIcon></FileDownloadIcon>}

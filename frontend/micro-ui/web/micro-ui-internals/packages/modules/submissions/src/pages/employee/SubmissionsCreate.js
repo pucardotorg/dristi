@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -26,6 +25,7 @@ import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 import { Urls } from "../../hooks/services/Urls";
+import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
@@ -301,7 +301,7 @@ const SubmissionsCreate = () => {
   ]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
+    if (applicationType && !["OTHERS", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
     if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
@@ -525,23 +525,18 @@ const SubmissionsCreate = () => {
     setShowSuccessModal(true);
   };
 
-  const handleMakePayment = () => {
+  const handleMakePayment = async () => {
     setMakePaymentLabel(false);
     setShowPaymentModal(false);
     setShowSuccessModal(true);
+    await updateSubmission(SubmissionWorkflowAction.PAY);
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
   };
 
   const handleDownloadSubmission = () => {
     // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-  if (
-    applicationDetails?.status &&
-    ![SubmissionWorkflowState.PENDINGSUBMISSION, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGPAYMENT].includes(
-      applicationDetails?.status
-    ) &&
-    caseDetails?.id
-  ) {
+  if (!filingNumber) {
     handleBack();
   }
   if (
