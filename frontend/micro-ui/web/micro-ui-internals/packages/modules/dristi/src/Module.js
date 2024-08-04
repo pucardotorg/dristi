@@ -51,6 +51,8 @@ import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
 import { DRISTIService } from "./services";
 import CustomChooseDate from "./components/CustomChooseDate";
 import CustomCalendar from "./components/CustomCalendar";
+import CommentComponent from "./components/CommentComponent";
+import { RightArrow } from "./icons/svgIndex";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
@@ -115,6 +117,7 @@ const componentsToRegister = {
   AdvocateNameDetails,
   CustomRadioInfoComponent,
   Modal,
+  CommentComponent,
   CustomCaseInfoDiv,
   CustomErrorTooltip,
   CustomSortComponent,
@@ -126,6 +129,7 @@ const componentsToRegister = {
   DRISTIService,
   CustomChooseDate,
   CustomCalendar,
+  RightArrow,
 };
 
 const overrideHooks = () => {

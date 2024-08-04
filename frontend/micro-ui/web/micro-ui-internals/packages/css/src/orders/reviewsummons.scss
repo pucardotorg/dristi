@@ -1,7 +1,8 @@
-.print-documents-container {
-  width: 568px;
-  height: 83px;
-  margin-top: 16px;
+.print-and-send-document {
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  flex-direction: column;
 }
 
 .print-documents-heading {

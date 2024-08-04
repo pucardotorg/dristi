@@ -15,7 +15,11 @@ const ReviewCard = ({ data, userInfoType }) => {
           <div className="review-card-action-main">
             <div className="review-card-action-count">{row?.pendingAction} new</div>
             <div className="review-card-action-arrow">
-              <span onClick={() => history.push(`/${window?.contextPath}/${userInfoType}/${row?.actionLink}`)}>
+              <span
+                onClick={() => {
+                  history.push(`/${window?.contextPath}/${userInfoType}/${row?.actionLink}`);
+                }}
+              >
                 <ArrowRightInbox />
               </span>
             </div>
