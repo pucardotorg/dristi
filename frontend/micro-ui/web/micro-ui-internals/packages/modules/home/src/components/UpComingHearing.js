@@ -3,6 +3,7 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalenderIcon } from "../../homeIcon";
+import { formatDateYYMMDD } from "../utils";
 
 function timeInMillisToDateTime(timeInMillis) {
   if (!timeInMillis || typeof timeInMillis !== "number") {
@@ -68,8 +69,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const curHr = today.getHours();
   const dateRange = useMemo(
     () => ({
-      start: today.toISOString().split("T")[0],
-      end: new Date(new Date().setDate(today.getDate() + 1)).toISOString().split("T")[0],
+      start: formatDateYYMMDD(today),
+      end: formatDateYYMMDD(new Date(new Date().setDate(today.getDate() + 1))),
     }),
     [today]
   );
@@ -77,10 +78,9 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     const year = today.getFullYear();
     const month = today.getMonth();
     const endOfMonth = new Date(year, month + 1, 0);
-    const formatDate = (date) => date.toISOString().split("T")[0];
     return {
-      fromDate: formatDate(today),
-      toDate: formatDate(endOfMonth),
+      fromDate: formatDateYYMMDD(today),
+      toDate: formatDateYYMMDD(endOfMonth),
     };
   }, [today]);
 
