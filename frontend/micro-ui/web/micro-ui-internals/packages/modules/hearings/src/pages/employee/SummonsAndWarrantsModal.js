@@ -25,7 +25,10 @@ const SummonsAndWarrantsModal = () => {
   // const { filingNumber } = Digit.Hooks.useQueryParams();
   const filingNumber = "F-C.1973.002-2024-001383";
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
+  const [orderNumber, setOrderNumber] = useState(null);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const userType = Digit.UserService.getType();
+  const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -47,7 +50,7 @@ const SummonsAndWarrantsModal = () => {
     [caseData]
   );
 
-  const { cnrNumber } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "" }), [caseDetails]);
+  const { caseId } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "", caseId: caseDetails?.id }), [caseDetails]);
 
   const handleCloseModal = () => {
     history.goBack();
@@ -58,7 +61,7 @@ const SummonsAndWarrantsModal = () => {
     history.push(`/${contextPath}/employee/orders/orders-create`);
   };
 
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const { data: ordersData } = useSearchOrdersService(
     { criteria: { tenantId: tenantId, filingNumber } },
     { tenantId },
     filingNumber,
@@ -70,7 +73,9 @@ const SummonsAndWarrantsModal = () => {
   const orderListFiltered = useMemo(() => {
     if (!ordersData?.list) return [];
 
-    const filteredOrders = ordersData?.list?.filter((item) => item.orderType === "SUMMONS" || item.orderType === "Warrant");
+    const filteredOrders = ordersData?.list?.filter(
+      (item) => (item.orderType === "SUMMONS" || item.orderType === "WARRANT") && item?.status === "PUBLISHED"
+    );
 
     const sortedOrders = filteredOrders?.sort((a, b) => {
       return new Date(b.auditDetails.createdTime) - new Date(a.auditDetails.createdTime);
@@ -79,13 +84,13 @@ const SummonsAndWarrantsModal = () => {
     return sortedOrders;
   }, [ordersData]);
 
+  const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
     setOrderList(orderListFiltered || []);
+    setOrderNumber(orderListFiltered?.[0]?.orderNumber);
   }, [orderListFiltered]);
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const [config, setConfig] = useState(summonsConfig({ filingNumber }));
+  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber }), [orderNumber]);
 
   const CloseButton = (props) => {
     return (
@@ -133,10 +138,16 @@ const SummonsAndWarrantsModal = () => {
         </div>
 
         <div className="case-info-column">
-          <a href="#" className="case-info-link">
+          <a
+            href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`}
+            className="case-info-link"
+          >
             {t("View Case")}
           </a>
-          <a href="#" className="case-info-link">
+          <a
+            href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`}
+            className="case-info-link"
+          >
             {t("View Order")}
           </a>
           <span></span>
@@ -148,13 +159,24 @@ const SummonsAndWarrantsModal = () => {
       <div></div>
       <div className="rounds-of-delivery" style={{ cursor: "pointer" }}>
         {orderList.map((item, index) => (
-          <div key={index} onClick={() => setActiveIndex(index)} className={`round-item ${index === activeIndex ? "active" : ""}`}>
+          <div
+            key={index}
+            onClick={() => {
+              setActiveIndex(index);
+              setOrderLoading(true);
+              setOrderNumber(item?.orderNumber);
+              setTimeout(() => {
+                setOrderLoading((prev) => !prev);
+              }, 0);
+            }}
+            className={`round-item ${index === activeIndex ? "active" : ""}`}
+          >
             {`${orderList.length - index} (${item?.orderType})`}
           </div>
         ))}
       </div>
 
-      <InboxSearchComposer configs={config} defaultValues={filingNumber}></InboxSearchComposer>
+      {orderNumber && !orderLoading && <InboxSearchComposer configs={config} defaultValues={filingNumber}></InboxSearchComposer>}
 
       <div className="action-buttons">
         <Button

@@ -87,21 +87,21 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
     setSelectedChannels(updatedSelectedChannels);
     onSelect(config.key, { ...formData[config.key], selectedChannels: updatedSelectedChannels });
   };
+  // const clean_data = (values) => {
+  //   return values?.reduce((value, curr) => {
+  //     if (value != null) {
+  //       values.push(curr);
+  //     }
+  //     return values;
+  //   }, []);
+  // };
   const renderDeliveryChannels = () => {
     const party = formData[config.key]?.party;
     if (!party) return null;
     const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
     const { address, phone_numbers, email } = party.data || {};
-    const clean_data = (values) => {
-      return values?.reduce((value, curr) => {
-        if (value != null) {
-          values.push(curr);
-        }
-        return values;
-      }, []);
-    };
     const deliveryChannels = [
-      { type: "SMS", values: clean_data(phone_numbers) || [] },
+      { type: "SMS", values: phone_numbers || [] },
       { type: "E-mail", values: email || [] },
       { type: "Post", values: address || [] },
       { type: "Via Police", values: address || [] },
@@ -125,7 +125,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
 
                   {Array.isArray(channel?.values) &&
                     channel?.values?.map((value, index) => (
-                      <div key={index}>
+                      <div key={`${channel.type}-${index}`}>
                         <input
                           type="checkbox"
                           id={`${channel.type}-${index}`}

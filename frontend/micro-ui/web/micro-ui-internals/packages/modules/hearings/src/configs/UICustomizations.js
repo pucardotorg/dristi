@@ -257,4 +257,39 @@ export const UICustomizations = {
       return [];
     },
   },
+  summonWarrantConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            console.log("summon", data);
+            return { ...data };
+          },
+        },
+      };
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
 };

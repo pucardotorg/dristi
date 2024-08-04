@@ -4,7 +4,7 @@
 //   applicationNumber:""
 // };
 
-export const summonsConfig = ({ filingNumber, limit, offset }) => {
+export const summonsConfig = ({ filingNumber, limit, offset, orderNumber }) => {
   return {
     label: "1(Summons)",
     type: "search",
@@ -18,12 +18,13 @@ export const summonsConfig = ({ filingNumber, limit, offset }) => {
       requestBody: {
         apiOperation: "SEARCH",
         criteria: {
-          // tenantId: Digit.ULBService.getCurrentTenantId(),
-          filingNumber: filingNumber,
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          filingNumber,
+          orderNumber,
         },
       },
       masterName: "commonUiConfig",
-      moduleName: "SearchIndividualConfig",
+      moduleName: "summonWarrantConfig",
       minParametersForSearchForm: 0,
       tableFormJsonPath: "requestParam",
       filterFormJsonPath: "requestBody.criteria",
