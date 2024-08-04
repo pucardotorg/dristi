@@ -1,8 +1,9 @@
 import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCopyTextDiv";
 import { Banner, Button, DownloadIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import DocumentPrintComponent from "./DocumentPrintComponent";
 
-const CustomStepperSuccess = ({ closeButtonAction, t, submissionData }) => {
+const CustomStepperSuccess = ({ closeButtonAction, t, submissionData, documents }) => {
   return (
     <div className="custom-stepper-modal-success" style={{ padding: "0px 20px" }}>
       <Banner
@@ -13,7 +14,6 @@ const CustomStepperSuccess = ({ closeButtonAction, t, submissionData }) => {
         style={{ minWidth: "100%", marginTop: "32px", marginBottom: "20px" }}
       ></Banner>
       {<p>Relevant party/ parties will be notified about the document(s) issued.</p>}
-      {/* {isPaymentDone && <SelectCustomNote t={t} config={customNoteConfig} />} */}
       <CustomCopyTextDiv
         t={t}
         keyStyle={{ margin: "8px 0px" }}
@@ -22,21 +22,23 @@ const CustomStepperSuccess = ({ closeButtonAction, t, submissionData }) => {
         tableDataClassName={"e-filing-table-data-style"}
         tableValueClassName={"e-filing-table-value-style"}
       />
+      <DocumentPrintComponent documents={documents} />
       <div className="action-button-success">
         <Button
           className={"selector-button-border"}
-          label={t("Download Document")}
-          icon={<DownloadIcon />}
+          label={t(documents ? "Close" : "Download Document")}
+          icon={documents ? undefined : <DownloadIcon />}
           onButtonClick={() => {
             // closeModal();
             // refreshInbox();
+            if (documents) closeButtonAction();
           }}
         />
         <Button
           className={"selector-button-primary"}
-          label={"Close"}
+          label={t(documents ? "Mark as sent" : "Close")}
           onButtonClick={() => {
-            closeButtonAction();
+            if (!documents) closeButtonAction();
           }}
         >
           {/* <RightArrow /> */}

@@ -342,7 +342,7 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
-            return { ...data, list: data.list?.filter((order) => order.orderType) };
+            return { ...data, list: data.list?.filter((order) => order.taskType) };
           },
         },
       };

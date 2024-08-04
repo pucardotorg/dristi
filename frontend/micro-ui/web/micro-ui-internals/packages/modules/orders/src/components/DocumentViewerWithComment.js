@@ -1,8 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import CommentBox from "./CommentBox/CommentBox";
+import ApplicationInfoComponent from "./ApplicationInfoComponent";
 
-const DocumentViewerWithComment = ({ infos, documents, showCommentSection, comments, showAddNewComment, onAddComment }) => {
+const DocumentViewerWithComment = ({ infos, links, documents, showCommentSection, comments, showAddNewComment, onAddComment }) => {
   const { t } = useTranslation();
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
 
@@ -10,19 +11,7 @@ const DocumentViewerWithComment = ({ infos, documents, showCommentSection, comme
     <div className="document-viewer-with-comment">
       <div className={`application-details ${!showCommentSection && "without-comment"}`}>
         <React.Fragment>
-          <div className="application-info">
-            {infos &&
-              infos?.map((info, index) => (
-                <div className="info-row" key={index}>
-                  <div className="info-key">
-                    <h3>{t(info?.key)}</h3>
-                  </div>
-                  <div className="info-value">
-                    <h3>{t(info?.value)}</h3>
-                  </div>
-                </div>
-              ))}
-          </div>
+          <ApplicationInfoComponent infos={infos} links={links} />
           {documents &&
             documents?.map((docs, index) => (
               <React.Fragment>

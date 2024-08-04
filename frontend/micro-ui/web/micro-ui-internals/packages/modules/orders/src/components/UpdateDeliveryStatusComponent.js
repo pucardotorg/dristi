@@ -1,8 +1,8 @@
 import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import React, { useEffect, useState } from "react";
+import ApplicationInfoComponent from "./ApplicationInfoComponent";
 
-const UpdateDeliveryStatusComponent = ({ t, infos }) => {
+const UpdateDeliveryStatusComponent = ({ t, infos, links, handleSubmitButtonDisable }) => {
   const [selectedDelievery, setSelectedDelievery] = useState({});
   const [date, setDate] = useState("");
   const [remarks, setRemarks] = useState("");
@@ -24,24 +24,33 @@ const UpdateDeliveryStatusComponent = ({ t, infos }) => {
       value: "Signed",
     },
   ];
+
+  useEffect(() => {
+    if (selectedDelievery && date) handleSubmitButtonDisable(false);
+    else handleSubmitButtonDisable(true);
+  }, [selectedDelievery, date]);
+
   return (
     <div className="update-delivery-status">
       <LabelFieldPair className="case-label-field-pair">
         <CardLabel className="case-input-label">{`${t("Update Delivery Status")}`}</CardLabel>
         <Dropdown t={t} option={deliveryOptions} selected={selectedDelievery} optionKey={"value"} select={(e) => setSelectedDelievery(e)} />
       </LabelFieldPair>
-      <LabelFieldPair className="case-label-field-pair">
-        <CardLabel className="case-input-label">{`${t("Update Delivery Status")}`}</CardLabel>
-        <TextInput
-          value={date}
-          type={"date"}
-          name={"delivery-date"}
-          onChange={(e) => {
-            setDate(e?.target?.value);
-            console.log("date :>> ", e.target.value);
-          }}
-        />
-      </LabelFieldPair>
+      {selectedDelievery && (
+        <LabelFieldPair className="case-label-field-pair">
+          <CardLabel className="case-input-label">{`${t("Update Delivery Status")}`}</CardLabel>
+          <TextInput
+            value={date}
+            type={"date"}
+            name={"delivery-date"}
+            onChange={(e) => {
+              setDate(e?.target?.value);
+              console.log("date :>> ", e.target.value);
+            }}
+          />
+        </LabelFieldPair>
+      )}
+
       <LabelFieldPair className="case-label-field-pair">
         <CardLabel className="case-input-label">{`${t("Remarks (optional)")}`}</CardLabel>
         <TextInput
@@ -54,24 +63,8 @@ const UpdateDeliveryStatusComponent = ({ t, infos }) => {
           }}
         />
       </LabelFieldPair>
-      <div className="application-info">
-        {true && (
-          <Link className="review-summon-order" to={{ pathname: `` }}>
-            {"View Order"}
-          </Link>
-        )}
-        {infos &&
-          infos?.map((info, index) => (
-            <div className="info-row" key={index}>
-              <div className="info-key">
-                <h3>{t(info?.key)}</h3>
-              </div>
-              <div className="info-value">
-                <h3>{t(info?.value)}</h3>
-              </div>
-            </div>
-          ))}
-      </div>
+
+      <ApplicationInfoComponent infos={infos} links={links} />
     </div>
   );
 };

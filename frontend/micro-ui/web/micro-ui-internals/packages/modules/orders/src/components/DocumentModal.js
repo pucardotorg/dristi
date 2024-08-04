@@ -21,18 +21,19 @@ const DocumentModal = ({ config }) => {
   // const [isDisabled, setIsDisabled] = useState(false);
 
   const isDisabled = useMemo(() => {
-    return config?.steps[step]?.isDisabled || false;
-  }, [config?.steps, step]);
+    if (config?.isStepperModal) return config?.steps[step]?.isDisabled;
+    return config?.isDisabled;
+  }, [config?.isDisabled, config?.isStepperModal, config?.steps, step]);
 
   const actionSaveOnSubmit = () => {
-    if (config?.isStepperModal[step] && config?.steps[step]?.actionCancelOnSubmit) {
+    if (config?.isStepperModal && config?.steps[step]?.actionCancelOnSubmit) {
       config?.steps[step]?.actionCancelOnSubmit();
     } else if (config?.actionSaveOnSubmit) config?.actionSaveOnSubmit();
     if (step + 1 <= config?.steps?.length) setStep(step + 1);
   };
 
   const actionCancelOnSubmit = () => {
-    if (config?.isStepperModal[step] && config?.steps[step]?.actionCancelOnSubmit) {
+    if (config?.isStepperModal && config?.steps[step]?.actionCancelOnSubmit) {
       config?.steps[step]?.actionCancelOnSubmit();
     } else if (config?.actionCancelOnSubmit) config?.actionCancelOnSubmit();
     if (step - 1 >= 0) setStep(step - 1);
@@ -48,11 +49,21 @@ const DocumentModal = ({ config }) => {
       actionCancelOnSubmit={actionCancelOnSubmit}
       formId="modal-action"
       headerBarMain={
-        config?.steps[step]?.type !== "success" && (
-          <Heading heading={config?.isStepperModal ? config?.steps[step]?.heading || config?.heading : config?.heading} />
+        config?.isStepperModal && config?.steps[step]?.type !== "success" ? (
+          <Heading heading={config?.steps[step]?.heading || config?.heading} />
+        ) : (
+          <Heading heading={config?.heading} />
         )
       }
-      className={config.steps[step]?.type === "document" ? "custom-modal-stepper" : "add-signature-modal"}
+      className={
+        config?.isStepperModal
+          ? config.steps[step]?.type === "document"
+            ? "custom-modal-stepper"
+            : "add-signature-modal"
+          : config?.type === "document"
+          ? "custom-modal-stepper"
+          : "add-signature-modal"
+      }
       isDisabled={isDisabled}
     >
       {config?.isStepperModal ? config?.steps[step]?.modalBody || config?.modalBody : config?.modalBody}

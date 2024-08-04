@@ -593,8 +593,28 @@
   padding: 16px 24px;
   background: #f7f5f3;
   display: flex;
+  gap: 12px;
+  align-items: start;
+}
+
+.info-link-wrapper,
+.info-row-wrapper {
+  background: #f7f5f3;
+  display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.info-link-wrapper {
+  width: 25%;
+}
+
+.info-row-wrapper {
+  width: 100%;
+
+  &.with-link {
+    width: 75%;
+  }
 }
 
 .info-row {

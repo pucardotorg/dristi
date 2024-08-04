@@ -13,7 +13,7 @@ export const SummonsTabsConfig = {
       label: "Pending",
       type: "search",
       apiDetails: {
-        serviceName: "/order/v1/search",
+        serviceName: "/task/v1/search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           limit: 10,
@@ -54,11 +54,11 @@ export const SummonsTabsConfig = {
               {
                 label: "Order Type",
                 isMandatory: false,
-                key: "orderType",
+                key: "taskType",
                 type: "dropdown",
                 disable: false,
                 populators: {
-                  name: "orderType",
+                  name: "taskType",
                   options: ["Summon", "Warrant"],
                   optionsCustomStyle: {
                     overflowX: "hidden",
@@ -146,7 +146,7 @@ export const SummonsTabsConfig = {
       label: "Sent",
       type: "search",
       apiDetails: {
-        serviceName: "/order/v1/search",
+        serviceName: "/task/v1/search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
