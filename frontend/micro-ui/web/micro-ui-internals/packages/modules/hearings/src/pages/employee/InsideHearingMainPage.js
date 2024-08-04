@@ -275,7 +275,7 @@ const InsideHearingMainPage = () => {
           </div>
         </div>
         <div style={{ marginTop: "10px", marginBottom: "50px" }}>
-          {activeTab === "Witness Deposition" && (
+          {activeTab === "Witness Deposition" && userHasRole("EMPLOYEE") && (
             <div>
               <Button
                 label={t("SAVE_WITNESS_DEPOSITION")}
