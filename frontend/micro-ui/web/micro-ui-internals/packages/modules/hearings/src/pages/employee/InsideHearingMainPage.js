@@ -209,7 +209,7 @@ const InsideHearingMainPage = () => {
       <div className="left-side" style={{ padding: "24px 40px" }}>
         <React.Fragment>
           <EvidenceHearingHeader
-            caseData={caseData}
+            caseData={caseData?.criteria?.[0]?.responseList?.[0]}
             hearing={hearing}
             setActiveTab={setActiveTab}
             activeTab={activeTab}

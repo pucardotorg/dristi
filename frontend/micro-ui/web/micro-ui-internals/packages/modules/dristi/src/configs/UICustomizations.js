@@ -990,4 +990,23 @@ export const UICustomizations = {
         return;
     }
   },
+  DristiCaseUtils: {
+    getAllCaseRepresentativesUUID: (caseData) => {
+      let representatives = {};
+      let list = [];
+      caseData?.litigants?.forEach((litigant) => {
+        list = caseData?.representatives
+          ?.filter((item) => {
+            return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+          })
+          .map((item) => item?.additionalDetails?.uuid);
+        if (list?.length > 0) {
+          representatives[litigant?.additionalDetails?.uuid] = list;
+        } else {
+          representatives[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+        }
+      });
+      return representatives;
+    },
+  },
 };
