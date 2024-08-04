@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import NextHearingModal from "../../components/NextHearingModal";
 import SummaryModal from "../../components/SummaryModal";
 import Modal from "@egovernments/digit-ui-module-dristi/src/components/Modal";
+import { hearingService } from "../../hooks/services";
 
 const AdjournHearing = ({ hearing, updateTranscript }) => {
   const { hearingId } = Digit.Hooks.useQueryParams();
@@ -96,6 +97,22 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
       if (formData.reason.code !== "Select a Reason") setDisable(false);
     }
   };
+  const adjournHearing = async (updatedTranscriptText) => {
+    try {
+      const updatedHearing = structuredClone(hearing);
+      updatedHearing.transcript[0] = updatedTranscriptText;
+      updatedHearing.workflow.action = "CLOSE";
+      updatedHearing.additionalDetails.purposeOfAdjournment = {
+        reason: reasonFormData.reason.code,
+      };
+      return await hearingService.updateHearing(
+        { tenantId: Digit.ULBService.getCurrentTenantId(), hearing: updatedHearing, hearingType: "", status: "" },
+        { applicationNumber: "", cnrNumber: "" }
+      );
+    } catch (error) {
+      console.error("Error Ending hearing:", error);
+    }
+  };
 
   return (
     <div>
@@ -139,9 +156,7 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
           handleConfirmationModal={handleConfirmationModal}
           hearingId={hearingId}
           onSaveSummary={(updatedTranscriptText) => {
-            const updatedHearing = structuredClone(hearing);
-            updatedHearing.transcript[0] = updatedTranscriptText;
-            updateTranscript({ body: { hearing: updatedHearing } }).then(() => {
+            adjournHearing(updatedTranscriptText).then(() => {
               setStepper((stepper) => stepper + 1);
             });
           }}
