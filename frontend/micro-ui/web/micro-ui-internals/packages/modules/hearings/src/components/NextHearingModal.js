@@ -4,6 +4,10 @@ import { Button, Modal } from "@egovernments/digit-ui-react-components";
 import { Card } from "@egovernments/digit-ui-react-components";
 import useGetAvailableDates from "../hooks/hearings/useGetAvailableDates";
 import { useHistory } from "react-router-dom";
+import CustomCalendar from "../../../dristi/src/components/CustomCalendar";
+import { useTranslation } from "react-i18next";
+import { formatDateInMonth } from "@egovernments/digit-ui-module-dristi/src/Utils";
+import { formatDate } from "../utils";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -37,10 +41,18 @@ const DateCard = ({ date, isSelected, onClick }) => (
   </div>
 );
 
-const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
+const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript }) => {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isCustomDateSelected, setIsCustomDateSelected] = useState(false);
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [caseDetails, setCaseDetails] = useState();
+  const [selectedCustomDate, setSelectedCustomDate] = useState(new Date());
+  const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
 
   const history = useHistory();
 
@@ -48,33 +60,41 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
     getCaseDetails();
   }, []);
 
-  console.log(hearing, "lll");
   const getCaseDetails = async () => {
     try {
       const response = await window?.Digit?.DRISTIService.searchCaseService(
         {
           criteria: [
             {
-              filingNumber: hearing?.filingNumber?.[0],
+              filingNumber: hearing?.filingNumber[0],
             },
           ],
           tenantId,
         },
         {}
       );
-      setCaseDetails(response);
+      setCaseDetails(response?.criteria[0]?.responseList[0]);
     } catch (error) {
-      const response = {
-        Case_Number: "FSM-29-04-23-898898",
-        Court_Name: "Kerala City Criminal Court",
-        Case_Type: "NIA S 138",
-      };
-      setCaseDetails(response);
+      console.log("error fetching case details", error);
     }
   };
 
   const { data: datesResponse, refetch: refetchGetAvailableDates } = useGetAvailableDates(true);
   const Dates = useMemo(() => datesResponse || [], [datesResponse]);
+
+  const { data: MdmsCourtList, isLoading: loading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "common-masters",
+    [{ name: "Court_Rooms" }],
+    {
+      cacheTime: 0,
+    }
+  );
+
+  const courtDetails = useMemo(() => {
+    if (!MdmsCourtList) return null;
+    return MdmsCourtList?.["common-masters"]?.Court_Rooms.find((court) => court.code === caseDetails?.courtId);
+  }, [MdmsCourtList, caseDetails?.courtId]);
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
@@ -85,7 +105,53 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
     handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`);
   };
 
-  const onGenerateOrder = () => {};
+  const onGenerateOrder = () => {
+    console.log(caseDetails, "caseDetails");
+    const requestBody = {
+      order: {
+        createdDate: new Date().getTime(),
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        filingNumber: caseDetails?.filingNumber,
+        cnrNumber: caseDetails?.cnrNumber,
+        statuteSection: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+        },
+        orderType: "SCHEDULING_NEXT_HEARING",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              type: "SCHEDULING_NEXT_HEARING",
+              isactive: true,
+              code: "SCHEDULING_NEXT_HEARING",
+              name: "ORDER_TYPE_SCHEDULING_NEXT_HEARING",
+            },
+            nextHearingDate: formatDate(new Date(selectedDate)),
+            transcriptSummary: transcript,
+          },
+        },
+      },
+    };
+    ordersService
+      .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+      .then((res) => {
+        history.push(
+          `/${window.contextPath}/${userType}/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const onBack = () => {
     setStepper(stepper - 1);
@@ -109,15 +175,15 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
           <div className="case-card">
             <div className="case-details">
               Case Number:
-              <div> {caseDetails?.Case_Number} </div>
+              <div> {caseDetails?.caseNumber} </div>
             </div>
             <div className="case-details">
               Court Name:
-              <div> {caseDetails?.Court_Name} </div>
+              <div> {courtDetails?.name} </div>
             </div>
             <div className="case-details">
               Case Type:
-              <div> {caseDetails?.Case_Type} </div>
+              <div> {caseDetails?.Case_Type || "NIA S 138"} </div>
             </div>
           </div>
         </Card>
@@ -129,10 +195,72 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper }) => {
             ))}
           </div>
         </Card>
-        <div className="footClass">
-          Dates Doesn't work? <Button label={"Select Custom Date"} variation={"teritiary"} onClick={() => {}} style={{ border: "none" }} />
-        </div>
+        {isCustomDateSelected ? (
+          <div className="footClass">
+            {formatDateInMonth(selectedCustomDate)}{" "}
+            <Button
+              label={"Select Another Date"}
+              variation={"teritiary"}
+              onButtonClick={() => {
+                setIsCalendarModalOpen(true);
+              }}
+              style={{ border: "none" }}
+            />
+          </div>
+        ) : (
+          <div className="footClass">
+            Dates Doesn't work?{" "}
+            <Button
+              label={"Select Custom Date"}
+              variation={"teritiary"}
+              onButtonClick={() => {
+                console.log(isCalendarModalOpen);
+                setIsCalendarModalOpen(true);
+              }}
+              style={{ border: "none" }}
+            />
+          </div>
+        )}
       </Modal>
+      {isCalendarModalOpen && (
+        <Modal
+          headerBarMain={<Heading label={t("CS_SELECT_CUSTOM_DATE")} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setIsCalendarModalOpen(false);
+              }}
+            />
+          }
+          // actionSaveLabel={t("CS_COMMON_CONFIRM")}
+          hideSubmit={true}
+          popmoduleClassName={"custom-date-selector-modal"}
+        >
+          <CustomCalendar
+            config={{
+              headModal: "CS_SELECT_CUSTOM_DATE",
+              label: "CS_HEARINGS_SCHEDULED",
+              showBottomBar: true,
+              buttonText: "CS_COMMON_CONFIRM",
+            }}
+            t={t}
+            onCalendarConfirm={(date) => {
+              // setScheduleHearingParam({ ...scheduleHearingParams, date: formatDateInMonth(date) });
+              // setSelectedCustomDate(date);
+              // console.log(date, "DATE");
+              setSelectedDate(selectedCustomDate);
+              setIsCustomDateSelected(true);
+              setIsCalendarModalOpen(false);
+            }}
+            handleSelect={(date) => {
+              // setScheduleHearingParam({ ...scheduleHearingParams, date: formatDateInMonth(date) });
+              setSelectedCustomDate(date);
+            }}
+            selectedCustomDate={selectedCustomDate}
+            tenantId={tenantId}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

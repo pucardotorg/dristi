@@ -14,7 +14,20 @@ module.exports = {
     rules: [
       {
         test: /\.(js)$/,
-        use: ["babel-loader"],
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",  
+              "@babel/preset-react" 
+            ],
+            plugins: [
+              "@babel/plugin-proposal-optional-chaining",  
+              "@babel/plugin-proposal-nullish-coalescing-operator" 
+            ]
+          },
+        },
       },
       {
         test: /\.css$/i,
@@ -44,3 +57,4 @@ module.exports = {
     new HtmlWebpackPlugin({ inject: true, template: "public/index.html" }),
   ],
 };
+

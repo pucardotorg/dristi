@@ -224,7 +224,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setErro
                 <div className="drag-drop-heading">
                   <h2 className="card-label">{t(input?.documentHeader)}</h2>
                   {input?.isOptional && <h3>{t(input?.isOptional)}</h3>}
-                  <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
+                  <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
                 </div>
                 {<p>{t(input?.documentSubText)}</p>}
               </div>

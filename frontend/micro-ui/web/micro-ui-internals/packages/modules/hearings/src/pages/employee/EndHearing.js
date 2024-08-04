@@ -47,6 +47,7 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
   const { t } = useTranslation();
   const [stepper, setStepper] = useState(1);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [transcript, setTranscript] = useState("");
   const history = useHistory();
 
   const handleNavigate = (path) => {
@@ -116,9 +117,18 @@ const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
         </Modal>
       )}
       {stepper === 2 && (
-        <SummaryModal handleConfirmationModal={handleConfirmationModal} hearingId={hearingId} stepper={stepper} setStepper={setStepper} />
+        <SummaryModal
+          transcript={transcript}
+          setTranscript={setTranscript}
+          handleConfirmationModal={handleConfirmationModal}
+          hearingId={hearingId}
+          stepper={stepper}
+          setStepper={setStepper}
+        />
       )}
-      {stepper === 3 && <NextHearingModal hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />}
+      {stepper === 3 && (
+        <NextHearingModal transcript={transcript} hearingId={hearingId} hearing={hearing} stepper={stepper} setStepper={setStepper} />
+      )}
     </div>
   );
 };

@@ -72,10 +72,9 @@ const CloseBtn = (props) => {
   );
 };
 
-const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper }) => {
+const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper, transcript, setTranscript }) => {
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const [transcript, setTranscript] = useState("");
 
   const reqBody = {
     hearing: { tenantId },
@@ -157,6 +156,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
               <TextArea
                 style={{ padding: "10px", width: "100%", minHeight: "100%", fontWeight: 400, fontSize: "16px", color: "#3D3C3C" }}
                 value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
               />
             </div>
           </CardText>

@@ -9,7 +9,7 @@ const CustomErrorTooltip = ({ message, showTooltip, icon }) => {
 
   return (
     <div className="custom-error-tooltip">
-      <span>{!icon ? <InfoIcon /> : <InfoIcon />}</span>
+      <span>{icon ? <InfoIcon /> : <InfoToolTipIcon />}</span>
       <div className="custom-error-tooltip-message" style={{ ...(!message && { border: "none" }) }}>
         {message}
       </div>
