@@ -525,23 +525,18 @@ const SubmissionsCreate = () => {
     setShowSuccessModal(true);
   };
 
-  const handleMakePayment = () => {
+  const handleMakePayment = async () => {
     setMakePaymentLabel(false);
     setShowPaymentModal(false);
     setShowSuccessModal(true);
+    await updateSubmission(SubmissionWorkflowAction.PAY);
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
   };
 
   const handleDownloadSubmission = () => {
     // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
-  if (
-    applicationDetails?.status &&
-    ![SubmissionWorkflowState.PENDINGSUBMISSION, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGPAYMENT].includes(
-      applicationDetails?.status
-    ) &&
-    caseDetails?.id
-  ) {
+  if (!filingNumber) {
     handleBack();
   }
   if (

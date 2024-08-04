@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Modal, Button, CardText, RadioButtons, CardLabel } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const PaymentForSummonModal = ({ onClose, onPayOnline }) => {
+const PaymentForSummonModal = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   const [selectedOption, setSelectedOption] = useState("e-post");
+
+  const onPayOnline = () => {};
 
   const feeOptions = {
     "e-post": [
@@ -31,7 +35,9 @@ const PaymentForSummonModal = ({ onClose, onPayOnline }) => {
       }}
       headerBarMain={<h1 className="heading-m">{t("Payment for Summon via Post")}</h1>}
       actionSaveLabel="Close"
-      actionSaveOnSubmit={onClose}
+      actionSaveOnSubmit={() => {
+        history.goBack();
+      }}
     >
       <CardText>
         <div>

@@ -4,12 +4,12 @@
 //   applicationNumber:""
 // };
 
-export const summonsConfig = ({ filingNumber, limit, offset }) => {
+export const summonsConfig = ({ filingNumber, limit, offset, orderNumber, orderId }) => {
   return {
     label: "1(Summons)",
     type: "search",
     apiDetails: {
-      serviceName: "/order/v1/search",
+      serviceName: "/task/v1/search",
       requestParam: {
         tenantId: Digit.ULBService.getCurrentTenantId(),
         limit: 2,
@@ -18,12 +18,11 @@ export const summonsConfig = ({ filingNumber, limit, offset }) => {
       requestBody: {
         apiOperation: "SEARCH",
         criteria: {
-          // tenantId: Digit.ULBService.getCurrentTenantId(),
-          filingNumber: filingNumber,
+          tenantId: Digit.ULBService.getCurrentTenantId(),
         },
       },
       masterName: "commonUiConfig",
-      moduleName: "SearchIndividualConfig",
+      moduleName: "summonWarrantConfig",
       minParametersForSearchForm: 0,
       tableFormJsonPath: "requestParam",
       filterFormJsonPath: "requestBody.criteria",
@@ -42,20 +41,20 @@ export const summonsConfig = ({ filingNumber, limit, offset }) => {
           columns: [
             {
               label: "Delivery Channels",
-              jsonPath: "individualId",
+              jsonPath: "deliveryChannel",
             },
 
             {
               label: "Channel Details",
-              jsonPath: "name.givenName",
+              jsonPath: "channelDetails",
             },
             {
               label: "Status",
               jsonPath: "status",
             },
             {
-              label: "Remark",
-              jsonPath: "comments",
+              label: "Remarks",
+              jsonPath: "remarks",
             },
           ],
 
@@ -65,5 +64,6 @@ export const summonsConfig = ({ filingNumber, limit, offset }) => {
         show: true,
       },
     },
+    additionalDetails: { filingNumber, orderNumber, orderId },
   };
 };
