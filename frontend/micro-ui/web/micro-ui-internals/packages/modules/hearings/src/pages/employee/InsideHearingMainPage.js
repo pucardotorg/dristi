@@ -202,6 +202,10 @@ const InsideHearingMainPage = () => {
     setEndHearingModalOpen(!endHearingModalOpen);
   };
 
+  const handleExitHearing = () => {
+    history.push(`/${window.contextPath}/${userType}/home/home-pending-task`);
+  };
+
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
 
   return (
@@ -230,38 +234,40 @@ const InsideHearingMainPage = () => {
                 style={{ width: "100%", height: "40px", fontSize: "16px" }}
               />
             </LabelFieldPair>
-            <div style={{ width: "151px", height: "19px", fontSize: "13px", color: "#007E7E", marginTop: "2px" }}>
-              <button
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  margin: 0,
-                  cursor: "pointer",
-                  fontSize: "13px",
-                  color: "#007E7E",
-                  fontWeight: 700,
-                }}
-                onClick={onClickAddWitness}
-              >
-                + Add New Witness
-              </button>
-            </div>
+            {userHasRole("EMPLOYEE") && (
+              <div style={{ width: "151px", height: "19px", fontSize: "13px", color: "#007E7E", marginTop: "2px" }}>
+                <button
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    margin: 0,
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    color: "#007E7E",
+                    fontWeight: 700,
+                  }}
+                  onClick={onClickAddWitness}
+                >
+                  + {t("CASE_ADD_PARTY")}
+                </button>
+              </div>
+            )}
           </div>
         )}
         <div style={{ padding: "40px, 40px", gap: "16px" }}>
-          <div style={{ minWidth: "940px", minHeight: "277px", gap: "16px", border: "1px solid", marginTop: "2px" }}>
+          <div style={{ gap: "16px", border: "1px solid", marginTop: "2px" }}>
             {userHasRole("EMPLOYEE") ? (
               <TextArea
                 ref={textAreaRef}
-                style={{ minWidth: "940px", minHeight: "453px" }}
+                style={{ width: "100%", minHeight: "40vh" }}
                 value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
                 onChange={handleChange}
                 disabled={activeTab === "Witness Deposition" && isDepositionSaved}
               />
             ) : (
               <TextArea
-                style={{ minWidth: "940px", minHeight: "453px", cursor: "default", backgroundColor: "#E8E8E8", color: "#3D3C3C" }}
+                style={{ width: "100%", minHeight: "40vh", cursor: "default", backgroundColor: "#E8E8E8", color: "#3D3C3C" }}
                 value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
                 disabled
               />
@@ -311,36 +317,35 @@ const InsideHearingMainPage = () => {
                 cursor: "pointer",
                 display: "inline-block",
                 fontSize: "16px",
-                width: "100%",
               }}
             >
               Attendance: <strong>{attendanceCount}</strong>
             </button>
-            <Button
-              label={"Mark Attendance"}
-              variation={"teritiary"}
-              onClick={handleModal}
-              // onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
-              style={{ width: "100%" }}
-            />
+            {userHasRole("EMPLOYEE") && (
+              <Button
+                label={"Mark Attendance"}
+                variation={"teritiary"}
+                onClick={handleModal}
+                // onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
+                style={{ width: "100%" }}
+              />
+            )}
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "16px",
-              width: "100%",
-            }}
-          >
-            <Button label={"Adjourn Hearing"} variation={"secondary"} onClick={() => setAdjournHearing(true)} style={{ width: "100%" }} />
+          {userHasRole("EMPLOYEE") ? (
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                width: "100%",
+              }}
+            >
+              <Button label={t("ADJOURN_HEARING")} variation={"secondary"} onClick={() => setAdjournHearing(true)} style={{ width: "100%" }} />
 
-            <Button
-              label={"End Hearing"}
-              variation={"primary"}
-              onClick={handleEndHearingModal}
-              // onClick={() => handleNavigate("/employee/hearings/end-hearing")}
-              style={{ width: "100%" }}
-            />
-          </div>
+              <Button label={t("END_HEARING")} variation={"primary"} onClick={handleEndHearingModal} style={{ width: "100%" }} />
+            </div>
+          ) : (
+            <Button label={t("EXIT_HEARING")} variation={"primary"} onClick={handleExitHearing} />
+          )}
           {isOpen && (
             <MarkAttendance
               handleModal={handleModal}
