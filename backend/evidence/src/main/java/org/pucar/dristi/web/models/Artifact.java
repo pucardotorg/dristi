@@ -75,15 +75,15 @@ public class Artifact {
 	private String order = null;
 
 	@JsonProperty("mediaType")
-
+	@NotNull
 	private String mediaType = null;
 
 	@JsonProperty("artifactType")
-
+	@NotNull
 	private String artifactType = null;
 
 	@JsonProperty("sourceType")
-
+	@NotNull
 	private String sourceType = null;
 
 	@JsonProperty("sourceID")
@@ -144,21 +144,5 @@ public class Artifact {
 
 	@Valid
 	private Workflow workflow = null;
-
-	public Artifact addApplicableToItem(String applicableToItem) {
-		if (this.applicableTo == null) {
-			this.applicableTo = new ArrayList<>();
-		}
-		this.applicableTo.add(applicableToItem);
-		return this;
-	}
-
-	public Artifact addCommentsItem(Comment commentsItem) {
-		if (this.comments == null) {
-			this.comments = new ArrayList<>();
-		}
-		this.comments.add(commentsItem);
-		return this;
-	}
 
 }

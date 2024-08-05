@@ -39,7 +39,7 @@ public class CaseUtil {
 
 		CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
 		caseExistsRequest.setRequestInfo(requestInfo);
-		CaseExists caseCriteria = new CaseExists();
+		CaseExists caseCriteria = CaseExists.builder().build();
 		caseCriteria.setCnrNumber(cnrNumber);
 		caseCriteria.setFilingNumber(filingNumber);
 		List<CaseExists> criteriaList = new ArrayList<>();

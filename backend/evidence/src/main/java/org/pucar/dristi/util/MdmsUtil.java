@@ -25,29 +25,27 @@ public class MdmsUtil {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper mapper;
 	private final Configuration configs;
+	private final MdmsUtil mdmsUtil;
 
 	@Autowired
-	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs,MdmsUtil mdmsUtil) {
 		this.restTemplate = restTemplate;
 		this.mapper = mapper;
 		this.configs = configs;
+		this.mdmsUtil = mdmsUtil;
 	}
 
-	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
-			String moduleName, List<String> masterNameList) {
+	public String fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName, List<String> masterNameList) {
+		String response = "";
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
-		Object response = new HashMap<>();
-		MdmsResponse mdmsResponse = new MdmsResponse();
 		try {
-			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-		} catch (Exception e) {
-			log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, String.class);
+		}catch(Exception e) {
+			log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
 		}
-
-		return mdmsResponse.getMdmsRes();
+		return response;
 	}
 
 	private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId, String moduleName,

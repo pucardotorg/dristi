@@ -35,9 +35,4 @@ public class AdvocateSearchRequest {
 	@Valid
 	private List<AdvocateSearchCriteria> criteria = new ArrayList<>();
 
-	public AdvocateSearchRequest addCriteriaItem(AdvocateSearchCriteria criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
-
 }

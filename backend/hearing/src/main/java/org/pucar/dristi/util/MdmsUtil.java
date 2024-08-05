@@ -1,7 +1,6 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -22,34 +21,31 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Component
 public class MdmsUtil {
-
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
     private final Configuration configs;
 
     @Autowired
-    public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+    public MdmsUtil(
+            RestTemplate restTemplate,
+            ObjectMapper mapper,
+            Configuration configs) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
         this.configs = configs;
     }
 
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                                                List<String> masterNameList) {
+    public String fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName, List<String> masterNameList) {
+        String response = "";
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
-        Object response = new HashMap<>();
-        MdmsResponse mdmsResponse = new MdmsResponse();
         try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, String.class);
         }catch(Exception e) {
             log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
-            throw new CustomException(e.getMessage(),ERROR_WHILE_FETCHING_FROM_MDMS);
         }
-
-        return mdmsResponse.getMdmsRes();
+        return response;
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,

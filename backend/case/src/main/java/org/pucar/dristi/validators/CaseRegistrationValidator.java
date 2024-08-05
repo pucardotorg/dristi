@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -75,17 +76,19 @@ public class CaseRegistrationValidator {
 	public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException {
 		CourtCase courtCase = caseRequest.getCases();
 
-		if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
-			throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
 		if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
 			throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
 		if (!(SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
 				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getLitigants())) {
 				throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
 		}
+
 		if (ObjectUtils.isEmpty(caseRequest.getRequestInfo().getUserInfo())) {
 			throw new CustomException(VALIDATION_ERR, "user info is mandatory for creating case");
 		}
+
+		//validate MDMS
+		validateMdms(caseRequest.getRequestInfo(), courtCase);
 	}
 
 	public Boolean validateUpdateRequest(CaseRequest caseRequest) {
@@ -108,20 +111,6 @@ public class CaseRegistrationValidator {
 		//For not allowing certain fields to update
 		setUnEditableOnUpdate(existingApplications.get(0).getResponseList().get(0), caseRequest);
 
-		validateMDMSData(requestInfo,courtCase);
-		validateDocuments(courtCase);
-		validateRepresentative(requestInfo,courtCase);
-		validateLinkedCase(courtCase,existingApplications.get(0).getResponseList());
-
-		return true;
-	}
-
-	private void validateMDMSData(RequestInfo requestInfo, CourtCase courtCase){
-		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(),
-				config.getCaseBusinessServiceName(), createMasterDetails());
-
-		if (mdmsData.get(config.getCaseBusinessServiceName()) == null)
-			throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 		if (!courtCase.getLitigants().isEmpty()) {
 			courtCase.getLitigants().forEach(litigant -> {
 				if (litigant.getIndividualId() != null) {
@@ -130,6 +119,23 @@ public class CaseRegistrationValidator {
 				} else
 					throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
 			});
+		}
+
+		validateDocuments(courtCase);
+		validateRepresentative(requestInfo,courtCase);
+		validateLinkedCase(courtCase,existingApplications.get(0).getResponseList());
+		//validate MDMS
+		validateMdms(caseRequest.getRequestInfo(), courtCase);
+		return true;
+	}
+
+	private void validateMdms(RequestInfo requestInfo, CourtCase courtCase){
+		String caseCategory = courtCase.getCaseCategory();
+		String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), config.getCaseModule(), createMasterDetails());
+
+		List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, config.getCaseCategoryPath().replace("{}",caseCategory));
+		if (orderTypeResults.isEmpty()) {
+			throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid CaseCategory");
 		}
 	}
 
@@ -236,10 +242,7 @@ public class CaseRegistrationValidator {
 
 	private List<String> createMasterDetails() {
 		List<String> masterList = new ArrayList<>();
-		masterList.add("ComplainantType");
 		masterList.add("CaseCategory");
-		masterList.add("PaymentMode");
-		masterList.add("ResolutionMechanism");
 
 		return masterList;
 	}

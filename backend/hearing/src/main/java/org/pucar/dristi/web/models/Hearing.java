@@ -119,37 +119,4 @@ public class Hearing {
     private String notes = null;
 
 
-    public Hearing addFilingNumberItem(String filingNumberItem) {
-        this.filingNumber.add(filingNumberItem);
-        return this;
-    }
-
-    public Hearing addCnrNumbersItem(String cnrNumbersItem) {
-        this.cnrNumbers.add(cnrNumbersItem);
-        return this;
-    }
-
-    public Hearing addApplicationNumbersItem(String applicationNumbersItem) {
-        this.applicationNumbers.add(applicationNumbersItem);
-        return this;
-    }
-
-    public Hearing addAttendeesItem(Attendee attendeesItem) {
-        if (this.attendees == null) {
-            this.attendees = new ArrayList<>();
-        }
-        this.attendees.add(attendeesItem);
-        return this;
-    }
-
-    public Hearing addTranscriptItem(String transcriptItem) {
-        this.transcript.add(transcriptItem);
-        return this;
-    }
-
-    public Hearing addDocumentsItem(Document documentsItem) {
-        this.documents.add(documentsItem);
-        return this;
-    }
-
 }

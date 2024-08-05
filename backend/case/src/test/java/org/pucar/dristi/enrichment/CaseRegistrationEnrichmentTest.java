@@ -73,8 +73,8 @@ class CaseRegistrationEnrichmentTest {
         documentsList.add(document);
 
         // Create case-indexer.yml CaseRequest with case-indexer.yml single CourtCase
-        caseRequest = new CaseRequest();
-        courtCase = new CourtCase();
+        caseRequest = CaseRequest.builder().build();
+        courtCase =  CourtCase.builder().build();
         courtCase.setTenantId("tenant-id");
         List<LinkedCase> linkedCases = new ArrayList<>();
         linkedCases.add(LinkedCase.builder().caseNumber("caseNumber").documents(documentsList).build());

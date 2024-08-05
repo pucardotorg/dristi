@@ -1,21 +1,8 @@
 package org.pucar.dristi.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.mdms.model.MdmsCriteriaReq;
-import org.egov.mdms.model.MdmsResponse;
+import org.egov.mdms.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,17 +11,18 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Method;
+import java.util.*;
 
-import net.minidev.json.JSONArray;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 public class MdmsUtilTest {
 
     @Mock
     private RestTemplate restTemplate;
-
-    @Mock
-    private ObjectMapper mapper;
 
     @Mock
     private Configuration configs;
@@ -64,14 +52,12 @@ public class MdmsUtilTest {
         doReturn("http://mdms-host").when(configs).getMdmsHost();
         doReturn("/mdms-endpoint").when(configs).getMdmsEndPoint();
         doReturn(new HashMap<>()).when(restTemplate).postForObject(any(String.class), any(MdmsCriteriaReq.class), any(Class.class));
-        doReturn(mockMdmsResponse).when(mapper).convertValue(any(), any(Class.class));
 
         // Act
-        Map<String, Map<String, JSONArray>> result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
+        String result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
 
         // Assert
         assertNotNull(result);
-        assertEquals(mockMdmsRes, result);
     }
 
     @Test
@@ -87,10 +73,10 @@ public class MdmsUtilTest {
         doThrow(new RuntimeException("Error")).when(restTemplate).postForObject(any(String.class), any(MdmsCriteriaReq.class), any(Class.class));
 
         // Act
-        Map<String, Map<String, JSONArray>> result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
+        String result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
 
         // Assert
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test

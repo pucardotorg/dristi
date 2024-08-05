@@ -33,9 +33,5 @@ public class CaseResponse {
 	@Valid
 	private List<CourtCase> cases = new ArrayList<>();
 
-	public CaseResponse addCasesItem(CourtCase casesItem) {
-		this.cases.add(casesItem);
-		return this;
-	}
 
 }

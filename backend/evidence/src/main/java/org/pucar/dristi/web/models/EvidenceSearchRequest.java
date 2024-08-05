@@ -27,28 +27,4 @@ public class EvidenceSearchRequest {
     @JsonProperty("pagination")
     @Valid
     private Pagination pagination = null;
-    // Getters and setters
-    public RequestInfo getRequestInfo() {
-        return requestInfo;
-    }
-
-    public void setRequestInfo(RequestInfo requestInfo) {
-        this.requestInfo = requestInfo;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public EvidenceSearchCriteria getCriteria() {
-        return criteria;
-    }
-
-    public void setCriteria(EvidenceSearchCriteria criteria) {
-        this.criteria = criteria;
-    }
 }

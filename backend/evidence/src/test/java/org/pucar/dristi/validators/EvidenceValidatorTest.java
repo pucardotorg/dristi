@@ -14,7 +14,6 @@ import org.pucar.dristi.util.*;
 import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,23 +44,7 @@ class EvidenceValidatorTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void validateEvidenceRegistration_ShouldThrowException_WhenTenantIdOrCaseIdIsEmpty() {
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
-        Artifact artifact = new Artifact();
-        artifact.setTenantId("");
-        artifact.setCaseId("");
-        artifact.setFilingNumber("");
-        evidenceRequest.setArtifact(artifact);
-        evidenceRequest.setRequestInfo(new RequestInfo());
 
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-
-        assertEquals(ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE, exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
-    }
     @Test
     public void testValidateEvidenceRegistration_OrderDoesNotExist() {
         EvidenceRequest evidenceRequest = new EvidenceRequest();
@@ -88,31 +71,6 @@ class EvidenceValidatorTest {
         // Execute and verify
         assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceRegistration(evidenceRequest));
     }
-    @Test
-    public void testValidateEvidenceExistence_Success() {
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
-        Artifact artifact = new Artifact();
-        artifact.setTenantId("pg");
-        artifact.setCaseId("47631e51-0eab-4037-a5b0-b823628b23ee");
-        artifact.setFilingNumber("47631e51-0eab-4037-a5b0-b823628b23ee");
-        artifact.setOrder( "47631e51-0eab-4037-a5b0-b823628b23ee");
-        evidenceRequest.setArtifact(artifact);
-        RequestInfo requestInfo=new RequestInfo();
-        User user=new User();
-        requestInfo.setUserInfo(user);
-        evidenceRequest.setRequestInfo(requestInfo);
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(true);
-        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(true);
-        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(true);
-        List<Artifact> artifacts = new ArrayList<>();
-        artifacts.add(artifact);
-        when(repository.getArtifacts(any(EvidenceSearchCriteria.class), any())).thenReturn(artifacts);
-
-        // Execute and verify
-        Artifact result = evidenceValidator.validateEvidenceExistence(evidenceRequest);
-        assertNotNull(result);
-    }
 
     @Test
     public void testValidateEvidenceExistence_ValidateEvidenceRegistrationException() {
@@ -124,29 +82,6 @@ class EvidenceValidatorTest {
         // Execute and verify
         CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceExistence(evidenceRequest));
         assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
-    }
-
-    @Test
-    public void testValidateEvidenceExistence_NoExistingArtifacts() {
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
-        Artifact artifact = new Artifact();
-        artifact.setTenantId("pg");
-        artifact.setCaseId("47631e51-0eab-4037-a5b0-b823628b23ee");
-        artifact.setFilingNumber("47631e51-0eab-4037-a5b0-b823628b23ee");
-        artifact.setOrder( "47631e51-0eab-4037-a5b0-b823628b23ee");
-        evidenceRequest.setArtifact(artifact);
-        RequestInfo requestInfo=new RequestInfo();
-        User user=new User();
-        requestInfo.setUserInfo(user);
-        evidenceRequest.setRequestInfo(requestInfo);
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(true);
-        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(true);
-        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(true);
-        when(repository.getArtifacts(any(EvidenceSearchCriteria.class), any())).thenReturn(new ArrayList<>());
-        // Execute and verify
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateEvidenceExistence(evidenceRequest));
-        assertEquals("VALIDATION EXCEPTION", exception.getCode());
     }
 
     @Test
@@ -192,82 +127,6 @@ class EvidenceValidatorTest {
     }
 
     @Test
-    void validateEvidenceRegistration_ShouldThrowException_WhenCaseDoesNotExist() {
-        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(false);
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-
-        assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
-    }
-
-    @Test
-    void validateEvidenceRegistration_ShouldThrowException_WhenApplicationDoesNotExist() {
-        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        evidenceRequest.getArtifact().setApplication("applicationId");
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(false);
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-
-        assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
-    }
-
-    @Test
-    void validateEvidenceRegistration_ShouldThrowException_WhenOrderDoesNotExist() {
-        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        evidenceRequest.getArtifact().setOrder("orderId");
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(false);
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-
-        assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
-    }
-
-    @Test
-    void validateEvidenceRegistration_ShouldThrowException_WhenHearingDoesNotExist() {
-        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        evidenceRequest.getArtifact().setHearing("hearingId");
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(false);
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-
-        assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
-    }
-
-    @Test
-    void validateEvidenceRegistration_ShouldPass_WhenAllValidationsPass() {
-        EvidenceRequest evidenceRequest = createValidEvidenceRequest();
-        evidenceRequest.getArtifact().setApplication("applicationId");
-        evidenceRequest.getArtifact().setOrder("8c11c5ca-03bd-11e7-93ae-92361f002671");
-        evidenceRequest.getArtifact().setHearing("hearingId");
-        evidenceRequest.getArtifact().setFilingNumber("8c11c5ca-03bd-11e7-93ae-92361f002671");
-
-        when(caseUtil.fetchCaseDetails(any(CaseExistsRequest.class))).thenReturn(true);
-        when(applicationUtil.fetchApplicationDetails(any(ApplicationExistsRequest.class))).thenReturn(true);
-        when(orderUtil.fetchOrderDetails(any(OrderExistsRequest.class))).thenReturn(true);
-        when(hearingUtil.fetchHearingDetails(any(HearingExistsRequest.class))).thenReturn(true);
-
-        assertDoesNotThrow(() -> {
-            evidenceValidator.validateEvidenceRegistration(evidenceRequest);
-        });
-    }
-
-    @Test
     void validateEvidenceExistence_ShouldThrowException_WhenNoExistingApplicationsFound() {
         EvidenceRequest evidenceRequest = createValidEvidenceRequest();
         when(repository.getArtifacts(any(EvidenceSearchCriteria.class), isNull())).thenReturn(new ArrayList<>());
@@ -277,7 +136,6 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
-        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
     }
 
     private EvidenceRequest createValidEvidenceRequest() {

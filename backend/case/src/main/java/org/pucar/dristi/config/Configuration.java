@@ -166,4 +166,11 @@ public class Configuration {
 	@Value("${egov.additional.join.case.kafka.topic}")
 	private String additionalJoinCaseTopic;
 
+	//MDMS validation
+	@Value("${mdms.case.category.path}")
+	private String caseCategoryPath;
+
+	@Value("${mdms.case.module.name}")
+	private String caseModule;
+
 }

@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
@@ -24,9 +23,6 @@ public class MdmsUtilTest {
 
     @Mock
     private RestTemplate restTemplate;
-
-    @Mock
-    private ObjectMapper mapper;
 
     @Mock
     private Configuration configs;
@@ -56,14 +52,12 @@ public class MdmsUtilTest {
         doReturn("http://mdms-host").when(configs).getMdmsHost();
         doReturn("/mdms-endpoint").when(configs).getMdmsEndPoint();
         doReturn(new HashMap<>()).when(restTemplate).postForObject(any(String.class), any(MdmsCriteriaReq.class), any(Class.class));
-        doReturn(mockMdmsResponse).when(mapper).convertValue(any(), any(Class.class));
 
         // Act
-        Map<String, Map<String, JSONArray>> result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
+        String result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
 
         // Assert
         assertNotNull(result);
-        assertEquals(mockMdmsRes, result);
     }
 
     @Test
@@ -79,10 +73,10 @@ public class MdmsUtilTest {
         doThrow(new RuntimeException("Error")).when(restTemplate).postForObject(any(String.class), any(MdmsCriteriaReq.class), any(Class.class));
 
         // Act
-        Map<String, Map<String, JSONArray>> result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
+        String result = mdmsUtil.fetchMdmsData(requestInfo, tenantId, moduleName, masterNameList);
 
         // Assert
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test

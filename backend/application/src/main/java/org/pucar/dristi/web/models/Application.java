@@ -119,22 +119,6 @@ public class Application   {
           @Valid
                 private Workflow workflow = null;
 
-
-        public Application addOnBehalfOfItem(UUID onBehalfOfItem) {
-            if (this.onBehalfOf == null) {
-            this.onBehalfOf = new ArrayList<>();
-            }
-        this.onBehalfOf.add(onBehalfOfItem);
-        return this;
-        }
-
-        public Application addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
     public boolean isResponseRequired() {
         if (additionalDetails instanceof Map) {
             Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;

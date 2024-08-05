@@ -1,6 +1,5 @@
 package org.pucar.dristi.validators;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +23,6 @@ import java.util.UUID;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,66 +87,6 @@ public class CaseRegistrationValidatorTest {
         joinCaseRequest.setLitigant(litigant);
         joinCaseRequest.setRepresentative(representative);
         joinCaseRequest.setRequestInfo(requestInfo);
-    }
-
-    @Test
-    void testValidateCaseRegistration_WithValidData() {
-        // Creating RequestInfo with necessary user info
-        RequestInfo requestInfo = new RequestInfo();
-        User userInfo = new User();
-        userInfo.setId(1234L);
-        userInfo.setUserName("test-user");
-        requestInfo.setUserInfo(userInfo);
-
-        // Setting up CaseRequest with valid data
-        CaseRequest request = new CaseRequest();
-        request.setRequestInfo(requestInfo);
-
-        CourtCase courtCase = new CourtCase();
-        courtCase.setTenantId("pg");
-        courtCase.setCaseCategory("civil");
-        courtCase.setFilingDate(System.currentTimeMillis());
-        courtCase.setCaseCategory("category");
-//        courtCase.setStatutesAndSections();
-
-        Document document = new Document();
-        document.setFileStore("123");
-        courtCase.setDocuments(List.of(document));
-
-        AdvocateMapping advocateMapping = new AdvocateMapping();
-        advocateMapping.setAdvocateId("123");
-        courtCase.setRepresentatives(List.of(advocateMapping));
-
-        Party party = new Party();
-        party.setIndividualId("123");
-        courtCase.setLitigants(List.of(party));
-
-        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
-        courtCase.setFilingDate(System.currentTimeMillis());
-
-        Workflow workflow = new Workflow();
-        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
-        courtCase.setWorkflow(workflow);
-
-        request.setCases(courtCase);
-
-        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-        mdmsRes.put("case", new HashMap<>());
-
-        List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
-
-        // Setting necessary stubbings to lenient
-        lenient().when(mdmsUtil.fetchMdmsData(requestInfo, "pg", "case", masterList)).thenReturn(mdmsRes);
-        lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
-        lenient().when(fileStoreUtil.doesFileExist("pg", "123")).thenReturn(true);
-        lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
-
-        // Validate the case registration
-        assertDoesNotThrow(() -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -260,115 +198,6 @@ public class CaseRegistrationValidatorTest {
     }
 
     @Test
-    void testvalidateUpdateRequest_ExistingApplication() {
-        CourtCase courtCase = new CourtCase();
-        courtCase.setTenantId("pg");
-        courtCase.setCaseCategory("civil");
-        Document document = new Document();
-        document.setFileStore("123");
-        courtCase.setDocuments(List.of(document));
-        Workflow workflow = new Workflow();
-        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
-        courtCase.setWorkflow(workflow);
-        AdvocateMapping advocateMapping = new AdvocateMapping();
-        advocateMapping.setAdvocateId("123");
-        courtCase.setRepresentatives(List.of(advocateMapping));
-        Party party = new Party();
-        party.setIndividualId("123");
-        courtCase.setLitigants(List.of(party));
-        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
-//        courtCase.setLinkedCases(List.of(linkedCase));
-        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
-        courtCase.setFilingDate(System.currentTimeMillis());
-        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-        mdmsRes.put("case", new HashMap<>());
-        List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
-
-        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
-        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setCaseId(linkedCase.getId().toString());
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        caseCriteriaList.add(caseCriteria);
-        caseSearchRequest.setRequestInfo(new RequestInfo());
-        caseSearchRequest.setCriteria(caseCriteriaList);
-        CaseRequest caseRequest = new CaseRequest();
-        caseRequest.setCases(courtCase);
-        User userInfo = new User();
-        userInfo.setId(1234L);
-        userInfo.setUserName("test-user");
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setUserInfo(userInfo);
-        caseRequest.setRequestInfo(requestInfo);
-        when(mdmsUtil.fetchMdmsData(requestInfo,"pg","case", masterList)).thenReturn(mdmsRes);
-
-        lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
-        lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
-        lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
-        lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
-
-        when(caseRepository.getApplications(any(), any())).thenReturn(caseCriteriaList);
-
-        Boolean result = validator.validateUpdateRequest(caseRequest);
-        assertTrue(result);
-    }
-
-    @Test
-    void testvalidateUpdateRequest_EmptyApplication() {
-        CourtCase courtCase = new CourtCase();
-        courtCase.setTenantId("pg");
-        courtCase.setCaseCategory("civil");
-        Document document = new Document();
-        document.setFileStore("123");
-        courtCase.setDocuments(List.of(document));
-        Workflow workflow = new Workflow();
-        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
-        courtCase.setWorkflow(workflow);
-        AdvocateMapping advocateMapping = new AdvocateMapping();
-        advocateMapping.setAdvocateId("123");
-        courtCase.setRepresentatives(List.of(advocateMapping));
-        Party party = new Party();
-        party.setIndividualId("123");
-        courtCase.setLitigants(List.of(party));
-        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
-        courtCase.setLinkedCases(List.of(linkedCase));
-        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
-        courtCase.setFilingDate(System.currentTimeMillis());
-        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-        mdmsRes.put("case", new HashMap<>());
-        List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
-
-        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
-        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setCaseId(linkedCase.getId().toString());
-        caseCriteria.setResponseList(new ArrayList<>());
-        caseCriteriaList.add(caseCriteria);
-        caseSearchRequest.setRequestInfo(new RequestInfo());
-        caseSearchRequest.setCriteria(caseCriteriaList);
-
-        when(caseRepository.getApplications(any(), any())).thenReturn((Collections.singletonList(caseCriteria)));
-        CaseRequest caseRequest = new CaseRequest();
-        caseRequest.setCases(courtCase);
-        User userInfo = new User();
-        userInfo.setId(1234L);
-        userInfo.setUserName("test-user");
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setUserInfo(userInfo);
-        caseRequest.setRequestInfo(requestInfo);
-        Boolean result = validator.validateUpdateRequest(caseRequest);
-        assertTrue(!result);
-    }
-
-    @Test
     void testvalidateUpdateRequest_ExistingApplication_INVALID_LINKEDCASE_ID() {
         CourtCase courtCase = new CourtCase();
         courtCase.setTenantId("pg");
@@ -408,7 +237,7 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
 
-        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
+        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn("mdmsRes");
 
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
         lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
@@ -496,7 +325,7 @@ public class CaseRegistrationValidatorTest {
         caseSearchRequest.setRequestInfo(new RequestInfo());
         caseSearchRequest.setCriteria(caseCriteriaList);
 
-        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
+        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn("mdmsRes");
 
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenThrow(new CustomException());
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");

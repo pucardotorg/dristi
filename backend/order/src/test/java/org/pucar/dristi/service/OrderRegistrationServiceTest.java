@@ -150,8 +150,8 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testExistsOrder_success() {
-        OrderExistsRequest orderExistsRequest = new OrderExistsRequest();
-        OrderExists orderExists = new OrderExists();
+        OrderExistsRequest orderExistsRequest = OrderExistsRequest.builder().build();
+        OrderExists orderExists =  OrderExists.builder().build();
         orderExists.setApplicationNumber("appNum");
         orderExists.setFilingNumber("filingNum");
         orderExists.setCnrNumber("cnrNum");

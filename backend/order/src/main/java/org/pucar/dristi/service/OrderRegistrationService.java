@@ -128,13 +128,13 @@ public class OrderRegistrationService {
         Order order = orderRequest.getOrder();
         RequestInfo requestInfo = orderRequest.getRequestInfo();
 
-        String orderType = order.getOrderType();
+        String orderCategory = order.getOrderCategory();
         String tenantId = order.getTenantId();
         String orderNumber = order.getOrderNumber();
         Workflow workflow = order.getWorkflow();
 
         String status ;
-        if (orderType.equalsIgnoreCase(JUDGEMENT)) {
+        if (orderCategory.equalsIgnoreCase(JUDGEMENT_ID)) {
             status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
                     config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
         } else {

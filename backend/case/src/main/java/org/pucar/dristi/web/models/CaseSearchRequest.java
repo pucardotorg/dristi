@@ -33,9 +33,5 @@ public class CaseSearchRequest {
 	@Valid
 	private List<CaseCriteria> criteria = new ArrayList<>();
 
-	public CaseSearchRequest addCriteriaItem(CaseCriteria criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
 
 }
