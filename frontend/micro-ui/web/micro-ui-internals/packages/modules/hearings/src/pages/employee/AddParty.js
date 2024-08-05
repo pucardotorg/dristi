@@ -49,7 +49,9 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
     return errors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e?.stopPropagation();
+    e?.preventDefault();
     const cleanedData = aFormData
       .map(({ data }) => {
         const newData = {};
@@ -100,6 +102,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
             mobileNumber: [data.phoneNumber],
             textFieldValue: "",
           },
+          addressDetails: [{ addressDetails: data?.address }],
           witnessAdditionalDetails: {
             text: data.additionalDetails,
           },

@@ -2803,7 +2803,7 @@ export const configsCreateOrderWarrant = [
               },
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {
-                regex: /^[6-9]{1}[0-9]$/,
+                isNumber: true,
               },
               isMandatory: true,
               disableFormValidation: false,
