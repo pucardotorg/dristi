@@ -178,11 +178,11 @@ components:
           attendeeIndividualId:
             type: string
           fromDate:
-            type: string
-            format: date
+            type: integer
+            format: int64
           toDate:
-            type: string
-            format: date
+            type: integer
+            format: int64
 
     HearingRequest:
       type: object
