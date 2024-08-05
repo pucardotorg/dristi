@@ -137,7 +137,7 @@ serviceMaps:
         - query: UPDATE dristi_application SET comment = ?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE applicationNumber=?;
           basePath: $
           jsonMaps:
-            - jsonPath: $.application.comment
+            - jsonPath: $.comment
               type: JSON
               dbType: JSONB
             - jsonPath: $.auditDetails.lastModifiedBy
