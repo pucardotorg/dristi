@@ -192,7 +192,7 @@ const MonthlyCalendar = () => {
             headerToolbar={{
               start: "prev",
               center: "title",
-              end: "next, dayGridMonth,timeGridWeek,timeGridDay",
+              end: "next,dayGridMonth,timeGridWeek,timeGridDay",
             }}
             height={"85vh"}
             events={Calendar_events}

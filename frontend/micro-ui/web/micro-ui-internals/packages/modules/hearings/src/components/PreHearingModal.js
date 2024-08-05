@@ -54,7 +54,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
       }),
     ];
     return configCopy;
-  }, [hearingData.fromDate, hearingData.toDate, hearingData.slot]);
+  }, [hearingData.fromDate, hearingData.toDate, hearingData.slot, userType, individualId]);
 
   const getTotalCount = useCallback(
     async function () {
@@ -109,6 +109,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
   if (userType === "citizen" && !individualId) {
     return <Loader />;
   }
+
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} />}

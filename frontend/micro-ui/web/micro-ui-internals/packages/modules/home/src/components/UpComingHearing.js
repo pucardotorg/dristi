@@ -1,6 +1,6 @@
 import { Button } from "@egovernments/digit-ui-components";
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalenderIcon } from "../../homeIcon";
 
@@ -43,6 +43,26 @@ class HearingSlot {
   }
 }
 
+function formatTimeTo12Hour(timeString) {
+  let [hours, minutes] = timeString.split(":").map(Number);
+
+  const suffix = hours >= 12 ? "pm" : "am";
+
+  hours = hours % 12 || 12;
+
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes} ${suffix}`;
+}
+
+function timeInMillisFromDateAndTime(date, hhmmssms) {
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const [h, m, s, ms] = hhmmssms.split(":").map(Number);
+  const millis = ((h || 0) * 60 * 60 + (m || 0) * 60 + (s || 0)) * 1000 + (ms || 0);
+  return startOfDate.getTime() + millis;
+}
+
 const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const userName = Digit.SessionStorage.get("User");
   const token = window.localStorage.getItem("token");
@@ -69,7 +89,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const dateRange = useMemo(
     () => ({
       start: today.getTime(),
-      end: new Date().setDate(today.getDate() + 1),
+      end: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime(),
     }),
     [today]
   );
@@ -88,11 +108,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
       criteria: {
         tenantId,
         fromDate: dateRange.start,
-        toDate: dateRange.end,
         attendeeIndividualId: props?.attendeeIndividualId,
       },
     }),
-    [dateRange.end, dateRange.start, props?.attendeeIndividualId, tenantId]
+    [dateRange.start, props?.attendeeIndividualId, tenantId]
   );
 
   const reqBodyMonthly = useMemo(
@@ -126,35 +145,49 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
   const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
 
-  const searchCase = async (HearingList) => {
-    setIsCaseLoading(false);
-    const hearingCaseList = await Promise.all(
-      HearingList?.map(async (hearing) => {
-        const response = await window?.Digit?.DRISTIService.searchCaseService(
-          {
-            criteria: [
-              {
-                filingNumber: hearing?.filingNumber?.[0],
-              },
-            ],
-            tenantId,
-          },
-          {}
-        );
-        if (response?.criteria[0]?.responseList?.length === 1) {
-          return {
-            caseName: response?.criteria[0]?.responseList[0].caseTitle,
-            filingNumber: response?.criteria[0]?.responseList[0].filingNumber,
-          };
-        }
-      }) || []
-    );
-    setHearingCaseList(hearingCaseList);
-    setIsCaseLoading(true);
-  };
+  const searchCase = useCallback(
+    async (hearings) => {
+      setIsCaseLoading(true);
 
-  const fetchBasicUserInfo = async () => {
-    setIsAdvocateLoading(false);
+      const filingNumbers = [
+        ...new Set(
+          hearings.map((hearing) => {
+            return hearing.filingNumber[0];
+          })
+        ),
+      ];
+
+      const criteria = filingNumbers.map((filingNumber) => {
+        return { filingNumber };
+      });
+
+      if (!criteria.length) {
+        setIsCaseLoading(false);
+        return;
+      }
+
+      const response = await window?.Digit?.DRISTIService.searchCaseService(
+        {
+          criteria,
+          tenantId,
+        },
+        {}
+      );
+      const hearingCaseList = response.criteria.map((cases) => {
+        return {
+          caseName: cases[0].caseTitle,
+          filingNumber: cases[0].filingNumber,
+        };
+      });
+
+      setHearingCaseList(hearingCaseList);
+      setIsCaseLoading(false);
+    },
+    [tenantId]
+  );
+
+  const fetchBasicUserInfo = useCallback(async () => {
+    setIsAdvocateLoading(true);
     const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
       {
         Individual: {
@@ -180,9 +213,9 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
     if (advocateResponse?.advocates[0]?.responseList?.length === 1) {
       setIsAdvocate(true);
-      setIsAdvocateLoading(true);
+      setIsAdvocateLoading(false);
     }
-  };
+  }, [tenantId, userInfo?.uuid]);
 
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
@@ -196,16 +229,11 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
-    `${dateRange.start}-${dateRange.end}`,
+    `monthly-${dateRange.start}-${dateRange.end}`,
     Boolean(dateRange.start && dateRange.end && (individualUserType === "citizen" ? individualId : true)),
     false,
     individualUserType === "citizen" && individualId
   );
-
-  useEffect(() => {
-    searchCase(hearingResponse?.HearingList);
-    fetchBasicUserInfo();
-  }, [hearingResponse]);
 
   /**
    * @type {HearingSlot[]}
@@ -223,6 +251,27 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
   const latestHearing = hearingSlots.filter((slot) => slot.hearings.length).sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime))[0];
 
+  useEffect(() => {
+    if (latestHearing) {
+      searchCase(latestHearing.hearings);
+    }
+    fetchBasicUserInfo();
+  }, [fetchBasicUserInfo, hearingResponse, latestHearing, searchCase]);
+
+  const hearingCountsByType = useMemo(() => {
+    const hearingCountsByType = {};
+
+    latestHearing?.hearings.forEach((hearing) => {
+      hearingCountsByType[hearing.hearingType] = (hearingCountsByType[hearing.hearingType] || 0) + 1;
+    });
+
+    return Object.keys(hearingCountsByType)
+      .map((hearingType) => {
+        return `${hearingType} (${hearingCountsByType[hearingType]})`;
+      })
+      .join(", ");
+  }, [latestHearing]);
+
   const hearingCount = useMemo(() => {
     return hearingResponse?.TotalCount;
   }, [hearingResponse]);
@@ -231,7 +280,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     return monthlyHearingResponse?.TotalCount;
   }, [monthlyHearingResponse]);
 
-  if (isLoading && isLoadingMonthly && isAdvocateLoading && isCaseLoading) {
+  if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
 
@@ -254,9 +303,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   }
 
   const hearingSearchParams = new URLSearchParams();
-  hearingSearchParams.set("from-date", dateRange.start);
-  hearingSearchParams.set("to-date", dateRange.end);
+  hearingSearchParams.set("from-date", timeInMillisFromDateAndTime(today, latestHearing?.slotStartTime));
+  hearingSearchParams.set("to-date", timeInMillisFromDateAndTime(today, latestHearing?.slotEndTime));
   hearingSearchParams.set("slot", latestHearing?.slotName);
+  hearingSearchParams.set("count", latestHearing?.hearings.length);
 
   return (
     <div className="upcoming-hearing-container">
@@ -276,7 +326,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   </div>
                   <div className="time-hearing-type">
                     <div className="timeText">
-                      {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
+                      {formatTimeTo12Hour(latestHearing.slotStartTime)} - {formatTimeTo12Hour(latestHearing.slotEndTime)}
                     </div>
                     <div style={{ display: "flex", gap: "8px" }}>
                       <Link
@@ -287,8 +337,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                           ? hearingCaseList
                               .slice(0, 2)
                               .map((hearing) => hearing.caseName)
-                              .join(", ") + (hearingCaseList.length >= 2 ? ` +${hearingCaseList.length - 2} more` : "")
-                          : `${latestHearing.hearings[0].hearingType} ${hearingCount}`}
+                              .join(", ") + (hearingCaseList.length > 2 ? ` +${hearingCaseList.length - 2} more` : "")
+                          : hearingCountsByType}
                       </Link>
                     </div>
                   </div>
