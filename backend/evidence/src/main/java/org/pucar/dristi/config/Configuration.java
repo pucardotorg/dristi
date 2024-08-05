@@ -122,4 +122,7 @@ public class Configuration {
 
 	@Value("${egov.hearing.path}")
 	private String hearingExistsPath;
+
+	@Value("${evidence.kafka.comments.update.topic}")
+	private String evidenceUpdateCommentsTopic;
 }
