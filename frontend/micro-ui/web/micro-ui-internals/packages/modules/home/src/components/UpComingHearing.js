@@ -27,19 +27,25 @@ function timeInMillisToDateTime(timeInMillis) {
 class HearingSlot {
   hearings = [];
   slotName = "";
-  slotStartTime = "";
-  slotEndTime = "";
-  constructor(slotName, slotStartTime, slotEndTime) {
+  slotStartTime = 0;
+  slotEndTime = 0;
+  slotStartString = "";
+  slotEndString = "";
+  constructor(slotName, slotStartTime, slotEndTime, slotStartString, slotEndString) {
     this.slotName = slotName;
     this.slotStartTime = slotStartTime;
     this.slotEndTime = slotEndTime;
+    this.slotStartString = slotStartString;
+    this.slotEndString = slotEndString;
   }
 
   addHearingIfApplicable(hearing) {
-    const hearingTime = timeInMillisToDateTime(hearing.startTime).time;
+    const hearingTime = hearing.startTime;
     if (this.slotStartTime <= hearingTime && hearingTime <= this.slotEndTime) {
       this.hearings.push(hearing);
+      return true;
     }
+    return false;
   }
 }
 
@@ -173,7 +179,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
         },
         {}
       );
-      const hearingCaseList = response.criteria.map((cases) => {
+      const hearingCaseList = response.criteria.map((res) => {
         return {
           caseName: cases[0]?.caseTitle,
           filingNumber: cases[0]?.filingNumber,
@@ -213,8 +219,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
     if (advocateResponse?.advocates[0]?.responseList?.length === 1) {
       setIsAdvocate(true);
-      setIsAdvocateLoading(false);
     }
+    setIsAdvocateLoading(false);
   }, [tenantId, userInfo?.uuid]);
 
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
@@ -226,7 +232,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     individualUserType === "citizen" && individualId
   );
 
-  const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
+  const { data: monthlyHearingResponse, isLoading: isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `monthly-${dateRange.start}-${dateRange.end}`,
@@ -235,33 +241,51 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     individualUserType === "citizen" && individualId
   );
 
-  /**
-   * @type {HearingSlot[]}
-   */
-  const hearingSlots = useMemo(() => {
-    if (!hearingSlotsResponse || !hearingResponse) {
-      return [];
+  const earliestHearing = useMemo(() => {
+    if (!hearingResponse) {
+      return null;
     }
-    const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
-    hearingResponse.HearingList.forEach((hearing) => {
-      hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
-    });
-    return hearingSlots;
-  }, [hearingResponse, hearingSlotsResponse]);
+    let earliestHearing = hearingResponse.HearingList[0];
+    for (const hearing of hearingResponse.HearingList) {
+      if (hearing.startTime < earliestHearing.startTime) {
+        earliestHearing = hearing;
+      }
+    }
+    return earliestHearing;
+  }, [hearingResponse]);
 
-  const latestHearing = hearingSlots.filter((slot) => slot.hearings.length).sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime))[0];
+  const earliestHearingSlot = useMemo(() => {
+    if (!hearingSlotsResponse || !hearingResponse || !earliestHearing) {
+      return null;
+    }
+    const slot = hearingSlotsResponse.slots.find((slot) => {
+      const hearingTime = timeInMillisToDateTime(earliestHearing.startTime).time;
+      return slot.slotStartTime <= hearingTime && hearingTime <= slot.slotEndTime;
+    });
+    const hearingSlotObj = new HearingSlot(
+      slot.slotName,
+      timeInMillisFromDateAndTime(new Date(earliestHearing.startTime), slot.slotStartTime),
+      timeInMillisFromDateAndTime(new Date(earliestHearing.startTime), slot.slotEndTime),
+      slot.slotStartTime,
+      slot.slotEndTime
+    );
+    hearingResponse.HearingList.forEach((hearing) => {
+      hearingSlotObj.addHearingIfApplicable(hearing);
+    });
+    return hearingSlotObj;
+  }, [earliestHearing, hearingResponse, hearingSlotsResponse]);
 
   useEffect(() => {
-    if (latestHearing) {
-      searchCase(latestHearing.hearings);
+    if (earliestHearingSlot) {
+      searchCase(earliestHearingSlot.hearings);
     }
     fetchBasicUserInfo();
-  }, [fetchBasicUserInfo, hearingResponse, latestHearing, searchCase]);
+  }, [fetchBasicUserInfo, hearingResponse, earliestHearingSlot, searchCase]);
 
   const hearingCountsByType = useMemo(() => {
     const hearingCountsByType = {};
 
-    latestHearing?.hearings.forEach((hearing) => {
+    earliestHearingSlot?.hearings.forEach((hearing) => {
       hearingCountsByType[hearing.hearingType] = (hearingCountsByType[hearing.hearingType] || 0) + 1;
     });
 
@@ -270,7 +294,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
         return `${hearingType} (${hearingCountsByType[hearingType]})`;
       })
       .join(", ");
-  }, [latestHearing]);
+  }, [earliestHearingSlot]);
 
   const hearingCount = useMemo(() => {
     return hearingResponse?.TotalCount;
@@ -279,12 +303,12 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const ongoingMonthHearingCount = useMemo(() => {
     return monthlyHearingResponse?.TotalCount;
   }, [monthlyHearingResponse]);
-
+  console.debug({ isLoading, isLoadingMonthly, isAdvocateLoading, isCaseLoading });
   if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
 
-  if (!latestHearing) {
+  if (!earliestHearingSlot) {
     return (
       <div className="upcoming-hearing-container">
         <div className="header">
@@ -303,10 +327,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   }
 
   const hearingSearchParams = new URLSearchParams();
-  hearingSearchParams.set("from-date", timeInMillisFromDateAndTime(today, latestHearing?.slotStartTime));
-  hearingSearchParams.set("to-date", timeInMillisFromDateAndTime(today, latestHearing?.slotEndTime));
-  hearingSearchParams.set("slot", latestHearing?.slotName);
-  hearingSearchParams.set("count", latestHearing?.hearings.length);
+  hearingSearchParams.set("from-date", earliestHearingSlot?.slotStartTime);
+  hearingSearchParams.set("to-date", earliestHearingSlot?.slotEndTime);
+  hearingSearchParams.set("slot", earliestHearingSlot?.slotName);
+  hearingSearchParams.set("count", earliestHearingSlot?.hearings.length);
 
   return (
     <div className="upcoming-hearing-container">
@@ -326,7 +350,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   </div>
                   <div className="time-hearing-type">
                     <div className="timeText">
-                      {formatTimeTo12Hour(latestHearing.slotStartTime)} - {formatTimeTo12Hour(latestHearing.slotEndTime)}
+                      {formatTimeTo12Hour(earliestHearingSlot.slotStartString)} - {formatTimeTo12Hour(earliestHearingSlot.slotEndString)}
                     </div>
                     <div style={{ display: "flex", gap: "8px" }}>
                       <Link

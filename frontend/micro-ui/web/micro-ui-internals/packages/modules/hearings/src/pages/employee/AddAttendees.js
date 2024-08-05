@@ -61,7 +61,7 @@ const AddAttendees = ({
 
   const formConfig = [
     {
-      label: "Select Online Attendees",
+      label: "SELECT_ONLINE_PARTIES",
       isMandatory: true,
       key: "onlineAttendees",
       type: "dropdown",
@@ -78,7 +78,7 @@ const AddAttendees = ({
       },
     },
     {
-      label: "Select Offline Attendees",
+      label: "SELECT_OFFLINE_PARTIES",
       isMandatory: true,
       key: "offlineAttendees",
       type: "dropdown",
@@ -138,7 +138,7 @@ const AddAttendees = ({
         }}
         children={
           <Button
-            label={"+ Add New Parties to this Case"}
+            label={t("ADD_NEW_PARTIES_TO_CASE")}
             onButtonClick={onClickAddWitness}
             variation={"teritiary"}
             style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
