@@ -67,7 +67,6 @@ async function search_hearing(tenantId, cnrNumber, requestinfo) {
   });
 }
 
-
 async function search_mdms_order(uniqueIdentifier, schemaCode, tenantID,requestInfo) {
   return await axios({
     method: "post",
@@ -120,6 +119,40 @@ async function search_individual(tenantId, individualId, requestinfo) {
   });
 }
 
+async function search_individual_uuid(tenantId, individualId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    limit:10,
+    offset:0,
+  };
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.individual, config.paths.individual_search),
+    data: {
+      RequestInfo: requestinfo.RequestInfo,
+      Individual: {
+        id:[individualId]
+      }
+    },
+    params,
+  });
+}
+
+async function search_application(tenantId1, applicationId1, requestinfo) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.application, config.paths.application_search),
+    data: {
+      "RequestInfo": requestinfo.RequestInfo,
+      "tenantId": tenantId1,
+      "criteria": {
+	      "tenantId": tenantId1,
+        "applicationNumber":applicationId1
+	    }
+    },
+  });
+}
+
 async function search_sunbirdrc_credential_service(tenantId, code, uuid, requestinfo) {
   return await axios({
     method: "post",
@@ -156,5 +189,7 @@ module.exports = {
   search_mdms_order,
   search_individual,
   search_hearing,
-  search_sunbirdrc_credential_service
+  search_sunbirdrc_credential_service,
+  search_individual_uuid,
+  search_application
 };

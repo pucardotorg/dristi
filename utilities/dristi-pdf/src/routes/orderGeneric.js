@@ -34,13 +34,8 @@ router.post(
         if (!tenantId) {
             return renderError(res, "tenantId is mandatory to generate the PDF", 400);
         }
-        if(qrCode) {
-            if (!taskId) {
-                return renderError(res, "taskId is mandatory to generate the PDF", 400);
-            }
-            if (!code) {
-                return renderError(res, "code is mandatory to generate the PDF", 400);
-            }
+        if (qrCode && (!taskId || !code)) {
+            return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
         }
         if (requestInfo == undefined) {
             return renderError(res, "requestInfo cannot be null", 400);
