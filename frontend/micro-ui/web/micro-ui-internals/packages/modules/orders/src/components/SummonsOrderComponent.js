@@ -181,21 +181,24 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                 selected={selectedParty}
                 select={handleDropdownChange}
               />
-              <Button
-                onButtonClick={handleAddParty}
-                className="add-party-btn"
-                style={{
-                  backgroundColor: "transparent",
-                  color: "blue",
-                  border: "none",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  padding: 0,
-                  WebkitBoxShadow: "none",
-                  boxShadow: "none",
-                }}
-                label={t("+ Add new witness")}
-              />
+              {
+                <Button
+                  onButtonClick={handleAddParty}
+                  className="add-party-btn"
+                  isDisabled={Boolean(!input?.showAddWitness)}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "blue",
+                    border: "none",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    padding: 0,
+                    WebkitBoxShadow: "none",
+                    boxShadow: "none",
+                  }}
+                  label={t("+ Add new witness")}
+                />
+              }
             </div>
           )}
           {input.type !== "dropdown" && renderDeliveryChannels()}

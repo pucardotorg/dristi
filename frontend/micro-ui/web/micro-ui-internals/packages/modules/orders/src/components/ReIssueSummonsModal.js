@@ -21,8 +21,8 @@ function ReIssueSummonsModal() {
       },
     },
     { applicationNumber: "", cnrNumber },
-    hearingId || hearingNumber,
-    Boolean(hearingId || hearingNumber)
+    hearingId,
+    Boolean(hearingId)
   );
   const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
 
@@ -127,14 +127,14 @@ function ReIssueSummonsModal() {
 
   return (
     <Modal
-      headerBarMain={<Heading label={t("RESCHEDULE_HEATING_FOR_SUMMONS")} />}
+      headerBarMain={<Heading label={t("RESCHEDULE_HEARING_FOR_SUMMONS")} />}
       headerBarEnd={<CloseButton onClick={handleCloseModal} />}
       actionCancelLabel={t("CS_SKIP_AND_CONTINUE")}
       actionCancelOnSubmit={handleReIssueSummon}
-      actionSaveLabel={t("RESCHEDULE_HEATING")}
+      actionSaveLabel={t("RESCHEDULE_HEARING")}
       actionSaveOnSubmit={handleRescheduleHearing}
     >
-      <h2>{`${t("NEXT_HEARING_SCHEDULED_ON")} ${formatDate(new Date(hearingDetails?.startTime))} ${t("DO_YOU_WITH_TO_RESCHEDULE")}`}</h2>
+      <h2>{`${t("NEXT_HEARING_SCHEDULED_ON")} ${formatDate(new Date(hearingDetails?.startTime))} ${t("DO_YOU_WANT_TO_RESCHEDULE")}`}</h2>
     </Modal>
   );
 }

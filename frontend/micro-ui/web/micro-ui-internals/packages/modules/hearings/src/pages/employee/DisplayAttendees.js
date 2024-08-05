@@ -10,21 +10,21 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
     <div>
       <div style={{ textAlign: "left", fontSize: "24px", backgroundColor: "#F7F5F3", padding: "16px 24px" }}>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>Parties to attend</span>
+          <span>{t("PARTIES_TO_ATTEND")}</span>
           <span>{partiesToAttend}</span>
         </div>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>Parties in Attendance Online </span>
+          <span>{t("PARTIES_IN_ATTENDANCE_ONLINE")}</span>
           <span>{onlineAttendees.length}</span>
         </div>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>Parties in Attendance Offline</span>
+          <span>{t("PARTIES_IN_ATTENDANCE_OFFLINE")}</span>
           <span>{offlineAttendees.length}</span>
         </div>
       </div>
       {onlineAttendees.length !== 0 && (
         <div style={{ borderRadius: "4px 0px 0px 0px", border: "1px solid #E8E8E8", marginTop: "12px", padding: "4px" }}>
-          Online Attendees
+          {t("ONLINE_ATTENDEES")}
           <hr style={{ border: "none", borderTop: "2px solid #E8E8E8", margin: "12px 0" }} />
           <ul>
             {onlineAttendees.map((attendee) => (
@@ -35,7 +35,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
       )}
       {offlineAttendees.length !== 0 && (
         <div style={{ border: "1px solid #E8E8E8", marginTop: "12px", height: "100px" }}>
-          Offline Attendees
+          {t("OFFLINE_ATTENDEES")}
           <hr style={{ border: "none", borderTop: "2px solid #E8E8E8", margin: "12px 0" }} />
           <ul>
             {offlineAttendees.map((attendee) => (
@@ -50,13 +50,13 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
         <div style={{ textAlign: "left", marginTop: "12px" }}>{t("NO_MARKED_ATTENDEES")}</div>
       )}
       <Button
-        label={"+ Add Attendees"}
+        label={t("ADD_ATTENDEES")}
         onButtonClick={handleAttendees}
         variation={"teritiary"}
         style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
       />
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px", padding: "4px" }}>
-        <Button variation={"teritiary"} label={" Share Link"} icon={<SVG.Share />} iconFill={"#007E7E"}></Button>
+        <Button variation={"teritiary"} label={t("SHARE_LINK")} icon={<SVG.Share />} iconFill={"#007E7E"}></Button>
         <Button label={"Done"} onButtonClick={handleModal}></Button>
       </div>
     </div>

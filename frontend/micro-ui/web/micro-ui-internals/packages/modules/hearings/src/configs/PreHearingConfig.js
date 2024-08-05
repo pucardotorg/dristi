@@ -45,7 +45,7 @@ export const preHearingConfig = {
             disable: false,
             name: "Newest",
             key: "sortCaseListByStartDate",
-            sortBy: "startDate",
+            sortBy: "startTime",
             ascText: "First",
             descText: "Last",
             showAdditionalText: true,

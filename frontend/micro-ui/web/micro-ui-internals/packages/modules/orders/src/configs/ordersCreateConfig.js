@@ -2707,11 +2707,13 @@ export const configsCreateOrderWarrant = [
           name: "warrantFor",
           optionsKey: "code",
           error: "required ",
-          mdmsConfig: {
-            masterName: "OrderType",
-            moduleName: "Order",
-            localePrefix: "ORDER_TYPE",
-          },
+
+          options: [
+            {
+              code: "Respondent_Name",
+              name: "Respondent Name",
+            },
+          ],
         },
       },
       {
@@ -2724,11 +2726,12 @@ export const configsCreateOrderWarrant = [
           name: "warrantType",
           optionsKey: "code",
           error: "required ",
-          mdmsConfig: {
-            masterName: "OrderType",
-            moduleName: "Order",
-            localePrefix: "ORDER_TYPE",
-          },
+          options: [
+            {
+              code: "Warrant_Type_1",
+              name: "Warrant_Type_1",
+            },
+          ],
         },
       },
       {

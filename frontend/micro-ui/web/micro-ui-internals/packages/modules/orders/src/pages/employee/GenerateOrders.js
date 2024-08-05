@@ -117,7 +117,7 @@ const GenerateOrders = () => {
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
-  const canESign = roles.some((role) => role.code === "ORDER_ESIGN");
+  const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -193,6 +193,19 @@ const GenerateOrders = () => {
         }) || []
     );
   }, [caseDetails, allAdvocates]);
+
+  const unJoinedLitigant = useMemo(() => {
+    return (
+      caseDetails?.additionalDetails?.respondentDetails?.formdata
+        ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
+        ?.map((data) => {
+          const fullName = `${data?.data?.respondentFirstName || ""}${
+            data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName + " " : " "
+          }${data?.data?.respondentLastName || ""}`.trim();
+          return { code: fullName, name: fullName };
+        }) || []
+    );
+  }, [caseDetails]);
 
   const {
     data: ordersData,
@@ -393,7 +406,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondents],
+                    options: [...complainants, ...respondents, ...unJoinedLitigant],
                   },
                 };
               }
@@ -779,25 +792,23 @@ const GenerateOrders = () => {
   };
 
   const handleUpdateHearing = async ({ startTime, endTime, action }) => {
-    try {
-      await ordersService.updateHearings(
-        {
-          hearing: {
-            ...hearingDetails,
-            ...(startTime && { startTime }),
-            ...(endTime && { endTime }),
-            documents: hearingDetails?.documents || [],
-            workflow: {
-              action: action,
-              assignes: [],
-              comments: "Update Hearing",
-              documents: [{}],
-            },
+    await ordersService.updateHearings(
+      {
+        hearing: {
+          ...hearingDetails,
+          ...(startTime && { startTime }),
+          ...(endTime && { endTime }),
+          documents: hearingDetails?.documents || [],
+          workflow: {
+            action: action,
+            assignes: [],
+            comments: "Update Hearing",
+            documents: [{}],
           },
         },
-        { tenantId }
-      );
-    } catch (error) {}
+      },
+      { tenantId }
+    );
   };
 
   const generateAddress = ({ pincode = "", district = "", city = "", state = "", coordinates = { longitude: "", latitude: "" }, locality = "" }) => {
@@ -1040,7 +1051,7 @@ const GenerateOrders = () => {
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
         await handleUpdateHearing({
-          action: HearingWorkflowAction.SETDATE,
+          action: HearingWorkflowAction.BULK_RESCHEDULE,
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
@@ -1069,8 +1080,8 @@ const GenerateOrders = () => {
       setLoader(false);
       setShowSuccessModal(true);
     } catch (error) {
-      //show toast of API failed
-      // setShowErrorToast()
+      showErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
+      setLoader(false);
     }
   };
 
@@ -1094,11 +1105,15 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
   const successModalActionSaveLabel = useMemo(() => {
-    if (createdHearing?.hearingId || (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons) {
+    if (
+      (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons ||
+      (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
+        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => !data?.uuid))
+    ) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
     return t("CS_COMMON_CLOSE");
-  }, [createdHearing, t]);
+  }, [currentOrder, prevOrder?.additionalDetails?.isReIssueSummons, prevOrder?.orderType, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);

@@ -15,10 +15,10 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
       ...body.criteria,
       filingNumber: caseNameOrId,
     };
-    body.pagination = {
-      ...body.criteria?.pagination,
-    };
   }
+  body.pagination = {
+    ...body.criteria?.pagination,
+  };
 
   const fetchCombinedData = async () => {
     //need to filter this hearing list response based on slot
@@ -114,7 +114,7 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
       })
       .flat();
 
-    return { items: combinedData };
+    return { items: combinedData, TotalCount: hearingListResponse.TotalCount };
   };
 
   const { isLoading, data, isFetching, refetch, error } = useQuery("GET_PRE_HEARING_DATA", fetchCombinedData, {
