@@ -51,7 +51,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return (
       <div className="evidence-title">
         <h1 className="heading-m">{props.label}</h1>
-        <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>
+        {props.showStatus && <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>}
       </div>
     );
   };
@@ -621,6 +621,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     : "Action Pending"
                   : t(applicationStatus)
               }
+              showStatus={modalType === "Documents" ? false : true}
               isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : applicationStatus}
             />
           }
