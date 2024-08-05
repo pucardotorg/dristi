@@ -481,7 +481,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondents, t]);
+  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant]);
 
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];

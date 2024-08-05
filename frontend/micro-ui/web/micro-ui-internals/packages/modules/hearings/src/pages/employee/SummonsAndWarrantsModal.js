@@ -89,14 +89,14 @@ const SummonsAndWarrantsModal = () => {
     );
   };
 
-  const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
+  const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, hearingId }) => {
     let reqBody = {
       order: {
         createdDate: new Date().getTime(),
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,
-        hearingNumber: referenceId,
+        hearingNumber: hearingId,
         statuteSection: {
           tenantId,
         },
@@ -112,13 +112,15 @@ const SummonsAndWarrantsModal = () => {
         },
         documents: [],
         additionalDetails: {
+          hearingId: hearingId,
           formdata: {
             orderType: {
               code: orderType,
               type: orderType,
               name: `ORDER_TYPE_${orderType}`,
             },
-            hearingId: referenceId,
+            dateOfHearing: formatDate(new Date(hearingDetails?.startTime)),
+            warrantFor: respondentName,
           },
         },
       },
@@ -129,8 +131,8 @@ const SummonsAndWarrantsModal = () => {
         pendingTask: {
           name: "Order Created",
           entityType: "order-managelifecycle",
-          referenceId: `MANUAL_${referenceId}`,
-          status: "SAVE_DRAFT",
+          referenceId: `MANUAL_${res.order.orderNumber}`,
+          status: "DRAFT_IN_PROGRESS",
           assignedTo: [],
           assignedRole: ["JUDGE_ROLE"],
           cnrNumber: null,
