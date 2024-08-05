@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -72,5 +73,14 @@ public class ApplicationEnrichment {
                 log.error("Error enriching application upon update: {}", e.getMessage());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching application upon update: " + e.getMessage());
             }
+    }
+    public void enrichCommentUponCreate(Comment comment, AuditDetails auditDetails) {
+        try {
+            comment.setId(UUID.randomUUID());
+            comment.setAuditdetails(auditDetails);
+        } catch (Exception e) {
+            log.error("Error enriching comment upon create: {}", e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching comment upon create: " + e.getMessage());
+        }
     }
 }
