@@ -152,7 +152,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           }}
         >
           <VideoIcon></VideoIcon>
-          <span>You can join this hearing online if you are not present in court.</span>
+          <span>{t("YOU_CAN_JOIN_HEARING_ONLINE_NOTE")}</span>
         </div>
         <Button
           variation={"tertiary"}
