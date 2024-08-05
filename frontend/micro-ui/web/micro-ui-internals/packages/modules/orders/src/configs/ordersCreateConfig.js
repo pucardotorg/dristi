@@ -2736,28 +2736,80 @@ export const configsCreateOrderWarrant = [
       },
       {
         isMandatory: true,
-        type: "radio",
-        key: "bailable",
-        label: "Is this a bailable warrant?",
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "bailInfo",
+        withoutLabel: true,
         populators: {
-          name: "bailable",
-          label: "bailableRadioButton",
-          type: "radioButton",
-          optionsKey: "name",
-          error: "Error!",
-          required: false,
-          isMandatory: true,
-          isDependent: true,
-          options: [
+          inputs: [
             {
-              code: "Yes",
-              name: "ES_COMMON_YES",
+              label: "IS_WARRANT_BAILABLE",
+              type: "radioButton",
+              name: "isBailable",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              styles: {
+                marginBottom: 0,
+              },
+              clearFields: { noOfSureties: "", bailableAmount: "" },
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: true,
+                  name: "ES_COMMON_YES",
+                },
+                {
+                  code: false,
+                  name: "ES_COMMON_NO",
+                },
+              ],
             },
             {
-              code: "No",
-              name: "ES_COMMON_NO",
+              label: "NO_OF_SURETIES",
+              type: "radioButton",
+              name: "noOfSureties",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              isMandatory: true,
+              disableFormValidation: false,
+              isDependentOn: "isBailable",
+              dependentKey: {
+                isBailable: ["code"],
+              },
+              styles: {
+                marginBottom: 0,
+              },
+              options: [
+                {
+                  code: 1,
+                  name: "One",
+                },
+                {
+                  code: 2,
+                  name: "Two",
+                },
+              ],
+            },
+            {
+              label: "BAILABLE_AMOUNT",
+              type: "text",
+              name: "bailableAmount",
+              isDependentOn: "isBailable",
+              dependentKey: {
+                isBailable: ["code"],
+              },
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {
+                regex: /^[6-9]{1}[0-9]$/,
+              },
+              isMandatory: true,
+              disableFormValidation: false,
             },
           ],
+          validation: {},
         },
       },
       // {

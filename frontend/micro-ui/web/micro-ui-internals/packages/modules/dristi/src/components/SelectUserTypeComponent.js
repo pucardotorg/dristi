@@ -230,7 +230,10 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       key={input.name}
                       value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                       onChange={(e) => {
-                        setValue(e.target.value, input.name, input);
+                        const updatedValue = e.target.value;
+                        if (input.validation && input.validation?.regex) {
+                        }
+                        setValue(updatedValue, input.name, input);
                       }}
                       disable={input.isDisabled}
                       defaultValue={undefined}

@@ -96,6 +96,7 @@ const SummonsAndWarrantsModal = () => {
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,
+        hearingNumber: referenceId,
         statuteSection: {
           tenantId,
         },
