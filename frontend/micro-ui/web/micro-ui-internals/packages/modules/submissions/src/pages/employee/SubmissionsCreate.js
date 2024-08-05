@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
+  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -25,7 +26,6 @@ import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 import { Urls } from "../../hooks/services/Urls";
-import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
@@ -261,6 +261,19 @@ const SubmissionsCreate = () => {
             applicationDate: formatDate(new Date()),
           };
         }
+      } else if (orderDetails?.orderType === orderTypes.WARRANT) {
+        return {
+          submissionType: {
+            code: "APPLICATION",
+            name: "APPLICATION",
+          },
+          applicationType: {
+            type: "BAIL_BOND",
+            name: "APPLICATION_TYPE_BAIL_BOND",
+          },
+          refOrderId: orderDetails?.orderNumber,
+          applicationDate: formatDate(new Date()),
+        };
       } else {
         return {
           submissionType: {

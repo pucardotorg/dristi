@@ -16,7 +16,7 @@ export const applicationTypeConfig = [
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
             select:
-              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`BAIL`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },
@@ -2630,11 +2630,11 @@ export const configsCreateOrderSchedule = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
         disable: false,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },
@@ -2689,36 +2689,28 @@ export const configsCreateOrderWarrant = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
-        disable: false,
+        disable: true,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },
       {
         isMandatory: true,
-        key: "Warrant For",
-        type: "dropdown",
+        key: "warrantFor",
+        type: "text",
         label: "WARRANT_FOR_PARTY",
-        disable: false,
+        disable: true,
         populators: {
           name: "warrantFor",
-          optionsKey: "code",
           error: "required ",
-
-          options: [
-            {
-              code: "Respondent_Name",
-              name: "Respondent Name",
-            },
-          ],
         },
       },
       {
         isMandatory: true,
-        key: "Warrant Type",
+        key: "warrantType",
         type: "dropdown",
         label: "WARRANT_TYPE",
         disable: false,
@@ -2899,11 +2891,11 @@ export const configsCreateOrderSummon = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
         disable: false,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },
