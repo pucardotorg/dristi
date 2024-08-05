@@ -173,10 +173,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
         },
         {}
       );
-      const hearingCaseList = response.criteria.map((cases) => {
+      const hearingCaseList = response.criteria.map((res) => {
         return {
-          caseName: cases[0].caseTitle,
-          filingNumber: cases[0].filingNumber,
+          caseName: res.responseList[0].caseTitle,
+          filingNumber: res.responseList[0].filingNumber,
         };
       });
 
@@ -213,8 +213,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
     if (advocateResponse?.advocates[0]?.responseList?.length === 1) {
       setIsAdvocate(true);
-      setIsAdvocateLoading(false);
     }
+    setIsAdvocateLoading(false);
   }, [tenantId, userInfo?.uuid]);
 
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
@@ -226,7 +226,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     individualUserType === "citizen" && individualId
   );
 
-  const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
+  const { data: monthlyHearingResponse, isLoading: isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `monthly-${dateRange.start}-${dateRange.end}`,
@@ -279,7 +279,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const ongoingMonthHearingCount = useMemo(() => {
     return monthlyHearingResponse?.TotalCount;
   }, [monthlyHearingResponse]);
-
+  console.debug({ isLoading, isLoadingMonthly, isAdvocateLoading, isCaseLoading });
   if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
