@@ -148,6 +148,24 @@ const GenerateOrders = () => {
     [caseData]
   );
 
+  const { data: pendingTaskDetails = [], isLoading: pendingTasksLoading } = Digit.Hooks.orders.useGetPendingTask({
+    data: {
+      SearchCriteria: {
+        tenantId,
+        moduleName: "Pending Tasks Service",
+        moduleSearchCriteria: {
+          filingNumber,
+          isCompleted: false,
+        },
+        limit: 10000,
+        offset: 0,
+      },
+    },
+    params: { tenantId },
+    key: filingNumber,
+  });
+  console.debug(pendingTaskDetails);
+
   const { data: courtRoomData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
     select: (data) => {
       let newData = {};

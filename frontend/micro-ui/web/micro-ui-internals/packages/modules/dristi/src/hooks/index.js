@@ -14,6 +14,7 @@ import { useToast } from "../components/Toast/useToast.js";
 import useCreateHearings from "./dristi/useCreateHearings.js";
 import useApplicationDetails from "./dristi/useApplicationDetails.js";
 import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
+import { useGetPendingTask } from "./dristi/useGetPendingTask.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -61,6 +62,7 @@ const dristi = {
   useApplicationDetails,
   useEvidenceDetails,
   useToast,
+  useGetPendingTask,
 };
 
 const Hooks = {
