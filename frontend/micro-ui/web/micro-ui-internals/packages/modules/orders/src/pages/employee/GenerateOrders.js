@@ -785,25 +785,23 @@ const GenerateOrders = () => {
   };
 
   const handleUpdateHearing = async ({ startTime, endTime, action }) => {
-    try {
-      await ordersService.updateHearings(
-        {
-          hearing: {
-            ...hearingDetails,
-            ...(startTime && { startTime }),
-            ...(endTime && { endTime }),
-            documents: hearingDetails?.documents || [],
-            workflow: {
-              action: action,
-              assignes: [],
-              comments: "Update Hearing",
-              documents: [{}],
-            },
+    await ordersService.updateHearings(
+      {
+        hearing: {
+          ...hearingDetails,
+          ...(startTime && { startTime }),
+          ...(endTime && { endTime }),
+          documents: hearingDetails?.documents || [],
+          workflow: {
+            action: action,
+            assignes: [],
+            comments: "Update Hearing",
+            documents: [{}],
           },
         },
-        { tenantId }
-      );
-    } catch (error) {}
+      },
+      { tenantId }
+    );
   };
 
   const generateAddress = ({ pincode = "", district = "", city = "", state = "", coordinates = { longitude: "", latitude: "" }, locality = "" }) => {
@@ -1046,7 +1044,7 @@ const GenerateOrders = () => {
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
         await handleUpdateHearing({
-          action: HearingWorkflowAction.SETDATE,
+          action: HearingWorkflowAction.BULK_RESCHEDULE,
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
@@ -1075,8 +1073,8 @@ const GenerateOrders = () => {
       setLoader(false);
       setShowSuccessModal(true);
     } catch (error) {
-      //show toast of API failed
-      // setShowErrorToast()
+      showErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
+      setLoader(false);
     }
   };
 
