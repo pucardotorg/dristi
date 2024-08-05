@@ -389,11 +389,11 @@ components:
     ApplicationAddComment:
       type: object
       properties:
-            applicationNumber:
-              type: string
-              description: The application number for which the comment is being added
-            comment:
-              type: array
-              description: An array of comments representing the discussion between the parties of the case on this specific application.
-              items:
-                $ref: '#/components/schemas/Comment'
+        applicationNumber:
+          type: string
+          description: The application number for which the comment is being added
+        comment:
+          type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific application.
+          items:
+            $ref: '#/components/schemas/Comment'
