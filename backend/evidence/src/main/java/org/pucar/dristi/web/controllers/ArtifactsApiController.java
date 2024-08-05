@@ -65,4 +65,12 @@ public class ArtifactsApiController {
 				return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
 	}
 
+	@RequestMapping(value="/v1/addcomment", method = RequestMethod.POST)
+	public ResponseEntity<EvidenceAddCommentResponse> applicationV1AddCommentPost(@Parameter(in = ParameterIn.DEFAULT, description = "Comments to be added + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody EvidenceAddCommentRequest body) {
+		evidenceService.addComments(body);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+		EvidenceAddCommentResponse applicationAddCommentResponse = EvidenceAddCommentResponse.builder().evidenceAddComment(body.getEvidenceAddComment()).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(applicationAddCommentResponse, HttpStatus.OK);
+	}
+
 }

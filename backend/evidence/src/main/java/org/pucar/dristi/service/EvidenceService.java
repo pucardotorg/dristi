@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -135,6 +136,38 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichIsActive(evidenceRequest);
+        }
+    }
+
+    public void addComments(EvidenceAddCommentRequest evidenceAddCommentRequest) {
+        try {
+            EvidenceAddComment evidenceAddComment = evidenceAddCommentRequest.getEvidenceAddComment();
+            List<Artifact> applicationList = repository.getArtifacts(EvidenceSearchCriteria.builder().artifactNumber(evidenceAddComment.getArtifactNumber()).build(), null);
+            if(CollectionUtils.isEmpty(applicationList)){
+                throw new CustomException(COMMENT_ADD_ERR, "Evidence not found");
+            }
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdBy(evidenceAddCommentRequest.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedBy(evidenceAddCommentRequest.getRequestInfo().getUserInfo().getUuid())
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build();
+            evidenceAddComment.getComment().forEach(comment -> evidenceEnrichment.enrichCommentUponCreate(comment, auditDetails));
+            Artifact artifactToUpdate = applicationList.get(0);
+            artifactToUpdate.getComments().addAll(evidenceAddComment.getComment());
+            evidenceAddComment.setComment(artifactToUpdate.getComments());
+            AuditDetails applicationAuditDetails = artifactToUpdate.getAuditdetails();
+            applicationAuditDetails.setLastModifiedBy(auditDetails.getLastModifiedBy());
+            applicationAuditDetails.setLastModifiedTime(auditDetails.getLastModifiedTime());
+            producer.push(config.getEvidenceUpdateCommentsTopic(), artifactToUpdate);
+        }
+        catch (CustomException e){
+            log.error("Custom exception while adding comments {}", e.toString());
+            throw e;
+        }
+        catch (Exception e){
+            log.error("Error while adding comments {}", e.toString());
+            throw new CustomException(COMMENT_ADD_ERR, e.getMessage());
         }
     }
 
