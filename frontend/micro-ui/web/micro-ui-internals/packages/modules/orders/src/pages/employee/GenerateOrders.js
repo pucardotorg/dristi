@@ -194,6 +194,19 @@ const GenerateOrders = () => {
     );
   }, [caseDetails, allAdvocates]);
 
+  const unJoinedLitigant = useMemo(() => {
+    return (
+      caseDetails?.additionalDetails?.respondentDetails?.formdata
+        ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
+        ?.map((data) => {
+          const fullName = `${data?.data?.respondentFirstName || ""}${
+            data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName + " " : " "
+          }${data?.data?.respondentLastName || ""}`.trim();
+          return { code: fullName, name: fullName };
+        }) || []
+    );
+  }, [caseDetails]);
+
   const {
     data: ordersData,
     refetch: refetchOrdersData,
@@ -393,7 +406,7 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondents],
+                    options: [...complainants, ...respondents, ...unJoinedLitigant],
                   },
                 };
               }
@@ -1087,11 +1100,15 @@ const GenerateOrders = () => {
     setDeleteOrderIndex(null);
   };
   const successModalActionSaveLabel = useMemo(() => {
-    if (createdHearing?.hearingId || (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons) {
+    if (
+      (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons ||
+      (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
+        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => !data?.uuid))
+    ) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
     return t("CS_COMMON_CLOSE");
-  }, [createdHearing, t]);
+  }, [currentOrder, prevOrder?.additionalDetails?.isReIssueSummons, prevOrder?.orderType, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
