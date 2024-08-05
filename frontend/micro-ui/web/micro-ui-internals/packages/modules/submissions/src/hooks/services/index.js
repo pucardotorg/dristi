@@ -34,4 +34,12 @@ export const submissionService = {
       data,
       params,
     }),
+  getPendingTaskService: (data, params) =>
+    Request({
+      url: Urls.application.getPendingTaskFields,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
 };

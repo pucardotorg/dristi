@@ -178,4 +178,12 @@ export const DRISTIService = {
       data,
       params,
     }),
+  getPendingTaskService: (data, params) =>
+    Request({
+      url: Urls.dristi.getPendingTaskFields,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
 };

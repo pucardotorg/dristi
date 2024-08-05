@@ -49,25 +49,6 @@ export const applicationTypeConfig = [
 export const configsBailBond = [
   {
     body: [
-      // {
-      //   isMandatory: true,
-      //   key: "applicationType",
-      //   type: "dropdown",
-      //   label: "Application Type",
-      //   disable: false,
-      //   inline: false,
-      //   populators: {
-      //     name: "applicationType",
-      //     optionsKey: "name",
-      //     required: true,
-      //     options: [
-      //       {
-      //         code: "requestForBail",
-      //         name: "Request for Bail - Surety",
-      //       },
-      //     ],
-      //   },
-      // },
       {
         label: "Add any information to support your application",
         placeholder: "Type Here.....",

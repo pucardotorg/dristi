@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
+  configsBail,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -11,7 +12,7 @@ import {
   configsProductionOfDocuments,
   configsRescheduleRequest,
   configsSettlement,
-  configsSurety,
+  configsSuretyOld,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
@@ -25,7 +26,6 @@ import isEqual from "lodash/isEqual";
 import { orderTypes } from "../../utils/orderTypes";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../dristi/src/Utils/submissionWorkflow";
 import { Urls } from "../../hooks/services/Urls";
-import { configsBailBond } from "../../../../orders/src/configs/MakeSubmissionBailConfig";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const fieldStyle = { marginRight: 0 };
@@ -89,8 +89,8 @@ const SubmissionsCreate = () => {
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsSettlement,
-      BAIL_BOND: configsBailBond,
-      SURETY: configsSurety,
+      BAIL_BOND: configsBail,
+      SURETY: configsSuretyOld,
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
     };
@@ -227,6 +227,7 @@ const SubmissionsCreate = () => {
           isactive: true,
           name: "APPLICATION_TYPE_RE_SCHEDULE",
         },
+        applicationDate: formatDate(new Date()),
       };
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
@@ -267,6 +268,7 @@ const SubmissionsCreate = () => {
             code: "APPLICATION",
             name: "APPLICATION",
           },
+          applicationDate: formatDate(new Date()),
         };
       }
     } else if (applicationType) {
@@ -288,6 +290,7 @@ const SubmissionsCreate = () => {
           code: "APPLICATION",
           name: "APPLICATION",
         },
+        applicationDate: formatDate(new Date()),
       };
     }
   }, [
@@ -301,7 +304,7 @@ const SubmissionsCreate = () => {
   ]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (applicationType && !["OTHERS", "BAIL_BOND"].includes(applicationType) && !formData?.applicationDate) {
+    if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
     if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
@@ -483,13 +486,6 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
-    !isExtension &&
-      orderNumber &&
-      (await createPendingTask({
-        refId: orderNumber,
-        isCompleted: true,
-        status: "Completed",
-      }));
     await createPendingTask({
       name: t("ESIGN_THE_SUBMISSION"),
       status: "ESIGN_THE_SUBMISSION",
@@ -530,6 +526,13 @@ const SubmissionsCreate = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
     await updateSubmission(SubmissionWorkflowAction.PAY);
+    applicationType === "PRODUCTION_DOCUMENTS" &&
+      orderNumber &&
+      createPendingTask({
+        refId: orderNumber,
+        isCompleted: true,
+        status: "Completed",
+      });
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
   };
 

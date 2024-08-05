@@ -66,7 +66,7 @@ const OutlinedInfoIcon = () => (
   </svg>
 );
 
-const stateSla = {
+const stateSlaMap = {
   SECTION_202_CRPC: 3,
   MANDATORY_SUBMISSIONS_RESPONSES: 3,
   EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: 3,
@@ -593,10 +593,17 @@ const GenerateOrders = () => {
     let entityType =
       formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
     let status = taskStatus;
+    let stateSla = stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate;
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
       name = t("MAKE_MANDATORY_SUBMISSION");
       assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
+      stateSla = new Date(formdata?.submissionDeadline).getTime();
+    }
+    if (order?.orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
+      create = true;
+      name = t("MAKE_MANDATORY_SUBMISSION");
+      stateSla = new Date(formdata?.newSubmissionDate).getTime();
     }
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
@@ -618,7 +625,7 @@ const GenerateOrders = () => {
             cnrNumber: cnrNumber,
             filingNumber: filingNumber,
             isCompleted: false,
-            stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+            stateSla,
             additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
             tenantId,
           },
@@ -645,7 +652,7 @@ const GenerateOrders = () => {
                 cnrNumber: cnrNumber,
                 filingNumber: filingNumber,
                 isCompleted: false,
-                stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+                stateSla: stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate,
                 additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
                 tenantId,
               },
@@ -683,7 +690,7 @@ const GenerateOrders = () => {
           cnrNumber: cnrNumber,
           filingNumber: filingNumber,
           isCompleted: false,
-          stateSla: stateSla?.[order?.orderType] * dayInMillisecond + todayDate,
+          stateSla: stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate,
           additionalDetails: additionalDetails,
           tenantId,
         },

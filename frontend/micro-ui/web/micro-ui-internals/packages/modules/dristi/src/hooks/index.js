@@ -38,6 +38,7 @@ export const Urls = {
     submissionsSearch: "/application/v1/search",
     submissionsUpdate: "/application/v1/update",
     pendingTask: "/analytics/pending_task/v1/create",
+    getPendingTaskFields: "/inbox/v2/_getFields",
   },
   case: {
     addWitness: "/case/v1/add/witness",

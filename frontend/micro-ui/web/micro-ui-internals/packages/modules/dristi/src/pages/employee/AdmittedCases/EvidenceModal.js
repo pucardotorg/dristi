@@ -480,7 +480,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       return acceptedApplicationTypes.includes(applicationType);
     }
   }, [documentSubmission, showConfirmationModal?.type]);
-
   const handleApplicationAction = async (generateOrder) => {
     try {
       let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
@@ -493,6 +492,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
         ...(orderType === "BAIL" && { bailType: { type: documentSubmission?.[0]?.applicationList?.applicationType } }),
       };
+      const linkedOrderNumber = documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.refOrderId;
       if (generateOrder) {
         const reqbody = {
           order: {
@@ -520,6 +520,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
               hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
             }),
+            ...(linkedOrderNumber && { linkedOrderNumber }),
           },
         };
         try {
