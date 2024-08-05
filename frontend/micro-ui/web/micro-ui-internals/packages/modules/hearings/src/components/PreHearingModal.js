@@ -15,8 +15,6 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
   const [purposeModalData, setPurposeModalData] = useState({});
   const [rescheduleAll, setRescheduleAll] = useState(false);
 
-  console.log(hearingData);
-
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -133,12 +131,14 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
         <div>
           <strong>{formatDate(new Date(hearingData.fromDate))}</strong>, {hearingData.slot}
         </div>
-        <Button
-          className="border-none dristi-font-bold"
-          onButtonClick={onRescheduleAllClick}
-          label="Reschedule All Hearings"
-          variation={"secondary"}
-        />
+        {Digit.UserService.getType() === "employee" && (
+          <Button
+            className="border-none dristi-font-bold"
+            onButtonClick={onRescheduleAllClick}
+            label={t("RESCHEDULE_ALL_HEARINGS")}
+            variation={"secondary"}
+          />
+        )}
       </div>
       {purposeModalOpen && (
         <ReschedulingPurpose rescheduleAll={rescheduleAll} courtData={courtData} closeFunc={closeFunc} caseDetails={purposeModalData} />

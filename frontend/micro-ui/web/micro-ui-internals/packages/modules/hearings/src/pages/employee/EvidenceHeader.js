@@ -1,7 +1,7 @@
 import { Button } from "@egovernments/digit-ui-components";
 
 import { Header, Menu } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { VideoIcon } from "./CustomSVGs";
 
@@ -43,6 +43,20 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
       return;
     }
   };
+
+  const allAdvocates = useMemo(
+    () => Digit?.Customizations?.DristiCaseUtils?.getAllCaseRepresentativesUUID?.(caseData)[Digit.UserService.getUser()?.info?.uuid] || [],
+    [caseData]
+  );
+
+  const isAdvocatePresent = useMemo(
+    () => (userRoles?.includes("ADVOCATE_ROLE") ? true : allAdvocates.includes(Digit.UserService.getUser()?.info?.uuid)),
+    [allAdvocates, userRoles]
+  );
+
+  const showMakeSubmission = useMemo(() => {
+    return isAdvocatePresent && userRoles?.includes("APPLICATION_CREATOR");
+  }, [userRoles, isAdvocatePresent]);
 
   return (
     <div className="admitted-case-header" style={{ padding: "0px", border: "none" }}>
@@ -111,7 +125,9 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
               </div>
             </div>
           ) : (
-            <Button variation={"primary"} label={t("MAKE_SUBMISSION")} onClick={() => handleSelect(t("MAKE_SUBMISSION"))}></Button>
+            showMakeSubmission && (
+              <Button variation={"primary"} label={t("MAKE_SUBMISSION")} onClick={() => handleSelect(t("MAKE_SUBMISSION"))}></Button>
+            )
           )}
         </div>
       </div>

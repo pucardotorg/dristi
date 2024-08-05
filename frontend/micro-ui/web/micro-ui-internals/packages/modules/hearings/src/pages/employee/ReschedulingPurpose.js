@@ -3,6 +3,15 @@ import { CustomDropdown, Card, Modal } from "@egovernments/digit-ui-react-compon
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
+/**
+ *
+ * @param {Date} date
+ * @returns {string}
+ */
+function formatDate(date) {
+  return `${date.getDate()} ${date.toLocaleString("en-IN", { month: "long" })}, ${date.getFullYear()}`;
+}
+
 export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc, rescheduleAll = false }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -170,7 +179,7 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc, resched
             </div>
             <div className="case-details">
               Initial Hearing Date
-              <div style={{ fontWeight: "700", marginTop: "5px" }}> {caseDetails?.fromDate.split("-").reverse().join("-")} </div>
+              <div style={{ fontWeight: "700", marginTop: "5px" }}> {formatDate(new Date(caseDetails?.fromDate))} </div>
             </div>
             <div className="case-details">
               Slot
