@@ -59,10 +59,10 @@ const DocumentModal = ({ config }) => {
         config?.isStepperModal
           ? config.steps[step]?.type === "document"
             ? "custom-modal-stepper"
-            : "add-signature-modal"
+            : "custom-modal-stepper-non-doc"
           : config?.type === "document"
           ? "custom-modal-stepper"
-          : "add-signature-modal"
+          : "custom-modal-stepper-non-doc"
       }
       isDisabled={isDisabled}
     >
