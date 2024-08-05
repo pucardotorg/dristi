@@ -5,11 +5,13 @@ import NextHearingModal from "../../components/NextHearingModal";
 import SummaryModal from "../../components/SummaryModal";
 import Modal from "@egovernments/digit-ui-module-dristi/src/components/Modal";
 import { hearingService } from "../../hooks/services";
+import { useTranslation } from "react-i18next";
 
 const AdjournHearing = ({ hearing, updateTranscript }) => {
   const { hearingId } = Digit.Hooks.useQueryParams();
   const [disable, setDisable] = useState(true);
   const [stepper, setStepper] = useState(1);
+  const { t } = useTranslation();
   const [reasonFormData, setReasonFormData] = useState({});
   const [transcript, setTranscript] = useState(hearing.transcript[0]);
 
@@ -118,9 +120,9 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
     <div>
       {stepper === 1 && (
         <Modal
-          headerBarMain={<Heading label={"ARE_SURE_ADJOURN_HEARING"} />}
+          headerBarMain={<Heading label={t("ARE_SURE_ADJOURN_HEARING")} />}
           headerBarEnd={<CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />}
-          actionSaveLabel="ADJOURN_HEARING"
+          actionSaveLabel={t("ADJOURN_HEARING")}
           actionSaveOnSubmit={onSubmit}
           style={{ marginTop: "5px" }}
           isDisabled={disable}
