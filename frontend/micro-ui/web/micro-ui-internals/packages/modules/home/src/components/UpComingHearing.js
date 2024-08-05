@@ -181,8 +181,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
       );
       const hearingCaseList = response.criteria.map((res) => {
         return {
-          caseName: cases[0]?.caseTitle,
-          filingNumber: cases[0]?.filingNumber,
+          caseName: res.responseList[0]?.caseTitle,
+          filingNumber: res.responseList[0]?.filingNumber,
         };
       });
 
