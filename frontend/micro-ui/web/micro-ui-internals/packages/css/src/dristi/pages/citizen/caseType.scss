@@ -11,6 +11,7 @@
 .popup-module.custom-modal-stepper,
 .popup-module.review-order-modal,
 .popup-module.add-signature-modal,
+.popup-module.custom-modal-stepper-non-doc,
 .popup-module.orders-success-modal,
 .popup-module.case-types {
   width: 536px;
@@ -347,6 +348,96 @@
       text-align: left;
       color: #0b0c0c;
       margin: 0px 0px 12px;
+    }
+  }
+}
+
+.popup-module.custom-modal-stepper-non-doc {
+  width: fit-content !important;
+
+  .popup-module-main {
+    .payment-for-summon {
+      width: 720px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 24px;
+    }
+    .radio-wrap.mode-of-post-pay {
+      display: flex;
+      gap: 24px;
+      margin: 0px;
+    }
+    .summon-payment-action-table {
+      .header-row {
+        border-bottom: 1px #bbbbbd solid;
+        .payment-action,
+        .payment-amount,
+        .payment-label {
+          font-weight: 700;
+        }
+      }
+      .action-row {
+        border-bottom: 1px #e8e8e8 solid;
+      }
+      .action-row,
+      .header-row {
+        display: flex;
+        .payment-label {
+          width: 44%;
+        }
+        .payment-amount {
+          width: 30%;
+        }
+        .payment-action {
+          width: 26%;
+        }
+      }
+      .payment-action,
+      .payment-amount,
+      .payment-label {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0a0a0a;
+      }
+
+      .payment-action {
+        button {
+          background-color: transparent;
+          box-shadow: none;
+          width: 100%;
+
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+            color: #007e7e;
+          }
+        }
+        .offline-process-text {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #3d3c3c;
+
+          .learn-more-text {
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }
