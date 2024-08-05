@@ -16,9 +16,9 @@ public class EvidenceAddCommentRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
-    private RequestInfo requestInfo = null;
+    private RequestInfo requestInfo = new RequestInfo();;
 
     @JsonProperty("evidenceAddComment")
     @Valid
-    private EvidenceAddComment evidenceAddComment = null;
+    private EvidenceAddComment evidenceAddComment = new EvidenceAddComment();;
 }

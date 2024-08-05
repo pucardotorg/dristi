@@ -16,10 +16,10 @@ public class EvidenceAddCommentResponse {
 
     @JsonProperty("ResponseInfo")
     @Valid
-    private ResponseInfo responseInfo = null;
+    private ResponseInfo responseInfo = new ResponseInfo();
 
     @JsonProperty("evidenceAddComment")
     @Valid
-    private EvidenceAddComment evidenceAddComment = null;
+    private EvidenceAddComment evidenceAddComment =  new EvidenceAddComment();;
 
 }

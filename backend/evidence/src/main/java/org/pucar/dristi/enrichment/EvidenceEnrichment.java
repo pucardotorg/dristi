@@ -137,7 +137,7 @@ public class EvidenceEnrichment {
             comment.setId(UUID.randomUUID());
             comment.setAuditdetails(auditDetails);
         } catch (Exception e) {
-            log.error("Error enriching comment upon create: {}", e.getMessage());
+            log.error("Error enriching comment upon create: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching comment upon create: " + e.getMessage());
         }
     }
