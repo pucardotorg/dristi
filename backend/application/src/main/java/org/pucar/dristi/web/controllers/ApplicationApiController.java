@@ -71,4 +71,12 @@ public class ApplicationApiController{
                 return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value="/v1/addcomment", method = RequestMethod.POST)
+    public ResponseEntity<ApplicationAddCommentResponse> applicationV1AddCommentPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationAddCommentRequest body) {
+                    applicationService.addComments(body);
+                    ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                    ApplicationAddCommentResponse applicationAddCommentResponse = ApplicationAddCommentResponse.builder().applicationAddComment(body.getApplicationAddComment()).responseInfo(responseInfo).build();
+                    return new ResponseEntity<>(applicationAddCommentResponse, HttpStatus.OK);
+    }
+
 }
