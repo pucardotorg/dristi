@@ -3,7 +3,6 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
