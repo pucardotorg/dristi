@@ -61,7 +61,7 @@ const AddAttendees = ({
 
   const formConfig = [
     {
-      label: "Select Online Attendees",
+      label: "Select Online Parties",
       isMandatory: true,
       key: "onlineAttendees",
       type: "dropdown",
@@ -78,7 +78,7 @@ const AddAttendees = ({
       },
     },
     {
-      label: "Select Offline Attendees",
+      label: "Select Offline Parties",
       isMandatory: true,
       key: "offlineAttendees",
       type: "dropdown",

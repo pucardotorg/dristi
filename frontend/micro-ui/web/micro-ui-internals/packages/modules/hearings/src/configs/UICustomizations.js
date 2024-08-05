@@ -8,12 +8,9 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       const updatedCriteria = {
         pagination: {
-          limit: 5,
-          offset: 0,
-          order: requestCriteria?.state?.searchForm?.sortCaseListByStartDate?.order || "asc",
-          sortBy: "startTime",
+          ...requestCriteria.state.tableForm,
+          ...requestCriteria?.state?.searchForm?.sortCaseListByStartDate,
         },
-        limit: 5,
         fromDate: requestCriteria?.params.fromDate,
         toDate: requestCriteria?.params.toDate,
         attendeeIndividualId: additionalDetails?.attendeeIndividualId ? additionalDetails?.attendeeIndividualId : "",
