@@ -131,4 +131,7 @@ public class Configuration {
 
     @Value("${egov.workflow.async.voluntary.submission.business.service.name}")
     private String asyncVoluntarySubBusinessServiceName;
+
+    @Value("${application.kafka.comments.update.topic}")
+    private String applicationUpdateCommentsTopic;
 }

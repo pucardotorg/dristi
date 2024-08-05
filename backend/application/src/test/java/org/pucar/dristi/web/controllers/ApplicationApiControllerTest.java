@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.ApplicationService;
@@ -234,5 +235,41 @@ class ApplicationApiControllerTest {
         assertEquals("Invalid request", exception.getMessage());
     }
 
+    @Test
+    void applicationV1AddCommentPost_Success() {
+        ApplicationAddCommentRequest requestBody = new ApplicationAddCommentRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+        requestBody.setApplicationAddComment(new ApplicationAddComment());
+
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(expectedResponseInfo);
+
+        ApplicationAddCommentResponse expectedResponse = ApplicationAddCommentResponse.builder()
+                .applicationAddComment(requestBody.getApplicationAddComment())
+                .responseInfo(expectedResponseInfo)
+                .build();
+
+        ResponseEntity<ApplicationAddCommentResponse> response = controller.applicationV1AddCommentPost(requestBody);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ApplicationAddCommentResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getApplicationAddComment(), actualResponse.getApplicationAddComment());
+        assertEquals(expectedResponse.getResponseInfo(), actualResponse.getResponseInfo());
+    }
+
+    @Test
+    void applicationV1AddCommentPost_InvalidRequest() {
+        ApplicationAddCommentRequest requestBody = new ApplicationAddCommentRequest();  // Missing required fields
+
+        Mockito.doThrow(new IllegalArgumentException("Invalid request")).when(applicationService).addComments(any(ApplicationAddCommentRequest.class));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            controller.applicationV1AddCommentPost(requestBody);
+        });
+
+        assertEquals("Invalid request", exception.getMessage());
+    }
 
 }
