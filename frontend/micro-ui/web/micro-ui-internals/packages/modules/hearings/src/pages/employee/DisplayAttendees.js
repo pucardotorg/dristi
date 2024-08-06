@@ -1,7 +1,22 @@
-import { Button } from "@egovernments/digit-ui-react-components";
+import { Button } from "@egovernments/digit-ui-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SVG } from "@egovernments/digit-ui-components";
+
+const displayAttendeesLabelStyle = {
+  fontFamily: "Roboto",
+  fontSize: "16px",
+  fontWeight: 700,
+  lineHeight: "18.75px",
+  textAlign: "left",
+};
+
+const displayAttendeesValueStyle = {
+  fontFamily: "Roboto",
+  fontSize: "16px",
+  fontWeight: 400,
+  lineHeight: "18.75px",
+  textAlign: "left",
+};
 
 const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttendees = [], handleAttendees, handleModal }) => {
   const { t } = useTranslation();
@@ -10,16 +25,28 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
     <div>
       <div style={{ textAlign: "left", fontSize: "24px", backgroundColor: "#F7F5F3", padding: "16px 24px" }}>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>{t("PARTIES_TO_ATTEND")}</span>
-          <span>{partiesToAttend}</span>
+          <span className="display-attendees-label" style={displayAttendeesLabelStyle}>
+            {t("PARTIES_TO_ATTEND")}
+          </span>
+          <span className="display-attendees-value" style={displayAttendeesValueStyle}>
+            {partiesToAttend}
+          </span>
         </div>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>{t("PARTIES_IN_ATTENDANCE_ONLINE")}</span>
-          <span>{onlineAttendees.length}</span>
+          <span className="display-attendees-label" style={displayAttendeesLabelStyle}>
+            {t("PARTIES_IN_ATTENDANCE_ONLINE")}
+          </span>
+          <span className="display-attendees-value" style={displayAttendeesValueStyle}>
+            {onlineAttendees.length}
+          </span>
         </div>
         <div style={{ display: "flex", gap: "16px" }}>
-          <span>{t("PARTIES_IN_ATTENDANCE_OFFLINE")}</span>
-          <span>{offlineAttendees.length}</span>
+          <span className="display-attendees-label" style={displayAttendeesLabelStyle}>
+            {t("PARTIES_IN_ATTENDANCE_OFFLINE")}
+          </span>
+          <span className="display-attendees-value" style={displayAttendeesValueStyle}>
+            {offlineAttendees.length}
+          </span>
         </div>
       </div>
       {onlineAttendees.length !== 0 && (
@@ -53,13 +80,63 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
       )}
       <Button
         label={t("ADD_ATTENDEES")}
-        onButtonClick={handleAttendees}
+        onClick={handleAttendees}
         variation={"teritiary"}
-        style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
+        style={{
+          borderColor: "#007E7E",
+          minWidth: "50px",
+          height: "40px",
+          backgroundColor: "#fff",
+        }}
+        textStyles={{
+          fontFamily: "Roboto",
+          fontSize: "16px",
+          fontWeight: 700,
+          lineHeight: "18.75px",
+          textAlign: "start",
+          color: "#007E7E",
+        }}
       />
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px", padding: "4px" }}>
-        <Button variation={"teritiary"} label={t("SHARE_LINK")} icon={<SVG.Share />} iconFill={"#007E7E"}></Button>
-        <Button label={"Done"} onButtonClick={handleModal}></Button>
+        <Button
+          variation={"teritiary"}
+          label={t("SHARE_LINK")}
+          style={{
+            border: "1px solid",
+            borderColor: "#007E7E",
+            height: "40px",
+            minWidth: "50px",
+            backgroundColor: "#fff",
+            "&.icon-label-container": {
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            },
+          }}
+          textStyles={{
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "center",
+            color: "#007E7E",
+          }}
+          icon={"Share"}
+          iconFill={"#007E7E"}
+          className={"take-action-btn-class"}
+        ></Button>
+        <Button
+          label={"Done"}
+          onClick={handleModal}
+          style={{
+            height: "40px",
+            minWidth: "50px",
+          }}
+          textStyles={{
+            textAlign: "center",
+            margin: 0,
+          }}
+        ></Button>
       </div>
     </div>
   );

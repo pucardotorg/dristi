@@ -51,7 +51,7 @@ const NextHearingCard = ({ caseData, width }) => {
 
   const handleButtonClick = () => {
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-    const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+    const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
     const searchParams = new URLSearchParams();
     searchParams.set("hearingId", scheduledHearing.hearingId);
     if (userType === "citizen") {

@@ -60,16 +60,14 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
         width: "50vw",
         minWidth: "600px",
         position: "absolute",
-        height: "400px",
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        padding: "12px 24px",
         justify: "space-between",
       }}
       popupModuleActionBarStyles={style}
       popupModuleMianStyles={{
-        padding: "18px",
+        padding: 0,
         margin: "0px",
         height: "calc(100% - 54px)",
         overflowY: "auto",
@@ -79,7 +77,11 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
           {isAddingAttendees ? "Add Attendees" : "Mark Attendance"}
         </h1>
       }
-      headerBarEnd={<CloseSvg onClick={handleModal} />}
+      headerBarEnd={
+        <h2 style={{padding: "5px 10px"}}>
+          <CloseSvg onClick={handleModal} />
+        </h2>
+      }
       formId="modal-action"
       actionCancelLabel={"Back"}
       actionCancelOnSubmit={() => setIsAddingAttendee(!isAddingAttendees)}
@@ -87,7 +89,7 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
       actionSaveOnSubmit={() => onFormSubmit(form)}
       isDisabled={isDisabled}
     >
-      <div style={{ width: "100%", padding: "16px", textAlign: "left" }}>
+      <div style={{ width: "100%", padding: "16px 0px", textAlign: "left" }}>
         {isAddingAttendees ? (
           <AddAttendees
             attendees={attendees}
