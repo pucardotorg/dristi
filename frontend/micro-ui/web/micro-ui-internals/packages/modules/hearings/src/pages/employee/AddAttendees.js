@@ -1,5 +1,6 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   Array.isArray(keys) &&
@@ -22,6 +23,7 @@ const AddAttendees = ({
   setForm,
   setIsDisabled,
 }) => {
+  const {t} = useTranslation()
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
