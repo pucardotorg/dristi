@@ -23,14 +23,16 @@ const AddAttendees = ({
   setForm,
   setIsDisabled,
 }) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
   };
+
+  console.debug(attendees);
   const attendeeOptions = Array.isArray(attendees)
     ? attendees.map((attendee) => ({
-        value: attendee.individualId,
+        value: attendee.individualId || attendee.name,
         label: attendee.name,
       }))
     : [];
@@ -41,7 +43,7 @@ const AddAttendees = ({
         .filter((attendee) => !attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
-            value: attendee.individualId,
+            value: attendee.individualId || attendee.name,
             label: attendee.name,
           };
         }),
@@ -54,7 +56,7 @@ const AddAttendees = ({
         .filter((attendee) => attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
-            value: attendee.individualId,
+            value: attendee.individualId || attendee.name,
             label: attendee.name,
           };
         }),

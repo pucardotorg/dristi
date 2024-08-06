@@ -28,7 +28,9 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           <hr style={{ border: "none", borderTop: "2px solid #E8E8E8", margin: "12px 0" }} />
           <ul>
             {onlineAttendees.map((attendee) => (
-              <li key={attendee.individualId}>{attendee.name} - {attendee.type}</li>
+              <li key={attendee.individualId || attendee.name}>
+                {attendee.name} - {attendee.type}
+              </li>
             ))}
           </ul>
         </div>
@@ -39,7 +41,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           <hr style={{ border: "none", borderTop: "2px solid #E8E8E8", margin: "12px 0" }} />
           <ul>
             {offlineAttendees.map((attendee) => (
-              <li key={attendee.individualId}>
+              <li key={attendee.individualId || attendee.name}>
                 {attendee.name} - {attendee.type}
               </li>
             ))}

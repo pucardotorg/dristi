@@ -29,7 +29,6 @@ const InsideHearingMainPage = () => {
   const [endHearingModalOpen, setEndHearingModalOpen] = useState(false);
   const textAreaRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [attendees, setAttendees] = useState([]);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId } = Digit.Hooks.useQueryParams();
   const [filingNumber, setFilingNumber] = useState("");
@@ -67,7 +66,7 @@ const InsideHearingMainPage = () => {
       hearingId: hearingId,
     },
   };
-  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingsData, refetch: refetchHearing } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
@@ -108,7 +107,6 @@ const InsideHearingMainPage = () => {
       if (hearingData) {
         setHearing(hearingData);
         setTranscriptText(hearingData?.transcript[0]);
-        setAttendees(hearingData.attendees || []);
         setFilingNumber(hearingData?.filingNumber[0]);
       }
     }
@@ -349,8 +347,8 @@ const InsideHearingMainPage = () => {
           {isOpen && (
             <MarkAttendance
               handleModal={handleModal}
-              attendees={attendees}
-              setAttendees={setAttendees}
+              attendees={hearing.attendees || []}
+              refetchHearing={refetchHearing}
               hearingData={hearing}
               setAddPartyModal={setAddPartyModal}
             />
@@ -367,7 +365,8 @@ const InsideHearingMainPage = () => {
             }}
             caseData={caseData}
             tenantId={tenantId}
-            hearingId={hearingId}
+            hearing={hearing}
+            refetchHearing={refetchHearing}
           ></AddParty>
         )}
       </div>
