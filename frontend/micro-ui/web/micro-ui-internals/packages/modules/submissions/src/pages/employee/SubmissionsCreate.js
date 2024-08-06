@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBailBondNew,
+  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -89,7 +89,7 @@ const SubmissionsCreate = () => {
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsSettlement,
-      BAIL_BOND: configsBailBondNew,
+      BAIL_BOND: configsBailBond,
       SURETY: configsSurety,
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,

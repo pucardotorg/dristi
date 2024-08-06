@@ -1219,182 +1219,11 @@ export const configsSettlement = [
   },
 ];
 
-export const configsBailBond = [
-  {
-    body: [
-      {
-        inline: true,
-        label: "REF_ORDER_ID",
-        isMandatory: false,
-        disable: true,
-        key: "refOrderId",
-        type: "text",
-        populators: { name: "refOrderId" },
-      },
-      {
-        inline: true,
-        label: "COURT_NAME",
-        isMandatory: true,
-        key: "courtName",
-        type: "text",
-        populators: { name: "courtName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CASE_NAME",
-        isMandatory: true,
-        key: "caseName",
-        type: "text",
-        populators: { name: "caseName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CNR_NUMBER",
-        isMandatory: true,
-        key: "cnrNumber",
-        type: "text",
-        populators: { name: "cnrNumber", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "FILING_NUMBER",
-        isMandatory: true,
-        key: "filingNumber",
-        type: "text",
-        populators: { name: "filingNumber", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "DATE_OF_APPLICATION",
-        disable: true,
-        isMandatory: true,
-        key: "applicationDate",
-        type: "date",
-        populators: {
-          name: "applicationDate",
-        },
-      },
-      {
-        inline: true,
-        label: "APPLICANT_NAME",
-        isMandatory: true,
-        key: "applicantName",
-        type: "text",
-        populators: { name: "applicantName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "PARTY_TYPE",
-        isMandatory: true,
-        type: "dropdown",
-        key: "partyType",
-        populators: {
-          optionsKey: "name",
-          hideInForm: true,
-          options: [
-            {
-              code: "complainant",
-              name: "Complainant",
-            },
-            {
-              code: "respondant",
-              name: "Respondant",
-            },
-          ],
-        },
-      },
-      {
-        inline: true,
-        label: "REPRESENTED_BY",
-        isMandatory: true,
-        key: "representedBy",
-        type: "text",
-        populators: { name: "representedBy", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "PLACE_OF_DETENTION",
-        isMandatory: true,
-        key: "placeOfDetention",
-        type: "text",
-        populators: {
-          name: "placeOfDetention",
-          error: "CS_ALPHANUMERIC_ALLOWED",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericInputTextValidation",
-            },
-          },
-        },
-      },
-      {
-        inline: true,
-        label: "BAIL_AMOUNT",
-        isMandatory: true,
-        key: "bailAmount",
-        type: "text",
-        populators: {
-          name: "bailAmount",
-          error: "CS_VALID_AMOUNT_DECIMAL",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "twoDecimalNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-];
-
 export const configsSurety = [
   {
     body: [
       {
         inline: true,
-        label: "REF_ORDER_ID",
-        isMandatory: false,
-        disable: true,
-        key: "refOrderId",
-        type: "text",
-        populators: { name: "refOrderId", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "COURT_NAME",
-        isMandatory: true,
-        key: "courtName",
-        type: "text",
-        populators: { name: "courtName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CASE_NAME",
-        isMandatory: true,
-        key: "caseName",
-        type: "text",
-        populators: { name: "caseName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CNR_NUMBER",
-        isMandatory: true,
-        key: "cnrNumber",
-        type: "text",
-        populators: { name: "cnrNumber", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "FILING_NUMBER",
-        isMandatory: true,
-        key: "filingNumber",
-        type: "text",
-        populators: { name: "filingNumber", hideInForm: true },
-      },
-      {
-        inline: true,
         label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
@@ -1405,300 +1234,14 @@ export const configsSurety = [
         },
       },
       {
-        inline: true,
-        label: "APPLICANT_NAME",
-        isMandatory: true,
-        key: "applicantName",
-        type: "text",
-        populators: { name: "applicantName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "PARTY_TYPE",
-        isMandatory: true,
-        type: "dropdown",
-        key: "partyType",
-        populators: {
-          optionsKey: "name",
-          hideInForm: true,
-          options: [
-            {
-              code: "complainant",
-              name: "Complainant",
-            },
-            {
-              code: "respondant",
-              name: "Respondant",
-            },
-          ],
-        },
-      },
-      {
-        inline: true,
-        label: "REPRESENTED_BY",
-        isMandatory: true,
-        key: "representedBy",
-        type: "text",
-        populators: { name: "representedBy", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "NAME_OF_SURETY",
-        isMandatory: true,
-        key: "nameOfSurety",
-        type: "text",
-        populators: {
-          name: "nameOfSurety",
-          error: "CS_ALPHANUMERIC_ALLOWED",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericInputTextValidation",
-            },
-          },
-        },
-      },
-      {
-        inline: true,
-        label: "BAIL_AMOUNT",
-        isMandatory: true,
-        key: "bailAmount",
-        type: "text",
-        populators: {
-          hideInForm: true,
-          name: "bailAmount",
-          error: "CS_VALID_AMOUNT_DECIMAL",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "twoDecimalNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-];
-
-export const configsBail = [
-  {
-    body: [
-      {
-        inline: true,
-        label: "REF_ORDER_ID",
-        isMandatory: false,
-        disable: true,
-        key: "refOrderId",
-        type: "text",
-        populators: { name: "refOrderId" },
-      },
-      {
-        inline: true,
-        label: "COURT_NAME",
-        isMandatory: true,
-        key: "courtName",
-        type: "text",
-        populators: { name: "courtName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CASE_NAME",
-        isMandatory: true,
-        key: "caseName",
-        type: "text",
-        populators: { name: "caseName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "CNR_NUMBER",
-        isMandatory: true,
-        key: "cnrNumber",
-        type: "text",
-        populators: { name: "cnrNumber", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "FILING_NUMBER",
-        isMandatory: true,
-        key: "filingNumber",
-        type: "text",
-        populators: { name: "filingNumber", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "DATE_OF_APPLICATION",
-        disable: true,
-        isMandatory: true,
-        key: "applicationDate",
-        type: "date",
-        populators: {
-          name: "applicationDate",
-        },
-      },
-      {
-        inline: true,
-        label: "APPLICANT_NAME",
-        isMandatory: true,
-        key: "applicantName",
-        type: "text",
-        populators: { name: "applicantName", hideInForm: true },
-      },
-      {
-        inline: true,
-        label: "PARTY_TYPE",
-        isMandatory: true,
-        type: "dropdown",
-        key: "partyType",
-        populators: {
-          optionsKey: "name",
-          hideInForm: true,
-          options: [
-            {
-              code: "complainant",
-              name: "Complainant",
-            },
-            {
-              code: "respondant",
-              name: "Respondant",
-            },
-          ],
-        },
-      },
-      {
-        inline: true,
-        label: "REPRESENTED_BY",
-        isMandatory: true,
-        key: "representedBy",
-        type: "text",
-        populators: { name: "representedBy", hideInForm: true },
-      },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "documentsListForBail",
-        isMandatory: true,
-        populators: {
-          inputs: [
-            {
-              isMandatory: true,
-              name: "documents",
-              // documentSubText: "PRODUCED_DOCUMENTS",
-              documentHeader: "LIST_OF_DOCUMENTS",
-              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
-              headerClassName: "dristi-font-bold",
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomTextArea",
-        key: "reasonForBail",
-        isMandatory: true,
-        populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaHeader: "REASON_FOR_BAIL",
-              headerClassName: "dristi-font-big-bold",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              type: "TextAreaComponent",
-            },
-          ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomTextArea",
-        key: "comments",
-        isMandatory: false,
-        populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaSubHeader: "COMMENTS",
-              subHeaderClassName: "dristi-font-big-bold",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              isOptional: true,
-              type: "TextAreaComponent",
-            },
-          ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-];
-
-export const configsBailBondNew = [
-  {
-    body: [
-      {
-        inline: true,
-        label: "DATE_OF_APPLICATION",
-        disable: true,
-        isMandatory: true,
-        key: "applicationDate",
-        type: "date",
-        populators: {
-          name: "applicationDate",
-        },
-      },
-      {
-        label: "Add any information to support your application",
-        placeholder: "Type Here.....",
-        key: "additionalInfo",
+        label: "REASON_FOR_APPLICATION",
+        placeholder: "TYPE_HERE",
+        key: "reasonForApplication",
         isMandatory: true,
         type: "textarea",
         inline: false,
         populators: {
-          name: "additionalInfo",
-        },
-      },
-      {
-        type: "component",
-        component: "SelectCustomNote",
-        key: "info",
-        inline: false,
-        isMandatory: false,
-        populators: {
-          inputs: [
-            {
-              infoHeader: "Info",
-              infoText: "If you would like to submit document(s) for bail bond, kindly make a separate submission for the same.",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
-              type: "InfoComponent",
-            },
-          ],
+          name: "reasonForApplication",
         },
       },
       {
@@ -1710,24 +1253,124 @@ export const configsBailBondNew = [
         populators: {
           inputs: [
             {
-              infoHeader: "Surety documents",
-              infoText: "To understand what kind of documents you can upload as surety,",
+              infoHeader: "SURETY_DOCUMENTS",
+              infoText: "SURETY_DOCUMENTS_INFO_TEXT",
               infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
               type: "InfoComponent",
-              linkText: "click here",
-              modalHeading: "List of surety documents",
+              linkText: "CLICK_HERE",
+              modalHeading: "LIST_OF_SURETY_DOCUMENT",
               modalData: [
                 {
-                  title: "Tax Records",
-                  description: "PAN Card, Aadhar card, Passport, Driving license, Voter ID, Ration card or Bank passbook",
-                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
+                  title: "TAX_RECORDS",
+                  description: "TAX_RECORDS_DESCRIPTION",
+                  hint: "TAX_RECORDS_DOCUMENT_TYPE",
                 },
                 {
-                  title: "Salary Receipts",
-                  description: "A copy of the bounced chequeon the  basis which this case is being filed",
-                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
+                  title: "SALARY_RECEIPTS",
+                  description: "SALARY_RECEIPTS_DESCRIPTION",
+                  hint: "SALARY_RECEIPTS_DOCUMENT_TYPE",
                 },
               ],
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        component: "AddSubmissionDocument",
+        key: "submissionDocuments",
+        inline: false,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              key: "documentType",
+              type: "dropdown",
+              label: "Document Type",
+              name: "documentType",
+              disable: false,
+              populators: {
+                name: "documentType",
+                optionsKey: "name",
+                required: true,
+                options: [
+                  {
+                    code: "TAX_RECORDS",
+                    name: "TAX_RECORDS",
+                  },
+                  {
+                    code: "SALARY_RECIEPTS",
+                    name: "SALARY_RECIEPTS",
+                  },
+                ],
+              },
+            },
+            {
+              label: "Document Title",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: true,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+              isMandatory: true,
+            },
+            {
+              label: "Attachment",
+              type: "documentUpload",
+              name: "document",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const configsBailBond = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "DATE_OF_APPLICATION",
+        disable: true,
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: {
+          name: "applicationDate",
+        },
+      },
+      {
+        label: "REASON_FOR_APPLICATION",
+        placeholder: "TYPE_HERE",
+        key: "reasonForApplication",
+        isMandatory: true,
+        type: "textarea",
+        inline: false,
+        populators: {
+          name: "reasonForApplication",
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "info",
+        inline: false,
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "BAIL_DOCUMENTS",
+              infoText: "BAIL_DOCUMENTS_INFO_TEXT",
+              infoTooltipMessage: "BAIL_DOCUMENTS_INFO_TOOLTIP_TEXT",
+              type: "InfoComponent",
             },
           ],
         },
@@ -1759,7 +1402,6 @@ export const configsBailBondNew = [
                     code: "salaryReciepts",
                     name: "Salary Reciepts",
                   },
-                  // Add more options as needed
                 ],
               },
             },
