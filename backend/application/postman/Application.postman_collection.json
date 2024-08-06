@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a5bae066-66be-4d7d-b6e3-17c3343bd254",
+		"_postman_id": "9fef4e48-168d-41a3-ab78-87c5bde9fa51",
 		"name": "Application",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23518159"
+		"_exporter_id": "33009635"
 	},
 	"item": [
 		{
@@ -68,6 +68,40 @@
 						"application",
 						"v1",
 						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-comment",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\": {\n            \"id\": 840,\n            \"userName\": \"applicationUser13\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"APPLICATION_APPROVER\",\n                    \"name\": \"APPLICATION_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"APPLICATION_VIEWER\",\n                    \"name\": \"APPLICATION_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"APPLICATION_CREATOR\",\n                    \"name\": \"APPLICATION_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_VIEWER\",\n                    \"name\": \"CASE_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"7f31ad89-42b9-4a85-8274-11823ae7cca6\",\n            \"createdDate\": \"23-05-2024 12:48:57\",\n            \"lastModifiedDate\": \"23-05-2024 12:48:57\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"21-08-2024 12:48:57\"\n        },\n        \"authToken\": \"6923ad4d-4313-43e8-bccb-3114f83dd8bd\"\n    },\n    \"applicationAddComment\": {\n        \"tenantId\": \"pg\",\n        \"comment\":[\n            {\n                    \"tenantId\": \"pg\",\n                    \"comment\":\"sfsgdsdgadg\",\n                    \"individualId\":\"dfadf\"\n            }\n        ],\n        \"applicationNumber\": \"APPLICATION-NO-2024-08-05-000593\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/application/v1/addcomment",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"application",
+						"v1",
+						"addcomment"
 					]
 				}
 			},
