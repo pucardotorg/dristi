@@ -29,7 +29,6 @@ const AddAttendees = ({
     setAddPartyModal(true);
   };
 
-  console.debug(attendees);
   const attendeeOptions = Array.isArray(attendees)
     ? attendees.map((attendee) => ({
         value: attendee.individualId || attendee.name,
