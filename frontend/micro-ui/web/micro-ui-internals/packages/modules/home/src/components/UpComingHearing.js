@@ -74,10 +74,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
-  const roles = Digit.UserService.getUser()?.info?.roles;
-  const isFSO = roles.some((role) => role.code === "FSO_ROLE");
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
+  const roles = userInfo?.roles;
+  const isFSO = roles?.some((role) => role?.code === "FSO_ROLE");
   const [hearingCaseList, setHearingCaseList] = useState([]);
   const [isAdvocateLoading, setIsAdvocateLoading] = useState(false);
   const [isCaseLoading, setIsCaseLoading] = useState(false);
@@ -303,7 +303,6 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const ongoingMonthHearingCount = useMemo(() => {
     return monthlyHearingResponse?.TotalCount;
   }, [monthlyHearingResponse]);
-  console.debug({ isLoading, isLoadingMonthly, isAdvocateLoading, isCaseLoading });
   if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
