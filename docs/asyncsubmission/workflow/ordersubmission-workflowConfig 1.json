@@ -76,7 +76,8 @@
               "action": "PAY",
               "nextState": "COMPLETED",
               "roles": [
-                "SYSTEM_ADMIN"
+                "SYSTEM_ADMIN",
+                "SUBMISSION_CREATOR"
               ]
             },
             {
