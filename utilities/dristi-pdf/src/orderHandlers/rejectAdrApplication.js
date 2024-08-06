@@ -26,8 +26,7 @@ async function rejectAdrApplication(req, res, qrCode) {
     const orderId = req.query.orderId;
     const tenantId = req.query.tenantId;
     const requestInfo = req.body;
-    const orderDate = req.query.date;
-    const taskId = req.query.taskId;
+    const entityId = req.query.entityId;
     const code = req.query.code;
 
     if (!cnrNumber) {
@@ -42,11 +41,8 @@ async function rejectAdrApplication(req, res, qrCode) {
     if (requestInfo == undefined) {
         return renderError(res, "requestInfo cannot be null", 400);
     }
-    if (!orderDate) {
-        return renderError(res, "date is mandatory to generate the PDF", 400);
-    }
-    if (qrCode === 'true' && (!taskId || !code)) {
-        return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
+    if (qrCode === 'true' && (!entityId || !code)) {
+        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
     }
 
     try {
@@ -117,7 +113,7 @@ async function rejectAdrApplication(req, res, qrCode) {
         if (qrCode === 'true') {
             var resCredential;
             try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
             }
@@ -161,13 +157,13 @@ async function rejectAdrApplication(req, res, qrCode) {
                     "date": stringDate,
                     "applicationId": order.applicationNumber[0],
                     "partyName": `${individual.name.givenName} ${individual.name.familyName}`,
-                    "advocateName": "Jane Doe",
-                    "provideBriefReasoning": "the complexity of the case and the potential for significant legal disputes",
-                    "reasonForRejection": "The application for ADR is rejected as the Court believes that the case involves complex issues that require a formal litigation process.",
+                    "advocateName": "[ Advocate Name ]",
+                    "provideBriefReasoning": "[ Reason ]",
+                    "reasonForRejection": "[ Rejection Reason ]",
                     "additionalComments": order.comments,
-                    "judgeSignature": "John Doe",
+                    "judgeSignature": "[ John Doe ]",
                     "judgeName": employee.user.name,
-                    "courtSeal": "Seal of the Superior Court",
+                    "courtSeal": "[ Seal of the Superior Court ]",
                     "qrCodeUrl": base64Url
                 }
 

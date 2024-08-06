@@ -8,7 +8,7 @@ const { renderError } = require("../utils/renderError");
 async function adrCaseReferral(req, res, qrCode) {
     const cnrNumber = req.query.cnrNumber;
     const orderId = req.query.orderId;
-    const taskId = req.query.taskId;
+    const entityId = req.query.entityId;
     const code = req.query.code;
     const tenantId = req.query.tenantId;
     const requestInfo = req.body;
@@ -22,8 +22,8 @@ async function adrCaseReferral(req, res, qrCode) {
     if (!tenantId) {
         return renderError(res, "tenantId is mandatory to generate the PDF", 400);
     }
-    if (qrCode === 'true' && (!taskId || !code)) {
-        return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
+    if (qrCode === 'true' && (!entityId || !code)) {
+        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
     }
     if (requestInfo == undefined) {
         return renderError(res, "requestInfo cannot be null", 400);
@@ -74,7 +74,7 @@ async function adrCaseReferral(req, res, qrCode) {
         if (qrCode === 'true') {
             var resCredential;
             try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
             }
@@ -107,11 +107,10 @@ async function adrCaseReferral(req, res, qrCode) {
                     "year": year,
                     "caseName": courtCase.caseTitle,
                     "date": order.createdDate,
-                    "adrMode": "Mode of ADR from UI",
+                    "adrMode": "[ Mode of ADR from MDMS ]",
                     "additionalComments": order.comments,
-                    "judgeSignature": "Judge's Signature",
+                    "judgeSignature": "[ Judge's Signature ]",
                     "judgeName": employee.user.name,
-                    "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
             ]

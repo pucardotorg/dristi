@@ -27,7 +27,7 @@ async function scheduleHearingDate(req, res, qrCode) {
     const tenantId = req.query.tenantId;
     const requestInfo = req.body;
     const orderDate = req.query.date;
-    const taskId = req.query.taskId;
+    const entityId = req.query.entityId;
     const code = req.query.code;
 
     if (!cnrNumber) {
@@ -45,8 +45,8 @@ async function scheduleHearingDate(req, res, qrCode) {
     if (!orderDate) {
         return renderError(res, "date is mandatory to generate the PDF", 400);
     }
-    if (qrCode === 'true' && (!taskId || !code)) {
-        return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
+    if (qrCode === 'true' && (!entityId || !code)) {
+        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
     }
 
     try {
@@ -133,7 +133,7 @@ async function scheduleHearingDate(req, res, qrCode) {
         if (qrCode === 'true') {
             var resCredential;
             try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
             }
@@ -176,9 +176,9 @@ async function scheduleHearingDate(req, res, qrCode) {
                     "dateOfNextHearing": orderDate,
                     "partyNames": `${individual.name.givenName} ${individual.name.familyName}`,
                     "additionalComments": order.comments,
-                    "judgeSignature": "Judges,s signature",
+                    "judgeSignature": "[ Judges,s signature ]",
                     "judgeName": employee.user.name,
-                    "courtSeal": "Court seal",
+                    "courtSeal": "[ Court seal ]",
                     "qrCodeUrl": base64Url
                 }
 

@@ -8,7 +8,7 @@ const { renderError } = require("../utils/renderError");
 async function caseSettlementRejection(req, res, qrCode) {
     const cnrNumber = req.query.cnrNumber;
     const orderId = req.query.orderId;
-    const taskId = req.query.taskId;
+    const entityId = req.query.entityId;
     const code = req.query.code;
     const tenantId = req.query.tenantId;
     const requestInfo = req.body;
@@ -22,8 +22,8 @@ async function caseSettlementRejection(req, res, qrCode) {
     if (!tenantId) {
         return renderError(res, "tenantId is mandatory to generate the PDF", 400);
     }
-    if (qrCode === 'true' && (!taskId || !code)) {
-        return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
+    if (qrCode === 'true' && (!entityId || !code)) {
+        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
     }
     if (requestInfo == undefined) {
         return renderError(res, "requestInfo cannot be null", 400);
@@ -54,15 +54,6 @@ async function caseSettlementRejection(req, res, qrCode) {
         }
         var mdmsCourtRoom = resMdms.data.mdms[0].data;
 
-        var resMdms1;
-        try {
-            resMdms1 = await search_mdms_order(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the court establishment mdms", 500, ex);
-        }
-        var mdmsCourtEstablishment = resMdms1.data.mdms[0].data;
-
-
         var resOrder;
         try {
             resOrder = await search_order(tenantId, orderId, requestInfo);
@@ -83,10 +74,10 @@ async function caseSettlementRejection(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to query details of the individual", 500, ex);
         }
-        var individual = resIndividual.data.Individual[0];
+        var respondentIndividual = resIndividual.data.Individual[0];
 
         // Filter litigants to find the respondent.primary
-        const complaintParty = courtCase.litigants.find(party => party.partyType === 'respondent.primary');
+        const complaintParty = courtCase.litigants.find(party => party.partyType === 'complaint.primary');
         if (!complaintParty) {
             return renderError(res, "No respondent with partyType 'respondent.primary' found", 400);
         }
@@ -97,13 +88,13 @@ async function caseSettlementRejection(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to query details of the individual", 500, ex);
         }
-        var individual1 = resIndividual1.data.Individual[0];
+        var complaintIndividual = resIndividual1.data.Individual[0];
 
         let base64Url = "";
         if (qrCode === 'true') {
             var resCredential;
             try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
             }
@@ -120,17 +111,17 @@ async function caseSettlementRejection(req, res, qrCode) {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
                     "caseNumber": courtCase.cnrNumber,
-                    "partyName": `${individual1.name.givenName} ${individual1.name.familyName}`,
-                    "otherPartyName": `${individual.name.givenName} ${individual.name.familyName}`,
+                    "partyName": `${complaintIndividual.name.givenName} ${complaintIndividual.name.familyName}`,
+                    "otherPartyName": `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
                     "date": order.createdDate,
-                    "settlementAgreementDate": "Settlement agreement date from UI",
-                    "mechanism": "mechanism from UI",
-                    "implemented": "Implementation status from UI",
-                    "rejectionReason": "Rejection reason from UI",
+                    "settlementAgreementDate": "[ Settlement agreement date from UI ]",
+                    "mechanism": "[ mechanism from UI ]",
+                    "implemented": "[ Implementation status from UI ]",
+                    "rejectionReason": "[ Rejection reason from UI ]",
                     "additionalComments": order.comments,
-                    "judgeSignature": "Judge's Signature",
+                    "judgeSignature": "[ Judge's Signature ]",
                     "judgeName": employee.user.name,
-                    "courtSeal": "Court Seal",
+                    "courtSeal": "[ Court Seal ]",
                     "qrCodeUrl": base64Url
                 }
             ]

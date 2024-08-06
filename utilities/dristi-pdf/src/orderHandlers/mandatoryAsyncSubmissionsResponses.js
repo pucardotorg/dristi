@@ -1,14 +1,14 @@
 const cheerio = require('cheerio');
 const config = require("../config");
 
-const { search_case, search_order, search_hearing, search_mdms_order, search_hrms, search_individual, search_sunbirdrc_credential_service, create_pdf } = require("../api");
+const { search_case, search_order, search_mdms_order, search_hrms, search_sunbirdrc_credential_service, create_pdf } = require("../api");
 
 const { renderError } = require("../utils/renderError");
 
 async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     const cnrNumber = req.query.cnrNumber;
     const orderId = req.query.orderId;
-    const taskId = req.query.taskId;
+    const entityId = req.query.entityId;
     const code = req.query.code;
     const tenantId = req.query.tenantId;
     const requestInfo = req.body;
@@ -22,8 +22,8 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     if (!tenantId) {
         return renderError(res, "tenantId is mandatory to generate the PDF", 400);
     }
-    if (qrCode === 'true' && (!taskId || !code)) {
-        return renderError(res, "taskId and code are mandatory when qrCode is enabled", 400);
+    if (qrCode === 'true' && (!entityId || !code)) {
+        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
     }
     if (requestInfo == undefined) {
         return renderError(res, "requestInfo cannot be null", 400);
@@ -71,33 +71,11 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
         }
         var order = resOrder.data.list[0];
 
-        var resHearing;
-        try {
-            resHearing = await search_hearing(tenantId, cnrNumber, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the hearing", 500, ex);
-        }
-        var hearing = resHearing.data.HearingList[0];
-
-        // Filter litigants to find the respondent.primary
-        const respondentParty = courtCase.litigants.find(party => party.partyType === 'respondent.primary');
-        if (!respondentParty) {
-            return renderError(res, "No respondent with partyType 'respondent.primary' found", 400);
-        }
-
-        var resIndividual;
-        try {
-            resIndividual = await search_individual(tenantId, respondentParty.individualId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the individual", 500, ex);
-        }
-        var individual = resIndividual.data.Individual[0];
-
         let base64Url = "";
         if (qrCode === 'true') {
             var resCredential;
             try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, taskId, requestInfo);
+                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
             } catch (ex) {
                 return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
             }
@@ -129,19 +107,19 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
                     "caseNumber": courtCase.cnrNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
-                    "parties": "Parties from UI",
-                    "documentList": "List of documents from UI",
-                    "evidenceSubmissionDeadline": "Evidence submission deadline from UI",
-                    "ifResponse": "If response from UI",
-                    "responseSubmissionDeadline": "Response submission deadline from UI",
+                    "parties": "[ Parties from UI ]",
+                    "documentList": "[ List of documents from UI ]",
+                    "evidenceSubmissionDeadline": "[ Evidence submission deadline from UI ]",
+                    "ifResponse": "[ If response from UI ]",
+                    "responseSubmissionDeadline": "[ Response submission deadline from UI ]",
                     "additionalComments": order.comments,
-                    "Date": "Date from UI",
-                    "Month": "Month from UI",
-                    "Year": "Year from UI",
-                    "judgeSignature": "Judge's Signature",
+                    "Date": "[ Date from UI ]",
+                    "Month": "[ Month from UI ]",
+                    "Year": "[ Year from UI ]",
+                    "judgeSignature": "[ Judge's Signature ]",
                     "judgeName": employee.user.name,
-                    "designation": "Judge designation",
-                    "courtSeal": "Court Seal",
+                    "designation": "[ Judge designation ]",
+                    "courtSeal": "[ Court Seal ]",
                     "qrCodeUrl": base64Url
                 }
             ]
