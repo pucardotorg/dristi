@@ -157,4 +157,25 @@ public class HearingService {
             throw new CustomException(HEARING_UPDATE_EXCEPTION, "Error occurred while updating hearing: " + e.getMessage());
         }
     }
+
+    public void updateStartAndTime(UpdateTimeRequest body) {
+        try {
+            for(Hearing hearing : body.getHearings()){
+                if(hearing.getHearingId()==null || hearing.getHearingId().isEmpty()){
+                    throw new CustomException(HEARING_UPDATE_TIME_EXCEPTION, "Hearing Id is required for updating start and end time");
+                }
+                Hearing existingHearing = validator.validateHearingExistence(body.getRequestInfo(),hearing);
+                existingHearing.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                existingHearing.getAuditDetails().setLastModifiedBy(body.getRequestInfo().getUserInfo().getUuid());
+                hearing.setAuditDetails(existingHearing.getAuditDetails());
+                producer.push(config.getStartEndTimeUpdateTopic(), hearing);
+            }
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while updating hearing start and end time");
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(HEARING_UPDATE_TIME_EXCEPTION, "Error occurred while updating hearing start and end time: " + e.getMessage());
+        }
+    }
 }

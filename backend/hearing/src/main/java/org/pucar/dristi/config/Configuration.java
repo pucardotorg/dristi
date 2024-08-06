@@ -136,4 +136,7 @@ public class Configuration {
 
     @Value("${verify.attendee.individual.id}")
     private Boolean verifyAttendeeIndividualId;
+
+    @Value("${update.start.end.time.topic}")
+    public String startEndTimeUpdateTopic;
 }

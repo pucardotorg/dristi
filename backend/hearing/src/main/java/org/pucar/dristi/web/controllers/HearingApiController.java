@@ -85,5 +85,15 @@ public class HearingApiController {
 
     }
 
+    @RequestMapping(value = "/v1/update/time", method = RequestMethod.POST)
+    public ResponseEntity<UpdateTimeResponse> hearingV1UpdateTimePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update start and end time + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody UpdateTimeRequest body) {
+
+        hearingService.updateStartAndTime(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        UpdateTimeResponse hearingResponse = UpdateTimeResponse.builder().hearings(body.getHearings()).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
+
+    }
+
 }
 
