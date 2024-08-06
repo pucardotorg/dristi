@@ -309,7 +309,6 @@ const GenerateOrders = () => {
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
   const referenceId = useMemo(() => currentOrder?.additionalDetails?.formdata?.refApplicationId, [currentOrder]);
   const hearingNumber = useMemo(() => currentOrder?.hearingNumber || currentOrder?.additionalDetails?.hearingId || "", [currentOrder]);
-
   const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
@@ -515,10 +514,6 @@ const GenerateOrders = () => {
       };
     }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
-    if (orderType === "SCHEDULING_NEXT_HEARING") {
-      updatedFormdata.lastHearingTranscript = { text: currentOrder?.additionalDetails?.formdata?.transcriptSummary };
-      updatedFormdata.hearingDate = currentOrder?.additionalDetails?.formdata?.nextHearingDate;
-    }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.additionalDetails?.onBehalOfName;
