@@ -1031,10 +1031,11 @@ const GenerateOrders = () => {
           },
         },
       };
-      const summonsArray = currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired
-        ?.filter((data) => !data?.uuid)
-        ?.map(() => ordersService.createOrder(reqbody, { tenantId }));
-      const resList = await Promise.all(summonsArray);
+      const summonsArray = currentOrder?.additionalDetails?.isReIssueSummons
+        ? [{}]
+        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => !data?.uuid);
+      const promiseList = summonsArray?.map(() => ordersService.createOrder(reqbody, { tenantId }));
+      const resList = await Promise.all(promiseList);
       setCreatedSummon(resList[0]?.order?.orderNumber);
       await Promise.all(
         resList.forEach((res) =>
