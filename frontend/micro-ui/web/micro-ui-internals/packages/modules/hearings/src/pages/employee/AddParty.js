@@ -3,18 +3,22 @@ import React, { useCallback, useState } from "react";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
 import { useTranslation } from "react-i18next";
 import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote.js";
+import { Urls } from "../../hooks/services/Urls.js";
 
-const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
+const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetchHearing }) => {
   const { t } = useTranslation();
   const DRISTIService = Digit?.ComponentRegistryService?.getComponent("DRISTIService");
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
-  const Close = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-      <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-    </svg>
-  );
+
+  const { mutateAsync: updateAttendees } = Digit.Hooks.useCustomAPIMutationHook({
+    url: Urls.hearing.hearingUpdate,
+    params: { applicationNumber: "", cnrNumber: "" },
+    body: { tenantId, hearingType: "", status: "" },
+    config: {
+      mutationKey: "addAttendee",
+    },
+  });
 
   const CloseBtn = (props) => {
     return (
@@ -49,7 +53,9 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
     return errors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e?.stopPropagation();
+    e?.preventDefault();
     const cleanedData = aFormData
       .map(({ data }) => {
         const newData = {};
@@ -88,7 +94,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
     });
   };
   const onAdd = async (cleanedData) => {
-    const newWitness = cleanedData.map((data) => {
+    const newWitnesses = cleanedData.map((data) => {
       return {
         isenabled: true,
         displayindex: 0,
@@ -100,6 +106,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
             mobileNumber: [data.phoneNumber],
             textFieldValue: "",
           },
+          addressDetails: [{ addressDetails: data?.address }],
           witnessAdditionalDetails: {
             text: data.additionalDetails,
           },
@@ -112,10 +119,10 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
       ...caseData?.criteria?.[0]?.responseList?.[0],
     };
     const witnessDetails = caseDetails.additionalDetails?.witnessDetails
-      ? [...caseDetails.additionalDetails?.witnessDetails?.formdata, ...newWitness]
-      : [...newWitness];
+      ? [...caseDetails.additionalDetails?.witnessDetails?.formdata, ...newWitnesses]
+      : [...newWitnesses];
 
-    return DRISTIService.addWitness(
+    await DRISTIService.addWitness(
       {
         tenantId,
         caseFilingNumber: caseDetails.filingNumber,
@@ -128,6 +135,24 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
       },
       tenantId
     );
+
+    if (hearing) {
+      const updatedHearing = structuredClone(hearing);
+      updatedHearing.attendees = updatedHearing.attendees || [];
+      updatedHearing.attendees.push(
+        ...newWitnesses.map((witness) => {
+          return {
+            name: [witness.data.firstName, witness.data.lastName].join(" "),
+            type: "Witness",
+            wasPresent: false,
+            isOnline: false,
+          };
+        })
+      );
+
+      await updateAttendees({ body: { hearing: updatedHearing } });
+      refetchHearing?.();
+    }
   };
 
   const onFormValueChange = useCallback(
@@ -177,7 +202,6 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId }) => {
       ))}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
         <Button onButtonClick={handleAddParty} label={t("CASE_ADD_PARTY")} />
-        <Button onButtonClick={handleRemoveParty} label={t("REMOVE_PARTY")} />
       </div>
     </Modal>
   );

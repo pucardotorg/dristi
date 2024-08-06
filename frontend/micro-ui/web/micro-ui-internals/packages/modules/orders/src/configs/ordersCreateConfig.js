@@ -16,7 +16,7 @@ export const applicationTypeConfig = [
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
             select:
-              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`BAIL`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },
@@ -2630,11 +2630,11 @@ export const configsCreateOrderSchedule = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
         disable: false,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },
@@ -2689,34 +2689,28 @@ export const configsCreateOrderWarrant = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
-        disable: false,
+        disable: true,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },
       {
         isMandatory: true,
-        key: "Warrant For",
-        type: "dropdown",
+        key: "warrantFor",
+        type: "text",
         label: "WARRANT_FOR_PARTY",
-        disable: false,
+        disable: true,
         populators: {
           name: "warrantFor",
-          optionsKey: "code",
           error: "required ",
-          mdmsConfig: {
-            masterName: "OrderType",
-            moduleName: "Order",
-            localePrefix: "ORDER_TYPE",
-          },
         },
       },
       {
         isMandatory: true,
-        key: "Warrant Type",
+        key: "warrantType",
         type: "dropdown",
         label: "WARRANT_TYPE",
         disable: false,
@@ -2724,37 +2718,90 @@ export const configsCreateOrderWarrant = [
           name: "warrantType",
           optionsKey: "code",
           error: "required ",
-          mdmsConfig: {
-            masterName: "OrderType",
-            moduleName: "Order",
-            localePrefix: "ORDER_TYPE",
-          },
+          options: [
+            {
+              code: "Warrant_Type_1",
+              name: "Warrant_Type_1",
+            },
+          ],
         },
       },
       {
         isMandatory: true,
-        type: "radio",
-        key: "bailable",
-        label: "Is this a bailable warrant?",
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "bailInfo",
+        withoutLabel: true,
         populators: {
-          name: "bailable",
-          label: "bailableRadioButton",
-          type: "radioButton",
-          optionsKey: "name",
-          error: "Error!",
-          required: false,
-          isMandatory: true,
-          isDependent: true,
-          options: [
+          inputs: [
             {
-              code: "Yes",
-              name: "ES_COMMON_YES",
+              label: "IS_WARRANT_BAILABLE",
+              type: "radioButton",
+              name: "isBailable",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              styles: {
+                marginBottom: 0,
+              },
+              clearFields: { noOfSureties: "", bailableAmount: "" },
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: true,
+                  name: "ES_COMMON_YES",
+                },
+                {
+                  code: false,
+                  name: "ES_COMMON_NO",
+                },
+              ],
             },
             {
-              code: "No",
-              name: "ES_COMMON_NO",
+              label: "NO_OF_SURETIES",
+              type: "radioButton",
+              name: "noOfSureties",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              isMandatory: true,
+              disableFormValidation: false,
+              isDependentOn: "isBailable",
+              dependentKey: {
+                isBailable: ["code"],
+              },
+              styles: {
+                marginBottom: 0,
+              },
+              options: [
+                {
+                  code: 1,
+                  name: "One",
+                },
+                {
+                  code: 2,
+                  name: "Two",
+                },
+              ],
+            },
+            {
+              label: "BAILABLE_AMOUNT",
+              type: "text",
+              name: "bailableAmount",
+              isDependentOn: "isBailable",
+              dependentKey: {
+                isBailable: ["code"],
+              },
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {
+                isNumber: true,
+              },
+              isMandatory: true,
+              disableFormValidation: false,
             },
           ],
+          validation: {},
         },
       },
       // {
@@ -2844,11 +2891,11 @@ export const configsCreateOrderSummon = [
       {
         label: "DATE_OF_HEARING",
         isMandatory: true,
-        key: "doh",
+        key: "dateOfHearing",
         type: "date",
         disable: false,
         populators: {
-          name: "doh",
+          name: "dateOfHearing",
           error: "Required",
         },
       },

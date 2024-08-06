@@ -10,7 +10,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const [selectedChannels, setSelectedChannels] = useState(formData[config.key]?.["selectedChannels"] || []);
   const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs]);
 
-  const { data: caseData } = useSearchCaseService(
+  const { data: caseData, refetch } = useSearchCaseService(
     {
       criteria: [{ filingNumber: filingNumber }],
       tenantId,
@@ -39,6 +39,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
     let users = [];
     if (caseDetails?.additionalDetails) {
       const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata || [];
+      const witnessData = caseDetails?.additionalDetails?.witnessDetails?.formdata || [];
       const updatedRespondentData = respondentData.map((item) => ({
         ...item,
         data: {
@@ -51,12 +52,30 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
             district: address.addressDetails.district,
             pincode: address.addressDetails.pincode,
           })),
+          partyType: "Respondent",
           phone_numbers: item.data.phonenumbers?.mobileNumber || [],
           email: item.data.emails?.emailId,
         },
       }));
-
-      users = [...updatedRespondentData];
+      const updatedWitnessData = witnessData.map((item) => ({
+        ...item,
+        data: {
+          ...item.data,
+          firstName: item.data.firstName,
+          lastName: item.data.lastName,
+          address: item.data.addressDetails?.map((address) => ({
+            locality: address.addressDetails.locality,
+            city: address.addressDetails.city,
+            district: address.addressDetails.district,
+            pincode: address.addressDetails.pincode,
+            address: address.addressDetails,
+          })),
+          partyType: "Witness",
+          phone_numbers: item.data.phonenumbers?.mobileNumber || [],
+          email: item.data.emails?.emailId,
+        },
+      }));
+      users = [...updatedRespondentData, ...updatedWitnessData];
     }
     return users;
   }, [caseDetails]);
@@ -137,7 +156,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                         />
                         <label htmlFor={`${channel.type}-${index}`}>
                           {channel.type === "Post" || channel.type === "Via Police"
-                            ? `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
+                            ? typeof value.address === "string"
+                              ? value.address
+                              : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
                             : value}
                         </label>
                       </div>
@@ -161,7 +182,10 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   }, [config.key, formData]);
 
   const [isPartyModalOpen, setIsPartyModalOpen] = useState(false);
-  const handleAddParty = () => {
+  const handleAddParty = (e) => {
+    console.log(e);
+    e?.stopPropagation();
+    e?.preventDefault();
     setIsPartyModalOpen(!isPartyModalOpen);
   };
 
@@ -181,27 +205,40 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                 selected={selectedParty}
                 select={handleDropdownChange}
               />
-              <Button
-                onButtonClick={handleAddParty}
-                className="add-party-btn"
-                style={{
-                  backgroundColor: "transparent",
-                  color: "blue",
-                  border: "none",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  padding: 0,
-                  WebkitBoxShadow: "none",
-                  boxShadow: "none",
-                }}
-                label={t("+ Add new witness")}
-              />
+              {
+                <Button
+                  onButtonClick={handleAddParty}
+                  className="add-party-btn"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "blue",
+                    border: "none",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    padding: 0,
+                    WebkitBoxShadow: "none",
+                    boxShadow: "none",
+                  }}
+                  label={t("+ Add new witness")}
+                />
+              }
             </div>
           )}
           {input.type !== "dropdown" && renderDeliveryChannels()}
         </div>
       ))}
-      {isPartyModalOpen && <AddParty onCancel={handleAddParty} onDismiss={handleAddParty} tenantId={tenantId} caseData={caseData}></AddParty>}
+      {isPartyModalOpen && (
+        <AddParty
+          onCancel={handleAddParty}
+          onDismiss={handleAddParty}
+          tenantId={tenantId}
+          caseData={caseData}
+          onAddSuccess={() => {
+            handleAddParty();
+            refetch();
+          }}
+        ></AddParty>
+      )}
     </div>
   );
 };

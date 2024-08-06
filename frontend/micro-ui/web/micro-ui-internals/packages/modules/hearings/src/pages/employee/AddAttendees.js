@@ -1,5 +1,6 @@
 import { Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   Array.isArray(keys) &&
@@ -22,13 +23,16 @@ const AddAttendees = ({
   setForm,
   setIsDisabled,
 }) => {
+  const { t } = useTranslation();
   const onClickAddWitness = () => {
     handleModal();
     setAddPartyModal(true);
   };
+
+  console.debug(attendees);
   const attendeeOptions = Array.isArray(attendees)
     ? attendees.map((attendee) => ({
-        value: attendee.individualId,
+        value: attendee.individualId || attendee.name,
         label: attendee.name,
       }))
     : [];
@@ -39,7 +43,7 @@ const AddAttendees = ({
         .filter((attendee) => !attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
-            value: attendee.individualId,
+            value: attendee.individualId || attendee.name,
             label: attendee.name,
           };
         }),
@@ -52,7 +56,7 @@ const AddAttendees = ({
         .filter((attendee) => attendee.isOnline && attendee.wasPresent)
         .map((attendee) => {
           return {
-            value: attendee.individualId,
+            value: attendee.individualId || attendee.name,
             label: attendee.name,
           };
         }),

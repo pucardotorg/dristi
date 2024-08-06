@@ -4,11 +4,11 @@ import DisplayAttendees from "./DisplayAttendees";
 import AddAttendees from "./AddAttendees";
 import { hearingService } from "../../hooks/services";
 
-const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData = {}, setAddPartyModal }) => {
+const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddPartyModal, refetchHearing }) => {
   const partiesToAttend = attendees.length;
   const onlineAttendees = attendees.filter((attendee) => attendee.isOnline && attendee.wasPresent);
-  const offlineAttendees = attendees.filter((attendee) => !attendee.isOnline && attendee.wasPresent );
-  
+  const offlineAttendees = attendees.filter((attendee) => !attendee.isOnline && attendee.wasPresent);
+
   const [isAddingAttendees, setIsAddingAttendee] = useState(false);
   const [formError, setFormError] = useState("");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -32,10 +32,10 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
     }
 
     const updatedAttendees = attendees.map((attendee) => {
-      if (onlineIds.includes(attendee.individualId)) {
+      if (onlineIds.includes(attendee.individualId || attendee.name)) {
         return { ...attendee, isOnline: true, wasPresent: true };
       }
-      if (offlineIds.includes(attendee.individualId)) {
+      if (offlineIds.includes(attendee.individualId || attendee.name)) {
         return { ...attendee, isOnline: false, wasPresent: true };
       }
       return { ...attendee, wasPresent: false };
@@ -46,7 +46,7 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
     } catch (error) {
       console.error("Error updating hearing:", error);
     }
-    setAttendees(updatedAttendees);
+    refetchHearing?.();
     handleAttendees();
     setFormError("");
   };
@@ -57,8 +57,8 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
   return (
     <Modal
       popupStyles={{
-        width: "40%",
-        minWidth: "300px",
+        width: "50vw",
+        minWidth: "600px",
         position: "absolute",
         height: "400px",
         top: "50%",
@@ -71,7 +71,6 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
       popupModuleMianStyles={{
         padding: "18px",
         margin: "0px",
-        height: "300px",
         height: "calc(100% - 54px)",
         overflowY: "auto",
       }}
@@ -92,7 +91,6 @@ const MarkAttendance = ({ handleModal, attendees = [], setAttendees, hearingData
         {isAddingAttendees ? (
           <AddAttendees
             attendees={attendees}
-            setAttendees={setAttendees}
             handleAttendees={handleAttendees}
             setAddPartyModal={setAddPartyModal}
             handleModal={handleModal}
