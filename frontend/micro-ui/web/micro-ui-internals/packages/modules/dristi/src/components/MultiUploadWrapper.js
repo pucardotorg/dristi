@@ -72,6 +72,7 @@ const MultiUploadWrapper = ({
   notSupportedError,
   maxFileErrorMessage,
   displayName,
+  disable,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -162,8 +163,8 @@ const MultiUploadWrapper = ({
         }}
         accept={acceptFiles}
         customClass={customClass}
-        enableButton={enableButton}
-        disabled={!enableButton}
+        enableButton={enableButton || !disable}
+        disabled={!enableButton || disable}
         displayName={displayName}
       />
       <span className="error-msg" style={{ display: "flex" }}>

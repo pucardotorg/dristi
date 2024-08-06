@@ -19,36 +19,16 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState({});
-  const user = localStorage.getItem("user-info");
-  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const [taskType, setTaskType] = useState({});
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit.UserService.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
-  const isCitizen = userRoles.includes("CITIZEN");
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const showSubmissionButtons = useMemo(() => {
     const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
     return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
   }, [currentOrder, userInfo?.uuid, userRoles]);
-  const advocateIds = caseData?.case?.representatives?.map((representative) => {
-    return {
-      id: representative?.advocateId,
-    };
-  });
 
-  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
-    {
-      criteria: advocateIds,
-    },
-    { tenantId: tenantId },
-    "DRISTI",
-    cnrNumber + filingNumber,
-    true
-  );
-
-  // console.log(advocateDetails);
-
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingRes, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -60,7 +40,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
     true
   );
 
-  const { data: ordersRes, refetch: refetchOrdersData, isLoading: isOrdersLoading } = useGetOrders(
+  const { data: ordersRes, isLoading: isOrdersLoading } = useGetOrders(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -75,13 +55,6 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   const previousHearing = hearingRes?.HearingList?.filter((hearing) => hearing.endTime < Date.now()).sort(
     (hearing1, hearing2) => hearing2.endTime - hearing1.endTime
   )[0];
-
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
 
   const navigateOrdersGenerate = () => {
     history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);

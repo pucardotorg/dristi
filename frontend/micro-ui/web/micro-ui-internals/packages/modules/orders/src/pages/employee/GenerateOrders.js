@@ -540,7 +540,6 @@ const GenerateOrders = () => {
     }
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails]);
-
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {

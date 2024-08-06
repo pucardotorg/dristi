@@ -491,7 +491,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           name: `ORDER_TYPE_${orderType}`,
         },
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-        ...(orderType === "BAIL" && { bailType: { type: documentSubmission?.[0]?.applicationList?.applicationType } }),
+        ...(orderType === "BAIL" && {
+          bailType: {
+            type: documentSubmission?.[0]?.applicationList?.applicationType,
+          },
+          submissionDocuments: structuredClone(documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.submissionDocuments),
+        }),
       };
       if (generateOrder) {
         const reqbody = {
