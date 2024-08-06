@@ -143,8 +143,16 @@ const AddAttendees = ({
           <Button
             label={t("ADD_NEW_PARTIES_TO_CASE")}
             onButtonClick={onClickAddWitness}
-            variation={"teritiary"}
-            style={{ border: "none", marginTop: "10px", color: "#rgba(0, 126, 126, 1)" }}
+            variation={"secondary"}
+            style={{ border: "none", boxShadow: "none", backgroundColor: "#fff", padding: "10px", minWidth: "166px" }}
+            textStyles={{
+              fontFamily: "Roboto",
+              fontSize: "16px",
+              fontWeight: 700,
+              lineHeight: "18.75px",
+              textAlign: "center",
+              color: "#007E7E",
+            }}
           ></Button>
         }
         childrenAtTheBottom={true}

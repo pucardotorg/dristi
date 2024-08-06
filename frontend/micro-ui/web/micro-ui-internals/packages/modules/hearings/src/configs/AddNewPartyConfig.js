@@ -25,7 +25,7 @@ const createPartyConfig = (index) => ({
       isMandatory: true,
       populators: {
         name: `partyName${index}`,
-        error: "CORE_REQUIRED_FIELD_ERROR",
+        error: "CS_ALPHABETS_ALLOWED",
         required: true,
         isMandatory: true,
         customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
@@ -33,12 +33,19 @@ const createPartyConfig = (index) => ({
     },
     {
       label: "Phone Number",
-      type: "text",
+      type: "number",
       key: `phoneNumber${index}`,
       isMandatory: true,
       populators: {
         name: `phoneNumber${index}`,
         error: "CORE_REQUIRED_FIELD_ERROR",
+        validation: {
+          minlength: 10,
+          maxlength: 10,
+          patternType: "Pincode",
+          pattern: "[0-9]+",
+          max: "9999999",
+        },
         required: true,
         isMandatory: true,
         customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
@@ -51,7 +58,7 @@ const createPartyConfig = (index) => ({
       isMandatory: true,
       populators: {
         name: `emailId${index}`,
-        error: "CORE_REQUIRED_FIELD_ERROR",
+        error: "CS_ENTER_VALID_EMAIL",
         required: true,
         isMandatory: true,
         customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
@@ -71,14 +78,22 @@ const createPartyConfig = (index) => ({
       },
     },
     {
-      label: "Additional details",
       key: `additionalDetails${index}`,
-      type: "textarea",
+      type: "component",
+      inline: true,
+      isMandatory: false,
+      component: "SelectCustomTextArea",
       populators: {
-        name: `additionalDetails${index}`,
-        error: "CORE_REQUIRED_FIELD_ERROR",
-        required: true,
-        isMandatory: true,
+        inputs: [
+          {
+            textAreaSubHeader: "Additional details",
+            placeholder: "Description",
+            type: "TextAreaComponent",
+            isOptional: true,
+            name: "text",
+          },
+        ],
+
         customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
       },
     },

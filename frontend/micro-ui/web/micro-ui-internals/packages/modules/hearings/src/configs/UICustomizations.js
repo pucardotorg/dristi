@@ -26,7 +26,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
       searchParams.set("hearingId", row.hearingId);
       switch (key) {
@@ -73,7 +73,7 @@ export const UICustomizations = {
       const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
       const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
       const future = row.hearing.startTime > Date.now();
       if (userInfo.roles.map((role) => role.code).includes("EMPLOYEE")) {

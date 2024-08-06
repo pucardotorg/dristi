@@ -771,7 +771,7 @@ export const UICustomizations = {
           },
         ];
       }
-      if (future && userInfo.type === "CITIZEN") {
+      if (future && userInfo?.type === "CITIZEN") {
         return [
           {
             label: "Request for Reschedule hearing",
@@ -977,7 +977,7 @@ export const UICustomizations = {
       case "email":
         return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       case "userName":
-        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
       default:
         return;
     }

@@ -1,5 +1,5 @@
 import { Button, CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
 import { useTranslation } from "react-i18next";
 import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote.js";
@@ -10,6 +10,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
   const DRISTIService = Digit?.ComponentRegistryService?.getComponent("DRISTIService");
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
+  const setFormErrors = useRef([]);
 
   const { mutateAsync: updateAttendees } = Digit.Hooks.useCustomAPIMutationHook({
     url: Urls.hearing.hearingUpdate,
@@ -43,13 +44,13 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
     }
   };
 
-  const validateFormData = (data) => {
+  const validateFormData = (data, index) => {
     const errors = {};
-    if (!data.partyName) errors.partyName = "Party name is required";
-    if (!data.partyType) errors.partyType = "Party type is required";
-    if (!data.phoneNumber || !/^\d+$/.test(data.phoneNumber)) errors.phoneNumber = "Phone number is invalid";
-    if (!data.emailId || !/\S+@\S+\.\S+/.test(data.emailId)) errors.emailId = "Email is invalid";
-    if (!data.address) errors.address = "Address is required";
+    if (!data["partyName" + index] || !/^[a-zA-Z\s]+$/.test(data["partyName" + index])) errors["partyName" + index] = "Party name is required";
+    if (!data["partyType" + index]) errors["partyType" + index] = "Party type is required";
+    if (!data["phoneNumber" + index] || !/^\d+$/.test(data["phoneNumber" + index])) errors["phoneNumber" + index] = "Phone number is invalid";
+    if (!data["emailId" + index] || !/\S+@\S+\.\S+/.test(data["emailId" + index])) errors["emailId" + index] = "Email is invalid";
+    if (!data["address" + index]) errors["address" + index] = "Address is required";
     return errors;
   };
 
@@ -57,7 +58,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
     e?.stopPropagation();
     e?.preventDefault();
     const cleanedData = aFormData
-      .map(({ data }) => {
+      .map(({ data }, index) => {
         const newData = {};
         Object.keys(data).forEach((key) => {
           const newKey = key.replace(/\d+$/, "");
@@ -68,9 +69,11 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
           }
         });
         newData.uuid = generateUUID();
-        const errors = validateFormData(newData);
+        const errors = validateFormData(data, index + 1);
         if (Object.keys(errors).length > 0) {
-          console.log("Validation errors:", errors);
+          Object.entries(errors).forEach(([errorKey, value]) => {
+            setFormErrors.current[index](errorKey, value);
+          });
           return null;
         }
         return newData;
@@ -166,14 +169,30 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
 
   return (
     <Modal
+      popupStyles={{
+        width: "60%",
+        minWidth: "600px",
+        position: "absolute",
+        height: "calc(100% - 100px)",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        justify: "space-between",
+      }}
+      popupModuleMianStyles={{
+        padding: 0,
+        margin: "0px",
+        height: "calc(100% - 100px)",
+        overflowY: "auto",
+      }}
       headerBarMain={<h1 className="heading-m">{t("ADD_NEW_PARTY")}</h1>}
       headerBarEnd={<CloseBtn onClick={onCancel} />}
-      actionCancelLabel={t("HEARING_BACK")}
-      actionCancelOnSubmit={onCancel}
+      // actionCancelLabel={t("HEARING_BACK")}
+      // actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("HEARING_ADD")}
       actionSaveOnSubmit={handleSubmit}
     >
-      <div style={{ padding: "16px 24px" }}>
+      <div style={{ padding: "16px 0px 24px 0px" }}>
         <SelectCustomNote
           config={{
             populators: {
@@ -190,18 +209,72 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
           t={t}
         />
       </div>
-      {formConfigs.map((config, index) => (
-        <FormComposerV2
-          key={index}
-          config={[config]}
-          onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-            onFormValueChange(formData, index);
-          }}
-          fieldStyle={{ width: "100%" }}
-        />
-      ))}
+      <div className="add-party">
+        {formConfigs.map((config, index) => (
+          <FormComposerV2
+            key={index}
+            config={[config]}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              onFormValueChange(formData, index);
+              if (!setFormErrors.current.hasOwnProperty(index)) {
+                setFormErrors.current[index] = setError;
+              }
+              if (JSON.stringify(formData) !== JSON.stringify(aFormData[index].data)) {
+                if (formData && Object.keys(formData).length !== 0) {
+                  const errors = validateFormData(formData, index + 1);
+                  for (const key of Object.keys(formData)) {
+                    if (formData[key] && !errors.hasOwnProperty(key)) {
+                      clearErrors(key);
+                    }
+                  }
+                }
+              }
+            }}
+            fieldStyle={{ width: "100%" }}
+          />
+        ))}
+      </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
-        <Button onButtonClick={handleAddParty} label={t("CASE_ADD_PARTY")} />
+        <Button
+          onButtonClick={handleAddParty}
+          label={t("ADD_PARTY")}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            marginTop: "10px",
+            borderColor: "#007E7E",
+            width: "28%",
+            backgroundColor: "#fff",
+          }}
+          textStyles={{
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "start",
+            color: "#007E7E",
+          }}
+        />
+        <Button
+          onButtonClick={handleRemoveParty}
+          label={t("REMOVE_PARTY")}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            marginTop: "10px",
+            borderColor: "#007E7E",
+            width: "28%",
+            backgroundColor: "#fff",
+          }}
+          textStyles={{
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "end",
+            color: "#007E7E",
+          }}
+        />
       </div>
     </Modal>
   );
