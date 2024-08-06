@@ -106,7 +106,7 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript 
   };
 
   const onGenerateOrder = () => {
-    console.log(caseDetails, "caseDetails");
+    console.log(caseDetails, "caseDetails", hearing);
     const requestBody = {
       order: {
         createdDate: new Date().getTime(),
