@@ -55,97 +55,6 @@ export const applicationTypeConfig = [
   },
 ];
 
-export const configs = [
-  {
-    head: "CREATE_SUBMISSION",
-    body: [
-      {
-        isMandatory: true,
-        key: "submissionType",
-        type: "dropdown",
-        label: "SUBMISSION_TYPE",
-        disable: false,
-        populators: {
-          name: "submissionType",
-          optionsKey: "type",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          styles: { maxWidth: "100%" },
-          mdmsConfig: {
-            //Used application type for timebeing since Submission type MDMS data is not defined
-            masterName: "ApplicationType",
-            moduleName: "Application",
-            localePrefix: "SUBMISSION_TYPE",
-          },
-        },
-      },
-      {
-        isMandatory: true,
-        key: "applicationType",
-        type: "dropdown",
-        label: "APPLICATION_TYPE",
-        disable: false,
-        populators: {
-          name: "applicationType",
-          optionsKey: "type",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          styles: { maxWidth: "100%" },
-          mdmsConfig: {
-            masterName: "ApplicationType",
-            moduleName: "Application",
-            localePrefix: "APPLICATION_TYPE",
-          },
-        },
-      },
-      {
-        isMandatory: false,
-        key: "referenceId",
-        type: "dropdown",
-        label: "ORDER",
-        disable: true,
-        populators: {
-          name: "ORDER",
-          optionsKey: "type",
-          styles: { maxWidth: "100%" },
-          error: "required ",
-        },
-      },
-      {
-        inline: true,
-        label: "DATE_PARTY_AVAILABLE",
-        isMandatory: true,
-        key: "datePartyAvailable",
-        type: "date",
-        disable: false,
-        populators: {
-          name: "datePartyAvailable",
-          error: "Required",
-        },
-      },
-      {
-        inline: true,
-        label: "DELAY_REASON",
-        isMandatory: true,
-        key: "delayReason",
-        type: "textarea",
-        disable: false,
-        populators: { name: "delayReason", error: " Required ", validation: { pattern: /^[A-Za-z]+$/i } },
-      },
-      {
-        inline: true,
-        label: "SUPPORTING_DOCUMENTS_OPTIONAL",
-        isMandatory: false,
-        name: "documentUpload",
-        type: "documentUpload",
-        disable: false,
-        module: "SUBMISSION",
-        mdmsModuleName: "pucar-ui",
-        localePrefix: "SUBMISSION",
-        populators: { name: "documentUpload", error: "Required", validation: { pattern: /^[A-Za-z]+$/i } },
-      },
-    ],
-  },
-];
-
 export const configsRescheduleRequest = [
   {
     body: [
@@ -1450,7 +1359,7 @@ export const configsSurety = [
         disable: true,
         key: "refOrderId",
         type: "text",
-        populators: { name: "refOrderId" },
+        populators: { name: "refOrderId", hideInForm: true },
       },
       {
         inline: true,
@@ -1556,6 +1465,7 @@ export const configsSurety = [
         key: "bailAmount",
         type: "text",
         populators: {
+          hideInForm: true,
           name: "bailAmount",
           error: "CS_VALID_AMOUNT_DECIMAL",
           validation: {
@@ -1743,6 +1653,138 @@ export const configsBail = [
               masterName: "alphaNumericValidation",
             },
           },
+        },
+      },
+    ],
+  },
+];
+
+export const configsBailBondNew = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "DATE_OF_APPLICATION",
+        disable: true,
+        isMandatory: true,
+        key: "applicationDate",
+        type: "date",
+        populators: {
+          name: "applicationDate",
+        },
+      },
+      {
+        label: "Add any information to support your application",
+        placeholder: "Type Here.....",
+        key: "additionalInfo",
+        isMandatory: true,
+        type: "textarea",
+        inline: false,
+        populators: {
+          name: "additionalInfo",
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "info",
+        inline: false,
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "Info",
+              infoText: "If you would like to submit document(s) for bail bond, kindly make a separate submission for the same.",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        component: "CustomInfo",
+        key: "suretyDocuments",
+        inline: false,
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "Surety documents",
+              infoText: "To understand what kind of documents you can upload as surety,",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+              linkText: "click here",
+              modalHeading: "List of surety documents",
+              modalData: [
+                {
+                  title: "Tax Records",
+                  description: "PAN Card, Aadhar card, Passport, Driving license, Voter ID, Ration card or Bank passbook",
+                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
+                },
+                {
+                  title: "Salary Receipts",
+                  description: "A copy of the bounced chequeon the  basis which this case is being filed",
+                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        component: "AddSubmissionDocument",
+        key: "submissionDocuments",
+        inline: false,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              key: "documentType",
+              type: "dropdown",
+              label: "Document Type",
+              name: "documentType",
+              disable: false,
+              populators: {
+                name: "documentType",
+                optionsKey: "name",
+                required: true,
+                options: [
+                  {
+                    code: "taxRecords",
+                    name: "Tax Records",
+                  },
+                  {
+                    code: "salaryReciepts",
+                    name: "Salary Reciepts",
+                  },
+                  // Add more options as needed
+                ],
+              },
+            },
+            {
+              label: "Document Title",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: true,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+              isMandatory: true,
+            },
+            {
+              label: "Attachment",
+              type: "documentUpload",
+              name: "document",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
+            },
+          ],
         },
       },
     ],

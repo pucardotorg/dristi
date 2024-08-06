@@ -939,7 +939,7 @@ export const configsScheduleHearingDate = [
         key: "refApplicationId",
         disable: true,
         type: "text",
-        populators: { name: "refApplicationId" },
+        populators: { name: "refApplicationId", hideInForm: true },
       },
       {
         label: "COURT_NAME",

@@ -190,7 +190,6 @@ const InsideHearingMainPage = () => {
     const selectedUUID = selectedWitnessOption.value;
     const selectedWitness = additionalDetails?.witnessDetails?.formdata?.find((w) => w.data.uuid === selectedUUID)?.data || {};
     setSelectedWitness(selectedWitness);
-    console.debug(hearing, selectedWitness);
     setWitnessDepositionText(
       hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition || ""
     );
