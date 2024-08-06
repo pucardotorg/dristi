@@ -5,6 +5,11 @@ serviceMaps:
       description: Persists hearing request details in tables
       fromTopic: create-hearing-application
       isTransaction: true
+      isAuditEnabled: true
+      module: HEARING
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: hearing
       queryMaps:
         - query: INSERT INTO dristi_hearing(id,tenantId,hearingId,filingNumber,cnrNumbers,applicationNumbers,hearingType,status,startTime,endTime,presidedBy,attendees,transcript,vcLink,isActive,additionalDetails,notes,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
@@ -61,6 +66,11 @@ serviceMaps:
       description: Update hearing request details in tables
       fromTopic: update-hearing-application
       isTransaction: true
+      isAuditEnabled: true
+      module: HEARING
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: hearing
       queryMaps:
         - query: UPDATE dristi_hearing SET hearingType = ?, status = ?, startTime = ?, endTime = ?,presidedBy=?, attendees = ?, transcript = ?, vcLink = ?, isActive = ?, additionalDetails = ?, notes = ?, lastModifiedBy = ?, lastModifiedTime = ? WHERE id = ?;
           basePath: hearing
@@ -87,3 +97,22 @@ serviceMaps:
             - jsonPath: $.hearing.auditDetails.lastModifiedBy
             - jsonPath: $.hearing.auditDetails.lastModifiedTime
             - jsonPath: $.hearing.id
+
+    - version: 1.0
+      description: Update hearing start and end time in tables
+      fromTopic: update-start-end-time
+      isTransaction: true
+      isAuditEnabled: true
+      module: HEARING
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: hearing
+      queryMaps:
+        - query: UPDATE dristi_hearing SET startTime = ?, endTime = ?, lastModifiedBy = ?, lastModifiedTime = ? WHERE hearingId = ?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.startTime
+            - jsonPath: $.endTime
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.hearingId
