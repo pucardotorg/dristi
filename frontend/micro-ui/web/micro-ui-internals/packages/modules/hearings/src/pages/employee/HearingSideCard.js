@@ -23,11 +23,6 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
               width: "100%",
               justifyContent: "center",
               backgroundColor: "#fff",
-              "&.icon-label-container": {
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              },
             }}
             textStyles={{
               fontFamily: "Roboto",
@@ -51,11 +46,6 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
               width: "100%",
               justifyContent: "center",
               backgroundColor: "#fff",
-              "&.icon-label-container": {
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              },
             }}
             textStyles={{
               fontFamily: "Roboto",
@@ -79,11 +69,6 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
               width: "100%",
               justifyContent: "center",
               backgroundColor: "#fff",
-              "&.icon-label-container": {
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              },
             }}
             textStyles={{
               fontFamily: "Roboto",
@@ -107,11 +92,6 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
               width: "100%",
               justifyContent: "center",
               backgroundColor: "#fff",
-              "&.icon-label-container": {
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              },
             }}
             textStyles={{
               fontFamily: "Roboto",

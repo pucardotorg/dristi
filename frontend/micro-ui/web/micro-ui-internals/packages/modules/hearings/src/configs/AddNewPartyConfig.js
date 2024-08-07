@@ -3,7 +3,7 @@ const createPartyConfig = (index) => ({
   head: `Party ${index}`,
   body: [
     {
-      label: "Party Type",
+      label: "PARTY_TYPE",
       type: "dropdown",
       isMandatory: true,
       key: `partyType${index}`,
@@ -19,7 +19,7 @@ const createPartyConfig = (index) => ({
       },
     },
     {
-      label: "Party Name",
+      label: "PARTY_NAME",
       key: `partyName${index}`,
       type: "text",
       isMandatory: true,
@@ -32,7 +32,7 @@ const createPartyConfig = (index) => ({
       },
     },
     {
-      label: "Phone Number",
+      label: "PARTY_PHONE_NUMBER",
       type: "number",
       key: `phoneNumber${index}`,
       isMandatory: true,
@@ -52,7 +52,7 @@ const createPartyConfig = (index) => ({
       },
     },
     {
-      label: "Email ID",
+      label: "PARTY_EMAIL_ID",
       key: `emailId${index}`,
       type: "text",
       isMandatory: true,
@@ -65,7 +65,7 @@ const createPartyConfig = (index) => ({
       },
     },
     {
-      label: "Address",
+      label: "PARTY_ADDRESS",
       key: `address${index}`,
       type: "text",
       isMandatory: true,
@@ -86,7 +86,7 @@ const createPartyConfig = (index) => ({
       populators: {
         inputs: [
           {
-            textAreaSubHeader: "Additional details",
+            textAreaSubHeader: "PARTY_ADDITIONAL_DETAILS",
             placeholder: "Description",
             type: "TextAreaComponent",
             isOptional: true,

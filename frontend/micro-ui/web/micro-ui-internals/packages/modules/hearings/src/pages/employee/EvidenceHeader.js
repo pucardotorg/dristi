@@ -76,11 +76,6 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
                 <Button
                   style={{
                     backgroundColor: "#fff",
-                    "&.icon-label-container": {
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    },
                   }}
                   textStyles={{
                     fontFamily: "Roboto",
