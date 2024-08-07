@@ -130,6 +130,8 @@ public class ApplicationService {
                     .build();
             applicationAddComment.getComment().forEach(comment -> enrichmentUtil.enrichCommentUponCreate(comment, auditDetails));
             Application applicationToUpdate = applicationList.get(0);
+            if(applicationToUpdate.getComment()==null)
+                applicationToUpdate.setComment(new ArrayList<>());
             applicationToUpdate.getComment().addAll(applicationAddComment.getComment());
             applicationAddComment.setComment(applicationToUpdate.getComment());
             AuditDetails applicationAuditDetails = applicationToUpdate.getAuditDetails();
