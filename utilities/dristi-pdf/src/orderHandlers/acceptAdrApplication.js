@@ -1,8 +1,6 @@
 const cheerio = require('cheerio');
 const config = require("../config");
-
-const { search_case, search_order, search_mdms_order, search_hrms, search_individual_uuid, search_sunbirdrc_credential_service, search_application, create_pdf } = require("../api");
-
+const { search_case, search_order, search_mdms, search_hrms, search_individual_uuid, search_sunbirdrc_credential_service, search_application, create_pdf } = require("../api");
 const { renderError } = require("../utils/renderError");
 
 function formatDate(epochMillis) {
@@ -10,14 +8,13 @@ function formatDate(epochMillis) {
     const date = new Date(epochMillis);
 
     // Ensure that the date is a valid Date object
-    if (isNaN(date)) {
+    if (Number.isNaN(date.getTime())) {
         throw new Error("Invalid date");
     }
 
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-
     return `${day}-${month}-${year}`;
 }
 
@@ -25,103 +22,115 @@ async function acceptAdrApplication(req, res, qrCode) {
     const cnrNumber = req.query.cnrNumber;
     const orderId = req.query.orderId;
     const tenantId = req.query.tenantId;
-    const requestInfo = req.body;
     const entityId = req.query.entityId;
     const code = req.query.code;
+    const requestInfo = req.body.RequestInfo;
 
-    if (!cnrNumber) {
-        return renderError(res, "cnrNumber is mandatory to generate the PDF", 400);
+    const missingFields = [];
+    if (!cnrNumber) missingFields.push("cnrNumber");
+    if (!orderId) missingFields.push("orderId");
+    if (!tenantId) missingFields.push("tenantId");
+    if (requestInfo === undefined) missingFields.push("requestInfo");
+    if (qrCode === 'true' && (!entityId || !code)) missingFields.push("entityId and code");
+
+    if (missingFields.length > 0) {
+        return renderError(res, `${missingFields.join(", ")} are mandatory to generate the PDF`, 400);
     }
-    if (!orderId) {
-        return renderError(res, "orderId is mandatory to generate the PDF", 400);
-    }
-    if (!tenantId) {
-        return renderError(res, "tenantId is mandatory to generate the PDF", 400);
-    }
-    if (requestInfo == undefined) {
-        return renderError(res, "requestInfo cannot be null", 400);
-    }
-    if (qrCode === 'true' && (!entityId || !code)) {
-        return renderError(res, "entityId and code are mandatory when qrCode is enabled", 400);
-    }
+
+    // Function to handle API calls
+    const handleApiCall = async (apiCall, errorMessage) => {
+        try {
+            return await apiCall();
+        } catch (ex) {
+            renderError(res, `${errorMessage}`, 500, ex);
+            throw ex;  // Ensure the function stops on error
+        }
+    };
 
     try {
-        var resCase;
-        try {
-            resCase = await search_case(cnrNumber, tenantId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the case", 500, ex);
+        // Search for case details
+        const resCase = await handleApiCall(
+            () => search_case(cnrNumber, tenantId, requestInfo),
+            "Failed to query case service"
+        );
+        const courtCase = resCase?.data?.criteria[0]?.responseList[0];
+        if (!courtCase) {
+            renderError(res, "Court case not found", 404);
         }
-        var courtCase = resCase.data.criteria[0].responseList[0];
 
-        var resHrms;
-        try {
-            resHrms = await search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of HRMS", 500, ex);
+        // Search for HRMS details
+        const resHrms = await handleApiCall(
+            () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+            "Failed to query HRMS service"
+        );
+        const employee = resHrms?.data?.Employees[0];
+        if (!employee) {
+            renderError(res, "Employee not found", 404);
         }
-        var employee = resHrms.data.Employees[0];
-
-        var resMdms;
-        try {
-            resMdms = await search_mdms_order(courtCase.courtId, "common-masters.Court_Rooms", tenantId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the court room mdms", 500, ex);
+        
+        // Search for MDMS court room details
+        const resMdms = await handleApiCall(
+            () => search_mdms(courtCase.courtId, "common-masters.Court_Rooms", tenantId, requestInfo),
+            "Failed to query MDMS service for court room"
+        );
+        const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+        if (!mdmsCourtRoom) {
+            renderError(res, "Court room MDMS master not found", 404);
         }
-        var mdmsCourtRoom = resMdms.data.mdms[0].data;
 
-        var resMdms1;
-        try {
-            resMdms1 = await search_mdms_order(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the court establishment mdms", 500, ex);
+        // Search for MDMS court establishment details
+        const resMdms1 = await handleApiCall(
+            () => search_mdms(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo),
+            "Failed to query MDMS service for court establishment"
+        );
+        const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
+        if (!mdmsCourtEstablishment) {
+            renderError(res, "Court establishment MDMS master not found", 404);
         }
-        var mdmsCourtEstablishment = resMdms1.data.mdms[0].data;
 
-
-        var resOrder;
-        try {
-            resOrder = await search_order(tenantId, orderId, requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the order", 500, ex);
+        // Search for order details
+        const resOrder = await handleApiCall(
+            () => search_order(tenantId, orderId, requestInfo),
+            "Failed to query order service"
+        );
+        const order = resOrder?.data?.list[0];
+        if (!order) {
+            renderError(res, "Order not found", 404);
         }
-        var order = resOrder.data.list[0];
 
-        var resApplication;
-        try {
-            resApplication = await search_application(tenantId, order.applicationNumber[0], requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the application", 500, ex);
-        }
-        var application = resApplication.data.applicationList[0];
+        // Search for application details
+        const resApplication = await handleApiCall(
+            () => search_application(tenantId, order.applicationNumber[0], requestInfo),
+            "Failed to query application service"
+        );
+        const application = resApplication?.data?.applicationList[0];
         if (!application) {
-            return renderError(res, "application not found", 404);
+            renderError(res, "Application not found", 404);
         }
 
-        var resIndividual;
-        try {
-            resIndividual = await search_individual_uuid(tenantId, application.onBehalfOf[0], requestInfo);
-        } catch (ex) {
-            return renderError(res, "Failed to query details of the individual", 500, ex);
-        }
-        var individual = resIndividual.data.Individual[0];
+        // Search for individual details
+        const resIndividual = await handleApiCall(
+            () => search_individual_uuid(tenantId, application.onBehalfOf[0], requestInfo),
+            "Failed to query individual service using id"
+        );
+        const individual = resIndividual?.data?.Individual[0];
         if (!individual) {
-            return renderError(res, "individual not found", 404);
+            renderError(res, "Individual not found", 404);
         }
 
+        // Handle QR code if enabled
         let base64Url = "";
         if (qrCode === 'true') {
-            var resCredential;
-            try {
-                resCredential = await search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo);
-            } catch (ex) {
-                return renderError(res, "Failed to query details of the sunbirdrc credential service", 500, ex);
-            }
-            // Load the response HTML into cheerio
+            const resCredential = await handleApiCall(
+                () => search_sunbirdrc_credential_service(tenantId, code, entityId, requestInfo),
+                "Failed to query sunbirdrc credential service"
+            );
             const $ = cheerio.load(resCredential.data);
-
-            // Extract the base64 URL from the img tag
-            base64Url = $('img').attr('src');
+            const imgTag = $('img');
+            if (imgTag.length === 0) {
+                return renderError(res, "No img tag found in the sunbirdrc response", 500);
+            }
+            base64Url = imgTag.attr('src');
         }
 
         let year;
@@ -140,7 +149,7 @@ async function acceptAdrApplication(req, res, qrCode) {
         try {
             stringDate = formatDate(order.createdDate);
         } catch (error) {
-            console.error("cannot convert epoch time to date");
+            console.error("Cannot convert epoch time to date");
         }
 
         const data = {
@@ -167,25 +176,22 @@ async function acceptAdrApplication(req, res, qrCode) {
             ]
         };
 
-        var pdfResponse;
+        // Generate the PDF
         const pdfKey = qrCode === 'true' ? config.pdf.accept_adr_application_qr : config.pdf.accept_adr_application;
-        try {
-            pdfResponse = await create_pdf(
-                tenantId,
-                pdfKey,
-                data,
-                requestInfo
-            );
-        } catch (ex) {
-            return renderError(res, "Failed to generate PDF for accept adr", 500, ex);
-        }
+        const pdfResponse = await handleApiCall(
+            () => create_pdf(tenantId, pdfKey, data, req.body),
+            "Failed to generate PDF of order for Acceptance of ADR application"
+        )
         res.writeHead(200, {
             "Content-Type": "application/json",
         });
-        pdfResponse.data.pipe(res);
-
+        pdfResponse.data.pipe(res).on('finish', () => {
+            res.end();
+        }).on('error', (err) => {
+            return renderError(res, "Failed to send PDF response", 500, err);
+        });
     } catch (ex) {
-        return renderError(res, "Failed to query details of accept ADR application", 500, ex);
+        return renderError(res, "Failed to query details of order for Acceptance of ADR application", 500, ex);
     }
 }
 

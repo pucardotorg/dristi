@@ -1,6 +1,6 @@
 # dristi-pdf service
 
-dristi-pdf service work in between pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. 
+The dristi-pdf service works between the pdf-service and the client requesting PDFs. Earlier, the client used to directly call the pdf-service with complete data as JSON, but with the introduction of this new service, one can provide just a few parameters, e.g., application number, tenant ID, to this new service to get a PDF.
 ### DB UML Diagram
 
 - NA
@@ -23,7 +23,7 @@ NA
 
 ## Service Details
 
-dristi-pdf service is new service being added which can work in between existing pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. The dristi-pdf service will take responsibility of getting application data from concerned service and also will do any enrichment if required and then with the data call pdf service to get pdf filestore ID. The service will return pdf filestore ID in the response which can be directly downloaded by the client from filestore service. With this service the existing pdf service endpoints need not be exposed to frontend.
+The dristi-pdf service is a new service being added that can work between the existing pdf-service and the client requesting PDFs. Earlier, the client used to directly call the pdf-service with complete data as JSON, but with the introduction of this new service, one can provide just a few parameters, e.g., application number, tenant ID, to this new service to get a PDF. The dristi-pdf service will take responsibility for getting application data from the concerned service and will also do any enrichment if required, and then with the data, call the pdf-service to get the PDF directly. The service will return the PDF filestore id in the response, which can be fetched by calling the filestore service. With this service, the existing pdf-service endpoints need not be exposed to the frontend.
 
 For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently dristi-pdf service has endpoint for order PDF templates.
 
@@ -32,17 +32,17 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 **Steps/guidelines for adding support for new pdf:**
 
-- Make sure the config for pdf is added in the PDF-Service.Refer the PDF service [documentatiom](https://digit-discuss.atlassian.net/l/c/f3APeZPF )
+- Make sure the config for the PDF is added in the PDF-Service.Refer to the PDF service [documentatiom](https://digit-discuss.atlassian.net/l/c/f3APeZPF )
 
-- Follow code of [existing supported PDFs](https://github.com/egovernments/DIGIT-Works/tree/master/utilities/works-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
+- Follow the code of [existing supported PDFs](https://github.com/egovernments/DIGIT-Works/tree/master/utilities/works-pdf/src/routes) and create a new endpoint with suitable search parameters for each PDF
 
-- Put parameters validations, module level validations ex:- application status,applicationtype and api error responses with proper error messages and error codes
+- Put parameters validations, module level validations e.g., application status,applicationtype and api error responses with proper error messages and error codes
 
-- Make sure whatever service is used for preparing data for PDF, search call to them.
+- Make sure whatever service is used for preparing data for the PDF, make search call to them.
 
-- Prepare data for pdf by calling required services.
+- Prepare data for the PDF by calling required services.
 
-- Use correct pdf key with data to call and return PDF filestor ID (use “/_create” endpoint of PDF service)
+- Use the correct PDF key with data to call and return the PDF filestor ID (use “/_create” endpoint of PDF service)
 
 
 ### API Details

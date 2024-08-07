@@ -4,6 +4,4 @@ const asyncMiddleware = fn =>
       .catch(next);
   };
 
-module.exports = {
-    asyncMiddleware
-}
+module.exports = asyncMiddleware;

@@ -18,7 +18,7 @@ const scheduleHearingDate = require("../orderHandlers/scheduleHearingDate");
 const summonsIssue = require("../orderHandlers/summonsIssue");
 
 
-const { asyncMiddleware } = require("../utils/asyncMiddleware");
+const asyncMiddleware  = require("../utils/asyncMiddleware");
 const { logger } = require("../logger");
 const { clear } = require("winston");
 
