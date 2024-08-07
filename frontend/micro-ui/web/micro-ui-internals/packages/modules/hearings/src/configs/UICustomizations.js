@@ -28,41 +28,70 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
+      const showAction =
+        (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START")) ||
+        row.hearing.status === "INPROGRESS";
       searchParams.set("hearingId", row.hearingId);
       switch (key) {
         case "Actions":
           return (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              {row.hearing.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+            <div style={{ display: "flex", justifyContent: "flex-end  ", alignItems: "center" }}>
+              {row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START") && (
                 <Button
                   variation={"secondary"}
-                  label={""}
+                  label={t(`START_HEARING`)}
                   onButtonClick={() => {
                     hearingService.startHearing({ hearing: row.hearing }).then(() => {
                       window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
                     });
                   }}
                   style={{ marginRight: "1rem" }}
-                >
-                  <strong>{t(`START_HEARING`)}</strong>
-                </Button>
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
               )}
               {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
-                <span>{t("HEARING_AWAITING_START")}</span>
+                <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
               )}
               {row.hearing.status === "INPROGRESS" && (
                 <Button
                   variation={"secondary"}
-                  label={""}
+                  label={t("JOIN_HEARING")}
                   onButtonClick={() => {
                     window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
                   }}
                   style={{ marginRight: "1rem" }}
-                >
-                  <strong>{t("JOIN_HEARING")}</strong>
-                </Button>
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
               )}
-              <OverlayDropdown style={{ position: "absolute" }} column={column} row={row} master="commonUiConfig" module="PreHearingsConfig" />
+              {showAction && (
+                <OverlayDropdown
+                  styles={{
+                    width: "40px",
+                    height: "40px",
+                    rotate: "90deg",
+                    border: "1px solid #0A5757",
+                  }}
+                  textStyle={{
+                    color: "#0A5757",
+                  }}
+                  column={column}
+                  row={row}
+                  master="commonUiConfig"
+                  module="PreHearingsConfig"
+                />
+              )}
             </div>
           );
         default:
@@ -76,7 +105,7 @@ export const UICustomizations = {
       const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
       const future = row.hearing.startTime > Date.now();
-      if (userInfo.roles.map((role) => role.code).includes("EMPLOYEE")) {
+      if (userInfo?.roles.map((role) => role.code).includes("EMPLOYEE")) {
         if (future) {
           return [
             {
@@ -136,7 +165,7 @@ export const UICustomizations = {
         ];
       }
 
-      if (userInfo.roles.map((role) => role.code).includes("CITIZEN")) {
+      if (userInfo?.roles.map((role) => role.code).includes("CITIZEN")) {
         if (future) {
           return [
             {

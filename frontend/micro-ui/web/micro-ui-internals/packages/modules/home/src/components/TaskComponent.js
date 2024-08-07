@@ -380,7 +380,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                 <div className="task-section">
                   <PendingTaskAccordion
                     pendingTasks={pendingTaskDataInWeek}
-                    accordionHeader={"Complete this week"}
+                    accordionHeader={"COMPLETE_THIS_WEEK"}
                     t={t}
                     totalCount={pendingTaskDataInWeek?.length}
                     isHighlighted={true}
@@ -390,7 +390,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                 <div className="task-section">
                   <PendingTaskAccordion
                     pendingTasks={allOtherPendingTask}
-                    accordionHeader={"All other tasks"}
+                    accordionHeader={"ALL_OTHER_TASKS"}
                     t={t}
                     totalCount={allOtherPendingTask?.length}
                   />

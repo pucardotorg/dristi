@@ -112,7 +112,7 @@ const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearin
           }}
           formId="modal-action"
         >
-          <div style={{ height: "70px", padding: "5px 24px 16px 24px" }}>
+          <div style={{ height: "70px" }}>
             <CardText style={{ color: "#3D3C3C", fontSize: "16px", fontWeight: 400, lineHeight: "18.75px" }}>{t("END_HEARING_DISCLAIMER")}</CardText>
           </div>
         </Modal>
