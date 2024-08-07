@@ -22,6 +22,7 @@ const dayInMillisecond = 24 * 3600 * 1000;
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
+  console.log(comments, documentSubmission[0].comments);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
@@ -66,7 +67,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       }
       return (
         userRoles.includes("JUDGE_ROLE") &&
-        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(
+          applicationStatus
+        )
       );
     } else {
       if (modalType === "Documents") {
@@ -156,9 +159,28 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       enable: false,
     },
   };
+  const addSubmissionComment = {
+    url: Urls.dristi.addSubmissionComment,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
+
+  const addEvidenceComment = {
+    url: Urls.dristi.addEvidenceComment,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
   const evidenceUpdateMutation = Digit.Hooks.useCustomAPIMutationHook(reqEvidenceUpdate);
+  const submissionComment = Digit.Hooks.useCustomAPIMutationHook(addSubmissionComment);
+  const evidenceComment = Digit.Hooks.useCustomAPIMutationHook(addEvidenceComment);
 
   // const markAsReadPayload = {
   //   tenantId: tenantId,
@@ -414,10 +436,22 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const submitCommentApplication = async (newComment) => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
+    await submissionComment.mutate({
+      url: Urls.dristi.addSubmissionComment,
       params: {},
-      body: { application: applicationCommentsPayload(newComment) },
+      body: { applicationAddComment: newComment },
+      config: {
+        enable: true,
+      },
+    });
+    counterUpdate();
+  };
+
+  const submitCommentEvidence = async (newComment) => {
+    await evidenceComment.mutate({
+      url: Urls.dristi.addEvidenceComment,
+      params: {},
+      body: { evidenceAddComment: newComment },
       config: {
         enable: true,
       },
@@ -574,6 +608,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const handleSubmitComment = async (newComment) => {
     if (modalType === "Submissions") {
       await submitCommentApplication(newComment);
+    } else {
+      await submitCommentEvidence(newComment);
     }
   };
   const actionSaveOnSubmit = async () => {
@@ -633,7 +669,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
-            <div className={modalType === "Submissions" ? "application-details" : "evidence-details"}>
+            <div className={"application-details"}>
               <div>
                 <div className="application-info">
                   <div className="info-row">
@@ -690,7 +726,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                 </div>
               </div>
             </div>
-            {modalType === "Submissions" && userRoles.includes("SUBMISSION_RESPONDER") && (
+            {userRoles.includes("SUBMISSION_RESPONDER") && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
@@ -700,43 +736,82 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                {actionSaveLabel === t("ADD_COMMENT") && showSubmit && (
-                  <div className="comment-send">
-                    <div className="comment-input-wrapper">
-                      <TextInput
-                        placeholder={"Type here..."}
-                        value={currentComment}
-                        onChange={(e) => {
-                          setCurrentComment(e.target.value);
-                        }}
-                      />
-                      <div
-                        className="send-comment-btn"
-                        onClick={() => {
-                          const newComment = {
-                            comment: currentComment,
-                            additionalDetails: {
-                              author: user,
-                              timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                                year: "2-digit",
-                                month: "short",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              }),
-                            },
-                          };
-                          setComments((prev) => [...prev, newComment]);
-                          setCurrentComment("");
-                          // handleSubmitComment(newComment);
-                        }}
-                      >
-                        <RightArrow />
+                {
+                  // actionSaveLabel === t("ADD_COMMENT") &&
+                  showSubmit && (
+                    <div className="comment-send">
+                      <div className="comment-input-wrapper">
+                        <TextInput
+                          placeholder={"Type here..."}
+                          value={currentComment}
+                          onChange={(e) => {
+                            setCurrentComment(e.target.value);
+                          }}
+                        />
+                        <div
+                          className="send-comment-btn"
+                          onClick={() => {
+                            if (currentComment !== "") {
+                              const newComment =
+                                modalType === "Submissions"
+                                  ? {
+                                      tenantId,
+                                      comment: [
+                                        {
+                                          tenantId,
+                                          comment: currentComment,
+                                          individualId: "",
+                                          additionalDetails: {
+                                            author: user,
+                                            timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                              year: "2-digit",
+                                              month: "short",
+                                              day: "2-digit",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                              hour12: true,
+                                            }),
+                                          },
+                                        },
+                                      ],
+                                      applicationNumber: documentSubmission?.[0]?.applicationList?.applicationNumber,
+                                    }
+                                  : {
+                                      tenantId,
+                                      comment: [
+                                        {
+                                          tenantId,
+                                          comment: currentComment,
+                                          individualId: "",
+                                          artifactId: documentSubmission?.[0]?.artifactList?.id,
+                                          additionalDetails: {
+                                            author: user,
+                                            timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                              year: "2-digit",
+                                              month: "short",
+                                              day: "2-digit",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                              hour12: true,
+                                            }),
+                                          },
+                                        },
+                                      ],
+                                      artifactNumber: documentSubmission?.[0]?.artifactList?.artifactNumber,
+                                    };
+                              console.log(userInfo, newComment);
+                              setComments((prev) => [...prev, ...newComment.comment]);
+                              setCurrentComment("");
+                              handleSubmitComment(newComment);
+                            }
+                          }}
+                        >
+                          <RightArrow />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )
+                }
               </div>
             )}
           </div>
