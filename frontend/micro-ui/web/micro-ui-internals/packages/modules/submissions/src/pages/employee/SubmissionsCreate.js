@@ -205,6 +205,12 @@ const SubmissionsCreate = () => {
     allAdvocates,
     userInfo?.uuid,
   ]);
+
+  const partyType = useMemo(
+    () =>
+      caseDetails?.litigants?.filter((item) => item.additionalDetails.uuid === onBehalfOf && item?.partyType?.includes("respondent"))?.[0]?.partyType,
+    [caseDetails, onBehalfOf]
+  );
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -391,14 +397,18 @@ const SubmissionsCreate = () => {
       if (formdata?.reasonForDocumentsSubmission?.documents?.length > 0) {
         documentsList = [...documentsList, ...formdata?.reasonForDocumentsSubmission?.documents];
       }
-      if (formdata?.documentsListForBail?.documents) {
-        documentsList = [...documentsList, ...formdata?.documentsListForBail?.documents];
-      }
-      const documentres = await Promise.all(documentsList?.map((doc) => onDocumentUpload(doc, doc?.name)));
+      const bailDocuments =
+        formdata?.additionalDetails?.submissionDocuments?.submissionDocuments?.map((item) => ({
+          fileType: item?.document?.documentType,
+          fileStore: item?.document?.fileStore,
+          additionalDetails: item?.document?.additionalDetails,
+        })) || [];
+      const documentres = (await Promise.all(documentsList?.map((doc) => onDocumentUpload(doc, doc?.name)))) || [];
       let documents = [];
       let file = null;
       let evidenceReqBody = {};
-      documentres.forEach((res) => {
+      const uploadedDocumentList = [...(documentres || []), ...bailDocuments];
+      uploadedDocumentList.forEach((res) => {
         file = {
           documentType: res?.fileType,
           fileStore: res?.file?.files?.[0]?.fileStoreId,
@@ -448,6 +458,7 @@ const SubmissionsCreate = () => {
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
+          comments: [],
           workflow: {
             id: "workflow123",
             action: SubmissionWorkflowAction.CREATE,
@@ -572,6 +583,7 @@ const SubmissionsCreate = () => {
         onFormValueChange={onFormValueChange}
         onSubmit={handleOpenReview}
         fieldStyle={fieldStyle}
+        key={applicationType}
       />
       {showReviewModal && (
         <ReviewSubmissionModal

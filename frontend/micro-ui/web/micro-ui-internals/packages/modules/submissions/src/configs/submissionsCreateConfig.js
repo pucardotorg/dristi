@@ -1234,14 +1234,27 @@ export const configsSurety = [
         },
       },
       {
-        label: "REASON_FOR_APPLICATION",
-        placeholder: "TYPE_HERE",
+        type: "component",
         key: "reasonForApplication",
         isMandatory: true,
-        type: "textarea",
         inline: false,
+        component: "SelectCustomTextArea",
         populators: {
-          name: "reasonForApplication",
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "REASON_FOR_APPLICATION",
+              subHeaderClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
       {
@@ -1348,14 +1361,27 @@ export const configsBailBond = [
         },
       },
       {
-        label: "REASON_FOR_APPLICATION",
-        placeholder: "TYPE_HERE",
+        type: "component",
         key: "reasonForApplication",
         isMandatory: true,
-        type: "textarea",
         inline: false,
+        component: "SelectCustomTextArea",
         populators: {
-          name: "reasonForApplication",
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "REASON_FOR_APPLICATION",
+              subHeaderClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
       {
