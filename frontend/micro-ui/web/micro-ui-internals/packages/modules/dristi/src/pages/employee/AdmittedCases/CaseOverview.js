@@ -8,6 +8,8 @@ import { OrderWorkflowState } from "../../../Utils/orderWorkflow";
 import PublishedOrderModal from "./PublishedOrderModal";
 import TasksComponent from "../../../../../home/src/components/TaskComponent";
 import NextHearingCard from "./NextHearingCard";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 
 const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest }) => {
   const { t } = useTranslation();
@@ -27,8 +29,39 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
     const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
     return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
   }, [currentOrder, userInfo?.uuid, userRoles]);
+  const advocateIds = caseData?.case?.representatives?.map((representative) => {
+    return {
+      id: representative?.advocateId,
+    };
+  });
 
-  const { data: hearingRes, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
+  const allAdvocates = useMemo(() => getAdvocates(caseData?.case)[userInfo?.uuid], [caseData?.case, userInfo]);
+  const isAdvocatePresent = useMemo(
+    () => (userInfo?.roles?.some((role) => role?.code === "ADVOCATE_ROLE") ? true : allAdvocates?.includes(userInfo?.uuid)),
+    [allAdvocates, userInfo?.roles, userInfo?.uuid]
+  );
+
+  const showMakeSubmission = useMemo(() => {
+    return (
+      isAdvocatePresent &&
+      userRoles?.includes("APPLICATION_CREATOR") &&
+      [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseData?.case?.status)
+    );
+  }, [userRoles, caseData?.case?.status, isAdvocatePresent]);
+
+  const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
+    {
+      criteria: advocateIds,
+    },
+    { tenantId: tenantId },
+    "DRISTI",
+    cnrNumber + filingNumber,
+    true
+  );
+
+  // console.log(advocateDetails);
+
+  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
         filingNumber: filingNumber,
@@ -139,7 +172,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
                       marginTop: "16px",
                     }}
                   >
-                    <Button variation={"outlined"} label={"Raise Application"} onButtonClick={handleMakeSubmission} />
+                    {showMakeSubmission && <Button variation={"outlined"} label={"Raise Application"} onButtonClick={handleMakeSubmission} />}
                   </div>
                 )}
               </div>
