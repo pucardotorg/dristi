@@ -155,9 +155,9 @@ async function rejectReschedulingRequest(req, res, qrCode) {
                     "reasonsForRescheduling": application.applicationType,
                     "originalHearingDate": orderDate,
                     "additionalComments": order.comments,
-                    "judgeSignature": "[ Hon. Alice Johnson ]",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
-                    "courtSeal": "[ Seal of Superior Court ]",
+                    "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
 
@@ -176,10 +176,8 @@ async function rejectReschedulingRequest(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF for reject reschedule request", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 

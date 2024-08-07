@@ -107,9 +107,9 @@ async function adrCaseReferral(req, res, qrCode) {
                     "year": year,
                     "caseName": courtCase.caseTitle,
                     "date": order.createdDate,
-                    "adrMode": "[ Mode of ADR from MDMS ]",
+                    "adrMode": "Mode of ADR from MDMS",
                     "additionalComments": order.comments,
-                    "judgeSignature": "[ Judge's Signature ]",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
                     "qrCodeUrl": base64Url
                 }
@@ -128,10 +128,8 @@ async function adrCaseReferral(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 

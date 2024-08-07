@@ -78,7 +78,7 @@ module.exports = {
   },
 
   paths: {
-    pdf_create: "/pdf-service/v1/_createnosave",
+    pdf_create: "/pdf-service/v1/_create",
     case_search:"/case/v1/_search",
     order_search: "/order/v1/search",
     hearing_search: "/hearing/v1/search",

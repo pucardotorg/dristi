@@ -79,7 +79,7 @@ async function caseSettlementAcceptance(req, res, qrCode) {
         // Filter litigants to find the respondent.primary
         const complaintParty = courtCase.litigants.find(party => party.partyType === 'complaint.primary');
         if (!complaintParty) {
-            return renderError(res, "No respondent with partyType 'respondent.primary' found", 400);
+            return renderError(res, "No respondent with partyType 'complaint.primary' found", 400);
         }
 
         var resIndividual1;
@@ -114,13 +114,13 @@ async function caseSettlementAcceptance(req, res, qrCode) {
                     "partyName": `${complaintIndividual.name.givenName} ${complaintIndividual.name.familyName}`,
                     "otherPartyName": `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
                     "date": order.createdDate,
-                    "settlementAgreementDate": "[ Settlement agreement date from UI ]",
-                    "mechanism": "[ mechanism from UI ]",
-                    "implemented": "[ Implementation status from UI ]",
+                    "settlementAgreementDate": "Settlement agreement date from UI",
+                    "mechanism": "Mechanism from UI",
+                    "implemented": "Implementation status from UI",
                     "additionalComments": order.comments,
-                    "judgeSignature": "[ Judge's Signature ]",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
-                    "courtSeal": "[ Court Seal ]",
+                    "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
             ]
@@ -139,10 +139,8 @@ async function caseSettlementAcceptance(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 

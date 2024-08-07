@@ -95,9 +95,9 @@ async function orderGeneric(req, res, qrCode) {
                         "orderName": order.orderNumber,
                         "date": order.createdDate,
                         "content": order.comments,
-                        "judgeSignature": "[ Judge's Signature ]",
+                        "judgeSignature": "Judge Signature",
                         "judgeName": employee.user.name,
-                        "courtSeal": "[ Court Seal ]",
+                        "courtSeal": "Court Seal",
                         "qrCodeUrl": base64Url
                     }
                 ]
@@ -116,10 +116,8 @@ async function orderGeneric(req, res, qrCode) {
             } catch (ex) {
                 return renderError(res, "Failed to generate PDF", 500, ex);
             }
-            const filename = `${pdfKey}_${new Date().getTime()}`;
             res.writeHead(200, {
-                "Content-Type": "application/pdf",
-                "Content-Disposition": `attachment; filename=${filename}.pdf`,
+                "Content-Type": "application/json",
             });
             pdfResponse.data.pipe(res);
 

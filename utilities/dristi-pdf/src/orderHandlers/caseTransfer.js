@@ -124,15 +124,15 @@ async function caseTransfer(req, res, qrCode) {
                     "date": order.createdDate,
                     "applicationId": order.applicationNumber[0],
                     "partyName": `${individual.name.givenName} ${individual.name.familyName}`,
-                    "courtOrJurisdiction": "[ Court from UI ]",
-                    "groundsForSeekingTransfer": "[ Grounds for seeking transfer from UI ]",
-                    "status": "[ GRANTED/REJECTED from UI ]",
-                    "transferredToCourtOrJurisdiction": "[ Transferred Court from UI ]",
-                    "rejectionReason": "[ Rejection reason from UI ]",
+                    "courtOrJurisdiction": "Court from UI",
+                    "groundsForSeekingTransfer": "Grounds for seeking transfer from UI",
+                    "status": "GRANTED/REJECTED from UI",
+                    "transferredToCourtOrJurisdiction": "Transferred Court from UI",
+                    "rejectionReason": "Rejection reason from UI",
                     "additionalComments": order.comments,
-                    "judgeSignature": "[ Judge's Signature ]",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
-                    "judgeSeal": "[ Court Seal ]",
+                    "judgeSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
             ]
@@ -151,10 +151,8 @@ async function caseTransfer(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 

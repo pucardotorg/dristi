@@ -107,19 +107,19 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
                     "caseNumber": courtCase.cnrNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
-                    "parties": "[ Parties from UI ]",
-                    "documentList": "[ List of documents from UI ]",
-                    "evidenceSubmissionDeadline": "[ Evidence submission deadline from UI ]",
-                    "ifResponse": "[ If response from UI ]",
-                    "responseSubmissionDeadline": "[ Response submission deadline from UI ]",
+                    "parties": "Parties from UI",
+                    "documentList": "List of documents from UI",
+                    "evidenceSubmissionDeadline": "Evidence submission deadline from UI",
+                    "ifResponse": "If response from UI ",
+                    "responseSubmissionDeadline": "Response submission deadline from UI",
                     "additionalComments": order.comments,
-                    "Date": "[ Date from UI ]",
-                    "Month": "[ Month from UI ]",
-                    "Year": "[ Year from UI ]",
-                    "judgeSignature": "[ Judge's Signature ]",
+                    "Date": "Date from UI",
+                    "Month": "Month from UI",
+                    "Year": "Year from UI",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
-                    "designation": "[ Judge designation ]",
-                    "courtSeal": "[ Court Seal ]",
+                    "designation": "Judge designation",
+                    "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
             ]
@@ -137,10 +137,8 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 

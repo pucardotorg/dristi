@@ -155,12 +155,12 @@ async function acceptAdrApplication(req, res, qrCode) {
                     "date": stringDate,
                     "applicationId": order.applicationNumber[0],
                     "partyName": `${individual.name.givenName} ${individual.name.familyName}`,
-                    "advocateName": "[ Advocate Name ]",
-                    "specifyModeOfADR": "[ ADR Mode ]",
+                    "advocateName": "Advocate Name from UI",
+                    "specifyModeOfADR": "ADR Mode from UI",
                     "additionalComments": order.comments,
-                    "judgeSignature": "[ Judge Alice Johnson ]",
+                    "judgeSignature": "Judge Signature",
                     "judgeName": employee.user.name,
-                    "courtSeal": "[ Seal of Superior Court ]",
+                    "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }
 
@@ -179,10 +179,8 @@ async function acceptAdrApplication(req, res, qrCode) {
         } catch (ex) {
             return renderError(res, "Failed to generate PDF for accept adr", 500, ex);
         }
-        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            "Content-Type": "application/json",
         });
         pdfResponse.data.pipe(res);
 
