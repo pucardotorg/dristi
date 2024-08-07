@@ -41,6 +41,8 @@ import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/s
 import { getAdvocates } from "../../utils/caseUtils";
 import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 import _ from "lodash";
+import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
+import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   keys.forEach((key) => {
@@ -148,24 +150,6 @@ const GenerateOrders = () => {
     [caseData]
   );
 
-  const { data: pendingTaskDetails = [], isLoading: pendingTasksLoading } = Digit.Hooks.orders.useGetPendingTask({
-    data: {
-      SearchCriteria: {
-        tenantId,
-        moduleName: "Pending Tasks Service",
-        moduleSearchCriteria: {
-          filingNumber,
-          isCompleted: false,
-        },
-        limit: 10000,
-        offset: 0,
-      },
-    },
-    params: { tenantId },
-    key: filingNumber,
-  });
-  console.debug(pendingTaskDetails);
-
   const { data: courtRoomData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
     select: (data) => {
       let newData = {};
@@ -225,12 +209,7 @@ const GenerateOrders = () => {
     );
   }, [caseDetails]);
 
-  const {
-    data: ordersData,
-    refetch: refetchOrdersData,
-    isLoading: isOrdersLoading,
-    isFetching: isOrdersFetching,
-  } = Digit.Hooks.orders.useSearchOrdersService(
+  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     {
       tenantId,
       criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS },
@@ -327,6 +306,40 @@ const GenerateOrders = () => {
   const referenceId = useMemo(() => currentOrder?.additionalDetails?.formdata?.refApplicationId, [currentOrder]);
   const hearingNumber = useMemo(() => currentOrder?.hearingNumber || currentOrder?.additionalDetails?.hearingId, [currentOrder]);
 
+  const { data: pendingTaskData = [], isLoading: pendingTasksLoading } = useGetPendingTask({
+    data: {
+      SearchCriteria: {
+        tenantId,
+        moduleName: "Pending Tasks Service",
+        moduleSearchCriteria: {
+          filingNumber,
+          isCompleted: false,
+        },
+        limit: 10000,
+        offset: 0,
+      },
+    },
+    params: { tenantId },
+    key: filingNumber,
+  });
+
+  const pendingTaskDetails = useMemo(() => pendingTaskData?.data || [], [pendingTaskData]);
+  const mandatorySubmissionTask = useMemo(() => {
+    const pendingtask = pendingTaskDetails?.filter((obj) =>
+      obj.fields.some((field) => field.key === "referenceId" && field.value === `MANUAL_${currentOrder?.linkedOrderNumber}`)
+    );
+    if (pendingtask) {
+      return pendingtask?.map((item) =>
+        item?.fields.reduce((acc, field) => {
+          acc[field.key] = field.value;
+          return acc;
+        }, {})
+      );
+    }
+    return {};
+  }, [currentOrder?.linkedOrderNumber, pendingTaskDetails]);
+
+  console.debug(mandatorySubmissionTask);
   const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
@@ -342,7 +355,10 @@ const GenerateOrders = () => {
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
-  const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId, [applicationDetails]);
+  const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId, [
+    applicationDetails,
+    currentOrder,
+  ]);
   const { data: hearingsData, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
@@ -629,11 +645,33 @@ const GenerateOrders = () => {
       name = t("MAKE_MANDATORY_SUBMISSION");
       assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
       stateSla = new Date(formdata?.submissionDeadline).getTime();
+      status = "CREATE_SUBMISSION";
+      const promises = assignees.map(async (assignee) => {
+        return ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: {
+            name,
+            entityType,
+            referenceId: `MANUAL_${assignee?.uuid}_${order?.orderNumber}`,
+            status,
+            assignedTo: [assignee],
+            assignedRole,
+            cnrNumber: cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla,
+            additionalDetails: { ...additionalDetails },
+            tenantId,
+          },
+        });
+      });
+      return await Promise.all(promises);
     }
     if (order?.orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
       create = true;
       name = t("MAKE_MANDATORY_SUBMISSION");
       stateSla = new Date(formdata?.newSubmissionDate).getTime();
+      ///TODO: Change stasla on all the pending tasks related to linkedOrderNumber
+      // mandatorySubmissionTask
     }
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
@@ -656,7 +694,7 @@ const GenerateOrders = () => {
             filingNumber: filingNumber,
             isCompleted: false,
             stateSla,
-            additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+            additionalDetails,
             tenantId,
           },
         });
@@ -1138,11 +1176,14 @@ const GenerateOrders = () => {
       }
       referenceId && (await handleApplicationAction(currentOrder));
       const orderResponse = await updateOrder(
-        { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) },
+        { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }), documents: [...currentOrder?.documents, newDoc] },
         OrderWorkflowAction.ESIGN
       );
       createPendingTask({ order: { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) } });
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
+      if (orderType === "SUMMONS") {
+        closeManualPendingTask(currentOrder?.hearingNumber);
+      }
       createTask(orderType, caseDetails, orderResponse);
       setLoader(false);
       setShowSuccessModal(true);
@@ -1231,7 +1272,16 @@ const GenerateOrders = () => {
     history.push("/employee/home/home-pending-task");
   }
 
-  if (loader || isOrdersLoading || isOrdersFetching || isCaseDetailsLoading || isApplicationDetailsLoading || !ordersData?.list || isHearingLoading) {
+  if (
+    loader ||
+    isOrdersLoading ||
+    isOrdersFetching ||
+    isCaseDetailsLoading ||
+    isApplicationDetailsLoading ||
+    !ordersData?.list ||
+    isHearingLoading ||
+    pendingTasksLoading
+  ) {
     return <Loader />;
   }
 

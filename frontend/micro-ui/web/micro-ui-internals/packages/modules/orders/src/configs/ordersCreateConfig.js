@@ -16,7 +16,7 @@ export const applicationTypeConfig = [
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
             select:
-              "(data) => {return data['Order'].OrderType?.filter((item)=>[`BAIL`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SUMMONS`,`BAIL`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },

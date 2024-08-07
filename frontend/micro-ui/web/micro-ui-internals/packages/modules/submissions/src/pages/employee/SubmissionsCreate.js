@@ -13,7 +13,6 @@ import {
   configsRescheduleRequest,
   configsSettlement,
   configsSurety,
-  configsSuretyOld,
   submissionTypeConfig,
 } from "../../configs/submissionsCreateConfig";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
@@ -206,12 +205,12 @@ const SubmissionsCreate = () => {
     allAdvocates,
     userInfo?.uuid,
   ]);
+  const partyType = useMemo(() => caseDetails?.litigants?.find((item) => item.additionalDetails.uuid === onBehalfOf)?.partyType, [
+    caseDetails,
+    onBehalfOf,
+  ]);
+  const sourceType = useMemo(() => (partyType?.toLowerCase()?.includes("complainant") ? "COMPLAINANT" : "ACCUSED"), [partyType]);
 
-  const partyType = useMemo(
-    () =>
-      caseDetails?.litigants?.filter((item) => item.additionalDetails.uuid === onBehalfOf && item?.partyType?.includes("respondent"))?.[0]?.partyType,
-    [caseDetails, onBehalfOf]
-  );
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -427,8 +426,7 @@ const SubmissionsCreate = () => {
             tenantId,
             comments: [],
             file,
-            sourceType: "COMPLAINANT",
-            //ACCUSED // COURT - if respondant is uplading submission
+            sourceType,
           },
         };
         DRISTIService.createEvidence(evidenceReqBody);
@@ -554,7 +552,7 @@ const SubmissionsCreate = () => {
     applicationType === "PRODUCTION_DOCUMENTS" &&
       orderNumber &&
       createPendingTask({
-        refId: orderNumber,
+        refId: `${userInfo?.uuid}_${orderNumber}`,
         isCompleted: true,
         status: "Completed",
       });

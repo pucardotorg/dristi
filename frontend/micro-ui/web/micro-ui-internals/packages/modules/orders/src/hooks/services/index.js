@@ -50,4 +50,12 @@ export const ordersService = {
       data,
       params,
     }),
+  getPendingTaskService: (data, params) =>
+    Request({
+      url: Urls.orders.getPendingTaskFields,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
 };
