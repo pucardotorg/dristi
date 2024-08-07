@@ -736,82 +736,87 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                {
-                  // actionSaveLabel === t("ADD_COMMENT") &&
-                  showSubmit && (
-                    <div className="comment-send">
-                      <div className="comment-input-wrapper">
-                        <TextInput
-                          placeholder={"Type here..."}
-                          value={currentComment}
-                          onChange={(e) => {
-                            setCurrentComment(e.target.value);
-                          }}
-                        />
-                        <div
-                          className="send-comment-btn"
-                          onClick={() => {
-                            if (currentComment !== "") {
-                              const newComment =
-                                modalType === "Submissions"
-                                  ? {
-                                      tenantId,
-                                      comment: [
-                                        {
-                                          tenantId,
-                                          comment: currentComment,
-                                          individualId: "",
-                                          additionalDetails: {
-                                            author: user,
-                                            timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                                              year: "2-digit",
-                                              month: "short",
-                                              day: "2-digit",
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                              hour12: true,
-                                            }),
-                                          },
+                {((modalType === "Submissions" &&
+                  [
+                    SubmissionWorkflowState.PENDINGAPPROVAL,
+                    SubmissionWorkflowState.PENDINGREVIEW,
+                    SubmissionWorkflowState.PENDINGRESPONSE,
+                    SubmissionWorkflowState.COMPLETED,
+                    SubmissionWorkflowState.REJECTED,
+                  ].includes(applicationStatus)) ||
+                  modalType === "Documents") && (
+                  <div className="comment-send">
+                    <div className="comment-input-wrapper">
+                      <TextInput
+                        placeholder={"Type here..."}
+                        value={currentComment}
+                        onChange={(e) => {
+                          setCurrentComment(e.target.value);
+                        }}
+                      />
+                      <div
+                        className="send-comment-btn"
+                        onClick={() => {
+                          if (currentComment !== "") {
+                            const newComment =
+                              modalType === "Submissions"
+                                ? {
+                                    tenantId,
+                                    comment: [
+                                      {
+                                        tenantId,
+                                        comment: currentComment,
+                                        individualId: "",
+                                        additionalDetails: {
+                                          author: user,
+                                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                            year: "2-digit",
+                                            month: "short",
+                                            day: "2-digit",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: true,
+                                          }),
                                         },
-                                      ],
-                                      applicationNumber: documentSubmission?.[0]?.applicationList?.applicationNumber,
-                                    }
-                                  : {
-                                      tenantId,
-                                      comment: [
-                                        {
-                                          tenantId,
-                                          comment: currentComment,
-                                          individualId: "",
-                                          artifactId: documentSubmission?.[0]?.artifactList?.id,
-                                          additionalDetails: {
-                                            author: user,
-                                            timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                                              year: "2-digit",
-                                              month: "short",
-                                              day: "2-digit",
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                              hour12: true,
-                                            }),
-                                          },
+                                      },
+                                    ],
+                                    applicationNumber: documentSubmission?.[0]?.applicationList?.applicationNumber,
+                                  }
+                                : {
+                                    tenantId,
+                                    comment: [
+                                      {
+                                        tenantId,
+                                        comment: currentComment,
+                                        individualId: "",
+                                        artifactId: documentSubmission?.[0]?.artifactList?.id,
+                                        additionalDetails: {
+                                          author: user,
+                                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                            year: "2-digit",
+                                            month: "short",
+                                            day: "2-digit",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: true,
+                                          }),
                                         },
-                                      ],
-                                      artifactNumber: documentSubmission?.[0]?.artifactList?.artifactNumber,
-                                    };
-                              console.log(userInfo, newComment);
-                              setComments((prev) => [...prev, ...newComment.comment]);
-                              setCurrentComment("");
-                              handleSubmitComment(newComment);
-                            }
-                          }}
-                        >
-                          <RightArrow />
-                        </div>
+                                      },
+                                    ],
+                                    artifactNumber: documentSubmission?.[0]?.artifactList?.artifactNumber,
+                                  };
+                            console.log(userInfo, newComment);
+                            setComments((prev) => [...prev, ...newComment.comment]);
+                            setCurrentComment("");
+                            handleSubmitComment(newComment);
+                          }
+                        }}
+                      >
+                        <RightArrow />
                       </div>
                     </div>
-                  )
-                }
+                  </div>
+                )}
               </div>
             )}
           </div>
