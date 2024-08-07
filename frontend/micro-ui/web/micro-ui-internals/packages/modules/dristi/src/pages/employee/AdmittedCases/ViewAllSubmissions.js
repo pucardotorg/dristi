@@ -4,8 +4,8 @@ import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 
 const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvidenceModal }) => {
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const history = useHistory();
   const CloseBtn = (props) => {
     return (

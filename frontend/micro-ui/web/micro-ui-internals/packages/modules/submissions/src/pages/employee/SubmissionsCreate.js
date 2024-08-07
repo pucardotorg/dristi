@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
   applicationTypeConfig,
-  configsBailBondNew,
+  configsBailBond,
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
@@ -50,7 +50,7 @@ const SubmissionsCreate = () => {
   const [makePaymentLabel, setMakePaymentLabel] = useState(false);
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const todayDate = new Date().getTime();
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
@@ -89,7 +89,7 @@ const SubmissionsCreate = () => {
       WITHDRAWAL: configsCaseWithdrawal,
       TRANSFER: configsCaseTransfer,
       SETTLEMENT: configsSettlement,
-      BAIL_BOND: configsBailBondNew,
+      BAIL_BOND: configsBailBond,
       SURETY: configsSurety,
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
@@ -205,6 +205,12 @@ const SubmissionsCreate = () => {
     allAdvocates,
     userInfo?.uuid,
   ]);
+
+  const partyType = useMemo(
+    () =>
+      caseDetails?.litigants?.filter((item) => item.additionalDetails.uuid === onBehalfOf && item?.partyType?.includes("respondent"))?.[0]?.partyType,
+    [caseDetails, onBehalfOf]
+  );
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -391,14 +397,18 @@ const SubmissionsCreate = () => {
       if (formdata?.reasonForDocumentsSubmission?.documents?.length > 0) {
         documentsList = [...documentsList, ...formdata?.reasonForDocumentsSubmission?.documents];
       }
-      if (formdata?.documentsListForBail?.documents) {
-        documentsList = [...documentsList, ...formdata?.documentsListForBail?.documents];
-      }
-      const documentres = await Promise.all(documentsList?.map((doc) => onDocumentUpload(doc, doc?.name)));
+      const bailDocuments =
+        formdata?.additionalDetails?.submissionDocuments?.submissionDocuments?.map((item) => ({
+          fileType: item?.document?.documentType,
+          fileStore: item?.document?.fileStore,
+          additionalDetails: item?.document?.additionalDetails,
+        })) || [];
+      const documentres = (await Promise.all(documentsList?.map((doc) => onDocumentUpload(doc, doc?.name)))) || [];
       let documents = [];
       let file = null;
       let evidenceReqBody = {};
-      documentres.forEach((res) => {
+      const uploadedDocumentList = [...(documentres || []), ...bailDocuments];
+      uploadedDocumentList.forEach((res) => {
         file = {
           documentType: res?.fileType,
           fileStore: res?.file?.files?.[0]?.fileStoreId,
@@ -448,6 +458,7 @@ const SubmissionsCreate = () => {
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
+          comments: [],
           workflow: {
             id: "workflow123",
             action: SubmissionWorkflowAction.CREATE,
@@ -572,6 +583,7 @@ const SubmissionsCreate = () => {
         onFormValueChange={onFormValueChange}
         onSubmit={handleOpenReview}
         fieldStyle={fieldStyle}
+        key={applicationType}
       />
       {showReviewModal && (
         <ReviewSubmissionModal

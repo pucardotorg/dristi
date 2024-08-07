@@ -27,7 +27,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const userInfo = Digit.UserService.getUser()?.info;
   const todayDate = useMemo(() => new Date().getTime(), []);
   const [totalPendingTask, setTotalPendingTask] = useState(0);
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -235,8 +235,10 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
-      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
-        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
+      const listOfFilingNumber = [
+        ...new Set(pendingTaskActionDetails?.map((data) => data?.fields?.find((field) => field.key === "filingNumber")?.value)),
+      ]?.map((data) => ({
+        filingNumber: data || "",
       }));
       const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
         criteria: listOfFilingNumber,

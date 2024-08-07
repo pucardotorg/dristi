@@ -1,5 +1,5 @@
-import { Button, TextArea } from "@egovernments/digit-ui-components";
-import { ActionBar, CardLabel, Dropdown, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { TextArea } from "@egovernments/digit-ui-components";
+import { ActionBar, CardLabel, Dropdown, LabelFieldPair, Button } from "@egovernments/digit-ui-react-components";
 import debounce from "lodash/debounce";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -206,7 +206,7 @@ const InsideHearingMainPage = () => {
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
 
   return (
-    <div className="admitted-case" style={{ display: "flex" }}>
+    <div className="admitted-case" style={{ display: "flex", height: "calc(100vh - 135px)" }}>
       <div className="left-side" style={{ padding: "24px 40px" }}>
         <React.Fragment>
           <EvidenceHearingHeader
@@ -285,7 +285,7 @@ const InsideHearingMainPage = () => {
           )}
         </div>
       </div>
-      <div className="right-side">
+      <div className="right-side" style={{ borderLeft: "1px solid lightgray" }}>
         <HearingSideCard hearingId={hearingId} caseId={caseData?.criteria?.[0]?.responseList?.[0]?.id} filingNumber={filingNumber}></HearingSideCard>
         {adjournHearing && <AdjournHearing hearing={hearing} updateTranscript={_updateTranscriptRequest} tenantID={tenantId} />}
       </div>
@@ -303,28 +303,46 @@ const InsideHearingMainPage = () => {
               gap: "16px",
             }}
           >
-            <button
-              style={{
-                border: "1px solid blue",
-                backgroundColor: "#e6f0ff",
-                color: "#1a73e8",
-                fontWeight: "bold",
-                padding: "10px 20px",
-                borderRadius: "5px",
-                cursor: "pointer",
-                display: "inline-block",
+            <Button
+              label={"Attendance: "}
+              style={{ boxShadow: "none", backgroundColor: "#ECF3FD", borderRadius: "4px", border: "none", padding: "10px" }}
+              textStyles={{
+                fontFamily: "Roboto",
                 fontSize: "16px",
+                fontWeight: 400,
+                lineHeight: "18.75px",
+                textAlign: "center",
+                color: "#0F3B8C",
               }}
             >
-              Attendance: <strong>{attendanceCount}</strong>
-            </button>
+              <h2
+                style={{
+                  paddingLeft: "4px",
+                  fontFamily: "Roboto",
+                  fontSize: "16px",
+                  lineHeight: "18.75px",
+                  textAlign: "center",
+                  color: "#0F3B8C",
+                  fontWeight: "700",
+                }}
+              >
+                {`${attendanceCount}`}
+              </h2>
+            </Button>
             {userHasRole("EMPLOYEE") && (
               <Button
                 label={"Mark Attendance"}
                 variation={"teritiary"}
-                onClick={handleModal}
-                // onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
-                style={{ width: "100%" }}
+                onButtonClick={handleModal}
+                style={{ boxShadow: "none", backgroundColor: "none", borderRadius: "4px", border: "none", padding: "10px" }}
+                textStyles={{
+                  fontFamily: "Roboto",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  lineHeight: "18.75px",
+                  textAlign: "center",
+                  color: "#007E7E",
+                }}
               />
             )}
           </div>
@@ -334,27 +352,53 @@ const InsideHearingMainPage = () => {
                 display: "flex",
                 gap: "16px",
                 width: "100%",
+                justifyContent: "flex-end",
               }}
             >
-              <Button label={t("ADJOURN_HEARING")} variation={"secondary"} onClick={() => setAdjournHearing(true)} style={{ width: "100%" }} />
+              <Button
+                label={t("ADJOURN_HEARING")}
+                variation={"secondary"}
+                onButtonClick={() => setAdjournHearing(true)}
+                style={{ boxShadow: "none", backgroundColor: "#fff", padding: "10px", width: "166px" }}
+                textStyles={{
+                  fontFamily: "Roboto",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  lineHeight: "18.75px",
+                  textAlign: "center",
+                  color: "#007E7E",
+                }}
+              />
 
-              <Button label={t("END_HEARING")} variation={"primary"} onClick={handleEndHearingModal} style={{ width: "100%" }} />
+              <Button
+                label={t("END_HEARING")}
+                variation={"primary"}
+                onButtonClick={handleEndHearingModal}
+                style={{ boxShadow: "none", backgroundColor: "#BB2C2F", border: "none", padding: "10px", width: "166px" }}
+                textStyles={{
+                  fontFamily: "Roboto",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  lineHeight: "18.75px",
+                  textAlign: "center",
+                  color: "#ffffff",
+                }}
+              />
             </div>
           ) : (
             <Button label={t("EXIT_HEARING")} variation={"primary"} onClick={handleExitHearing} />
           )}
-          {isOpen && (
-            <MarkAttendance
-              handleModal={handleModal}
-              attendees={hearing.attendees || []}
-              refetchHearing={refetchHearing}
-              hearingData={hearing}
-              setAddPartyModal={setAddPartyModal}
-            />
-          )}
         </div>
       </ActionBar>
-
+      {isOpen && (
+        <MarkAttendance
+          handleModal={handleModal}
+          attendees={hearing.attendees || []}
+          refetchHearing={refetchHearing}
+          hearingData={hearing}
+          setAddPartyModal={setAddPartyModal}
+        />
+      )}
       <div>
         {addPartyModal && (
           <AddParty

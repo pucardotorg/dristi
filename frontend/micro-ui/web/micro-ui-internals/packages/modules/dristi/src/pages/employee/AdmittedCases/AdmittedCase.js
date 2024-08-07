@@ -49,7 +49,7 @@ const AdmittedCases = () => {
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
   const userInfo = Digit.UserService.getUser()?.info;
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
