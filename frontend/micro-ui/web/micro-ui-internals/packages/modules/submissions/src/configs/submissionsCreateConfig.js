@@ -1358,107 +1358,6 @@ export const configsBailBond = [
           name: "reasonForApplication",
         },
       },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "documentsListForBail",
-        isMandatory: true,
-        populators: {
-          inputs: [
-            {
-              isMandatory: true,
-              name: "documents",
-              // documentSubText: "PRODUCED_DOCUMENTS",
-              documentHeader: "LIST_OF_DOCUMENTS",
-              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
-              headerClassName: "dristi-font-bold",
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomTextArea",
-        key: "reasonForBail",
-        isMandatory: true,
-        populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaHeader: "REASON_FOR_BAIL",
-              headerClassName: "dristi-font-big-bold",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              type: "TextAreaComponent",
-            },
-          ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-  {
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomTextArea",
-        key: "comments",
-        isMandatory: false,
-        populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaSubHeader: "COMMENTS",
-              subHeaderClassName: "dristi-font-big-bold",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              isOptional: true,
-              type: "TextAreaComponent",
-            },
-          ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
-        },
-      },
-    ],
-  },
-];
-
-export const configsSurety = [
-  {
-    body: [
-      {
-        label: "Add any information to support your application",
-        placeholder: "Type Here.....",
-        key: "additionalInfo",
-        isMandatory: true,
-        type: "textarea",
-        inline: false,
-        populators: {
-          name: "additionalInfo",
-        },
-      },
       {
         type: "component",
         component: "SelectCustomNote",
@@ -1468,41 +1367,10 @@ export const configsSurety = [
         populators: {
           inputs: [
             {
-              infoHeader: "Info",
-              infoText: "If you would like to submit document(s) for bail bond, kindly make a separate submission for the same.",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              infoHeader: "BAIL_DOCUMENTS",
+              infoText: "BAIL_DOCUMENTS_INFO_TEXT",
+              infoTooltipMessage: "BAIL_DOCUMENTS_INFO_TOOLTIP_TEXT",
               type: "InfoComponent",
-            },
-          ],
-        },
-      },
-      {
-        type: "component",
-        component: "CustomInfo",
-        key: "suretyDocuments",
-        inline: false,
-        isMandatory: false,
-        populators: {
-          inputs: [
-            {
-              infoHeader: "Surety documents",
-              infoText: "To understand what kind of documents you can upload as surety,",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
-              type: "InfoComponent",
-              linkText: "click here",
-              modalHeading: "List of surety documents",
-              modalData: [
-                {
-                  title: "Tax Records",
-                  description: "PAN Card, Aadhar card, Passport, Driving license, Voter ID, Ration card or Bank passbook",
-                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
-                },
-                {
-                  title: "Salary Receipts",
-                  description: "A copy of the bounced chequeon the  basis which this case is being filed",
-                  hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
-                },
-              ],
             },
           ],
         },
@@ -1534,7 +1402,6 @@ export const configsSurety = [
                     code: "salaryReciepts",
                     name: "Salary Reciepts",
                   },
-                  // Add more options as needed
                 ],
               },
             },
