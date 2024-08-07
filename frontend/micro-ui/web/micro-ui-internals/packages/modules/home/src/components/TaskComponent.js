@@ -27,7 +27,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const userInfo = Digit.UserService.getUser()?.info;
   const todayDate = useMemo(() => new Date().getTime(), []);
   const [totalPendingTask, setTotalPendingTask] = useState(0);
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -174,81 +174,6 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     [getApplicationDetail, history, userType]
   );
 
-  const handleCreateSummonsOrder = useCallback(
-    async ({ cnrNumber, filingNumber, orderType = "SUMMONS", referenceId }) => {
-      const reqBody = {
-        order: {
-          createdDate: new Date().getTime(),
-          tenantId,
-          cnrNumber,
-          filingNumber: filingNumber,
-          statuteSection: {
-            tenantId,
-          },
-          orderType: orderType,
-          status: "",
-          isActive: true,
-          workflow: {
-            action: CaseWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          additionalDetails: {
-            ...(orderType === "SUMMONS" && { hearingId: referenceId }),
-            formdata: {
-              orderType: {
-                code: orderType,
-                type: orderType,
-                name: `ORDER_TYPE_${orderType}`,
-              },
-              refApplicationId: referenceId,
-            },
-          },
-        },
-      };
-      try {
-        const res = await HomeService.customApiService(Urls.orderCreate, reqBody, { tenantId });
-        HomeService.customApiService(Urls.pendingTask, {
-          pendingTask: {
-            name: "Order Created",
-            entityType: "order-managelifecycle",
-            referenceId: `MANUAL_${referenceId}`,
-            status: "SAVE_DRAFT",
-            assignedTo: [],
-            assignedRole: ["JUDGE_ROLE"],
-            cnrNumber: null,
-            filingNumber: filingNumber,
-            isCompleted: true,
-            stateSla: null,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
-        HomeService.customApiService(Urls.pendingTask, {
-          pendingTask: {
-            name: `${t("ORDER_DRAFT_IN_PRGORESS")} : ${t(orderType)}`,
-            entityType: "order-managelifecycle",
-            referenceId: `MANUAL_${res?.order?.orderNumber}`,
-            status: "DRAFT_IN_PROGRESS",
-            assignedTo: [],
-            assignedRole: ["JUDGE_ROLE"],
-            cnrNumber: null,
-            filingNumber: filingNumber,
-            isCompleted: false,
-            stateSla: null,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
-        history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
-      } catch (error) {}
-    },
-    [history, t, tenantId]
-  );
-
   const handleCreateOrder = useCallback(
     async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
       let reqBody = {
@@ -310,8 +235,10 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
-      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
-        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
+      const listOfFilingNumber = [
+        ...new Set(pendingTaskActionDetails?.map((data) => data?.fields?.find((field) => field.key === "filingNumber")?.value)),
+      ]?.map((data) => ({
+        filingNumber: data || "",
       }));
       const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
         criteria: listOfFilingNumber,
@@ -325,7 +252,6 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
         handleCreateOrder,
         handleReviewSubmission,
         handleReviewOrder,
-        handleCreateSummonsOrder,
       };
 
       const tasks = await Promise.all(
@@ -381,7 +307,6 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     [
       getCaseDetailByFilingNumber,
       handleCreateOrder,
-      handleCreateSummonsOrder,
       handleReviewOrder,
       handleReviewSubmission,
       isLoading,

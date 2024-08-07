@@ -69,13 +69,6 @@ const SummonsAndWarrantsModal = () => {
     [caseData]
   );
 
-  const respondentName = useMemo(() => {
-    const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data;
-    return `${respondentData?.respondentFirstName || ""}${
-      respondentData?.respondentMiddleName ? " " + respondentData?.respondentMiddleName + " " : " "
-    }${respondentData?.respondentLastName || ""}`;
-  }, [caseDetails]);
-
   const { caseId, cnrNumber } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "", caseId: caseDetails?.id }), [caseDetails]);
 
   const handleCloseModal = () => {
@@ -89,13 +82,14 @@ const SummonsAndWarrantsModal = () => {
     );
   };
 
-  const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
+  const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, hearingId }) => {
     let reqBody = {
       order: {
         createdDate: new Date().getTime(),
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,
+        hearingNumber: hearingId,
         statuteSection: {
           tenantId,
         },
@@ -111,13 +105,15 @@ const SummonsAndWarrantsModal = () => {
         },
         documents: [],
         additionalDetails: {
+          hearingId: hearingId,
           formdata: {
             orderType: {
               code: orderType,
               type: orderType,
               name: `ORDER_TYPE_${orderType}`,
             },
-            hearingId: referenceId,
+            dateOfHearing: formatDate(new Date(hearingDetails?.startTime)),
+            warrantFor: respondentName,
           },
         },
       },
@@ -128,8 +124,8 @@ const SummonsAndWarrantsModal = () => {
         pendingTask: {
           name: "Order Created",
           entityType: "order-managelifecycle",
-          referenceId: `MANUAL_${referenceId}`,
-          status: "SAVE_DRAFT",
+          referenceId: `MANUAL_${res.order.orderNumber}`,
+          status: "DRAFT_IN_PROGRESS",
           assignedTo: [],
           assignedRole: ["JUDGE_ROLE"],
           cnrNumber: null,
@@ -176,6 +172,16 @@ const SummonsAndWarrantsModal = () => {
 
   const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId }), [filingNumber, orderId, orderNumber]);
 
+  const { respondentName, partyType } = useMemo(() => {
+    const orderData = orderList[orderList.length - 1]?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
+    return {
+      respondentName: `${orderData?.firstName || ""}${orderData?.respondentMiddleName ? " " + orderData?.middleName + " " : " "}${
+        orderData?.lastName || ""
+      }`,
+      partyType: orderData?.partyType || "Respondent",
+    };
+  }, [orderList]);
+
   const CloseButton = (props) => {
     return (
       <div onClick={props?.onClick} className="header-bar-end">
@@ -215,7 +221,9 @@ const SummonsAndWarrantsModal = () => {
           <span className="case-info-value">
             {caseDetails?.caseTitle}, {filingNumber}
           </span>
-          <span className="case-info-value">{respondentName} (Respondent 1)</span>
+          <span className="case-info-value">
+            {respondentName} ({partyType} 1)
+          </span>
           <span className="case-info-value">{hearingDetails?.startTime && formatDate(new Date(hearingDetails?.startTime), "DD-MM-YYYY")}</span>
           <span className="case-info-value">
             {orderList[orderList.length - 1]?.createdDate && formatDate(new Date(orderList[orderList.length - 1]?.createdDate), "DD-MM-YYYY")} (Round{" "}

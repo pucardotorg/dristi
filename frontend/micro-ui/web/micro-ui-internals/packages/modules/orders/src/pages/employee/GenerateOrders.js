@@ -113,7 +113,7 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [createdHearing, setCreatedHearing] = useState({});
+  const [createdSummon, setCreatedSummon] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -258,7 +258,7 @@ const GenerateOrders = () => {
   );
 
   const defaultIndex = useMemo(() => {
-    return formList.findIndex((order) => order.orderNumber === orderNumber);
+    return formList.findIndex((order) => order?.orderNumber === orderNumber);
   }, [formList, orderNumber]);
 
   const defaultOrderData = useMemo(
@@ -499,7 +499,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondents, t]);
+  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant]);
 
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];
@@ -558,7 +558,6 @@ const GenerateOrders = () => {
     }
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails]);
-
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
@@ -665,9 +664,7 @@ const GenerateOrders = () => {
       return await Promise.all(promises);
     }
     if (order?.orderType === "SUMMONS") {
-      debugger;
       assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
-      debugger;
       if (Array.isArray(order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels)) {
         entityType = "order-managelifecycle";
         const promises = order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
@@ -1023,6 +1020,61 @@ const GenerateOrders = () => {
     }
   };
 
+  const handleIssueSummons = async (hearingDate, hearingNumber) => {
+    try {
+      const reqbody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "SUMMONS",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          ...(hearingNumber && { hearingNumber }),
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                code: "SUMMONS",
+                type: "SUMMONS",
+                name: "ORDER_TYPE_SUMMONS",
+              },
+              hearingDate,
+            },
+          },
+        },
+      };
+      const summonsArray = currentOrder?.additionalDetails?.isReIssueSummons
+        ? [{}]
+        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => !data?.uuid);
+      const promiseList = summonsArray?.map(() => ordersService.createOrder(reqbody, { tenantId }));
+      const resList = await Promise.all(promiseList);
+      setCreatedSummon(resList[0]?.order?.orderNumber);
+      await Promise.all(
+        resList.forEach((res) =>
+          createPendingTask({
+            order: res?.order,
+            isAssignedRole: true,
+            createTask: true,
+            taskStatus: "DRAFT_IN_PROGRESS",
+            taskName: t("DRAFT_IN_PROGRESS_ISSUE_SUMMONS"),
+          })
+        )
+      );
+    } catch (error) {}
+  };
+
   const handleIssueOrder = async () => {
     try {
       setLoader(true);
@@ -1064,8 +1116,8 @@ const GenerateOrders = () => {
           { tenantId: tenantId }
         );
         newhearingId = hearingres?.hearing?.hearingId;
-        setCreatedHearing({ hearingId: newhearingId, startDate: currentOrder?.additionalDetails?.formdata?.hearingDate });
-        await createPendingTask({ order: currentOrder, refId: newhearingId, isAssignedRole: true });
+
+        await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.hearingDate, newhearingId);
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
         await handleUpdateHearing({
@@ -1074,10 +1126,7 @@ const GenerateOrders = () => {
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
         if (currentOrder?.additionalDetails?.isReIssueSummons) {
-          setCreatedHearing({
-            hearingId: hearingId || hearingNumber,
-            startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
-          });
+          await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.newHearingDate, hearingNumber || hearingId);
         }
       }
       if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
@@ -1165,54 +1214,6 @@ const GenerateOrders = () => {
     handleSaveDraft({ showReviewModal: true });
   };
 
-  const handleIssueSummonClick = async () => {
-    try {
-      const reqbody = {
-        order: {
-          createdDate: new Date().getTime(),
-          tenantId,
-          cnrNumber,
-          filingNumber,
-          statuteSection: {
-            tenantId,
-          },
-          orderType: "SUMMONS",
-          status: "",
-          isActive: true,
-          workflow: {
-            action: OrderWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          hearingNumber: createdHearing?.hearingId,
-          additionalDetails: {
-            formdata: {
-              orderType: {
-                code: "SUMMONS",
-                type: "SUMMONS",
-                name: "ORDER_TYPE_SUMMONS",
-              },
-              date: createdHearing?.startDate,
-            },
-          },
-        },
-      };
-      const res = await ordersService.createOrder(reqbody, { tenantId });
-      await closeManualPendingTask(createdHearing?.hearingId);
-      await createPendingTask({
-        order: res?.order,
-        isAssignedRole: true,
-        createTask: true,
-        taskStatus: "DRAFT_IN_PROGRESS",
-        taskName: t("DRAFT_IN_PROGRESS_ISSUE_SUMMONS"),
-      });
-      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
-    } catch (error) {}
-  };
-
   const handleClose = async () => {
     if (successModalActionSaveLabel === t("CS_COMMON_CLOSE")) {
       history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
@@ -1222,7 +1223,7 @@ const GenerateOrders = () => {
       return;
     }
     if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
-      await handleIssueSummonClick();
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${createdSummon}`);
     }
   };
 

@@ -8,8 +8,6 @@ import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 import PaymentStatus from "../../components/PaymentStatus";
 import PaymentForSummonModal from "./PaymentForSummonModal";
-import MakeSubmissionBail from "./MakeSubmissionBail";
-// import MakeSubmission from "./MakeSubmission";
 import ReviewSummonsNoticeAndWarrant from "./ReviewSummonsNoticeAndWarrant";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -49,8 +47,6 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/Summons&Notice`} component={() => <ReviewSummonsNoticeAndWarrant />} />
         <PrivateRoute path={`${path}/payment-screen`} component={() => <PaymentStatus />} />
         <PrivateRoute path={`${path}/payment-modal`} component={() => <PaymentForSummonModal />} />
-        <PrivateRoute path={`${path}/makesubmissionbail`} component={() => <MakeSubmissionBail />} />
-        {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
       </AppContainer>
     </Switch>
   );
