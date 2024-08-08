@@ -54,6 +54,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -77,6 +78,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -105,6 +107,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
