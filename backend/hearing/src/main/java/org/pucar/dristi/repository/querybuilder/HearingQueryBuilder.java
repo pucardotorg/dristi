@@ -63,7 +63,7 @@ public class HearingQueryBuilder {
         }
     }
 
-    private void addListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
+    public void addListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
         if (itemList != null && !itemList.isEmpty()) {
             prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList);
         }

@@ -14,6 +14,7 @@ import org.pucar.dristi.web.models.*;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -346,5 +347,50 @@ class HearingQueryBuilderTest {
         // Assert
         assertFalse(query.toString().contains("AND startTime >= ?"));
         assertTrue(preparedStmtList.isEmpty());
+    }
+
+    @Test
+    public void testAddListCriteria() {
+        // Arrange
+        List<String> itemList = Arrays.asList("item1", "item2", "item3");
+        StringBuilder query = new StringBuilder();
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Act
+        hearingQueryBuilder.addListCriteria(itemList, query, preparedStmtList);
+
+        // Assert
+        assertEquals(" AND status IN (?,?,?)", query.toString());
+        assertEquals(itemList, preparedStmtList);
+    }
+
+    @Test
+    public void testPrepareStatementAndArgumentForListCriteria() {
+        // Arrange
+        List<String> itemList = Arrays.asList("item1", "item2", "item3");
+        StringBuilder query = new StringBuilder();
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Act
+        hearingQueryBuilder.addListCriteria(itemList, query, preparedStmtList);
+
+        // Assert
+        assertEquals(" AND status IN (?,?,?)", query.toString());
+        assertEquals(itemList, preparedStmtList);
+    }
+
+    @Test
+    public void testPrepareStatementAndArgumentForListCriteriaWithEmptyList() {
+        // Arrange
+        List<String> itemList = new ArrayList<>();
+        StringBuilder query = new StringBuilder();
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Act
+        hearingQueryBuilder.addListCriteria(itemList, query, preparedStmtList);
+
+        // Assert
+        assertEquals("", query.toString());
+        assertEquals(0, preparedStmtList.size());
     }
 }
