@@ -448,9 +448,11 @@ const LitigantHomePage = () => {
   const today = new Date();
   const history = useHistory();
   const curHr = today.getHours();
+  const userType = Digit.UserService.getType();
   const [callRefetch, SetCallRefetch] = useState(false);
   const refreshInbox = () => {
     SetCallRefetch(true);
+    history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
   };
   return (
     <div className="upcoming-hearing-container" style={{ width: "100%", padding: 40 }}>

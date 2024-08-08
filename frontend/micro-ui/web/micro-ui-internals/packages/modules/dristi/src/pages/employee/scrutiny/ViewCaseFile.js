@@ -244,8 +244,24 @@ function ViewCaseFile({ t, inViewCase = false }) {
     history.push("/digit-ui/employee/dristi/cases");
   };
   const handleAllocationJudge = () => {
-    setActionModal(false);
-    history.push("/digit-ui/employee/dristi/cases");
+    DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            status: ["UNDER_SCRUTINY"],
+          },
+        ],
+        tenantId,
+      },
+      {}
+    )
+      .then((res) => {
+        history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        setActionModal(false);
+      })
+      .catch(() => {
+        setActionModal(false);
+      });
   };
   const handleCloseSucessModal = () => {
     setActionModal(false);
