@@ -54,7 +54,7 @@ public class TaskQueryBuilder {
             String cnrNumber = criteria.getCnrNumber();
             String tenantId = criteria.getTenantId();
             String id = criteria.getId();
-            String status = criteria.getStatus();
+            List<String> status = criteria.getStatus();
             UUID orderId = criteria.getOrderId();
 
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
@@ -63,7 +63,7 @@ public class TaskQueryBuilder {
 
             firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList);
             firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList);
+            firstCriteria = addListCriteria(status, query, firstCriteria, preparedStmtList);
             firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList);
             firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList);
             addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList);
@@ -74,6 +74,25 @@ public class TaskQueryBuilder {
         } catch (Exception e) {
             log.error("Error while building task search query :: {}", e.toString());
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
+        }
+    }
+
+    private boolean addListCriteria(List<String> itemList, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList) {
+        if (itemList != null && !itemList.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
+        if (!itemList.isEmpty()) {
+            query.append("task.status").append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            preparedStmtList.addAll(itemList);
+
         }
     }
 

@@ -107,13 +107,32 @@ public class OrderQueryBuilder {
             firstCriteria = addCriteria(criteria.getTenantId(), query, firstCriteria, "orders.tenantId = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
             firstCriteria = addCriteria(criteria.getOrderType(), query, firstCriteria, "orders.orderType = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
             firstCriteria = addCriteria(criteria.getId(), query, firstCriteria, "orders.id = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
-            firstCriteria = addCriteria(criteria.getStatus(), query, firstCriteria, "orders.status = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+            firstCriteria = addListCriteria(criteria.getStatus(), query, firstCriteria, preparedStmtList, preparedStmtArgList);
 
              addCriteria(criteria.getOrderNumber() == null? null : "%" + criteria.getOrderNumber() + "%", query, firstCriteria, "LOWER(orders.orderNumber) LIKE LOWER(?)", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building order search query :: {}",e.toString());
             throw new CustomException(ORDER_SEARCH_EXCEPTION, "Error occurred while building the order search query: " + e.getMessage());
+        }
+    }
+
+    private boolean addListCriteria(List<String> itemList, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (itemList != null && !itemList.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList, preparedStmtArgList);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
+        if (!itemList.isEmpty()) {
+            query.append("orders.status").append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            preparedStmtList.addAll(itemList);
+            itemList.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
         }
     }
 

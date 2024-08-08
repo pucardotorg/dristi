@@ -52,7 +52,8 @@ public class TaskRepository {
             List<Object> preparedStmtAm = new ArrayList<>();
             List<Object> preparedStmtDc = new ArrayList<>();
             String casesQuery = "";
-            casesQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList);             log.info("Final case query :: {}", casesQuery);
+            casesQuery = queryBuilder.getTaskSearchQuery(criteria,preparedStmtList);
+            log.info("Final case query :: {}", casesQuery);
             List<Task> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB task list :: {}", list);
             if (list != null) {

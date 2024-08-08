@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+
+import java.util.List;
 import java.util.UUID;
 
 @Validated
@@ -40,6 +42,6 @@ public class ApplicationCriteria {
 
     @JsonProperty("status")
     @Valid
-    private String status = null;
+    private List<String> status = null;
 
 }

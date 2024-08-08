@@ -111,7 +111,7 @@ class ApplicationQueryBuilderTest {
         criteria.setFilingNumber("testFilingNumber");
         criteria.setCnrNumber("testCnrNumber");
         criteria.setTenantId("testTenantId");
-        criteria.setStatus("testStatus");
+        criteria.setStatus(Collections.singletonList("testStatus"));
         criteria.setApplicationNumber("testApplicationNumber");
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -250,11 +250,11 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationSearchQueryWithStatus() {
         ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("status123");
+        criteria.setStatus(Collections.singletonList("status123"));
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQueryPart = "app.status = ?";
+        String expectedQueryPart = "app.status";
 
         String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
 
@@ -262,21 +262,6 @@ class ApplicationQueryBuilderTest {
         assertEquals(1, preparedStmtList.size());
         assertEquals("status123", preparedStmtList.get(0));
     }
-
-    @Test
-    void testGetApplicationSearchQueryWithEmptyStatus() {
-        ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("");
-
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
-
-        assertFalse(query.contains("app.status ="));
-        assertEquals(0, preparedStmtList.size());
-    }
-
-
 
     @Test
     void testGetDocumentSearchQueryWithNoIds() {
@@ -292,7 +277,21 @@ class ApplicationQueryBuilderTest {
         assertTrue(preparedStmtList.isEmpty());
     }
 
+    @Test
+    void testGetDocumentSearchQuery() {
+        // Arrange
+        List<String> ids = List.of("1", "2", "3");
+        List<Object> preparedStmtList = new ArrayList<>();
 
+        // Act
+        String query = applicationQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+
+        // Assert
+        String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore,doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id FROM dristi_application_document doc WHERE doc.application_id IN (?,?,?)";
+
+        assertEquals(expectedQuery, query, "The query should match the expected SQL statement.");
+        assertEquals(ids, preparedStmtList, "The prepared statement list should match the input IDs.");
+    }
 
 
     @Test

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.UUID;
 
 @Validated
@@ -29,6 +30,6 @@ public class TaskCriteria {
     private String taskNumber = null;
 
     @JsonProperty("status")
-    private String status = null;
+    private List<String> status = null;
 
 }

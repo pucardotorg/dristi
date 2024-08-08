@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.OrderCriteria;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ class OrderQueryBuilderTest {
         criteria.setFilingNumber("filing123");
         criteria.setTenantId("tenant123");
         criteria.setId("id123");
-        criteria.setStatus("status123");
+        criteria.setStatus(Collections.singletonList("status123"));
         criteria.setOrderNumber("order123");
 
         String query = orderQueryBuilder.getOrderSearchQuery(criteria, preparedStmt,preparedStmtArg);
