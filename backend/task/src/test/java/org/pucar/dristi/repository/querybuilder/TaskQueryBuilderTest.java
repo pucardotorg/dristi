@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.TaskCriteria;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
@@ -32,7 +29,7 @@ public class TaskQueryBuilderTest {
         criteria.setCnrNumber("CNR123");
         criteria.setTenantId("tenant1");
         criteria.setId("123e4567-e89b-12d3-a456-426614174000");
-        criteria.setStatus("Open");
+        criteria.setStatus(Collections.singletonList("Open"));
         criteria.setOrderId(UUID.randomUUID());
         List<Object> preparedStmtList = new ArrayList<>();
         String query = taskQueryBuilder.getTaskSearchQuery(criteria, preparedStmtList);

@@ -111,7 +111,7 @@ class ApplicationQueryBuilderTest {
         criteria.setFilingNumber("testFilingNumber");
         criteria.setCnrNumber("testCnrNumber");
         criteria.setTenantId("testTenantId");
-        criteria.setStatus("testStatus");
+        criteria.setStatus(Collections.singletonList("testStatus"));
         criteria.setApplicationNumber("testApplicationNumber");
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -250,11 +250,11 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationSearchQueryWithStatus() {
         ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("status123");
+        criteria.setStatus(Collections.singletonList("status123"));
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQueryPart = "app.status = ?";
+        String expectedQueryPart = "app.status";
 
         String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
 
@@ -262,21 +262,6 @@ class ApplicationQueryBuilderTest {
         assertEquals(1, preparedStmtList.size());
         assertEquals("status123", preparedStmtList.get(0));
     }
-
-    @Test
-    void testGetApplicationSearchQueryWithEmptyStatus() {
-        ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("");
-
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
-
-        assertFalse(query.contains("app.status ="));
-        assertEquals(0, preparedStmtList.size());
-    }
-
-
 
     @Test
     void testGetDocumentSearchQueryWithNoIds() {

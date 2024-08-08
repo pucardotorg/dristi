@@ -145,7 +145,7 @@ class ApplicationRepositoryTest {
         ApplicationCriteria applicationCriteria = new ApplicationCriteria();
         applicationCriteria.setApplicationNumber("");
         applicationCriteria.setId("");
-        applicationCriteria.setStatus("");
+        applicationCriteria.setStatus(Collections.singletonList(""));
         applicationCriteria.setCnrNumber("");
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
@@ -167,7 +167,7 @@ class ApplicationRepositoryTest {
         ApplicationCriteria applicationCriteria = new ApplicationCriteria();
         applicationCriteria.setApplicationNumber("");
         applicationCriteria.setId("");
-        applicationCriteria.setStatus("");
+        applicationCriteria.setStatus(Collections.singletonList(""));
         applicationCriteria.setCnrNumber("");
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
