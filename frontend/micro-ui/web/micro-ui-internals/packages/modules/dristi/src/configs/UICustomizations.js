@@ -612,6 +612,7 @@ export const UICustomizations = {
           criteria: {
             ...requestCriteria.body.criteria,
             ...filterList,
+            status: !filterList?.status || filterList?.status === "PUBLISHED" ? "PUBLISHED" : "EMPTY",
           },
           tenantId,
           pagination: {

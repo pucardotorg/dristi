@@ -484,12 +484,19 @@ const GenerateOrders = () => {
                   },
                 };
               }
-              if (field.key === "respondingParty") {
+              if (field?.populators?.inputs?.some((input) => input?.name === "respondingParty")) {
                 return {
                   ...field,
                   populators: {
-                    ...field.populators,
-                    options: [...complainants, ...respondents],
+                    ...field?.populators,
+                    inputs: field?.populators?.inputs.map((input) =>
+                      input.name === "respondingParty"
+                        ? {
+                            ...input,
+                            options: [...complainants, ...respondents],
+                          }
+                        : input
+                    ),
                   },
                 };
               }
@@ -626,6 +633,67 @@ const GenerateOrders = () => {
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
+
+    if (orderType && ["MANDATORY_SUBMISSIONS_RESPONSES"].includes(orderType)) {
+      if (formData?.submissionDeadline && formData?.responseInfo?.responseDeadline) {
+        if (new Date(formData?.submissionDeadline).getTime() >= new Date(formData?.responseInfo?.responseDeadline).getTime()) {
+          setValue("responseInfo", {
+            ...formData.responseInfo,
+            responseDeadline: "",
+          });
+          setError("responseDeadline", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_SUBMISSION_DEADLINE") });
+        } else if (Object.keys(formState?.errors).includes("responseDeadline")) {
+          setValue("responseInfo", formData?.responseInfo);
+          clearErrors("responseDeadline");
+        }
+      }
+      if (formData?.responseInfo?.isResponseRequired && Object.keys(formState?.errors).includes("isResponseRequired")) {
+        clearErrors("isResponseRequired");
+      } else if (
+        formState?.submitCount &&
+        !formData?.responseInfo?.isResponseRequired &&
+        !Object.keys(formState?.errors).includes("isResponseRequired")
+      ) {
+        setError("isResponseRequired", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+      }
+      if (formData?.responseInfo?.responseDeadline && Object.keys(formState?.errors).includes("responseDeadline")) {
+        clearErrors("responseDeadline");
+      } else if (
+        formState?.submitCount &&
+        !formData?.responseInfo?.responseDeadline &&
+        !Object.keys(formState?.errors).includes("responseDeadline")
+      ) {
+        setError("responseDeadline", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_SUBMISSION_DEADLINE") });
+      }
+      if (formData?.responseInfo?.respondingParty?.length > 0 && Object.keys(formState?.errors).includes("respondingParty")) {
+        clearErrors("respondingParty");
+      } else if (
+        formState?.submitCount &&
+        (!formData?.responseInfo?.respondingParty || formData?.responseInfo?.respondingParty?.length === 0) &&
+        !Object.keys(formState?.errors).includes("respondingParty")
+      ) {
+        setError("respondingParty", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+      }
+    }
+
+    if (orderType && ["WARRANT"].includes(orderType)) {
+      if (formData?.bailInfo?.isBailable && Object.keys(formState?.errors).includes("isBailable")) {
+        clearErrors("isBailable");
+      } else if (formState?.submitCount && !formData?.bailInfo?.isBailable && !Object.keys(formState?.errors).includes("isBailable")) {
+        setError("isBailable", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+      }
+      if (formData?.bailInfo?.noOfSureties && Object.keys(formState?.errors).includes("noOfSureties")) {
+        clearErrors("noOfSureties");
+      } else if (formState?.submitCount && !formData?.bailInfo?.noOfSureties && !Object.keys(formState?.errors).includes("noOfSureties")) {
+        setError("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+      }
+      if (formData?.bailInfo?.bailableAmount && Object.keys(formState?.errors).includes("bailableAmount")) {
+        clearErrors("bailableAmount");
+      } else if (formState?.submitCount && !formData?.bailInfo?.bailableAmount && !Object.keys(formState?.errors).includes("bailableAmount")) {
+        setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
+      }
+    }
+
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
       const updatedFormData =
         currentOrder?.additionalDetails?.formdata?.orderType?.code !== formData?.orderType?.code ? { orderType: formData.orderType } : formData;
