@@ -47,7 +47,7 @@ public class HearingService {
         try {
 
             // Validate applications
-        //    validator.validateHearingRegistration(body);
+            validator.validateHearingRegistration(body);
 
             // Enrich applications
             enrichmentUtil.enrichHearingRegistration(body);

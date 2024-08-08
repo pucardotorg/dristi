@@ -69,6 +69,13 @@ public class ApplicationEnrichment {
                 Application application = applicationRequest.getApplication();
                 application.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 application.getAuditDetails().setLastModifiedBy(applicationRequest.getRequestInfo().getUserInfo().getUuid());
+
+                if (application.getDocuments() != null) {
+                    application.getDocuments().forEach(document -> {
+                        if(document.getId()==null)
+                         document.setId(String.valueOf(UUID.randomUUID()));
+                    });
+                }
             } catch (Exception e) {
                 log.error("Error enriching application upon update: {}", e.getMessage());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching application upon update: " + e.getMessage());
