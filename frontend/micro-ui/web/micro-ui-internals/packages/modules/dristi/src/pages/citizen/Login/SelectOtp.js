@@ -69,7 +69,11 @@ const SelectOtp = ({
     });
   };
   const Heading = (props) => {
-    return <h1 className="heading-m">{props.label}</h1>;
+    return (
+      <h1 style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }} className="heading-m">
+        {props.label}
+      </h1>
+    );
   };
   const CloseBtn = (props) => {
     return (
@@ -120,7 +124,9 @@ const SelectOtp = ({
       headerBarMain={
         <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
+          <CardText>
+            {isAdhaar ? t("ENTER_OTP_TO_THE_REGISTERED_AADHAR_NO") : `${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}
+          </CardText>
         </React.Fragment>
       }
       className={"otp-modal-class"}

@@ -574,7 +574,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
             onCancel={handleCloseSucessModal}
             onSubmit={handleNextCase}
             type={"caseSendBackSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+            data={{ caseId: caseDetails?.filingNumber, caseName: caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
           />
         )}
 
@@ -588,7 +588,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
             onCancel={handleCloseSucessModal}
             onSubmit={handleAllocationJudge}
             type={"caseRegisterSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+            data={{ caseId: caseDetails?.filingNumber, caseName: caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
           />
         )}
       </div>
