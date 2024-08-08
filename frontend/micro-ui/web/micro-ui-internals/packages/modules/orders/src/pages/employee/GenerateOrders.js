@@ -177,6 +177,8 @@ const GenerateOrders = () => {
             name: item?.additionalDetails?.fullName,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
             individualId: item?.individualId,
+            isJoined: true,
+            partyType: "complainant",
           };
         }) || []
     );
@@ -191,6 +193,8 @@ const GenerateOrders = () => {
             code: item?.additionalDetails?.fullName,
             name: item?.additionalDetails?.fullName,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
+            isJoined: true,
+            partyType: "respondent",
           };
         }) || []
     );
@@ -204,7 +208,7 @@ const GenerateOrders = () => {
           const fullName = `${data?.data?.respondentFirstName || ""}${
             data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName + " " : " "
           }${data?.data?.respondentLastName || ""}`.trim();
-          return { code: fullName, name: fullName };
+          return { code: fullName, name: fullName, uuid: data?.data?.uuid, isJoined: false, partyType: "respondent" };
         }) || []
     );
   }, [caseDetails]);
@@ -560,6 +564,30 @@ const GenerateOrders = () => {
       if (hearingDetails?.startTime) {
         updatedFormdata.date = formatDate(new Date(hearingDetails?.startTime));
       }
+      if (currentOrder?.additionalDetails?.selectedParty && currentOrder?.additionalDetails?.selectedParty?.uuid) {
+        updatedFormdata.SummonsOrder = {
+          party: caseDetails?.additionalDetails?.respondentDetails?.formdata
+            ?.filter((data) => data?.data?.uuid === currentOrder?.additionalDetails?.selectedParty?.uuid)
+            ?.map((item) => ({
+              ...item,
+              data: {
+                ...item.data,
+                firstName: item.data.respondentFirstName,
+                lastName: item.data.respondentLastName,
+                address: item.data.addressDetails.map((address) => ({
+                  locality: address.addressDetails.locality,
+                  city: address.addressDetails.city,
+                  district: address.addressDetails.district,
+                  pincode: address.addressDetails.pincode,
+                })),
+                partyType: "Respondent",
+                phone_numbers: item.data.phonenumbers?.mobileNumber || [],
+                email: item.data.emails?.emailId,
+              },
+            }))?.[0],
+          selectedChannels: [],
+        };
+      }
     }
     if (
       [
@@ -573,7 +601,7 @@ const GenerateOrders = () => {
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
-  }, [currentOrder, orderType, applicationDetails, t, hearingDetails]);
+  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
     if (formData?.orderType?.code && !isEqual(formData, currentOrder?.additionalDetails?.formdata)) {
@@ -884,13 +912,13 @@ const GenerateOrders = () => {
     const orderData = orderDetails?.order;
     const orderFormData = orderDetails?.order?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
     const selectedChannel = orderData?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels;
-    const respondentAddress = generateAddress({ ...orderFormData?.addressDetails?.[0]?.addressDetails });
+    const respondentAddress = orderFormData?.addressDetails?.map((data) => generateAddress({ ...data?.addressDetails }));
     const respondentName = `${orderFormData?.respondentFirstName || ""}${
       orderFormData?.respondentMiddleName ? " " + orderFormData?.respondentMiddleName + " " : " "
     }${orderFormData?.respondentLastName || ""}`.trim();
 
-    const respondentPhoneNo = orderFormData?.phonenumbers?.mobileNumber?.join(", ") || "";
-    const respondentEmail = orderFormData?.emails?.email?.join(", ") || "";
+    const respondentPhoneNo = orderFormData?.phonenumbers?.mobileNumber || [];
+    const respondentEmail = orderFormData?.emails?.email || [];
     const complainantDetails = individualDetail?.Individual?.[0];
     const addressLine1 = complainantDetails?.address[0]?.addressLine1 || "";
     const addressLine2 = complainantDetails?.address[0]?.addressLine2 || "";
@@ -925,9 +953,9 @@ const GenerateOrders = () => {
           },
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress,
-            phone: respondentPhoneNo,
-            email: respondentEmail,
+            address: respondentAddress[0],
+            phone: respondentPhoneNo[0] || "",
+            email: respondentEmail[0] || "",
             age: "",
             gender: "",
           },
@@ -957,9 +985,9 @@ const GenerateOrders = () => {
         payload = {
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress,
-            phone: respondentPhoneNo,
-            email: respondentEmail,
+            address: respondentAddress[0],
+            phone: respondentPhoneNo[0] || "",
+            email: respondentEmail[0] || "",
             age: "",
             gender: "",
           },
@@ -988,9 +1016,9 @@ const GenerateOrders = () => {
         payload = {
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress,
-            phone: respondentPhoneNo,
-            email: respondentEmail,
+            address: respondentAddress[0],
+            phone: respondentPhoneNo[0] || "",
+            email: respondentEmail[0] || "",
             age: "",
             gender: "",
           },
@@ -1009,17 +1037,47 @@ const GenerateOrders = () => {
         break;
     }
     if (Object.keys(payload || {}).length > 0 && Array.isArray(selectedChannel)) {
+      const channelMap = new Map();
       selectedChannel.forEach(async (item) => {
+        if (channelMap.get(item?.type)) {
+          channelMap.set(item?.type, channelMap.get(item?.type) + 1);
+        } else {
+          channelMap.set(item?.type, 1);
+        }
         if ("deliveryChannels" in payload) {
           payload.deliveryChannels = {
             ...payload.deliveryChannels,
             channelName: channelTypeEnum?.[item?.type]?.type,
           };
+
+          payload.respondentDetails = {
+            ...payload.respondentDetails,
+            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : respondentAddress[channelMap.get(item?.type) - 1] || "",
+            phone: ["SMS"].includes(item?.type) ? item?.value : respondentPhoneNo[channelMap.get(item?.type) - 1] || "",
+            email: ["E-mail"].includes(item?.type) ? item?.value : respondentEmail[channelMap.get(item?.type) - 1] || "",
+            age: "",
+            gender: "",
+          };
         }
         if ("deliveryChannel" in payload) {
+          const channelDetailsEnum = {
+            SMS: "phone",
+            "E-mail": "email",
+            Post: "address",
+            "Via Police": "address",
+          };
           payload.deliveryChannel = {
             ...payload.deliveryChannel,
             channelName: channelTypeEnum?.[item?.type]?.type,
+            [channelDetailsEnum?.[item?.type]]: item?.value || "",
+          };
+          payload.respondentDetails = {
+            ...payload.respondentDetails,
+            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : respondentAddress[channelMap.get(item?.type) - 1] || "",
+            phone: ["SMS"].includes(item?.type) ? item?.value : respondentPhoneNo[channelMap.get(item?.type) - 1] || "",
+            email: ["E-mail"].includes(item?.type) ? item?.value : respondentEmail[channelMap.get(item?.type) - 1] || "",
+            age: "",
+            gender: "",
           };
         }
         await ordersService.customApiService(Urls.orders.taskCreate, {
@@ -1054,6 +1112,39 @@ const GenerateOrders = () => {
           },
           tenantId,
         });
+      });
+    } else if (Object.keys(payload || {}).length > 0) {
+      await ordersService.customApiService(Urls.orders.taskCreate, {
+        task: {
+          taskDetails: payload,
+          workflow: {
+            action: "CREATE",
+            comments: orderType,
+            documents: [
+              {
+                documentType: null,
+                fileStore: null,
+                documentUid: null,
+                additionalDetails: {},
+              },
+            ],
+            assignes: null,
+            rating: null,
+          },
+          createdDate: formatDate(new Date(), "DD-MM-YYYY"),
+          orderId: orderData?.id,
+          filingNumber,
+          cnrNumber,
+          taskType: orderType,
+          status: "INPROGRESS",
+          tenantId,
+          amount: {
+            type: "FINE",
+            status: "DONE",
+            amount: "100",
+          },
+        },
+        tenantId,
       });
     }
   };
@@ -1095,8 +1186,22 @@ const GenerateOrders = () => {
       };
       const summonsArray = currentOrder?.additionalDetails?.isReIssueSummons
         ? [{}]
-        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => !data?.uuid);
-      const promiseList = summonsArray?.map(() => ordersService.createOrder(reqbody, { tenantId }));
+        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent");
+      const promiseList = summonsArray?.map((data) =>
+        ordersService.createOrder(
+          {
+            ...reqbody,
+            order: {
+              ...reqbody.order,
+              additionalDetails: {
+                ...reqbody.order?.additionalDetails,
+                selectedParty: data,
+              },
+            },
+          },
+          { tenantId }
+        )
+      );
       const resList = await Promise.all(promiseList);
       setCreatedSummon(resList[0]?.order?.orderNumber);
       await Promise.all(
@@ -1216,7 +1321,7 @@ const GenerateOrders = () => {
     if (
       (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons ||
       (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
-        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => !data?.uuid))
+        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType === "respondent"))
     ) {
       return t("ISSUE_SUMMONS_BUTTON");
     }

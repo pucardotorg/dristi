@@ -460,7 +460,7 @@ const SubmissionsCreate = () => {
           },
           documents,
           onBehalfOf: [userInfo?.uuid],
-          comments: [],
+          comment: [],
           workflow: {
             id: "workflow123",
             action: SubmissionWorkflowAction.CREATE,

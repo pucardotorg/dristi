@@ -1,4 +1,4 @@
-import { FormComposerV2 } from "@egovernments/digit-ui-components";
+import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import NextHearingModal from "../../components/NextHearingModal";
@@ -29,19 +29,20 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
 
   const config = [
     {
-      head: "Purpose of Adjournment",
       body: [
         {
           isMandatory: true,
           type: "dropdown",
-          key: "reasons",
+          key: "reason",
+          label: "PURPOSE_OF_ADJOURNMENT",
           disable: false,
-          inline: false,
           populators: {
             name: "reason",
             optionsKey: "name",
-            error: "",
+            error: "CORE_REQUIRED_FIELD_ERROR",
+            styles: { maxWidth: "100%" },
             required: true,
+            isMandatory: true,
             options: [
               {
                 code: "Option1",
@@ -59,9 +60,7 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
                 isEnabled: true,
               },
             ],
-            optionsCustomStyle: {
-              top: "40px",
-            },
+            customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
           },
         },
       ],
@@ -120,8 +119,16 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
     <div>
       {stepper === 1 && (
         <Modal
+          popupStyles={{
+            width: "40vw",
+            minWidth: "600px",
+          }}
           headerBarMain={<Heading label={t("ARE_SURE_ADJOURN_HEARING")} />}
-          headerBarEnd={<CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />}
+          headerBarEnd={
+            <h1 style={{ padding: "5px 5x 5x 5x" }}>
+              <CloseBtn onClick={() => handleNavigate(`/employee/hearings/inside-hearing?hearingId=${hearingId}`)} />
+            </h1>
+          }
           actionSaveLabel={t("ADJOURN_HEARING")}
           actionSaveOnSubmit={onSubmit}
           style={{ marginTop: "5px" }}
@@ -148,6 +155,7 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
                     },
                   }
             }
+            fieldStyle={{ width: "100%" }}
           ></FormComposerV2>
         </Modal>
       )}

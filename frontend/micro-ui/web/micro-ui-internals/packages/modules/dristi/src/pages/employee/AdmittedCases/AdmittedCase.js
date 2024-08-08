@@ -29,7 +29,7 @@ const AdmittedCases = () => {
   const caseId = urlParams.get("caseId");
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isFSO = roles.some((role) => role.code === "FSO_ROLE");
-  const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
+  const activeTab = isFSO ? "Complaint" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -775,7 +775,7 @@ const AdmittedCases = () => {
           openSubmissionsViewModal={openSubmissionViewModal}
         />
       )}
-      {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
+      {config?.label !== "Overview" && config?.label !== "Complaint" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
           {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
@@ -855,7 +855,7 @@ const AdmittedCases = () => {
           />
         </div>
       )}
-      {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
+      {tabData.filter((tab) => tab.label === "Complaint")[0].active && (
         <div className="view-case-file-wrapper">
           <ViewCaseFile t={t} inViewCase={true} />
         </div>

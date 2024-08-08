@@ -31,7 +31,7 @@ export const Evidence = ({ rowData, colData, value = "", showAsHeading = false, 
         documentUid: rowData.file?.documentUid,
         additionalDetails: rowData.file?.additionalDetails,
       },
-      comments: [],
+      comments: rowData.comments,
       artifactList: rowData,
     },
   ];

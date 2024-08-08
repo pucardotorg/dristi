@@ -38,6 +38,8 @@ export const Urls = {
     ordersCreate: "/order/v1/create",
     submissionsSearch: "/application/v1/search",
     submissionsUpdate: "/application/v1/update",
+    addSubmissionComment: "/application/v1/addcomment",
+    addEvidenceComment: "/evidence/v1/addcomment",
     pendingTask: "/analytics/pending_task/v1/create",
     getPendingTaskFields: "/inbox/v2/_getFields",
   },

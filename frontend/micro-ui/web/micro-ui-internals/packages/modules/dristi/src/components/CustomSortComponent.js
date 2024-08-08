@@ -28,7 +28,7 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
   return (
     <div
       className="select-signature-main"
-      style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", height: "100%", marginTop: 13, maxWidth: 250 }}
+      style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", height: "100%", marginTop: 8, maxWidth: 250 }}
     >
       <React.Fragment>
         <button

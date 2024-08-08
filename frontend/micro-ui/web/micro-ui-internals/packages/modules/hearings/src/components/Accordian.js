@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CustomArrowUpIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
+import { CustomArrowDownIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
 import { useTranslation } from "react-i18next";
 
 const Accordian = ({ groupedData, caseDataDetails }) => {
@@ -25,7 +25,7 @@ const Accordian = ({ groupedData, caseDataDetails }) => {
             lineHeight: "18.75px",
             textAlign: "left",
           }}
-        >{`${t("Cases with Pending Tasks")} (${groupedData?.length})`}</span>
+        >{`${t("CASE_WITH_PENDING_TASKS")} (${groupedData?.length})`}</span>
         <div
           className="icon"
           style={{
@@ -33,7 +33,7 @@ const Accordian = ({ groupedData, caseDataDetails }) => {
           }}
         >
           <span className="reverse-arrow" style={{ cursor: "pointer" }} onClick={handleAccordionClick}>
-            <CustomArrowUpIcon />
+            <CustomArrowDownIcon />
           </span>
         </div>
       </div>
