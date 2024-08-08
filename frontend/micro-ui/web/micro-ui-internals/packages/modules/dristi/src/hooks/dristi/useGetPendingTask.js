@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
+import { DRISTIService } from "../../services";
 
 export const useGetPendingTask = ({ data, params, config = {}, key = "" }) => {
   return useQuery(

@@ -8,5 +8,6 @@ export const Urls = {
     pendingTask: "/analytics/pending_task/v1/create",
     createHearings: "/hearing/v1/create",
     updateHearings: "/hearing/v1/update",
+    getPendingTaskFields: "/inbox/v2/_getFields",
   },
 };
