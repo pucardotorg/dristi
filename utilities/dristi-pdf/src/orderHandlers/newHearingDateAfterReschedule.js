@@ -109,7 +109,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
         try {
             stringDate = formatDate(order.createdDate);
         } catch (error) {
-            console.error("cannot convert epoch time to date");
+            return renderError(res, "Cannot convert epoch time to date", 500, error);
         }
 
         const data = {
