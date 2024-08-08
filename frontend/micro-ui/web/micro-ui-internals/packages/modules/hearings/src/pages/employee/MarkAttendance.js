@@ -3,9 +3,11 @@ import { CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
 import DisplayAttendees from "./DisplayAttendees";
 import AddAttendees from "./AddAttendees";
 import { hearingService } from "../../hooks/services";
+import { useTranslation } from "react-i18next";
 
 const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddPartyModal, refetchHearing }) => {
   const partiesToAttend = attendees.length;
+  const { t } = useTranslation();
   const onlineAttendees = attendees.filter((attendee) => attendee.isOnline && attendee.wasPresent);
   const offlineAttendees = attendees.filter((attendee) => !attendee.isOnline && attendee.wasPresent);
 
@@ -27,7 +29,7 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
     const duplicateIds = onlineIds.filter((id) => offlineIds.includes(id));
 
     if (duplicateIds.length > 0) {
-      setFormError("Attendees cannot be selected for both online and offline.");
+      setFormError(t("BOTH_CANT_BE_SELECTED"));
       return;
     }
 
@@ -66,6 +68,7 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
         justify: "space-between",
       }}
       popupModuleActionBarStyles={style}
+      popupModuleActionBarClass={"hearing-secondary-button"}
       popupModuleMianStyles={{
         padding: 0,
         margin: "0px",
@@ -74,18 +77,18 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
       }}
       headerBarMain={
         <h1 className="heading-m" style={{ textAlign: "left" }}>
-          {isAddingAttendees ? "Add Attendees" : "Mark Attendance"}
+          {isAddingAttendees ? t("ADD_ATTENDEES_LABEL") : t("MARK_ATTENDANCE")}
         </h1>
       }
       headerBarEnd={
-        <h2 style={{padding: "5px 10px"}}>
+        <h2 style={{ padding: "5px 10px" }}>
           <CloseSvg onClick={handleModal} />
         </h2>
       }
       formId="modal-action"
-      actionCancelLabel={"Back"}
+      actionCancelLabel={t("HEARING_BACK")}
       actionCancelOnSubmit={() => setIsAddingAttendee(!isAddingAttendees)}
-      actionSaveLabel={"Add"}
+      actionSaveLabel={t("HEARING_ADD")}
       actionSaveOnSubmit={() => onFormSubmit(form)}
       isDisabled={isDisabled}
     >

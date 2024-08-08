@@ -1612,14 +1612,13 @@ export const configRejectSubmission = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: false,
+        isMandatory: true,
         populators: {
           inputs: [
             {
               name: "text",
               textAreaSubHeader: "REASON_FOR_REJECTION_SUBMISSION",
               placeholder: "TYPE_HERE_PLACEHOLDER",
-              isOptional: true,
               type: "TextAreaComponent",
             },
           ],

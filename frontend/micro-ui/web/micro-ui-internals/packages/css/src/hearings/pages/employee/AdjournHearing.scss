@@ -24,3 +24,51 @@
   display: flex;
   align-items: center;
 }
+
+.hearing-secondary-button {
+  .selector-button-border {
+    width: 84px;
+    height: 40px;
+    padding: 8px 24px 8px 24px;
+    gap: 4px;
+    border: 1px solid#007E7E;
+    background-color: #fff;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+      color: #007e7e;
+    }
+  }
+  .selector-button-primary {
+    width: 84px;
+    height: 40px;
+    padding: 8px 24px 8px 24px;
+    gap: 4px;
+    border: 1px solid#007E7E;
+    background-color: #007E7E;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+      color: #fff;
+    }
+  }
+  .selector-button-primary-disabled {
+    width: 84px;
+    height: 40px;
+    padding: 8px 24px 8px 24px;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+      color: #fff;
+    }
+  }
+}
