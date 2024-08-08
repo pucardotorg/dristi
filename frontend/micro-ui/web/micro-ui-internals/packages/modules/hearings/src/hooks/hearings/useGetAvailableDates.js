@@ -6,7 +6,7 @@ function useGetAvailableDates(enabled) {
     const options = { day: "numeric", month: "long", year: "numeric" };
     const nextFiveDays = Array.from({ length: 5 }, (_, i) => {
       const nextDay = new Date(today);
-      nextDay.setDate(today.getDate() + i);
+      nextDay.setDate(today.getDate() + i + 1);
       return nextDay.toLocaleDateString("en-GB", options); // Format: "4th July 2024"
     });
     return nextFiveDays;

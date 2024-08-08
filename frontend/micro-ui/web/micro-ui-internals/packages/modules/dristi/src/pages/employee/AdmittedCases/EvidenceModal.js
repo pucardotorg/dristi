@@ -22,7 +22,6 @@ const dayInMillisecond = 24 * 3600 * 1000;
 
 const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
-  console.log(comments, documentSubmission[0].comments);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
@@ -599,6 +598,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       setShow(false);
       setShowSuccessModal(false);
+      counterUpdate();
     }
   };
 
@@ -802,7 +802,6 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                                     ],
                                     artifactNumber: documentSubmission?.[0]?.artifactList?.artifactNumber,
                                   };
-                            console.log(userInfo, newComment);
                             setComments((prev) => [...prev, ...newComment.comment]);
                             setCurrentComment("");
                             handleSubmitComment(newComment);

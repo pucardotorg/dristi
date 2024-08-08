@@ -13,7 +13,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
   const setFormErrors = useRef([]);
 
   const { mutateAsync: updateAttendees } = Digit.Hooks.useCustomAPIMutationHook({
-    url: Urls.hearing.hearingUpdate,
+    url: Urls.hearing.hearingUpdateTranscript,
     params: { applicationNumber: "", cnrNumber: "" },
     body: { tenantId, hearingType: "", status: "" },
     config: {

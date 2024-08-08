@@ -24,6 +24,7 @@ import {
   configsRejectRescheduleHeadingDate,
   configsRescheduleHearingDate,
   configsScheduleHearingDate,
+  configsScheduleNextHearingDate,
   configsVoluntarySubmissionStatus,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
@@ -308,7 +309,7 @@ const GenerateOrders = () => {
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
   const referenceId = useMemo(() => currentOrder?.additionalDetails?.formdata?.refApplicationId, [currentOrder]);
-  const hearingNumber = useMemo(() => currentOrder?.hearingNumber || currentOrder?.additionalDetails?.hearingId, [currentOrder]);
+  const hearingNumber = useMemo(() => currentOrder?.hearingNumber || currentOrder?.additionalDetails?.hearingId || "", [currentOrder]);
 
   const { data: pendingTaskData = [], isLoading: pendingTasksLoading } = useGetPendingTask({
     data: {
@@ -367,7 +368,7 @@ const GenerateOrders = () => {
   );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
-  const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId, [
+  const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId || "", [
     applicationDetails,
     currentOrder,
   ]);
@@ -382,9 +383,16 @@ const GenerateOrders = () => {
     },
     { applicationNumber: "", cnrNumber: "" },
     hearingId || hearingNumber,
-    Boolean(hearingId || hearingNumber)
+    true
   );
   const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
+
+  const isHearingAlreadyScheduled = useMemo(() => {
+    const isPresent = hearingsData?.HearingList.some((hearing) => {
+      return !(hearing?.status === "COMPLETED" || hearing?.status === "ABATED");
+    });
+    return isPresent;
+  }, [hearingsData]);
 
   const modifiedFormConfig = useMemo(() => {
     const configKeys = {
@@ -393,6 +401,7 @@ const GenerateOrders = () => {
       EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
       REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
       SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+      SCHEDULING_NEXT_HEARING: configsScheduleNextHearingDate,
       RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
       REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
       INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
@@ -1237,7 +1246,8 @@ const GenerateOrders = () => {
       setLoader(true);
       let newhearingId = "";
       setPrevOrder(currentOrder);
-      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+      console.log("currentOrder", currentOrder);
+      if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType)) {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
             individualId: advocate.responseList[0].individualId,
@@ -1250,6 +1260,7 @@ const GenerateOrders = () => {
             hearing: {
               tenantId: tenantId,
               filingNumber: [filingNumber],
+              cnrNumbers: [cnrNumber],
               hearingType: currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type,
               status: true,
               attendees: [
@@ -1315,7 +1326,7 @@ const GenerateOrders = () => {
   const handleDeleteOrder = async () => {
     try {
       if (formList[deleteOrderIndex]?.orderNumber) {
-        await updateOrder(formList[deleteOrderIndex], OrderWorkflowAction.ABANDON);
+        await updateOrder(formList[deleteOrderIndex], OrderWorkflowAction.DELETE);
         closeManualPendingTask(formList[deleteOrderIndex]?.orderNumber);
       }
       setFormList((prev) => prev.filter((_, i) => i !== deleteOrderIndex));
@@ -1357,6 +1368,13 @@ const GenerateOrders = () => {
   };
 
   const handleReviewOrderClick = () => {
+    if (orderType === "SCHEDULE_OF_HEARING_DATE" && isHearingAlreadyScheduled) {
+      setShowErrorToast({
+        label: t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE"),
+        error: true,
+      });
+      return;
+    }
     if (referenceId && ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
       setShowErrorToast({
         label:
