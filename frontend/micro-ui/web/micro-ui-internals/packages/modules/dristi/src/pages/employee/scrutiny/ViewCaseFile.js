@@ -240,8 +240,29 @@ function ViewCaseFile({ t, inViewCase = false }) {
     // Write isAdmission condition here
   };
   const handleNextCase = () => {
-    setActionModal(false);
-    history.push("/digit-ui/employee/dristi/cases");
+    DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            status: ["UNDER_SCRUTINY"],
+          },
+        ],
+        tenantId,
+      },
+      {}
+    )
+      .then((res) => {
+        if (res?.criteria?.[0]?.responseList?.[0]?.id) {
+          history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        } else {
+          history.push("/digit-ui/employee/dristi/cases");
+        }
+        setActionModal(false);
+      })
+      .catch(() => {
+        setActionModal(false);
+        history.push("/digit-ui/employee/dristi/cases");
+      });
   };
   const handleAllocationJudge = () => {
     DRISTIService.searchCaseService(
@@ -256,11 +277,16 @@ function ViewCaseFile({ t, inViewCase = false }) {
       {}
     )
       .then((res) => {
-        history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        if (res?.criteria?.[0]?.responseList?.[0]?.id) {
+          history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        } else {
+          history.push("/digit-ui/employee/dristi/cases");
+        }
         setActionModal(false);
       })
       .catch(() => {
         setActionModal(false);
+        history.push("/digit-ui/employee/dristi/cases");
       });
   };
   const handleCloseSucessModal = () => {
