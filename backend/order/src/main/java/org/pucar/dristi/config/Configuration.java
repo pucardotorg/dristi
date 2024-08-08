@@ -118,4 +118,11 @@ public class Configuration {
 
     @Value("${mdms.order.module.name}")
     private String orderModule;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }

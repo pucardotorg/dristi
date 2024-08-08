@@ -65,5 +65,7 @@ public class ServiceConstants {
     public static final String SEARCH_QUERY_EXCEPTION = "Exception while creating query";
     public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
     public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
+    public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
+    public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
 }

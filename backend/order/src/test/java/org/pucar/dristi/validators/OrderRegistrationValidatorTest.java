@@ -2,7 +2,9 @@ package org.pucar.dristi.validators;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_FILESTORE_ID;
 
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.OrderRepository;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.OrderRequest;
@@ -26,6 +29,8 @@ public class OrderRegistrationValidatorTest {
 
     @Mock
     private OrderRepository orderRepository;
+    @Mock
+    private FileStoreUtil fileStoreUtil;
 
     @InjectMocks
     private OrderRegistrationValidator orderRegistrationValidator;
@@ -39,6 +44,7 @@ public class OrderRegistrationValidatorTest {
         requestInfo = new RequestInfo();
         order = new Order();
         order.setCnrNumber("123");
+        order.setTenantId("pg");
         order.setFilingNumber("111");
         orderRequest = new OrderRequest();
         orderRequest.setRequestInfo(requestInfo);
@@ -80,5 +86,20 @@ public class OrderRegistrationValidatorTest {
 
         boolean result = orderRegistrationValidator.validateApplicationExistence(orderRequest);
         assertFalse(result);
+    }
+
+    @Test
+    public void testValidateOrder_InvalidDocumentFileStore() {
+        when(fileStoreUtil.doesFileExist(anyString(), anyString())).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, this::invokeValidator);
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    private void invokeValidator() {
+        Document document = new Document();
+        document.setFileStore("invalidFileStore");
+        orderRequest.getOrder().setDocuments(Collections.singletonList(document));
+        orderRegistrationValidator.validateApplicationExistence(orderRequest);
     }
 }
