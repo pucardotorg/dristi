@@ -306,7 +306,7 @@ const InsideHearingMainPage = () => {
             }}
           >
             <Button
-              label={"Attendance: "}
+              label={"ATTENDANCE_CHIP"}
               style={{ boxShadow: "none", backgroundColor: "#ECF3FD", borderRadius: "4px", border: "none", padding: "10px" }}
               textStyles={{
                 fontFamily: "Roboto",
@@ -333,7 +333,7 @@ const InsideHearingMainPage = () => {
             </Button>
             {userHasRole("EMPLOYEE") && (
               <Button
-                label={"Mark Attendance"}
+                label={"MARK_ATTENDANCE"}
                 variation={"teritiary"}
                 onButtonClick={handleModal}
                 style={{ boxShadow: "none", backgroundColor: "none", borderRadius: "4px", border: "none", padding: "10px" }}

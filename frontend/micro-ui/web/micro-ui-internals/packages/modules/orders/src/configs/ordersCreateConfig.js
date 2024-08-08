@@ -1780,14 +1780,13 @@ export const configRejectSubmission = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
-        isMandatory: false,
+        isMandatory: true,
         populators: {
           inputs: [
             {
               name: "text",
               textAreaSubHeader: "REASON_FOR_REJECTION_SUBMISSION",
               placeholder: "TYPE_HERE_PLACEHOLDER",
-              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -2718,6 +2717,61 @@ export const configsBail = [
             moduleName: "Order",
             localePrefix: "BAIL_TYPE",
           },
+        },
+      },
+      {
+        type: "component",
+        component: "AddSubmissionDocument",
+        key: "submissionDocuments",
+        inline: false,
+        disable: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              key: "documentType",
+              type: "dropdown",
+              label: "Document Type",
+              name: "documentType",
+              disable: false,
+              populators: {
+                name: "documentType",
+                optionsKey: "name",
+                required: true,
+                options: [
+                  {
+                    code: "TAX_RECORDS",
+                    name: "TAX_RECORDS",
+                  },
+                  {
+                    code: "SALARY_RECIEPTS",
+                    name: "SALARY_RECIEPTS",
+                  },
+                ],
+              },
+            },
+            {
+              label: "Document Title",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: true,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+              isMandatory: true,
+            },
+            {
+              label: "Attachment",
+              type: "documentUpload",
+              name: "document",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
+            },
+          ],
         },
       },
       {

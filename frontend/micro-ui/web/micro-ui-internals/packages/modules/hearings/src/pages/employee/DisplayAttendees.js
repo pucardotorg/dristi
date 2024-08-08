@@ -107,11 +107,6 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
             height: "40px",
             minWidth: "50px",
             backgroundColor: "#fff",
-            "&.icon-label-container": {
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            },
           }}
           textStyles={{
             fontFamily: "Roboto",
@@ -126,7 +121,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           className={"take-action-btn-class"}
         ></Button>
         <Button
-          label={"Done"}
+          label={"ADD_ATTENDANCE_DONE"}
           onClick={handleModal}
           style={{
             height: "40px",

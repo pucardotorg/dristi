@@ -1,5 +1,5 @@
 import { InfoBannerIcon } from "@egovernments/digit-ui-components";
-import { CustomArrowUpIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
+import { CustomArrowDownIcon } from "@egovernments/digit-ui-module-dristi/src/icons/svgIndex";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 // import { CustomArrowDownIcon, CustomArrowUpIcon } from "../icons/svgIndex";
@@ -12,7 +12,7 @@ function PendingTaskAccordion({
   totalCount,
   handleGoToPage,
   selected,
-  accordionHeader = "Complete this week",
+  accordionHeader = "COMPLETE_THIS_WEEK",
   accordionKey = "accordion",
   isHighlighted = false,
   isAccordionOpen = false,
@@ -68,7 +68,7 @@ function PendingTaskAccordion({
           }}
         >
           <span className="reverse-arrow" style={{ cursor: "pointer" }} onClick={handleAccordionClick}>
-            <CustomArrowUpIcon />
+            <CustomArrowDownIcon />
           </span>
         </div>
       </div>

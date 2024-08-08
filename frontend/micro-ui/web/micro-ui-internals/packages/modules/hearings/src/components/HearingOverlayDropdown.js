@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 export const Context = React.createContext();
 
-const OverlayDropdown = ({ column, row, master, module }) => {
+const OverlayDropdown = ({ styles, textStyle, column, row, master, module }) => {
   const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const history = useHistory();
@@ -30,11 +30,12 @@ const OverlayDropdown = ({ column, row, master, module }) => {
           zIndex: "1000",
           width: "20px",
           textAlign: "center",
+          ...styles,
         }}
         onClick={toggleDropdown}
       >
         {/* You can use any icon or three dots image here */}
-        <span>...</span>
+        <span style={textStyle}>...</span>
       </div>
 
       {isDropdownOpen && (
