@@ -277,7 +277,21 @@ class ApplicationQueryBuilderTest {
         assertTrue(preparedStmtList.isEmpty());
     }
 
+    @Test
+    void testGetDocumentSearchQuery() {
+        // Arrange
+        List<String> ids = List.of("1", "2", "3");
+        List<Object> preparedStmtList = new ArrayList<>();
 
+        // Act
+        String query = applicationQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+
+        // Assert
+        String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore,doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id FROM dristi_application_document doc WHERE doc.application_id IN (?,?,?)";
+
+        assertEquals(expectedQuery, query, "The query should match the expected SQL statement.");
+        assertEquals(ids, preparedStmtList, "The prepared statement list should match the input IDs.");
+    }
 
 
     @Test
