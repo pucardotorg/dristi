@@ -136,4 +136,14 @@ public class Configuration {
 
     @Value("${verify.attendee.individual.id}")
     private Boolean verifyAttendeeIndividualId;
+
+    @Value("${update.start.end.time.topic}")
+    public String startEndTimeUpdateTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }

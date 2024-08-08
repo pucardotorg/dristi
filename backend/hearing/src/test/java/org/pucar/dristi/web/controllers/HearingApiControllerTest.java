@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.HearingService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,5 +141,42 @@ public class HearingApiControllerTest {
         assertEquals(hearing, response.getBody().getHearing());
         assertEquals(responseInfo, response.getBody().getResponseInfo());
         assertTrue(response.getBody().getHearing().getTranscript().isEmpty());
+    }
+
+    @Test
+    void hearingV1UpdateTimePost_Success() {
+        UpdateTimeRequest requestBody = new UpdateTimeRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+        requestBody.setHearings(Collections.singletonList(new Hearing()));
+
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(expectedResponseInfo);
+
+        UpdateTimeResponse expectedResponse = UpdateTimeResponse.builder()
+                .hearings(requestBody.getHearings())
+                .responseInfo(expectedResponseInfo)
+                .build();
+
+        ResponseEntity<UpdateTimeResponse> response = hearingApiController.hearingV1UpdateTimePost(requestBody);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        UpdateTimeResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getHearings(), actualResponse.getHearings());
+        assertEquals(expectedResponse.getResponseInfo(), actualResponse.getResponseInfo());
+    }
+
+    @Test
+    void hearingV1UpdateTimePost_InvalidRequest() {
+        UpdateTimeRequest requestBody = new UpdateTimeRequest();  // Missing required fields
+
+        Mockito.doThrow(new IllegalArgumentException("Invalid request")).when(hearingService).updateStartAndTime(any(UpdateTimeRequest.class));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            hearingApiController.hearingV1UpdateTimePost(requestBody);
+        });
+
+        assertEquals("Invalid request", exception.getMessage());
     }
 }

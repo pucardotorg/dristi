@@ -272,7 +272,7 @@ class ApplicationServiceTest {
         Application application = new Application();
         application.setApplicationNumber("app123");
         application.setTenantId("tenant1");
-        application.setComment(new ArrayList<>());
+        application.setComment(null);
         AuditDetails auditDetails = AuditDetails.builder().build();
         application.setAuditDetails(auditDetails);
 
