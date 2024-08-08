@@ -81,7 +81,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   }, [caseDetails]);
 
   const handleDropdownChange = (selectedOption) => {
-    const isEqual = _.isEqual(selectedOption.value.data, formData[config.key]?.party.data);
+    const isEqual = _.isEqual(selectedOption.value.data, formData?.[config.key]?.party?.data);
     if (!isEqual) {
       setSelectedChannels([]);
       onSelect(config.key, { ...formData[config.key], party: selectedOption.value, selectedChannels: [] });

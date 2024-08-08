@@ -116,6 +116,7 @@ const GenerateOrders = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(null);
   const [loader, setLoader] = useState(false);
+  const [newHearingNumber, setNewHearingNumber] = useState(null);
   const [createdSummon, setCreatedSummon] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
@@ -1352,8 +1353,7 @@ const GenerateOrders = () => {
           { tenantId: tenantId }
         );
         newhearingId = hearingres?.hearing?.hearingId;
-
-        await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.hearingDate, newhearingId);
+        setNewHearingNumber(newhearingId);
       }
       if (orderType === "RESCHEDULE_OF_HEARING_DATE") {
         await handleUpdateHearing({
@@ -1469,6 +1469,7 @@ const GenerateOrders = () => {
       return;
     }
     if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
+      await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.hearingDate, newHearingNumber || hearingId || hearingNumber);
       history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${createdSummon}`);
     }
   };
