@@ -74,10 +74,8 @@ const InsideHearingMainPage = () => {
     10 * SECOND
   );
 
-  console.log("hearingsData", hearingsData);
-
   const { mutateAsync: _updateTranscriptRequest } = Digit.Hooks.useCustomAPIMutationHook({
-    url: Urls.hearing.hearingUpdate,
+    url: Urls.hearing.hearingUpdateTranscript,
     params: { applicationNumber: "", cnrNumber: "" },
     body: { tenantId, hearingType: "", status: "" },
     config: {

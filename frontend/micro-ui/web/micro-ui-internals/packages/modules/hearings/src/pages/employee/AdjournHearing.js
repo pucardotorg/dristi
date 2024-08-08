@@ -102,11 +102,14 @@ const AdjournHearing = ({ hearing, updateTranscript }) => {
     try {
       const updatedHearing = structuredClone(hearing);
       updatedHearing.transcript[0] = updatedTranscriptText;
+      updatedHearing.workflow = updatedHearing.workflow || {};
       updatedHearing.workflow.action = "CLOSE";
-      updatedHearing.additionalDetails.purposeOfAdjournment = {
-        reason: reasonFormData.reason.code,
+      updatedHearing.additionalDetails = {
+        purposeOfAdjournment: {
+          reason: reasonFormData.reason.code,
+        },
       };
-      return await hearingService.updateHearing(
+      return await hearingService.updateHearings(
         { tenantId: Digit.ULBService.getCurrentTenantId(), hearing: updatedHearing, hearingType: "", status: "" },
         { applicationNumber: "", cnrNumber: "" }
       );

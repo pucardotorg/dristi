@@ -6,6 +6,7 @@ import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
 import { RenderInstance } from "../components/RenderInstance";
 import OverlayDropdown from "../components/OverlayDropdown";
+import ReactTooltip from "react-tooltip";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -621,7 +622,6 @@ export const UICustomizations = {
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            // console.log(requestCriteria, data, requestCriteria.url.split("/").includes("order"));
             // if (requestCriteria.url.split("/").includes("order")) {
             const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
@@ -656,10 +656,13 @@ export const UICustomizations = {
           return <span>{formattedDate}</span>;
         case "Parties":
           return (
-            <span>{`${value
-              .slice(0, 2)
-              .map((party) => party.name)
-              .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+            <div>
+              {value.length > 2 && <ReactTooltip id={`hearing-list`}>{value.map((party) => party.name).join(", ")}</ReactTooltip>}
+              <span data-tip data-for={`hearing-list`}>{`${value
+                .slice(0, 2)
+                .map((party) => party.name)
+                .join(", ")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+            </div>
           );
         case "Order Type":
           return <OrderName rowData={row} colData={column} value={value} />;
@@ -691,7 +694,7 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const date = new Date(row.startTime);
       const future = row.startTime > Date.now();
-      if (future && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
+      if (future && row.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
@@ -841,7 +844,6 @@ export const UICustomizations = {
   },
   HistoryConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      // console.log(userRoles);
       return {
         ...requestCriteria,
         config: {
@@ -856,7 +858,6 @@ export const UICustomizations = {
                   status: application.status,
                 };
               });
-              // console.log(data.caseFiles[0]?.evidence, "applicationHistory");
               const evidenceHistory = data.caseFiles[0]?.evidence.map((evidence) => {
                 return {
                   instance: evidence.artifactType,
@@ -864,11 +865,9 @@ export const UICustomizations = {
                   status: evidence.status,
                 };
               });
-              // console.log(evidenceHistory, "evidenceHistory");
               const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
                 return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
               });
-              // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
                 ? data.caseFiles[0]?.orders
                     ?.filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
@@ -888,9 +887,7 @@ export const UICustomizations = {
                       status: order.order.status,
                     };
                   });
-              // console.log(orderHistory, "orderHistory");
               const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
-              // console.log(historyList, "historyList");
               return { ...data, history: historyList };
             } else {
               return { ...data, history: [] };

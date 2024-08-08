@@ -44,7 +44,7 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
     });
     try {
       const hearing = { ...hearingData, attendees: updatedAttendees };
-      hearingService.updateHearing({ tenantId, hearing, hearingType: "", status: "" }, "");
+      hearingService.updateHearingTranscript({ tenantId, hearing, hearingType: "", status: "" }, "");
     } catch (error) {
       console.error("Error updating hearing:", error);
     }

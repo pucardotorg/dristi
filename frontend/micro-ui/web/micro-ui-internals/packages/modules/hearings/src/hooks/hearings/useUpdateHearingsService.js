@@ -4,7 +4,7 @@ import { hearingService } from "../services";
 function useUpdateHearingsService(data, params, keys, enabled) {
   const { isLoading, data: hearingResponse, isFetching, refetch, error } = useQuery(
     `GET_HEARING_${keys}`,
-    () => hearingService.updateHearing(data, params),
+    () => hearingService.updateHearingTranscript(data, params),
     {
       cacheTime: 0,
       enabled: Boolean(enabled),

@@ -57,8 +57,9 @@ const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearin
     try {
       const updatedHearing = structuredClone(hearing);
       updatedHearing.transcript[0] = updatedTranscriptText;
+      updatedHearing.workflow = updatedHearing.workflow || {};
       updatedHearing.workflow.action = "CLOSE";
-      return await hearingService.updateHearing(
+      return await hearingService.updateHearings(
         { tenantId, hearing: updatedHearing, hearingType: "", status: "" },
         { applicationNumber: "", cnrNumber: "" }
       );

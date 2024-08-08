@@ -2,9 +2,18 @@ import { Request } from "@egovernments/digit-ui-libraries";
 import { Urls } from "./Urls";
 
 export const hearingService = {
-  updateHearing: (data, params) => {
+  updateHearingTranscript: (data, params) => {
     return Request({
-      url: Urls.hearing.hearingUpdate,
+      url: Urls.hearing.hearingUpdateTranscript,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  updateHearings: (data, params) => {
+    return Request({
+      url: Urls.hearing.updateHearings,
       useCache: false,
       userService: false,
       data,
