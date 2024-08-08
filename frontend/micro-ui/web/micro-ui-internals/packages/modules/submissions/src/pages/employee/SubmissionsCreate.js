@@ -370,7 +370,7 @@ const SubmissionsCreate = () => {
     let entityType = "async-voluntary-submission-managelifecycle";
     if (orderNumber) {
       entityType =
-        orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
+        orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true
           ? "async-submission-with-response-managelifecycle"
           : "async-order-submission-managelifecycle";
     }
@@ -454,10 +454,11 @@ const SubmissionsCreate = () => {
             onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
             partyType: "complainant.primary",
             ...(orderDetails &&
-              orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
-                respondingParty: orderDetails?.additionalDetails?.formdata?.respondingParty,
+              orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true && {
+                respondingParty: orderDetails?.additionalDetails?.formdata?.responseInfo?.respondingParty,
               }),
-            isResponseRequired: orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" : true,
+            isResponseRequired:
+              orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true : true,
             ...(hearingId && { hearingId }),
           },
           documents,

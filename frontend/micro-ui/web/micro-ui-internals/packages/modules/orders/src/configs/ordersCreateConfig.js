@@ -580,73 +580,88 @@ export const configsOrderMandatorySubmissions = [
   {
     body: [
       {
-        label: "IS_RESPONSE_REQUIRED",
-        key: "isResponseRequired",
         isMandatory: true,
-        type: "radio",
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "responseInfo",
+        withoutLabel: true,
         populators: {
-          name: "isResponseRequired",
-          optionsKey: "name",
-          title: "",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          options: [
+          inputs: [
             {
-              code: "Yes",
-              name: "ES_COMMON_YES",
+              label: "IS_RESPONSE_REQUIRED",
+              type: "radioButton",
+              name: "isResponseRequired",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              styles: {
+                marginBottom: 0,
+              },
+              clearFields: { respondingParty: [], responseDeadline: "" },
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: true,
+                  name: "ES_COMMON_YES",
+                },
+                {
+                  code: false,
+                  name: "ES_COMMON_NO",
+                },
+              ],
             },
             {
-              code: "No",
-              name: "ES_COMMON_NO",
+              label: "RESPONDING_PARTY",
+              type: "dropdown",
+              name: "respondingParty",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              allowMultiSelect: true,
+              required: true,
+              isMandatory: true,
+              selectedText: "party(s)",
+              disableFormValidation: false,
+              isDependentOn: "isResponseRequired",
+              dependentKey: {
+                isResponseRequired: ["code"],
+              },
+              styles: {
+                marginBottom: 0,
+              },
+              options: [
+                {
+                  code: "PARTY_1",
+                  name: "PARTY_1",
+                },
+                {
+                  code: "PARTY_2",
+                  name: "PARTY_2",
+                },
+                {
+                  code: "PARTY_3",
+                  name: "PARTY_3",
+                },
+              ],
+            },
+            {
+              label: "RESPONSE_DEADLINE",
+              type: "date",
+              name: "responseDeadline",
+              labelChildren: "OutlinedInfoIcon",
+              tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
+              isDependentOn: "isResponseRequired",
+              dependentKey: {
+                isResponseRequired: ["code"],
+              },
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {
+                min: new Date().toISOString().split("T")[0],
+              },
+              isMandatory: true,
+              disableFormValidation: false,
             },
           ],
-        },
-      },
-      {
-        label: "RESPONDING_PARTY",
-        key: "respondingParty",
-        type: "dropdown",
-        populators: {
-          name: "respondingParty",
-          allowMultiSelect: true,
-          optionsKey: "name",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          selectedText: "party(s)",
-          options: [
-            {
-              code: "PARTY_1",
-              name: "PARTY_1",
-            },
-            {
-              code: "PARTY_2",
-              name: "PARTY_2",
-            },
-            {
-              code: "PARTY_3",
-              name: "PARTY_3",
-            },
-          ],
-        },
-      },
-      {
-        label: "RESPONSE_DEADLINE",
-        isMandatory: false,
-        key: "responseDeadline",
-        type: "date",
-        labelChildren: "OutlinedInfoIcon",
-        tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
-        populators: {
-          name: "responseDeadline",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "minTodayDateValidation",
-            },
-          },
         },
       },
       {
@@ -2900,7 +2915,7 @@ export const configsCreateOrderWarrant = [
         populators: {
           name: "orderType",
           optionsKey: "code",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           mdmsConfig: {
             masterName: "OrderType",
             moduleName: "Order",
@@ -2916,7 +2931,7 @@ export const configsCreateOrderWarrant = [
         disable: true,
         populators: {
           name: "dateOfHearing",
-          error: "Required",
+          error: "CORE_REQUIRED_FIELD_ERROR",
         },
       },
       {
@@ -2927,7 +2942,7 @@ export const configsCreateOrderWarrant = [
         disable: true,
         populators: {
           name: "warrantFor",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
         },
       },
       {
@@ -2939,7 +2954,7 @@ export const configsCreateOrderWarrant = [
         populators: {
           name: "warrantType",
           optionsKey: "code",
-          error: "required ",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           options: [
             {
               code: "Warrant_Type_1",
@@ -3011,13 +3026,15 @@ export const configsCreateOrderWarrant = [
               label: "BAILABLE_AMOUNT",
               type: "text",
               name: "bailableAmount",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               isDependentOn: "isBailable",
               dependentKey: {
                 isBailable: ["code"],
               },
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {
-                isNumber: true,
+                pattern: /^\d{0,8}(\.\d{1,2})?$/i,
+                errMsg: "CS_VALID_AMOUNT_DECIMAL",
               },
               isMandatory: true,
               disableFormValidation: false,
