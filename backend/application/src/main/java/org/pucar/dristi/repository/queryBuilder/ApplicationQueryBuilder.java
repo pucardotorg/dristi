@@ -7,7 +7,6 @@ import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -65,9 +64,9 @@ public class ApplicationQueryBuilder {
             firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
+            firstCriteria = addListCriteria(applicationCriteria.getStatus(), query, firstCriteria, preparedStmtList);
             firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList);
-            addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber", preparedStmtList);
+            addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, preparedStmtList);
 
             return query.toString();
         }
@@ -76,14 +75,31 @@ public class ApplicationQueryBuilder {
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
     }
-    boolean addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
-        if (criteria != null && !criteria.isEmpty()) {
+
+    private boolean addListCriteria(List<String> itemList, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList) {
+        if (itemList != null && !itemList.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append(str).append(" LIKE ?");
-            preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList);
             firstCriteria = false;
         }
         return firstCriteria;
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
+        if (!itemList.isEmpty()) {
+            query.append("app.status").append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            preparedStmtList.addAll(itemList);
+        }
+    }
+
+    void addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append("app.applicationNumber").append(" LIKE ?");
+            preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
+        }
     }
 
     boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {

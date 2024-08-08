@@ -146,8 +146,8 @@ public class HearingRegistrationValidator {
         if (existingHearings.isEmpty())
             throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
 
-        if(config.getVerifyAttendeeIndividualId())
-            validateIndividualExistence(requestInfo, hearing);
+    //    if(config.getVerifyAttendeeIndividualId())
+           // validateIndividualExistence(requestInfo, hearing);
 
         return existingHearings.get(0);
     }
