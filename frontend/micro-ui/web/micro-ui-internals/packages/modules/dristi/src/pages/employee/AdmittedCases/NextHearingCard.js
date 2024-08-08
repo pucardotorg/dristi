@@ -51,9 +51,9 @@ const NextHearingCard = ({ caseData, width }) => {
 
   const handleButtonClick = () => {
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-    const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+    const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
     const searchParams = new URLSearchParams();
-    searchParams.set("hearingId", scheduledHearing.hearingId);
+    searchParams.set("hearingId", scheduledHearing?.hearingId);
     if (userType === "citizen") {
       history.push(`/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`);
     } else {
@@ -120,7 +120,16 @@ const NextHearingCard = ({ caseData, width }) => {
           <Button
             variation={"outlined"}
             onButtonClick={handleButtonClick}
-            label={userRoles.includes("CITIZEN") ? t("JOIN_HEARING") : t("START_NOW")}
+            isDisabled={userRoles.includes("CITIZEN") && scheduledHearing?.status === "SCHEDULED"}
+            label={
+              userRoles.includes("CITIZEN")
+                ? scheduledHearing?.status === "SCHEDULED"
+                  ? t("AWAIT_START_HEARING")
+                  : t("JOIN_HEARING")
+                : scheduledHearing?.status === "SCHEDULED"
+                ? t("START_NOW")
+                : t("JOIN_HEARING")
+            }
           />
         </div>
       </Card>

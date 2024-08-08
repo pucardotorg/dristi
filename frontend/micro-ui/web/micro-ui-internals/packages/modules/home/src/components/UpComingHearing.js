@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@egovernments/digit-ui-components";
-import { Link } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { CalenderIcon } from "../../homeIcon";
 
 function timeInMillisToDateTime(timeInMillis) {
@@ -27,29 +27,57 @@ function timeInMillisToDateTime(timeInMillis) {
 class HearingSlot {
   hearings = [];
   slotName = "";
-  slotStartTime = "";
-  slotEndTime = "";
-  constructor(slotName, slotStartTime, slotEndTime) {
+  slotStartTime = 0;
+  slotEndTime = 0;
+  slotStartString = "";
+  slotEndString = "";
+  constructor(slotName, slotStartTime, slotEndTime, slotStartString, slotEndString) {
     this.slotName = slotName;
     this.slotStartTime = slotStartTime;
     this.slotEndTime = slotEndTime;
+    this.slotStartString = slotStartString;
+    this.slotEndString = slotEndString;
   }
 
   addHearingIfApplicable(hearing) {
-    const hearingTime = timeInMillisToDateTime(hearing.startTime).time;
+    const hearingTime = hearing.startTime;
     if (this.slotStartTime <= hearingTime && hearingTime <= this.slotEndTime) {
       this.hearings.push(hearing);
+      return true;
     }
+    return false;
   }
+}
+
+function formatTimeTo12Hour(timeString) {
+  let [hours, minutes] = timeString.split(":").map(Number);
+
+  const suffix = hours >= 12 ? "pm" : "am";
+
+  hours = hours % 12 || 12;
+
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes} ${suffix}`;
+}
+
+function timeInMillisFromDateAndTime(date, hhmmssms) {
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const [h, m, s, ms] = hhmmssms.split(":").map(Number);
+  const millis = ((h || 0) * 60 * 60 + (m || 0) * 60 + (s || 0)) * 1000 + (ms || 0);
+  return startOfDate.getTime() + millis;
 }
 
 const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const userName = Digit.SessionStorage.get("User");
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
-  const roles = Digit.UserService.getUser()?.info?.roles;
-  const isFSO = roles.some((role) => role.code === "FSO_ROLE");
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
+  const roles = userInfo?.roles;
+  const isFSO = roles?.some((role) => role?.code === "FSO_ROLE");
   const [hearingCaseList, setHearingCaseList] = useState([]);
   const [isAdvocateLoading, setIsAdvocateLoading] = useState(false);
   const [isCaseLoading, setIsCaseLoading] = useState(false);
@@ -63,16 +91,11 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const dayOptions = { weekday: "short" };
   const date = today.toLocaleDateString("en-US", dateOptions); // e.g., "Jun 15"
   const day = today.toLocaleDateString("en-US", dayOptions); // e.g., "Tue"
-  const time = "9:30am-12:00pm"; // Static time for demonstration purposes
-  const hearingType = "Admission Hearings";
-  const pendingTasks = 4;
-  const upcomingHearings = 2;
-  // [TODO: Time, Hearing Type, Pending Tasks, upcoming hearings need to be integrated with actual data]
   const curHr = today.getHours();
   const dateRange = useMemo(
     () => ({
-      start: today.toISOString().split("T")[0],
-      end: new Date(new Date().setDate(today.getDate() + 1)).toISOString().split("T")[0],
+      start: today.getTime(),
+      end: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime(),
     }),
     [today]
   );
@@ -80,10 +103,9 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     const year = today.getFullYear();
     const month = today.getMonth();
     const endOfMonth = new Date(year, month + 1, 0);
-    const formatDate = (date) => date.toISOString().split("T")[0];
     return {
-      fromDate: formatDate(today),
-      toDate: formatDate(endOfMonth),
+      fromDate: today.getTime(),
+      toDate: endOfMonth.getTime(),
     };
   }, [today]);
 
@@ -92,11 +114,10 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
       criteria: {
         tenantId,
         fromDate: dateRange.start,
-        toDate: dateRange.end,
         attendeeIndividualId: props?.attendeeIndividualId,
       },
     }),
-    [dateRange.end, dateRange.start, props?.attendeeIndividualId, tenantId]
+    [dateRange.start, props?.attendeeIndividualId, tenantId]
   );
 
   const reqBodyMonthly = useMemo(
@@ -110,37 +131,69 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     [dayLeftInOngoingMonthRange, props?.attendeeIndividualId, tenantId]
   );
 
+  const { data: individualData } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "Home",
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+
+  const individualId = useMemo(() => {
+    return individualData?.Individual?.[0]?.individualId;
+  }, [individualData]);
+
+  const individualUserType = Digit.UserService.getType();
+
   const { data: hearingSlotsResponse } = Digit.Hooks.hearings.useGetHearingSlotMetaData(true);
 
-  const searchCase = async (HearingList) => {
-    setIsCaseLoading(false);
-    const hearingCaseList = await Promise.all(
-      HearingList?.map(async (hearing) => {
-        const response = await window?.Digit?.DRISTIService.searchCaseService(
-          {
-            criteria: [
-              {
-                filingNumber: hearing?.filingNumber?.[0],
-              },
-            ],
-            tenantId,
-          },
-          {}
-        );
-        if (response?.criteria[0]?.responseList?.length === 1) {
-          return {
-            caseName: response?.criteria[0]?.responseList[0].caseTitle,
-            filingNumber: response?.criteria[0]?.responseList[0].filingNumber,
-          };
-        }
-      }) || []
-    );
-    setHearingCaseList(hearingCaseList);
-    setIsCaseLoading(true);
-  };
+  const searchCase = useCallback(
+    async (hearings) => {
+      setIsCaseLoading(true);
 
-  const fetchBasicUserInfo = async () => {
-    setIsAdvocateLoading(false);
+      const filingNumbers = [
+        ...new Set(
+          hearings.map((hearing) => {
+            return hearing.filingNumber[0];
+          })
+        ),
+      ];
+
+      const criteria = filingNumbers.map((filingNumber) => {
+        return { filingNumber };
+      });
+
+      if (!criteria.length) {
+        setIsCaseLoading(false);
+        return;
+      }
+
+      const response = await window?.Digit?.DRISTIService.searchCaseService(
+        {
+          criteria,
+          tenantId,
+        },
+        {}
+      );
+      const hearingCaseList = response.criteria.map((res) => {
+        return {
+          caseName: res.responseList[0]?.caseTitle,
+          filingNumber: res.responseList[0]?.filingNumber,
+        };
+      });
+
+      setHearingCaseList(hearingCaseList);
+      setIsCaseLoading(false);
+    },
+    [tenantId]
+  );
+
+  const fetchBasicUserInfo = useCallback(async () => {
+    setIsAdvocateLoading(true);
     const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
       {
         Individual: {
@@ -166,45 +219,82 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
     if (advocateResponse?.advocates[0]?.responseList?.length === 1) {
       setIsAdvocate(true);
-      setIsAdvocateLoading(true);
     }
-  };
+    setIsAdvocateLoading(false);
+  }, [tenantId, userInfo?.uuid]);
 
   const { data: hearingResponse, isLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start}-${dateRange.end}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && (individualUserType === "citizen" ? individualId : true)),
+    false,
+    individualUserType === "citizen" && individualId
   );
 
-  const { data: monthlyHearingResponse, isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
+  const { data: monthlyHearingResponse, isLoading: isLoadingMonthly } = Digit.Hooks.hearings.useGetHearings(
     reqBodyMonthly,
     { applicationNumber: "", cnrNumber: "", tenantId },
-    `${dateRange.start}-${dateRange.end}`,
-    dateRange.start && dateRange.end
+    `monthly-${dateRange.start}-${dateRange.end}`,
+    Boolean(dateRange.start && dateRange.end && (individualUserType === "citizen" ? individualId : true)),
+    false,
+    individualUserType === "citizen" && individualId
   );
 
-  useEffect(() => {
-    searchCase(hearingResponse?.HearingList);
-    fetchBasicUserInfo();
+  const earliestHearing = useMemo(() => {
+    if (!hearingResponse) {
+      return null;
+    }
+    let earliestHearing = hearingResponse.HearingList[0];
+    for (const hearing of hearingResponse.HearingList) {
+      if (hearing.startTime < earliestHearing.startTime) {
+        earliestHearing = hearing;
+      }
+    }
+    return earliestHearing;
   }, [hearingResponse]);
 
-  /**
-   * @type {HearingSlot[]}
-   */
-  const hearingSlots = useMemo(() => {
-    if (!hearingSlotsResponse || !hearingResponse) {
-      return [];
+  const earliestHearingSlot = useMemo(() => {
+    if (!hearingSlotsResponse || !hearingResponse || !earliestHearing) {
+      return null;
     }
-    console.debug({ hearingResponse, hearingSlotsResponse });
-    const hearingSlots = hearingSlotsResponse.slots.map((slot) => new HearingSlot(slot.slotName, slot.slotStartTime, slot.slotEndTime)) || [];
-    hearingResponse.HearingList.forEach((hearing) => {
-      hearingSlots.forEach((slot) => slot.addHearingIfApplicable(hearing));
+    const slot = hearingSlotsResponse.slots.find((slot) => {
+      const hearingTime = timeInMillisToDateTime(earliestHearing.startTime).time;
+      return slot.slotStartTime <= hearingTime && hearingTime <= slot.slotEndTime;
     });
-    return hearingSlots;
-  }, [hearingResponse, hearingSlotsResponse]);
+    const hearingSlotObj = new HearingSlot(
+      slot.slotName,
+      timeInMillisFromDateAndTime(new Date(earliestHearing.startTime), slot.slotStartTime),
+      timeInMillisFromDateAndTime(new Date(earliestHearing.startTime), slot.slotEndTime),
+      slot.slotStartTime,
+      slot.slotEndTime
+    );
+    hearingResponse.HearingList.forEach((hearing) => {
+      hearingSlotObj.addHearingIfApplicable(hearing);
+    });
+    return hearingSlotObj;
+  }, [earliestHearing, hearingResponse, hearingSlotsResponse]);
 
-  const latestHearing = hearingSlots.filter((slot) => slot.hearings.length).sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime))[0];
+  useEffect(() => {
+    if (earliestHearingSlot) {
+      searchCase(earliestHearingSlot.hearings);
+    }
+    fetchBasicUserInfo();
+  }, [fetchBasicUserInfo, hearingResponse, earliestHearingSlot, searchCase]);
+
+  const hearingCountsByType = useMemo(() => {
+    const hearingCountsByType = {};
+
+    earliestHearingSlot?.hearings.forEach((hearing) => {
+      hearingCountsByType[hearing.hearingType] = (hearingCountsByType[hearing.hearingType] || 0) + 1;
+    });
+
+    return Object.keys(hearingCountsByType)
+      .map((hearingType) => {
+        return `${hearingType} (${hearingCountsByType[hearingType]})`;
+      })
+      .join(", ");
+  }, [earliestHearingSlot]);
 
   const hearingCount = useMemo(() => {
     return hearingResponse?.TotalCount;
@@ -213,10 +303,34 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const ongoingMonthHearingCount = useMemo(() => {
     return monthlyHearingResponse?.TotalCount;
   }, [monthlyHearingResponse]);
-
-  if (isLoading && isLoadingMonthly && isAdvocateLoading && isCaseLoading) {
+  if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
+
+  if (!earliestHearingSlot) {
+    return (
+      <div className="upcoming-hearing-container">
+        <div className="header">
+          {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
+        </div>
+        <div className="hearingCard">
+          <div className="no-hearing">
+            <CalenderIcon />
+            <p>
+              {t("YOU_DONT_HAVE_ANY")} <span>{t("HEARING_SCHEDULED")}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const hearingSearchParams = new URLSearchParams();
+  hearingSearchParams.set("from-date", earliestHearingSlot?.slotStartTime);
+  hearingSearchParams.set("to-date", earliestHearingSlot?.slotEndTime);
+  hearingSearchParams.set("slot", earliestHearingSlot?.slotName);
+  hearingSearchParams.set("count", earliestHearingSlot?.hearings.length);
+
   return (
     <div className="upcoming-hearing-container">
       <div className="header">
@@ -225,7 +339,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
       {!isFSO && (
         <div className="hearing-card-wrapper">
           <div className="hearingCard">
-            {hearingCount > 0 ? (
+            {hearingCount > 0 && (
               <React.Fragment>
                 <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                   <div className="hearingDate">
@@ -235,46 +349,25 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
                   </div>
                   <div className="time-hearing-type">
                     <div className="timeText">
-                      {latestHearing.slotName} - {latestHearing.slotStartTime} to {latestHearing.slotEndTime}
+                      {formatTimeTo12Hour(earliestHearingSlot.slotStartString)} - {formatTimeTo12Hour(earliestHearingSlot.slotEndString)}
                     </div>
                     <div style={{ display: "flex", gap: "8px" }}>
-                      {userInfoType === "citizen" ? (
-                        <React.Fragment>
-                          {hearingCaseList?.map((hearing, index) => (
-                            <React.Fragment>
-                              {index < 2 && (
-                                <React.Fragment>
-                                  <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                    {hearing?.caseName}
-                                  </Link>
-                                  {index !== hearingCaseList.length - 1 && <span>,</span>}
-                                </React.Fragment>
-                              )}
-                              {index === 2 && (
-                                <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                                  {`+ ${hearingCaseList?.length - 2} more`}
-                                </Link>
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </React.Fragment>
-                      ) : (
-                        <Link className="hearingType" to={`/${window.contextPath}/${userType}/hearings`}>
-                          {hearingType} ({hearingCount})
-                        </Link>
-                      )}
+                      <Link
+                        className="hearingType"
+                        to={{ pathname: `/${window.contextPath}/${userType}/hearings`, search: hearingSearchParams.toString() }}
+                      >
+                        {userInfoType === "citizen"
+                          ? hearingCaseList
+                              .slice(0, 2)
+                              .map((hearing) => hearing.caseName)
+                              .join(", ") + (hearingCaseList.length > 2 ? ` +${hearingCaseList.length - 2} more` : "")
+                          : hearingCountsByType}
+                      </Link>
                     </div>
                   </div>
                 </div>
                 <Button className={"view-hearing-button"} label={t("VIEW_HEARINGS")} variation={"primary"} onClick={props.handleNavigate} />
               </React.Fragment>
-            ) : (
-              <div className="no-hearing">
-                <CalenderIcon />
-                <p>
-                  {t("YOU_DONT_HAVE_ANY")} <span>{t("HEARING_SCHEDULED")}</span>
-                </p>
-              </div>
             )}
           </div>
           {ongoingMonthHearingCount > 0 && userInfoType === "citizen" && isAdvocate && (

@@ -1,64 +1,84 @@
-import React from "react";
-import { CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-const Heading = (props) => {
-  return <h1 className="heading-m">{props.label}</h1>;
-};
-
-const CloseBtn = (props) => {
-  return (
-    <div onClick={props.onClick} className="close-button-style">
-      <CloseSvg />
-    </div>
-  );
-};
-
-const popUpStyle = {
-  width: "fit-content",
-  height: "fit-content",
-  borderRadius: "0.3rem",
-};
+import DocumentModal from "./DocumentModal";
+import CustomStepperSuccess from "./CustomStepperSuccess";
+import AddSignatureComponent from "./AddSignatureComponent";
+import UpdateDeliveryStatusComponent from "./UpdateDeliveryStatusComponent";
 
 const ReviewDocumentModal = ({ handleClose }) => {
   const { t } = useTranslation();
-  return (
-    <div>
-      <Modal
-        popupStyles={popUpStyle}
-        headerBarMain={<Heading label={"Review Document: Summons Document"} />}
-        headerBarEnd={<CloseBtn onClick={handleClose} />}
-        actionSaveLabel={t("E-Sign")}
-      >
-        <div style={{ height: "620px" }}>
-          <div className="document-info-container">
-            <div className="document-info-row">
-              <div className="document-info-heading">Issued to</div>
-              <div>Vikram Singh</div>
-              <div className="view-order-right">View Order</div>
-            </div>
-            <div className="document-info-row">
-              <div className="document-info-heading">Issued Date</div>
-              <div>23/04/2024</div>
-            </div>
-            <div className="document-info-row">
-              <div className="document-info-heading">Next Hearing Date</div>
-              <div>04/07/2024</div>
-            </div>
-            <div className="document-info-row">
-              <div className="document-info-heading">Amount Paid</div>
-              <div>Rs. 15/-</div>
-            </div>
-            <div className="document-info-row">
-              <div className="document-info-heading">Channel Details</div>
-              <div>Physical Post </div>
-            </div>
-          </div>
-          <div className="document-preview">Document preview Space</div>
-        </div>
-      </Modal>
-    </div>
-  );
+
+  const [isSigned, setIsSigned] = useState(false);
+
+  const infos = useMemo(() => {
+    return [
+      { key: "Issued to", value: "Vikram Singh" },
+      { key: "Issued Date", value: "23/04/2024" },
+      { key: "Next Hearing Date", value: "04/07/2024" },
+      { key: "Amount Paid", value: "Rs. 15" },
+      { key: "Channel Details", value: "Physical Post" },
+    ];
+  }, []);
+
+  const documents = useMemo(() => {
+    return [
+      {
+        fileName: "CS_CHEQUE_RETURN_MEMO",
+        fileStoreId: "a236b4e0-5ddd-4ece-9ba3-4d02edf15adc",
+        documentName: "file_example_JPG_100kB.jpg",
+        documentType: "image/jpeg",
+      },
+      {
+        fileName: "CS_CHEQUE_RETURN_MEMO",
+        fileStoreId: "a236b4e0-5ddd-4ece-9ba3-4d02edf15adc",
+        documentName: "file_example_JPG_100kB.jpg",
+        documentType: "image/jpeg",
+      },
+    ];
+  }, []);
+
+  const submissionData = useMemo(() => {
+    return [
+      { key: "SUBMISSION_DATE", value: "25-08-2001", copyData: false },
+      { key: "SUBMISSION_ID", value: "875897348579453457", copyData: true },
+    ];
+  }, []);
+
+  const handleSigned = () => {
+    setIsSigned(true);
+  };
+
+  const config = useMemo(() => {
+    return {
+      handleClose: handleClose,
+      heading: { label: "Review Document: Summons Document" },
+      actionSaveLabel: "E-sign",
+      isStepperModal: true,
+      actionSaveOnSubmit: () => {},
+      steps: [
+        {
+          // type: "document",
+          // modalBody: <DocumentViewerWithComment infos={infos} documents={documents} />,
+          modalBody: <UpdateDeliveryStatusComponent t={t} infos={infos} />,
+          actionSaveOnSubmit: () => {},
+        },
+        {
+          heading: { label: "Add Signature (1)" },
+          actionSaveLabel: "Send Email",
+          actionCancelLabel: "Back",
+          modalBody: <AddSignatureComponent t={t} isSigned={isSigned} handleSigned={handleSigned} />,
+          isDisabled: isSigned ? false : true,
+        },
+        {
+          type: "success",
+          hideSubmit: true,
+          modalBody: <CustomStepperSuccess closeButtonAction={handleClose} t={t} submissionData={submissionData} />,
+        },
+      ],
+    };
+  }, [documents, handleClose, infos, isSigned, submissionData, t]);
+
+  return <DocumentModal config={config} />;
 };
 
 export default ReviewDocumentModal;

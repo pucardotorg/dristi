@@ -4,8 +4,8 @@ import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 
 const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvidenceModal }) => {
-  const user = localStorage.getItem("user-info");
-  const userRoles = JSON.parse(user).roles.map((role) => role.code);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const history = useHistory();
   const CloseBtn = (props) => {
     return (
@@ -49,7 +49,7 @@ const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvid
             <div style={{ fontWeight: 700, fontSize: "16px", lineHeight: "18.75px", color: "#101828" }}>{t(`${application.applicationType}`)}</div>
             <div style={{ display: "flex", gap: "5px" }}>
               <div style={{ fontWeight: 600, fontSize: "14px", lineHeight: "20px", color: "#101828" }}>Deadline: </div>
-              <div style={{ fontWeight: 500, fontSize: "14px", lineHeight: "20px", color: "#101828" }}>24 Jul, 2024</div>
+              <div style={{ fontWeight: 500, fontSize: "14px", lineHeight: "20px", color: "#101828" }}>{application.stateSla}</div>
             </div>
           </div>
           <div

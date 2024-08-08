@@ -26,6 +26,7 @@ function SuccessModal({
   handleCloseSuccessModal,
   applicationNumber,
   createdDate,
+  makePayment,
 }) {
   const submissionData = [
     { key: "SUBMISSION_DATE", value: createdDate, copyData: false },
@@ -35,7 +36,7 @@ function SuccessModal({
     <Modal
       actionCancelLabel={t(actionCancelLabel)}
       actionCancelOnSubmit={actionCancelOnSubmit}
-      actionSaveLabel={t("CS_CLOSE")}
+      actionSaveLabel={makePayment ? t("CS_MAKE_PAYMENT") : t("CS_CLOSE")}
       actionSaveOnSubmit={handleCloseSuccessModal}
       className={"submission-success-modal"}
     >

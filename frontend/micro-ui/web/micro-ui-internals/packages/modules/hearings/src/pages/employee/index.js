@@ -8,10 +8,11 @@ import EndHearing from "./EndHearing";
 import InsideHearingMainPage from "./InsideHearingMainPage";
 
 const bredCrumbStyle = { maxWidth: "min-content" };
+
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const crumbs = [
     {
       path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
@@ -20,7 +21,7 @@ const ProjectBreadCrumb = ({ location }) => {
     },
     {
       path: `/${window?.contextPath}/employee`,
-      content: t(location.pathname.split("/").pop()),
+      content: t(location.pathname.split("/").filter(Boolean).pop()),
       show: true,
     },
   ];
@@ -30,7 +31,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer className="ground-container hearing-action-block">
         <React.Fragment>
           <ProjectBreadCrumb location={window.location} />
         </React.Fragment>

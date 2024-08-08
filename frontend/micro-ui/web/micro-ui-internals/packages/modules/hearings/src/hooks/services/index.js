@@ -20,4 +20,21 @@ export const hearingService = {
       params,
     });
   },
+  startHearing: ({ hearing }, params) => {
+    return Request({
+      url: Urls.hearing.updateHearings,
+      useCache: false,
+      userService: false,
+      data: { hearing: { ...hearing, workflow: { action: "START" } } },
+      params,
+    });
+  },
+  customApiService: (url, data, params, useCache = false, userService = true) =>
+    Request({
+      url: url,
+      useCache: useCache,
+      userService: true,
+      data,
+      params,
+    }),
 };

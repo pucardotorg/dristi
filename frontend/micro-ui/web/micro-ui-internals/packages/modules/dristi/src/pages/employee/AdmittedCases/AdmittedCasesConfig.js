@@ -23,7 +23,7 @@ export const TabSearchconfig = {
       type: "search",
     },
     {
-      label: "Complaints",
+      label: "Complaint",
       type: "search",
     },
     {

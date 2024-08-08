@@ -2,42 +2,82 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/";
 import PreHearingModal from "../../components/PreHearingModal";
+import TasksComponent from "../../components/TaskComponentCalander";
 import useGetHearings from "../../hooks/hearings/useGetHearings";
-import useGetHearingSlotMetaData from "../../hooks/services/useGetHearingSlotMetaData";
+import useGetHearingSlotMetaData from "../../hooks/useGetHearingSlotMetaData";
 
-const tenantId = window.localStorage.getItem("tenant-id");
+const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
 const MonthlyCalendar = () => {
   const history = useHistory();
+  const { t } = useTranslation();
+  const calendarRef = useRef(null);
+  const getCurrentViewType = () => {
+    const calendarApi = calendarRef.current.getApi();
+    const currentViewType = calendarApi.view.type;
+    return currentViewType;
+  };
+  const { data: courtData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
+    cacheTime: 0,
+  });
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const { data: individualData } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "Home",
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+  const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
+  const userType = Digit.UserService.getType();
 
   const [dateRange, setDateRange] = useState({});
+  const [taskType, setTaskType] = useState({});
+  const [caseType, setCaseType] = useState({});
+  const initial = userInfoType === "citizen" ? "timeGridDay" : "dayGridMonth";
 
   const search = window.location.search;
-  const { fromDate, toDate, slot } = useMemo(() => {
+  const { fromDate, toDate, slot, initialView, count } = useMemo(() => {
     const searchParams = new URLSearchParams(search);
-    const fromDate = searchParams.get("from-date") || null;
-    const toDate = searchParams.get("to-date") || null;
+    const fromDate = Number(searchParams.get("from-date")) || null;
+    const toDate = Number(searchParams.get("to-date")) || null;
     const slot = searchParams.get("slot") || null;
-    return { fromDate, toDate, slot };
+    const initialView = searchParams.get("view") || initial;
+    const count = searchParams.get("count") || 0;
+    return { fromDate, toDate, slot, initialView, count };
   }, [search]);
 
   const reqBody = {
-    criteria: { tenantId, fromDate: dateRange.start?.toISOString().split("T")[0], toDate: dateRange.end?.toISOString().split("T")[0] },
+    criteria: {
+      tenantId,
+      fromDate: dateRange.start ? dateRange.start.getTime() : null,
+      toDate: dateRange.end ? dateRange.end.getTime() : null,
+    },
   };
 
   const { data: hearingResponse, refetch: refetch } = useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", tenantId },
     `${dateRange.start?.toISOString()}-${dateRange.end?.toISOString()}`,
-    dateRange.start && dateRange.end
+    Boolean(dateRange.start && dateRange.end && (userType === "citizen" ? individualId : true)),
+    false,
+    userType === "citizen" && individualId
   );
-  const { data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
+  const { data: hearingSlots } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
 
-  const events = useMemo(() => AdvocateSlotsResponse || [], [AdvocateSlotsResponse]);
+  const events = useMemo(() => hearingSlots || [], [hearingSlots]);
 
   function epochToDateTimeObject(epochTime) {
     if (!epochTime || typeof epochTime !== "number") {
@@ -96,16 +136,31 @@ const MonthlyCalendar = () => {
     return eventsArray;
   }, [hearingDetails, events.slots]);
 
-  const handleEventClick = (arg) => {
-    const fromDate = new Date(arg.event.extendedProps.date);
-    const toDate = new Date(fromDate);
-    toDate.setDate(fromDate.getDate() + 1);
+  const getEachHearingType = (hearingList) => {
+    return [...new Set(hearingList.map((hearing) => hearing.hearingType))];
+  };
 
+  const hearingCount = (hearingList) => {
+    const hearingTypeList = getEachHearingType(hearingList);
+    return hearingTypeList.map((type) => {
+      return {
+        type: type,
+        frequency: hearingList.filter((hearing) => hearing.hearingType === type).length,
+      };
+    });
+  };
+
+  const handleEventClick = (arg, ...rest) => {
+    console.log(arg, ...rest);
+    const fromDate = arg.event.start;
+    const count = arg.event.extendedProps.count;
+    const toDate = arg.event.end;
     const searchParams = new URLSearchParams(search);
-    searchParams.set("from-date", fromDate.toISOString().split("T")[0]);
-    searchParams.set("to-date", toDate.toISOString().split("T")[0]);
+    searchParams.set("from-date", fromDate.getTime());
+    searchParams.set("to-date", toDate.getTime());
     searchParams.set("slot", arg.event.extendedProps.slot);
-
+    searchParams.set("view", getCurrentViewType());
+    searchParams.set("count", count);
     history.replace({ search: searchParams.toString() });
   };
 
@@ -114,6 +169,8 @@ const MonthlyCalendar = () => {
     searchParams.delete("from-date");
     searchParams.delete("to-date");
     searchParams.delete("slot");
+    searchParams.delete("view");
+    searchParams.delete("count");
     history.replace({ search: searchParams.toString() });
   };
 
@@ -126,27 +183,59 @@ const MonthlyCalendar = () => {
   );
 
   return (
-    <div>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          start: "prev",
-          center: "title",
-          end: "next, dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        height={"85vh"}
-        events={Calendar_events}
-        eventContent={(arg) => {
-          return <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>;
-        }}
-        eventClick={handleEventClick}
-        datesSet={(dateInfo) => {
-          setDateRange({ start: dateInfo.start, end: dateInfo.end });
-        }}
-      />
-
-      {fromDate && toDate && slot && <PreHearingModal onCancel={closeModal} hearingData={{ fromDate, toDate, slot }} />}
+    <div style={{ display: "flex" }}>
+      <div style={{ width: "70%" }}>
+        <div>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView={initialView}
+            headerToolbar={{
+              start: "prev",
+              center: "title",
+              end: "next,dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            height={"85vh"}
+            events={Calendar_events}
+            eventContent={(arg) => {
+              return (
+                <div>
+                  <div>{`${arg.event.extendedProps.slot} : ${arg.event.extendedProps.count}-hearings`}</div>
+                  {hearingCount(arg.event.extendedProps.hearings).map((hearingFrequency) => (
+                    <div>
+                      {hearingFrequency.frequency} - {t(hearingFrequency.type)}
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
+            eventClick={handleEventClick}
+            datesSet={(dateInfo) => {
+              setDateRange({ start: dateInfo.start, end: dateInfo.end });
+            }}
+            ref={calendarRef}
+          />
+          {fromDate && toDate && slot && (
+            <PreHearingModal
+              courtData={courtData?.["common-masters"]?.Court_Rooms}
+              onCancel={closeModal}
+              hearingData={{ fromDate, toDate, slot, count }}
+              individualId={individualId}
+              userType={userType}
+            />
+          )}
+        </div>
+      </div>
+      <div className="right-side">
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          caseType={caseType}
+          setCaseType={setCaseType}
+          isLitigant={Boolean(userInfoType === "citizen")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+        />
+      </div>
     </div>
   );
 };

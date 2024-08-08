@@ -29,7 +29,7 @@ const AdmittedCases = () => {
   const caseId = urlParams.get("caseId");
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isFSO = roles.some((role) => role.code === "FSO_ROLE");
-  const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
+  const activeTab = isFSO ? "Complaint" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -49,7 +49,7 @@ const AdmittedCases = () => {
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
   const userInfo = Digit.UserService.getUser()?.info;
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -66,7 +66,7 @@ const AdmittedCases = () => {
   );
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
-  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0].status === "CASE_ADMITTED";
+  const showTakeAction = userRoles.includes("JUDGE_ROLE") && caseData?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED";
 
   const statue = useMemo(
     () =>
@@ -333,7 +333,7 @@ const AdmittedCases = () => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
+                          return { code: party.name, name: party.name, value: party.individualId };
                         }),
                       },
                     },
@@ -551,6 +551,48 @@ const AdmittedCases = () => {
         })
         .catch((err) => {});
       return;
+    } else if (option === t("MANDATORY_SUBMISSIONS_RESPONSES")) {
+      const reqBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId,
+          cnrNumber,
+          filingNumber: filingNumber,
+          statuteSection: {
+            tenantId,
+          },
+          orderType: "MANDATORY_SUBMISSIONS_RESPONSES",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                type: "MANDATORY_SUBMISSIONS_RESPONSES",
+                code: "MANDATORY_SUBMISSIONS_RESPONSES",
+                name: "ORDER_TYPE_MANDATORY_SUBMISSIONS_RESPONSES",
+              },
+            },
+          },
+        },
+      };
+      ordersService
+        .createOrder(reqBody, { tenantId })
+        .then((res) => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
+            caseId: caseId,
+            tab: activeTab,
+          });
+        })
+        .catch((err) => {});
+      return;
     }
     history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`, { caseId: caseId, tab: "Orders" });
   };
@@ -611,7 +653,7 @@ const AdmittedCases = () => {
         documents: [],
         additionalDetails: {
           formdata: {
-            hearingDate: `${dateArr[2]}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${dateArr[0]}`,
+            hearingDate: formatDate(date).split("-").reverse().join("-"),
             hearingPurpose: data.purpose,
             orderType: {
               code: "SCHEDULE_OF_HEARING_DATE",
@@ -652,7 +694,7 @@ const AdmittedCases = () => {
             <hr className="vertical-line" />
             <div className="sub-details-text">{caseDetails?.stage}</div>
             <hr className="vertical-line" />
-            <div className="sub-details-text">Code: {caseData?.criteria[0].responseList[0].accessCode}</div>
+            <div className="sub-details-text">Code: {caseData?.criteria[0].responseList[0]?.accessCode}</div>
           </div>
           <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && <Button variation={"outlined"} label={t("DOWNLOAD_CASE_FILE")} />}
@@ -733,7 +775,7 @@ const AdmittedCases = () => {
           openSubmissionsViewModal={openSubmissionViewModal}
         />
       )}
-      {config?.label !== "Overview" && config?.label !== "Complaints" && config?.label !== "History" && (
+      {config?.label !== "Overview" && config?.label !== "Complaint" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
           {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
@@ -758,7 +800,7 @@ const AdmittedCases = () => {
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
               <div
-                // onClick={() => handleSelect(t("GENERATE_ORDER_HOME"))}
+                onClick={() => handleSelect(t("MANDATORY_SUBMISSIONS_RESPONSES"))}
                 style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}
               >
                 {t("REQUEST_DOCUMENTS_LINK")}
@@ -813,7 +855,7 @@ const AdmittedCases = () => {
           />
         </div>
       )}
-      {tabData.filter((tab) => tab.label === "Complaints")[0].active && (
+      {tabData.filter((tab) => tab.label === "Complaint")[0].active && (
         <div className="view-case-file-wrapper">
           <ViewCaseFile t={t} inViewCase={true} />
         </div>

@@ -585,7 +585,6 @@ export const UICustomizations = {
   },
   SearchIndividualConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria.state);
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
@@ -706,7 +705,7 @@ export const UICustomizations = {
                   statuteSection: {
                     tenantId: row.tenantId,
                   },
-                  orderType: "RESCHEDULE_OF_HEARING_DATE",
+                  orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                   status: "",
                   isActive: true,
                   workflow: {
@@ -720,13 +719,13 @@ export const UICustomizations = {
                   additionalDetails: {
                     formdata: {
                       orderType: {
-                        type: "RESCHEDULE_OF_HEARING_DATE",
+                        type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                         isactive: true,
-                        code: "RESCHEDULE_OF_HEARING_DATE",
-                        name: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
+                        code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
                       originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
-                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                        date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
                       }`,
                     },
                   },
@@ -772,7 +771,7 @@ export const UICustomizations = {
           },
         ];
       }
-      if (future && userInfo.type === "CITIZEN") {
+      if (future && userInfo?.type === "CITIZEN") {
         return [
           {
             label: "Request for Reschedule hearing",
@@ -978,7 +977,7 @@ export const UICustomizations = {
       case "email":
         return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       case "userName":
-        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
       default:
         return;
     }
@@ -990,5 +989,24 @@ export const UICustomizations = {
       default:
         return;
     }
+  },
+  DristiCaseUtils: {
+    getAllCaseRepresentativesUUID: (caseData) => {
+      let representatives = {};
+      let list = [];
+      caseData?.litigants?.forEach((litigant) => {
+        list = caseData?.representatives
+          ?.filter((item) => {
+            return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+          })
+          .map((item) => item?.additionalDetails?.uuid);
+        if (list?.length > 0) {
+          representatives[litigant?.additionalDetails?.uuid] = list;
+        } else {
+          representatives[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+        }
+      });
+      return representatives;
+    },
   },
 };

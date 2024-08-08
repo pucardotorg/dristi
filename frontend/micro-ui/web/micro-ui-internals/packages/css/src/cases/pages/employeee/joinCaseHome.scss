@@ -4,6 +4,7 @@
 .general-details-vek,
 .select-user-join-case,
 .noc-court-order-upload,
+.update-delivery-status,
 .case-number-input {
   margin: 24px 0px 24px 24px;
   padding-right: 24px;
@@ -27,6 +28,7 @@
       gap: 24px;
       flex-wrap: wrap;
     }
+    .employee-select-wrap,
     .select-wrap {
       margin-bottom: 0px;
       max-width: 100%;
@@ -156,17 +158,18 @@
             width: 48px;
           }
         }
-        .action-button-success {
-          margin-top: 40px;
-          display: flex;
-          gap: 16px;
-        }
       }
       .popup-module-action-bar {
         display: none;
       }
     }
   }
+}
+
+.action-button-success {
+  margin-top: 40px;
+  display: flex;
+  gap: 16px;
 }
 
 .complainants-respondents {

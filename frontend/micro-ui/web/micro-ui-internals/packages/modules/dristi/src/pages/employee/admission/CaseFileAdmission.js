@@ -1,19 +1,24 @@
+import { BackButton, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { FormComposerV2, Header, Loader, Toast, BackButton } from "@egovernments/digit-ui-react-components";
-import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import AdmissionActionModal from "./AdmissionActionModal";
 import { Redirect, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { DRISTIService } from "../../../services";
-import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
-import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
-import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
-import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
-import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
-import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import { Urls } from "../../../hooks";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { OrderTypes, OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import {
+  admitCaseSubmitConfig,
+  scheduleCaseSubmitConfig,
+  selectParticipantConfig,
+  sendBackCase,
+} from "../../citizen/FileCase/Config/admissionActionConfig";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
+import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+import AdmissionActionModal from "./AdmissionActionModal";
+import { generateUUID } from "../../../Utils";
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
@@ -77,7 +82,34 @@ function CaseFileAdmission({ t, path }) {
   }, [caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
-    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
+    let respondentDetails = caseDetails?.additionalDetails?.respondentDetails;
+    let witnessDetails = caseDetails?.additionalDetails?.witnessDetails;
+    if (action === "ADMIT") {
+      respondentDetails = {
+        ...caseDetails?.additionalDetails?.respondentDetails,
+        formdata: caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((data) => ({
+          ...data,
+          data: {
+            ...data?.data,
+            uuid: generateUUID(),
+          },
+        })),
+      };
+      witnessDetails = {
+        ...caseDetails?.additionalDetails?.witnessDetails,
+        formdata: caseDetails?.additionalDetails?.witnessDetails?.formdata?.map((data) => ({
+          ...data,
+          data: {
+            ...data?.data,
+            uuid: generateUUID(),
+          },
+        })),
+      };
+    }
+    const newcasedetails = {
+      ...caseDetails,
+      additionalDetails: { ...caseDetails.additionalDetails, respondentDetails, witnessDetails, judge: data },
+    };
 
     return DRISTIService.caseUpdateService(
       {
@@ -115,7 +147,7 @@ function CaseFileAdmission({ t, path }) {
     },
     {
       key: "SUBMITTED_ON",
-      value: caseDetails?.filingDate,
+      value: formatDate(new Date(caseDetails?.filingDate)),
     },
   ];
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
@@ -264,7 +296,46 @@ function CaseFileAdmission({ t, path }) {
       });
     });
   };
-  const handleScheduleCase = (props) => {
+  const scheduleHearing = async ({ purpose, participant, date }) => {
+    return DRISTIService.createHearings(
+      {
+        hearing: {
+          tenantId: tenantId,
+          filingNumber: [caseDetails.filingNumber],
+          hearingType: purpose,
+          status: true,
+          attendees: [
+            ...Object.values(participant)
+              .map((val) => val.attendees.map((attendee) => JSON.parse(attendee)))
+              .flat(Infinity),
+          ],
+          startTime: Date.parse(
+            `${date
+              .split(" ")
+              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              .join(" ")}`
+          ),
+          endTime: Date.parse(
+            `${date
+              .split(" ")
+              .map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date))
+              .join(" ")}`
+          ),
+          workflow: {
+            action: "CREATE",
+            assignes: [],
+            comments: "Create new Hearing",
+            documents: [{}],
+          },
+          documents: [],
+        },
+        tenantId,
+      },
+      { tenantId: tenantId }
+    );
+  };
+
+  const handleScheduleCase = async (props) => {
     setSubmitModalInfo({
       ...scheduleCaseSubmitConfig,
       caseInfo: [
@@ -275,6 +346,7 @@ function CaseFileAdmission({ t, path }) {
         },
       ],
     });
+    await scheduleHearing({ purpose: "ADMISSION", date: props.date, participant: props.participant });
     updateCaseDetails("SCHEDULE_ADMISSION_HEARING", props).then((res) => {
       setModalInfo({ ...modalInfo, page: 2 });
     });
@@ -313,8 +385,8 @@ function CaseFileAdmission({ t, path }) {
       },
     };
     DRISTIService.customApiService(Urls.dristi.ordersCreate, reqBody, { tenantId })
-      .then(() => {
-        history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`, {
+      .then((res) => {
+        history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`, {
           caseId: caseId,
           tab: "Orders",
         });
@@ -383,15 +455,26 @@ function CaseFileAdmission({ t, path }) {
                 config={formConfig}
                 onSubmit={onSubmit}
                 // defaultValues={}
-                onSecondayActionClick={onSaveDraft}
+                onSecondayActionClick={
+                  caseDetails?.status === CaseWorkflowState.ADMISSION_HEARING_SCHEDULED
+                    ? () =>
+                        history.push(
+                          `/digit-ui/employee/dristi/home/view-case?caseId=${caseId}&filingNumber=${caseDetails?.filingNumber}&tab=Hearings`
+                        )
+                    : onSaveDraft
+                }
                 defaultValues={{}}
                 onFormValueChange={onFormValueChange}
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
-                secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-                showSecondaryLabel={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
-                actionClassName="case-file-admission-action-bar"
+                secondaryLabel={
+                  caseDetails?.status === CaseWorkflowState.ADMISSION_HEARING_SCHEDULED
+                    ? t("HEARING_IS_SCHEDULED")
+                    : t("CS_SCHEDULE_ADMISSION_HEARING")
+                }
+                showSecondaryLabel={true}
+                actionClassName={"case-file-admission-action-bar"}
                 showSkip={caseDetails?.status !== CaseWorkflowState.ADMISSION_HEARING_SCHEDULED}
                 onSkip={onSendBack}
                 skiplabel={t("SEND_BACK_FOR_CORRECTION")}

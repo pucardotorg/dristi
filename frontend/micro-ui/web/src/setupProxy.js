@@ -37,5 +37,6 @@ module.exports = function (app) {
     "/hearing",
     "/case",
     "/analytics",
+    "/task",
   ].forEach((location) => app.use(location, createProxy));
 };

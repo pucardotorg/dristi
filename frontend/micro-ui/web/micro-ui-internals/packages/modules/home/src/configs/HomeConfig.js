@@ -53,6 +53,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -75,6 +76,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -102,6 +104,7 @@ export const userTypeOptions = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -127,6 +130,7 @@ export const rolesToConfigMapping = [
       "ORDER_VIEWER",
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
     ],
     config: TabLitigantSearchConfig,
     isLitigant: true,
@@ -323,10 +327,32 @@ export const pendingTaskOrderActions = {
   },
   DRAFT_IN_PROGRESS: {
     actorName: ["JUDGE"],
-    actionName: "Schedule admission hearing",
-    additionalDetailsKeys: ["orderType"],
+    actionName: "Draft in Progress for Order",
     redirectDetails: {
       url: "/orders/generate-orders",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+
+  SUMMON_WARRANT_STATUS: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/summons-warrants-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "hearingId", value: "referenceId" },
+      ],
+    },
+  },
+  PAYMENT_PENDING_POST: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/post-payment-modal",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "orderNumber", value: "referenceId" },

@@ -27,7 +27,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const userInfo = Digit.UserService.getUser()?.info;
   const todayDate = useMemo(() => new Date().getTime(), []);
   const [totalPendingTask, setTotalPendingTask] = useState(0);
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -139,7 +139,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           auditDetails: applicationDetails?.auditDetails,
         },
         applicationContent: null,
-        comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+        comments: applicationDetails?.comment ? applicationDetails?.comment : [],
         applicationList: applicationDetails,
       };
 
@@ -162,7 +162,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
             documentUid: doc.documentUid,
             additionalDetails: doc.additionalDetails,
           },
-          comments: applicationDetails?.comment ? JSON.parse(applicationDetails?.comment) : [],
+          comments: applicationDetails?.comment ? applicationDetails?.comment : [],
           applicationList: applicationDetails,
         };
       }) || [defaultObj];
@@ -235,8 +235,10 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const fetchPendingTasks = useCallback(
     async function () {
       if (isLoading) return;
-      const listOfFilingNumber = pendingTaskActionDetails?.map((data) => ({
-        filingNumber: data?.fields?.find((field) => field.key === "filingNumber")?.value || "",
+      const listOfFilingNumber = [
+        ...new Set(pendingTaskActionDetails?.map((data) => data?.fields?.find((field) => field.key === "filingNumber")?.value)),
+      ]?.map((data) => ({
+        filingNumber: data || "",
       }));
       const allPendingTaskCaseDetails = await getCaseDetailByFilingNumber({
         criteria: listOfFilingNumber,
@@ -264,7 +266,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
           const entityType = data?.fields?.find((field) => field.key === "entityType")?.value;
-          const updateReferenceId = referenceId.startsWith("MANUAL_") ? referenceId.substring("MANUAL_".length) : referenceId;
+          const updateReferenceId = referenceId.split("_").pop();
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[entityType || taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
@@ -284,14 +286,16 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const redirectUrl = isCustomFunction
             ? getCustomFunction[pendingTaskActions?.[status]?.customFunction]
             : `/${window?.contextPath}/${userType}${pendingTaskActions?.[status]?.redirectDetails?.url}?${searchParams.toString()}`;
+          const due = dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
-            due: dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`,
+            due: due,
             dayCount: dayCount ? dayCount : dayCount === 0 ? 0 : Infinity,
             isCompleted,
+            dueDateColor: due === "Due today" ? "#9E400A" : "",
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
             isCustomFunction,
@@ -320,17 +324,19 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
   const { pendingTaskDataInWeek, allOtherPendingTask } = useMemo(
     () => ({
       pendingTaskDataInWeek:
-        pendingTasks
-          .filter((data) => data?.dayCount < 7 && !data?.isCompleted)
-          .map((data) => data)
-          .sort((data) => data?.dayCount) || [],
+        [
+          ...pendingTasks
+            .filter((data) => data?.dayCount < 7 && !data?.isCompleted)
+            .map((data) => data)
+            .sort((data) => data?.dayCount),
+        ] || [],
       allOtherPendingTask:
         pendingTasks
           .filter((data) => data?.dayCount >= 7 && !data?.isCompleted)
           .map((data) => data)
           .sort((data) => data?.dayCount) || [],
     }),
-    [pendingTasks]
+    [pendingTasks, userType]
   );
   if (isLoading) {
     return <Loader />;
@@ -374,7 +380,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                 <div className="task-section">
                   <PendingTaskAccordion
                     pendingTasks={pendingTaskDataInWeek}
-                    accordionHeader={"Complete this week"}
+                    accordionHeader={"COMPLETE_THIS_WEEK"}
                     t={t}
                     totalCount={pendingTaskDataInWeek?.length}
                     isHighlighted={true}
@@ -384,7 +390,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                 <div className="task-section">
                   <PendingTaskAccordion
                     pendingTasks={allOtherPendingTask}
-                    accordionHeader={"All other tasks"}
+                    accordionHeader={"ALL_OTHER_TASKS"}
                     t={t}
                     totalCount={allOtherPendingTask?.length}
                   />
