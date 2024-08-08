@@ -45,7 +45,7 @@ function ConfirmSubmissionAction({ t, type, setShowConfirmationModal, handleActi
         setShowConfirmationModal(null);
       }}
       actionSaveOnSubmit={() => {
-        handleAction(generateOrder);
+        handleAction(generateOrder, type);
       }}
     >
       <div>

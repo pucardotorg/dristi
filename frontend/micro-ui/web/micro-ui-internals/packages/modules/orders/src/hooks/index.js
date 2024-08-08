@@ -3,10 +3,12 @@ import utils from "../utils";
 
 import { ordersService } from "./services";
 import useSearchOrdersService from "./orders/useSearchOrdersService";
+import { useGetPendingTask } from "./orders/useGetPendingTask";
 
 const orders = {
   useIndividualView,
   useSearchOrdersService,
+  useGetPendingTask,
 };
 
 const Hooks = {

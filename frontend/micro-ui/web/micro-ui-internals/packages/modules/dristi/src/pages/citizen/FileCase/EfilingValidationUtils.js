@@ -892,6 +892,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "SUBMISSION_CREATOR",
             "SUBMISSION_RESPONDER",
             "SUBMISSION_DELETE",
+            "TASK_VIEWER",
           ]?.map((role) => ({
             code: role,
             name: role,

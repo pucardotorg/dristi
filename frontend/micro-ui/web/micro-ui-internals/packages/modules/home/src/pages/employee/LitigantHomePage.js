@@ -435,18 +435,27 @@ const subtextStyle = {
   lineHeight: "18.75px",
   textAlign: "center",
 };
+const containerJoinFileCaseStyle = {
+  height: "40vh",
+  margin: 0,
+  width: "100%",
+  border: "1px solid #e8e8e8",
+  borderRadius: "8px",
+};
 const LitigantHomePage = () => {
   const userName = Digit.SessionStorage.get("User");
   const { t } = useTranslation();
   const today = new Date();
   const history = useHistory();
   const curHr = today.getHours();
+  const userType = Digit.UserService.getType();
   const [callRefetch, SetCallRefetch] = useState(false);
   const refreshInbox = () => {
     SetCallRefetch(true);
+    history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
   };
   return (
-    <div className="response-main" style={{ width: "100%", padding: 40 }}>
+    <div className="upcoming-hearing-container" style={{ width: "100%", padding: 40 }}>
       <div className="header">
         {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
       </div>
@@ -464,7 +473,7 @@ const LitigantHomePage = () => {
           gap: "20px",
         }}
       >
-        <div className="container" style={{ height: "40vh", margin: 0 }}>
+        <div className="container" style={containerJoinFileCaseStyle}>
           <div
             className="litigant-file-case"
             style={{
@@ -498,7 +507,7 @@ const LitigantHomePage = () => {
           </div>
         </div>
 
-        <div className="container" style={{ height: "40vh", margin: 0 }}>
+        <div className="container" style={containerJoinFileCaseStyle}>
           <div
             className="litigant-join-case"
             style={{

@@ -201,16 +201,18 @@ const SubmissionsCreate = () => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
-  const onBehalfOf = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+  const onBehalfOfuuid = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
     allAdvocates,
     userInfo?.uuid,
   ]);
+  const onBehalfOfLitigent = useMemo(() => caseDetails?.litigants?.find((item) => item.additionalDetails.uuid === onBehalfOfuuid), [
+    caseDetails,
+    onBehalfOfuuid,
+  ]);
+  const sourceType = useMemo(() => (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant") ? "COMPLAINANT" : "ACCUSED"), [
+    onBehalfOfLitigent,
+  ]);
 
-  const partyType = useMemo(
-    () =>
-      caseDetails?.litigants?.filter((item) => item.additionalDetails.uuid === onBehalfOf && item?.partyType?.includes("respondent"))?.[0]?.partyType,
-    [caseDetails, onBehalfOf]
-  );
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
     { tenantId },
@@ -233,6 +235,7 @@ const SubmissionsCreate = () => {
           isactive: true,
           name: "APPLICATION_TYPE_RE_SCHEDULE",
         },
+        applicationDate: formatDate(new Date()),
       };
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
@@ -286,6 +289,7 @@ const SubmissionsCreate = () => {
             code: "APPLICATION",
             name: "APPLICATION",
           },
+          applicationDate: formatDate(new Date()),
         };
       }
     } else if (applicationType) {
@@ -307,6 +311,7 @@ const SubmissionsCreate = () => {
           code: "APPLICATION",
           name: "APPLICATION",
         },
+        applicationDate: formatDate(new Date()),
       };
     }
   }, [
@@ -423,8 +428,7 @@ const SubmissionsCreate = () => {
             tenantId,
             comments: [],
             file,
-            sourceType: "COMPLAINANT",
-            //ACCUSED // COURT - if respondant is uplading submission
+            sourceType,
           },
         };
         DRISTIService.createEvidence(evidenceReqBody);
@@ -447,7 +451,7 @@ const SubmissionsCreate = () => {
             formdata,
             ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
             ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
-            onBehalOfName: userInfo.name,
+            onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
             partyType: "complainant.primary",
             ...(orderDetails &&
               orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
@@ -457,7 +461,7 @@ const SubmissionsCreate = () => {
             ...(hearingId && { hearingId }),
           },
           documents,
-          onBehalfOf: [userInfo?.uuid],
+          onBehalfOf: [onBehalfOfuuid],
           comment: [],
           workflow: {
             id: "workflow123",
@@ -507,20 +511,13 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
-    !isExtension &&
-      orderNumber &&
-      (await createPendingTask({
-        refId: orderNumber,
-        isCompleted: true,
-        status: "Completed",
-      }));
-    await createPendingTask({
-      name: t("ESIGN_THE_SUBMISSION"),
-      status: "ESIGN_THE_SUBMISSION",
-      refId: newapplicationNumber,
-      stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
-    });
     if (newapplicationNumber) {
+      await createPendingTask({
+        name: t("ESIGN_THE_SUBMISSION"),
+        status: "ESIGN_THE_SUBMISSION",
+        refId: newapplicationNumber,
+        stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
+      });
       history.push(
         orderNumber
           ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderNumber=${orderNumber}`
@@ -554,6 +551,13 @@ const SubmissionsCreate = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
     await updateSubmission(SubmissionWorkflowAction.PAY);
+    applicationType === "PRODUCTION_DOCUMENTS" &&
+      orderNumber &&
+      createPendingTask({
+        refId: `${userInfo?.uuid}_${orderNumber}`,
+        isCompleted: true,
+        status: "Completed",
+      });
     createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
   };
 
