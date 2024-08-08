@@ -328,22 +328,30 @@ const GenerateOrders = () => {
   });
 
   const pendingTaskDetails = useMemo(() => pendingTaskData?.data || [], [pendingTaskData]);
-  const mandatorySubmissionTask = useMemo(() => {
+  const mandatorySubmissionTasks = useMemo(() => {
     const pendingtask = pendingTaskDetails?.filter((obj) =>
-      obj.fields.some((field) => field.key === "referenceId" && field.value === `MANUAL_${currentOrder?.linkedOrderNumber}`)
+      obj.fields.some((field) => field.key === "referenceId" && field.value.includes(currentOrder?.linkedOrderNumber))
     );
-    if (pendingtask) {
+    if (pendingtask?.length > 0) {
       return pendingtask?.map((item) =>
         item?.fields.reduce((acc, field) => {
-          acc[field.key] = field.value;
+          if (field.key.startsWith("assignedTo[")) {
+            const indexMatch = field.key.match(/assignedTo\[(\d+)\]\.uuid/);
+            if (indexMatch) {
+              const index = parseInt(indexMatch[1], 10);
+              acc.assignedTo = acc.assignedTo || [];
+              acc.assignedTo[index] = { uuid: field.value };
+            }
+          } else {
+            acc[field.key] = field.value;
+          }
           return acc;
         }, {})
       );
     }
-    return {};
+    return [];
   }, [currentOrder?.linkedOrderNumber, pendingTaskDetails]);
 
-  console.debug(mandatorySubmissionTask);
   const { data: applicationData, isLoading: isApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
@@ -544,6 +552,11 @@ const GenerateOrders = () => {
       };
     }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
+    if (orderType === "BAIL") {
+      updatedFormdata.bailType = { type: applicationDetails?.applicationType };
+      updatedFormdata.submissionDocuments = applicationDetails?.additionalDetails?.formdata?.submissionDocuments;
+      updatedFormdata.bailOf = applicationDetails?.additionalDetails?.onBehalOfName;
+    }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.additionalDetails?.onBehalOfName;
@@ -695,11 +708,13 @@ const GenerateOrders = () => {
       return await Promise.all(promises);
     }
     if (order?.orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE") {
-      create = true;
-      name = t("MAKE_MANDATORY_SUBMISSION");
       stateSla = new Date(formdata?.newSubmissionDate).getTime();
-      ///TODO: Change stasla on all the pending tasks related to linkedOrderNumber
-      // mandatorySubmissionTask
+      const promises = mandatorySubmissionTasks?.map(async (task) => {
+        return ordersService.customApiService(Urls.orders.pendingTask, {
+          pendingTask: { ...task, stateSla, tenantId },
+        });
+      });
+      return await Promise.all(promises);
     }
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
@@ -859,9 +874,8 @@ const GenerateOrders = () => {
             ...applicationDetails,
             workflow: {
               ...applicationDetails.workflow,
-              action: ["REJECTION_RESCHEDULE_REQUEST", "REJECT_VOLUNTARY_SUBMISSIONS"].includes(order?.orderType)
-                ? SubmissionWorkflowAction.REJECT
-                : SubmissionWorkflowAction.APPROVE,
+              action:
+                order?.additionalDetails?.applicationStatus === t("APPROVED") ? SubmissionWorkflowAction.APPROVE : SubmissionWorkflowAction.REJECT,
             },
           },
         },
@@ -1281,7 +1295,7 @@ const GenerateOrders = () => {
       }
       referenceId && (await handleApplicationAction(currentOrder));
       const orderResponse = await updateOrder(
-        { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }), documents: [...currentOrder?.documents, newDoc] },
+        { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) },
         OrderWorkflowAction.ESIGN
       );
       createPendingTask({ order: { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) } });

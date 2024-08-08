@@ -474,9 +474,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "SETTLEMENT":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "SETTLEMENT";
       case "BAIL_BOND":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+        return "BAIL";
       case "SURETY":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+        return "BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
@@ -514,9 +514,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       return acceptedApplicationTypes.includes(applicationType);
     }
   }, [documentSubmission, showConfirmationModal?.type]);
-  const handleApplicationAction = async (generateOrder) => {
+  const handleApplicationAction = async (generateOrder, type) => {
     try {
-      let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
+      const orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, type);
       const formdata = {
         orderType: {
           code: orderType,
@@ -524,12 +524,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           name: `ORDER_TYPE_${orderType}`,
         },
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-        ...(orderType === "BAIL" && {
-          bailType: {
-            type: documentSubmission?.[0]?.applicationList?.applicationType,
-          },
-          submissionDocuments: structuredClone(documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.submissionDocuments),
-        }),
+        applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
       };
       const linkedOrderNumber = documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.refOrderId;
       if (generateOrder) {
@@ -555,6 +550,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
             documents: [],
             additionalDetails: {
               formdata,
+              applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
             },
             ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
               hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,

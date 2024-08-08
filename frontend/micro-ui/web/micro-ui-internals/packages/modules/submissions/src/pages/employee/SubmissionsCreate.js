@@ -201,15 +201,17 @@ const SubmissionsCreate = () => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
-  const onBehalfOf = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+  const onBehalfOfuuid = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
     allAdvocates,
     userInfo?.uuid,
   ]);
-  const partyType = useMemo(() => caseDetails?.litigants?.find((item) => item.additionalDetails.uuid === onBehalfOf)?.partyType, [
+  const onBehalfOfLitigent = useMemo(() => caseDetails?.litigants?.find((item) => item.additionalDetails.uuid === onBehalfOfuuid), [
     caseDetails,
-    onBehalfOf,
+    onBehalfOfuuid,
   ]);
-  const sourceType = useMemo(() => (partyType?.toLowerCase()?.includes("complainant") ? "COMPLAINANT" : "ACCUSED"), [partyType]);
+  const sourceType = useMemo(() => (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant") ? "COMPLAINANT" : "ACCUSED"), [
+    onBehalfOfLitigent,
+  ]);
 
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
@@ -449,7 +451,7 @@ const SubmissionsCreate = () => {
             formdata,
             ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
             ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
-            onBehalOfName: userInfo.name,
+            onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
             partyType: "complainant.primary",
             ...(orderDetails &&
               orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes" && {
@@ -459,7 +461,7 @@ const SubmissionsCreate = () => {
             ...(hearingId && { hearingId }),
           },
           documents,
-          onBehalfOf: [userInfo?.uuid],
+          onBehalfOf: [onBehalfOfuuid],
           comment: [],
           workflow: {
             id: "workflow123",
@@ -509,13 +511,13 @@ const SubmissionsCreate = () => {
     setLoader(true);
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
-    await createPendingTask({
-      name: t("ESIGN_THE_SUBMISSION"),
-      status: "ESIGN_THE_SUBMISSION",
-      refId: newapplicationNumber,
-      stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
-    });
     if (newapplicationNumber) {
+      await createPendingTask({
+        name: t("ESIGN_THE_SUBMISSION"),
+        status: "ESIGN_THE_SUBMISSION",
+        refId: newapplicationNumber,
+        stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
+      });
       history.push(
         orderNumber
           ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderNumber=${orderNumber}`

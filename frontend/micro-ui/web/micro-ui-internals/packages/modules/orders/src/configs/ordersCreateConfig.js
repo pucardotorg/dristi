@@ -16,7 +16,7 @@ export const applicationTypeConfig = [
             masterName: "OrderType",
             localePrefix: "ORDER_TYPE",
             select:
-              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SUMMONS`,`BAIL`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
+              "(data) => {return data['Order'].OrderType?.filter((item)=>[`SUMMONS`,`SECTION_202_CRPC`, `MANDATORY_SUBMISSIONS_RESPONSES`, `REFERRAL_CASE_TO_ADR`, `SCHEDULE_OF_HEARING_DATE`, `WARRANT`, `OTHERS`, `JUDGEMENT`].includes(item.type)).map((item) => {return { ...item, name: 'ORDER_TYPE_'+item.code };});}",
           },
         },
       },
@@ -1181,7 +1181,7 @@ export const configsRescheduleHearingDate = [
         populators: { name: "reschedulingReason", hideInForm: true },
       },
       {
-        label: "APPLICTION_STATUS",
+        label: "APPLICATION_STATUS",
         isMandatory: true,
         key: "applicationStatus",
         type: "text",
@@ -2503,19 +2503,10 @@ export const configsBail = [
         label: "BAIL_OF",
         isMandatory: true,
         key: "bailOf",
-        type: "dropdown",
+        disable: true,
+        type: "text",
         populators: {
           name: "bailOf",
-          optionsKey: "name",
-          error: "CORE_REQUIRED_FIELD_ERROR",
-          required: true,
-          isMandatory: true,
-          options: [
-            {
-              code: "NAME_OF_PARTY",
-              name: "Name of Party",
-            },
-          ],
         },
       },
       {
@@ -2536,7 +2527,7 @@ export const configsBail = [
         label: "BAIL_TYPE",
         isMandatory: true,
         key: "bailType",
-        // disable: true,
+        disable: true,
         type: "dropdown",
         populators: {
           name: "bailType",
@@ -2550,6 +2541,14 @@ export const configsBail = [
             localePrefix: "BAIL_TYPE",
           },
         },
+      },
+      {
+        label: "APPLICATION_STATUS",
+        isMandatory: true,
+        key: "applicationStatus",
+        type: "text",
+        disable: true,
+        populators: { name: "applicationStatus" },
       },
       {
         type: "component",
@@ -2611,6 +2610,7 @@ export const configsBail = [
         label: "Brief Summary",
         type: "textarea",
         key: "briefSummary",
+        isMandatory: true,
         populators: {
           name: "briefSummary",
         },
