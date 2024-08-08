@@ -702,6 +702,7 @@ export const UICustomizations = {
                   createdDate: new Date().getTime(),
                   tenantId: row.tenantId,
                   filingNumber: row.filingNumber[0],
+                  cnrNumber: row.cnrNumbers[0],
                   statuteSection: {
                     tenantId: row.tenantId,
                   },

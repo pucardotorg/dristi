@@ -1077,6 +1077,7 @@ const GenerateOrders = () => {
             hearing: {
               tenantId: tenantId,
               filingNumber: [filingNumber],
+              cnrNumbers: [cnrNumber],
               hearingType: currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type,
               status: true,
               attendees: [
