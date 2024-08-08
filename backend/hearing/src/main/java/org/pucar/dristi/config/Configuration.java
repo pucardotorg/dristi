@@ -139,4 +139,11 @@ public class Configuration {
 
     @Value("${update.start.end.time.topic}")
     public String startEndTimeUpdateTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }
