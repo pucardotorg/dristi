@@ -1,8 +1,15 @@
-import { Button, Card } from "@egovernments/digit-ui-react-components";
+import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { DRISTIService } from "../../../services";
+
+function timeInMillisFromDateAndTime(date, hhmmssms) {
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const [h, m, s, ms] = hhmmssms.split(":").map(Number);
+  const millis = ((h || 0) * 60 * 60 + (m || 0) * 60 + (s || 0)) * 1000 + (ms || 0);
+  return startOfDate.getTime() + millis;
+}
 
 const NextHearingCard = ({ caseData, width }) => {
   const filingNumber = caseData.filingNumber;
@@ -11,9 +18,10 @@ const NextHearingCard = ({ caseData, width }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
-  const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingRes, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
+        fromDate: timeInMillisFromDateAndTime(new Date(), "00:00:00:00"),
         filingNumber: filingNumber,
         tenantId: tenantId,
       },
@@ -22,7 +30,7 @@ const NextHearingCard = ({ caseData, width }) => {
     cnr + filingNumber,
     true
   );
-  const scheduledHearing = hearingRes?.HearingList?.filter((hearing) => hearing.startTime > Date.now()).sort(
+  const scheduledHearing = hearingRes?.HearingList?.filter((hearing) => hearing.status !== "COMPLETED").sort(
     (hearing1, hearing2) => hearing1.startTime - hearing2.startTime
   )[0];
 
@@ -56,84 +64,91 @@ const NextHearingCard = ({ caseData, width }) => {
     searchParams.set("hearingId", scheduledHearing?.hearingId);
     if (userType === "citizen") {
       history.push(`/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`);
-    } else {
+    } else if (scheduledHearing?.status === "SCHEDULED") {
       DRISTIService.startHearing({ hearing: scheduledHearing }).then(() => {
         window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
       });
+    } else {
+      window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
     }
   };
 
+  if (isHearingsLoading) {
+    return <Loader />;
+  }
+
+  if (!scheduledHearing) {
+    return null;
+  }
+
   return (
-    !isHearingsLoading &&
-    hearingRes?.HearingList?.filter((hearing) => hearing.startTime > Date.now()).length !== 0 && (
-      <Card
+    <Card
+      style={{
+        width: width,
+        marginTop: "10px",
+      }}
+    >
+      <div
         style={{
-          width: width,
-          marginTop: "10px",
+          fontWeight: 700,
+          fontSize: "16px",
+          lineHeight: "18.75px",
+          color: "#231F20",
         }}
       >
-        <div
-          style={{
-            fontWeight: 700,
-            fontSize: "16px",
-            lineHeight: "18.75px",
-            color: "#231F20",
-          }}
-        >
-          Next Hearing
-        </div>
-        <hr style={{ border: "1px solid #FFF6E880" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <div className="hearingCard">
-              <div className="hearingDate">
-                <div className="dateText">{formattedDate.split(" ")[1]}</div>
-                <div className="dateNumber">{formattedDate.split(" ")[0]}</div>
-                <div className="dayText">{day}</div>
-              </div>
-            </div>
-            <div>
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: "24px",
-                  lineHeight: "28.13px",
-                  color: "#231F20",
-                  marginTop: "5px",
-                }}
-              >
-                {formattedTime()}
-              </div>
-              <div
-                style={{
-                  fontWeight: 400,
-                  fontSize: "14px",
-                  lineHeight: "16.41px",
-                  color: "#3D3C3C",
-                  marginTop: "5px",
-                }}
-              >
-                {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
-              </div>
+        Next Hearing
+      </div>
+      <hr style={{ border: "1px solid #FFF6E880" }} />
+      <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className="hearingCard">
+            <div className="hearingDate">
+              <div className="dateText">{formattedDate.split(" ")[1]}</div>
+              <div className="dateNumber">{formattedDate.split(" ")[0]}</div>
+              <div className="dayText">{day}</div>
             </div>
           </div>
-          <Button
-            variation={"outlined"}
-            onButtonClick={handleButtonClick}
-            isDisabled={userRoles.includes("CITIZEN") && scheduledHearing?.status === "SCHEDULED"}
-            label={
-              userRoles.includes("CITIZEN")
-                ? scheduledHearing?.status === "SCHEDULED"
-                  ? t("AWAIT_START_HEARING")
-                  : t("JOIN_HEARING")
-                : scheduledHearing?.status === "SCHEDULED"
-                ? t("START_NOW")
-                : t("JOIN_HEARING")
-            }
-          />
+          <div>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "24px",
+                lineHeight: "28.13px",
+                color: "#231F20",
+                marginTop: "5px",
+              }}
+            >
+              {formattedTime()}
+            </div>
+            <div
+              style={{
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "16.41px",
+                color: "#3D3C3C",
+                marginTop: "5px",
+              }}
+            >
+              {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
+            </div>
+          </div>
         </div>
-      </Card>
-    )
+        <Button
+          variation={"outlined"}
+          onButtonClick={handleButtonClick}
+          isDisabled={userRoles.includes("CITIZEN") && scheduledHearing?.status === "SCHEDULED"}
+          label={
+            userRoles.includes("CITIZEN")
+              ? scheduledHearing?.status === "SCHEDULED"
+                ? t("AWAIT_START_HEARING")
+                : t("JOIN_HEARING")
+              : scheduledHearing?.status === "SCHEDULED"
+              ? t("START_NOW")
+              : t("JOIN_HEARING")
+          }
+        />
+      </div>
+    </Card>
   );
 };
 
