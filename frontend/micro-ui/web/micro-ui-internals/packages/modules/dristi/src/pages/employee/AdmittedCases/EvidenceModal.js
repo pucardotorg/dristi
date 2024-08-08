@@ -602,6 +602,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       setShow(false);
       setShowSuccessModal(false);
+      counterUpdate();
     }
   };
 
