@@ -94,7 +94,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const curHr = today.getHours();
   const dateRange = useMemo(
     () => ({
-      start: today.getTime(),
+      start: timeInMillisFromDateAndTime(today, "00:00:00:000"),
       end: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime(),
     }),
     [today]
