@@ -657,7 +657,11 @@ const GenerateOrders = () => {
       ) {
         setError("isResponseRequired", { message: t("CORE_REQUIRED_FIELD_ERROR") });
       }
-      if (formData?.responseInfo?.responseDeadline && Object.keys(formState?.errors).includes("responseDeadline")) {
+      if (
+        formData?.responseInfo?.responseDeadline &&
+        new Date(formData?.submissionDeadline).getTime() < new Date(formData?.responseInfo?.responseDeadline).getTime() &&
+        Object.keys(formState?.errors).includes("responseDeadline")
+      ) {
         clearErrors("responseDeadline");
       } else if (
         formState?.submitCount &&
