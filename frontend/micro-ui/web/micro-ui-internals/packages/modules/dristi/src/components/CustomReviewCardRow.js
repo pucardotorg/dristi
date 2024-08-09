@@ -172,7 +172,9 @@ const CustomReviewCardRow = ({
                   ? textValue.length > 0
                     ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
                     : t("CS_NOT_AVAILABLE")
-                  : textValue || dependentOnValue && textDependentValue || t("CS_NOT_AVAILABLE")}
+                  : textValue && typeof textValue === "object"
+                  ? textValue?.text || ""
+                  : textValue || (dependentOnValue && textDependentValue) || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -516,18 +518,24 @@ const CustomReviewCardRow = ({
         if (Array.isArray(addressDetails)) {
           address = addressDetails.map(({ addressDetails }) => {
             return {
-              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
-                addressDetails?.state || ""
-              } - ${addressDetails?.pincode || ""}`,
+              address:
+                typeof addressDetails === "string"
+                  ? addressDetails
+                  : `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                      addressDetails?.state || ""
+                    } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             };
           });
         } else {
           address = [
             {
-              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
-                addressDetails?.state || ""
-              } - ${addressDetails?.pincode || ""}`,
+              address:
+                typeof addressDetails === "string"
+                  ? addressDetails
+                  : `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                      addressDetails?.state || ""
+                    } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             },
           ];
@@ -630,28 +638,30 @@ const CustomReviewCardRow = ({
         );
     }
   }, [
-    badgeType,
-    configKey,
-    data,
-    dataError,
-    dataIndex,
-    handleImageClick,
-    handleOpenPopup,
-    isPrevScrutiny,
     isScrutiny,
-    isJudge,
-    label,
-    name,
-    prevDataError,
-    setShowImageModal,
-    t,
-    tenantId,
-    titleHeading,
-    titleIndex,
-    type,
-    value,
     disableScrutiny,
+    isPrevScrutiny,
+    dataError,
     isCaseReAssigned,
+    type,
+    prevDataError,
+    value,
+    titleIndex,
+    titleHeading,
+    t,
+    badgeType,
+    data,
+    dataIndex,
+    textDependentOn,
+    label,
+    textDependentValue,
+    isJudge,
+    handleOpenPopup,
+    configKey,
+    name,
+    tenantId,
+    handleImageClick,
+    setShowImageModal,
   ]);
 
   return renderCard;

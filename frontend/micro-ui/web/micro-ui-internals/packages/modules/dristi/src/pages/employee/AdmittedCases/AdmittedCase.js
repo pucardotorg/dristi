@@ -843,7 +843,7 @@ const AdmittedCases = () => {
         <div className="case-overview-wrapper">
           <CaseOverview
             handleDownload={handleDownload}
-            handleRequestLabel={handleExtensionRequest}
+            handleExtensionRequest={handleExtensionRequest}
             handleSubmitDocument={handleSubmitDocument}
             openHearingModule={openHearingModule}
             caseData={caseRelatedData}
