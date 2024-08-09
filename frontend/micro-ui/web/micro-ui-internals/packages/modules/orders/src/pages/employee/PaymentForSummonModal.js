@@ -182,8 +182,13 @@ const PaymentForSummonModal = () => {
   }, [hearingsData?.HearingList]);
 
   const links = useMemo(() => {
-    return [{ text: "View order", link: "" }];
-  }, []);
+    return [
+      {
+        text: "View order",
+        link: history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${orderNumber}`),
+      },
+    ];
+  }, [filingNumber, history, orderNumber]);
 
   const paymentForSummonModalConfig = useMemo(() => {
     return {
