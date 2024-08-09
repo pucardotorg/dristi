@@ -258,14 +258,14 @@ const InsideHearingMainPage = () => {
               <TextArea
                 ref={textAreaRef}
                 style={{ width: "100%", minHeight: "40vh" }}
-                value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
+                value={activeTab === "Witness Deposition" ? witnessDepositionText || "" : transcriptText || ""}
                 onChange={handleChange}
                 disabled={activeTab === "Witness Deposition" && isDepositionSaved}
               />
             ) : (
               <TextArea
                 style={{ width: "100%", minHeight: "40vh", cursor: "default", backgroundColor: "#E8E8E8", color: "#3D3C3C" }}
-                value={activeTab === "Witness Deposition" ? witnessDepositionText : transcriptText}
+                value={activeTab === "Witness Deposition" ? witnessDepositionText || "" : transcriptText || ""}
                 disabled
               />
             )}
@@ -304,7 +304,7 @@ const InsideHearingMainPage = () => {
             }}
           >
             <Button
-              label={"ATTENDANCE_CHIP"}
+              label={t("ATTENDANCE_CHIP")}
               style={{ boxShadow: "none", backgroundColor: "#ECF3FD", borderRadius: "4px", border: "none", padding: "10px" }}
               textStyles={{
                 fontFamily: "Roboto",
@@ -331,7 +331,7 @@ const InsideHearingMainPage = () => {
             </Button>
             {userHasRole("EMPLOYEE") && (
               <Button
-                label={"MARK_ATTENDANCE"}
+                label={t("MARK_ATTENDANCE")}
                 variation={"teritiary"}
                 onButtonClick={handleModal}
                 style={{ boxShadow: "none", backgroundColor: "none", borderRadius: "4px", border: "none", padding: "10px" }}
@@ -386,7 +386,7 @@ const InsideHearingMainPage = () => {
               />
             </div>
           ) : (
-            <Button label={t("EXIT_HEARING")} variation={"primary"} onClick={handleExitHearing} />
+            <Button label={t("EXIT_HEARING")} variation={"primary"} onButtonClick={handleExitHearing} />
           )}
         </div>
       </ActionBar>
