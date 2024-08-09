@@ -832,7 +832,7 @@ const GenerateOrders = () => {
               pendingTask: {
                 name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
                 entityType,
-                referenceId: `MANUAL_${orderNumber}`,
+                referenceId: `MANUAL_${currentOrder?.orderNumber}`,
                 status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
                 assignedTo: assignees,
                 assignedRole,
@@ -984,7 +984,18 @@ const GenerateOrders = () => {
     );
   };
 
-  const generateAddress = ({ pincode = "", district = "", city = "", state = "", coordinates = { longitude: "", latitude: "" }, locality = "" }) => {
+  const generateAddress = ({
+    pincode = "",
+    district = "",
+    city = "",
+    state = "",
+    coordinates = { longitude: "", latitude: "" },
+    locality = "",
+    address = "",
+  }) => {
+    if (address) {
+      return address;
+    }
     return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
   };
 
@@ -1045,7 +1056,7 @@ const GenerateOrders = () => {
           },
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress[0],
+            address: typeof respondentAddress[0] === "object" ? generateAddress(...respondentAddress[0]) : respondentAddress[0],
             phone: respondentPhoneNo[0] || "",
             email: respondentEmail[0] || "",
             age: "",
@@ -1142,11 +1153,24 @@ const GenerateOrders = () => {
             channelName: channelTypeEnum?.[item?.type]?.type,
           };
 
+          const address =
+            typeof respondentAddress[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentAddress[channelMap.get(item?.type) - 1])
+              : respondentAddress[channelMap.get(item?.type) - 1];
+          const sms =
+            typeof respondentPhoneNo[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentPhoneNo[channelMap.get(item?.type) - 1])
+              : respondentPhoneNo[channelMap.get(item?.type) - 1];
+          const email =
+            typeof respondentEmail[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentEmail[channelMap.get(item?.type) - 1])
+              : respondentEmail[channelMap.get(item?.type) - 1];
+
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : respondentAddress[channelMap.get(item?.type) - 1] || "",
-            phone: ["SMS"].includes(item?.type) ? item?.value : respondentPhoneNo[channelMap.get(item?.type) - 1] || "",
-            email: ["E-mail"].includes(item?.type) ? item?.value : respondentEmail[channelMap.get(item?.type) - 1] || "",
+            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : address || "",
+            phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
+            email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",
             gender: "",
           };
@@ -1163,11 +1187,26 @@ const GenerateOrders = () => {
             channelName: channelTypeEnum?.[item?.type]?.type,
             [channelDetailsEnum?.[item?.type]]: item?.value || "",
           };
+
+          const address =
+            typeof respondentAddress[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentAddress[channelMap.get(item?.type) - 1])
+              : respondentAddress[channelMap.get(item?.type) - 1];
+
+          const sms =
+            typeof respondentPhoneNo[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentPhoneNo[channelMap.get(item?.type) - 1])
+              : respondentPhoneNo[channelMap.get(item?.type) - 1];
+          const email =
+            typeof respondentEmail[channelMap.get(item?.type) - 1] === "object"
+              ? generateAddress(...respondentEmail[channelMap.get(item?.type) - 1])
+              : respondentEmail[channelMap.get(item?.type) - 1];
+
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : respondentAddress[channelMap.get(item?.type) - 1] || "",
-            phone: ["SMS"].includes(item?.type) ? item?.value : respondentPhoneNo[channelMap.get(item?.type) - 1] || "",
-            email: ["E-mail"].includes(item?.type) ? item?.value : respondentEmail[channelMap.get(item?.type) - 1] || "",
+            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : address || "",
+            phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
+            email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",
             gender: "",
           };
@@ -1374,13 +1413,25 @@ const GenerateOrders = () => {
       }
       referenceId && (await handleApplicationAction(currentOrder));
       const orderResponse = await updateOrder(
-        { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) },
+        {
+          ...currentOrder,
+          ...((newhearingId || hearingNumber || hearingDetails?.hearingId) && {
+            hearingNumber: newhearingId || hearingNumber || hearingDetails?.hearingId,
+          }),
+        },
         OrderWorkflowAction.ESIGN
       );
-      createPendingTask({ order: { ...currentOrder, ...(newhearingId && { hearingNumber: newhearingId || hearingNumber }) } });
+      createPendingTask({
+        order: {
+          ...currentOrder,
+          ...((newhearingId || hearingNumber || hearingDetails?.hearingId) && {
+            hearingNumber: newhearingId || hearingNumber || hearingDetails?.hearingId,
+          }),
+        },
+      });
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
       if (orderType === "SUMMONS") {
-        closeManualPendingTask(currentOrder?.hearingNumber);
+        closeManualPendingTask(currentOrder?.hearingNumber || hearingDetails?.hearingId);
       }
       createTask(orderType, caseDetails, orderResponse);
       setLoader(false);

@@ -240,6 +240,20 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
+            const generateAddress = ({
+              pincode = "",
+              district = "",
+              city = "",
+              state = "",
+              coordinates = { longitude: "", latitude: "" },
+              locality = "",
+              address = "",
+            }) => {
+              if (address) {
+                return address;
+              }
+              return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
+            };
             const taskData = data?.list
               ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
               ?.map((data) => {
@@ -250,9 +264,10 @@ export const UICustomizations = {
                   Post: "address",
                   Police: "address",
                 };
+                const channelDetails = taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]];
                 return {
                   deliveryChannel: taskDetail?.deliveryChannels?.channelName,
-                  channelDetails: taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]],
+                  channelDetails: typeof channelDetails === "object" ? generateAddress({ ...channelDetails }) : channelDetails,
                   status: data?.status,
                   remarks: taskDetail?.deliveryChannels?.status,
                 };
