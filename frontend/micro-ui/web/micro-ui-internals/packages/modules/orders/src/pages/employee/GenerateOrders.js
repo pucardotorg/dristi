@@ -688,7 +688,17 @@ const GenerateOrders = () => {
       } else if (formState?.submitCount && !formData?.bailInfo?.noOfSureties && !Object.keys(formState?.errors).includes("noOfSureties")) {
         setError("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
       }
-      if (formData?.bailInfo?.bailableAmount && Object.keys(formState?.errors).includes("bailableAmount")) {
+      if (
+        formState?.submitCount &&
+        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] === "." &&
+        !Object.keys(formState?.errors).includes("bailableAmount")
+      ) {
+        setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
+      } else if (
+        formData?.bailInfo?.bailableAmount &&
+        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] !== "." &&
+        Object.keys(formState?.errors).includes("bailableAmount")
+      ) {
         clearErrors("bailableAmount");
       } else if (formState?.submitCount && !formData?.bailInfo?.bailableAmount && !Object.keys(formState?.errors).includes("bailableAmount")) {
         setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });

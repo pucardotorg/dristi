@@ -253,6 +253,7 @@ function AdmissionActionModal({
         >
           <CustomCalendar
             config={stepItems[3]}
+            minDate={new Date()}
             t={t}
             onCalendarConfirm={onCalendarConfirm}
             handleSelect={handleSelect}

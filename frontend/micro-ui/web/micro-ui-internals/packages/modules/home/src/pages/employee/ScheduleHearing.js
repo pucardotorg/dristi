@@ -398,6 +398,7 @@ function ScheduleHearing({
             <CustomCalendar
               config={customDateConfig}
               t={t}
+              minDate={new Date()}
               onCalendarConfirm={onCalendarConfirm}
               handleSelect={handleSelect}
               selectedCustomDate={selectedCustomDate}

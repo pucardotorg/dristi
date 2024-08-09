@@ -3033,7 +3033,8 @@ export const configsCreateOrderWarrant = [
               },
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {
-                pattern: /^\d{0,8}(\.\d{1,2})?$/i,
+                isDecimal: true,
+                regex: /^\d+(\.\d{0,2})?$/,
                 errMsg: "CS_VALID_AMOUNT_DECIMAL",
               },
               isMandatory: true,
