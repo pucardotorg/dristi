@@ -61,8 +61,8 @@ class HearingQueryBuilderTest {
         String hearingType = "type1";
         String filingNumber = "FILE123";
         String tenantId = "tenant1";
-        Long fromDate = LocalDate.of(2024, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-        Long toDate = LocalDate.of(2025, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        Long fromDate = 12345678l;
+        Long toDate =12345679l;
         String attendeeIndividualId = "Ind-01";
         HearingCriteria criteria = HearingCriteria.builder()
                 .cnrNumber(cnrNumber)
@@ -70,8 +70,8 @@ class HearingQueryBuilderTest {
                 .hearingId(hearingId)
                 .filingNumber(filingNumber)
                 .tenantId(tenantId)
-                .fromDate(System.currentTimeMillis())
-                .toDate(System.currentTimeMillis())
+                .fromDate(fromDate)
+                .toDate(toDate)
                 .hearingType(hearingType)
                 .attendeeIndividualId(attendeeIndividualId)
                 .build();
@@ -87,7 +87,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
-        assertTrue(query.contains("AND startTime < ?"));
+        assertTrue(query.contains("AND startTime <= ?"));
         assertTrue(query.contains("AND hearingtype = ?"));
         assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
         assertEquals(9, preparedStmtList.size());
@@ -329,7 +329,6 @@ class HearingQueryBuilderTest {
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgList = new ArrayList<>();
-        Long criteria = LocalDate.of(2023, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
         String str = " AND startTime >= ?";
 
         Long date = System.currentTimeMillis();
@@ -340,7 +339,6 @@ class HearingQueryBuilderTest {
         assertTrue(query.toString().contains("AND startTime >= ?"));
         assertEquals(1, preparedStmtList.size());
         assertEquals(date, preparedStmtList.get(0));
-        assertEquals(criteria, preparedStmtList.get(0));
     }
 
     @Test
