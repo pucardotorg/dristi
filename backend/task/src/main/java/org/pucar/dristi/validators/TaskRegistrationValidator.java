@@ -38,9 +38,9 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(taskRequest.getRequestInfo().getUserInfo())) {
             throw new CustomException(CREATE_TASK_ERR, "User info is mandatory for creating task");
         }
-        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
-            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
-        }
+//        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
+//            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
+//        }
     }
 
     public Boolean validateApplicationExistence(Task task, RequestInfo requestInfo) {

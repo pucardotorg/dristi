@@ -60,7 +60,13 @@ public class TaskApiController {
     public ResponseEntity<TaskListResponse> taskV1SearchPost( @Parameter(in = ParameterIn.DEFAULT, schema = @Schema()) @Valid @RequestBody TaskSearchRequest request){
         List<Task> tasks = taskService.searchTask(request);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
-        TaskListResponse taskListResponse = TaskListResponse.builder().list(tasks).totalCount(tasks.size()).responseInfo(responseInfo).build();
+        int totalCount;
+        if (request.getPagination() != null) {
+            totalCount = request.getPagination().getTotalCount().intValue();
+        } else {
+            totalCount = tasks.size();
+        }
+        TaskListResponse taskListResponse = TaskListResponse.builder().list(tasks).totalCount(totalCount).pagination(request.getPagination()).responseInfo(responseInfo).build();
         return new ResponseEntity<>(taskListResponse, HttpStatus.OK);
     }
 

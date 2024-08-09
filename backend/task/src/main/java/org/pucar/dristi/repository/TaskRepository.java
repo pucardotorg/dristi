@@ -5,10 +5,7 @@ import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.TaskQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
-import org.pucar.dristi.web.models.Amount;
-import org.pucar.dristi.web.models.Task;
-import org.pucar.dristi.web.models.TaskCriteria;
-import org.pucar.dristi.web.models.TaskExists;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -44,7 +41,7 @@ public class TaskRepository {
     }
     
 
-    public List<Task> getApplications(TaskCriteria criteria) {
+    public List<Task> getApplications(TaskCriteria criteria, Pagination pagination) {
         try {
             List<Task> taskList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
@@ -62,7 +59,16 @@ public class TaskRepository {
                 log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                 throw new CustomException(SEARCH_TASK_ERR, "Args and ArgTypes size mismatch");
             }
+            taskQuery = queryBuilder.addOrderByQuery(taskQuery, pagination);
             log.info("Final Task query :: {}", taskQuery);
+
+            if(pagination !=  null) {
+                Integer totalRecords = getTotalCountOrders(taskQuery, preparedStmtList);
+                log.info("Total count without pagination :: {}", totalRecords);
+                pagination.setTotalCount(Double.valueOf(totalRecords));
+                taskQuery = queryBuilder.addPaginationQuery(taskQuery, pagination, preparedStmtList, preparedStmtArgList);
+            }
+
             List<Task> list = jdbcTemplate.query(taskQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB task list :: {}", list);
             if (list != null) {
@@ -128,5 +134,11 @@ public class TaskRepository {
             log.error("Error while checking task exist :: {} ", e.toString());
             throw new CustomException(EXIST_TASK_ERR, "Custom exception while checking task exist : " + e.getMessage());
         }
+    }
+
+    public Integer getTotalCountOrders(String baseQuery, List<Object> preparedStmtList) {
+        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+        log.info("Final count query :: {}", countQuery);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
 }

@@ -24,4 +24,7 @@ public class TaskSearchRequest {
     @Valid
     private TaskCriteria criteria = null;
 
+    @JsonProperty("pagination")
+    private Pagination pagination = null;
+
 }
