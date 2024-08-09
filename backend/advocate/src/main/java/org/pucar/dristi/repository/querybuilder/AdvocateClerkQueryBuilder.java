@@ -165,10 +165,10 @@ public class AdvocateClerkQueryBuilder {
         if (limit != null && offset != null) {
             query.append(LIMIT_OFFSET);
             preparedStmtList.add(limit);
-            preparedStmtArgssList.add(Types.DOUBLE);
+            preparedStmtArgssList.add(Types.INTEGER);
 
             preparedStmtList.add(offset);
-            preparedStmtArgssList.add(Types.DOUBLE);
+            preparedStmtArgssList.add(Types.INTEGER);
 
         }
     }

@@ -41,7 +41,7 @@ public class AdvocateQueryBuilder {
                     addClauseIfRequiredForTenantId(query, firstCriteria);
                     query.append("LOWER(adv.tenantid) = LOWER(?)");
                     preparedStmtList.add(tenantId.toLowerCase());
-                    preparedStmtArgList.add(Types.DOUBLE);
+                    preparedStmtArgList.add(Types.VARCHAR);
                 }
             }
 
@@ -174,10 +174,10 @@ public class AdvocateQueryBuilder {
         if (limit != null && offset != null) {
             query.append(LIMIT_OFFSET);
             preparedStmtList.add(limit);
-            preparedStmtArgumentList.add(Types.DOUBLE);
+            preparedStmtArgumentList.add(Types.INTEGER);
 
             preparedStmtList.add(offset);
-            preparedStmtArgumentList.add(Types.DOUBLE);
+            preparedStmtArgumentList.add(Types.INTEGER);
 
         }
     }
