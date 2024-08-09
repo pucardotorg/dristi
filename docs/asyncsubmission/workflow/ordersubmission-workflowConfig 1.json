@@ -35,48 +35,9 @@
           "actions": [
             {
               "action": "ESIGN",
-              "nextState": "PENDINGPAYMENT",
-              "roles": [
-                "SUBMISSION_RESPONDER"
-              ]
-            },
-            {
-              "action": "DELAY",
-              "nextState": "REQUESTDELAY",
-              "roles": [
-                "SUBMISSION_RESPONDER"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "SUBMISSION_DELETE"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": null,
-          "state": "PENDINGPAYMENT",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": true,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "PAY",
               "nextState": "COMPLETED",
               "roles": [
-                "SYSTEM_ADMIN"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
@@ -84,38 +45,6 @@
               "nextState": "DELETED",
               "roles": [
                 "SUBMISSION_DELETE"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "REQUESTDELAY",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "APPROVE",
-              "nextState": "PENDINGSUBMISSION",
-              "roles": [
-                "SUBMISSION_APPROVER"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "SUBMISSION_DELETE"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "PENDINGSUBMISSION",
-              "roles": [
-                "SUBMISSION_APPROVER"
               ]
             },
             {
