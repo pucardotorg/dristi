@@ -38,7 +38,7 @@ const createPartyConfig = (index) => ({
       isMandatory: true,
       populators: {
         name: `phoneNumber${index}`,
-        error: "CORE_REQUIRED_FIELD_ERROR",
+        error: "INVALID_PHONE_NUMBER",
         validation: {
           minlength: 10,
           maxlength: 10,

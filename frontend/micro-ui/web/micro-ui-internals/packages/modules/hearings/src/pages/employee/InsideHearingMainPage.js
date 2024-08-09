@@ -386,7 +386,7 @@ const InsideHearingMainPage = () => {
               />
             </div>
           ) : (
-            <Button label={t("EXIT_HEARING")} variation={"primary"} onClick={handleExitHearing} />
+            <Button label={t("EXIT_HEARING")} variation={"primary"} onButtonClick={handleExitHearing} />
           )}
         </div>
       </ActionBar>
