@@ -6,8 +6,8 @@ import org.pucar.dristi.web.models.ApplicationCriteria;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -43,9 +43,9 @@ public class ApplicationQueryBuilder {
             StringBuilder query = new StringBuilder(BASE_APPLICATION_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
-            addCriteria(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
+            firstCriteria = addCriteriaExist(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteriaExist(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
+            addCriteriaExist(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
 
             return query.toString();
         } catch (Exception e) {
@@ -54,20 +54,20 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(ApplicationCriteria applicationCriteria, List<Object> preparedStmtList) {
+    public String getApplicationSearchQuery(ApplicationCriteria applicationCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
 
             boolean firstCriteria = true; // To check if it's the first criteria
-            firstCriteria = addCriteria(applicationCriteria.getId(), query, firstCriteria, "app.id = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getFilingNumber(), query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList);
-            firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList);
-            addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, "app.applicationNumber", preparedStmtList);
+            firstCriteria = addCriteria(applicationCriteria.getId(), query, firstCriteria, "app.id = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getFilingNumber(), query, firstCriteria, "app.filingNumber = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList,preparedStmtArgList);
+            addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, preparedStmtList,preparedStmtArgList);
 
             return query.toString();
         }
@@ -76,17 +76,27 @@ public class ApplicationQueryBuilder {
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
     }
-    boolean addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+    void addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append(str).append(" LIKE ?");
+            query.append("app.applicationNumber").append(" LIKE ?");
             preparedStmtList.add("%" + criteria + "%"); // Add wildcard characters for partial match
+            preparedStmtArgList.add(Types.VARCHAR); // Add wildcard characters for partial match
+        }
+    }
+
+    boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str);
+            preparedStmtList.add(criteria);
+            preparedStmtArgList.add(Types.VARCHAR); // Add wildcard characters for partial match
             firstCriteria = false;
         }
         return firstCriteria;
     }
 
-    boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+    boolean addCriteriaExist(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(str);
@@ -109,9 +119,11 @@ public class ApplicationQueryBuilder {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
 
-    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList, List<Integer> preparedStatementArgList) {
         preparedStatementList.add(pagination.getLimit());
+        preparedStatementArgList.add(Types.DOUBLE);
         preparedStatementList.add(pagination.getOffSet());
+        preparedStatementArgList.add(Types.DOUBLE);
         return query + " LIMIT ? OFFSET ?";
     }
     public String addOrderByQuery(String query, Pagination pagination) {
@@ -122,7 +134,7 @@ public class ApplicationQueryBuilder {
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgListDoc) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -131,6 +143,7 @@ public class ApplicationQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgListDoc.add(Types.VARCHAR));
             }
 
             return query.toString();

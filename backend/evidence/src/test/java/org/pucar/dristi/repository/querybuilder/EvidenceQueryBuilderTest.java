@@ -55,7 +55,7 @@ public class EvidenceQueryBuilderTest {
                 "AND art.artifactNumber LIKE ?";
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList, criteria);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,new ArrayList<>(), criteria);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -88,7 +88,7 @@ public class EvidenceQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList, criteria);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList, new ArrayList<>(), criteria);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -104,7 +104,7 @@ public class EvidenceQueryBuilderTest {
         String criteriaClause = "art.isEvidence = ?";
 
         // Call the method under test
-        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria, criteriaClause);
+        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria,new ArrayList<>());
 
         // Verify the results
         assertFalse(result); // firstCriteria should be false after adding the first criteria
@@ -139,12 +139,12 @@ public class EvidenceQueryBuilderTest {
                         any(StringBuilder.class),
                         anyList(),
                         anyBoolean(),
-                        anyString()
+                        anyList()
                 );
 
         // Execute the method and assert that the CustomException is thrown
         CustomException exception = assertThrows(CustomException.class, () -> {
-            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList, criteria);
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,new ArrayList<>(), criteria);
         });
 
         // Verify that the correct exception is thrown with the expected message
@@ -170,10 +170,10 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art";
 
         // Mock behavior for null criteria
-        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(Mockito.any(), Mockito.isNull())).thenReturn(expectedQuery);
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(Mockito.any(),Mockito.isNull(),Mockito.isNull())).thenReturn(expectedQuery);
 
         // Call the method and verify results
-        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(new ArrayList<>(), null);
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(new ArrayList<>(), null,null);
         assertEquals(expectedQuery, actualQuery);
     }
 

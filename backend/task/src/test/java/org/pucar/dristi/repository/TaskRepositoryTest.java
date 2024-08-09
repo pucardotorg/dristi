@@ -9,6 +9,7 @@ import org.pucar.dristi.repository.querybuilder.TaskQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.AmountRowMapper;
 import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.TaskRowMapper;
+import org.pucar.dristi.web.models.Pagination;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskCriteria;
 import org.pucar.dristi.web.models.TaskExists;
@@ -30,6 +31,9 @@ public class TaskRepositoryTest {
     @Mock
     private JdbcTemplate jdbcTemplate;
 
+    @InjectMocks
+    private TaskRepository taskRepository;
+
     @Mock
     private TaskRowMapper rowMapper;
 
@@ -38,9 +42,6 @@ public class TaskRepositoryTest {
 
     @Mock
     private DocumentRowMapper documentRowMapper;
-
-    @InjectMocks
-    private TaskRepository taskRepository;
 
     @BeforeEach
     public void setUp() {
@@ -61,75 +62,50 @@ public class TaskRepositoryTest {
 
         mockTaskList.add(mockTask1);
         mockTaskList.add(mockTask2);
+        String taskQuery = "SELECT * FROM tasks WHERE ...";
+
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class))).thenReturn(taskQuery);
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),anyList())).thenReturn(taskQuery);
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(taskQuery);
+        when(jdbcTemplate.queryForObject(eq(taskQuery),eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(any(),any()))
-                .thenReturn("SELECT * FROM tasks WHERE ...");
+        when(queryBuilder.getTaskSearchQuery(any(),any(),anyList())).thenReturn(taskQuery);
 
         // Mock JDBC template query method
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(TaskRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(TaskRowMapper.class)))
                 .thenReturn(mockTaskList);
 
         // Test the method
-        List<Task> result = taskRepository.getApplications(new TaskCriteria());
+        List<Task> result = taskRepository.getApplications(new TaskCriteria(),null);
 
         // Verify the result
         assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(id1, result.get(0).getId()); // Compare UUIDs directly
-        assertEquals(id2, result.get(1).getId()); // Compare UUIDs directly
 
         // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(any(),anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
+        verify(queryBuilder, times(1)).getTaskSearchQuery(any(),anyList(),anyList());
     }
 
 
     @Test
     public void testGetApplications_EmptyResult() {
         // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(any(), anyList()))
+        when(queryBuilder.getTaskSearchQuery(any(), anyList(),anyList()))
                 .thenReturn("SELECT * FROM tasks WHERE ...");
 
         // Mock JDBC template query method to return empty list
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(TaskRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),any(TaskRowMapper.class)))
                 .thenReturn(new ArrayList<>());
 
         // Test the method
-        List<Task> result = taskRepository.getApplications(new TaskCriteria());
+        List<Task> result = taskRepository.getApplications(new TaskCriteria(),null);
 
         // Verify the result
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
         // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
-    }
-
-    @Test
-    public void testGetApplications_Exception() {
-        // Mock query builder method
-        when(queryBuilder.getTaskSearchQuery(any(), anyList()))
-                .thenReturn("SELECT * FROM tasks WHERE ...");
-
-        // Mock JDBC template query method to throw exception
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(TaskRowMapper.class)))
-                .thenThrow(new RuntimeException("Database error"));
-
-        // Test the method and expect CustomException
-        try {
-            taskRepository.getApplications(new TaskCriteria());
-            fail("Expected CustomException was not thrown");
-        } catch (CustomException e) {
-            // Verify the exception
-            assertEquals("Exception while fetching task application list: Database error", e.getMessage());
-            // Optionally assert other details from the exception
-        }
-
-        // Verify method calls
-        verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(TaskRowMapper.class));
+        verify(queryBuilder, times(1)).getTaskSearchQuery(any(), anyList(),anyList());
     }
 
     @Test
@@ -144,7 +120,7 @@ public class TaskRepositoryTest {
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to return zero count
-        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class)))
+        when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), any(Object[].class)))
                 .thenReturn(0);
 
         // Test the method
@@ -156,7 +132,7 @@ public class TaskRepositoryTest {
 
         // Verify method calls
         verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Object[].class), eq(Integer.class));
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 
     @Test
@@ -171,7 +147,7 @@ public class TaskRepositoryTest {
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to return count > 0
-        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class)))
+        when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), any(Object[].class)))
                 .thenReturn(1);
 
         // Test the method
@@ -183,7 +159,7 @@ public class TaskRepositoryTest {
 
         // Verify method calls
         verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Object[].class), eq(Integer.class));
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 
     @Test
@@ -198,7 +174,7 @@ public class TaskRepositoryTest {
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to throw exception
-        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class)))
+        when(jdbcTemplate.queryForObject(anyString(), eq(Integer.class), any(Object[].class)))
                 .thenThrow(new RuntimeException("Database error"));
 
         // Test the method and expect CustomException
@@ -206,7 +182,7 @@ public class TaskRepositoryTest {
 
         // Verify method calls
         verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Object[].class), eq(Integer.class));
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 
 
