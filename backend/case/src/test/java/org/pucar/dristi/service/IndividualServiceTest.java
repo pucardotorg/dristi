@@ -20,7 +20,7 @@ import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 
 @ExtendWith(MockitoExtension.class)
-public class IndividualServiceTest {
+class IndividualServiceTest {
 
     @Mock
     IndividualUtil individualUtil;
@@ -43,7 +43,7 @@ public class IndividualServiceTest {
         IndividualResponse individualResponse = new IndividualResponse(); // Mock or provide necessary data
         when(configuration.getIndividualHost()).thenReturn("http://example.com");
         when(configuration.getIndividualSearchEndpoint()).thenReturn("/search");
-        when(individualUtil.individualCall(any(), any())).thenReturn(true);
+        when(individualUtil.individualExists(any(), any())).thenReturn(true);
 
         // Call the method under test
         Boolean result = individualService.searchIndividual(caseRequest.getRequestInfo(),"123");

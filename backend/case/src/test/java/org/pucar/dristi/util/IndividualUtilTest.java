@@ -42,7 +42,7 @@ public class IndividualUtilTest {
     }
 
     @Test
-    public void testIndividualCallSuccess() {
+    public void testIndividualExistsSuccess() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
 
@@ -55,14 +55,14 @@ public class IndividualUtilTest {
 
         when(serviceRequestRepository.fetchResult(any(), any())).thenReturn(jsonResponse);
 
-        Boolean result = individualUtil.individualCall(request, uri);
+        Boolean result = individualUtil.individualExists(request, uri);
 
         assertTrue(result);
         verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
     }
 
     @Test
-    public void testIndividualCallEmptyResponse() {
+    public void testIndividualExistsEmptyResponse() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
 
@@ -71,21 +71,21 @@ public class IndividualUtilTest {
 
         when(serviceRequestRepository.fetchResult(any(), any())).thenReturn(jsonResponse);
 
-        Boolean result = individualUtil.individualCall(request, uri);
+        Boolean result = individualUtil.individualExists(request, uri);
 
         assertFalse(result);
         verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
     }
 
     @Test
-    public void testIndividualCallCustomException() {
+    public void testIndividualExistsCustomException() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
 
         when(serviceRequestRepository.fetchResult(any(), any())).thenThrow(new CustomException("CODE", "Custom Exception"));
 
         CustomException thrown = assertThrows(CustomException.class, () -> {
-            individualUtil.individualCall(request, uri);
+            individualUtil.individualExists(request, uri);
         });
 
         assertTrue(thrown.getMessage().contains("Custom Exception"));
@@ -93,14 +93,14 @@ public class IndividualUtilTest {
     }
 
     @Test
-    public void testIndividualCallGenericException() {
+    public void testIndividualExistsGenericException() {
         IndividualSearchRequest request = new IndividualSearchRequest();
         StringBuilder uri = new StringBuilder("http://localhost:8080");
 
         when(serviceRequestRepository.fetchResult(any(), any())).thenThrow(new RuntimeException("Error"));
 
         CustomException thrown = assertThrows(CustomException.class, () -> {
-            individualUtil.individualCall(request, uri);
+            individualUtil.individualExists(request, uri);
         });
 
         assertTrue(thrown.getMessage().contains("Exception in individual utility service: Error"));
