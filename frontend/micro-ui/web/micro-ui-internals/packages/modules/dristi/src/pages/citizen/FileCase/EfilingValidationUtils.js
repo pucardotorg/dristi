@@ -660,6 +660,11 @@ export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToa
         return true;
       }
     }
+    if (formData?.chequeAmount === "0") {
+      setFormErrors("chequeAmount", { message: "Amount cannot be zero" });
+      setShowErrorToast(true);
+      return true;
+    }
   } else {
     return false;
   }
@@ -796,6 +801,18 @@ export const delayApplicationValidation = ({ t, formData, selected, setShowError
     ) {
       setFormErrors("condonationFileUpload", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+  } else {
+    return false;
+  }
+};
+
+export const debtLiabilityValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
+  if (selected === "debtLiabilityDetails") {
+    if (formData?.totalAmount === "0") {
+      setFormErrors("totalAmount", { message: "Amount cannot be zero" });
+      setShowErrorToast(true);
       return true;
     }
   } else {
