@@ -605,6 +605,8 @@ export const UICustomizations = {
           {}
         );
       const tenantId = window?.Digit.ULBService.getStateId();
+      const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+      const status = !filterList?.status || filterList?.status === "PUBLISHED" ? "PUBLISHED" : "EMPTY";
       return {
         ...requestCriteria,
         body: {
@@ -612,7 +614,7 @@ export const UICustomizations = {
           criteria: {
             ...requestCriteria.body.criteria,
             ...filterList,
-            status: !filterList?.status || filterList?.status === "PUBLISHED" ? "PUBLISHED" : "EMPTY",
+            status: userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order") ? status : filterList?.status,
           },
           tenantId,
           pagination: {
@@ -624,7 +626,6 @@ export const UICustomizations = {
           ...requestCriteria.config,
           select: (data) => {
             // if (requestCriteria.url.split("/").includes("order")) {
-            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
               ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
               : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
