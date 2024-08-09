@@ -59,7 +59,7 @@ const TopBarComponent = ({
               }
               alt="mSeva"
             />
-            <img
+            {/* <img
               className="city"
               id="topbar-logo"
               style={{ display: "flex", alignItems: "center", height: "40px" }}
@@ -68,7 +68,7 @@ const TopBarComponent = ({
                 "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
               }
               alt="mSeva"
-            />
+            /> */}
           </div>
           <h3>{cityOfCitizenShownBesideLogo}</h3>
         </div>

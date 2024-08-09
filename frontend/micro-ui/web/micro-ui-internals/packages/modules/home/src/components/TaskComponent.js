@@ -46,7 +46,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
     },
     params: { tenantId },
     key: `${taskType?.code}-${filingNumber}`,
-    config: { enabled: Boolean(taskType.code && tenantId) },
+    config: { enabled: Boolean(taskType?.code && tenantId) },
   });
 
   useEffect(() => {

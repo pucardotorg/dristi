@@ -894,6 +894,8 @@ function EFilingCases({ path }) {
                           isDisabled: input?.shouldBeEnabled ? false : true,
                         };
                       }
+
+                      // 225 Inquiry Affidavit Validation in respondent details
                       if (selected === "respondentDetails") {
                         if (
                           Array.isArray(data?.addressDetails) &&
@@ -910,8 +912,8 @@ function EFilingCases({ path }) {
                               body?.key === "inquiryAffidavitFileUpload"
                           )
                         ) {
-                          delete input.isOptional;
-                          body.isMandatory = true;
+                          // delete input.isOptional;
+                          body.isMandatory = false;
                           return {
                             ...input,
                             hideDocument: false,
@@ -921,7 +923,7 @@ function EFilingCases({ path }) {
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
-                            hideDocument: true,
+                            hideDocument: false,
                           };
                         } else {
                           return {
