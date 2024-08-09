@@ -48,7 +48,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
     const errors = {};
     if (!data["partyName" + index] || !/^[a-zA-Z\s]+$/.test(data["partyName" + index])) errors["partyName" + index] = "Party name is required";
     if (!data["partyType" + index]) errors["partyType" + index] = "Party type is required";
-    if (!data["phoneNumber" + index] || !/^\d+$/.test(data["phoneNumber" + index])) errors["phoneNumber" + index] = "Phone number is invalid";
+    if (!data["phoneNumber" + index] || !/^\d{10}$/.test(data["phoneNumber" + index])) errors["phoneNumber" + index] = "Phone number is invalid";
     if (!data["emailId" + index] || !/\S+@\S+\.\S+/.test(data["emailId" + index])) errors["emailId" + index] = "Email is invalid";
     if (!data["address" + index]) errors["address" + index] = "Address is required";
     return errors;
