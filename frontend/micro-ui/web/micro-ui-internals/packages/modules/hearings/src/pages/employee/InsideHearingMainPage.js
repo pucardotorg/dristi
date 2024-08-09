@@ -206,7 +206,7 @@ const InsideHearingMainPage = () => {
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
 
   return (
-    <div className="admitted-case" style={{ display: "flex", height: "calc(100vh - 135px)" }}>
+    <div className="admitted-case" style={{ display: "flex", height: "100vh" }}>
       <div className="left-side" style={{ padding: "24px 40px" }}>
         <React.Fragment>
           <EvidenceHearingHeader
@@ -277,7 +277,7 @@ const InsideHearingMainPage = () => {
               <Button
                 label={t("SAVE_WITNESS_DEPOSITION")}
                 isDisabled={isDepositionSaved}
-                onClick={() => {
+                onButtonClick={() => {
                   saveWitnessDeposition();
                 }}
               ></Button>
