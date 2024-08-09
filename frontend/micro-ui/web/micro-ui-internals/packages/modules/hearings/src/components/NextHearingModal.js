@@ -242,6 +242,7 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript 
               buttonText: "CS_COMMON_CONFIRM",
             }}
             t={t}
+            minDate={new Date()}
             onCalendarConfirm={(date) => {
               // setScheduleHearingParam({ ...scheduleHearingParams, date: formatDateInMonth(date) });
               // setSelectedCustomDate(date);

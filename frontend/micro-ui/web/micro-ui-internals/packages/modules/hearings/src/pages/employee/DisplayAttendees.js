@@ -63,7 +63,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
         </div>
       )}
       {offlineAttendees.length !== 0 && (
-        <div style={{ border: "1px solid #E8E8E8", marginTop: "12px", height: "100px" }}>
+        <div style={{ borderRadius: "4px 0px 0px 0px", border: "1px solid #E8E8E8", marginTop: "12px", padding: "4px" }}>
           {t("OFFLINE_ATTENDEES")}
           <hr style={{ border: "none", borderTop: "2px solid #E8E8E8", margin: "12px 0" }} />
           <ul>

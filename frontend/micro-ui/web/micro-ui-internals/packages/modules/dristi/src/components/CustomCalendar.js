@@ -3,7 +3,7 @@ import { Calendar } from "react-date-range";
 import { CalendarLeftArrow, CalendarRightArrow } from "../icons/svgIndex";
 import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
 
-function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
+function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId, minDate, maxDate }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
   const { data: hearingResponse, refetch: refetch } = Digit.Hooks.hearings.useGetHearings(
     { criteria: { tenantId }, tenantId },
@@ -89,17 +89,14 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     );
   };
 
-  const minDate = new Date();
-  const maxDate = new Date(2025, 11, 31);
-
   return (
     <div>
       <div>
         <Calendar
           date={selectedCustomDate}
           onChange={handleSelect}
-          // minDate={minDate}
-          maxDate={maxDate}
+          minDate={minDate && minDate}
+          maxDate={maxDate ? maxDate : new Date(2080, 11, 31)}
           dayContentRenderer={renderCustomDay}
           navigatorRenderer={navigatorRenderer}
           onShownDateChange={(date) => {

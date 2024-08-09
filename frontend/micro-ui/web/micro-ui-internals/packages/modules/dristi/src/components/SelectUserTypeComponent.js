@@ -236,6 +236,9 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                             ? updatedValue
                             : updatedValue?.slice(0, updatedValue?.length - 1);
                         }
+                        if (input.validation && input.validation?.isDecimal && input.validation?.regex) {
+                          updatedValue = input.validation?.regex.test(updatedValue) ? updatedValue : updatedValue?.slice(0, updatedValue?.length - 1);
+                        }
                         setValue(updatedValue, input.name, input);
                       }}
                       errorStyle={errors?.[input.name]}
