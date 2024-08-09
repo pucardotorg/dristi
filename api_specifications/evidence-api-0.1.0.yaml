@@ -9,7 +9,7 @@ tags:
     description: APIs required to upload digital artifacts for evidence consideration
   
 paths:
-  /artifacts/v1/_create:
+  /v1/_create:
     post:
       tags:
         - Evidence
@@ -38,7 +38,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
       x-codegen-request-body-name: ArtifactRequest
-  /artifacts/v1/_update:
+  /v1/_update:
     post:
       tags:
         - Evidence
@@ -64,7 +64,7 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
-  /artifacts/v1/_search:
+  /v1/_search:
     post:
       tags:
         - Evidence
@@ -87,6 +87,33 @@ paths:
                 $ref: '#/components/schemas/EvidenceSearchResponse'
         '400':
           description: Artifacts search failed. Refer to the response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  /v1/addcomment:
+    post:
+      tags:
+        - Evidence
+      summary: Add comment in artifacts
+      description: |
+        API used to add comment in artifacts
+      requestBody:
+        description: Comments to be added + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/EvidenceAddCommentRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with comment
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EvidenceAddCommentResponse'
+        '400':
+          description: Add comment failed. Refer to the response body for specifics.
           content:
             '*/*':
               schema:
@@ -316,5 +343,31 @@ components:
           type: string
         status:
           type: string
+        artifactNumber:
+          type: string
+    EvidenceAddCommentRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddCommentResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddComment:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        comment:
+          type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific artifact.
         artifactNumber:
           type: string

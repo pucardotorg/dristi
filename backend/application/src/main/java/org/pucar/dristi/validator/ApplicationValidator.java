@@ -4,6 +4,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,25 @@ public class ApplicationValidator {
     private final ApplicationRepository repository;
     private final CaseUtil caseUtil;
     private final OrderUtil orderUtil;
+    private final FileStoreUtil fileStoreUtil;
     @Autowired
-    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil,OrderUtil orderUtil) {
+    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil, OrderUtil orderUtil, FileStoreUtil fileStoreUtil) {
         this.repository = repository;
         this.caseUtil = caseUtil;
         this.orderUtil = orderUtil;
+        this.fileStoreUtil = fileStoreUtil;
     }
 
     public void validateApplication(ApplicationRequest applicationRequest) throws CustomException {
         RequestInfo requestInfo = applicationRequest.getRequestInfo();
         Application application = applicationRequest.getApplication();
+
+        //validate documents
+        validateDocuments(application);
+
+        if(ObjectUtils.isEmpty(application.getCaseId())) {
+            throw new CustomException(VALIDATION_ERR, "caseId is mandatory for creating application");
+        }
 
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
 
@@ -40,6 +50,13 @@ public class ApplicationValidator {
     }
 
     public Boolean validateApplicationExistence(RequestInfo requestInfo ,Application application) {
+        //validate documents
+        validateDocuments(application);
+
+        if(ObjectUtils.isEmpty(application.getCaseId())) {
+            throw new CustomException(VALIDATION_ERR, "caseId is mandatory for updating application");
+        }
+
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
@@ -87,6 +104,19 @@ public class ApplicationValidator {
             if (!orderUtil.fetchOrderDetails(orderExistsRequest)) {
                 throw new CustomException(ORDER_EXCEPTION, "Order does not exist");
             }
+        }
+    }
+
+    private void validateDocuments(Application application){
+        if (application.getDocuments() != null && !application.getDocuments().isEmpty()) {
+            application.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(application.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+
+            });
         }
     }
 }

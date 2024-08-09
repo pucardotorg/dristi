@@ -145,9 +145,52 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: hearingRequest
-
+  /hearing/v1/update/time:
+    post:
+      tags:
+        - Hearing
+      summary: update hearing start and end time.
+      requestBody:
+        description: Details for updating start and end time + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/UpdateTimeRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with hearing(s) time updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UpdateTimeResponse'
+        "400":
+          description: hearing(s) time update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'      
 components:
   schemas:
+    UpdateTimeRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        hearings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hearing'
+    UpdateTimeResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        hearings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hearing'
+            
     HearingSearchRequest:
       type: object
       properties:
@@ -157,7 +200,7 @@ components:
           $ref: '#/components/schemas/HearingCriteria'
         pagination:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination            
 
       HearingCriteria:
         type: object
@@ -178,11 +221,11 @@ components:
           attendeeIndividualId:
             type: string
           fromDate:
-           type: integer
-           format: int64
+            type: integer
+            format: int64
           toDate:
-           type: integer
-           format: int64
+            type: integer
+            format: int64
 
     HearingRequest:
       type: object
@@ -346,6 +389,9 @@ components:
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
+              isOnline:
+                type: boolean
+                description: Set it true if attendee appears online for the hearing.
         transcript:
           type: array
           items:

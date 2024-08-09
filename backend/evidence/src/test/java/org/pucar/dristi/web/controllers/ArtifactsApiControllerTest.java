@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.EvidenceService;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
@@ -231,6 +233,43 @@ public class ArtifactsApiControllerTest {
         });
 
         // Verify exception message
+        assertEquals("Invalid request", exception.getMessage());
+    }
+
+    @Test
+    void applicationV1AddCommentPost_Success() {
+        EvidenceAddCommentRequest requestBody = new EvidenceAddCommentRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+        requestBody.setEvidenceAddComment(new EvidenceAddComment());
+
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(expectedResponseInfo);
+
+        EvidenceAddCommentResponse expectedResponse = EvidenceAddCommentResponse.builder()
+                .evidenceAddComment(requestBody.getEvidenceAddComment())
+                .responseInfo(expectedResponseInfo)
+                .build();
+
+        ResponseEntity<EvidenceAddCommentResponse> response = controller.applicationV1AddCommentPost(requestBody);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        EvidenceAddCommentResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getEvidenceAddComment(), actualResponse.getEvidenceAddComment());
+        assertEquals(expectedResponse.getResponseInfo(), actualResponse.getResponseInfo());
+    }
+
+    @Test
+    void applicationV1AddCommentPost_InvalidRequest() {
+        EvidenceAddCommentRequest requestBody = new EvidenceAddCommentRequest();  // Missing required fields
+
+        Mockito.doThrow(new IllegalArgumentException("Invalid request")).when(evidenceService).addComments(any(EvidenceAddCommentRequest.class));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            controller.applicationV1AddCommentPost(requestBody);
+        });
+
         assertEquals("Invalid request", exception.getMessage());
     }
 }

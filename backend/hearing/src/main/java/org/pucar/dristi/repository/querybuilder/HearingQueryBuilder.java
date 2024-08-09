@@ -109,7 +109,7 @@ public class HearingQueryBuilder {
     }
 
     public String buildUpdateTranscriptAdditionalAttendeesQuery(List<Object> preparedStmtList, Hearing hearing) throws CustomException {
-        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , vclink = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , vclink = ? , notes = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
         // Convert the objects to JSON
         try {
@@ -125,6 +125,7 @@ public class HearingQueryBuilder {
 
         // Add other parameters to preparedStmtList
         preparedStmtList.add(hearing.getVcLink());
+        preparedStmtList.add(hearing.getNotes());
         preparedStmtList.add(hearing.getAuditDetails().getLastModifiedBy());
         preparedStmtList.add(hearing.getAuditDetails().getLastModifiedTime());
         preparedStmtList.add(hearing.getHearingId());

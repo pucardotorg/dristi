@@ -61,6 +61,8 @@ class HearingQueryBuilderTest {
         String hearingType = "type1";
         String filingNumber = "FILE123";
         String tenantId = "tenant1";
+        Long fromDate = LocalDate.of(2024, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        Long toDate = LocalDate.of(2025, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
         String attendeeIndividualId = "Ind-01";
         HearingCriteria criteria = HearingCriteria.builder()
                 .cnrNumber(cnrNumber)
@@ -85,7 +87,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
-        assertTrue(query.contains("AND startTime <= ?"));
+        assertTrue(query.contains("AND startTime < ?"));
         assertTrue(query.contains("AND hearingtype = ?"));
         assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
         assertEquals(9, preparedStmtList.size());
@@ -95,6 +97,8 @@ class HearingQueryBuilderTest {
         assertEquals(hearingType, preparedStmtList.get(3));
         assertEquals("[\"FILE123\"]", preparedStmtList.get(4));
         assertEquals("tenant1", preparedStmtList.get(5));
+        assertEquals(fromDate, preparedStmtList.get(6));
+        assertEquals(toDate, preparedStmtList.get(7));
         assertEquals(attendeeIndividualId, preparedStmtList.get(8));
     }
 
@@ -164,6 +168,7 @@ class HearingQueryBuilderTest {
         String hearingId = "hearing123";
         String tenantId = "tenant1";
         String vcLink = "test_vc_link";
+        String notes = "updatedNote";
         List<String> transcriptList = List.of("transcript1", "transcript2");
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setLastModifiedBy("user1");
@@ -179,6 +184,7 @@ class HearingQueryBuilderTest {
                 .auditDetails(auditDetails)
                 .additionalDetails(additionalDetails)
                 .attendees(attendees)
+                .notes(notes)
                 .build();
 
         String transcriptJson = "[\"transcript1\",\"transcript2\"]";
@@ -193,16 +199,17 @@ class HearingQueryBuilderTest {
         String query = hearingQueryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
 
         // Assert
-        assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , vclink = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
-        assertEquals(8, preparedStmtList.size());
+        assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , vclink = ? , notes = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
+        assertEquals(9, preparedStmtList.size());
         assertEquals(transcriptJson, preparedStmtList.get(0));
         assertEquals(additionalDetailsJson, preparedStmtList.get(1));
         assertEquals(attendeesJson, preparedStmtList.get(2));
         assertEquals(vcLink,preparedStmtList.get(3));
-        assertEquals("user1", preparedStmtList.get(4));
-        assertEquals(123456789L, preparedStmtList.get(5));
-        assertEquals(hearingId, preparedStmtList.get(6));
-        assertEquals(tenantId, preparedStmtList.get(7));
+        assertEquals(notes,preparedStmtList.get(4));
+        assertEquals("user1", preparedStmtList.get(5));
+        assertEquals(123456789L, preparedStmtList.get(6));
+        assertEquals(hearingId, preparedStmtList.get(7));
+        assertEquals(tenantId, preparedStmtList.get(8));
     }
 
     @Test
@@ -322,6 +329,7 @@ class HearingQueryBuilderTest {
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgList = new ArrayList<>();
+        Long criteria = LocalDate.of(2023, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
         String str = " AND startTime >= ?";
 
         Long date = System.currentTimeMillis();
@@ -332,6 +340,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.toString().contains("AND startTime >= ?"));
         assertEquals(1, preparedStmtList.size());
         assertEquals(date, preparedStmtList.get(0));
+        assertEquals(criteria, preparedStmtList.get(0));
     }
 
     @Test
@@ -345,7 +354,6 @@ class HearingQueryBuilderTest {
 
         // Act
         hearingQueryBuilder.addCriteriaDate(criteria, query, str, preparedStmtList,preparedStmtArgList);
-
         // Assert
         assertFalse(query.toString().contains("AND startTime >= ?"));
         assertTrue(preparedStmtList.isEmpty());

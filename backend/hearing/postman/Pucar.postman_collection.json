@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "15e668b3-11b9-47ec-a315-42495aaa433f",
+		"_postman_id": "45fc2568-2ae3-47c7-8f67-26bebcfcdb57",
 		"name": "Pucar",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31752715"
+		"_exporter_id": "33009635"
 	},
 	"item": [
 		{
@@ -1220,6 +1220,46 @@
 								"hearing",
 								"v1",
 								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-time",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"f95b4413-c22a-474d-b1dd-cdbea64adfe9\",\n        \"userInfo\": {\n            \"id\": 1779,\n            \"userName\": \"hearinguser\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"kl\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_CREATOR\",\n                    \"name\": \"HEARING_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_SCHEDULER\",\n                    \"name\": \"HEARING_SCHEDULER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_DATE_REQUESTOR\",\n                    \"name\": \"HEARING_DATE_REQUESTOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_START\",\n                    \"name\": \"HEARING_START\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_CLOSER\",\n                    \"name\": \"HEARING_CLOSER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_APPROVER\",\n                    \"name\": \"HEARING_APPROVER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"kl\"\n                }\n            ],\n            \"uuid\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"createdDate\": \"12-06-2024 13:29:45\",\n            \"lastModifiedDate\": \"12-06-2024 13:29:45\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"10-09-2024 13:29:45\"\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"hearings\": [\n        {\n            \"hearingId\": \"HEARING-ID-2024-08-06-000299\",\n            \"tenantId\": \"pg\",\n            \"filingNumber\": [\n                \"F-C.1973.002-2024-000477\"\n            ],\n            \"cnrNumbers\": [],\n            \"applicationNumbers\": [\n                \"APPLICATION-NO-2024-06-28-000027\"\n            ],\n            \"hearingType\": \"TRIAL_HEARING\",\n            \"status\": true,\n            \"startTime\": 1715266873451,\n            \"endTime\": 1715266873451,\n            \"presidedBy\": {\n                \"benchID\": \"bench2\",\n                \"judgeID\": [\n                    \"judge2\"\n                ],\n                \"courtID\": null\n            },\n            \"attendees\": [\n                {\n                    \"name\": \"Rajat\",\n                    \"individualId\": \"IND-2024-05-13-000180\",\n                    \"type\": \"EMPLOYEE\",\n                    \"associatedWith\": \"Party1\",\n                    \"wasPresent\": true\n                }\n            ],\n            \"transcript\": [\n                \"string1\"\n            ],\n            \"vcLink\": \"vc1\",\n            \"isActive\": false,\n            \"additionalDetails\": {\n                \"name\": \"Ram babu\"\n            },\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                    \"documentUid\": \"\",\n                    \"additionalDetails\": {\n                        \"name\": \"Ram babu\"\n                    }\n                }\n            ],\n            \"workflow\": {\n                \"action\": \"CREATE\",\n                \"assignes\": [],\n                \"comments\": \"Create new Hearing\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            },\n            \"notes\": \"string\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/hearing/v1/update/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearing",
+								"v1",
+								"update",
+								"time"
 							]
 						}
 					},

@@ -4,7 +4,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -254,4 +256,87 @@ class ApplicationServiceTest {
         assertEquals("Database error", thrown.getMessage());
         verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
     }
+    @Test
+    void addComments_Success() {
+        ApplicationAddCommentRequest request = new ApplicationAddCommentRequest();
+        ApplicationAddComment applicationAddComment = new ApplicationAddComment();
+        applicationAddComment.setApplicationNumber("app123");
+        applicationAddComment.setTenantId("tenant1");
+        Comment comment = new Comment();
+        applicationAddComment.setComment(Collections.singletonList(comment));
+        User userInfo = User.builder().uuid("user-uuid").tenantId("tenant-id").build();
+        RequestInfo requestInfoLocal = RequestInfo.builder().userInfo(userInfo).build();
+        request.setRequestInfo(requestInfoLocal);
+        request.setApplicationAddComment(applicationAddComment);
+
+        Application application = new Application();
+        application.setApplicationNumber("app123");
+        application.setTenantId("tenant1");
+        application.setComment(null);
+        AuditDetails auditDetails = AuditDetails.builder().build();
+        application.setAuditDetails(auditDetails);
+
+        when(applicationRepository.getApplications(any())).thenReturn(Collections.singletonList(application));
+        when(config.getApplicationUpdateCommentsTopic()).thenReturn("update-comments");
+        doNothing().when(producer).push(anyString(), any());
+
+        applicationService.addComments(request);
+
+        verify(applicationRepository).getApplications(any());
+        verify(producer).push(anyString(), any());
+    }
+
+    @Test
+    void addComments_ApplicationNotFound() {
+        ApplicationAddCommentRequest request = new ApplicationAddCommentRequest();
+        ApplicationAddComment applicationAddComment = new ApplicationAddComment();
+        applicationAddComment.setApplicationNumber("app123");
+        applicationAddComment.setTenantId("tenant1");
+        request.setApplicationAddComment(applicationAddComment);
+        request.setRequestInfo(new RequestInfo());
+
+        when(applicationRepository.getApplications(any())).thenReturn(Collections.emptyList());
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            applicationService.addComments(request);
+        });
+
+        assertEquals(VALIDATION_ERR, exception.getCode());
+        assertEquals("Application not found", exception.getMessage());
+        verify(applicationRepository).getApplications(any());
+        verify(producer, never()).push(anyString(), any());
+    }
+
+    @Test
+    void addComments_EnrichmentFailure() {
+        ApplicationAddCommentRequest request = new ApplicationAddCommentRequest();
+        ApplicationAddComment applicationAddComment = new ApplicationAddComment();
+        applicationAddComment.setApplicationNumber("app123");
+        applicationAddComment.setTenantId("tenant1");
+        Comment comment = new Comment();
+        applicationAddComment.setComment(Collections.singletonList(comment));
+        request.setApplicationAddComment(applicationAddComment);
+        User userInfo = User.builder().uuid("user-uuid").tenantId("tenant-id").build();
+        RequestInfo requestInfoLocal = RequestInfo.builder().userInfo(userInfo).build();
+        request.setRequestInfo(requestInfoLocal);
+        request.setApplicationAddComment(applicationAddComment);
+
+        Application application = new Application();
+        application.setApplicationNumber("app123");
+        application.setTenantId("tenant1");
+        application.setComment(new ArrayList<>());
+
+        when(applicationRepository.getApplications(any())).thenReturn(Collections.singletonList(application));
+        doThrow(new RuntimeException("Enrichment failed")).when(enrichmentUtil).enrichCommentUponCreate(any(), any());
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            applicationService.addComments(request);
+        });
+
+        assertEquals(COMMENT_ADD_ERR, exception.getCode());
+        assertEquals("Enrichment failed", exception.getMessage());
+        verify(applicationRepository).getApplications(any());
+        verify(producer, never()).push(anyString(), any());
+    }
+
 }

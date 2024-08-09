@@ -3,6 +3,7 @@ package org.pucar.dristi.validator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -14,6 +15,7 @@ import org.pucar.dristi.repository.HearingRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.ApplicationUtil;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 
@@ -22,6 +24,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_FILESTORE_ID;
 
 @Slf4j
 class HearingRegistrationValidatorTest {
@@ -34,6 +37,9 @@ class HearingRegistrationValidatorTest {
 
     @Mock
     private MdmsUtil mdmsUtil;
+
+    @Mock
+    private FileStoreUtil fileStoreUtil;
 
     @Mock
     private Configuration config;
@@ -303,5 +309,27 @@ class HearingRegistrationValidatorTest {
         // Assert
         assertNotNull(request);
         assertTrue(request.getApplicationExists().isEmpty());
+    }
+
+    @Test
+    public void testValidateOrder_InvalidDocumentFileStore() {
+        when(fileStoreUtil.doesFileExist(anyString(), anyString())).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, this::invokeValidator);
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    private void invokeValidator() {
+        Hearing hearing = new Hearing();
+        hearing.setTenantId("pg");
+
+        List<Hearing> existingHearings = Collections.singletonList(hearing);
+
+        when(repository.checkHearingsExist(any())).thenReturn(existingHearings);
+
+        Document document = new Document();
+        document.setFileStore("invalidFileStore");
+        hearing.setDocuments(Collections.singletonList(document));
+        validator.validateHearingExistence(new RequestInfo(),hearing);
     }
 }
