@@ -30,6 +30,7 @@ import {
   chequeDateValidation,
   chequeDetailFileValidation,
   complainantValidation,
+  debtLiabilityValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
   getAllAssignees,
@@ -1361,6 +1362,23 @@ function EFilingCases({ path }) {
             toast,
             setFormErrors: setFormErrors.current,
             clearFormDataErrors: clearFormDataErrors.current,
+          })
+        )
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) =>
+          debtLiabilityValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
           })
         )
     ) {
