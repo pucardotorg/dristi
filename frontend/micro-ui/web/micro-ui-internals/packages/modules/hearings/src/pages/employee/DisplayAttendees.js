@@ -121,7 +121,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           className={"take-action-btn-class"}
         ></Button>
         <Button
-          label={"ADD_ATTENDANCE_DONE"}
+          label={t("ADD_ATTENDANCE_DONE")}
           onClick={handleModal}
           style={{
             height: "40px",
