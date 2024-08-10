@@ -185,10 +185,10 @@ const PaymentForSummonModal = () => {
     return [
       {
         text: "View order",
-        link: history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${orderNumber}`),
+        link: "",
       },
     ];
-  }, [filingNumber, history, orderNumber]);
+  }, []);
 
   const paymentForSummonModalConfig = useMemo(() => {
     return {
