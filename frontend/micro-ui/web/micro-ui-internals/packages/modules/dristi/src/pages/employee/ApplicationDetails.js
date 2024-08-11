@@ -158,7 +158,8 @@ const ApplicationDetails = ({ location, match }) => {
         history.push(
           userType === "ADVOCATE_CLERK"
             ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
-            : `/digit-ui/employee/dristi/registration-requests?type=advocate`
+            : `/digit-ui/employee/dristi/registration-requests?type=advocate`,
+          { isSentBack: true }
         );
       });
   }
