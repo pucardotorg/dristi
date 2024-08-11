@@ -37,6 +37,7 @@ function CaseFileAdmission({ t, path }) {
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [caseAdmitLoader, setCaseADmitLoader] = useState(false);
+  const [updatedCaseDetails, setUpdatedCaseDetails] = useState({});
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isCaseApprover = roles.some((role) => role.code === "CASE_APPROVER");
   const { data: caseFetchResponse, isLoading } = useSearchCaseService(
@@ -125,7 +126,9 @@ function CaseFileAdmission({ t, path }) {
         tenantId,
       },
       tenantId
-    );
+    ).then((response) => {
+      setUpdatedCaseDetails(response?.cases?.[0]);
+    });
   };
 
   const caseInfo = [
@@ -143,7 +146,7 @@ function CaseFileAdmission({ t, path }) {
     },
     {
       key: "COURT_NAME",
-      value: "Kerala City Criminal Court",
+      value: t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`),
     },
     {
       key: "SUBMITTED_ON",
@@ -175,7 +178,7 @@ function CaseFileAdmission({ t, path }) {
         },
         {
           key: "COURT_NAME",
-          value: "Kerala City Criminal Court",
+          value: t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`),
         },
         {
           key: "CASE_TYPE",
@@ -286,7 +289,7 @@ function CaseFileAdmission({ t, path }) {
           status: "SCHEDULE_HEARING",
           assignedTo: [],
           assignedRole: ["JUDGE_ROLE"],
-          cnrNumber: null,
+          cnrNumber: updatedCaseDetails?.cnrNumber,
           filingNumber: caseDetails?.filingNumber,
           isCompleted: false,
           stateSla: todayDate + stateSla.SCHEDULE_HEARING,
@@ -357,7 +360,7 @@ function CaseFileAdmission({ t, path }) {
       order: {
         createdDate: new Date().getTime(),
         tenantId,
-        cnrNumber: caseDetails?.cnrNumber,
+        cnrNumber: updatedCaseDetails?.cnrNumber || caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,
         statuteSection: {
           tenantId,
@@ -389,6 +392,22 @@ function CaseFileAdmission({ t, path }) {
         history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`, {
           caseId: caseId,
           tab: "Orders",
+        });
+        DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Schedule Hearing",
+            entityType: "case",
+            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+            status: "SCHEDULE_HEARING",
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: updatedCaseDetails?.cnrNumber,
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: true,
+            stateSla: todayDate + stateSla.SCHEDULE_HEARING,
+            additionalDetails: {},
+            tenantId,
+          },
         });
       })
       .catch();
