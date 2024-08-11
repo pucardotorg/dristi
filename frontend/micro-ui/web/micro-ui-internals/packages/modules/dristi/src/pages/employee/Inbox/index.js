@@ -49,7 +49,7 @@ const Inbox = ({ tenants, parentRoute }) => {
       timer();
       window.history.replaceState({}, "");
     }
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timer());
   }, [state]);
 
   if (isLoading) {
