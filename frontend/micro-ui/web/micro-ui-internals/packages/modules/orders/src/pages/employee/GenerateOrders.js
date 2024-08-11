@@ -743,8 +743,18 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
+      console.debug({ order });
+      const validOrderFromForm = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(
+        order.additionalDetails.formdata,
+        modifiedFormConfig
+      );
+      console.debug({ validOrderFromForm });
+      const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(validOrderFromForm, modifiedFormConfig);
+      console.debug({ formOrder });
       return await ordersService.createOrder({ order }, { tenantId });
-    } catch (error) {}
+    } catch (error) {
+      console.debug(error);
+    }
   };
 
   const handleAddOrder = () => {
@@ -1333,19 +1343,16 @@ const GenerateOrders = () => {
         ? [{}]
         : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent");
       const promiseList = summonsArray?.map((data) =>
-        ordersService.createOrder(
-          {
-            ...reqbody,
-            order: {
-              ...reqbody.order,
-              additionalDetails: {
-                ...reqbody.order?.additionalDetails,
-                selectedParty: data,
-              },
+        createOrder({
+          ...reqbody,
+          order: {
+            ...reqbody.order,
+            additionalDetails: {
+              ...reqbody.order?.additionalDetails,
+              selectedParty: data,
             },
           },
-          { tenantId }
-        )
+        })
       );
       const resList = await Promise.all(promiseList);
       setCreatedSummon(resList[0]?.order?.orderNumber);

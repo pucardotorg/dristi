@@ -1,3 +1,4 @@
+
 export const applicationTypeConfig = [
   {
     body: [
@@ -6,6 +7,7 @@ export const applicationTypeConfig = [
         key: "orderType",
         type: "dropdown",
         label: "ORDER_TYPE",
+        transformer: "mdmsDropdown",
         disable: false,
         populators: {
           name: "orderType",
@@ -893,6 +895,8 @@ export const configsOrderTranferToADR = [
         label: "ADR_MODE",
         isMandatory: true,
         key: "ADRMode",
+        schemaKey:"adrMode",
+        transformer: "mdmsDropdown",
         type: "dropdown",
         populators: {
           name: "ADRMode",
