@@ -442,7 +442,7 @@ const SubmissionsCreate = () => {
           cnrNumber: caseDetails?.cnrNumber,
           caseId: caseDetails?.id,
           referenceId: isExtension ? null : orderDetails?.id || null,
-          createdDate: formatDate(new Date(), "DD-MM-YYYY"),
+          createdDate: new Date().getTime(),
           applicationType,
           status: caseDetails?.status,
           isActive: true,
