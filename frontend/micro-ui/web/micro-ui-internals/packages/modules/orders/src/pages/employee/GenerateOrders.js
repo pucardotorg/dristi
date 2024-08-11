@@ -506,6 +506,32 @@ const GenerateOrders = () => {
           };
         });
       }
+      if (orderType === "WARRANT") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "warrantFor") {
+                return {
+                  ...field,
+                  ...(!currentOrder?.additionalDetails?.warrantFor && {
+                    disable: false,
+                  }),
+                  populators: {
+                    ...field.populators,
+                    options: [
+                      ...(currentOrder?.additionalDetails?.warrantFor
+                        ? [currentOrder?.additionalDetails?.warrantFor]
+                        : [...respondents, ...unJoinedLitigant].map((data) => data?.name || "")),
+                    ],
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
       newConfig = [...newConfig, ...orderTypeForm];
     }
     const updatedConfig = newConfig.map((config) => {
@@ -617,6 +643,12 @@ const GenerateOrders = () => {
             }))?.[0],
           selectedChannels: [],
         };
+      }
+    }
+    if (orderType === "WARRANT") {
+      console.debug(hearingDetails);
+      if (hearingDetails?.startTime) {
+        updatedFormdata.dateOfHearing = formatDate(new Date(hearingDetails?.startTime));
       }
     }
     if (
