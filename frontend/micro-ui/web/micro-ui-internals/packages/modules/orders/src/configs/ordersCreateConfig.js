@@ -2937,7 +2937,7 @@ export const configsCreateOrderWarrant = [
       {
         isMandatory: true,
         key: "warrantFor",
-        type: "text",
+        type: "dropdown",
         label: "WARRANT_FOR_PARTY",
         disable: true,
         populators: {
