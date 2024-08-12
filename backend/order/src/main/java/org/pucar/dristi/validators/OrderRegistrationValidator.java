@@ -38,8 +38,7 @@ public class OrderRegistrationValidator {
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 
-        if(!ADMINISTRATIVE.equalsIgnoreCase(orderRequest.getOrder().getOrderCategory())){
-            if (!caseUtil.fetchCaseDetails(requestInfo, orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber()))
+        if(!ADMINISTRATIVE.equalsIgnoreCase(orderRequest.getOrder().getOrderCategory()) && !caseUtil.fetchCaseDetails(requestInfo, orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber())){
                 throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
         }
 
