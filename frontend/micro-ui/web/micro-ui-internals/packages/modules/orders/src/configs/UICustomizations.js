@@ -64,12 +64,28 @@ export const UICustomizations = {
           }
         },
       },
-      dateString: {
+      date: {
         formToSchema: (dateString) => {
           return dateString ? new Date(dateString).getTime() : null;
         },
         schemaToForm: (date) => {
           return date ? new Date(date).toISOString().split("T")[0] : null;
+        },
+      },
+      customDropdown: {
+        formToSchema: (optionOrOptions) => {
+          if (Array.isArray(optionOrOptions)) {
+            return optionOrOptions.map((party) => party.name);
+          } else {
+            return optionOrOptions.name;
+          }
+        },
+        schemaToForm: (value) => {
+          if (Array.isArray(value)) {
+            return value.map((party) => ({ name: party }));
+          } else {
+            return { name: value };
+          }
         },
       },
     },
@@ -78,8 +94,24 @@ export const UICustomizations = {
       formConfig.forEach((section) => {
         section.body.forEach((field) => {
           const schemaKeyPath = field.schemaKeyPath || field.key;
-          const transformer = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.transformers[field.transformer]?.formToSchema;
-          set(transformedFormData, schemaKeyPath, transformer ? transformer(formData[field.key]) : formData[field.key]);
+          if (!schemaKeyPath) {
+            return;
+          }
+          if (typeof schemaKeyPath === "string") {
+            const transformer = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.transformers[field.transformer]?.formToSchema;
+            set(transformedFormData, schemaKeyPath, transformer ? transformer(get(formData, field.key)) : get(formData, field.key));
+            return;
+          } else if (typeof schemaKeyPath === "object") {
+            // the schemaKeyPath is an object with multiple keys with value of {value: value , transformer: transformer} and above needs to be applied for each key
+            Object.entries(schemaKeyPath).forEach(([key, value]) => {
+              const transformer = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.transformers[value.transformer]?.formToSchema;
+              set(
+                transformedFormData,
+                key,
+                transformer ? transformer(get(formData, [field.key, value.value].join("."))) : get(formData, [field.key, value.value].join("."))
+              );
+            });
+          }
         });
       });
       return transformedFormData;
@@ -110,9 +142,12 @@ export const UICustomizations = {
       const transformPromises = [];
       formConfig.forEach((section) => {
         section.body.forEach(async (field) => {
-          const schemaKeyName = field.schemaKeyName || field.key;
-          const schemaKeyPath = field.schemaKeyPath || schemaKeyName;
+          const schemaKeyPath = field.schemaKeyPath || field.key;
+          if (!schemaKeyPath || field.populators.hideInForm) {
+            return;
+          }
           const transformer = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.transformers[field.transformer]?.schemaToForm;
+
           if (transformer) {
             const transformedValue = await transformer(get(schemaData, schemaKeyPath), field.populators?.mdmsConfig);
             transformPromises.push(transformedValue);

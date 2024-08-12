@@ -166,6 +166,14 @@ const GenerateOrders = () => {
     },
   });
 
+  const { data: orderTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Order", [{ name: "OrderType" }], {
+    select: (data) => {
+      return _.get(data, "Order.OrderType", [])
+        .filter((opt) => (opt?.hasOwnProperty("isactive") ? opt.isactive : true))
+        .map((opt) => ({ ...opt }));
+    },
+  });
+
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
 
@@ -562,9 +570,7 @@ const GenerateOrders = () => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
         orderType: {
-          code: currentOrder?.orderType,
-          type: currentOrder?.orderType,
-          name: `ORDER_TYPE_${currentOrder?.orderType}`,
+          ...orderTypeData?.find((item) => item.code === currentOrder?.orderType),
         },
       };
     }
@@ -631,7 +637,7 @@ const GenerateOrders = () => {
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
-  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails]);
+  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
 
@@ -743,15 +749,18 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      console.debug({ order });
-      const validOrderFromForm = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(
-        order.additionalDetails.formdata,
-        modifiedFormConfig
+      const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
+
+      return await ordersService.createOrder(
+        {
+          order: {
+            ...order,
+            ...orderSchema,
+          },
+        },
+        { tenantId }
       );
-      console.debug({ validOrderFromForm });
-      const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(validOrderFromForm, modifiedFormConfig);
-      console.debug({ formOrder });
-      return await ordersService.createOrder({ order }, { tenantId });
     } catch (error) {
       console.debug(error);
     }
