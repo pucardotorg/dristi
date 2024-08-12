@@ -82,7 +82,7 @@ function AdmissionActionModal({
     });
   }, [t]);
 
-  const [scheduleHearingParams, setScheduleHearingParam] = useState(!isCaseAdmitted ? { purpose: "Admission Purpose" } : {});
+  const [scheduleHearingParams, setScheduleHearingParam] = useState(!isCaseAdmitted ? { purpose: t("ADMISSION") } : {});
   const isGenerateOrderDisabled = useMemo(() => Boolean(!scheduleHearingParams?.purpose || !scheduleHearingParams?.date), [scheduleHearingParams]);
   console.log("first", scheduleHearingParams, isGenerateOrderDisabled);
 
