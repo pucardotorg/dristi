@@ -91,14 +91,7 @@
               ]
             },
             {
-              "action": "REJECT",
-              "nextState": "BAILREJECTED",
-              "roles": [
-                "TASK_APPROVER"
-              ]
-            },
-            {
-              "action": "RE ASSIGN",
+              "action": "SEND BACK",
               "nextState": "BAILDOCUMENTUPLOAD",
               "roles": [
                 "TASK_APPROVER"
@@ -116,15 +109,6 @@
         {
           "sla": 5,
           "state": "BAILGRANTED",
-          "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": 5,
-          "state": "BAILREJECTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
