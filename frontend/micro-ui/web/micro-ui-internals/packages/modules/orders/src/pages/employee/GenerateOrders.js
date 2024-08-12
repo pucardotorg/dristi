@@ -45,6 +45,30 @@ import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 
+const configKeys = {
+  SECTION_202_CRPC: configsOrderSection202CRPC,
+  MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+  REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+  SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+  SCHEDULING_NEXT_HEARING: configsScheduleNextHearingDate,
+  RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+  REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
+  INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
+  ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
+  ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
+  CASE_TRANSFER: configsCaseTransfer,
+  SETTLEMENT: configsCaseSettlement,
+  SUMMONS: configsIssueSummons,
+  BAIL: configsBail,
+  WARRANT: configsCreateOrderWarrant,
+  WITHDRAWAL: configsCaseWithdrawal,
+  OTHERS: configsOthers,
+  APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+  REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
+  JUDGEMENT: configsJudgement,
+};
+
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   keys.forEach((key) => {
     if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
@@ -162,6 +186,14 @@ const GenerateOrders = () => {
         };
       });
       return newData;
+    },
+  });
+
+  const { data: orderTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Order", [{ name: "OrderType" }], {
+    select: (data) => {
+      return _.get(data, "Order.OrderType", [])
+        .filter((opt) => (opt?.hasOwnProperty("isactive") ? opt.isactive : true))
+        .map((opt) => ({ ...opt }));
     },
   });
 
@@ -406,29 +438,6 @@ const GenerateOrders = () => {
   }, [hearingsData]);
 
   const modifiedFormConfig = useMemo(() => {
-    const configKeys = {
-      SECTION_202_CRPC: configsOrderSection202CRPC,
-      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
-      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
-      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
-      SCHEDULING_NEXT_HEARING: configsScheduleNextHearingDate,
-      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-      REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
-      INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
-      ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
-      ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
-      CASE_TRANSFER: configsCaseTransfer,
-      SETTLEMENT: configsCaseSettlement,
-      SUMMONS: configsIssueSummons,
-      BAIL: configsBail,
-      WARRANT: configsCreateOrderWarrant,
-      WITHDRAWAL: configsCaseWithdrawal,
-      OTHERS: configsOthers,
-      APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
-      REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
-      JUDGEMENT: configsJudgement,
-    };
     let newConfig = currentOrder?.orderNumber
       ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
       : structuredClone(applicationTypeConfig);
@@ -622,9 +631,7 @@ const GenerateOrders = () => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
         orderType: {
-          code: currentOrder?.orderType,
-          type: currentOrder?.orderType,
-          name: `ORDER_TYPE_${currentOrder?.orderType}`,
+          ...orderTypeData?.find((item) => item.code === currentOrder?.orderType),
         },
       };
     }
@@ -715,7 +722,7 @@ const GenerateOrders = () => {
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
-  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, filingNumber]);
+  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, filingNumber, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
 
@@ -818,8 +825,13 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
+    // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+    const orderSchema = {};
     try {
-      return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
+      return await ordersService.updateOrder(
+        { order: { ...order, ...orderSchema, workflow: { ...order.workflow, action, documents: [{}] } } },
+        { tenantId }
+      );
     } catch (error) {
       return null;
     }
@@ -827,8 +839,22 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      return await ordersService.createOrder({ order }, { tenantId });
-    } catch (error) {}
+      // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      const orderSchema = {};
+      // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
+      console.debug(order, orderSchema);
+      return await ordersService.createOrder(
+        {
+          order: {
+            ...order,
+            ...orderSchema,
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {
+      console.debug(error);
+    }
   };
 
   const handleAddOrder = () => {
@@ -1427,19 +1453,16 @@ const GenerateOrders = () => {
           ? [{}]
           : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent") || [];
       const promiseList = summonsArray?.map((data) =>
-        ordersService.createOrder(
-          {
-            ...reqbody,
-            order: {
-              ...reqbody.order,
-              additionalDetails: {
-                ...reqbody.order?.additionalDetails,
-                selectedParty: data,
-              },
+        createOrder({
+          ...reqbody,
+          order: {
+            ...reqbody.order,
+            additionalDetails: {
+              ...reqbody.order?.additionalDetails,
+              selectedParty: data,
             },
           },
-          { tenantId }
-        )
+        })
       );
       const resList = await Promise.all(promiseList);
 
