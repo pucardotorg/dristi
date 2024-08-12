@@ -87,10 +87,10 @@
               ]
             },
             {
-              "action": "DELETE",
-              "nextState": "DELETED",
+              "action": "REJECT",
+              "nextState": "PENDINGREVIEW",
               "roles": [
-                "APPLICATION_DELETE"
+                "APPLICATION_APPROVER"
               ]
             },
             {
@@ -166,17 +166,17 @@
               ]
             },
             {
-              "action": "REJECT",
-              "nextState": "REJECTED",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
                 "APPLICATION_APPROVER"
               ]
             },
             {
-              "action": "DELETE",
-              "nextState": "DELETED",
+              "action": "REJECT",
+              "nextState": "REJECTED",
               "roles": [
-                "APPLICATION_DELETE"
+                "APPLICATION_APPROVER"
               ]
             },
             {
