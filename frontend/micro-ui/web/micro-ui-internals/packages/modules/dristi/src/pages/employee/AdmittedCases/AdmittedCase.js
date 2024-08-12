@@ -429,7 +429,7 @@ const AdmittedCases = () => {
             },
           };
     });
-  }, [caseId, caseRelatedData.parties, cnrNumber, filingNumber, history, isCitizen, tenantId]);
+  }, [caseId, caseRelatedData, cnrNumber, filingNumber, history, isCitizen, tenantId, userInfo]);
 
   const newTabSearchConfig = {
     ...TabSearchconfig,
@@ -508,7 +508,7 @@ const AdmittedCases = () => {
 
   const handleSelect = (option) => {
     if (option === t("MAKE_SUBMISSION")) {
-      history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+      history.push(`/digit-ui/employee/submissions/submissions-create?filingNumber=${filingNumber}&applicationType=DOCUMENT`);
       return;
     }
     if (option === t("SCHEDULE_HEARING")) {
@@ -680,17 +680,21 @@ const AdmittedCases = () => {
     () =>
       userRoles.includes("ORDER_CREATOR")
         ? [
-            ...(userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
+            ...((userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR")) && !isCitizen
+              ? [t("MAKE_SUBMISSION")]
+              : []),
             t("GENERATE_ORDER_HOME"),
             t("SCHEDULE_HEARING"),
             t("REFER_TO_ADR"),
           ]
         : [
-            ...(userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
+            ...((userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR")) && !isCitizen
+              ? [t("MAKE_SUBMISSION")]
+              : []),
             t("SCHEDULE_HEARING"),
             t("REFER_TO_ADR"),
           ],
-    [t, userRoles]
+    [t, userRoles, isCitizen]
   );
 
   if (isLoading) {
