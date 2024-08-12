@@ -215,6 +215,17 @@ const GenerateOrders = () => {
     );
   }, [caseDetails]);
 
+  const witnesses = useMemo(() => {
+    return (
+      caseDetails?.additionalDetails?.witnessDetails?.formdata?.map((data) => {
+        const fullName = `${data?.data?.firstName || ""}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${
+          data?.data?.lastName || ""
+        }`.trim();
+        return { code: fullName, name: fullName, uuid: data?.data?.uuid, partyType: "witness" };
+      }) || []
+    );
+  }, [caseDetails]);
+
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     {
       tenantId,
@@ -452,7 +463,7 @@ const GenerateOrders = () => {
           };
         });
       }
-      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+      if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType)) {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
@@ -462,7 +473,32 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondents, ...unJoinedLitigant],
+                    options: [...complainants, ...respondents, ...unJoinedLitigant, ...witnesses],
+                  },
+                };
+              }
+              if (field.key === "unjoinedPartiesNote") {
+                const parties = [...unJoinedLitigant, ...witnesses];
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    inputs: [
+                      {
+                        ...field.populators.inputs[0],
+                        children: (
+                          <React.Fragment>
+                            {parties.map((party, index) => (
+                              <div className="list-div" key={index}>
+                                <p style={{ margin: "0px", fontSize: "14px" }}>
+                                  {index + 1}. {party?.name}
+                                </p>
+                              </div>
+                            ))}
+                          </React.Fragment>
+                        ),
+                      },
+                    ],
                   },
                 };
               }
@@ -570,7 +606,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant]);
+  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant, witnesses]);
 
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];
