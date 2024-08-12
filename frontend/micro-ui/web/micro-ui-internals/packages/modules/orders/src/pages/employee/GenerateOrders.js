@@ -45,6 +45,30 @@ import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 
+const configKeys = {
+  SECTION_202_CRPC: configsOrderSection202CRPC,
+  MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+  REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
+  SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
+  SCHEDULING_NEXT_HEARING: configsScheduleNextHearingDate,
+  RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+  REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
+  INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
+  ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
+  ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
+  CASE_TRANSFER: configsCaseTransfer,
+  SETTLEMENT: configsCaseSettlement,
+  SUMMONS: configsIssueSummons,
+  BAIL: configsBail,
+  WARRANT: configsCreateOrderWarrant,
+  WITHDRAWAL: configsCaseWithdrawal,
+  OTHERS: configsOthers,
+  APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
+  REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
+  JUDGEMENT: configsJudgement,
+};
+
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
   keys.forEach((key) => {
     if (formData[key] && Array.isArray(formData[key]) && formData[key].length === 0) {
@@ -117,7 +141,6 @@ const GenerateOrders = () => {
   const [showErrorToast, setShowErrorToast] = useState(null);
   const [loader, setLoader] = useState(false);
   const [newHearingNumber, setNewHearingNumber] = useState(null);
-  const [createdSummon, setCreatedSummon] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -163,6 +186,14 @@ const GenerateOrders = () => {
         };
       });
       return newData;
+    },
+  });
+
+  const { data: orderTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Order", [{ name: "OrderType" }], {
+    select: (data) => {
+      return _.get(data, "Order.OrderType", [])
+        .filter((opt) => (opt?.hasOwnProperty("isactive") ? opt.isactive : true))
+        .map((opt) => ({ ...opt }));
     },
   });
 
@@ -212,6 +243,17 @@ const GenerateOrders = () => {
           }${data?.data?.respondentLastName || ""}`.trim();
           return { code: fullName, name: fullName, uuid: data?.data?.uuid, isJoined: false, partyType: "respondent" };
         }) || []
+    );
+  }, [caseDetails]);
+
+  const witnesses = useMemo(() => {
+    return (
+      caseDetails?.additionalDetails?.witnessDetails?.formdata?.map((data) => {
+        const fullName = `${data?.data?.firstName || ""}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "}${
+          data?.data?.lastName || ""
+        }`.trim();
+        return { code: fullName, name: fullName, uuid: data?.data?.uuid, partyType: "witness" };
+      }) || []
     );
   }, [caseDetails]);
 
@@ -396,29 +438,6 @@ const GenerateOrders = () => {
   }, [hearingsData]);
 
   const modifiedFormConfig = useMemo(() => {
-    const configKeys = {
-      SECTION_202_CRPC: configsOrderSection202CRPC,
-      MANDATORY_SUBMISSIONS_RESPONSES: configsOrderMandatorySubmissions,
-      EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
-      REFERRAL_CASE_TO_ADR: configsOrderTranferToADR,
-      SCHEDULE_OF_HEARING_DATE: configsScheduleHearingDate,
-      SCHEDULING_NEXT_HEARING: configsScheduleNextHearingDate,
-      RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
-      REJECTION_RESCHEDULE_REQUEST: configsRejectRescheduleHeadingDate,
-      INITIATING_RESCHEDULING_OF_HEARING_DATE: configsInitiateRescheduleHearingDate,
-      ASSIGNING_DATE_RESCHEDULED_HEARING: configsAssignDateToRescheduledHearing,
-      ASSIGNING_NEW_HEARING_DATE: configsAssignNewHearingDate,
-      CASE_TRANSFER: configsCaseTransfer,
-      SETTLEMENT: configsCaseSettlement,
-      SUMMONS: configsIssueSummons,
-      BAIL: configsBail,
-      WARRANT: configsCreateOrderWarrant,
-      WITHDRAWAL: configsCaseWithdrawal,
-      OTHERS: configsOthers,
-      APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
-      REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
-      JUDGEMENT: configsJudgement,
-    };
     let newConfig = currentOrder?.orderNumber
       ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
       : structuredClone(applicationTypeConfig);
@@ -452,7 +471,7 @@ const GenerateOrders = () => {
           };
         });
       }
-      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+      if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType)) {
         orderTypeForm = orderTypeForm?.map((section) => {
           return {
             ...section,
@@ -462,7 +481,32 @@ const GenerateOrders = () => {
                   ...field,
                   populators: {
                     ...field.populators,
-                    options: [...complainants, ...respondents, ...unJoinedLitigant],
+                    options: [...complainants, ...respondents, ...unJoinedLitigant, ...witnesses],
+                  },
+                };
+              }
+              if (field.key === "unjoinedPartiesNote") {
+                const parties = [...unJoinedLitigant, ...witnesses];
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    inputs: [
+                      {
+                        ...field.populators.inputs[0],
+                        children: (
+                          <React.Fragment>
+                            {parties.map((party, index) => (
+                              <div className="list-div" key={index}>
+                                <p style={{ margin: "0px", fontSize: "14px" }}>
+                                  {index + 1}. {party?.name}
+                                </p>
+                              </div>
+                            ))}
+                          </React.Fragment>
+                        ),
+                      },
+                    ],
                   },
                 };
               }
@@ -570,8 +614,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant]);
-
+  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant, witnesses]);
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];
     modifiedFormConfig.forEach((config) => {
@@ -588,13 +631,30 @@ const GenerateOrders = () => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
         orderType: {
-          code: currentOrder?.orderType,
-          type: currentOrder?.orderType,
-          name: `ORDER_TYPE_${currentOrder?.orderType}`,
+          ...orderTypeData?.find((item) => item.code === currentOrder?.orderType),
         },
       };
     }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
+    if (orderType === "JUDGEMENT") {
+      updatedFormdata.caseNumber = filingNumber;
+      updatedFormdata.nameofRespondant = caseDetails?.litigants?.filter((item) =>
+        item?.partyType?.includes("respondent")
+      )?.[0]?.additionalDetails?.fullName;
+      updatedFormdata.nameOfCourt = "";
+      updatedFormdata.addressRespondant = "";
+      updatedFormdata.dateChequeReturnMemo = "";
+      updatedFormdata.dateFiling = "";
+      updatedFormdata.dateApprehension = "";
+      updatedFormdata.dateofReleaseOnBail = "";
+      updatedFormdata.dateofCommencementTrial = "";
+      updatedFormdata.dateofCloseTrial = "";
+      updatedFormdata.dateofSentence = "";
+      updatedFormdata.nameofComplainant = "";
+      updatedFormdata.nameofComplainantAdvocate = "";
+      updatedFormdata.nameofRespondantAdvocate = "";
+      updatedFormdata.offense = "";
+    }
     if (orderType === "BAIL") {
       updatedFormdata.bailType = { type: applicationDetails?.applicationType };
       updatedFormdata.submissionDocuments = applicationDetails?.additionalDetails?.formdata?.submissionDocuments;
@@ -646,7 +706,6 @@ const GenerateOrders = () => {
       }
     }
     if (orderType === "WARRANT") {
-      console.debug(hearingDetails);
       if (hearingDetails?.startTime) {
         updatedFormdata.dateOfHearing = formatDate(new Date(hearingDetails?.startTime));
       }
@@ -663,7 +722,7 @@ const GenerateOrders = () => {
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
     return updatedFormdata;
-  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails]);
+  }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, filingNumber, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
 
@@ -766,8 +825,13 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
+    // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+    const orderSchema = {};
     try {
-      return await ordersService.updateOrder({ order: { ...order, workflow: { ...order.workflow, action, documents: [{}] } } }, { tenantId });
+      return await ordersService.updateOrder(
+        { order: { ...order, ...orderSchema, workflow: { ...order.workflow, action, documents: [{}] } } },
+        { tenantId }
+      );
     } catch (error) {
       return null;
     }
@@ -775,8 +839,22 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      return await ordersService.createOrder({ order }, { tenantId });
-    } catch (error) {}
+      // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      const orderSchema = {};
+      // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
+      console.debug(order, orderSchema);
+      return await ordersService.createOrder(
+        {
+          order: {
+            ...order,
+            ...orderSchema,
+          },
+        },
+        { tenantId }
+      );
+    } catch (error) {
+      console.debug(error);
+    }
   };
 
   const handleAddOrder = () => {
@@ -896,6 +974,13 @@ const GenerateOrders = () => {
         });
         return await Promise.all(promises);
       }
+    }
+    if (order?.orderType === "WARRANT") {
+      entityType = "order-managelifecycle";
+      create = true;
+      assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
+      name = t("PAYMENT_PENDING_FOR_WARRANT");
+      status = `PAYMENT_PENDING_FOR_WARRANT`;
     }
 
     if (isAssignedRole) {
@@ -1061,7 +1146,9 @@ const GenerateOrders = () => {
     const orderData = orderDetails?.order;
     const orderFormData = orderDetails?.order?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
     const selectedChannel = orderData?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels;
-    const respondentAddress = orderFormData?.addressDetails?.map((data) => generateAddress({ ...data?.addressDetails }));
+    const respondentAddress = orderFormData?.addressDetails
+      ? orderFormData?.addressDetails?.map((data) => generateAddress({ ...data?.addressDetails }))
+      : caseDetails?.additionalDetails?.respondentDetails?.addressDetails?.map((data) => data?.addressDetails);
     const respondentName = `${orderFormData?.respondentFirstName || ""}${
       orderFormData?.respondentMiddleName ? " " + orderFormData?.respondentMiddleName + " " : " "
     }${orderFormData?.respondentLastName || ""}`.trim();
@@ -1134,9 +1221,9 @@ const GenerateOrders = () => {
         payload = {
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress[0],
-            phone: respondentPhoneNo[0] || "",
-            email: respondentEmail[0] || "",
+            address: respondentAddress?.[0],
+            phone: respondentPhoneNo?.[0] || "",
+            email: respondentEmail?.[0] || "",
             age: "",
             gender: "",
           },
@@ -1274,7 +1361,7 @@ const GenerateOrders = () => {
               assignes: null,
               rating: null,
             },
-            createdDate: formatDate(new Date(), "DD-MM-YYYY"),
+            createdDate: new Date().getTime(),
             orderId: orderData?.id,
             filingNumber,
             cnrNumber,
@@ -1308,7 +1395,7 @@ const GenerateOrders = () => {
             assignes: null,
             rating: null,
           },
-          createdDate: formatDate(new Date(), "DD-MM-YYYY"),
+          createdDate: new Date().getTime(),
           orderId: orderData?.id,
           filingNumber,
           cnrNumber,
@@ -1361,28 +1448,26 @@ const GenerateOrders = () => {
           },
         },
       };
-      const summonsArray = currentOrder?.additionalDetails?.isReIssueSummons
-        ? [{}]
-        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent");
+      const summonsArray =
+        currentOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE"
+          ? [{}]
+          : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent") || [];
       const promiseList = summonsArray?.map((data) =>
-        ordersService.createOrder(
-          {
-            ...reqbody,
-            order: {
-              ...reqbody.order,
-              additionalDetails: {
-                ...reqbody.order?.additionalDetails,
-                selectedParty: data,
-              },
+        createOrder({
+          ...reqbody,
+          order: {
+            ...reqbody.order,
+            additionalDetails: {
+              ...reqbody.order?.additionalDetails,
+              selectedParty: data,
             },
           },
-          { tenantId }
-        )
+        })
       );
       const resList = await Promise.all(promiseList);
-      setCreatedSummon(resList[0]?.order?.orderNumber);
+
       await Promise.all(
-        resList.forEach((res) =>
+        resList?.map((res) =>
           createPendingTask({
             order: res?.order,
             isAssignedRole: true,
@@ -1392,6 +1477,9 @@ const GenerateOrders = () => {
           })
         )
       );
+      history.push(
+        `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${resList?.[0]?.order?.orderNumber}`
+      );
     } catch (error) {}
   };
 
@@ -1400,7 +1488,6 @@ const GenerateOrders = () => {
       setLoader(true);
       let newhearingId = "";
       setPrevOrder(currentOrder);
-      console.log("currentOrder", currentOrder);
       if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType)) {
         const advocateData = advocateDetails.advocates.map((advocate) => {
           return {
@@ -1446,9 +1533,6 @@ const GenerateOrders = () => {
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
-        if (currentOrder?.additionalDetails?.isReIssueSummons) {
-          await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.newHearingDate, hearingNumber || hearingId);
-        }
       }
       if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
         await handleUpdateHearing({
@@ -1476,9 +1560,10 @@ const GenerateOrders = () => {
         },
       });
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
-      if (orderType === "SUMMONS") {
-        closeManualPendingTask(currentOrder?.hearingNumber || hearingDetails?.hearingId);
+      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+        closeManualPendingTask(filingNumber);
       }
+      closeManualPendingTask(currentOrder?.orderNumber);
       createTask(orderType, caseDetails, orderResponse);
       setLoader(false);
       setShowSuccessModal(true);
@@ -1509,14 +1594,14 @@ const GenerateOrders = () => {
   };
   const successModalActionSaveLabel = useMemo(() => {
     if (
-      (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE") & prevOrder?.additionalDetails?.isReIssueSummons ||
+      prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" ||
       (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
         currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType === "respondent"))
     ) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
     return t("CS_COMMON_CLOSE");
-  }, [currentOrder, prevOrder?.additionalDetails?.isReIssueSummons, prevOrder?.orderType, t]);
+  }, [currentOrder, prevOrder?.orderType, t]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
@@ -1567,7 +1652,6 @@ const GenerateOrders = () => {
     }
     if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
       await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.hearingDate, newHearingNumber || hearingId || hearingNumber);
-      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${createdSummon}`);
     }
   };
 
