@@ -7,6 +7,18 @@ const defaultSearchValues = {
   sortCaseListByStartDate: "",
 };
 
+export const subStageOptions = [
+  { stage: ["Filing"] },
+  { stage: ["Cognizance"] },
+  { stage: ["Inquiry"] },
+  { stage: ["Appearance"] },
+  { stage: ["Framing of charges"] },
+  { stage: ["Evidence"] },
+  { stage: ["Arguments"] },
+  { stage: ["Judgment"] },
+  { stage: ["Post-Judgement"] },
+];
+
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
   type: "search",
@@ -83,14 +95,7 @@ export const preHearingConfig = {
               name: "stage",
               error: "Required",
               optionsKey: "stage",
-              options: [
-                {
-                  stage: ["Pre-Trial"],
-                },
-                {
-                  stage: ["Inquiry"],
-                },
-              ],
+              options: subStageOptions
             },
           },
           {
@@ -116,7 +121,7 @@ export const preHearingConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "stage",
+            jsonPath: "subStage",
           },
           {
             label: "Case Type",

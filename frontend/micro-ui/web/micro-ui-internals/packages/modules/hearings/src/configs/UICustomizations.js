@@ -141,7 +141,7 @@ export const UICustomizations = {
           {
             label: "View transcript",
             id: "view_transcript",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -149,7 +149,7 @@ export const UICustomizations = {
           {
             label: "View witness deposition",
             id: "view_witness",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -204,7 +204,7 @@ export const UICustomizations = {
           {
             label: "View transcript",
             id: "view_transcript",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -212,7 +212,7 @@ export const UICustomizations = {
           {
             label: "View witness deposition",
             id: "view_witness",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
