@@ -170,8 +170,10 @@ class EncryptionDecryptionUtilTest {
     @Test
     void testIsUserDecryptingForSelf_MultipleLitigants() {
         // Test with multiple litigants
-
-        Object objectToDecrypt = createCourtCase().addLitigantsItem(createLitigant(UUID.randomUUID())).addLitigantsItem(createLitigant(UUID.randomUUID()));
+        List<Party> litigants = new ArrayList<>();
+        litigants.add(createLitigant(UUID.randomUUID()));
+        litigants.add(createLitigant(UUID.randomUUID()));
+        Object objectToDecrypt = createCourtCase(litigants);
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
 
         boolean result = encryptionDecryptionUtil.isUserDecryptingForSelf(objectToDecrypt, requestInfo);
@@ -246,6 +248,17 @@ class EncryptionDecryptionUtilTest {
         courtCase.setAuditdetails(auditDetails);
         courtCase.setLitigants(new ArrayList<>());
         courtCase.setRepresentatives(new ArrayList<>());
+        return courtCase;
+    }
+
+    private CourtCase createCourtCase(List<Party> litigants) {
+        CourtCase courtCase = new CourtCase();
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(UUID.randomUUID().toString());
+        courtCase.setAuditdetails(auditDetails);
+        courtCase.setLitigants(new ArrayList<>());
+        courtCase.setRepresentatives(new ArrayList<>());
+        courtCase.setLitigants(litigants);
         return courtCase;
     }
 
