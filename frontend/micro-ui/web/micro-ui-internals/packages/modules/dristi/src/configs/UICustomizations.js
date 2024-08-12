@@ -696,7 +696,7 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const date = new Date(row.startTime);
       const future = row.startTime > Date.now();
-      if (future && row.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
+      if (row.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
@@ -777,7 +777,7 @@ export const UICustomizations = {
           },
         ];
       }
-      if (future && userInfo?.type === "CITIZEN") {
+      if (row.status === "SCHEDULED" && userInfo?.type === "CITIZEN") {
         return [
           {
             label: "Request for Reschedule hearing",
@@ -835,7 +835,7 @@ export const UICustomizations = {
         {
           label: "View pending task",
           id: "view_pending_tasks",
-          hide: false,
+          hide: true,
           disabled: true,
           action: (history) => {
             alert("Not Yet Implemented");

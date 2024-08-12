@@ -106,6 +106,7 @@ const usePreHearingModalData = ({ url, params, body, config = {}, plainAccessReq
               caseName: caseData?.caseTitle || "",
               cnrNumber: caseData.cnrNumber,
               stage: caseData?.stage || "",
+              subStage: caseData?.substage || "",
               caseType: caseData?.caseType || "NIA S138",
               pendingTasks: pendingTasksData || "-",
               hearingId: hearing.hearingId,

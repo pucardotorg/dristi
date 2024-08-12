@@ -457,7 +457,7 @@ const AdmittedCases = () => {
   const isTabDisabled = useMemo(() => {
     return isFSO
       ? true
-      : caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED" && config?.label !== "Complaint";
+      : caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED";
   }, [caseDetails?.status, config?.label, isFSO]);
 
   useEffect(() => {

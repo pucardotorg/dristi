@@ -1299,7 +1299,7 @@ export const configsSurety = [
               isMandatory: true,
               key: "documentType",
               type: "dropdown",
-              label: "Document Type",
+              label: "DOCUMENT_TYPE",
               name: "documentType",
               disable: false,
               populators: {
@@ -1319,7 +1319,7 @@ export const configsSurety = [
               },
             },
             {
-              label: "Document Title",
+              label: "DOCUMENT_TITLE",
               type: "text",
               name: "documentTitle",
               validation: {
@@ -1330,7 +1330,7 @@ export const configsSurety = [
               isMandatory: true,
             },
             {
-              label: "Attachment",
+              label: "DOCUMENT_ATTACHMENT",
               type: "documentUpload",
               name: "document",
               validation: {
@@ -1412,7 +1412,7 @@ export const configsBailBond = [
               isMandatory: true,
               key: "documentType",
               type: "dropdown",
-              label: "Document Type",
+              label: "DOCUMENT_TYPE",
               name: "documentType",
               disable: false,
               populators: {
@@ -1432,7 +1432,7 @@ export const configsBailBond = [
               },
             },
             {
-              label: "Document Title",
+              label: "DOCUMENT_TITLE",
               type: "text",
               name: "documentTitle",
               validation: {
@@ -1443,7 +1443,7 @@ export const configsBailBond = [
               isMandatory: true,
             },
             {
-              label: "Attachment",
+              label: "DOCUMENT_ATTACHMENT",
               type: "documentUpload",
               name: "document",
               validation: {
@@ -1482,6 +1482,28 @@ export const configsOthers = [
   },
   {
     body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "othersDocument",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              name: "documents",
+              documentHeader: "OTHERS_DOCUMENT",
+              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["PDF", "JPEG"],
+              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
+              headerClassName: "dristi-font-bold",
+            },
+          ],
+        },
+      },
       {
         type: "component",
         component: "SelectCustomTextArea",
