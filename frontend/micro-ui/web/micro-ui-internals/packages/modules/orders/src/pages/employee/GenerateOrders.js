@@ -741,7 +741,8 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
-    const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+    // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+    const orderSchema = {};
     try {
       return await ordersService.updateOrder(
         { order: { ...order, ...orderSchema, workflow: { ...order.workflow, action, documents: [{}] } } },
@@ -754,7 +755,8 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      const orderSchema = {};
       // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
       console.debug(order, orderSchema);
       return await ordersService.createOrder(
