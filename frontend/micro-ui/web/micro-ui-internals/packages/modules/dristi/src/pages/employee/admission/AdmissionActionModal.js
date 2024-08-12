@@ -10,6 +10,7 @@ import SelectParticipant from "./SelectParticipant";
 import CustomCalendar from "../../../components/CustomCalendar";
 import { WhiteRightArrow } from "../../../icons/svgIndex";
 import { formatDateInMonth } from "../../../Utils";
+import { DRISTIService } from "../../../services";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -146,6 +147,32 @@ function AdmissionActionModal({
     });
   };
 
+  const handleNextCase = () => {
+    DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            status: ["PENDING_ADMISSION"],
+          },
+        ],
+        tenantId,
+      },
+      {}
+    )
+      .then((res) => {
+        if (res?.criteria?.[0]?.responseList?.[0]?.id) {
+          history.push(
+            `/${window?.contextPath}/employee/dristi/admission?filingNumber=${res?.criteria?.[0]?.responseList?.[0]?.filingNumber}caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`
+          );
+        } else {
+          history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+        }
+      })
+      .catch(() => {
+        history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+      });
+  };
+
   return (
     <React.Fragment>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
@@ -278,7 +305,7 @@ function AdmissionActionModal({
             if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
               handleScheduleNextHearing();
             } else {
-              history.push(`/employee`);
+              handleNextCase();
             }
           }}
           className="case-types"

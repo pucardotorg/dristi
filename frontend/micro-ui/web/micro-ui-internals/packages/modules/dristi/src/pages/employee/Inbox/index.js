@@ -38,23 +38,24 @@ const Inbox = ({ tenants, parentRoute }) => {
     ulb: tenants?.find((tenant) => tenant?.code === tenantId),
   });
 
-  useEffect(() => {
-    const timer = () =>
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1500);
+  // delay for fetching it in inbox api
+  // useEffect(() => {
+  //   const timer = () =>
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 1500);
 
-    if (state?.isSentBack) {
-      setIsLoading(true);
-      timer();
-      window.history.replaceState({}, "");
-    }
-    return () => clearTimeout(timer());
-  }, [state]);
+  //   if (state?.isSentBack) {
+  //     setIsLoading(true);
+  //     timer();
+  //     window.history.replaceState({}, "");
+  //   }
+  //   return () => clearTimeout(timer());
+  // }, [state]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <React.Fragment>

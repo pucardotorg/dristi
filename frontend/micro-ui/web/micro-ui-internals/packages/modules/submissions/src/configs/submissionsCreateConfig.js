@@ -19,6 +19,10 @@ export const submissionTypeConfig = [
               code: "APPLICATION",
               name: "APPLICATION",
             },
+            {
+              code: "DOCUMENT",
+              name: "DOCUMENT",
+            },
           ],
         },
       },
@@ -607,6 +611,102 @@ export const configsExtensionSubmissionDeadline = [
               masterName: "alphaNumericValidation",
             },
           },
+        },
+      },
+    ],
+  },
+];
+
+export const configsDocumentSubmission = [
+  {
+    body: [
+      {
+        inline: true,
+        label: "DOCUMENT_TYPE",
+        isMandatory: true,
+        type: "dropdown",
+        key: "documentType",
+        populators: {
+          name: "documentType",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
+          required: true,
+          isMandatory: true,
+          mdmsConfig: {
+            moduleName: "Submission",
+            masterName: "DocumentType",
+            localePrefix: "",
+          },
+        },
+      },
+      {
+        inline: true,
+        label: "SUBMISSION_TITLE",
+        isMandatory: true,
+        key: "submissionTitle",
+        type: "text",
+        populators: {
+          name: "submissionTitle",
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        inline: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "extensionBenefit",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaHeader: "PURPOSE_FOR_DOCUMENT_SUBMISSION",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: 0,
+              },
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "document",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              name: "documents",
+              documentHeader: "DOCUMENT",
+              documentHeaderStyle: { fontSize: "16px", fontWeight: 400, marginBottom: 0 },
+              type: "DragDropComponent",
+              maxFileSize: 25,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["TXT", "DOC", "PDF", "DOCX"],
+              isMultipleUpload: true,
+              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
+              headerClassName: "dristi-font-bold",
+            },
+          ],
         },
       },
     ],

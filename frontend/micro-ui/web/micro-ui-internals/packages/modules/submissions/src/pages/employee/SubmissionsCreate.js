@@ -7,6 +7,7 @@ import {
   configsCaseTransfer,
   configsCaseWithdrawal,
   configsCheckoutRequest,
+  configsDocumentSubmission,
   configsExtensionSubmissionDeadline,
   configsOthers,
   configsProductionOfDocuments,
@@ -51,6 +52,7 @@ const SubmissionsCreate = () => {
   const [loader, setLoader] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
+  const isCitizen = useMemo(() => userInfo?.type === "CITIZEN", [userInfo]);
   const todayDate = new Date().getTime();
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
@@ -94,7 +96,7 @@ const SubmissionsCreate = () => {
       CHECKOUT_REQUEST: configsCheckoutRequest,
       OTHERS: configsOthers,
     };
-    let newConfig = applicationConfigKeys?.[applicationType] || [];
+    let newConfig = isCitizen ? applicationConfigKeys?.[applicationType] || [] : configsDocumentSubmission || [];
 
     if (newConfig.length > 0) {
       const updatedConfig = newConfig.map((config) => {
@@ -124,7 +126,7 @@ const SubmissionsCreate = () => {
     } else {
       return [];
     }
-  }, [applicationType]);
+  }, [applicationType, isCitizen]);
 
   const formatDate = (date, format) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -137,8 +139,9 @@ const SubmissionsCreate = () => {
   };
 
   const modifiedFormConfig = useMemo(() => {
+    if (!isCitizen) return [...submissionTypeConfig, ...applicationFormConfig];
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
-  }, [submissionFormConfig, applicationFormConfig]);
+  }, [isCitizen, submissionFormConfig, applicationFormConfig]);
 
   const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
@@ -305,6 +308,13 @@ const SubmissionsCreate = () => {
         },
         applicationDate: formatDate(new Date()),
       };
+    } else if (!isCitizen) {
+      return {
+        submissionType: {
+          code: "DOCUMENT",
+          name: "DOCUMENT",
+        },
+      };
     } else {
       return {
         submissionType: {
@@ -314,15 +324,7 @@ const SubmissionsCreate = () => {
         applicationDate: formatDate(new Date()),
       };
     }
-  }, [
-    applicationDetails?.additionalDetails?.formdata,
-    hearingId,
-    hearingsData?.HearingList,
-    orderNumber,
-    applicationType,
-    orderDetails,
-    isExtension,
-  ]);
+  }, [applicationDetails, hearingId, hearingsData, orderNumber, applicationType, isCitizen, orderDetails, isExtension]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS"].includes(applicationType) && !formData?.applicationDate) {
