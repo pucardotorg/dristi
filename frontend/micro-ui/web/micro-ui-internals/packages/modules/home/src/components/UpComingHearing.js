@@ -109,16 +109,17 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
     };
   }, [today]);
 
-  const reqBody = useMemo(
-    () => ({
+  const reqBody = useMemo(() => {
+    today.setHours(23, 59, 59, 999);
+    return {
       criteria: {
         tenantId,
         fromDate: dateRange.start,
         attendeeIndividualId: props?.attendeeIndividualId,
+        toDate: today.getTime(),
       },
-    }),
-    [dateRange.start, props?.attendeeIndividualId, tenantId]
-  );
+    };
+  }, [dateRange.start, props?.attendeeIndividualId, tenantId]);
 
   const reqBodyMonthly = useMemo(
     () => ({
