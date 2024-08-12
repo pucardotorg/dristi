@@ -62,7 +62,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       <div className="custom-text-area-main-div" style={input?.style}>
         <div className="custom-text-area-header-div">
           {input.textAreaHeader && (
-            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px 0px 8px" }}>
+            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px 0px 8px", ...input.textAreaStyle }}>
               {t(input?.textAreaHeader)}
             </h1>
           )}
