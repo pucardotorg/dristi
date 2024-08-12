@@ -52,6 +52,7 @@ public class ServiceConstants {
     public static final String CITIZEN_UPPER = "CITIZEN";
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String USER = "user";
+    public static final String ADMINISTRATIVE = "ADMINISTRATIVE";
 
     public static final String PARSING_ERROR = "PARSING ERROR";
     public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
