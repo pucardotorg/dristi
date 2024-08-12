@@ -6,6 +6,10 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
+<<<<<<< HEAD
+=======
+import org.egov.common.contract.user.enums.UserType;
+>>>>>>> main
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import java.util.*;
 
 @Component
 public class UserUtil {
+<<<<<<< HEAD
 	private final ObjectMapper mapper;
 	private final ServiceRequestRepository serviceRequestRepository;
 	private final Configuration configs;
@@ -26,6 +31,22 @@ public class UserUtil {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.configs = configs;
+=======
+
+	@Autowired
+	private ObjectMapper mapper;
+
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
+
+	@Autowired
+	private Configuration configs;
+
+	@Autowired
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+		this.mapper = mapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+>>>>>>> main
 	}
 
 	/**
@@ -44,7 +65,11 @@ public class UserUtil {
 		else if (uri.toString().contains(configs.getUserCreateEndpoint()))
 			dobFormat = DOB_FORMAT_D_M_Y;
 		try {
+<<<<<<< HEAD
 			LinkedHashMap<String, Object> responseMap =(LinkedHashMap)  serviceRequestRepository.fetchResult(uri, userRequest);
+=======
+			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+>>>>>>> main
 			parseResponse(responseMap, dobFormat);
 			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
 			return userDetailResponse;
@@ -55,21 +80,38 @@ public class UserUtil {
 
 	/**
 	 * Parses date formats to long for all users in responseMap
+<<<<<<< HEAD
 	 *
 	 * @param responseMap LinkedHashMap got from user api response
 	 */
 
 	public void parseResponse(LinkedHashMap<String, Object> responseMap, String dobFormat) {
 		List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get(USER);
+=======
+	 * 
+	 * @param responseMap LinkedHashMap got from user api response
+	 */
+
+	public void parseResponse(LinkedHashMap responseMap, String dobFormat) {
+		List<LinkedHashMap> users = (List<LinkedHashMap>) responseMap.get(USER);
+>>>>>>> main
 		String format1 = DOB_FORMAT_D_M_Y_H_M_S;
 		if (users != null) {
 			users.forEach(map -> {
 				map.put(CREATED_DATE, dateTolong((String) map.get(CREATED_DATE), format1));
+<<<<<<< HEAD
 				if (map.get(LAST_MODIFIED_DATE) != null)
 					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if (map.get(DOB) != null)
 					map.put(DOB, dateTolong((String) map.get(DOB), dobFormat));
 				if (map.get(PWD_EXPIRY_DATE) != null)
+=======
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
+				if ((String) map.get(DOB) != null)
+					map.put(DOB, dateTolong((String) map.get(DOB), dobFormat));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+>>>>>>> main
 					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
@@ -77,7 +119,11 @@ public class UserUtil {
 
 	/**
 	 * Converts date to long
+<<<<<<< HEAD
 	 *
+=======
+	 * 
+>>>>>>> main
 	 * @param date   date to be parsed
 	 * @param format Format of the date
 	 * @return Long value of date
@@ -96,7 +142,11 @@ public class UserUtil {
 	/**
 	 * enriches the userInfo with statelevel tenantId and other fields The function
 	 * creates user with username as mobile number.
+<<<<<<< HEAD
 	 *
+=======
+	 * 
+>>>>>>> main
 	 * @param mobileNumber
 	 * @param tenantId
 	 * @param userInfo
@@ -107,11 +157,19 @@ public class UserUtil {
 		userInfo.setType(userType);
 		userInfo.setUserName(mobileNumber);
 		userInfo.setTenantId(getStateLevelTenant(tenantId));
+<<<<<<< HEAD
+=======
+		// userInfo.setActive(true);
+>>>>>>> main
 	}
 
 	/**
 	 * Returns role object for citizen
+<<<<<<< HEAD
 	 *
+=======
+	 * 
+>>>>>>> main
 	 * @param tenantId
 	 * @return
 	 */

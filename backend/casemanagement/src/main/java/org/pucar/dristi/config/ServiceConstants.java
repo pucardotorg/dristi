@@ -45,6 +45,7 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+<<<<<<< HEAD
     public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
 
     public static final String FILE_STORE_MAPPER_KEY="referenceid_filestore_mapper";
@@ -73,5 +74,8 @@ public class ServiceConstants {
 
     //JSON Path
     public static final String ES_HITS_PATH = "$.hits.hits.*._source";
+=======
+
+>>>>>>> main
 
 }

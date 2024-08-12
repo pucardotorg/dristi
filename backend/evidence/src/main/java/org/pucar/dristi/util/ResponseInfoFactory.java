@@ -16,7 +16,11 @@ public class ResponseInfoFactory {
 		Long ts = null;
 		if (requestInfo != null)
 			ts = requestInfo.getTs();
+<<<<<<< HEAD
 		final String resMsgId = RES_MSG_ID;
+=======
+		final String resMsgId = RES_MSG_ID; // FIXME : Hard-coded
+>>>>>>> main
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
 		final String responseStatus = success ? SUCCESSFUL : FAILED;
 

@@ -1,7 +1,10 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
+=======
+>>>>>>> main
 import org.pucar.dristi.config.Configuration;
 import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+<<<<<<< HEAD
 
 
 @Service
@@ -33,18 +37,44 @@ public class WorkflowUtil {
         this.configs = configs;
         this.mapper = mapper;
     }
+=======
+import java.util.stream.Collectors;
+
+@Service
+public class WorkflowUtil {
+
+    @Autowired
+    private ServiceRequestRepository repository;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
+
+
+>>>>>>> main
 
     /**
     * Searches the BussinessService corresponding to the businessServiceCode
     * Returns applicable BussinessService for the given parameters
     * @param requestInfo
     * @param tenantId
+<<<<<<< HEAD
     * @param businessService
     * @return
     */
     public BusinessService getBusinessService(RequestInfo requestInfo, String tenantId, String businessService) {
 
         StringBuilder url = getSearchURLWithParams(tenantId, businessService);
+=======
+    * @param businessServiceCode
+    * @return
+    */
+    public BusinessService getBusinessService(RequestInfo requestInfo, String tenantId, String businessServiceCode) {
+
+        StringBuilder url = getSearchURLWithParams(tenantId, businessServiceCode);
+>>>>>>> main
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object result = repository.fetchResult(url, requestInfoWrapper);
         BusinessServiceResponse response = null;
@@ -55,7 +85,11 @@ public class WorkflowUtil {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
+<<<<<<< HEAD
             throw new CustomException(BUSINESS_SERVICE_NOT_FOUND, THE_BUSINESS_SERVICE + businessService + NOT_FOUND);
+=======
+            throw new CustomException(BUSINESS_SERVICE_NOT_FOUND, THE_BUSINESS_SERVICE + businessServiceCode + NOT_FOUND);
+>>>>>>> main
 
         return response.getBusinessServices().get(0);
     }
@@ -71,6 +105,7 @@ public class WorkflowUtil {
     * @param wfModuleName
     * @return
     */
+<<<<<<< HEAD
     public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
         ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
 
@@ -79,6 +114,16 @@ public class WorkflowUtil {
         State state = callWorkFlow(workflowRequest);
 
         return state.getState();
+=======
+    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
+        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
+        businessServiceCode, workflow, wfModuleName);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+
+        return state.getApplicationStatus();
+>>>>>>> main
     }
 
     /**
@@ -102,20 +147,32 @@ public class WorkflowUtil {
     * @param requestInfo
     * @param tenantId
     * @param businessId
+<<<<<<< HEAD
     * @param businessService
+=======
+    * @param businessServiceCode
+>>>>>>> main
     * @param workflow
     * @param wfModuleName
     * @return
     */
     private ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
+<<<<<<< HEAD
         String businessId, String businessService, Workflow workflow, String wfModuleName) {
+=======
+        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+>>>>>>> main
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(businessId);
         processInstance.setAction(workflow.getAction());
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
+<<<<<<< HEAD
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessService).getBusinessService());
+=======
+        processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
+>>>>>>> main
         processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
@@ -147,7 +204,11 @@ public class WorkflowUtil {
             List<String> userIds = null;
 
             if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
+<<<<<<< HEAD
                 userIds = processInstance.getAssignes().stream().map(User::getUuid).toList();
+=======
+                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+>>>>>>> main
             }
 
             Workflow workflow = Workflow.builder()

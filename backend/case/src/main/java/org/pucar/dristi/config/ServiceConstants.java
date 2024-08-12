@@ -1,13 +1,19 @@
 package org.pucar.dristi.config;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
 
+=======
+>>>>>>> main
 import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
+<<<<<<< HEAD
 	private ServiceConstants() {
 	}
+=======
+>>>>>>> main
 
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
@@ -39,10 +45,13 @@ public class ServiceConstants {
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
+<<<<<<< HEAD
 	public static final String RESPONDENT_PRIMARY = "respondent.primary";
 	public static final String COMPLAINANT_PRIMARY = "complainant.primary";
 
     public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
+=======
+>>>>>>> main
 
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -51,6 +60,7 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+<<<<<<< HEAD
 	public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
 	public static final String ERROR_WHILE_FETCHING_FROM_ADVOCATE = "ERROR_WHILE_FETCHING_FROM_ADVOCATE";
 	public static final String ERROR_WHILE_CREATING_DEMAND_FOR_CASE = "ERROR_WHILE_CREATING_DEMAND_FOR_CASE";
@@ -110,5 +120,7 @@ public class ServiceConstants {
 	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
 
 	public static final String EMPLOYEE = "EMPLOYEE";
+=======
+>>>>>>> main
 
 }

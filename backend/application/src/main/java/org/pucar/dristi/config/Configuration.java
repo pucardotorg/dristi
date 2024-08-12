@@ -77,12 +77,15 @@ public class Configuration {
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
 
+<<<<<<< HEAD
     // Order Config
     @Value("${egov.order.host}")
     private String orderHost;
 
     @Value("${egov.order.path}")
     private String orderExistsPath;
+=======
+>>>>>>> main
 
     //URLShortening
     @Value("${egov.url.shortner.host}")
@@ -95,6 +98,7 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+<<<<<<< HEAD
 
     // Case Config
     @Value("${egov.case.host}")
@@ -141,4 +145,6 @@ public class Configuration {
 
     @Value("${egov.filestore.path}")
     private String fileStorePath;
+=======
+>>>>>>> main
 }

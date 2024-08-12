@@ -15,7 +15,10 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Map;
+=======
+>>>>>>> main
 import java.util.UUID;
 
 /**
@@ -38,10 +41,13 @@ public class Application   {
 
                 private String tenantId = null;
 
+<<<<<<< HEAD
         @JsonProperty("caseId")
         @NotNull
         private String caseId = null;
 
+=======
+>>>>>>> main
         @JsonProperty("filingNumber")
 
                 private String filingNumber = null;
@@ -58,7 +64,11 @@ public class Application   {
         @JsonProperty("createdDate")
           @NotNull
 
+<<<<<<< HEAD
                 private Long createdDate = null;
+=======
+                private String createdDate = null;
+>>>>>>> main
 
         @JsonProperty("createdBy")
 
@@ -72,7 +82,11 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
+<<<<<<< HEAD
                 private String applicationType = null;
+=======
+                private List<UUID> applicationType = new ArrayList<>();
+>>>>>>> main
 
         @JsonProperty("applicationNumber")
 
@@ -80,7 +94,11 @@ public class Application   {
 
         @JsonProperty("issuedBy")
 
+<<<<<<< HEAD
                 private IssuedBy issuedBy = null;
+=======
+                private Object issuedBy = null;
+>>>>>>> main
 
         @JsonProperty("status")
           @NotNull
@@ -89,7 +107,11 @@ public class Application   {
 
         @JsonProperty("comment")
 
+<<<<<<< HEAD
                 private List<Comment> comment = new ArrayList<>();
+=======
+                private String comment = null;
+>>>>>>> main
 
         @JsonProperty("isActive")
           @NotNull
@@ -107,7 +129,11 @@ public class Application   {
 
         @JsonProperty("additionalDetails")
 
+<<<<<<< HEAD
                 private Object additionalDetails = null;
+=======
+                private String additionalDetails = null;
+>>>>>>> main
 
         @JsonProperty("auditDetails")
 
@@ -128,6 +154,14 @@ public class Application   {
         return this;
         }
 
+<<<<<<< HEAD
+=======
+        public Application addApplicationTypeItem(UUID applicationTypeItem) {
+        this.applicationType.add(applicationTypeItem);
+        return this;
+        }
+
+>>>>>>> main
         public Application addDocumentsItem(Document documentsItem) {
             if (this.documents == null) {
             this.documents = new ArrayList<>();
@@ -135,6 +169,7 @@ public class Application   {
         this.documents.add(documentsItem);
         return this;
         }
+<<<<<<< HEAD
     public boolean isResponseRequired() {
         if (additionalDetails instanceof Map) {
             Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
@@ -144,4 +179,7 @@ public class Application   {
         }
         return false;
     }
+=======
+
+>>>>>>> main
 }

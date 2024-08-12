@@ -1,13 +1,21 @@
 package org.pucar.dristi.util;
 
+<<<<<<< HEAD
 import static org.pucar.dristi.config.ServiceConstants.FAILED;
 import static org.pucar.dristi.config.ServiceConstants.RES_MSG_ID;
 import static org.pucar.dristi.config.ServiceConstants.SUCCESSFUL;
 
+=======
+>>>>>>> main
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.stereotype.Component;
 
+<<<<<<< HEAD
+=======
+import static org.pucar.dristi.config.ServiceConstants.*;
+
+>>>>>>> main
 @Component
 public class ResponseInfoFactory {
 
@@ -18,7 +26,11 @@ public class ResponseInfoFactory {
 		Long ts = null;
 		if (requestInfo != null)
 			ts = requestInfo.getTs();
+<<<<<<< HEAD
 		final String resMsgId = RES_MSG_ID;
+=======
+		final String resMsgId = RES_MSG_ID; // FIXME : Hard-coded
+>>>>>>> main
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
 		final String responseStatus = success ? SUCCESSFUL : FAILED;
 

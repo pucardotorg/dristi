@@ -26,6 +26,7 @@ public class AdvocateClerkSearchRequest {
 	@Valid
 	private RequestInfo requestInfo = null;
 
+<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/AdvocateClerkSearchRequest.java
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
@@ -33,5 +34,15 @@ public class AdvocateClerkSearchRequest {
 	@Valid
 	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
 
+=======
+	@JsonProperty("advocates")
+	@Valid
+	private List<Advocate> advocates = new ArrayList<>();
+
+	public AdvocateRequest addAdvocatesItem(Advocate advocatesItem) {
+		this.advocates.add(advocatesItem);
+		return this;
+	}
+>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateRequest.java
 
 }

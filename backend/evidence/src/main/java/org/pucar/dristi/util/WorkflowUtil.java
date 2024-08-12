@@ -1,7 +1,10 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
+=======
+>>>>>>> main
 import org.pucar.dristi.config.Configuration;
 import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+<<<<<<< HEAD
 
 @Slf4j
 @Service
@@ -30,6 +34,22 @@ public class WorkflowUtil {
 		this.mapper = mapper;
 		this.configs = configs;
 	}
+=======
+import java.util.stream.Collectors;
+
+@Service
+public class WorkflowUtil {
+
+	@Autowired
+	private ServiceRequestRepository repository;
+
+	@Autowired
+	private ObjectMapper mapper;
+
+	@Autowired
+	private Configuration configs;
+
+>>>>>>> main
 	/**
 	 * Searches the BussinessService corresponding to the businessServiceCode
 	 * Returns applicable BussinessService for the given parameters
@@ -125,6 +145,7 @@ public class WorkflowUtil {
 
 		if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
 			List<User> users = workflow.getAssignes().stream()
+<<<<<<< HEAD
 					.map(uuid -> {
 						User user = new User();
 						user.setUuid(uuid);
@@ -132,6 +153,16 @@ public class WorkflowUtil {
 					})
 					.toList();
 		processInstance.setAssignes(users);
+=======
+			    .map(uuid -> {
+			      User user = new User();
+			      user.setUuid(uuid);
+			      return user;
+			    })
+			    .collect(Collectors.toList());
+
+			processInstance.setAssignes(users);
+>>>>>>> main
 		}
 
 		return processInstance;
@@ -151,12 +182,18 @@ public class WorkflowUtil {
 			List<String> userIds = null;
 
 			if (!CollectionUtils.isEmpty(processInstance.getAssignes())) {
+<<<<<<< HEAD
 				userIds = processInstance.getAssignes().stream()
 						.map(User::getUuid)
 						.toList();
 			}
 
 
+=======
+				userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+			}
+
+>>>>>>> main
 			Workflow workflow = Workflow.builder().action(processInstance.getAction()).assignes(userIds)
 					.comments(processInstance.getComment()).documents(processInstance.getDocuments()).build();
 

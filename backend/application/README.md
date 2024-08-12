@@ -15,6 +15,7 @@ Start your server as an simple java application
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/  
 
+<<<<<<< HEAD
 Change default port value in application.properties
 
 Workflow related to Application module:
@@ -22,3 +23,6 @@ Workflow related to Application module:
 
 API-specs for application 
 [application-api-specs](../../api_specifications/application-api-0.1.0.yaml)
+=======
+Change default port value in application.properties
+>>>>>>> main

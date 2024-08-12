@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+<<<<<<< HEAD
 import java.util.List;
 
+=======
+>>>>>>> main
 /**
  * OrderExistsResponse
  */
@@ -21,6 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
 public class OrderExistsResponse {
 
     @JsonProperty("ResponseInfo")
@@ -30,6 +34,18 @@ public class OrderExistsResponse {
     @JsonProperty("orderList")
     @Valid
     private List<OrderExists> order = null;
+=======
+public class OrderExistsResponse   {
+        @JsonProperty("responseInfo")
+
+          @Valid
+                private ResponseInfo responseInfo = null;
+
+        @JsonProperty("order")
+
+          @Valid
+                private OrderExists order = null;
+>>>>>>> main
 
 
 }

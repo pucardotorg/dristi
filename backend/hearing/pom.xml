@@ -9,7 +9,10 @@
     <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+<<<<<<< HEAD
     <jacoco.version>0.8.9</jacoco.version>
+=======
+>>>>>>> main
 </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,6 +33,7 @@
                     </execution>
                 </executions>
             </plugin>
+<<<<<<< HEAD
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -57,6 +61,8 @@
                     </execution>
                 </executions>
             </plugin>
+=======
+>>>>>>> main
         </plugins>
     </build>
     <dependencies>
@@ -105,6 +111,7 @@
             <artifactId>tracer</artifactId>
             <version>2.9.0-SNAPSHOT</version>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.egov.common</groupId>
             <artifactId>health-services-common</artifactId>
@@ -116,6 +123,13 @@
             <version>1.0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+=======
+<!--        <dependency>-->
+<!--            <groupId>org.egov.services</groupId>-->
+<!--            <artifactId>digit-models</artifactId>-->
+<!--            <version>1.0.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
+>>>>>>> main
         <dependency>
           <groupId>org.egov</groupId>
           <artifactId>mdms-client</artifactId>

@@ -4,8 +4,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
+<<<<<<< HEAD
 	private ServiceConstants() {
 	}
+=======
+
+>>>>>>> main
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -36,7 +40,10 @@ public class ServiceConstants {
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
+<<<<<<< HEAD
 	public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
+=======
+>>>>>>> main
 
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -45,6 +52,7 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+<<<<<<< HEAD
 	public static final String EVIDENCE_CREATE_EXCEPTION = "ADVOCATE_CREATE_EXCEPTION";
 	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
 	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
@@ -71,5 +79,7 @@ public class ServiceConstants {
 	public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
 	public static final String ERROR_WHILE_FETCHING_FROM_ORDER = "ERROR_WHILE_FETCHING_FROM_ORDER_SERVICE";
 	public static final String ERROR_WHILE_FETCHING_FROM_HEARING = "ERROR_WHILE_FETCHING_FROM_HEARING";
+=======
+>>>>>>> main
 
 }

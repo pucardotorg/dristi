@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceConstants {
 
+<<<<<<< HEAD
     private ServiceConstants() {
     }
 
@@ -20,15 +21,21 @@ public class ServiceConstants {
     public static final String GET_WORKFLOW_EXCEPTION = "GET_WORKFLOW_EXCEPTION";
     public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
     public static final String STATUTE_SEARCH_QUERY_EXCEPTION = "STATUTE_SEARCH_QUERY_EXCEPTION";
+=======
+    public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
+>>>>>>> main
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
     public static final String IDGEN_ERROR = "IDGEN ERROR";
     public static final String NO_IDS_FOUND_ERROR = "No ids returned from idgen Service";
 
     public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
+<<<<<<< HEAD
     public static final String ERROR_WHILE_FETCHING_FROM_CASE = "Exception occurred while fetching case details: ";
     public static final String CREATE_ORDER_ERR = "Exception occurred while validating order details: ";
     public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
+=======
+>>>>>>> main
 
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
@@ -52,7 +59,10 @@ public class ServiceConstants {
     public static final String CITIZEN_UPPER = "CITIZEN";
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String USER = "user";
+<<<<<<< HEAD
     public static final String ADMINISTRATIVE = "ADMINISTRATIVE";
+=======
+>>>>>>> main
 
     public static final String PARSING_ERROR = "PARSING ERROR";
     public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -61,8 +71,12 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+<<<<<<< HEAD
     public static final String JUDGEMENT = "JUDGEMENT";
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+=======
+
+>>>>>>> main
 
 }

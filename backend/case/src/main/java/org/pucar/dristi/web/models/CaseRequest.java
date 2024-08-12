@@ -1,5 +1,11 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+import java.util.List;
+
+>>>>>>> main
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,13 +27,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseRequest {
+<<<<<<< HEAD
 
 	@JsonProperty("RequestInfo")
+=======
+	@JsonProperty("requestInfo")
+
+>>>>>>> main
 	@Valid
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("cases")
 	@Valid
+<<<<<<< HEAD
 	private CourtCase cases = null;
+=======
+	private List<CourtCase> cases = new ArrayList<>();
+
+	public CaseRequest addCasesItem(CourtCase casesItem) {
+		this.cases.add(casesItem);
+		return this;
+	}
+>>>>>>> main
 
 }

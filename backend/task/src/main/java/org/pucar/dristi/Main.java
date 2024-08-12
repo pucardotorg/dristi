@@ -13,7 +13,11 @@ import org.springframework.context.annotation.Import;
 public class Main {
 
 
+<<<<<<< HEAD
     public static void main(String[] args) {
+=======
+    public static void main(String[] args) throws Exception {
+>>>>>>> main
         SpringApplication.run(Main.class, args);
     }
 

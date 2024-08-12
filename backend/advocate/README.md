@@ -9,6 +9,7 @@ Modularity: Most technology systems are monolithic: they are designed end to end
 
 Registries and Data Standards: In the past, when developing digital solutions for different stages of a case's lifecycle, each solution managed its own data, resulting in multiple versions in diverse formats. To address this, the platform adopts registries with data standards, published and available for all to use, ensuring uniformity and consistency as new digital solutions are built. Additionally, APIs enable new solutions to plug in and operate using registries of existing solutions, guaranteeing a singular, reliable version of the truth.
 
+<<<<<<< HEAD
 Separate Data and Workflows: Data related to different cases is separated from the specific workflows that manage those cases allowing for the platform to accommodate variations in the nature of cases. For example, a cheque bouncing case has different processes and workflows from civil suit for recovery or  workflows from a motor vehicle compensation cases. Separation of data from workflow ensures that the same underlying data tables can be used across both these.
 
 Federated & decentralized allowing data to remain where it’s been collected. 
@@ -18,3 +19,13 @@ Privacy & Security by Design: Managing security and privacy of data is crucial t
 Workflows related to advocate module:
 1. [advocateregistration-workflowConfig.json](../../docs/Advocate/worfkow/advocateregistration-workflowConfig.json)
 2. [advocateclerkregistration-workflowConfig - Copy.json](..%2F..%2Fdocs%2FAdvocate%2Fworfkow%2Fadvocateclerkregistration-workflowConfig%20-%20Copy.json)
+=======
+Start your server as a simple java application  
+
+You can view the API documentation in Swagger UI by pointing to  
+http://localhost:8080/  
+
+Change default port value in application.properties
+# Example: server.port=8081
+
+>>>>>>> main

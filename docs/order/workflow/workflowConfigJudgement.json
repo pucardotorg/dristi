@@ -2,8 +2,13 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
       "business": "order-judgement",
       "businessService": "order-judgement-managelifecycle",
+========
+      "businessService": "task-bail",
+      "business": "task-bail-services",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
       "businessServiceSla": 30,
       "states": [
         {
@@ -16,17 +21,28 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
               "action": "SAVE_DRAFT",
               "nextState": "DRAFT_IN_PROGRESS",
               "roles": [
                 "ORDER_CREATOR"
+========
+              "action": "CREATE",
+              "nextState": "PAYMENT_PENDING",
+              "roles": [
+                "TASK_CREATOR"
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
               ]
             }
           ]
         },
         {
           "sla": null,
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
           "state": "DRAFT_IN_PROGRESS",
+========
+          "state": "PAYMENT_PENDING",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
@@ -34,6 +50,7 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
               "action": "SAVE_DRAFT",
               "nextState": "DRAFT_IN_PROGRESS",
               "roles": [
@@ -52,6 +69,12 @@
               "nextState": "PENDINGSTAMPING",
               "roles": [
                 "ORDER_APPROVER"
+========
+              "action": "MAKE PAYMENT",
+              "nextState": "BAILDOCUMENTUPLOAD",
+              "roles": [
+                "TASK_UPDATOR"
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
               ]
             },
             {
@@ -59,20 +82,53 @@
               "nextState": "ABATED",
               "roles": [
                 "WORKFLOW_ABANDON"
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+========
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "BAILDOCUMENTUPLOAD",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "UPLOAD",
+              "nextState": "PENDINGREVIEW",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
               ]
             }
           ]
         },
         {
           "sla": 10,
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
           "state": "PENDINGSTAMPING",
+========
+          "state": "PENDINGREVIEW",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
           "isTerminateState": false,
-          "isStateUpdatable": false,
+          "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
               "action": "STAMP",
               "nextState": "PUBLISHED",
               "roles": [
@@ -84,6 +140,19 @@
               "nextState": "DELETED",
               "roles": [
                 "ORDER_DELETE"
+========
+              "action": "APPROVE",
+              "nextState": "BAILGRANTED",
+              "roles": [
+                "TASK_APPROVER"
+              ]
+            },
+            {
+              "action": "SEND BACK",
+              "nextState": "BAILDOCUMENTUPLOAD",
+              "roles": [
+                "TASK_APPROVER"
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
               ]
             },
             {
@@ -97,7 +166,11 @@
         },
         {
           "sla": 5,
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
           "state": "PUBLISHED",
+========
+          "state": "BAILGRANTED",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -106,6 +179,7 @@
         },
         {
           "sla": 5,
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
           "state": "DELETED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
@@ -115,6 +189,8 @@
         },
         {
           "sla": 5,
+========
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
           "state": "ABATED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,

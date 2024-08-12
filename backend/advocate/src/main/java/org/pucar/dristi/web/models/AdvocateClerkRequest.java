@@ -25,6 +25,15 @@ public class AdvocateClerkRequest {
 
 	@JsonProperty("clerk")
 	@Valid
+<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/AdvocateClerkRequest.java
 	private AdvocateClerk clerk = null;
+=======
+	private List<AdvocateClerk> clerks = new ArrayList<>();
+
+	public AdvocateClerkRequest addClerksItem(AdvocateClerk clerksItem) {
+		this.clerks.add(clerksItem);
+		return this;
+	}
+>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateClerkRequest.java
 
 }

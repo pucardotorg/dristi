@@ -1,16 +1,30 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonProperty;
+=======
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+>>>>>>> main
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+<<<<<<< HEAD
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+=======
+>>>>>>> main
 
 /**
  * CaseGroupRequest
@@ -21,6 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
 public class CaseGroupRequest {
 	@JsonProperty("requestInfo")
 
@@ -39,5 +54,25 @@ public class CaseGroupRequest {
 		this.caseGroups.add(caseGroupsItem);
 		return this;
 	}
+=======
+public class CaseGroupRequest   {
+        @JsonProperty("requestInfo")
+
+          @Valid
+                private RequestInfo requestInfo = null;
+
+        @JsonProperty("caseGroups")
+          @Valid
+                private List<CaseGroup> caseGroups = null;
+
+
+        public CaseGroupRequest addCaseGroupsItem(CaseGroup caseGroupsItem) {
+            if (this.caseGroups == null) {
+            this.caseGroups = new ArrayList<>();
+            }
+        this.caseGroups.add(caseGroupsItem);
+        return this;
+        }
+>>>>>>> main
 
 }

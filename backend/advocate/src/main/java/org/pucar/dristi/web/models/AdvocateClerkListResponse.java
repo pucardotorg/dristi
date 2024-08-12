@@ -28,12 +28,23 @@ public class AdvocateClerkListResponse {
 
 	@JsonProperty("clerks")
 	@Valid
+<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/AdvocateClerkListResponse.java
 	private List<AdvocateClerkSearchCriteria> clerks = null;
+=======
+	private List<AdvocateClerk> clerks = new ArrayList<>();
+>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateClerkResponse.java
 
 	@JsonProperty("pagination")
 
 	@Valid
 	private Pagination pagination = null;
 
+<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/AdvocateClerkListResponse.java
+=======
+	public AdvocateClerkResponse addClerksItem(AdvocateClerk clerksItem) {
+		this.clerks.add(clerksItem);
+		return this;
+	}
+>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateClerkResponse.java
 
 }

@@ -129,8 +129,11 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/TaskCriteria'
+<<<<<<< HEAD
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
+=======
+>>>>>>> main
     TaskCriteria:
       type: object
       description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
@@ -203,6 +206,28 @@ components:
           items:
             $ref: '#/components/schemas/TaskExists'
 
+<<<<<<< HEAD
+=======
+    TaskExistsRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
+    TaskExistsResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
+
+>>>>>>> main
     TaskExists:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search

@@ -10,13 +10,21 @@ This is an example of building a swagger-enabled server in Java using the Spring
 
 The underlying library integrating swagger to SpringBoot is [springfox](https://github.com/springfox/springfox)  
 
+<<<<<<< HEAD
 Start your server as a simple java application  
+=======
+Start your server as an simple java application  
+>>>>>>> main
 
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/  
 
+<<<<<<< HEAD
 Change default port value in application.properties
 
 Hearing API Specs: [hearing-api-0.1.0.yaml](..%2F..%2Fapi_specifications%2Fhearing-api-0.1.0.yaml)
 
 Hearing Workflow: [workflowConfig.json](..%2F..%2Fdocs%2Fhearing%2Fworkflow%2FworkflowConfig.json)
+=======
+Change default port value in application.properties
+>>>>>>> main

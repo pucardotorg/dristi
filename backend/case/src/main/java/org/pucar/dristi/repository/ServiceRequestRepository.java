@@ -1,20 +1,32 @@
 package org.pucar.dristi.repository;
 
+<<<<<<< HEAD
 import static org.pucar.dristi.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 import java.util.Map;
 
+=======
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
+>>>>>>> main
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.extern.slf4j.Slf4j;
+=======
+import java.util.Map;
+
+import static org.pucar.dristi.config.ServiceConstants.*;
+>>>>>>> main
 
 @Repository
 @Slf4j
@@ -36,7 +48,11 @@ public class ServiceRequestRepository {
 		try {
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
+<<<<<<< HEAD
             log.error(EXTERNAL_SERVICE_EXCEPTION + " URI: {}", uri, e);
+=======
+			log.error(EXTERNAL_SERVICE_EXCEPTION, e);
+>>>>>>> main
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
 			log.error(SEARCHER_SERVICE_EXCEPTION, e);

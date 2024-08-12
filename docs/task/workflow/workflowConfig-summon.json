@@ -59,6 +59,7 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<< HEAD
               "action": "SERVE",
               "nextState": "SUMMONSERVED",
               "roles": [
@@ -118,12 +119,17 @@
             {
               "action": "SERVE",
               "nextState": "SUMMONSERVED",
+=======
+              "action": "SERVED",
+              "nextState": "DELIVERED",
+>>>>>>> main
               "roles": [
                 "TASK_UPDATOR"
               ]
             },
             {
               "action": "NOT SERVED",
+<<<<<<< HEAD
               "nextState": "ISSUEWARRANT",
               "roles": [
                 "TASK_UPDATOR"
@@ -152,6 +158,12 @@
               "nextState": "COMPLETED",
               "roles": [
                 "TASK_CLOSER"
+=======
+              "nextState": "UNDELIVERED",
+              "roles": [
+                "TASK_UPDATOR",
+                "AUTO_ESCALATE"
+>>>>>>> main
               ]
             },
             {
@@ -165,7 +177,20 @@
         },
         {
           "sla": 5,
+<<<<<<< HEAD
           "state": "COMPLETED",
+=======
+          "state": "DELIVERED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "UNDELIVERED",
+>>>>>>> main
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class WorkflowUtil {
+<<<<<<< HEAD
     private final ServiceRequestRepository repository;
     private final ObjectMapper mapper;
     private final Configuration configs;
@@ -31,6 +32,19 @@ public class WorkflowUtil {
         this.mapper = mapper;
         this.configs = configs;
     }
+=======
+
+    @Autowired
+    private ServiceRequestRepository repository;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
+
+
+>>>>>>> main
 
     /**
     * Searches the BussinessService corresponding to the businessServiceCode
@@ -145,7 +159,11 @@ public class WorkflowUtil {
             List<String> userIds = null;
 
             if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
+<<<<<<< HEAD
                 userIds = processInstance.getAssignes().stream().map(User::getUuid).toList();
+=======
+                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+>>>>>>> main
             }
 
             Workflow workflow = Workflow.builder()

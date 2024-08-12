@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+<<<<<<< HEAD
 import jakarta.validation.constraints.Size;
+=======
+>>>>>>> main
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +17,10 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
+<<<<<<< HEAD
+=======
+import java.time.LocalDate;
+>>>>>>> main
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,11 +46,14 @@ public class Hearing {
 
     private String tenantId = null;
 
+<<<<<<< HEAD
     @JsonProperty("hearingId")
     @Size(min = 2, max = 64)
     @Valid
     private String hearingId = null;
 
+=======
+>>>>>>> main
     @JsonProperty("filingNumber")
 
     private List<String> filingNumber = new ArrayList<>();
@@ -63,17 +73,27 @@ public class Hearing {
 
     @JsonProperty("status")
     @NotNull
+<<<<<<< HEAD
 // Hearing workflow state,
     private String status = null;
+=======
+
+    private Boolean status = null;
+>>>>>>> main
 
     @JsonProperty("startTime")
 
     @Valid
+<<<<<<< HEAD
     private Long startTime = null;
+=======
+    private LocalDate startTime = null;
+>>>>>>> main
 
     @JsonProperty("endTime")
 
     @Valid
+<<<<<<< HEAD
     private Long endTime = null;
 
     @JsonProperty("presidedBy")
@@ -83,6 +103,13 @@ public class Hearing {
     @JsonProperty("attendees")
 
     private List<Attendee> attendees = new ArrayList<>();
+=======
+    private LocalDate endTime = null;
+
+    @JsonProperty("attendees")
+
+    private List<Object> attendees = new ArrayList<>();
+>>>>>>> main
 
     @JsonProperty("transcript")
 
@@ -102,7 +129,11 @@ public class Hearing {
 
     @JsonProperty("additionalDetails")
 
+<<<<<<< HEAD
     private Object additionalDetails = null;
+=======
+    private String additionalDetails = null;
+>>>>>>> main
 
     @JsonProperty("auditDetails")
 
@@ -134,7 +165,11 @@ public class Hearing {
         return this;
     }
 
+<<<<<<< HEAD
     public Hearing addAttendeesItem(Attendee attendeesItem) {
+=======
+    public Hearing addAttendeesItem(Object attendeesItem) {
+>>>>>>> main
         if (this.attendees == null) {
             this.attendees = new ArrayList<>();
         }

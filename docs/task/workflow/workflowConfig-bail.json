@@ -2,8 +2,18 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
+<<<<<<< HEAD
       "businessService": "task-bail",
       "business": "task-bail-services",
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+      "business": "order-judgement",
+      "businessService": "order-judgement-managelifecycle",
+========
+      "businessService": "task-bail",
+      "business": "task-bail-services",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
       "businessServiceSla": 30,
       "states": [
         {
@@ -16,28 +26,79 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+              "action": "SAVE_DRAFT",
+              "nextState": "DRAFT_IN_PROGRESS",
+              "roles": [
+                "ORDER_CREATOR"
+========
+>>>>>>> main
               "action": "CREATE",
               "nextState": "PAYMENT_PENDING",
               "roles": [
                 "TASK_CREATOR"
+<<<<<<< HEAD
+=======
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
               ]
             }
           ]
         },
         {
           "sla": null,
+<<<<<<< HEAD
           "state": "PAYMENT_PENDING",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": true,
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+          "state": "DRAFT_IN_PROGRESS",
+========
+          "state": "PAYMENT_PENDING",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+>>>>>>> main
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+              "action": "SAVE_DRAFT",
+              "nextState": "DRAFT_IN_PROGRESS",
+              "roles": [
+                "ORDER_CREATOR"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+              ]
+            },
+            {
+              "action": "E-SIGN",
+              "nextState": "PENDINGSTAMPING",
+              "roles": [
+                "ORDER_APPROVER"
+========
+>>>>>>> main
               "action": "MAKE PAYMENT",
               "nextState": "BAILDOCUMENTUPLOAD",
               "roles": [
                 "TASK_UPDATOR"
+<<<<<<< HEAD
+=======
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
               ]
             },
             {
@@ -45,6 +106,11 @@
               "nextState": "ABATED",
               "roles": [
                 "WORKFLOW_ABANDON"
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+========
+>>>>>>> main
               ]
             }
           ]
@@ -70,13 +136,25 @@
               "nextState": "ABATED",
               "roles": [
                 "WORKFLOW_ABANDON"
+<<<<<<< HEAD
+=======
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
               ]
             }
           ]
         },
         {
           "sla": 10,
+<<<<<<< HEAD
           "state": "PENDINGREVIEW",
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+          "state": "PENDINGSTAMPING",
+========
+          "state": "PENDINGREVIEW",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
@@ -84,6 +162,22 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+              "action": "STAMP",
+              "nextState": "PUBLISHED",
+              "roles": [
+                "ORDER_STAMP"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "ORDER_DELETE"
+========
+>>>>>>> main
               "action": "APPROVE",
               "nextState": "BAILGRANTED",
               "roles": [
@@ -91,6 +185,7 @@
               ]
             },
             {
+<<<<<<< HEAD
               "action": "REJECT",
               "nextState": "BAILREJECTED",
               "roles": [
@@ -102,6 +197,13 @@
               "nextState": "BAILDOCUMENTUPLOAD",
               "roles": [
                 "TASK_APPROVER"
+=======
+              "action": "SEND BACK",
+              "nextState": "BAILDOCUMENTUPLOAD",
+              "roles": [
+                "TASK_APPROVER"
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
               ]
             },
             {
@@ -115,7 +217,15 @@
         },
         {
           "sla": 5,
+<<<<<<< HEAD
           "state": "BAILGRANTED",
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+          "state": "PUBLISHED",
+========
+          "state": "BAILGRANTED",
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -124,8 +234,14 @@
         },
         {
           "sla": 5,
+<<<<<<< HEAD
           "state": "BAILREJECTED",
           "applicationStatus": "ACTIVE",
+=======
+<<<<<<<< HEAD:docs/order/workflow/workflowConfigJudgement.json
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
+>>>>>>> main
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
@@ -133,6 +249,11 @@
         },
         {
           "sla": 5,
+<<<<<<< HEAD
+=======
+========
+>>>>>>>> main:docs/task/workflow/workflowConfig-bail.json
+>>>>>>> main
           "state": "ABATED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,

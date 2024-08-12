@@ -77,5 +77,12 @@ public class Advocate {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
+<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/Advocate.java
+=======
+	public Advocate addDocumentsItem(Document documentsItem) {
+		this.documents.add(documentsItem);
+		return this;
+	}
+>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/Advocate.java
 
 }

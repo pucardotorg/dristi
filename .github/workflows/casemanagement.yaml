@@ -2,11 +2,19 @@ name: casemanagement workflow
 on:
   push:
     branches:
+<<<<<<< HEAD
+=======
+      - main
+>>>>>>> main
       - develop
     paths:
       - 'backend/casemanagement/**'
   pull_request:
     branches:
+<<<<<<< HEAD
+=======
+      - main
+>>>>>>> main
       - develop
     paths:
       - 'backend/casemanagement/**' 
@@ -35,15 +43,24 @@ jobs:
         run: mvn -B -f backend/casemanagement/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_casemanagement -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
 
       - name: Login to Azure Container Registry
+<<<<<<< HEAD
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for casemanagement
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+=======
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+
+      - name: Build and Push Docker image for casemanagement
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+>>>>>>> main
         run: |
           docker build --build-arg WORK_DIR="backend/casemanagement" -t pucar_casemanagement:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_casemanagement:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
+<<<<<<< HEAD
           
       - name: Build and Push Docker image for casemanagement_DB
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
@@ -60,3 +77,5 @@ jobs:
           -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
           https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
           -d '{"ref":"Dev-0"}'
+=======
+>>>>>>> main

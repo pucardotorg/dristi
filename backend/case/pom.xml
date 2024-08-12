@@ -6,6 +6,7 @@
     <name>case</name>
     <version>1.0.0</version>
     <properties>
+<<<<<<< HEAD
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -16,6 +17,12 @@
         <sonar.organization>pucar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
+=======
+    <java.version>17</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+</properties>
+>>>>>>> main
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -35,6 +42,7 @@
                     </execution>
                 </executions>
             </plugin>
+<<<<<<< HEAD
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -62,6 +70,8 @@
                     </execution>
                 </executions>
             </plugin>
+=======
+>>>>>>> main
         </plugins>
     </build>
     <dependencies>
@@ -94,6 +104,7 @@
             <artifactId>swagger-core</artifactId>
             <version>1.5.18</version>
         </dependency>
+<<<<<<< HEAD
 
         <dependency>
             <groupId>org.egov.common</groupId>
@@ -107,6 +118,8 @@
             <scope>compile</scope>
         </dependency>
 
+=======
+>>>>>>> main
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -123,6 +136,14 @@
             <artifactId>tracer</artifactId>
             <version>2.9.0-SNAPSHOT</version>
         </dependency>
+<<<<<<< HEAD
+=======
+<!--        <dependency>-->
+<!--            <groupId>org.egov.services</groupId>-->
+<!--            <artifactId>digit-models</artifactId>-->
+<!--            <version>1.0.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
+>>>>>>> main
         <dependency>
           <groupId>org.egov</groupId>
           <artifactId>mdms-client</artifactId>

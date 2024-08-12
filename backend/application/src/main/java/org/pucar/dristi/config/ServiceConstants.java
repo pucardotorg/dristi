@@ -3,15 +3,21 @@ package org.pucar.dristi.config;
 
 import org.springframework.stereotype.Component;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
 
+=======
+>>>>>>> main
 
 @Component
 public class ServiceConstants {
 
+<<<<<<< HEAD
     private ServiceConstants() {
     }
 
+=======
+>>>>>>> main
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -50,6 +56,7 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+<<<<<<< HEAD
     public static final String CREATE_APPLICATION_ERR = "CREATE_APPLICATION_ERR";
     public static final String UPDATE_APPLICATION_ERR = "UPDATE_APPLICATION_ERR";
     public static final String APPLICATION_SEARCH_ERR = "APPLICATION_SEARCH_ERR";
@@ -77,5 +84,8 @@ public class ServiceConstants {
     public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+=======
+
+>>>>>>> main
 
 }

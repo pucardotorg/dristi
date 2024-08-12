@@ -10,6 +10,7 @@ Order->UI: Return 400 : if caseId invalid
 
 Order->Order: enrich orderId
 
+<<<<<<< HEAD
 alt if ordertype = summons/warrant
     loop for each address and delivery channel
         Order->Task: Create Task for Summon
@@ -38,6 +39,8 @@ else
     end
 end
 
+=======
+>>>>>>> main
 Order->Workflow: get Order status
 Workflow-->Order: return Order status 'Drafted'
 

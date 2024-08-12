@@ -12,6 +12,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Component
 public class UrlShortenerUtil {
+<<<<<<< HEAD
     private final RestTemplate restTemplate;
     private final Configuration configs;
 
@@ -22,6 +23,14 @@ public class UrlShortenerUtil {
         this.restTemplate = restTemplate;
         this.configs = configs;
     }
+=======
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private Configuration configs;
+>>>>>>> main
 
 
     public String getShortenedUrl(String url){

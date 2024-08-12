@@ -122,6 +122,7 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
+<<<<<<< HEAD
   /application/v1/addcomment:
     post:
       tags:
@@ -148,12 +149,18 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
+=======
+>>>>>>> main
 components:
   schemas:
     ApplicationSearchRequest:
       type: object
       properties:
+<<<<<<< HEAD
         RequestInfo:
+=======
+        requestInfo:
+>>>>>>> main
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/ApplicationCriteria'
@@ -164,7 +171,11 @@ components:
     ApplicationRequest:
       type: object
       properties:
+<<<<<<< HEAD
         RequestInfo:
+=======
+        requestInfo:
+>>>>>>> main
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
@@ -193,7 +204,11 @@ components:
     ApplicationExistsRequest:
       type: object
       properties:
+<<<<<<< HEAD
         RequestInfo:
+=======
+        requestInfo:
+>>>>>>> main
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         applicationList:
           type: array
@@ -214,9 +229,12 @@ components:
       properties:
         filingNumber:
           type: string
+<<<<<<< HEAD
         owner:
           type: UUID
           description: UUID of user
+=======
+>>>>>>> main
         cnrNumber:
           type: string
         applicationNumber:
@@ -288,7 +306,11 @@ components:
         createdDate:
           type: integer
           format: int64
+<<<<<<< HEAD
           description: the date on which the application was created
+=======
+          description: the epoch datetime in milliseconds on which the application was created
+>>>>>>> main
         createdBy:
           type: string
           format: uuid
@@ -314,10 +336,15 @@ components:
           type: string
           description: workflow status
         comment:
+<<<<<<< HEAD
           type: array
           description: An array of comments representing the discussion between the parties of the case on this specific application.
           items:
             $ref: '#/components/schemas/Comment'
+=======
+          type: string
+          description: can be used to store any comments on application approval, rejection or otherwise
+>>>>>>> main
         isActive:
           type: boolean
           description: to handle soft delete
@@ -335,6 +362,7 @@ components:
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
+<<<<<<< HEAD
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
     Comment:
       type: object
@@ -397,3 +425,6 @@ components:
           description: An array of comments representing the discussion between the parties of the case on this specific application.
           items:
             $ref: '#/components/schemas/Comment'
+=======
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
+>>>>>>> main

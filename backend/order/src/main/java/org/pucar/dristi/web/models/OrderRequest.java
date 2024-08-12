@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
 public class OrderRequest {
 
     @JsonProperty("RequestInfo")
@@ -27,5 +28,18 @@ public class OrderRequest {
     @JsonProperty("order")
     @Valid
     private Order order = null;
+=======
+public class OrderRequest   {
+        @JsonProperty("requestInfo")
+
+          @Valid
+                private RequestInfo requestInfo = null;
+
+        @JsonProperty("order")
+
+          @Valid
+                private Order order = null;
+
+>>>>>>> main
 
 }

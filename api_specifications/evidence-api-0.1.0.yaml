@@ -9,7 +9,11 @@ tags:
     description: APIs required to upload digital artifacts for evidence consideration
   
 paths:
+<<<<<<< HEAD
   /v1/_create:
+=======
+  /artifacts/v1/_create:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -38,7 +42,11 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
       x-codegen-request-body-name: ArtifactRequest
+<<<<<<< HEAD
   /v1/_update:
+=======
+  /artifacts/v1/_update:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -64,7 +72,11 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
   /v1/_search:
+=======
+  /artifacts/v1/_search:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -91,6 +103,7 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
   /v1/addcomment:
     post:
       tags:
@@ -118,6 +131,8 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+=======
+>>>>>>> main
       x-codegen-request-body-name: ArtifactRequest
 components:
   schemas:
@@ -191,7 +206,11 @@ components:
             type: string
         createdDate:
           type: integer
+<<<<<<< HEAD
           format: int64
+=======
+          format: date
+>>>>>>> main
           description: Date this artifact was created. This may be different from the upload time which will be captured in the audit details.
         isActive:
           type: boolean
@@ -324,9 +343,12 @@ components:
           type: string
         applicationId:
           type: string
+<<<<<<< HEAD
         owner:
           type: UUID
           description: UUID of user
+=======
+>>>>>>> main
         filingNumber:
           type: string
         artifactType:
@@ -344,6 +366,7 @@ components:
         status:
           type: string
         artifactNumber:
+<<<<<<< HEAD
           type: string
     EvidenceAddCommentRequest:
       type: object
@@ -370,4 +393,6 @@ components:
           type: array
           description: An array of comments representing the discussion between the parties of the case on this specific artifact.
         artifactNumber:
+=======
+>>>>>>> main
           type: string

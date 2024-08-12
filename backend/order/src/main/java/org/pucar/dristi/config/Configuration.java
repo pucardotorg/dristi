@@ -1,5 +1,6 @@
 package org.pucar.dristi.config;
 
+<<<<<<< HEAD
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.config.TracerConfiguration;
@@ -9,6 +10,26 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Import({TracerConfiguration.class})
+=======
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.*;
+import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
+
+@Component
+@Data
+@Import({TracerConfiguration.class})
+@NoArgsConstructor
+@AllArgsConstructor
+>>>>>>> main
 @Setter
 @Getter
 public class Configuration {
@@ -38,12 +59,15 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+<<<<<<< HEAD
     // Case Config
     @Value("${egov.case.host}")
     private String caseHost;
 
     @Value("${egov.case.path}")
     private String casePath;
+=======
+>>>>>>> main
 
     //Workflow Config
     @Value("${egov.workflow.host}")
@@ -86,6 +110,7 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+<<<<<<< HEAD
 
     //save order kafka topic
     @Value("${egov.kafka.order.save.topic}")
@@ -125,4 +150,6 @@ public class Configuration {
 
     @Value("${egov.filestore.path}")
     private String fileStorePath;
+=======
+>>>>>>> main
 }

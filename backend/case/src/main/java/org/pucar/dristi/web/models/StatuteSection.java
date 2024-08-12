@@ -30,17 +30,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class StatuteSection {
+<<<<<<< HEAD
 
 	@JsonProperty("id")
+=======
+	@JsonProperty("id")
+
+>>>>>>> main
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("statute")
+<<<<<<< HEAD
 	private String statute = null;
 
 	@JsonProperty("sections")
@@ -62,6 +72,28 @@ public class StatuteSection {
 	@JsonProperty("strSubsections")
 	private String strSubsections = null;
 
+=======
+
+	private String statute = null;
+
+	@JsonProperty("sections")
+
+	private List<String> sections = null;
+
+	@JsonProperty("subsections")
+
+	private List<String> subsections = null;
+
+	@JsonProperty("additionalDetails")
+
+	private String additionalDetails = null;
+
+	@JsonProperty("auditdetails")
+
+	@Valid
+	private AuditDetails auditdetails = null;
+
+>>>>>>> main
 	public StatuteSection addSectionsItem(String sectionsItem) {
 		if (this.sections == null) {
 			this.sections = new ArrayList<>();

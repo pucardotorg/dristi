@@ -1,18 +1,31 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
 import org.apache.kafka.common.protocol.types.Field;
+=======
+>>>>>>> main
 import org.pucar.dristi.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.*;
 
+<<<<<<< HEAD
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> main
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.List;
+=======
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+>>>>>>> main
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -20,6 +33,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class MdmsUtil {
 
+<<<<<<< HEAD
     private RestTemplate restTemplate;
 
     private Configuration configs;
@@ -40,6 +54,37 @@ public class MdmsUtil {
             log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
         }
         return response;
+=======
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private Configuration configs;
+
+
+
+
+    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
+                                                                                List<String> masterNameList) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
+        Object response = new HashMap<>();
+        Integer rate = 0;
+        MdmsResponse mdmsResponse = new MdmsResponse();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+        }catch(Exception e) {
+            log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
+        }
+
+        return mdmsResponse.getMdmsRes();
+        //log.info(ulbToCategoryListMap.toString());
+>>>>>>> main
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,

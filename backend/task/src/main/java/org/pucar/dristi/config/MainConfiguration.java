@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+<<<<<<< HEAD
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.util.TimeZone;
@@ -11,6 +12,14 @@ import java.util.TimeZone;
 import jakarta.annotation.PostConstruct;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+=======
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import java.util.TimeZone;
+import jakarta.annotation.PostConstruct;
+    import com.fasterxml.jackson.databind.DeserializationFeature;
+    import com.fasterxml.jackson.databind.ObjectMapper;
+>>>>>>> main
 import org.egov.tracer.config.TracerConfiguration;
 
 
@@ -26,13 +35,19 @@ public class MainConfiguration {
     }
 
     @Bean
+<<<<<<< HEAD
     public ObjectMapper objectMapper() {
         return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
+=======
+    public ObjectMapper objectMapper(){
+    return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
+>>>>>>> main
     }
 
     @Bean
     @Autowired
     public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
+<<<<<<< HEAD
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(objectMapper);
         return converter;
@@ -40,5 +55,10 @@ public class MainConfiguration {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+=======
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setObjectMapper(objectMapper);
+    return converter;
+>>>>>>> main
     }
 }

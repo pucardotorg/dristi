@@ -20,17 +20,34 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class TaskExists {
+<<<<<<< HEAD
 
     @JsonProperty("taskId")
+=======
+    @JsonProperty("taskId")
+
+>>>>>>> main
     @Valid
     private UUID taskId = null;
 
     @JsonProperty("filingNumber")
+<<<<<<< HEAD
     private String filingNumber = null;
 
     @JsonProperty("cnrNumber")
     private String cnrNumber = null;
 
     @JsonProperty("exists")
+=======
+
+    private String filingNumber = null;
+
+    @JsonProperty("cnrNumber")
+
+    private String cnrNumber = null;
+
+    @JsonProperty("exists")
+
+>>>>>>> main
     private Boolean exists = null;
 }

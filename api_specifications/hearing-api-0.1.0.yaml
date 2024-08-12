@@ -145,6 +145,7 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: hearingRequest
+<<<<<<< HEAD
   /hearing/v1/update/time:
     post:
       tags:
@@ -191,6 +192,11 @@ components:
           items:
             $ref: '#/components/schemas/Hearing'
             
+=======
+
+components:
+  schemas:
+>>>>>>> main
     HearingSearchRequest:
       type: object
       properties:
@@ -200,7 +206,11 @@ components:
           $ref: '#/components/schemas/HearingCriteria'
         pagination:
           $ref: >-
+<<<<<<< HEAD
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination            
+=======
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+>>>>>>> main
 
       HearingCriteria:
         type: object
@@ -218,6 +228,7 @@ components:
             type: string
           tenantId:
             type: string
+<<<<<<< HEAD
           attendeeIndividualId:
             type: string
           fromDate:
@@ -226,6 +237,14 @@ components:
           toDate:
             type: integer
             format: int64
+=======
+          fromDate:
+            type: string
+            format: date
+          toDate:
+            type: string
+            format: date
+>>>>>>> main
 
     HearingRequest:
       type: object
@@ -346,12 +365,20 @@ components:
           type: integer
           format: int64
           nullable: true
+<<<<<<< HEAD
           description: This field holds information about start date time of hearing in epoch time.
+=======
+          description: This field holds information about start date time of hearing in epoch time in milliseconds.
+>>>>>>> main
         endTime:
           type: integer
           format: int64
           nullable: true
+<<<<<<< HEAD
           description: This field holds information about end date time of hearing in epoch time. Optional field.
+=======
+          description: This field holds information about end date time of hearing in epoch time in milliseconds. Optional field.
+>>>>>>> main
         presidedBy:
           description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
           type: object
@@ -389,9 +416,12 @@ components:
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
+<<<<<<< HEAD
               isOnline:
                 type: boolean
                 description: Set it true if attendee appears online for the hearing.
+=======
+>>>>>>> main
         transcript:
           type: array
           items:
@@ -421,4 +451,8 @@ components:
           type: string
           description: summary notes of the hearing
 
+<<<<<<< HEAD
 x-original-swagger-version: "2.0"
+=======
+x-original-swagger-version: "2.0"
+>>>>>>> main

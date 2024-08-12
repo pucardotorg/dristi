@@ -21,7 +21,11 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class HearingRequest   {
+<<<<<<< HEAD
         @JsonProperty("RequestInfo")
+=======
+        @JsonProperty("requestInfo")
+>>>>>>> main
 
           @Valid
                 private RequestInfo requestInfo = null;
@@ -29,7 +33,11 @@ public class HearingRequest   {
         @JsonProperty("hearing")
 
           @Valid
+<<<<<<< HEAD
                 private Hearing hearing = new Hearing();
+=======
+                private Hearing hearing = null;
+>>>>>>> main
 
 
 }
