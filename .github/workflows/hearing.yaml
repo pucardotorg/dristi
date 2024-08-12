@@ -37,18 +37,18 @@ jobs:
         run: mvn -B -f backend/hearing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_hearing -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
 
       - name: Login to Azure Container Registry
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for hearing
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           docker build --build-arg WORK_DIR="backend/hearing" -t pucar_hearing:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_hearing:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_hearing:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_hearing:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for hearing_DB
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           docker build -t pucar_hearing_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_hearing_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_hearing_db:v1.0.0-${{ github.sha }}
