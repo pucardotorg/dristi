@@ -6,8 +6,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -567,9 +566,14 @@ public class CaseServiceTest {
         caseExists.setExists(true);
         List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
 
+        CourtCase caseObj = CourtCase.builder()
+                .filingNumber(addWitnessRequest.getCaseFilingNumber())
+                .additionalDetails(addWitnessRequest.getAdditionalDetails())
+                .build();
+
         when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
         when(config.getAdditionalJoinCaseTopic()).thenReturn("topic");
-
+        when(encryptionDecryptionUtil.encryptObject(any(), any(), any())).thenReturn(caseObj);
         AddWitnessResponse response = caseService.addWitness(addWitnessRequest);
 
         verify(producer, times(1)).push(eq("topic"), eq(addWitnessRequest));
