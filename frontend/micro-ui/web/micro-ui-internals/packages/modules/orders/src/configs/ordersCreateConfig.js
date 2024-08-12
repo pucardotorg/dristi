@@ -3306,7 +3306,7 @@ export const configsJudgement = [
         key: "dateOfJudgement",
         disable: true,
         type: "date",
-        populators: { name: "dateOfJudgement" },
+        populators: { name: "dateOfJudgement", hideInForm: true },
       },
       {
         label: "NAME_OF_JUDGE",

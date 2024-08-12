@@ -363,6 +363,13 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
+  PAYMENT_PENDING_FOR_WARRANT: {
+    actorName: ["JUDGE"],
+    actionName: "Show Warrant Payment Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/e-filing-payment-breakdown",
+    },
+  },
 };
 
 export const pendingTaskOrderOfJudgementActions = {};
