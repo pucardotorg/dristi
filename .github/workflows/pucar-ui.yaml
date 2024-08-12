@@ -2,12 +2,14 @@ name: pucar-ui workflow
 on:
   push:
     branches:
+      - main
       - develop
     paths:
       - 'frontend/pucar-ui/**'
   pull_request:
     branches:
       - develop
+      - main
     paths:
       - 'frontend/pucar-ui/**'
   workflow_dispatch:
@@ -23,13 +25,21 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Login to Azure Container Registry
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for pucar-ui
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           docker build -t pucar-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
           docker tag pucar-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar-ui:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar-ui:v1.0.0-${{ github.sha }}
         working-directory: frontend/pucar-ui
+      - name: trigger deployment pipeline
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+          -d '{"ref":"Dev-0"}'
