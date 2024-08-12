@@ -39,10 +39,11 @@ class HearingQueryBuilderTest {
     void getHearingSearchQuery_NoCriteria() {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         HearingCriteria criteria = HearingCriteria.builder().build();
 
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria,preparedStmtArgList);
 
         // Assert
         assertNotNull(query);
@@ -53,16 +54,16 @@ class HearingQueryBuilderTest {
     void getHearingSearchQuery_WithCriteria() {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         String cnrNumber = "CNR123";
         String applicationNumber = "APP456";
         String hearingId = "HEARING789";
         String hearingType = "type1";
         String filingNumber = "FILE123";
         String tenantId = "tenant1";
-        Long fromDate = LocalDate.of(2024, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-        Long toDate = LocalDate.of(2025, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        Long fromDate = 12345678l;
+        Long toDate =12345679l;
         String attendeeIndividualId = "Ind-01";
-
         HearingCriteria criteria = HearingCriteria.builder()
                 .cnrNumber(cnrNumber)
                 .applicationNumber(applicationNumber)
@@ -76,7 +77,7 @@ class HearingQueryBuilderTest {
                 .build();
 
         // Act
-        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria);
+        String query = hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria,preparedStmtArgList);
 
         // Assert
         assertNotNull(query);
@@ -86,7 +87,7 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
         assertTrue(query.contains("AND startTime >= ?"));
-        assertTrue(query.contains("AND startTime < ?"));
+        assertTrue(query.contains("AND startTime <= ?"));
         assertTrue(query.contains("AND hearingtype = ?"));
         assertTrue(query.contains("AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)"));
         assertEquals(9, preparedStmtList.size());
@@ -105,10 +106,11 @@ class HearingQueryBuilderTest {
     void getHearingSearchQuery_Exception() {
         // Arrange
         List<Object> preparedStmtList = null;
+        List<Integer> preparedStmtArgList = null;
         HearingCriteria criteria = HearingCriteria.builder().hearingId("Hearing123").build();
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.getHearingSearchQuery(preparedStmtList, criteria,preparedStmtArgList));
         assertEquals(SEARCH_QUERY_EXCEPTION, exception.getCode());
     }
 
@@ -117,9 +119,10 @@ class HearingQueryBuilderTest {
         // Arrange
         List<String> ids = List.of("doc1", "doc2");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Act
-        String query = hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
         assertNotNull(query);
@@ -135,9 +138,10 @@ class HearingQueryBuilderTest {
         // Arrange
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Act
-        String query = hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String query = hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
         assertNotNull(query);
@@ -151,9 +155,10 @@ class HearingQueryBuilderTest {
         // Arrange
         List<String> ids = null;
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
 
         // Act & Assert
-        assertThrows(CustomException.class, () -> hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList));
+        assertThrows(CustomException.class, () -> hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList));
     }
 
     @Test
@@ -272,7 +277,7 @@ class HearingQueryBuilderTest {
         Pagination pagination = Pagination.builder().limit(10d).offSet(20d).build();
 
         // Act
-        query = hearingQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList);
+        query = hearingQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList,new ArrayList<>());
 
         // Assert
         assertTrue(query.contains(" LIMIT ? OFFSET ?"));
@@ -286,12 +291,13 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         String criteria = "CNR123";
         String str = " AND cnrNumbers @> ?::jsonb";
         Object listItem = "[\"CNR123\"]";
 
         // Act
-        hearingQueryBuilder.addCriteriaString(criteria, query, str, preparedStmtList, listItem);
+        hearingQueryBuilder.addCriteriaString(criteria, query, str, preparedStmtList, preparedStmtArgList,listItem);
 
         // Assert
         assertTrue(query.toString().contains("AND cnrNumbers @> ?::jsonb"));
@@ -304,12 +310,13 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         String criteria = null;
         String str = " AND cnrNumbers @> ?::jsonb";
         Object listItem = "[\"CNR123\"]";
 
         // Act
-        hearingQueryBuilder.addCriteriaString(criteria, query, str, preparedStmtList, listItem);
+        hearingQueryBuilder.addCriteriaString(criteria, query, str, preparedStmtList, preparedStmtArgList,listItem);
 
         // Assert
         assertFalse(query.toString().contains("AND cnrNumbers @> ?::jsonb"));
@@ -321,16 +328,17 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
-        Long criteria = LocalDate.of(2023, 1, 1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        List<Integer> preparedStmtArgList = new ArrayList<>();
         String str = " AND startTime >= ?";
 
+        Long date = System.currentTimeMillis();
         // Act
-        hearingQueryBuilder.addCriteriaDate(criteria, query, str, preparedStmtList);
+        hearingQueryBuilder.addCriteriaDate(date, query, str, preparedStmtList,preparedStmtArgList);
 
         // Assert
         assertTrue(query.toString().contains("AND startTime >= ?"));
         assertEquals(1, preparedStmtList.size());
-        assertEquals(criteria, preparedStmtList.get(0));
+        assertEquals(date, preparedStmtList.get(0));
     }
 
     @Test
@@ -338,11 +346,12 @@ class HearingQueryBuilderTest {
         // Arrange
         StringBuilder query = new StringBuilder("SELECT * FROM dristi_hearing WHERE 1=1");
         List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+        Long criteria = null;
         String str = " AND startTime >= ?";
 
         // Act
-        hearingQueryBuilder.addCriteriaDate(null, query, str, preparedStmtList);
-
+        hearingQueryBuilder.addCriteriaDate(criteria, query, str, preparedStmtList,preparedStmtArgList);
         // Assert
         assertFalse(query.toString().contains("AND startTime >= ?"));
         assertTrue(preparedStmtList.isEmpty());

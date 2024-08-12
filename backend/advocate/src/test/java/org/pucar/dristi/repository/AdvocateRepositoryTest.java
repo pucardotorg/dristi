@@ -70,12 +70,12 @@ import static org.mockito.Mockito.*;
         Integer offset = 0;
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(),any(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
         // Mock jdbcTemplate methods
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
         List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, tenantId, limit, offset);
@@ -95,12 +95,12 @@ import static org.mockito.Mockito.*;
         Integer offset = 0;
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(),any(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
         // Mock jdbcTemplate methods
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
 
         // Assert
         assertThrows(Exception.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
@@ -116,12 +116,12 @@ import static org.mockito.Mockito.*;
         Integer offset = 0;
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(),any(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
         // Mock jdbcTemplate methods
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
 
         // Assert
         assertThrows(CustomException.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
@@ -155,11 +155,11 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyList(),anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),anyList())).thenReturn("testDocumentQuery");
 
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset);
@@ -194,11 +194,11 @@ import static org.mockito.Mockito.*;
         advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(),anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset);
@@ -228,12 +228,12 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(),anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
         // Populate advocateList with test data
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset);
@@ -260,11 +260,11 @@ import static org.mockito.Mockito.*;
         advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyList(),anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn("testDocumentQuery");
 
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset);
@@ -282,15 +282,15 @@ import static org.mockito.Mockito.*;
         Integer limit = 10;
         Integer offset = 0;
 
-        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("SELECT * FROM advocates WHERE application_number = ? AND tenant_id = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(Collections.emptyList());
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyList(),anyString(), anyInt(), anyInt())).thenReturn("SELECT * FROM advocates WHERE application_number = ? AND tenant_id = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),any(AdvocateRowMapper.class))).thenReturn(Collections.emptyList());
         // Act
         List<Advocate> result = advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset);
 
         // Assert
         assertEquals(0, result.size());
-        verify(queryBuilder, times(1)).getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateRowMapper.class));
+        verify(queryBuilder, times(1)).getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyList(),anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(),any(AdvocateRowMapper.class));
     }
 
     @Test
@@ -321,7 +321,7 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), any(),anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset));
     }
@@ -354,7 +354,7 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset));
     }
@@ -379,7 +379,7 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), any(),anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset));
     }
@@ -404,7 +404,7 @@ import static org.mockito.Mockito.*;
         listAdvocates.add(advocate3);
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset));
     }

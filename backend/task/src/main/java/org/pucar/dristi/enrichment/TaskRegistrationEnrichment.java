@@ -47,6 +47,7 @@ public class TaskRegistrationEnrichment {
                 });
             }
             task.getAmount().setId(UUID.randomUUID());
+            task.setCreatedDate(System.currentTimeMillis());
             task.setTaskNumber(taskRegistrationIdList.get(0));
 
         } catch (Exception e) {

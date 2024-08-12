@@ -60,9 +60,9 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .filingNumber(rs.getString("filingnumber"))
                             .taskNumber(rs.getString("tasknumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
-                            .createdDate(stringToLocalDate(rs.getString("createddate")))
-                            .dateCloseBy(stringToLocalDate(rs.getString("datecloseby")))
-                            .dateClosed(stringToLocalDate(rs.getString("dateclosed")))
+                            .createdDate(rs.getLong("createddate"))
+                            .dateCloseBy(rs.getLong("datecloseby"))
+                            .dateClosed(rs.getLong("dateclosed"))
                             .taskDescription(rs.getString("taskdescription"))
                             .taskDetails(rs.getString("taskdetails"))
                             .taskType(rs.getString("tasktype"))
@@ -87,20 +87,6 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
             throw new CustomException(ROW_MAPPER_EXCEPTION, "Error occurred while processing Task ResultSet: " + e.getMessage());
         }
         return new ArrayList<>(taskMap.values());
-    }
-
-    private LocalDate stringToLocalDate(String str) {
-        LocalDate localDate = null;
-        if (str != null)
-            try {
-                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                localDate = LocalDate.parse(str, pattern);
-            } catch (DateTimeParseException e) {
-                log.error("Date parsing failed for input: {}", str, e);
-                throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
-            }
-
-        return localDate;
     }
 
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
