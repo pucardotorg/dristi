@@ -19,15 +19,74 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+<<<<<<< HEAD
+ * Holds the statute ID and the corresponding section &amp; subsections
+ * applicable to the case.
+ */
+@Schema(description = "Holds the statute ID and the corresponding section & subsections applicable to the case. ")
+@Validated
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
+=======
  * Holds the statute ID and the corresponding section &amp; subsections applicable to the case. 
  */
 @Schema(description = "Holds the statute ID and the corresponding section & subsections applicable to the case. ")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-17T10:19:47.222225+05:30[Asia/Kolkata]")
+>>>>>>> main
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class StatuteSection {
+
+    @JsonProperty("id")
+    @Valid
+    private UUID id = null;
+
+    @JsonProperty("tenantId")
+    @NotNull
+    @Size(min = 2, max = 64)
+    private String tenantId = null;
+
+    @JsonProperty("statute")
+    private String statute = null;
+
+    @JsonProperty("sections")
+    private List<String> sections = null;
+
+    @JsonProperty("subsections")
+    private List<String> subsections = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
+
+    @JsonProperty("auditdetails")
+    @Valid
+    private AuditDetails auditdetails = null;
+
+    @JsonProperty("strSections")
+    private String strSections = null;
+
+    @JsonProperty("strSubsections")
+    private String strSubsections = null;
+
+    public StatuteSection addSectionsItem(String sectionsItem) {
+        if (this.sections == null) {
+            this.sections = new ArrayList<>();
+        }
+        this.sections.add(sectionsItem);
+        return this;
+    }
+
+    public StatuteSection addSubsectionsItem(String subsectionsItem) {
+        if (this.subsections == null) {
+            this.subsections = new ArrayList<>();
+        }
+        this.subsections.add(subsectionsItem);
+        return this;
+    }
+=======
 public class StatuteSection   {
         @JsonProperty("id")
 
@@ -76,5 +135,6 @@ public class StatuteSection   {
         this.subsections.add(subsectionsItem);
         return this;
         }
+>>>>>>> main
 
 }

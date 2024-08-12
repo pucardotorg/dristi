@@ -1,0 +1,63 @@
+.verify-phone-div {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h2 {
+    width: 100%;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+
+  input {
+    margin-bottom: 0px;
+  }
+
+  p {
+    display: flex;
+    margin: 0px !important;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    gap: 4px;
+    .error-message {
+      color: #bb2c2f;
+      display: flex !important;
+      gap: 4px !important;
+      align-items: center;
+    }
+
+    .resend-text {
+      color: #007e7e;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
+.verify-mobile-modal {
+  .popup-module-main {
+    .verify-mobile-modal-main {
+      padding: 16px 24px 0px;
+      .label-field-pair {
+        margin-bottom: 12px !important;
+        .field {
+          .verify-mobile-otp-input {
+            &.error {
+              input {
+                border-color: #bb2c2f;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

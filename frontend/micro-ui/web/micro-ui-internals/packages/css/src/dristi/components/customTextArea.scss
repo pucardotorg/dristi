@@ -1,0 +1,13 @@
+.custom-text-area-main-div {
+  .custom-text-area-header-div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.custom-textarea-style {
+  max-width: 100%;
+  min-width: 100%;
+  border: solid 1px #3d3c3c;
+}

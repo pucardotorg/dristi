@@ -1,18 +1,28 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+=======
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
+>>>>>>> main
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
 
+<<<<<<< HEAD
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
+=======
 import org.pucar.dristi.web.models.Task;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+>>>>>>> main
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -27,6 +37,26 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class TaskListResponse {
+
+    @JsonProperty("ResponseInfo")
+    @Valid
+    private ResponseInfo responseInfo = null;
+
+    @JsonProperty("TotalCount")
+    private Integer totalCount = null;
+
+    @JsonProperty("list")
+    @Valid
+    private List<Task> list = null;
+
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
+
+
+=======
 public class TaskListResponse   {
         @JsonProperty("responseInfo")
 
@@ -50,4 +80,5 @@ public class TaskListResponse   {
         return this;
         }
 
+>>>>>>> main
 }

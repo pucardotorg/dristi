@@ -9,6 +9,15 @@
     <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+<<<<<<< HEAD
+    <jacoco.version>0.8.9</jacoco.version>
+    <sonar.coverage.jacoco.xmlReportPaths>
+        /backend/order/target/jacoco.exec
+    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.organization>pucar</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+=======
+>>>>>>> main
 </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -29,6 +38,36 @@
                     </execution>
                 </executions>
             </plugin>
+<<<<<<< HEAD
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+=======
+>>>>>>> main
         </plugins>
     </build>
     <dependencies>
@@ -77,11 +116,14 @@
             <artifactId>tracer</artifactId>
             <version>2.9.0-SNAPSHOT</version>
         </dependency>
+<<<<<<< HEAD
+=======
 <!--        <dependency>-->
 <!--            <groupId>org.egov.services</groupId>-->
 <!--            <artifactId>digit-models</artifactId>-->
 <!--            <version>1.0.0-SNAPSHOT</version>-->
 <!--        </dependency>-->
+>>>>>>> main
         <dependency>
           <groupId>org.egov</groupId>
           <artifactId>mdms-client</artifactId>
@@ -103,12 +145,15 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
+<<<<<<< HEAD
+=======
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>case</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+>>>>>>> main
     </dependencies>
     <repositories>
         <repository>

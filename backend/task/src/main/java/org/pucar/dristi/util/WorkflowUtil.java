@@ -14,11 +14,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+<<<<<<< HEAD
+=======
 import java.util.stream.Collectors;
+>>>>>>> main
 
 @Service
 public class WorkflowUtil {
 
+<<<<<<< HEAD
+    private final ServiceRequestRepository repository;
+    private final ObjectMapper mapper;
+    private final Configuration configs;
+
+    @Autowired
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
+=======
     @Autowired
     private ServiceRequestRepository repository;
 
@@ -27,6 +42,7 @@ public class WorkflowUtil {
 
     @Autowired
     private Configuration configs;
+>>>>>>> main
 
 
 
@@ -74,7 +90,11 @@ public class WorkflowUtil {
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
 
+<<<<<<< HEAD
+        return state.getState();
+=======
         return state.getApplicationStatus();
+>>>>>>> main
     }
 
     /**
@@ -143,7 +163,13 @@ public class WorkflowUtil {
             List<String> userIds = null;
 
             if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
+<<<<<<< HEAD
+                userIds = processInstance.getAssignes().stream()
+                        .map(User::getUuid)
+                        .toList();
+=======
                 userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+>>>>>>> main
             }
 
             Workflow workflow = Workflow.builder()

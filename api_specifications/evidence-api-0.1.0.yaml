@@ -9,7 +9,11 @@ tags:
     description: APIs required to upload digital artifacts for evidence consideration
   
 paths:
+<<<<<<< HEAD
+  /v1/_create:
+=======
   /artifacts/v1/_create:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -38,7 +42,11 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
       x-codegen-request-body-name: ArtifactRequest
+<<<<<<< HEAD
+  /v1/_update:
+=======
   /artifacts/v1/_update:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -64,7 +72,11 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
+  /v1/_search:
+=======
   /artifacts/v1/_search:
+>>>>>>> main
     post:
       tags:
         - Evidence
@@ -91,6 +103,36 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
+  /v1/addcomment:
+    post:
+      tags:
+        - Evidence
+      summary: Add comment in artifacts
+      description: |
+        API used to add comment in artifacts
+      requestBody:
+        description: Comments to be added + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/EvidenceAddCommentRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with comment
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EvidenceAddCommentResponse'
+        '400':
+          description: Add comment failed. Refer to the response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+=======
+>>>>>>> main
       x-codegen-request-body-name: ArtifactRequest
 components:
   schemas:
@@ -164,7 +206,11 @@ components:
             type: string
         createdDate:
           type: integer
+<<<<<<< HEAD
+          format: int64
+=======
           format: date
+>>>>>>> main
           description: Date this artifact was created. This may be different from the upload time which will be captured in the audit details.
         isActive:
           type: boolean
@@ -297,6 +343,12 @@ components:
           type: string
         applicationId:
           type: string
+<<<<<<< HEAD
+        owner:
+          type: UUID
+          description: UUID of user
+=======
+>>>>>>> main
         filingNumber:
           type: string
         artifactType:
@@ -314,4 +366,33 @@ components:
         status:
           type: string
         artifactNumber:
+<<<<<<< HEAD
+          type: string
+    EvidenceAddCommentRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddCommentResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddComment:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        comment:
+          type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific artifact.
+        artifactNumber:
+=======
+>>>>>>> main
           type: string

@@ -1,0 +1,37 @@
+.custom-note-main-div {
+  padding: 8px;
+  background-color: #ecf3fd;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .custom-note-heading-div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    path {
+      fill: #0f3b8c;
+    }
+
+    h2 {
+      margin: 0px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700 !important;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+
+  .custom-note-info-div p {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #3d3c3c;
+  }
+}

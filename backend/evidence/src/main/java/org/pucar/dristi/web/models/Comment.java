@@ -57,7 +57,11 @@ public class Comment {
 
 	@JsonProperty("additionalDetails")
 
+<<<<<<< HEAD
+	private Object additionalDetails = null;
+=======
 	private String additionalDetails = null;
+>>>>>>> main
 
 	@JsonProperty("auditdetails")
 

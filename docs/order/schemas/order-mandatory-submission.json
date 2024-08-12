@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-mandatory-submission.json",
+  "$comment": "definition of the schema for issuing mandatory submission order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "documentType":
+    [{
+      "type" : "string",
+      "description": "document type"
+    }],
+    "documentName":
+    {
+      "type" : "string",
+      "description": "document name"
+    },
+    "isResponseRequired": {
+      "type" : "string",
+      "description": "is response required (YES/NO)"
+    }
+  },
+  "partyDetails":
+   {
+    "partyToMakeSubmission": {
+      "type" : "string",
+      "description": "parties to make submission"
+    },
+    "partiesToRespond":[
+      {
+      "type": "string",
+      "description": "parties to response"
+      }
+    ]
+   },
+  "dates":
+  {
+    "submissionDeadlineDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "deadline for submission"
+    },
+    "responseDeadlineDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "deadline for response"
+    }
+  }
+}

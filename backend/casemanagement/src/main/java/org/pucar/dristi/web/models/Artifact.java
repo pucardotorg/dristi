@@ -23,11 +23,149 @@ import lombok.NoArgsConstructor;
  * Artifact
  */
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-16T15:17:16.225735+05:30[Asia/Kolkata]")
+=======
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-17T10:19:47.222225+05:30[Asia/Kolkata]")
+>>>>>>> main
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class Artifact {
+	@JsonProperty("id")
+
+	@Valid
+	private UUID id = null;
+
+	@JsonProperty("tenantId")
+	@NotNull
+
+	private String tenantId = null;
+
+	@JsonProperty("artifactNumber")
+
+	@Size(min = 2, max = 64)
+	private String artifactNumber = null;
+
+	@JsonProperty("evidenceNumber")
+
+	@Size(min = 2, max = 64)
+	private String evidenceNumber = null;
+	@JsonProperty("filingNumber")
+	@NotNull
+
+	private String filingNumber = null;
+	@JsonProperty("externalRefNumber")
+
+	@Size(min = 2, max = 128)
+	private String externalRefNumber = null;
+
+	@JsonProperty("caseId")
+	@NotNull
+
+	private String caseId = null;
+
+	@JsonProperty("application")
+
+	private String application = null;
+
+	@JsonProperty("hearing")
+
+	private String hearing = null;
+
+	@JsonProperty("order")
+
+	private String order = null;
+
+	@JsonProperty("mediaType")
+
+	private String mediaType = null;
+
+	@JsonProperty("artifactType")
+
+	private String artifactType = null;
+
+	@JsonProperty("sourceType")
+
+	private String sourceType = null;
+
+	@JsonProperty("sourceID")
+
+	private String sourceID = null;
+
+	@JsonProperty("sourceName")
+
+	private String sourceName = null;
+
+	@JsonProperty("applicableTo")
+
+	private List<String> applicableTo = null;
+
+	@JsonProperty("createdDate")
+
+	private Integer createdDate = null;
+
+	@JsonProperty("isActive")
+
+	private Boolean isActive = true;
+
+	@JsonProperty("isEvidence")
+
+	private Boolean isEvidence = false;
+
+	@JsonProperty("status")
+
+	private String status = null;
+
+	@JsonProperty("file")
+
+	@Valid
+	private Document file = null;
+
+	@JsonProperty("description")
+
+	private String description = null;
+
+	@JsonProperty("artifactDetails")
+
+	private Object artifactDetails = null;
+
+	@JsonProperty("comments")
+	@Valid
+	private List<Comment> comments = null;
+
+	@JsonProperty("additionalDetails")
+
+	private Object additionalDetails = null;
+
+	@JsonProperty("auditdetails")
+
+	@Valid
+	private AuditDetails auditdetails = null;
+
+	@JsonProperty("workflow")
+
+	@Valid
+	private Workflow workflow = null;
+
+	public Artifact addApplicableToItem(String applicableToItem) {
+		if (this.applicableTo == null) {
+			this.applicableTo = new ArrayList<>();
+		}
+		this.applicableTo.add(applicableToItem);
+		return this;
+	}
+
+	public Artifact addCommentsItem(Comment commentsItem) {
+		if (this.comments == null) {
+			this.comments = new ArrayList<>();
+		}
+		this.comments.add(commentsItem);
+		return this;
+	}
+=======
 public class Artifact   {
         @JsonProperty("id")
 
@@ -147,5 +285,6 @@ public class Artifact   {
         this.comments.add(commentsItem);
         return this;
         }
+>>>>>>> main
 
 }

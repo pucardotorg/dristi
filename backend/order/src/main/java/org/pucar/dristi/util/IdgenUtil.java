@@ -15,13 +15,30 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
+=======
 import java.util.stream.Collectors;
+>>>>>>> main
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class IdgenUtil {
 
+<<<<<<< HEAD
+    private ObjectMapper mapper;
+
+    private ServiceRequestRepository restRepo;
+
+    private Configuration configs;
+
+    @Autowired
+    public IdgenUtil(ObjectMapper mapper, Configuration configs, ServiceRequestRepository restRepo) {
+        this.mapper = mapper;
+        this.configs = configs;
+        this.restRepo = restRepo;
+    }
+=======
     @Autowired
     private ObjectMapper mapper;
 
@@ -30,6 +47,7 @@ public class IdgenUtil {
 
     @Autowired
     private Configuration configs;
+>>>>>>> main
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();
@@ -46,6 +64,10 @@ public class IdgenUtil {
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
+<<<<<<< HEAD
+        return idResponses.stream().map(IdResponse::getId).toList();
+=======
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+>>>>>>> main
     }
 }

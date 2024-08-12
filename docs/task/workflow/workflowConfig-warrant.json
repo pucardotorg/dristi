@@ -35,17 +35,27 @@
           "actions": [
             {
               "action": "DELIVERED",
+<<<<<<< HEAD
+              "nextState": "COMPLETED",
+=======
               "nextState": "EXECUTED",
+>>>>>>> main
               "roles": [
                 "TASK_UPDATOR"
               ]
             },
             {
               "action": "NOT DELIVERED",
+<<<<<<< HEAD
+              "nextState": "COMPLETED",
+              "roles": [
+                "TASK_UPDATOR"
+=======
               "nextState": "NOTEXECUTED",
               "roles": [
                 "TASK_UPDATOR",
                 "AUTO_ESCALATE"
+>>>>>>> main
               ]
             },
             {
@@ -58,6 +68,10 @@
           ]
         },
         {
+<<<<<<< HEAD
+          "sla": 5,
+          "state": "COMPLETED",
+=======
           "sla": 1,
           "state": "EXECUTED",
           "applicationStatus": "ACTIVE",
@@ -69,6 +83,7 @@
         {
           "sla": 5,
           "state": "NOTEXECUTED",
+>>>>>>> main
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

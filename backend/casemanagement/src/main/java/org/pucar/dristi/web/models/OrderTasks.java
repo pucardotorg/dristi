@@ -1,5 +1,17 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
+=======
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
+>>>>>>> main
 
 /**
  * OrderTasks
@@ -25,6 +38,26 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class OrderTasks {
+    @JsonProperty("order")
+
+    @Valid
+    private Order order = null;
+
+    @JsonProperty("tasks")
+    @Valid
+    private List<Task> tasks = null;
+
+
+    public OrderTasks addTasksItem(Task tasksItem) {
+        if (this.tasks == null) {
+            this.tasks = new ArrayList<>();
+        }
+        this.tasks.add(tasksItem);
+        return this;
+    }
+=======
 public class OrderTasks   {
         @JsonProperty("order")
 
@@ -43,5 +76,6 @@ public class OrderTasks   {
         this.tasks.add(tasksItem);
         return this;
         }
+>>>>>>> main
 
 }

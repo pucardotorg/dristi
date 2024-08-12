@@ -1,5 +1,8 @@
 package org.pucar.dristi.util;
 
+<<<<<<< HEAD
+import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_MDMS;
+=======
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pucar.dristi.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +13,32 @@ import org.egov.mdms.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+>>>>>>> main
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
+import org.egov.mdms.model.ModuleDetail;
+import org.pucar.dristi.config.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+=======
 import static org.pucar.dristi.config.ServiceConstants.*;
+>>>>>>> main
 
 @Slf4j
 @Component
@@ -36,8 +58,13 @@ public class MdmsUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
+<<<<<<< HEAD
+		log.info("MDMS Criteria :: {}",mdmsCriteriaReq);
+		Object response;
+=======
 		Object response = new HashMap<>();
 		Integer rate = 0;
+>>>>>>> main
 		MdmsResponse mdmsResponse = new MdmsResponse();
 		try {
 			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
@@ -47,7 +74,10 @@ public class MdmsUtil {
 		}
 
 		return mdmsResponse.getMdmsRes();
+<<<<<<< HEAD
+=======
 		// log.info(ulbToCategoryListMap.toString());
+>>>>>>> main
 	}
 
 	private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId, String moduleName,

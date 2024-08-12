@@ -26,6 +26,16 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class TaskExistsRequest   {
+<<<<<<< HEAD
+
+        @JsonProperty("RequestInfo")
+        @Valid
+        private RequestInfo requestInfo = null;
+
+        @JsonProperty("task")
+        @Valid
+        private TaskExists task = null;
+=======
         @JsonProperty("requestInfo")
 
           @Valid
@@ -37,4 +47,5 @@ public class TaskExistsRequest   {
                 private TaskExists order = null;
 
 
+>>>>>>> main
 }

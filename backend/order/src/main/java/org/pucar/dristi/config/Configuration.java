@@ -1,5 +1,16 @@
 package org.pucar.dristi.config;
 
+<<<<<<< HEAD
+import lombok.Getter;
+import lombok.Setter;
+import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
+
+@Component
+@Import({TracerConfiguration.class})
+=======
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
@@ -18,6 +29,7 @@ import java.util.TimeZone;
 @Import({TracerConfiguration.class})
 @NoArgsConstructor
 @AllArgsConstructor
+>>>>>>> main
 @Setter
 @Getter
 public class Configuration {
@@ -47,6 +59,15 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+<<<<<<< HEAD
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String casePath;
+=======
+>>>>>>> main
 
     //Workflow Config
     @Value("${egov.workflow.host}")
@@ -89,4 +110,46 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+<<<<<<< HEAD
+
+    //save order kafka topic
+    @Value("${egov.kafka.order.save.topic}")
+    private String saveOrderKafkaTopic;
+
+    //update order kafka topic
+    @Value("${egov.kafka.order.update.topic}")
+    private String updateOrderKafkaTopic;
+
+    @Value("${egov.workflow.order.business.name}")
+    private String orderBusinessName;
+
+    // Order Workflow/Business Service name
+    @Value("${egov.workflow.order.business.service.name}")
+    private String orderBusinessServiceName;
+
+    @Value("${egov.workflow.order.judgement.business.name}")
+    private String orderJudgementBusinessName;
+
+    // Order Workflow/Business Service name
+    @Value("${egov.workflow.order.judgement.business.service.name}")
+    private String orderJudgementBusinessServiceName;
+
+    //MDMS validation
+    @Value("${mdms.order.type.path}")
+    private String orderTypePath;
+
+    @Value("${mdms.order.category.path}")
+    private String orderCategoryPath;
+
+    @Value("${mdms.order.module.name}")
+    private String orderModule;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
+=======
+>>>>>>> main
 }

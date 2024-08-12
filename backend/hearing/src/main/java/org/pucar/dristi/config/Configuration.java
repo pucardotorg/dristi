@@ -1,5 +1,17 @@
 package org.pucar.dristi.config;
 
+<<<<<<< HEAD
+import lombok.Getter;
+import lombok.Setter;
+import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
+
+
+@Component
+@Import({TracerConfiguration.class})
+=======
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
@@ -18,6 +30,7 @@ import java.util.TimeZone;
 @Import({TracerConfiguration.class})
 @NoArgsConstructor
 @AllArgsConstructor
+>>>>>>> main
 @Setter
 @Getter
 public class Configuration {
@@ -89,4 +102,72 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+<<<<<<< HEAD
+
+    @Value("${kafka.topics.hearing.update}")
+    private String hearingUpdateTopic;
+
+    @Value("${kafka.topics.hearing.create}")
+    private String hearingCreateTopic;
+
+    //Individual Service
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.path}")
+    private String individualPath;
+
+    @Value("${egov.individual.create.path}")
+    private String individualCreateEndpoint;
+
+    @Value("${egov.individual.search.path}")
+    private String individualSearchEndpoint;
+
+    @Value("${egov.individual.update.path}")
+    private String individualUpdateEndpoint;
+
+    // Advocate Workflow/Business name
+    @Value("${egov.workflow.hearing.business.name}")
+    private String hearingBusinessName;
+
+    // Advocate Workflow/Business Service name
+    @Value("${egov.workflow.hearing.business.service.name}")
+    private String hearingBusinessServiceName;
+
+    // MDMS Hearing module name
+    @Value("${egov.mdms.module.name}")
+    private String mdmsHearingModuleName;
+
+    // MDMS Hearing Type Master List name
+    @Value("${egov.mdms.hearing.type.master.name}")
+    private String mdmsHearingTypeMasterName;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    // Application Config
+    @Value("${egov.application.host}")
+    private String applicationHost;
+
+    @Value("${egov.application.path}")
+    private String applicationExistsPath;
+
+    @Value("${verify.attendee.individual.id}")
+    private Boolean verifyAttendeeIndividualId;
+
+    @Value("${update.start.end.time.topic}")
+    public String startEndTimeUpdateTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
+=======
+>>>>>>> main
 }

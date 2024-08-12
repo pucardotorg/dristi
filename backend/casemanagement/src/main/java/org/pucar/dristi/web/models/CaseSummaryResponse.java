@@ -1,5 +1,8 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
+import com.fasterxml.jackson.annotation.JsonProperty;
+=======
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +11,20 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+>>>>>>> main
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+<<<<<<< HEAD
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
+=======
+>>>>>>> main
 
 /**
  * CaseSummaryResponse
@@ -23,6 +35,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class CaseSummaryResponse {
+	@JsonProperty("requestInfo")
+
+	@Valid
+	private RequestInfo requestInfo = null;
+
+	@JsonProperty("criteria")
+	@Valid
+<<<<<<<< HEAD:backend/casemanagement/src/main/java/org/pucar/dristi/web/models/CaseSummaryResponse.java
+	private List<CaseSummary> criteria = null;
+
+
+	public CaseSummaryResponse addCriteriaItem(CaseSummary criteriaItem) {
+		if (this.criteria == null) {
+			this.criteria = new ArrayList<>();
+		}
+========
+	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
+
+	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
+>>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateClerkSearchRequest.java
+		this.criteria.add(criteriaItem);
+		return this;
+	}
+=======
 public class CaseSummaryResponse   {
         @JsonProperty("requestInfo")
 
@@ -41,5 +79,6 @@ public class CaseSummaryResponse   {
         this.criteria.add(criteriaItem);
         return this;
         }
+>>>>>>> main
 
 }

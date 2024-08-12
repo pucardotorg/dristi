@@ -59,18 +59,111 @@
           "isStateUpdatable": true,
           "actions": [
             {
+<<<<<<< HEAD
+              "action": "SERVE",
+              "nextState": "SUMMONSERVED",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "REISSUE",
+              "nextState": "REISSUESUMMON",
+              "roles": [
+                "TASK_REJECTOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "SUMMONSERVED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "TASK_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "REISSUESUMMON",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SERVE",
+              "nextState": "SUMMONSERVED",
+=======
               "action": "SERVED",
               "nextState": "DELIVERED",
+>>>>>>> main
               "roles": [
                 "TASK_UPDATOR"
               ]
             },
             {
               "action": "NOT SERVED",
+<<<<<<< HEAD
+              "nextState": "ISSUEWARRANT",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "ISSUEWARRANT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "ISSUE WARRANT",
+              "nextState": "COMPLETED",
+              "roles": [
+                "TASK_CLOSER"
+=======
               "nextState": "UNDELIVERED",
               "roles": [
                 "TASK_UPDATOR",
                 "AUTO_ESCALATE"
+>>>>>>> main
               ]
             },
             {
@@ -84,6 +177,9 @@
         },
         {
           "sla": 5,
+<<<<<<< HEAD
+          "state": "COMPLETED",
+=======
           "state": "DELIVERED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
@@ -94,6 +190,7 @@
         {
           "sla": 5,
           "state": "UNDELIVERED",
+>>>>>>> main
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

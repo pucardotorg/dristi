@@ -22,6 +22,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class OrderListResponse {
+
+    @JsonProperty("ResponseInfo")
+    @Valid
+    private ResponseInfo responseInfo = null;
+
+    @JsonProperty("TotalCount")
+    private Integer totalCount = null;
+
+    @JsonProperty("list")
+    @Valid
+    private List<Order> list = null;
+
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
+=======
 public class OrderListResponse   {
         @JsonProperty("responseInfo")
 
@@ -44,5 +62,6 @@ public class OrderListResponse   {
         this.list.add(listItem);
         return this;
         }
+>>>>>>> main
 
 }

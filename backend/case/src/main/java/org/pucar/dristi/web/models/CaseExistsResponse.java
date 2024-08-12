@@ -24,18 +24,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseExistsResponse {
+<<<<<<< HEAD
+
+	@JsonProperty("ResponseInfo")
+	@Valid
+	private ResponseInfo responseInfo = null;
+=======
 	@JsonProperty("requestInfo")
 
 	@Valid
 	private ResponseInfo requestInfo = null;
+>>>>>>> main
 
 	@JsonProperty("criteria")
 	@Valid
 	private List<CaseExists> criteria = new ArrayList<>();
 
+<<<<<<< HEAD
+=======
 	public CaseExistsResponse addCriteriaItem(CaseExists criteriaItem) {
 		this.criteria.add(criteriaItem);
 		return this;
 	}
+>>>>>>> main
 
 }

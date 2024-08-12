@@ -9,9 +9,19 @@
       "type" : "string",
       "description": "alphanumeric string representing the judgement ID"
     },
+<<<<<<< HEAD
+    "plea": {
+      "type" : "string",
+      "description": "plea details"
+    },
+    "issueDate": {
+      "type": "integer",
+      "format": "int64",
+=======
     "issueDate": {
       "type" : "string",
       "format": "date",
+>>>>>>> main
       "description": "date of judgement/sentence"
     }
   },
@@ -55,11 +65,63 @@
       "type": "string",
       "pattern": "^[a-zA-Z]{1,100}$",
       "description": "string having a max of 100 alphabets. no numbers"
+<<<<<<< HEAD
+    },
+    "rank" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+=======
+>>>>>>> main
     }
   },
   "dates":
   {
     "occurrenceDate": {
+<<<<<<< HEAD
+      "type": "integer",
+      "format": "int64",
+      "description": "date of cheque return memo"
+    },
+    "complaintDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of filing of complaint before the court"
+    },
+    "apprehensionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of first appearance of the accused/respondent"
+    },
+    "lastHearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of last hearing"
+    },
+    "bailDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of grant of bail"
+    },
+    "sentenceDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of sentence order"
+    },
+    "judgementIssueDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of judgement issue"
+    },
+    "trailCommencementDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of first hearing"
+    },
+    "trailClosureDate": {
+      "type": "integer",
+      "format": "int64",
+=======
       "type" : "string",
       "format": "date",
       "description": "date of cheque return memo"
@@ -87,6 +149,7 @@
     "trailClosureDate": {
       "type" : "string",
       "format": "date",
+>>>>>>> main
       "description": "date of last hearing before judgement hearing"
     }
   },
@@ -145,6 +208,14 @@
       "pattern": "^.{1,20}$",
       "description": "the case CNR number"
     },
+<<<<<<< HEAD
+    "caseNumber" : {
+      "type": "string",
+      "pattern": "^.{1,20}$",
+      "description": "the case number"
+    },
+=======
+>>>>>>> main
     "year": {
       "type": "integer",
       "minimum": 1900,
@@ -162,4 +233,8 @@
       "description": "string having a max of 124 alphanumeric characters"
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

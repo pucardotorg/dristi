@@ -1,16 +1,27 @@
 package org.pucar.dristi.web.models;
 
+<<<<<<< HEAD
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+=======
+import com.fasterxml.jackson.annotation.JsonProperty;
+>>>>>>> main
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+<<<<<<< HEAD
+=======
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+>>>>>>> main
 
 /**
  * WitnessRequest
@@ -21,6 +32,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+<<<<<<< HEAD
+public class WitnessRequest {
+
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
+
+    @JsonProperty("witness")
+    @Valid
+    private Witness witness = null;
+=======
 public class WitnessRequest   {
         @JsonProperty("requestInfo")
 
@@ -39,5 +61,6 @@ public class WitnessRequest   {
         this.witnesses.add(witnessesItem);
         return this;
         }
+>>>>>>> main
 
 }

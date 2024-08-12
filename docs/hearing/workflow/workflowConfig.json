@@ -36,8 +36,25 @@
             {
               "action": "RESCHEDULE",
               "nextState": "OPTOUT",
+<<<<<<< HEAD
               "roles": [
                 "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "BULK_RESCHEDULE",
+              "nextState": "SCHEDULED",
+=======
+>>>>>>> main
+              "roles": [
+                "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "START",
+              "nextState": "INPROGRESS",
+              "roles": [
+                "HEARING_START"
               ]
             },
             {

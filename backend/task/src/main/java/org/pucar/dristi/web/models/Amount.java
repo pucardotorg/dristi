@@ -24,6 +24,30 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class Amount   {
+<<<<<<< HEAD
+
+        @JsonProperty("id")
+        @Valid
+        private UUID id = null;
+
+        @JsonProperty("amount")
+        @NotNull
+        private String amount = null;
+
+        @JsonProperty("type")
+        @NotNull
+        private String type = null;
+
+        @JsonProperty("paymentRefNumber")
+        private String paymentRefNumber = null;
+
+        @JsonProperty("additionalDetails")
+        private Object additionalDetails = null;
+
+        @JsonProperty("status")
+        @NotNull
+        private String status = null;
+=======
         @JsonProperty("id")
 
           @Valid
@@ -51,6 +75,7 @@ public class Amount   {
           @NotNull
 
                 private String status = null;
+>>>>>>> main
 
 
 }
