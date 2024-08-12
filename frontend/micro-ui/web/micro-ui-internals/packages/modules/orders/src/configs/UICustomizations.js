@@ -77,7 +77,7 @@ export const UICustomizations = {
           if (Array.isArray(optionOrOptions)) {
             return optionOrOptions.map((party) => party.name);
           } else {
-            return optionOrOptions.name;
+            return optionOrOptions?.name;
           }
         },
         schemaToForm: (value) => {
@@ -93,7 +93,7 @@ export const UICustomizations = {
       const transformedFormData = {};
       formConfig.forEach((section) => {
         section.body.forEach((field) => {
-          const schemaKeyPath = field.schemaKeyPath || field.key;
+          const schemaKeyPath = field.schemaKeyPath;
           if (!schemaKeyPath) {
             return;
           }
@@ -107,8 +107,8 @@ export const UICustomizations = {
               const transformer = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.transformers[value.transformer]?.formToSchema;
               set(
                 transformedFormData,
-                key,
-                transformer ? transformer(get(formData, [field.key, value.value].join("."))) : get(formData, [field.key, value.value].join("."))
+                value.value,
+                transformer ? transformer(get(formData, [field.key, key].join("."))) : get(formData, [field.key, key].join("."))
               );
             });
           }
