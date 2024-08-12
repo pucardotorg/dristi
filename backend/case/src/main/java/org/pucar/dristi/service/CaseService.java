@@ -128,7 +128,7 @@ public class CaseService {
                 enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
                 enrichmentUtil.enrichRegistrationDate(caseRequest);
             }
-
+            log.info("Encrypting: {}",caseRequest);
             caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
