@@ -147,11 +147,12 @@
       "type": "boolean",
       "description": "did the payer pay within 15 days after the notice or not"
     },
-    "arrualDate": {
+    "accrualDate": {
       "type": "string",
       "format": "date",
       "description": "Date when the 15 days from service of demand notice was complete (date of accrual of cause of action). Auto filled based on 15 days from service date"
-    }
+    },
+    "required": ["isTimelyNotice", "dispatchMode","issueDate","dispatchDate","serviceDate","isServiceProof"]
   },
   "delayAppDetails": {
     "isDelayed": {
@@ -166,6 +167,8 @@
       "type": "string",
       "format": "uuid",
       "description": "uuid of the document for delay condonation application, stored in the document array in main case object"
-    }
-  }
+    },
+    "required": ["isDelayed"]
+  },
+  "required": ["chequeDetails", "debtDetails", "demandNoticeDetails", "delayAppDetails" ]
 }
