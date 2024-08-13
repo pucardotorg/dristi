@@ -18,32 +18,32 @@
     "isResponseRequired": {
       "type" : "string",
       "description": "is response required (YES/NO)"
-    }
-  },
-  "partyDetails":
-   {
-    "partyToMakeSubmission": {
-      "type" : "string",
-      "description": "parties to make submission"
     },
-    "partiesToRespond":[
-      {
-      "type": "string",
-      "description": "parties to response"
+    "partyDetails":
+    {
+      "partyToMakeSubmission": {
+        "type" : "string",
+        "description": "parties to make submission"
+      },
+      "partiesToRespond":[
+        {
+          "type": "string",
+          "description": "parties to response"
+        }
+      ]
+    },
+    "dates":
+    {
+      "submissionDeadlineDate": {
+        "type": "integer",
+        "format": "int64",
+        "description": "deadline for submission"
+      },
+      "responseDeadlineDate": {
+        "type": "integer",
+        "format": "int64",
+        "description": "deadline for response"
       }
-    ]
-   },
-  "dates":
-  {
-    "submissionDeadlineDate": {
-      "type": "integer",
-      "format": "int64",
-      "description": "deadline for submission"
-    },
-    "responseDeadlineDate": {
-      "type": "integer",
-      "format": "int64",
-      "description": "deadline for response"
     }
   }
 }
