@@ -12,7 +12,7 @@ const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const crumbs = [
     {
       path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
@@ -31,7 +31,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer className="ground-container hearing-action-block">
         <React.Fragment>
           <ProjectBreadCrumb location={window.location} />
         </React.Fragment>

@@ -7,4 +7,5 @@ export const OrderWorkflowAction = {
   SAVE_DRAFT: "SAVE_DRAFT",
   ESIGN: "E-SIGN",
   ABANDON: "ABANDON",
+  DELETE: "DELETE",
 };

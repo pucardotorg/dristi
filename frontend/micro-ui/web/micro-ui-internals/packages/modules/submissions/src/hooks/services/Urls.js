@@ -5,5 +5,6 @@ export const Urls = {
     applicationUpdate: "/application/v1/update",
     applicationSearch: "/application/v1/search",
     pendingTask: "/analytics/pending_task/v1/create",
+    getPendingTaskFields: "/inbox/v2/_getFields",
   },
 };

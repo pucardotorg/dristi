@@ -115,12 +115,12 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
           <div className="drag-drop-visible-main">
             <div className="drag-drop-heading-main">
               {!config?.disableScrutinyHeader && (
-                <div className="drag-drop-heading">
+                <div className="drag-drop-heading" style={{ marginLeft: 0 }}>
                   <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
                     {t(input?.documentHeader)}
                   </h1>
                   {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
-                  <CustomErrorTooltip message={t(input?.documentHeader)} showTooltip={Boolean(input?.infoTooltipMessage)} />
+                  <CustomErrorTooltip message={t(input?.documentHeader)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
                 </div>
               )}
               {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}

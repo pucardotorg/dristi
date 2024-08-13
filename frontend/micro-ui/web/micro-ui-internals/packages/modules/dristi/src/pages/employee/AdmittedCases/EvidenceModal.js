@@ -15,9 +15,6 @@ import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import DocViewerWrapper from "../docViewerWrapper";
 
 const stateSla = {
-  RE_SCHEDULE: 2,
-  CHECKOUT_REQUEST: 2,
-  SAVE_DRAFT: 2,
   DRAFT_IN_PROGRESS: 2,
 };
 
@@ -41,7 +38,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
   const isLitigent = useMemo(() => !userInfo?.roles?.some((role) => ["ADVOCATE_ROLE", "ADVOCATE_CLERK"].includes(role?.code)), [userInfo?.roles]);
-  const userType = useMemo(() => (userInfo.type === "CITIZEN" ? "citizen" : "employee"), [userInfo.type]);
+  const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const todayDate = new Date().getTime();
   const CloseBtn = (props) => {
     return (
@@ -54,7 +51,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return (
       <div className="evidence-title">
         <h1 className="heading-m">{props.label}</h1>
-        <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>
+        {props.showStatus && <h3 className={props.isStatusRed ? "status-false" : "status"}>{props?.status}</h3>}
       </div>
     );
   };
@@ -69,7 +66,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       }
       return (
         userRoles.includes("JUDGE_ROLE") &&
-        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(
+          applicationStatus
+        )
       );
     } else {
       if (modalType === "Documents") {
@@ -159,9 +158,28 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       enable: false,
     },
   };
+  const addSubmissionComment = {
+    url: Urls.dristi.addSubmissionComment,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
+
+  const addEvidenceComment = {
+    url: Urls.dristi.addEvidenceComment,
+    params: {},
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
   const evidenceUpdateMutation = Digit.Hooks.useCustomAPIMutationHook(reqEvidenceUpdate);
+  const submissionComment = Digit.Hooks.useCustomAPIMutationHook(addSubmissionComment);
+  const evidenceComment = Digit.Hooks.useCustomAPIMutationHook(addEvidenceComment);
 
   // const markAsReadPayload = {
   //   tenantId: tenantId,
@@ -247,9 +265,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     return {
       ...documentSubmission[0]?.applicationList,
       statuteSection: { ...documentSubmission[0]?.applicationList?.statuteSection, tenantId: tenantId },
-      comment: documentSubmission[0]?.applicationList.comment
-        ? JSON.stringify([...documentSubmission[0]?.applicationList.comment, newComment])
-        : JSON.stringify([newComment]),
+      comment: documentSubmission[0]?.applicationList.comment ? [...documentSubmission[0]?.applicationList.comment, newComment] : [newComment],
       workflow: {
         ...documentSubmission[0]?.applicationList?.workflow,
         action: "RESPOND",
@@ -350,7 +366,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       {
         url: Urls.dristi.submissionsUpdate,
         params: {},
-        body: { application: respondApplicationPayload },
+        body: {
+          application: {
+            ...respondApplicationPayload,
+            comment: comments,
+          },
+        },
         config: {
           enable: true,
         },
@@ -414,10 +435,22 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   };
 
   const submitCommentApplication = async (newComment) => {
-    await mutation.mutate({
-      url: Urls.dristi.submissionsUpdate,
+    await submissionComment.mutate({
+      url: Urls.dristi.addSubmissionComment,
       params: {},
-      body: { application: applicationCommentsPayload(newComment) },
+      body: { applicationAddComment: newComment },
+      config: {
+        enable: true,
+      },
+    });
+    counterUpdate();
+  };
+
+  const submitCommentEvidence = async (newComment) => {
+    await evidenceComment.mutate({
+      url: Urls.dristi.addEvidenceComment,
+      params: {},
+      body: { evidenceAddComment: newComment },
       config: {
         enable: true,
       },
@@ -432,7 +465,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderTypes = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
       case "TRANSFER":
@@ -440,13 +473,11 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "SETTLEMENT":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "SETTLEMENT";
       case "BAIL_BOND":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
+        return "BAIL";
       case "SURETY":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+        return "BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVAL_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
@@ -455,7 +486,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const getOrderActionName = (applicationType, type) => {
     switch (applicationType) {
       case "RE_SCHEDULE":
-        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "ORDER_FOR_INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
       case "TRANSFER":
@@ -466,10 +497,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
       case "SURETY":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
-      case "CHECKOUT_REQUEST":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_RESCHEDULE_REQUEST";
+        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_EXTENSION_SUBMISSION_DEADLINE";
       default:
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
@@ -477,26 +506,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const isMandatoryOrderCreation = useMemo(() => {
     const applicationType = documentSubmission?.[0]?.applicationList?.applicationType;
     const type = showConfirmationModal?.type;
-    const acceptedApplicationTypes = [
-      "RE_SCHEDULE",
-      "WITHDRAWAL",
-      "TRANSFER",
-      "SETTLEMENT",
-      "BAIL_BOND",
-      "SURETY",
-      "CHECKOUT_REQUEST",
-      "EXTENSION_SUBMISSION_DEADLINE",
-    ];
+    const acceptedApplicationTypes = ["RE_SCHEDULE", "WITHDRAWAL", "TRANSFER", "SETTLEMENT", "BAIL_BOND", "SURETY", "EXTENSION_SUBMISSION_DEADLINE"];
     if (type === "reject") {
       return false;
     } else {
       return acceptedApplicationTypes.includes(applicationType);
     }
   }, [documentSubmission, showConfirmationModal?.type]);
-
-  const handleApplicationAction = async (generateOrder) => {
+  const handleApplicationAction = async (generateOrder, type) => {
     try {
-      let orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, showConfirmationModal?.type);
+      const orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, type);
       const formdata = {
         orderType: {
           code: orderType,
@@ -504,8 +523,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           name: `ORDER_TYPE_${orderType}`,
         },
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-        ...(orderType === "BAIL" && { bailType: { type: documentSubmission?.[0]?.applicationList?.applicationType } }),
+        applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
       };
+      const linkedOrderNumber = documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.refOrderId;
       if (generateOrder) {
         const reqbody = {
           order: {
@@ -527,7 +547,14 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               documents: [{}],
             },
             documents: [],
-            additionalDetails: { formdata },
+            additionalDetails: {
+              formdata,
+              applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
+            },
+            ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
+              hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
+            }),
+            ...(linkedOrderNumber && { linkedOrderNumber }),
           },
         };
         try {
@@ -549,9 +576,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               tenantId,
             },
           });
-          history.push(
-            `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&applicationNumber=${documentSubmission?.[0]?.applicationList?.applicationNumber}&orderNumber=${res?.order?.orderNumber}`
-          );
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res?.order?.orderNumber}`);
         } catch (error) {}
       } else {
         if (showConfirmationModal.type === "reject") {
@@ -573,12 +598,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
     } else {
       setShow(false);
       setShowSuccessModal(false);
+      counterUpdate();
     }
   };
 
   const handleSubmitComment = async (newComment) => {
     if (modalType === "Submissions") {
       await submitCommentApplication(newComment);
+    } else {
+      await submitCommentEvidence(newComment);
     }
   };
   const actionSaveOnSubmit = async () => {
@@ -594,6 +622,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       counterUpdate();
       setShow(false);
       counterUpdate();
+      history.replace(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     }
   };
 
@@ -630,13 +659,14 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     : "Action Pending"
                   : t(applicationStatus)
               }
+              showStatus={modalType === "Documents" ? false : true}
               isStatusRed={modalType === "Documents" ? !documentSubmission?.[0]?.artifactList?.isEvidence : applicationStatus}
             />
           }
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
-            <div className={modalType === "Submissions" ? "application-details" : "evidence-details"}>
+            <div className={"application-details"}>
               <div>
                 <div className="application-info">
                   <div className="info-row">
@@ -693,7 +723,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                 </div>
               </div>
             </div>
-            {modalType === "Submissions" && userRoles.includes("SUBMISSION_RESPONDER") && (
+            {userRoles.includes("SUBMISSION_RESPONDER") && (
               <div className="application-comment">
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
@@ -703,7 +733,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                     ))}
                   </div>
                 </div>
-                {actionSaveLabel === t("ADD_COMMENT") && showSubmit && (
+                {((modalType === "Submissions" &&
+                  [
+                    SubmissionWorkflowState.PENDINGAPPROVAL,
+                    SubmissionWorkflowState.PENDINGREVIEW,
+                    SubmissionWorkflowState.PENDINGRESPONSE,
+                    SubmissionWorkflowState.COMPLETED,
+                    SubmissionWorkflowState.REJECTED,
+                  ].includes(applicationStatus)) ||
+                  modalType === "Documents") && (
                   <div className="comment-send">
                     <div className="comment-input-wrapper">
                       <TextInput
@@ -716,23 +754,58 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                       <div
                         className="send-comment-btn"
                         onClick={() => {
-                          const newComment = {
-                            comment: currentComment,
-                            additionalDetails: {
-                              author: user,
-                              timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
-                                year: "2-digit",
-                                month: "short",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              }),
-                            },
-                          };
-                          setComments((prev) => [...prev, newComment]);
-                          setCurrentComment("");
-                          handleSubmitComment(newComment);
+                          if (currentComment !== "") {
+                            const newComment =
+                              modalType === "Submissions"
+                                ? {
+                                    tenantId,
+                                    comment: [
+                                      {
+                                        tenantId,
+                                        comment: currentComment,
+                                        individualId: "",
+                                        additionalDetails: {
+                                          author: user,
+                                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                            year: "2-digit",
+                                            month: "short",
+                                            day: "2-digit",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: true,
+                                          }),
+                                        },
+                                      },
+                                    ],
+                                    applicationNumber: documentSubmission?.[0]?.applicationList?.applicationNumber,
+                                  }
+                                : {
+                                    tenantId,
+                                    comment: [
+                                      {
+                                        tenantId,
+                                        comment: currentComment,
+                                        individualId: "",
+                                        artifactId: documentSubmission?.[0]?.artifactList?.id,
+                                        additionalDetails: {
+                                          author: user,
+                                          timestamp: new Date(Date.now()).toLocaleDateString("en-in", {
+                                            year: "2-digit",
+                                            month: "short",
+                                            day: "2-digit",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: true,
+                                          }),
+                                        },
+                                      },
+                                    ],
+                                    artifactNumber: documentSubmission?.[0]?.artifactList?.artifactNumber,
+                                  };
+                            setComments((prev) => [...prev, ...newComment.comment]);
+                            setCurrentComment("");
+                            handleSubmitComment(newComment);
+                          }
                         }}
                       >
                         <RightArrow />

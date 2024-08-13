@@ -14,6 +14,8 @@ import { useToast } from "../components/Toast/useToast.js";
 import useCreateHearings from "./dristi/useCreateHearings.js";
 import useApplicationDetails from "./dristi/useApplicationDetails.js";
 import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
+import { useGetPendingTask } from "./dristi/useGetPendingTask.js";
+import useGetStatuteSection from "./dristi/useGetStatuteSection.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -37,10 +39,13 @@ export const Urls = {
     ordersCreate: "/order/v1/create",
     submissionsSearch: "/application/v1/search",
     submissionsUpdate: "/application/v1/update",
+    addSubmissionComment: "/application/v1/addcomment",
+    addEvidenceComment: "/evidence/v1/addcomment",
     pendingTask: "/analytics/pending_task/v1/create",
+    getPendingTaskFields: "/inbox/v2/_getFields",
   },
   case: {
-    addWitness: "/case/case/v1/add/witness",
+    addWitness: "/case/v1/add/witness",
   },
   FileFetchById: "/filestore/v1/files/id",
 };
@@ -60,6 +65,8 @@ const dristi = {
   useApplicationDetails,
   useEvidenceDetails,
   useToast,
+  useGetPendingTask,
+  useGetStatuteSection,
 };
 
 const Hooks = {

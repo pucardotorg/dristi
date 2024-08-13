@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { CardText, Modal } from "@egovernments/digit-ui-react-components";
 import { TextArea } from "@egovernments/digit-ui-components";
+import { CardText, Modal } from "@egovernments/digit-ui-react-components";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
-const fieldStyle = { marginRight: 0 };
+import useGetHearings from "../hooks/hearings/useGetHearings";
 
 const Heading = (props) => {
   return (
@@ -72,10 +71,9 @@ const CloseBtn = (props) => {
   );
 };
 
-const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper }) => {
+const SummaryModal = ({ handleConfirmationModal, hearingId, onSaveSummary, onCancel, transcript, setTranscript }) => {
   const { t } = useTranslation();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const [transcript, setTranscript] = useState("");
 
   const reqBody = {
     hearing: { tenantId },
@@ -85,12 +83,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
     },
   };
 
-  const { data: latestText, refetch } = Digit.Hooks.hearings.useGetHearings(
-    reqBody,
-    { applicationNumber: "", cnrNumber: "", hearingId },
-    "dristi",
-    true
-  );
+  const { data: latestText } = useGetHearings(reqBody, { applicationNumber: "", cnrNumber: "", hearingId }, hearingId, true);
 
   useEffect(() => {
     // await refetch();
@@ -98,7 +91,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
       const hearingData = latestText?.HearingList?.[0];
       setTranscript(hearingData.transcript[0]);
     }
-  }, [latestText, stepper]);
+  }, [latestText, setTranscript]);
 
   return (
     <div>
@@ -137,9 +130,14 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
         headerBarEnd={<CloseBtn onClick={handleConfirmationModal} />}
         actionSaveLabel={<BackBtn text={t("Set Next Hearing Date")} />}
         actionCancelLabel={t("Back")}
-        actionSaveOnSubmit={() => setStepper(stepper + 1)} // pass the handler of next modal
-        actionCancelOnSubmit={() => setStepper(stepper - 1)}
+        actionSaveOnSubmit={() => {
+          onSaveSummary(transcript);
+        }} // pass the handler of next modal
+        actionCancelOnSubmit={() => {
+          onCancel();
+        }}
         formId="modal-action"
+        isDisabled={!transcript}
       >
         <div style={{ height: "308px", padding: "5px 24px 16px 24px", width: "100%" }}>
           <div style={{ height: "80px", backgroundColor: "#ECF3FD", borderRadius: "4px" }}>
@@ -157,6 +155,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId, stepper, setStepper 
               <TextArea
                 style={{ padding: "10px", width: "100%", minHeight: "100%", fontWeight: 400, fontSize: "16px", color: "#3D3C3C" }}
                 value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
               />
             </div>
           </CardText>

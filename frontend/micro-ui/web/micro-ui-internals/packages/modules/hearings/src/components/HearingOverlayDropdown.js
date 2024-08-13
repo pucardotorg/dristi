@@ -1,22 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
 export const Context = React.createContext();
 
-const OverlayDropdown = ({ column, row, master, module }) => {
+const OverlayDropdown = ({ styles, textStyle, column, row, master, module }) => {
   const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const history = useHistory();
+  const dropdownRef = useRef(null);
 
   const dropdownItems = Digit.Customizations[master]?.[module]?.dropDownItems?.(row) || [];
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (e) => {
+    e.stopPropagation();
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div style={{ position: "relative" }}>
+    <div ref={dropdownRef} style={{ position: "relative" }}>
       {/* Three dots or any other trigger */}
       <div
         style={{
@@ -30,19 +45,20 @@ const OverlayDropdown = ({ column, row, master, module }) => {
           zIndex: "1000",
           width: "20px",
           textAlign: "center",
+          ...styles,
         }}
         onClick={toggleDropdown}
       >
         {/* You can use any icon or three dots image here */}
-        <span>...</span>
+        <span style={textStyle}>...</span>
       </div>
 
       {isDropdownOpen && (
         <ul
           style={{
             position: "absolute",
-            top: "100%",
-            right: 0,
+            top: "-55px",
+            right: "42px",
             backgroundColor: "white",
             border: "1px solid #ccc",
             listStyle: "none",
@@ -60,7 +76,7 @@ const OverlayDropdown = ({ column, row, master, module }) => {
                 style={{ padding: "10px", cursor: "pointer" }}
                 onClick={() => {
                   setIsDropdownOpen(false);
-                  return item.action(history);
+                  return item.action(history, column);
                 }}
               >
                 {item.label}

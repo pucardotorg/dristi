@@ -30,6 +30,7 @@ import {
   chequeDateValidation,
   chequeDetailFileValidation,
   complainantValidation,
+  debtLiabilityValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
   getAllAssignees,
@@ -44,6 +45,7 @@ import {
 import _, { isEqual, isMatch } from "lodash";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -408,6 +410,8 @@ function EFilingCases({ path }) {
   const isCaseReAssigned = useMemo(() => state === CaseWorkflowState.CASE_RE_ASSIGNED, [state]);
   const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
   const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
+  const { data: courtRoomDetails, isLoading: isCourtIdsLoading } = useGetStatuteSection("common-masters", [{ name: "Court_Rooms" }]);
+  const courtRooms = useMemo(() => courtRoomDetails?.Court_Rooms || [], [courtRoomDetails]);
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -894,6 +898,8 @@ function EFilingCases({ path }) {
                           isDisabled: input?.shouldBeEnabled ? false : true,
                         };
                       }
+
+                      // 225 Inquiry Affidavit Validation in respondent details
                       if (selected === "respondentDetails") {
                         if (
                           Array.isArray(data?.addressDetails) &&
@@ -910,8 +916,8 @@ function EFilingCases({ path }) {
                               body?.key === "inquiryAffidavitFileUpload"
                           )
                         ) {
-                          delete input.isOptional;
-                          body.isMandatory = true;
+                          // delete input.isOptional;
+                          body.isMandatory = false;
                           return {
                             ...input,
                             hideDocument: false,
@@ -921,7 +927,7 @@ function EFilingCases({ path }) {
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
-                            hideDocument: true,
+                            hideDocument: false,
                           };
                         } else {
                           return {
@@ -1368,6 +1374,23 @@ function EFilingCases({ path }) {
       formdata
         .filter((data) => data.isenabled)
         .some((data) =>
+          debtLiabilityValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+          })
+        )
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) =>
           delayApplicationValidation({
             formData: data?.data,
             t,
@@ -1423,7 +1446,12 @@ function EFilingCases({ path }) {
     }
 
     if (selected === "addSignature" && isDraftInProgress) {
-      setOpenConfirmCourtModal(true);
+      if (courtRooms?.length === 1) {
+        onSubmitCase({ court: courtRooms[0] });
+        return;
+      } else {
+        setOpenConfirmCourtModal(true);
+      }
     } else {
       updateCaseDetails({
         isCompleted: true,
@@ -1627,7 +1655,7 @@ function EFilingCases({ path }) {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  if (isLoading || isGetAllCasesLoading) {
+  if (isLoading || isGetAllCasesLoading || isCourtIdsLoading) {
     return <Loader />;
   }
 

@@ -6,6 +6,7 @@ import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
 import { RenderInstance } from "../components/RenderInstance";
 import OverlayDropdown from "../components/OverlayDropdown";
+import ReactTooltip from "react-tooltip";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -584,7 +585,7 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
-    preProcess: (requestCriteria, additionalDetails) => {      
+    preProcess: (requestCriteria, additionalDetails) => {
       const filterList = Object.keys(requestCriteria.state.searchForm)
         .map((key) => {
           if (requestCriteria.state.searchForm[key]?.type) {
@@ -604,6 +605,8 @@ export const UICustomizations = {
           {}
         );
       const tenantId = window?.Digit.ULBService.getStateId();
+      const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+      const status = !filterList?.status || filterList?.status === "PUBLISHED" ? "PUBLISHED" : "EMPTY";
       return {
         ...requestCriteria,
         body: {
@@ -611,6 +614,7 @@ export const UICustomizations = {
           criteria: {
             ...requestCriteria.body.criteria,
             ...filterList,
+            status: userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order") ? status : filterList?.status,
           },
           tenantId,
           pagination: {
@@ -621,9 +625,7 @@ export const UICustomizations = {
         config: {
           ...requestCriteria.config,
           select: (data) => {
-            // console.log(requestCriteria, data, requestCriteria.url.split("/").includes("order"));
             // if (requestCriteria.url.split("/").includes("order")) {
-            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
               ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
               : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
@@ -656,10 +658,13 @@ export const UICustomizations = {
           return <span>{formattedDate}</span>;
         case "Parties":
           return (
-            <span>{`${value
-              .slice(0, 2)
-              .map((party) => party.name)
-              .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+            <div>
+              {value.length > 2 && <ReactTooltip id={`hearing-list`}>{value.map((party) => party.name).join(", ")}</ReactTooltip>}
+              <span data-tip data-for={`hearing-list`}>{`${value
+                .slice(0, 2)
+                .map((party) => party.name)
+                .join(", ")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+            </div>
           );
         case "Order Type":
           return <OrderName rowData={row} colData={column} value={value} />;
@@ -691,7 +696,7 @@ export const UICustomizations = {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
       const date = new Date(row.startTime);
       const future = row.startTime > Date.now();
-      if (future && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
+      if (row.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
         return [
           {
             label: "Reschedule hearing",
@@ -702,6 +707,7 @@ export const UICustomizations = {
                   createdDate: new Date().getTime(),
                   tenantId: row.tenantId,
                   filingNumber: row.filingNumber[0],
+                  cnrNumber: row.cnrNumbers[0],
                   statuteSection: {
                     tenantId: row.tenantId,
                   },
@@ -725,7 +731,7 @@ export const UICustomizations = {
                         name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                       },
                       originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
-                        date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()
+                        date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
                       }`,
                     },
                   },
@@ -771,7 +777,7 @@ export const UICustomizations = {
           },
         ];
       }
-      if (future && userInfo.type === "CITIZEN") {
+      if (row.status === "SCHEDULED" && userInfo?.type === "CITIZEN") {
         return [
           {
             label: "Request for Reschedule hearing",
@@ -829,7 +835,7 @@ export const UICustomizations = {
         {
           label: "View pending task",
           id: "view_pending_tasks",
-          hide: false,
+          hide: true,
           disabled: true,
           action: (history) => {
             alert("Not Yet Implemented");
@@ -840,7 +846,6 @@ export const UICustomizations = {
   },
   HistoryConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      // console.log(userRoles);
       return {
         ...requestCriteria,
         config: {
@@ -855,7 +860,6 @@ export const UICustomizations = {
                   status: application.status,
                 };
               });
-              // console.log(data.caseFiles[0]?.evidence, "applicationHistory");
               const evidenceHistory = data.caseFiles[0]?.evidence.map((evidence) => {
                 return {
                   instance: evidence.artifactType,
@@ -863,11 +867,9 @@ export const UICustomizations = {
                   status: evidence.status,
                 };
               });
-              // console.log(evidenceHistory, "evidenceHistory");
               const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
                 return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
               });
-              // console.log(hearingHistory, "hearingHistory");
               const orderHistory = userRoles.includes("CITIZEN")
                 ? data.caseFiles[0]?.orders
                     ?.filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
@@ -887,9 +889,7 @@ export const UICustomizations = {
                       status: order.order.status,
                     };
                   });
-              // console.log(orderHistory, "orderHistory");
               const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
-              // console.log(historyList, "historyList");
               return { ...data, history: historyList };
             } else {
               return { ...data, history: [] };
@@ -977,7 +977,7 @@ export const UICustomizations = {
       case "email":
         return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       case "userName":
-        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
       default:
         return;
     }
@@ -989,5 +989,24 @@ export const UICustomizations = {
       default:
         return;
     }
+  },
+  DristiCaseUtils: {
+    getAllCaseRepresentativesUUID: (caseData) => {
+      let representatives = {};
+      let list = [];
+      caseData?.litigants?.forEach((litigant) => {
+        list = caseData?.representatives
+          ?.filter((item) => {
+            return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+          })
+          .map((item) => item?.additionalDetails?.uuid);
+        if (list?.length > 0) {
+          representatives[litigant?.additionalDetails?.uuid] = list;
+        } else {
+          representatives[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+        }
+      });
+      return representatives;
+    },
   },
 };

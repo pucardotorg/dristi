@@ -542,6 +542,91 @@
     }
   }
 
+  .bail-submission {
+    .employeeCard {
+      margin-bottom: 90px !important;
+      width: 590px;
+      box-shadow: none;
+      margin: 0px;
+      padding: 0px;
+      .label-field-pair {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: start;
+        margin-bottom: 24px;
+        .card-label {
+          width: 100%;
+          margin: 0px !important;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+        .field {
+          width: 100%;
+          .employee-select-wrap {
+            margin-bottom: 0px;
+            #jk-dropdown-unique {
+              margin-top: 40px !important;
+              max-height: 275px !important;
+            }
+          }
+          .cell-text,
+          .custom-checkbox-emp {
+            margin: 0px;
+          }
+          .checkbox-wrap,
+          textarea,
+          input {
+            margin-bottom: 0px;
+          }
+        }
+      }
+      .card-label-error {
+        margin-left: 0px !important;
+      }
+    }
+    .action-bar-wrap {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      box-shadow: none;
+      border-top: 1px #bbbbbd solid;
+      padding: 16px 24px;
+      .submit-bar {
+        width: 190px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+          color: #ffffff;
+        }
+      }
+      .previous-button {
+        padding: 8px 24px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        border: solid 1px #007e7e !important;
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+          color: #007e7e !important;
+        }
+      }
+    }
+  }
+
   .employee-card-input.employee-card-input-error {
     margin-bottom: 24px !important;
   }

@@ -1,25 +1,30 @@
-import { Button, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
-import React, { useCallback, useState } from "react";
+import { Button, CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
+import React, { useCallback, useRef, useState } from "react";
 import addPartyConfig from "../../configs/AddNewPartyConfig.js";
+import { useTranslation } from "react-i18next";
+import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote.js";
+import { Urls } from "../../hooks/services/Urls.js";
 
-const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
+const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetchHearing }) => {
+  const { t } = useTranslation();
   const DRISTIService = Digit?.ComponentRegistryService?.getComponent("DRISTIService");
   const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
   const [aFormData, setFormData] = useState([{}]);
-  const Close = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-      <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-    </svg>
-  );
+  const setFormErrors = useRef([]);
+
+  const { mutateAsync: updateAttendees } = Digit.Hooks.useCustomAPIMutationHook({
+    url: Urls.hearing.hearingUpdateTranscript,
+    params: { applicationNumber: "", cnrNumber: "" },
+    body: { tenantId, hearingType: "", status: "" },
+    config: {
+      mutationKey: "addAttendee",
+    },
+  });
 
   const CloseBtn = (props) => {
     return (
-      <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
-        <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
-          {" "}
-          <Close />{" "}
-        </div>
+      <div onClick={props.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+        <CloseSvg />
       </div>
     );
   };
@@ -39,19 +44,21 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
     }
   };
 
-  const validateFormData = (data) => {
+  const validateFormData = (data, index) => {
     const errors = {};
-    if (!data.partyName) errors.partyName = "Party name is required";
-    if (!data.partyType) errors.partyType = "Party type is required";
-    if (!data.phoneNumber || !/^\d+$/.test(data.phoneNumber)) errors.phoneNumber = "Phone number is invalid";
-    if (!data.emailId || !/\S+@\S+\.\S+/.test(data.emailId)) errors.emailId = "Email is invalid";
-    if (!data.address) errors.address = "Address is required";
+    if (!data["partyName" + index] || !/^[a-zA-Z\s]+$/.test(data["partyName" + index])) errors["partyName" + index] = "Party name is required";
+    if (!data["partyType" + index]) errors["partyType" + index] = "Party type is required";
+    if (!data["phoneNumber" + index] || !/^\d{10}$/.test(data["phoneNumber" + index])) errors["phoneNumber" + index] = "Phone number is invalid";
+    if (!data["emailId" + index] || !/\S+@\S+\.\S+/.test(data["emailId" + index])) errors["emailId" + index] = "Email is invalid";
+    if (!data["address" + index]) errors["address" + index] = "Address is required";
     return errors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e?.stopPropagation();
+    e?.preventDefault();
     const cleanedData = aFormData
-      .map(({ data }) => {
+      .map(({ data }, index) => {
         const newData = {};
         Object.keys(data).forEach((key) => {
           const newKey = key.replace(/\d+$/, "");
@@ -61,11 +68,12 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
             newData[newKey] = data[key];
           }
         });
-        newData.isSigned = false;
         newData.uuid = generateUUID();
-        const errors = validateFormData(newData);
+        const errors = validateFormData(data, index + 1);
         if (Object.keys(errors).length > 0) {
-          console.log("Validation errors:", errors);
+          Object.entries(errors).forEach(([errorKey, value]) => {
+            setFormErrors.current[index](errorKey, value);
+          });
           return null;
         }
         return newData;
@@ -73,8 +81,12 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       .filter(Boolean);
 
     if (cleanedData.length === aFormData.length) {
-      onAdd(cleanedData);
-      onDismiss();
+      onAdd(cleanedData)
+        .catch(console.error)
+        .then(() => {
+          onAddSuccess();
+          onCancel();
+        });
     }
   };
   const generateUUID = () => {
@@ -84,8 +96,8 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       return v.toString(16);
     });
   };
-  const onAdd = (cleanedData) => {
-    const newWitness = cleanedData.map((data) => {
+  const onAdd = async (cleanedData) => {
+    const newWitnesses = cleanedData.map((data) => {
       return {
         isenabled: true,
         displayindex: 0,
@@ -97,10 +109,10 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
             mobileNumber: [data.phoneNumber],
             textFieldValue: "",
           },
+          addressDetails: [{ addressDetails: data?.address }],
           witnessAdditionalDetails: {
             text: data.additionalDetails,
           },
-          isSigned: false,
           uuid: data.uuid,
         },
       };
@@ -110,10 +122,10 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       ...caseData?.criteria?.[0]?.responseList?.[0],
     };
     const witnessDetails = caseDetails.additionalDetails?.witnessDetails
-      ? [...caseDetails.additionalDetails?.witnessDetails?.formdata, ...newWitness]
-      : [...newWitness];
+      ? [...caseDetails.additionalDetails?.witnessDetails?.formdata, ...newWitnesses]
+      : [...newWitnesses];
 
-    return DRISTIService.addWitness(
+    await DRISTIService.addWitness(
       {
         tenantId,
         caseFilingNumber: caseDetails.filingNumber,
@@ -126,6 +138,24 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
       },
       tenantId
     );
+
+    if (hearing) {
+      const updatedHearing = structuredClone(hearing);
+      updatedHearing.attendees = updatedHearing.attendees || [];
+      updatedHearing.attendees.push(
+        ...newWitnesses.map((witness) => {
+          return {
+            name: [witness.data.firstName, witness.data.lastName].join(" "),
+            type: "Witness",
+            wasPresent: false,
+            isOnline: false,
+          };
+        })
+      );
+
+      await updateAttendees({ body: { hearing: updatedHearing } });
+      refetchHearing?.();
+    }
   };
 
   const onFormValueChange = useCallback(
@@ -139,25 +169,112 @@ const AddParty = ({ onCancel, onDismiss, caseData, tenantId }) => {
 
   return (
     <Modal
-      headerBarMain={<h1 className="heading-m">Add New Party</h1>}
-      headerBarEnd={<CloseBtn onClick={onDismiss} />}
-      actionCancelLabel="Back"
-      actionCancelOnSubmit={onCancel}
-      actionSaveLabel="Add"
+      popupStyles={{
+        width: "60%",
+        minWidth: "600px",
+        position: "absolute",
+        height: "calc(100% - 100px)",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        justify: "space-between",
+      }}
+      popupModuleMianStyles={{
+        padding: 0,
+        margin: "0px",
+        height: "calc(100% - 100px)",
+        overflowY: "auto",
+      }}
+      headerBarMain={<h1 className="heading-m">{t("ADD_NEW_PARTY")}</h1>}
+      headerBarEnd={<CloseBtn onClick={onCancel} />}
+      // actionCancelLabel={t("HEARING_BACK")}
+      // actionCancelOnSubmit={onCancel}
+      actionSaveLabel={t("HEARING_ADD")}
       actionSaveOnSubmit={handleSubmit}
     >
-      {formConfigs.map((config, index) => (
-        <FormComposerV2
-          key={index}
-          config={[config]}
-          onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-            onFormValueChange(formData, index);
+      <div style={{ padding: "16px 0px 24px 0px" }}>
+        <SelectCustomNote
+          config={{
+            populators: {
+              inputs: [
+                {
+                  infoHeader: "CS_PLEASE_COMMON_NOTE",
+                  infoText: "NEW_PARTY_NOTE",
+                  infoTooltipMessage: "Tooltip",
+                  type: "InfoComponent",
+                },
+              ],
+            },
+          }}
+          t={t}
+        />
+      </div>
+      <div className="add-party">
+        {formConfigs.map((config, index) => (
+          <FormComposerV2
+            key={index}
+            config={[config]}
+            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+              onFormValueChange(formData, index);
+              if (!setFormErrors.current.hasOwnProperty(index)) {
+                setFormErrors.current[index] = setError;
+              }
+              if (JSON.stringify(formData) !== JSON.stringify(aFormData[index].data)) {
+                if (formData && Object.keys(formData).length !== 0) {
+                  const errors = validateFormData(formData, index + 1);
+                  for (const key of Object.keys(formData)) {
+                    if (formData[key] && !errors.hasOwnProperty(key)) {
+                      clearErrors(key);
+                    }
+                  }
+                }
+              }
+            }}
+            fieldStyle={{ width: "100%" }}
+          />
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
+        <Button
+          onButtonClick={handleAddParty}
+          label={t("ADD_PARTY")}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            marginTop: "10px",
+            borderColor: "#007E7E",
+            width: "28%",
+            backgroundColor: "#fff",
+          }}
+          textStyles={{
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "start",
+            color: "#007E7E",
           }}
         />
-      ))}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3rem" }}>
-        <Button onButtonClick={handleAddParty} label="Add Party" />
-        <Button onButtonClick={handleRemoveParty} label="Remove Party" />
+        <Button
+          onButtonClick={handleRemoveParty}
+          label={t("REMOVE_PARTY")}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            marginTop: "10px",
+            borderColor: "#007E7E",
+            width: "28%",
+            backgroundColor: "#fff",
+          }}
+          textStyles={{
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "end",
+            color: "#007E7E",
+          }}
+        />
       </div>
     </Modal>
   );

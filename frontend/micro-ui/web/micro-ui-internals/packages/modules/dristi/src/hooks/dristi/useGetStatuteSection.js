@@ -4,7 +4,6 @@ const useGetStatuteSection = (moduleName = "case", masterName = [{ name: "Statut
   return Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), moduleName, masterName, {
     select: (data) => {
       let newData = {};
-      console.log("data", data);
       masterName?.forEach((master) => {
         const optionsData = _.get(data, `${moduleName}.${master?.name}`, []);
         newData = {

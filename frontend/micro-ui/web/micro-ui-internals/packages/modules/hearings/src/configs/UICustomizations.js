@@ -3,24 +3,17 @@ import React from "react";
 import OverlayDropdown from "../components/HearingOverlayDropdown";
 import { hearingService } from "../hooks/services";
 
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
-};
-
 export const UICustomizations = {
   PreHearingsConfig: {
-    preProcess: (requestCriteria) => {
+    preProcess: (requestCriteria, additionalDetails) => {
       const updatedCriteria = {
         pagination: {
-          limit: 5,
-          offset: 0,
+          ...requestCriteria.state.tableForm,
+          ...requestCriteria?.state?.searchForm?.sortCaseListByStartDate,
         },
-        limit: 5,
         fromDate: requestCriteria?.params.fromDate,
         toDate: requestCriteria?.params.toDate,
+        attendeeIndividualId: additionalDetails?.attendeeIndividualId ? additionalDetails?.attendeeIndividualId : "",
       };
 
       return {
@@ -33,43 +26,72 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
+      const showAction =
+        (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START")) ||
+        row.hearing.status === "INPROGRESS";
       searchParams.set("hearingId", row.hearingId);
       switch (key) {
         case "Actions":
           return (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              {row.hearing.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+            <div style={{ display: "flex", justifyContent: "flex-end  ", alignItems: "center" }}>
+              {row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START") && (
                 <Button
                   variation={"secondary"}
-                  label={""}
+                  label={t(`START_HEARING`)}
                   onButtonClick={() => {
                     hearingService.startHearing({ hearing: row.hearing }).then(() => {
                       window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
                     });
                   }}
                   style={{ marginRight: "1rem" }}
-                >
-                  <strong>{t(`START_HEARING`)}</strong>
-                </Button>
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
               )}
               {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
-                <span>{t("HEARING_AWAITING_START")}</span>
+                <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
               )}
               {row.hearing.status === "INPROGRESS" && (
                 <Button
                   variation={"secondary"}
-                  label={""}
+                  label={t("JOIN_HEARING")}
                   onButtonClick={() => {
                     window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
                   }}
                   style={{ marginRight: "1rem" }}
-                >
-                  <strong>{t("JOIN_HEARING")}</strong>
-                </Button>
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
               )}
-              <OverlayDropdown style={{ position: "absolute" }} column={column} row={row} master="commonUiConfig" module="PreHearingsConfig" />
+              {showAction && (
+                <OverlayDropdown
+                  styles={{
+                    width: "40px",
+                    height: "40px",
+                    rotate: "90deg",
+                    border: "1px solid #0A5757",
+                  }}
+                  textStyle={{
+                    color: "#0A5757",
+                  }}
+                  column={column}
+                  row={row}
+                  master="commonUiConfig"
+                  module="PreHearingsConfig"
+                />
+              )}
             </div>
           );
         default:
@@ -80,10 +102,10 @@ export const UICustomizations = {
       const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
       const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
       const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-      const userType = userInfo.type === "CITIZEN" ? "citizen" : "employee";
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
       const future = row.hearing.startTime > Date.now();
-      if (userInfo.roles.map((role) => role.code).includes("EMPLOYEE")) {
+      if (userInfo?.roles.map((role) => role.code).includes("EMPLOYEE")) {
         if (future) {
           return [
             {
@@ -99,57 +121,8 @@ export const UICustomizations = {
             {
               label: "Reschedule hearing",
               id: "reschedule",
-              action: (history) => {
-                const date = new Date(row.hearing.startTime);
-                const requestBody = {
-                  order: {
-                    createdDate: new Date().getTime(),
-                    tenantId: Digit.ULBService.getCurrentTenantId(),
-                    filingNumber: row.filingNumber,
-                    statuteSection: {
-                      tenantId: Digit.ULBService.getCurrentTenantId(),
-                    },
-                    orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                    status: "",
-                    isActive: true,
-                    workflow: {
-                      action: OrderWorkflowAction.SAVE_DRAFT,
-                      comments: "Creating order",
-                      assignes: null,
-                      rating: null,
-                      documents: [{}],
-                    },
-                    documents: [],
-                    additionalDetails: {
-                      formdata: {
-                        orderType: {
-                          type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                          isactive: true,
-                          code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                          name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                        },
-                        originalHearingDate: formatDate(date),
-                      },
-                    },
-                  },
-                };
-                ordersService
-                  .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
-                  .then((res) => {
-                    searchParams.set("filingNumber", row.filingNumber);
-                    searchParams.set("orderNumber", res.order.orderNumber);
-                    history.push({
-                      pathname: `/${window.contextPath}/${userType}/orders/generate-orders`,
-                      search: searchParams.toString(),
-                      state: {
-                        caseId: row.caseId,
-                        tab: "Orders",
-                      },
-                    });
-                  })
-                  .catch((err) => {
-                    console.error(err);
-                  });
+              action: (history, column) => {
+                column.openRescheduleDialog(row);
               },
             },
           ];
@@ -168,7 +141,7 @@ export const UICustomizations = {
           {
             label: "View transcript",
             id: "view_transcript",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -176,7 +149,7 @@ export const UICustomizations = {
           {
             label: "View witness deposition",
             id: "view_witness",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -192,7 +165,7 @@ export const UICustomizations = {
         ];
       }
 
-      if (userInfo.roles.map((role) => role.code).includes("CITIZEN")) {
+      if (userInfo?.roles.map((role) => role.code).includes("CITIZEN")) {
         if (future) {
           return [
             {
@@ -231,7 +204,7 @@ export const UICustomizations = {
           {
             label: "View transcript",
             id: "view_transcript",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -239,7 +212,7 @@ export const UICustomizations = {
           {
             label: "View witness deposition",
             id: "view_witness",
-            hide: true,
+            hide: false,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -255,6 +228,73 @@ export const UICustomizations = {
         ];
       }
       return [];
+    },
+  },
+  summonWarrantConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            const generateAddress = ({
+              pincode = "",
+              district = "",
+              city = "",
+              state = "",
+              coordinates = { longitude: "", latitude: "" },
+              locality = "",
+              address = "",
+            }) => {
+              if (address) {
+                return address;
+              }
+              return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
+            };
+            const taskData = data?.list
+              ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
+              ?.map((data) => {
+                const taskDetail = JSON.parse(data?.taskDetails || "{}");
+                const channelDetailsEnum = {
+                  SMS: "phone",
+                  Email: "email",
+                  Post: "address",
+                  Police: "address",
+                };
+                const channelDetails = taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]];
+                return {
+                  deliveryChannel: taskDetail?.deliveryChannels?.channelName,
+                  channelDetails: typeof channelDetails === "object" ? generateAddress({ ...channelDetails }) : channelDetails,
+                  status: data?.status,
+                  remarks: taskDetail?.deliveryChannels?.status,
+                };
+              });
+            console.log("taskData", taskData);
+            return { list: taskData };
+          },
+        },
+      };
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        default:
+          return t("ES_COMMON_NA");
+      }
     },
   },
 };

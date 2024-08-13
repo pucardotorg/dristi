@@ -8,8 +8,10 @@
 .popup-module.join-a-case-modal,
 .popup-module.evidence-modal,
 .popup-module.review-submission-appl-modal,
+.popup-module.custom-modal-stepper,
 .popup-module.review-order-modal,
 .popup-module.add-signature-modal,
+.popup-module.custom-modal-stepper-non-doc,
 .popup-module.orders-success-modal,
 .popup-module.case-types {
   width: 536px;
@@ -158,6 +160,41 @@
     }
     .selector-button-primary {
       box-shadow: none;
+    }
+  }
+}
+
+.popup-module.review-custom-modal {
+  width: unset !important;
+  min-width: 536px !important;
+  max-width: 80% !important;
+  max-height: 80% !important;
+  .popup-module-main {
+    padding: 0px !important;
+  }
+}
+
+.custom-stepper-modal-success {
+  .action-button-success {
+    .jk-digit-primary-btn.selector-button-primary,
+    .jk-digit-primary-btn.selector-button-border {
+      width: 50% !important;
+    }
+
+    .jk-digit-primary-btn.selector-button-border {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      h2 {
+        width: fit-content !important;
+      }
+      svg {
+        margin: 0px;
+        height: 16px;
+        path {
+          fill: #007e7e;
+        }
+      }
     }
   }
 }
@@ -315,7 +352,98 @@
   }
 }
 
+.popup-module.custom-modal-stepper-non-doc {
+  width: fit-content !important;
+
+  .popup-module-main {
+    .payment-for-summon {
+      width: 720px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 24px;
+    }
+    .radio-wrap.mode-of-post-pay {
+      display: flex;
+      gap: 24px;
+      margin: 0px;
+    }
+    .summon-payment-action-table {
+      .header-row {
+        border-bottom: 1px #bbbbbd solid;
+        .payment-action,
+        .payment-amount,
+        .payment-label {
+          font-weight: 700;
+        }
+      }
+      .action-row {
+        border-bottom: 1px #e8e8e8 solid;
+      }
+      .action-row,
+      .header-row {
+        display: flex;
+        .payment-label {
+          width: 44%;
+        }
+        .payment-amount {
+          width: 30%;
+        }
+        .payment-action {
+          width: 26%;
+        }
+      }
+      .payment-action,
+      .payment-amount,
+      .payment-label {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0a0a0a;
+      }
+
+      .payment-action {
+        button {
+          background-color: transparent;
+          box-shadow: none;
+          width: 100%;
+
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 18.75px;
+            text-align: center;
+            color: #007e7e;
+          }
+        }
+        .offline-process-text {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #3d3c3c;
+
+          .learn-more-text {
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
 .popup-module.review-submission-appl-modal,
+.popup-module.custom-modal-stepper,
 .popup-module.evidence-modal {
   max-width: 80% !important;
   width: 80% !important;
@@ -369,6 +497,7 @@
   }
 }
 
+.document-viewer-with-comment,
 .review-submission-appl-body-main,
 .evidence-modal-main {
   display: flex;
@@ -380,6 +509,9 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    &.without-comment {
+      width: 100%;
+    }
     .application-view {
       .docviewer-wrapper {
         margin-top: 0px !important;
@@ -421,34 +553,6 @@
     }
   }
 
-  .application-info {
-    padding: 16px 24px;
-    background: #f7f5f3;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .info-row {
-    display: flex;
-    gap: 16px;
-    h3 {
-      margin: 0px;
-      font-family: Roboto;
-      font-size: 16px;
-      line-height: 18.75px;
-      text-align: left;
-    }
-    .info-key {
-      width: 180px;
-      font-weight: 700;
-      color: #0a0a0a;
-    }
-    .info-value {
-      width: calc(100% - 180px);
-      font-weight: 400 !important;
-      color: #3d3c3c !important;
-    }
-  }
   .application-comment {
     width: 33.33%;
     border-left: 1px #e8e8e8 solid;
@@ -573,4 +677,61 @@
 
 .react-pdf__Page__textContent {
   display: none !important;
+}
+
+.application-info {
+  position: relative;
+  padding: 16px 24px;
+  background: #f7f5f3;
+  display: flex;
+  gap: 12px;
+  align-items: start;
+}
+
+.info-link-wrapper,
+.info-row-wrapper {
+  background: #f7f5f3;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-link-wrapper {
+  width: 25%;
+}
+
+.info-row-wrapper {
+  width: 100%;
+
+  &.with-link {
+    width: 75%;
+  }
+}
+
+.info-row {
+  display: flex;
+  gap: 16px;
+  h3 {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    line-height: 18.75px;
+    text-align: left;
+  }
+  .info-key {
+    width: 180px;
+    font-weight: 700;
+    color: #0a0a0a;
+  }
+  .info-value {
+    width: calc(100% - 180px);
+    font-weight: 400 !important;
+    color: #3d3c3c !important;
+  }
+}
+
+.review-summon-order {
+  position: absolute;
+  right: 24px;
+  color: #3d3c3c;
 }

@@ -1638,6 +1638,42 @@ const JoinCaseHome = ({ refreshInbox }) => {
               }
             }) || []
           );
+          const documentList = [...nocDocument, ...courOrderDocument, ...vakalatnamaDocument];
+          await Promise.all(
+            documentList
+              ?.filter((data) => data)
+              ?.map(async (data) => {
+                await DRISTIService.createEvidence({
+                  artifact: {
+                    artifactType: "DOCUMENTARY",
+                    sourceType: "COMPLAINANT",
+                    sourceID: individualId,
+                    caseId: caseDetails?.id,
+                    filingNumber: caseDetails?.filingNumber,
+                    tenantId,
+                    comments: [],
+                    file: {
+                      documentType: data?.fileType || data?.documentType,
+                      fileStore: data?.fileStore,
+                      fileName: data?.fileName,
+                      documentName: data?.documentName,
+                    },
+                    workflow: {
+                      action: "TYPE DEPOSITION",
+                      documents: [
+                        {
+                          documentType: data?.documentType,
+                          fileName: data?.fileName,
+                          documentName: data?.documentName,
+                          fileStoreId: data?.fileStore,
+                        },
+                      ],
+                    },
+                  },
+                });
+              })
+          );
+
           const [res, err] = await submitJoinCase({
             additionalDetails: {
               ...caseDetails?.additionalDetails,
@@ -1723,6 +1759,54 @@ const JoinCaseHome = ({ refreshInbox }) => {
             });
           }
         } else {
+          const vakalatnamaDocument = await Promise.all(
+            adovacteVakalatnama?.adcVakalatnamaFileUpload?.document?.map(async (document) => {
+              if (document) {
+                const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                return {
+                  documentType: uploadedData.fileType || document?.documentType,
+                  fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                  documentName: uploadedData.filename || document?.documentName,
+                  fileName: `Vakalatnama (${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName})`,
+                  individualId,
+                };
+              }
+            }) || []
+          );
+          await Promise.all(
+            vakalatnamaDocument
+              ?.filter((data) => data)
+              ?.map(async (data) => {
+                await DRISTIService.createEvidence({
+                  artifact: {
+                    artifactType: "DOCUMENTARY",
+                    sourceType: "COMPLAINANT",
+                    sourceID: individualId,
+                    caseId: caseDetails?.id,
+                    filingNumber: caseDetails?.filingNumber,
+                    tenantId,
+                    comments: [],
+                    file: {
+                      documentType: data?.fileType || data?.documentType,
+                      fileStore: data?.fileStore,
+                      fileName: data?.fileName,
+                      documentName: data?.documentName,
+                    },
+                    workflow: {
+                      action: "TYPE DEPOSITION",
+                      documents: [
+                        {
+                          documentType: data?.documentType,
+                          fileName: data?.fileName,
+                          documentName: data?.documentName,
+                          fileStoreId: data?.fileStore,
+                        },
+                      ],
+                    },
+                  },
+                });
+              })
+          );
           const [res, err] = await submitJoinCase({
             additionalDetails: {
               ...caseDetails?.additionalDetails,
@@ -1794,6 +1878,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
               additionalDetails: {
                 advocateName: advocateDetailForm?.additionalDetails?.username,
                 uuid: userInfo?.uuid,
+                document: {
+                  vakalatnamaFileUpload: vakalatnamaDocument?.length > 0 && vakalatnamaDocument,
+                },
               },
             },
           });
@@ -1898,6 +1985,40 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 };
               }
             }) || []
+          );
+          await Promise.all(
+            newDocument
+              ?.filter((data) => data)
+              ?.map(async (data) => {
+                await DRISTIService.createEvidence({
+                  artifact: {
+                    artifactType: "DOCUMENTARY",
+                    sourceType: "COMPLAINANT",
+                    sourceID: individualId,
+                    caseId: caseDetails?.id,
+                    filingNumber: caseDetails?.filingNumber,
+                    tenantId,
+                    comments: [],
+                    file: {
+                      documentType: data?.fileType || data?.documentType,
+                      fileStore: data?.fileStore,
+                      fileName: data?.fileName,
+                      documentName: data?.documentName,
+                    },
+                    workflow: {
+                      action: "TYPE DEPOSITION",
+                      documents: [
+                        {
+                          documentType: data?.documentType,
+                          fileName: data?.fileName,
+                          documentName: data?.documentName,
+                          fileStoreId: data?.fileStore,
+                        },
+                      ],
+                    },
+                  },
+                });
+              })
           );
           const [res, err] = await submitJoinCase(
             {
@@ -2031,6 +2152,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   additionalDetails: {
                     advocateName: advocateDetailForm?.advocateBarRegNumberWithName?.[0]?.advocateName,
                     uuid: userUUID,
+                    document: {
+                      vakalatnamaFileUpload: newDocument?.length > 0 && newDocument,
+                    },
                   },
                 },
               }),

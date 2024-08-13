@@ -54,6 +54,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -77,6 +78,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -105,6 +107,7 @@ export const userTypeOptions = [
       "SUBMISSION_CREATOR",
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
+      "TASK_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -118,32 +121,7 @@ export const userTypeOptions = [
 
 export const rolesToConfigMapping = [
   {
-    roles: [
-      "CASE_CREATOR",
-      "CASE_EDITOR",
-      "CASE_VIEWER",
-      "DEPOSITION_CREATOR",
-      "DEPOSITION_VIEWER",
-      "APPLICATION_CREATOR",
-      "APPLICATION_VIEWER",
-      "HEARING_VIEWER",
-      "ORDER_VIEWER",
-      "SUBMISSION_CREATOR",
-      "SUBMISSION_RESPONDER",
-      "SUBMISSION_DELETE",
-    ],
-    config: TabLitigantSearchConfig,
-    isLitigant: true,
-    showJoinFileOption: true,
-    onRowClickRoute: {
-      dependentUrl: "/dristi/home/file-case/case",
-      urlDependentOn: "status",
-      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
-      params: [{ key: "caseId", value: "id" }],
-    },
-  },
-  {
-    roles: ["CASE_APPROVER"],
+    roles: ["CASE_VIEWER", "JUDGE_ROLE"],
     config: TabJudgeSearchConfig,
     isJudge: true,
     onRowClickRoute: {
@@ -157,7 +135,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["HEARING_CREATOR"],
+    roles: ["CASE_VIEWER", "HEARING_CREATOR"],
     config: TabJudgeSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {
@@ -171,7 +149,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["CASE_REVIEWER"],
+    roles: ["CASE_VIEWER", "CASE_REVIEWER"],
     config: TabFSOSearchConfig,
     isFSO: true,
     onRowClickRoute: {
@@ -182,7 +160,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["BENCHCLERK_ROLE"],
+    roles: ["CASE_VIEWER", "BENCHCLERK_ROLE"],
     config: TabBenchSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {
@@ -196,7 +174,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["HEARING_CREATOR"],
+    roles: ["CASE_VIEWER", "COURT_ADMIN"],
     config: TabCourtRoomSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {
@@ -207,6 +185,32 @@ export const rolesToConfigMapping = [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
       ],
+    },
+  },
+  {
+    roles: ["CASE_VIEWER", "COURT_ROOM_MANAGER"],
+    config: TabCourtRoomSearchConfig,
+    isCourtOfficer: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/admission",
+      urlDependentOn: "status",
+      urlDependentValue: "PENDING_ADMISSION",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
+  },
+  {
+    roles: ["CASE_VIEWER"],
+    config: TabLitigantSearchConfig,
+    isLitigant: true,
+    showJoinFileOption: true,
+    onRowClickRoute: {
+      dependentUrl: "/dristi/home/file-case/case",
+      urlDependentOn: "status",
+      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
+      params: [{ key: "caseId", value: "id" }],
     },
   },
 ];
@@ -327,14 +331,43 @@ export const pendingTaskOrderActions = {
   },
   DRAFT_IN_PROGRESS: {
     actorName: ["JUDGE"],
-    actionName: "Schedule admission hearing",
-    additionalDetailsKeys: ["orderType"],
+    actionName: "Draft in Progress for Order",
     redirectDetails: {
       url: "/orders/generate-orders",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "orderNumber", value: "referenceId" },
       ],
+    },
+  },
+
+  SUMMON_WARRANT_STATUS: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/summons-warrants-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "hearingId", value: "referenceId" },
+      ],
+    },
+  },
+  PAYMENT_PENDING_POST: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/post-payment-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "orderNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PAYMENT_PENDING_FOR_WARRANT: {
+    actorName: ["JUDGE"],
+    actionName: "Show Warrant Payment Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/e-filing-payment-breakdown",
     },
   },
 };

@@ -1,8 +1,23 @@
 const defaultSearchValues = {
   stage: "",
-  type: "",
+  type: {
+    type: "NIA S138",
+  },
   caseNameOrId: "",
+  sortCaseListByStartDate: "",
 };
+
+export const subStageOptions = [
+  { stage: ["Filing"] },
+  { stage: ["Cognizance"] },
+  { stage: ["Inquiry"] },
+  { stage: ["Appearance"] },
+  { stage: ["Framing of charges"] },
+  { stage: ["Evidence"] },
+  { stage: ["Arguments"] },
+  { stage: ["Judgment"] },
+  { stage: ["Post-Judgement"] },
+];
 
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
@@ -36,6 +51,21 @@ export const preHearingConfig = {
         },
         fields: [
           {
+            type: "component",
+            component: "CustomSortComponent",
+            isMandatory: false,
+            disable: false,
+            name: "Newest",
+            key: "sortCaseListByStartDate",
+            sortBy: "startTime",
+            ascText: "First",
+            descText: "Last",
+            showAdditionalText: true,
+            showIcon: true,
+            icon: "UpDownArrowIcon",
+            populators: {},
+          },
+          {
             label: "Type",
             isMandatory: false,
             key: "type",
@@ -65,14 +95,7 @@ export const preHearingConfig = {
               name: "stage",
               error: "Required",
               optionsKey: "stage",
-              options: [
-                {
-                  stage: ["Pre-Trial"],
-                },
-                {
-                  stage: ["Inquiry"],
-                },
-              ],
+              options: subStageOptions
             },
           },
           {
@@ -98,7 +121,7 @@ export const preHearingConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "stage",
+            jsonPath: "subStage",
           },
           {
             label: "Case Type",

@@ -7,7 +7,7 @@ import OrdersCreate from "./OrdersCreate";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 import PaymentStatus from "../../components/PaymentStatus";
-// import MakeSubmission from "./MakeSubmission";
+import PaymentForSummonModal from "./PaymentForSummonModal";
 import ReviewSummonsNoticeAndWarrant from "./ReviewSummonsNoticeAndWarrant";
 const bredCrumbStyle = { maxWidth: "min-content" };
 const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
@@ -37,16 +37,16 @@ const App = ({ path, stateCode, userType, tenants }) => {
     <Switch>
       <AppContainer className="ground-container order-submission">
         <React.Fragment>
-          <ProjectBreadCrumb location={location} />
+          <ProjectBreadCrumb location={window.location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/orders-response`} component={() => <OrdersResponse></OrdersResponse>} />
         <PrivateRoute path={`${path}/orders-create`} component={() => <OrdersCreate />} />
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
-        <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} />
+        {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
         <PrivateRoute path={`${path}/Summons&Notice`} component={() => <ReviewSummonsNoticeAndWarrant />} />
         <PrivateRoute path={`${path}/payment-screen`} component={() => <PaymentStatus />} />
-        {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
+        <PrivateRoute path={`${path}/payment-modal`} component={() => <PaymentForSummonModal />} />
       </AppContainer>
     </Switch>
   );

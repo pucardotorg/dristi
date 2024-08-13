@@ -1,11 +1,11 @@
 import { useQuery } from "react-query";
-import { HomeService } from "./services";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 
 export const useGetPendingTask = ({ data, params, config = {}, key = "" }) => {
   return useQuery(
     ["Pending Task Details", key],
     () =>
-      HomeService.getPendingTaskService(data, params)
+      DRISTIService.getPendingTaskService(data, params)
         .then((data) => data)
         .catch(() => []),
     config
