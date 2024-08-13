@@ -274,7 +274,17 @@ const GenerateOrders = () => {
     filingNumber,
     Boolean(filingNumber && cnrNumber)
   );
-
+  const { data: publishedOrdersData, isLoading: isPublishedOrdersLoading } = useSearchOrdersService(
+    {
+      tenantId,
+      criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.PUBLISHED },
+      pagination: { limit: 1000, offset: 0 },
+    },
+    { tenantId },
+    filingNumber + OrderWorkflowState.PUBLISHED,
+    Boolean(filingNumber && cnrNumber)
+  );
+  const publishedBailOrder = useMemo(() => publishedOrdersData?.list?.find((item) => item?.orderType === "BAIL") || {}, [publishedOrdersData]);
   const advocateIds = caseDetails.representatives?.map((representative) => {
     return {
       id: representative.advocateId,
@@ -436,6 +446,7 @@ const GenerateOrders = () => {
     true
   );
   const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
+  const hearingsList = useMemo(() => hearingsData?.HearingList?.sort((a, b) => b.startTime - a.startTime), [hearingsData]);
 
   const isHearingAlreadyScheduled = useMemo(() => {
     const isPresent = hearingsData?.HearingList.some((hearing) => {
@@ -670,14 +681,14 @@ const GenerateOrders = () => {
       updatedFormdata.addressRespondant = generateAddress(
         caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.addressDetails?.map((data) => data?.addressDetails)[0]
       );
-      updatedFormdata.dateChequeReturnMemo = "";
+      updatedFormdata.dateChequeReturnMemo = formatDate(new Date(caseDetails?.caseDetails?.chequeDetails?.formdata?.[0]?.data?.depositDate));
       updatedFormdata.dateFiling = formatDate(new Date(caseDetails?.filingDate));
-      updatedFormdata.dateApprehension = "";
-      updatedFormdata.dateofReleaseOnBail = "";
-      updatedFormdata.dateofCommencementTrial = "";
-      updatedFormdata.dateofCloseTrial = "";
-      updatedFormdata.dateofSentence = "";
-      updatedFormdata.offense = "";
+      updatedFormdata.dateApprehension = formatDate(new Date(publishedBailOrder?.auditDetails?.lastModifiedTime)) || "";
+      updatedFormdata.dateofReleaseOnBail = formatDate(new Date(publishedBailOrder?.auditDetails?.lastModifiedTime)) || "";
+      updatedFormdata.dateofCommencementTrial = formatDate(new Date(publishedBailOrder?.auditDetails?.lastModifiedTime)) || "";
+      updatedFormdata.dateofCloseTrial = formatDate(new Date(hearingsList?.[hearingsList?.length - 2]?.startTime));
+      updatedFormdata.dateofSentence = formatDate(new Date(hearingsList?.[hearingsList?.length - 1]?.startTime));
+      updatedFormdata.offense = "NIA 138";
     }
     if (orderType === "BAIL") {
       updatedFormdata.bailType = { type: applicationDetails?.applicationType };
