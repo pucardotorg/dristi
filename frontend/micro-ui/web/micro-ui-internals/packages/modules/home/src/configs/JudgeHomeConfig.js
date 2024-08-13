@@ -376,8 +376,8 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: ["Post-Trial"],
-              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
+              stage: ["Trial"],
+              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED"],
             },
           ],
         },
@@ -517,7 +517,6 @@ export const TabJudgeSearchConfig = {
           criteria: [
             {
               outcome: outcomesOptions,
-              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],
         },
