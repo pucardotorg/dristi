@@ -19,6 +19,7 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
 import { generateUUID } from "../../../Utils";
+import { documentTypeMapping } from "../../citizen/FileCase/Config";
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
@@ -228,20 +229,61 @@ function CaseFileAdmission({ t, path }) {
     let documentList = [];
     documentList = [
       ...documentList,
-      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.bouncedChequeFileUpload?.document),
-      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.depositChequeFileUpload?.document),
-      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => form?.data?.returnMemoFileUpload?.document),
-      ...caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((form) => form?.data?.debtLiabilityFileUpload?.document),
-      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.legalDemandNoticeFileUpload?.document),
-      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfAcknowledgmentFileUpload?.document),
-      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfDispatchFileUpload?.document),
-      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => form?.data?.proofOfReplyFileUpload?.document),
-      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.memorandumOfComplaint?.document),
-      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.prayerForRelief?.document),
-      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => form?.data?.swornStatement?.document),
-      ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((form) => form?.data?.inquiryAffidavitFileUpload?.document),
-      ...caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((form) => form?.data?.vakalatnamaFileUpload?.document),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => ({
+        document: form?.data?.bouncedChequeFileUpload?.document,
+        key: "bouncedChequeFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => ({
+        document: form?.data?.depositChequeFileUpload?.document,
+        key: "depositChequeFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.chequeDetails?.formdata?.map((form) => ({
+        document: form?.data?.returnMemoFileUpload?.document,
+        key: "returnMemoFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((form) => ({
+        document: form?.data?.debtLiabilityFileUpload?.document,
+        key: "debtLiabilityFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => ({
+        document: form?.data?.legalDemandNoticeFileUpload?.document,
+        key: "legalDemandNoticeFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => ({
+        document: form?.data?.proofOfAcknowledgmentFileUpload?.document,
+        key: "proofOfAcknowledgmentFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => ({
+        document: form?.data?.proofOfDispatchFileUpload?.document,
+        key: "proofOfDispatchFileUpload",
+      })),
+      ...caseDetails?.caseDetails?.demandNoticeDetails?.formdata?.map((form) => ({
+        document: form?.data?.proofOfReplyFileUpload?.document,
+        key: "proofOfReplyFileUpload",
+      })),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
+        document: form?.data?.memorandumOfComplaint?.document,
+        key: "memorandumOfComplaint",
+      })),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
+        document: form?.data?.prayerForRelief?.document,
+        key: "prayerForRelief",
+      })),
+      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
+        document: form?.data?.swornStatement?.document,
+        key: "swornStatement",
+      })),
+      ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((form) => ({
+        document: form?.data?.inquiryAffidavitFileUpload?.document,
+        key: "inquiryAffidavitFileUpload",
+      })),
+      ...caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((form) => ({
+        document: form?.data?.vakalatnamaFileUpload?.document,
+        key: "vakalatnamaFileUpload",
+      })),
     ].flat();
+
+    console.log("documentList", documentList, typeof documentTypeMapping[documentList[0]?.key]);
 
     await Promise.all(
       documentList
@@ -249,7 +291,7 @@ function CaseFileAdmission({ t, path }) {
         ?.map(async (data) => {
           await DRISTIService.createEvidence({
             artifact: {
-              artifactType: "DOCUMENTARY",
+              artifactType: documentTypeMapping[data?.key],
               sourceType: "COMPLAINANT",
               sourceID: individualId,
               caseId: caseDetails?.id,
@@ -257,19 +299,19 @@ function CaseFileAdmission({ t, path }) {
               tenantId,
               comments: [],
               file: {
-                documentType: data?.fileType || data?.documentType,
-                fileStore: data?.fileStore,
-                fileName: data?.fileName,
-                documentName: data?.documentName,
+                documentType: data?.document?.fileType || data?.document?.documentType,
+                fileStore: data?.document?.fileStore,
+                fileName: data?.document?.fileName,
+                documentName: data?.document?.documentName,
               },
               workflow: {
                 action: "TYPE DEPOSITION",
                 documents: [
                   {
-                    documentType: data?.documentType,
-                    fileName: data?.fileName,
-                    documentName: data?.documentName,
-                    fileStoreId: data?.fileStore,
+                    documentType: data?.document?.documentType,
+                    fileName: data?.document?.fileName,
+                    documentName: data?.document?.documentName,
+                    fileStoreId: data?.document?.fileStore,
                   },
                 ],
               },
