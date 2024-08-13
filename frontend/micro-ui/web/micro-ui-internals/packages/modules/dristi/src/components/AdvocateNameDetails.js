@@ -53,7 +53,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-  console.debug(userType);
+
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
@@ -82,7 +82,6 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
       searchResult?.[0]?.status !== "INACTIVE"
     );
   }, [searchResult, userType]);
-  console.debug(userType, isApprovalPending, searchData, searchResult);
 
   useEffect(() => {
     const isPending = isApprovalPending;

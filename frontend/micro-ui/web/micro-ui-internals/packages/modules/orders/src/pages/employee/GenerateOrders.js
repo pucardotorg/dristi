@@ -39,7 +39,7 @@ import isEqual from "lodash/isEqual";
 import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkflow";
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
-import { getAdvocates } from "../../utils/caseUtils";
+import { getAdvocates, getuuidNameMap } from "../../utils/caseUtils";
 import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
@@ -152,6 +152,10 @@ const GenerateOrders = () => {
   const closeToast = () => {
     setShowErrorToast(null);
   };
+  const { data: courtRoomDetails, isLoading: isCourtIdsLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "Court_Rooms" },
+  ]);
+  const courtRooms = useMemo(() => courtRoomDetails?.Court_Rooms || [], [courtRoomDetails]);
 
   const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -199,6 +203,7 @@ const GenerateOrders = () => {
 
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const uuidNameMap = useMemo(() => getuuidNameMap(caseDetails), [caseDetails]);
 
   const complainants = useMemo(() => {
     return (
@@ -627,6 +632,21 @@ const GenerateOrders = () => {
     return foundKeys;
   }, [modifiedFormConfig]);
 
+  const generateAddress = ({
+    pincode = "",
+    district = "",
+    city = "",
+    state = "",
+    coordinates = { longitude: "", latitude: "" },
+    locality = "",
+    address = "",
+  }) => {
+    if (address) {
+      return address;
+    }
+    return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
+  };
+
   const defaultValue = useMemo(() => {
     if (currentOrder?.orderType && !currentOrder?.additionalDetails?.formdata) {
       return {
@@ -637,22 +657,24 @@ const GenerateOrders = () => {
     }
     let updatedFormdata = structuredClone(currentOrder?.additionalDetails?.formdata || {});
     if (orderType === "JUDGEMENT") {
-      updatedFormdata.caseNumber = filingNumber;
-      updatedFormdata.nameofRespondant = caseDetails?.litigants?.filter((item) =>
-        item?.partyType?.includes("respondent")
-      )?.[0]?.additionalDetails?.fullName;
-      updatedFormdata.nameOfCourt = "";
-      updatedFormdata.addressRespondant = "";
+      const complainantPrimary = caseDetails?.litigants?.filter((item) => item?.partyType?.includes("complainant.primary"))?.[0];
+      const respondentPrimary = caseDetails?.litigants?.filter((item) => item?.partyType?.includes("respondent.primary"))?.[0];
+      updatedFormdata.nameofComplainant = complainantPrimary?.additionalDetails?.fullName;
+      updatedFormdata.nameofRespondent = respondentPrimary?.additionalDetails?.fullName;
+      updatedFormdata.nameofComplainantAdvocate = uuidNameMap?.[allAdvocates?.[complainantPrimary?.additionalDetails?.uuid]] || "";
+      updatedFormdata.nameofRespondentAdvocate = uuidNameMap?.[allAdvocates?.[respondentPrimary?.additionalDetails?.uuid]] || "";
+      updatedFormdata.caseNumber = caseDetails?.courtCaseNumber;
+      updatedFormdata.nameOfCourt = courtRooms.find((room) => room.code === caseDetails?.courtId)?.name;
+      updatedFormdata.addressRespondant = generateAddress(
+        caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.addressDetails?.map((data) => data?.addressDetails)[0]
+      );
       updatedFormdata.dateChequeReturnMemo = "";
-      updatedFormdata.dateFiling = "";
+      updatedFormdata.dateFiling = formatDate(new Date(caseDetails?.filingDate));
       updatedFormdata.dateApprehension = "";
       updatedFormdata.dateofReleaseOnBail = "";
       updatedFormdata.dateofCommencementTrial = "";
       updatedFormdata.dateofCloseTrial = "";
       updatedFormdata.dateofSentence = "";
-      updatedFormdata.nameofComplainant = "";
-      updatedFormdata.nameofComplainantAdvocate = "";
-      updatedFormdata.nameofRespondantAdvocate = "";
       updatedFormdata.offense = "";
     }
     if (orderType === "BAIL") {
@@ -842,7 +864,7 @@ const GenerateOrders = () => {
       // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
       const orderSchema = {};
       // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
-      console.debug(order, orderSchema);
+
       return await ordersService.createOrder(
         {
           order: {
@@ -852,9 +874,7 @@ const GenerateOrders = () => {
         },
         { tenantId }
       );
-    } catch (error) {
-      console.debug(error);
-    }
+    } catch (error) {}
   };
 
   const handleAddOrder = () => {
@@ -1115,21 +1135,6 @@ const GenerateOrders = () => {
     );
   };
 
-  const generateAddress = ({
-    pincode = "",
-    district = "",
-    city = "",
-    state = "",
-    coordinates = { longitude: "", latitude: "" },
-    locality = "",
-    address = "",
-  }) => {
-    if (address) {
-      return address;
-    }
-    return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
-  };
-
   const createTask = async (orderType, caseDetails, orderDetails) => {
     let payload = {};
     const { litigants } = caseDetails;
@@ -1148,7 +1153,7 @@ const GenerateOrders = () => {
     const selectedChannel = orderData?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels;
     const respondentAddress = orderFormData?.addressDetails
       ? orderFormData?.addressDetails?.map((data) => generateAddress({ ...data?.addressDetails }))
-      : caseDetails?.additionalDetails?.respondentDetails?.addressDetails?.map((data) => data?.addressDetails);
+      : caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.addressDetails?.map((data) => data?.addressDetails);
     const respondentName = `${orderFormData?.respondentFirstName || ""}${
       orderFormData?.respondentMiddleName ? " " + orderFormData?.respondentMiddleName + " " : " "
     }${orderFormData?.respondentLastName || ""}`.trim();
@@ -1252,9 +1257,9 @@ const GenerateOrders = () => {
         payload = {
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress[0],
-            phone: respondentPhoneNo[0] || "",
-            email: respondentEmail[0] || "",
+            address: respondentAddress?.[0],
+            phone: respondentPhoneNo?.[0] || "",
+            email: respondentEmail?.[0] || "",
             age: "",
             gender: "",
           },
@@ -1667,7 +1672,8 @@ const GenerateOrders = () => {
     isApplicationDetailsLoading ||
     !ordersData?.list ||
     isHearingLoading ||
-    pendingTasksLoading
+    pendingTasksLoading ||
+    isCourtIdsLoading
   ) {
     return <Loader />;
   }

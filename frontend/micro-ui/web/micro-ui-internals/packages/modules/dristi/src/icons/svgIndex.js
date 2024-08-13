@@ -777,6 +777,20 @@ const SearchIcon = () => (
     />
   </svg>
 );
+const JudgementIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="28" height="28" rx="14" fill="#ECF3FD" />
+    <mask id="mask0_7707_99480" mask-type="alpha" maskUnits="userSpaceOnUse" x="6" y="6" width="16" height="16">
+      <rect x="6" y="6" width="16" height="16" fill="#D9D9D9" />
+    </mask>
+    <g mask="url(#mask0_7707_99480)">
+      <path
+        d="M8.6665 19.9997V18.6663H16.6665V19.9997H8.6665ZM12.4332 16.7663L8.6665 12.9997L10.0665 11.5663L13.8665 15.333L12.4332 16.7663ZM16.6665 12.533L12.8998 8.73301L14.3332 7.33301L18.0998 11.0997L16.6665 12.533ZM19.7332 19.333L11.0332 10.633L11.9665 9.69967L20.6665 18.3997L19.7332 19.333Z"
+        fill="#0F3B8C"
+      />
+    </g>
+  </svg>
+);
 
 export {
   AdvocateIcon,
@@ -829,4 +843,5 @@ export {
   WaitIcon,
   WhiteRightArrow,
   SearchIcon,
+  JudgementIcon,
 };

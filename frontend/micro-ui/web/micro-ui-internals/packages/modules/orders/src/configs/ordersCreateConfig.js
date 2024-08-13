@@ -3373,7 +3373,8 @@ export const configsJudgement = [
       {
         label: "DESCRIPTION_OF_ACCUSED",
         isMandatory: false,
-        key: "nameofRespondant",
+        disable: true,
+        key: "nameofRespondent",
         schemaKeyPath: "respondentDetails.name",
         type: "text",
         populators: {
@@ -3486,11 +3487,11 @@ export const configsJudgement = [
       {
         label: "NAME_RESPONDANT_ADVOCATE",
         isMandatory: false,
-        key: "nameofRespondantAdvocate",
+        key: "nameofRespondentAdvocate",
         schemaKeyPath: "respondentDetails.advocateName",
         disable: true,
         type: "text",
-        populators: { name: "nameofRespondantAdvocate" },
+        populators: { name: "nameofRespondentAdvocate" },
       },
       {
         label: "OFFENSE",

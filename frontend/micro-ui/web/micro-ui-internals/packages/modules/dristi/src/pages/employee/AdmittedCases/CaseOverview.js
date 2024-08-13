@@ -10,6 +10,7 @@ import TasksComponent from "../../../../../home/src/components/TaskComponent";
 import NextHearingCard from "./NextHearingCard";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
+import JudgementViewCard from "./JudgementViewCard";
 
 const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest }) => {
   const { t } = useTranslation();
@@ -107,7 +108,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: "70%" }}>
-        {hearingRes?.HearingList?.length === 0 && orderList?.length === 0 ? (
+        {caseData?.case?.outcome ? (
+          <JudgementViewCard caseData={caseData} />
+        ) : hearingRes?.HearingList?.length === 0 && orderList?.length === 0 ? (
           <div
             style={{
               display: "flex",
