@@ -229,7 +229,6 @@ public class IndexerUtils {
 		// Add additional details to the caseDetails map
 		caseDetails.putAll(entityDetails);
 		caseDetails.put("name", name);
-		caseDetails.put("isCompleted", Boolean.toString(isCompleted));
 
 		return caseDetails;
 	}
