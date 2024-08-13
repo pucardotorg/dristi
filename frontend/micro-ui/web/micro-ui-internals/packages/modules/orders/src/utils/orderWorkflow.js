@@ -1,6 +1,7 @@
 export const OrderWorkflowState = {
   ABATED: "ABATED",
   DRAFT_IN_PROGRESS: "DRAFT_IN_PROGRESS",
+  PUBLISHED: "PUBLISHED",
 };
 
 export const OrderWorkflowAction = {
