@@ -6,6 +6,7 @@ var logger = require("morgan");
 var config = require("./config");
 
 const order = require("./routes/order");
+const application = require("./routes/application");
 
 // var {listenConsumer} = require("./consumer")
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(config.app.contextPath + "/order", order);
+app.use(config.app.contextPath + "/application", application);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
