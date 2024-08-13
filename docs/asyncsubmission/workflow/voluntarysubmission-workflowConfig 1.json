@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "async-voluntary-submission",
-      "businessService": "async-voluntary-submission-managelifecycle",
+      "business": "application",
+      "businessService": "application-voluntary-submission",
       "businessServiceSla": 30,
       "states": [
         {
