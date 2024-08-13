@@ -55,6 +55,7 @@ module.exports = {
     accept_adr_application_qr : process.env.ACCEPT_ADR_APPLICATION_QR || "accept-adr-application-qr",
     reject_adr_application: process.env.REJECT_ADR_APPLICATION || "reject-adr-application",
     reject_adr_application_qr: process.env.REJECT_ADR_APPLICATION_QR || "reject-adr-application-qr",
+    application_submission_extension: process.env.APPLICATION_SUBMISSION_EXTENSION || "application-submission-extension",
   },
 
   app: {
