@@ -568,44 +568,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
             />
           )}
         </div>
-        {actionModal == "sendCaseBack" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
-            type="sendCaseBack"
-          />
-        )}
-        {actionModal == "sendCaseBackPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_NO_REGISTER_CASE"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            handleCloseModal={handleCloseModal}
-            onCancel={handlePotentialConfirm}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
-            type="sendCaseBackPotential"
-          />
-        )}
-        {actionModal == "caseRegisterPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
-            actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
-            type="sendCaseBackPotential"
-          />
-        )}
-
         {actionModal === "caseSendBackSuccess" && (
           <SuccessModal
             header={"Vaibhav"}
@@ -616,21 +578,11 @@ function ViewCaseFile({ t, inViewCase = false }) {
             onCancel={handleCloseSucessModal}
             onSubmit={handleNextCase}
             type={"caseSendBackSuccess"}
-            data={{ caseId: caseDetails?.filingNumber, caseName: caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
-          />
-        )}
-
-        {actionModal === "caseRegisterSuccess" && (
-          <SuccessModal
-            header={"Vaibhav"}
-            t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_ALLOCATE_JUDGE"}
-            bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
-            onCancel={handleCloseSucessModal}
-            onSubmit={handleAllocationJudge}
-            type={"caseRegisterSuccess"}
-            data={{ caseId: caseDetails?.filingNumber, caseName: caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
+            data={{
+              caseId: caseDetails?.filingNumber,
+              caseName: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+              errorsMarked: totalErrors.total,
+            }}
           />
         )}
       </div>

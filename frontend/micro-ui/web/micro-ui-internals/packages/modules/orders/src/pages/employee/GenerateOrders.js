@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
@@ -143,6 +143,8 @@ const GenerateOrders = () => {
   const [newHearingNumber, setNewHearingNumber] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
+  const setFormErrors = useRef(null);
+  const [currentFormData, setCurrentFormData] = useState(null);
   const roles = Digit.UserService.getUser()?.info?.roles;
   const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
@@ -776,18 +778,24 @@ const GenerateOrders = () => {
         Object.keys(formState?.errors).includes("responseDeadline")
       ) {
         clearErrors("responseDeadline");
+      } else if (formData?.responseInfo?.isResponseRequired?.code === false && Object.keys(formState?.errors).includes("responseDeadline")) {
+        clearErrors("responseDeadline");
       } else if (
         formState?.submitCount &&
         !formData?.responseInfo?.responseDeadline &&
+        formData?.responseInfo?.isResponseRequired?.code === true &&
         !Object.keys(formState?.errors).includes("responseDeadline")
       ) {
         setError("responseDeadline", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_SUBMISSION_DEADLINE") });
       }
       if (formData?.responseInfo?.respondingParty?.length > 0 && Object.keys(formState?.errors).includes("respondingParty")) {
         clearErrors("respondingParty");
+      } else if (formData?.responseInfo?.isResponseRequired?.code === false && Object.keys(formState?.errors).includes("respondingParty")) {
+        clearErrors("respondingParty");
       } else if (
         formState?.submitCount &&
         (!formData?.responseInfo?.respondingParty || formData?.responseInfo?.respondingParty?.length === 0) &&
+        formData?.responseInfo?.isResponseRequired?.code === true &&
         !Object.keys(formState?.errors).includes("respondingParty")
       ) {
         setError("respondingParty", { message: t("CORE_REQUIRED_FIELD_ERROR") });
@@ -802,22 +810,37 @@ const GenerateOrders = () => {
       }
       if (formData?.bailInfo?.noOfSureties && Object.keys(formState?.errors).includes("noOfSureties")) {
         clearErrors("noOfSureties");
-      } else if (formState?.submitCount && !formData?.bailInfo?.noOfSureties && !Object.keys(formState?.errors).includes("noOfSureties")) {
+      } else if (formData?.bailInfo?.isBailable?.code === false && Object.keys(formState?.errors).includes("noOfSureties")) {
+        clearErrors("noOfSureties");
+      } else if (
+        formState?.submitCount &&
+        !formData?.bailInfo?.noOfSureties &&
+        formData?.bailInfo?.isBailable?.code === true &&
+        !Object.keys(formState?.errors).includes("noOfSureties")
+      ) {
         setError("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
       }
       if (
-        formState?.submitCount &&
-        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] === "." &&
-        !Object.keys(formState?.errors).includes("bailableAmount")
-      ) {
-        setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
-      } else if (
         formData?.bailInfo?.bailableAmount &&
         formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] !== "." &&
         Object.keys(formState?.errors).includes("bailableAmount")
       ) {
         clearErrors("bailableAmount");
-      } else if (formState?.submitCount && !formData?.bailInfo?.bailableAmount && !Object.keys(formState?.errors).includes("bailableAmount")) {
+      } else if (formData?.bailInfo?.isBailable?.code === false && Object.keys(formState?.errors).includes("bailableAmount")) {
+        clearErrors("bailableAmount");
+      } else if (
+        formState?.submitCount &&
+        formData?.bailInfo?.isBailable?.code === true &&
+        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] === "." &&
+        !Object.keys(formState?.errors).includes("bailableAmount")
+      ) {
+        setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
+      } else if (
+        formState?.submitCount &&
+        !formData?.bailInfo?.bailableAmount &&
+        formData?.bailInfo?.isBailable?.code === true &&
+        !Object.keys(formState?.errors).includes("bailableAmount")
+      ) {
         setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
       }
     }
@@ -838,7 +861,9 @@ const GenerateOrders = () => {
               };
         });
       });
+      setCurrentFormData(formData);
     }
+    setFormErrors.current = setError;
     if (Object.keys(formState?.errors).length) {
       setIsSubmitDisabled(true);
     } else {
@@ -1629,6 +1654,30 @@ const GenerateOrders = () => {
         error: true,
       });
       return;
+    }
+    if (orderType && ["MANDATORY_SUBMISSIONS_RESPONSES"].includes(orderType)) {
+      if (!currentFormData?.responseInfo?.responseDeadline && currentFormData?.responseInfo?.isResponseRequired?.code === true) {
+        setFormErrors.current("responseDeadline", { message: t("PROPOSED_DATE_CAN_NOT_BE_BEFORE_SUBMISSION_DEADLINE") });
+        return;
+      }
+      if (
+        (!currentFormData?.responseInfo?.respondingParty || currentFormData?.responseInfo?.respondingParty?.length === 0) &&
+        currentFormData?.responseInfo?.isResponseRequired?.code === true
+      ) {
+        setFormErrors.current("respondingParty", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+        return;
+      }
+    }
+    if (orderType && ["WARRANT"].includes(orderType)) {
+      debugger;
+      if (!currentFormData?.bailInfo?.noOfSureties) {
+        setFormErrors.current("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
+        return;
+      }
+      if (!currentFormData?.bailInfo?.bailableAmount) {
+        setFormErrors.current("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
+        return;
+      }
     }
     if (referenceId && ![SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationDetails?.status)) {
       setShowErrorToast({

@@ -508,7 +508,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: ["Post-Trial"],
+              outcome: outcomesOptions,
               status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
             },
           ],

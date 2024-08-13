@@ -260,6 +260,9 @@ export const UICustomizations = {
             [additionalDetails.sortBy]: undefined,
             sortBy: undefined,
           }),
+          ...(requestCriteria?.state?.searchForm?.outcome && {
+            outcome: [requestCriteria?.state?.searchForm?.outcome],
+          }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,

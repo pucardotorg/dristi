@@ -187,7 +187,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             className={"secondary-button-selector"}
             label={t("CS_GO_TO_HOME")}
             labelClassName={"secondary-label-selector"}
-            style={{minWidth: "30%"}}
+            style={{ minWidth: "30%" }}
             onButtonClick={() => {
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
@@ -197,14 +197,14 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             className={"secondary-button-selector"}
             label={t("CS_PRINT_CASE_FILE")}
             labelClassName={"secondary-label-selector"}
-            style={{minWidth: "30%"}}
+            style={{ minWidth: "30%" }}
             onButtonClick={() => {}}
           />
           <Button
             className={"tertiary-button-selector"}
             label={t("CS_MAKE_PAYMENT")}
             labelClassName={"tertiary-label-selector"}
-            style={{minWidth: "30%"}}
+            style={{ minWidth: "30%" }}
             onButtonClick={() => {
               setShowPaymentModal(true);
             }}
@@ -247,7 +247,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
               <div>
                 <InfoCard
                   variant={"default"}
-                  label={t("CS_COMMON_NOTE")}
+                  label={t("CS_PAYMENT_NOTE")}
                   style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
                   additionalElements={[
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
