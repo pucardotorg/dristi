@@ -518,6 +518,7 @@ export const configsOrderMandatorySubmissions = [
         isMandatory: true,
         key: "submissionParty",
         schemaKeyPath: "partyDetails.partyToMakeSubmission",
+        transformer: "customDropdown",
         type: "dropdown",
         populators: {
           allowMultiSelect: true,
@@ -1031,6 +1032,8 @@ export const configsScheduleHearingDate = [
         label: "HEARING_DATE",
         isMandatory: true,
         key: "hearingDate",
+        schemaKeyPath: "orderDetails.hearingDate",
+        transformer: "date",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",

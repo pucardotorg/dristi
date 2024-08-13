@@ -825,8 +825,7 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
-    // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
-    const orderSchema = {};
+    const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
     try {
       return await ordersService.updateOrder(
         { order: { ...order, ...orderSchema, workflow: { ...order.workflow, action, documents: [{}] } } },
@@ -839,8 +838,7 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
-      const orderSchema = {};
+      const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
       // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
       console.debug(order, orderSchema);
       return await ordersService.createOrder(
@@ -1568,7 +1566,7 @@ const GenerateOrders = () => {
       setLoader(false);
       setShowSuccessModal(true);
     } catch (error) {
-      showErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
+      setShowErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
       setLoader(false);
     }
   };
