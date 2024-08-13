@@ -153,7 +153,11 @@ const AdmittedCases = () => {
           [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
         ) {
           if (createdByUuid === userInfo?.uuid) {
-            history.push(`/digit-ui/employee/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`);
+            history.push(
+              `/digit-ui/${
+                isCitizen ? "citizen" : "employee"
+              }/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`
+            );
           }
         } else {
           setDocumentSubmission(docObj);
