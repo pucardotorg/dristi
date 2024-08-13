@@ -538,6 +538,10 @@ export const TabSearchconfig = {
                 jsonPath: "artifactNumber",
               },
               {
+                label: "Evidence Number",
+                jsonPath: "evidenceNumber",
+              },
+              {
                 label: "Source",
                 jsonPath: "sourceType",
                 additionalCustomization: true,
