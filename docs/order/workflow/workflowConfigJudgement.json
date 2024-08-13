@@ -49,41 +49,9 @@
             },
             {
               "action": "E-SIGN",
-              "nextState": "PENDINGSTAMPING",
-              "roles": [
-                "ORDER_APPROVER"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "PENDINGSTAMPING",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "STAMP",
               "nextState": "PUBLISHED",
               "roles": [
-                "ORDER_STAMP"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "ORDER_DELETE"
+                "ORDER_APPROVER"
               ]
             },
             {
