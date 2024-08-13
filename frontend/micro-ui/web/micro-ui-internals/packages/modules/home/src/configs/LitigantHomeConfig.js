@@ -355,7 +355,7 @@ export const TabLitigantSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{ stage: ["Post-Trial"] }],
+          criteria: [{ outcome: outcomesOptions }],
         },
         masterName: "commonUiConfig",
         moduleName: "homeLitigantUiConfig",

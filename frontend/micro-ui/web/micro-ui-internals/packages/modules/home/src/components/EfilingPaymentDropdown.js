@@ -144,7 +144,7 @@ function EfilingPaymentBreakdown({ amount = 2000 }) {
           <div>
             <InfoCard
               variant={"default"}
-              label={t("CS_COMMON_NOTE")}
+              label={t("CS_PAYMENT_NOTE")}
               style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
               additionalElements={[
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
