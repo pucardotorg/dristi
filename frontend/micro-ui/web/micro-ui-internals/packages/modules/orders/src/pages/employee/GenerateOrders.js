@@ -1445,36 +1445,34 @@ const GenerateOrders = () => {
 
   const handleIssueSummons = async (hearingDate, hearingNumber) => {
     try {
-      const reqbody = {
-        order: {
-          createdDate: new Date().getTime(),
+      const orderbody = {
+        createdDate: new Date().getTime(),
+        tenantId,
+        cnrNumber,
+        filingNumber,
+        statuteSection: {
           tenantId,
-          cnrNumber,
-          filingNumber,
-          statuteSection: {
-            tenantId,
-          },
-          orderType: "SUMMONS",
-          status: "",
-          isActive: true,
-          workflow: {
-            action: OrderWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          ...(hearingNumber && { hearingNumber }),
-          additionalDetails: {
-            formdata: {
-              orderType: {
-                code: "SUMMONS",
-                type: "SUMMONS",
-                name: "ORDER_TYPE_SUMMONS",
-              },
-              hearingDate,
+        },
+        orderType: "SUMMONS",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        ...(hearingNumber && { hearingNumber }),
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              code: "SUMMONS",
+              type: "SUMMONS",
+              name: "ORDER_TYPE_SUMMONS",
             },
+            hearingDate,
           },
         },
       };
@@ -1484,18 +1482,14 @@ const GenerateOrders = () => {
           : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent") || [];
       const promiseList = summonsArray?.map((data) =>
         createOrder({
-          ...reqbody,
-          order: {
-            ...reqbody.order,
-            additionalDetails: {
-              ...reqbody.order?.additionalDetails,
-              selectedParty: data,
-            },
+          ...orderbody,
+          additionalDetails: {
+            ...orderbody?.additionalDetails,
+            selectedParty: data,
           },
         })
       );
       const resList = await Promise.all(promiseList);
-
       await Promise.all(
         resList?.map((res) =>
           createPendingTask({
@@ -1626,7 +1620,7 @@ const GenerateOrders = () => {
     if (
       prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" ||
       (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
-        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType === "respondent"))
+        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType.includes("respondent")))
     ) {
       return t("ISSUE_SUMMONS_BUTTON");
     }
