@@ -467,7 +467,7 @@ export const TabSearchconfig = {
                     moduleName: "Evidence",
                     localePrefix: "EVIDENCE_TYPE",
                     select:
-                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
+                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype && item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },

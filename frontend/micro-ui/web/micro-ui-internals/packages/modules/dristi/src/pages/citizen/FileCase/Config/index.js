@@ -389,3 +389,19 @@ export const sideMenuConfig = [
     ],
   },
 ];
+
+export const documentTypeMapping = {
+  bouncedChequeFileUpload: "BOUNCED_CHEQUE",
+  depositChequeFileUpload: "PROOF_OF_DEPOSIT_OF_CHEQUE",
+  returnMemoFileUpload: "RETURN_MEMO",
+  debtLiabilityFileUpload: "DEBT_LIABILITY",
+  legalDemandNoticeFileUpload: "DEMAND_NOTICE",
+  proofOfAcknowledgmentFileUpload: "PROOF_OF_ACK_OF_LEGAL_NOTICE",
+  proofOfDispatchFileUpload: "PROOF_OF_DISPATCH_OF_LEGAL_NOTICE",
+  proofOfReplyFileUpload: "PROOF_OF_REPLY_TO_LEGAL_NOTICE",
+  memorandumOfComplaint: "MEMORANDUM_OF_COMPLAINT",
+  prayerForRelief: "PRAYER_FOR_RELIEF",
+  swornStatement: "SWORN_STATEMENT",
+  inquiryAffidavitFileUpload: "AFFIDAVIT",
+  vakalatnamaFileUpload: "VAKALATNAMA",
+};

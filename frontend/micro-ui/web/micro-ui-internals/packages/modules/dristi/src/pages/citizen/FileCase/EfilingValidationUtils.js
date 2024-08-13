@@ -1705,7 +1705,7 @@ export const updateCaseDetails = async ({
                     async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
-                          artifactType: "DOCUMENTARY",
+                          artifactType: "OTHER",
                           sourceType: "COMPLAINANT",
                           caseId: caseDetails?.id,
                           sourceID: individualId,
