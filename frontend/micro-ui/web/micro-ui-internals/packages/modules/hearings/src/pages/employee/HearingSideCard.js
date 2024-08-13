@@ -1,7 +1,12 @@
 import { Button } from "@egovernments/digit-ui-components";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import TasksComponent from "../../../../home/src/components/TaskComponent";
 
 const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
+  const [taskType, setTaskType] = useState({});
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const userRoles = userInfo?.roles?.map((role) => role.code);
   const handleNavigate = (path, extraSearchParams) => {
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
     const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
@@ -108,6 +113,14 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
           />
         </div>
       </div>
+      <TasksComponent
+        taskType={taskType}
+        setTaskType={setTaskType}
+        isLitigant={userRoles.includes("CITIZEN")}
+        uuid={userInfo?.uuid}
+        userInfoType={userInfoType}
+        filingNumber={filingNumber}
+      />
     </div>
   );
 };
