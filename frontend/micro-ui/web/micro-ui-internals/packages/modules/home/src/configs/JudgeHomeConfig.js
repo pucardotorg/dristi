@@ -376,7 +376,6 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: ["Trial"],
               status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED"],
             },
           ],
