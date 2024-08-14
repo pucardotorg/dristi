@@ -21,14 +21,29 @@
     },
     "partyDetails":
     {
-      "partyToMakeSubmission": {
-        "type" : "string",
-        "description": "parties to make submission"
-      },
-      "partiesToRespond":[
+      "partiesToMakeSubmission": [
         {
-          "type": "string",
-          "description": "parties to response"
+          "uuid": [{
+            "type": "string",
+            "format": "uuid",
+            "description": "uuid of user"
+          }],
+          "name": {
+            "type": "string",
+            "description": "name of party to make submission"
+          }
+        }
+      ],
+      "partiesToRespond": [
+        {
+          "uuid": [{
+            "type": "uuid",
+            "description": "uuid of user"
+          }],
+          "name": {
+            "type": "string",
+            "description": "name of party to respond"
+          }
         }
       ]
     },
