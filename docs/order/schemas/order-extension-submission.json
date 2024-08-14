@@ -31,6 +31,16 @@
       "type": "integer",
       "format": "int64",
       "description": "original document submission date"
+    },
+    "proposedSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "proposed submission date"
+    },
+    "newSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "new submission date"
     }
   }
 }
