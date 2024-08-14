@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -37,6 +38,10 @@ public class Application   {
 
                 private String tenantId = null;
 
+        @JsonProperty("caseId")
+        @NotNull
+        private String caseId = null;
+
         @JsonProperty("filingNumber")
 
                 private String filingNumber = null;
@@ -53,7 +58,7 @@ public class Application   {
         @JsonProperty("createdDate")
           @NotNull
 
-                private String createdDate = null;
+                private Long createdDate = null;
 
         @JsonProperty("createdBy")
 
@@ -67,7 +72,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private List<UUID> applicationType = new ArrayList<>();
+                private String applicationType = null;
 
         @JsonProperty("applicationNumber")
 
@@ -75,7 +80,7 @@ public class Application   {
 
         @JsonProperty("issuedBy")
 
-                private Object issuedBy = null;
+                private IssuedBy issuedBy = null;
 
         @JsonProperty("status")
           @NotNull
@@ -84,7 +89,7 @@ public class Application   {
 
         @JsonProperty("comment")
 
-                private String comment = null;
+                private List<Comment> comment = new ArrayList<>();
 
         @JsonProperty("isActive")
           @NotNull
@@ -102,7 +107,7 @@ public class Application   {
 
         @JsonProperty("additionalDetails")
 
-                private String additionalDetails = null;
+                private Object additionalDetails = null;
 
         @JsonProperty("auditDetails")
 
@@ -123,11 +128,6 @@ public class Application   {
         return this;
         }
 
-        public Application addApplicationTypeItem(UUID applicationTypeItem) {
-        this.applicationType.add(applicationTypeItem);
-        return this;
-        }
-
         public Application addDocumentsItem(Document documentsItem) {
             if (this.documents == null) {
             this.documents = new ArrayList<>();
@@ -135,5 +135,13 @@ public class Application   {
         this.documents.add(documentsItem);
         return this;
         }
-
+    public boolean isResponseRequired() {
+        if (additionalDetails instanceof Map) {
+            Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
+            if (detailsMap.containsKey("isResponseRequired")) {
+                return (boolean) detailsMap.get("isResponseRequired");
+            }
+        }
+        return false;
+    }
 }

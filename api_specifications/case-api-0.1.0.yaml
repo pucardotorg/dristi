@@ -334,12 +334,8 @@ components:
           type: string
         stage:
           type: string
-          description: the main/primary stage of the case
-          example: Pre-Trial, Trial, Post-Trial
-        subStage:
+        substage:
           type: string
-          description: the secondary level of stage within the primary stage
-          example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
         benchId:
           type: string
           description: The bench a case is assigned to. A court has multiple benches and each bench can comprise of one or more arbitrators. The relationships to be defined in master data. The unique master data ID for a bench is stored here.
@@ -358,11 +354,11 @@ components:
         judgementDate:
           type: integer
           format: int64
-          description: date of judgement (will mostly also mean closure of case) in epoch time (milliseconds). this will be same as judgement hearing date
+          description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
         registrationDate:
           type: integer
           format: int64
-          description: Date when case was admitted by the judge in epoch time (milliseconds). Can also be derived from a WF state change
+          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
         caseDetails:
           type: object
           description: Field to store all case type specific details. These can vary depending on case type.
@@ -395,10 +391,6 @@ components:
         status:
           type: string
           description: The current status of the case as pulled from the Workflow service. Workflow service will hold the entire history of the case.
-        outcome:
-          type: string
-          format: uuid
-          description: case outcome from master data like Withdrawn, Settled, Transferred, Dismissed, Convicted, etc.
         documents:
           type: array
           items:
@@ -407,6 +399,11 @@ components:
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
+        outcome:
+          type: string
+          description: >-
+            The outcome of the case. This can be a judgement, a settlement or
+            any other outcome.
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
@@ -731,40 +728,37 @@ components:
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-
     AddWitnessResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+           https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         addWitnessRequest:
-          $ref: '#/components/schemas/AddWitnessRequest'
+          $ref: '#/components/schemas/AddWitnessRequest'          
             
     JoinCaseRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        accessCode:
-          type: string
-        caseFilingNumber:
-          type: string
-        representative:
-          type: object
-          $ref: '#/components/schemas/AdvocateMapping'
-        litigant:
-          type: object
-          $ref: '#/components/schemas/Party'
-        additionalDetails:
-          type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
-        auditDetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        type: object
+        properties:
+          RequestInfo:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+          accessCode:
+            type: string
+          caseFilingNumber:
+            type: string
+          representative:
+            $ref: '#/components/schemas/AdvocateMapping'
+          litigant:
+            $ref: '#/components/schemas/Party'
+          additionalDetails:
+            type: object
+            description: >-
+              Any extra fields that are not captured as first class fields can be
+              stored here as key/value pairs. Implementation specific.
+          auditDetails:
+            $ref: >-
+               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
 
     JoinCaseResponse:
       type: object
@@ -799,7 +793,9 @@ components:
         advocateId:
           type: string
         status:
-          type: string
+          type: array
+          items:
+            type: string
         filingFromDate:
           type: integer
           format: int64
@@ -819,8 +815,8 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
     CaseExists:
       type: object
       properties:

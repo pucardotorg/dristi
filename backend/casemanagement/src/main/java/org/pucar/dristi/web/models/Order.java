@@ -1,17 +1,6 @@
 package org.pucar.dristi.web.models;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.models.Workflow;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -20,125 +9,114 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
  */
 @Schema(description = "An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks")
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-17T10:19:47.222225+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:13:43.389623100+05:30[Asia/Calcutta]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Order   {
-        @JsonProperty("id")
+public class Order {
 
-          @Valid
-                private UUID id = null;
+	@JsonProperty("id")
+	@Valid
+	private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("tenantId")
+	@NotNull
+	private String tenantId = null;
 
-                private String tenantId = null;
+	@JsonProperty("filingNumber")
+	private String filingNumber = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("cnrNumber")
+	private String cnrNumber = null;
 
-                private String filingNumber = null;
+	@JsonProperty("applicationNumber")
+	private List<String> applicationNumber = new ArrayList<>();
 
-        @JsonProperty("cnrNumber")
+	@JsonProperty("hearingNumber")
+	@Valid
+	private String hearingNumber = null;
 
-                private String cnrNumber = null;
+	@JsonProperty("orderNumber")
+	@Size(min = 24, max = 256)
+	private String orderNumber = null;
 
-        @JsonProperty("applicationNumber")
+	@JsonProperty("linkedOrderNumber")
+	@Size(min = 24, max = 256)
+	private String linkedOrderNumber = null;
 
-                private List<String> applicationNumber = null;
+	@JsonProperty("createdDate")
+	@NotNull
+	@Valid
+	private Long createdDate = null;
 
-        @JsonProperty("hearingNumber")
+	@JsonProperty("issuedBy")
+	private IssuedBy issuedBy = null;
 
-          @Valid
-                private UUID hearingNumber = null;
+	@JsonProperty("orderType")
+	@NotNull
+	@Valid
+	private String orderType = null;
 
-        @JsonProperty("orderNumber")
+	@JsonProperty("orderCategory")
+	private String orderCategory = null;
 
-        @Size(min=24,max=256)         private String orderNumber = null;
+	@JsonProperty("status")
+	@NotNull
+	private String status = null;
 
-        @JsonProperty("createdDate")
-          @NotNull
+	@JsonProperty("comments")
+	private String comments = null;
 
-          @Valid
-                private LocalDate createdDate = null;
+	@JsonProperty("isActive")
+	@NotNull
+	private Boolean isActive = null;
 
-        @JsonProperty("issuedBy")
+	@JsonProperty("statuteSection")
+	@Valid
+	private StatuteSection statuteSection = null;
 
-                private Object issuedBy = null;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-        @JsonProperty("orderType")
-          @NotNull
-          @Valid
-                private List<UUID> orderType = new ArrayList<>();
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails = null;
 
-        @JsonProperty("orderCategory")
+	@JsonProperty("auditDetails")
+	@Valid
+	private AuditDetails auditDetails = null;
 
-                private String orderCategory = null;
-
-        @JsonProperty("status")
-          @NotNull
-
-                private String status = null;
-
-        @JsonProperty("comments")
-
-                private String comments = null;
-
-        @JsonProperty("isActive")
-          @NotNull
-
-                private Boolean isActive = null;
-
-        @JsonProperty("statuteSection")
-
-          @Valid
-                private StatuteSection statuteSection = null;
-
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
-        @JsonProperty("additionalDetails")
-
-                private String additionalDetails = null;
-
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
-
-        @JsonProperty("workflow")
-
-          @Valid
-                private Workflow workflow = null;
+	@JsonProperty("workflow")
+	@Valid
+	private Workflow workflow = null;
 
 
-        public Order addApplicationNumberItem(String applicationNumberItem) {
-            if (this.applicationNumber == null) {
-            this.applicationNumber = new ArrayList<>();
-            }
-        this.applicationNumber.add(applicationNumberItem);
-        return this;
-        }
+	public Order addApplicationIdsItem(String applicationNumbersItem) {
+		this.applicationNumber.add(applicationNumbersItem);
+		return this;
+	}
 
-        public Order addOrderTypeItem(UUID orderTypeItem) {
-        this.orderType.add(orderTypeItem);
-        return this;
-        }
-
-        public Order addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
+	public Order addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
 }

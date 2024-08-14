@@ -29,6 +29,31 @@
           "state": "DRAFT_IN_PROGRESS",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "PENDINGESIGN",
+              "roles": [
+                "ORDER_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "PENDINGESIGN",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
@@ -48,8 +73,8 @@
               ]
             },
             {
-              "action": "DELETE",
-              "nextState": "DELETED",
+              "action": "ABANDON",
+              "nextState": "ABATED",
               "roles": [
                 "ORDER_DELETE"
               ]

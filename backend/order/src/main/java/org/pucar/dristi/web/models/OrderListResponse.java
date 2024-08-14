@@ -22,27 +22,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderListResponse   {
-        @JsonProperty("responseInfo")
+public class OrderListResponse {
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+    @JsonProperty("ResponseInfo")
+    @Valid
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("TotalCount")
+    @JsonProperty("TotalCount")
+    private Integer totalCount = null;
 
-                private Integer totalCount = null;
+    @JsonProperty("list")
+    @Valid
+    private List<Order> list = null;
 
-        @JsonProperty("list")
-          @Valid
-                private List<Order> list = null;
-
-
-        public OrderListResponse addListItem(Order listItem) {
-            if (this.list == null) {
-            this.list = new ArrayList<>();
-            }
-        this.list.add(listItem);
-        return this;
-        }
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
 
 }

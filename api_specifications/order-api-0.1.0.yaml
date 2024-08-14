@@ -274,7 +274,6 @@ components:
         createdDate:
           type: integer
           format: int64
-          description: the date on which the order was created in epoch time (milliseconds). Can be treated as the start date also
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
         orderType:

@@ -1,19 +1,18 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * AdvocateMapping
@@ -27,10 +26,10 @@ import java.util.List;
 public class AdvocateMapping   {
         @JsonProperty("id")
 
-        @Size(min=2,max=64)         private String id = null;
+        @Valid         private String id = null;
 
         @JsonProperty("tenantId")
-          @NotNull
+        //  @NotNull
 
                 private String tenantId = null;
 
@@ -44,7 +43,8 @@ public class AdvocateMapping   {
 
         @JsonProperty("representing")
           @Valid
-        @Size(min=1)         private List<Party> representing = null;
+       // @Size(min=1)
+        private List<Party> representing = null;
 
         @JsonProperty("isActive")
 
@@ -63,21 +63,5 @@ public class AdvocateMapping   {
 
                 private Object additionalDetails = null;
 
-
-        public AdvocateMapping addRepresentingItem(Party representingItem) {
-            if (this.representing == null) {
-            this.representing = new ArrayList<>();
-            }
-        this.representing.add(representingItem);
-        return this;
-        }
-
-        public AdvocateMapping addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
 
 }

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+    private ServiceConstants() {
+    }
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -45,6 +46,22 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+
+    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+
+    public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
+    public static final String CREATE_TASK_ERR = "Error creating task";
+    public static final String UPDATE_TASK_ERR = "Error updating task";
+    public static final String TASK_SEARCH_QUERY_EXCEPTION = "Error updating task";
+    public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "Error searching task documents";
+    public static final String AMOUNT_SEARCH_QUERY_EXCEPTION = "Error searching task amount";
+    public static final String ROW_MAPPER_EXCEPTION = "Error in row mapper";
+    public static final String EXIST_TASK_ERR = "Error while checking task exist";
+    public static final String SEARCH_TASK_ERR = "Error while searching task";
+    public static final String BAIL = "BAIL";
+    public static final String SUMMON = "SUMMON";
+    public static final String WARRANT = "WARRANT";
+    public static final String ISSUESUMMON = "ISSUESUMMON";
 
 
 }

@@ -1,0 +1,259 @@
+.employee {
+  .topbar {
+    box-shadow: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .hambuger-back-wrapper {
+      display: flex !important;
+      gap: 16px;
+      img {
+        width: fit-content !important;
+      }
+    }
+  }
+  .main {
+    width: 100%;
+    margin: 84px 0px 0px;
+    padding: 0px;
+    min-height: calc(100vh - 84px) !important;
+
+    .employee-app-wrapper {
+      min-height: calc(100vh - 84px);
+      background-color: #eeeeee;
+      .ground-container {
+        min-height: calc(100vh - 84px) !important;
+        padding: 0px;
+        margin: 0px;
+      }
+      .employeeCard.main-card-home {
+        width: fit-content;
+        margin: 0px !important;
+        padding: 0px;
+        padding: 64px 100px 64px 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 64px;
+        header {
+          margin-bottom: 0px;
+        }
+        .main-inner-div {
+          .custom-card-style {
+            box-shadow: none;
+            border: 1px #e2e2e2 solid;
+            border-radius: 8px;
+            .card-label {
+              margin-top: 0px;
+              font-family: Roboto;
+              font-size: 24px;
+              font-weight: 600;
+              line-height: 28.13px;
+              text-align: center;
+              margin-bottom: 8px;
+            }
+            .card-text {
+              margin: 0px;
+              margin-bottom: 24px;
+              text-align: center;
+            }
+            button {
+              box-shadow: none;
+              width: 100%;
+            }
+          }
+        }
+      }
+      .moduleCardWrapper {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.scrutiny-inbox-table {
+  td {
+    padding: 16px !important;
+    width: 20%;
+    max-width: 20%;
+    min-width: 20%;
+  }
+  th {
+    padding-left: 16px !important;
+  }
+  tr {
+    td:last-child {
+      text-align: center !important;
+    }
+  }
+}
+
+.registration-requests {
+  td {
+    padding: 0px 1px 0px 0px !important;
+    width: 16.66%;
+    max-width: 16.66%;
+    min-width: 16.66%;
+  }
+}
+
+.scrutiny-inbox-table,
+.registration-requests {
+  margin: 24px 16px 24px;
+  background-color: #ffffff;
+  padding: 40px;
+
+  .header-class {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 40px;
+    .employee-select-wrap {
+      margin-bottom: 0px;
+    }
+  }
+
+  .inbox-search-wrapper {
+    .inbox-search-component-wrapper {
+      .sections-parent.inbox {
+        gap: 0px;
+        background-color: #ffffff;
+        .no-data-found {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          margin: 24px;
+        }
+        .section.search {
+          min-height: 0px;
+          .search-wrapper {
+            padding: 0px 0px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            header {
+              margin: 0px;
+            }
+            .search-field-wrapper.inbox {
+              display: flex;
+              justify-content: flex-end;
+              align-items: end;
+              .label-field-pair {
+                h2 {
+                  margin-top: 0px;
+                }
+                input {
+                  margin-bottom: 0px;
+                  width: 340px;
+                }
+              }
+            }
+            .search-button-wrapper {
+              padding-top: 0px;
+              button {
+                box-shadow: none;
+                width: 100px;
+                header {
+                  font-family: Roboto;
+                  font-size: 16px;
+                  font-weight: 500;
+                  line-height: 24px;
+                  text-align: center;
+                  color: #ffffff;
+                }
+              }
+            }
+          }
+        }
+        .search-component-table {
+          .link {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #f47738;
+            text-decoration: underline;
+            word-wrap: break-word;
+            white-space: break-spaces;
+          }
+
+          .action-link {
+            border: 1px solid #007e7e;
+            padding: 8px 0px 8px 0px;
+            text-align: center;
+            height: 38px;
+            margin: 12px 0px 12px 12px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            a {
+              font-family: Roboto;
+              font-size: 19px;
+              font-weight: 600;
+              line-height: 22.27px;
+              text-align: left;
+              color: #007e7e;
+              text-decoration: none;
+            }
+          }
+
+          th {
+            padding: 0px 12px 12px 0px;
+            width: 16.66%;
+            max-width: 16.66%;
+            min-width: 16.66%;
+          }
+
+          th:last-child {
+            text-align: center !important;
+            padding-left: 12px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.employee {
+  .back-button-home {
+    display: flex;
+    position: fixed;
+    padding: 20px;
+    width: 100%;
+    justify-content: space-between;
+    .back-btn2 {
+      margin-bottom: 0px;
+      p {
+        margin: 0px;
+      }
+    }
+  }
+  .file-case-main {
+    padding-top: 56px;
+  }
+}
+
+.view-application {
+  min-height: calc(100vh - 84px);
+  padding: 0px;
+  margin: 0px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  background-color: #eeeeee;
+  .application-main {
+    background-color: #ffffff;
+    padding: 40px;
+    margin: 60px 0px;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    gap: 40px;
+    .employeeCard {
+      padding: 16px !important;
+      margin: 0px !important;
+    }
+  }
+}

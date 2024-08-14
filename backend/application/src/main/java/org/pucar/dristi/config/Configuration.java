@@ -77,6 +77,12 @@ public class Configuration {
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
 
+    // Order Config
+    @Value("${egov.order.host}")
+    private String orderHost;
+
+    @Value("${egov.order.path}")
+    private String orderExistsPath;
 
     //URLShortening
     @Value("${egov.url.shortner.host}")
@@ -89,4 +95,50 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    //Application topic
+    @Value("${application.kafka.create.topic}")
+    private String applicationCreateTopic;
+
+    @Value("${application.kafka.update.topic}")
+    private String applicationUpdateTopic;
+
+    @Value("${application.kafka.status.update.topic}")
+    private String applicationUpdateStatusTopic;
+
+    //Workflow
+    @Value("${egov.workflow.async.order.submission.business.name}")
+    private String asyncOrderSubBusinessName;
+
+    @Value("${egov.workflow.async.order.submission.business.service.name}")
+    private String asyncOrderSubBusinessServiceName;
+
+    @Value("${egov.workflow.async.order.submission.withresponse.business.name}")
+    private String asyncOrderSubWithResponseBusinessName;
+
+    @Value("${egov.workflow.async.order.submission.withresponse.business.service.name}")
+    private String asyncOrderSubWithResponseBusinessServiceName;
+
+    @Value("${egov.workflow.async.voluntary.submission.business.name}")
+    private String asyncVoluntarySubBusinessName;
+
+    @Value("${egov.workflow.async.voluntary.submission.business.service.name}")
+    private String asyncVoluntarySubBusinessServiceName;
+
+    @Value("${application.kafka.comments.update.topic}")
+    private String applicationUpdateCommentsTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }

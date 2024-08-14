@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-section-202-crpc.json",
+  "$comment": "definition of the schema for issuing section 202 crpc order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "applicationFilledBy": {
+      "type" : "string",
+      "description": "application filled by"
+    },
+    "soughtOfDetails": {
+      "type" : "string",
+      "description": "details sought of"
+    },
+    "sectionOfLaw": {
+      "type" : "string",
+      "description": "section of law to FIR"
+    },
+    "responseRequiredByDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "response required by date"
+    }
+  }
+}

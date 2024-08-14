@@ -1,16 +1,18 @@
 package org.pucar.dristi.web.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * WitnessSearchRequest
@@ -21,23 +23,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WitnessSearchRequest   {
-        @JsonProperty("requestInfo")
+public class WitnessSearchRequest {
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("searchCriteria")
-          @Valid
-                private List<WitnessSearchCriteria> searchCriteria = null;
+    @JsonProperty("searchCriteria")
+    @Valid
+    private List<WitnessSearchCriteria> searchCriteria = null;
 
-
-        public WitnessSearchRequest addSearchCriteriaItem(WitnessSearchCriteria searchCriteriaItem) {
-            if (this.searchCriteria == null) {
-            this.searchCriteria = new ArrayList<>();
-            }
-        this.searchCriteria.add(searchCriteriaItem);
-        return this;
-        }
 
 }

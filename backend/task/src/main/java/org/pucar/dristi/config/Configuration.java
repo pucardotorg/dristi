@@ -1,23 +1,15 @@
 package org.pucar.dristi.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.util.TimeZone;
 
 @Component
-@Data
 @Import({TracerConfiguration.class})
-@NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
 public class Configuration {
@@ -89,4 +81,55 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //Case
+    @Value("${task.kafka.update.topic}")
+    private String taskUpdateTopic;
+
+    @Value("${task.kafka.create.topic}")
+    private String taskCreateTopic;
+
+    @Value("${task.kafka.summon.topic}")
+    private String taskIssueSummonTopic;
+
+    @Value("${egov.workflow.task.business.name}")
+    private String taskBusinessName;
+
+    @Value("${egov.workflow.task.business.service.name}")
+    private String taskBusinessServiceName;
+
+    @Value("${egov.workflow.task.bail.business.name}")
+    private String taskBailBusinessName;
+
+    @Value("${egov.workflow.task.bail.business.service.name}")
+    private String taskBailBusinessServiceName;
+
+    @Value("${egov.workflow.task.summon.business.name}")
+    private String taskSummonBusinessName;
+
+    @Value("${egov.workflow.task.summon.business.service.name}")
+    private String taskSummonBusinessServiceName;
+
+    @Value("${egov.workflow.task.warrant.business.name}")
+    private String taskWarrantBusinessName;
+
+    @Value("${egov.workflow.task.warrant.business.service.name}")
+    private String taskWarrantBusinessServiceName;
+
+    @Value("${egov.idgen.taskNumber}")
+    private String taskNumber;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String casePath;
+
+    // Order Config
+    @Value("${egov.order.host}")
+    private String orderHost;
+
+    @Value("${egov.order.path}")
+    private String orderPath;
 }

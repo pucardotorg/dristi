@@ -87,6 +87,13 @@
               ]
             },
             {
+              "action": "REJECT",
+              "nextState": "PENDINGREVIEW",
+              "roles": [
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -109,6 +116,13 @@
               "nextState": "RESPONSESUBMITTED",
               "roles": [
                 "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
               ]
             },
             {
@@ -149,6 +163,13 @@
               "nextState": "DELETED",
               "roles": [
                 "APPLICATION_DELETE"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_APPROVER"
               ]
             },
             {

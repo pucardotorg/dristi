@@ -2,6 +2,7 @@ package org.pucar.dristi.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
@@ -10,8 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,11 +28,11 @@ import lombok.NoArgsConstructor;
 public class Party {
 	@JsonProperty("id")
 
-	@Size(min = 2, max = 128)
-	private String id = null;
+	@Valid
+	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	@NotNull
+	//@NotNull
 
 	private String tenantId = null;
 
@@ -42,7 +41,7 @@ public class Party {
 	private String caseId = null;
 
 	@JsonProperty("partyCategory")
-	@NotNull
+	//@NotNull
 
 	private String partyCategory = null;
 
@@ -75,12 +74,5 @@ public class Party {
 
 	private Object additionalDetails = null;
 
-	public Party addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

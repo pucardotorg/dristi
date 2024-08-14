@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,25 +25,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LinkedCase {
-	@JsonProperty("id")
 
+	@JsonProperty("id")
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("relationshipType")
-
 	private String relationshipType = null;
 
 	@JsonProperty("caseNumber")
-
 	private String caseNumber = null;
 
 	@JsonProperty("referenceUri")
-
 	private String referenceUri = null;
 
 	@JsonProperty("isActive")
-
 	private Boolean isActive = null;
 
 	@JsonProperty("documents")
@@ -52,20 +47,11 @@ public class LinkedCase {
 	private List<Document> documents = null;
 
 	@JsonProperty("additionalDetails")
-
-	private String additionalDetails = null;
+	private Object additionalDetails = null;
 
 	@JsonProperty("auditdetails")
-
 	@Valid
 	private AuditDetails auditdetails = null;
 
-	public LinkedCase addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

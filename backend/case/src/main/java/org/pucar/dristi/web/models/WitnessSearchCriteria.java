@@ -1,11 +1,13 @@
 package org.pucar.dristi.web.models;
 
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * WitnessSearchCriteria
@@ -16,18 +18,16 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WitnessSearchCriteria   {
-        @JsonProperty("caseId")
+public class WitnessSearchCriteria {
 
-                private String caseId = null;
+    @JsonProperty("caseId")
+    private String caseId = null;
 
-        @JsonProperty("individualId")
+    @JsonProperty("individualId")
+    private String individualId = null;
 
-                private String individualId = null;
-
-        @JsonProperty("includeInactive")
-
-                private Boolean includeInactive = false;
+    @JsonProperty("includeInactive")
+    private Boolean includeInactive = false;
 
 
 }
