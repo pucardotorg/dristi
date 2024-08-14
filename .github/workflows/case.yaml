@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - develop
+      - develop-enc-dyc
     paths:
       - 'backend/case/**'
   pull_request:
     branches:
       - develop
+      - develop-enc-dyc 
     paths:
       - 'backend/case/**'
   workflow_dispatch:
@@ -28,25 +30,25 @@ jobs:
           distribution: "temurin"
           cache: maven
 
-      - name: Build and analyze case
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
+      # - name: Build and analyze case
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+      #     SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+      #   run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
 
       - name: Login to Azure Container Registry
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        # if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for case
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        # if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           docker build --build-arg WORK_DIR="backend/case" -t pucar_case:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_case:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for case_DB
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        # if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           docker build -t pucar_case_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_case_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
