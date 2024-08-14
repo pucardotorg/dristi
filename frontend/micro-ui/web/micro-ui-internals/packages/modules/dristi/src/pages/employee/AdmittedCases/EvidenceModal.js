@@ -563,7 +563,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           DRISTIService.customApiService(Urls.dristi.pendingTask, {
             pendingTask: {
               name: t(name),
-              entityType: "order-managelifecycle",
+              entityType: "order-default",
               referenceId: `MANUAL_${res?.order?.orderNumber}`,
               status: "DRAFT_IN_PROGRESS",
               assignedTo: [],

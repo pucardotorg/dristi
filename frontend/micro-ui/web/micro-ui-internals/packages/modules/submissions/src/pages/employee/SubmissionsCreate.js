@@ -401,12 +401,12 @@ const SubmissionsCreate = () => {
     isAssignedRole = false,
     assignedRole = [],
   }) => {
-    let entityType = "async-voluntary-submission-managelifecycle";
+    let entityType = "application-voluntary-submission";
     if (orderNumber) {
       entityType =
         orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true
-          ? "async-submission-with-response-managelifecycle"
-          : "async-order-submission-managelifecycle";
+          ? "application-order-submission-feedback"
+          : "application-order-submission-default";
     }
     const assignes = !isAssignedRole ? [userInfo?.uuid] || [] : [];
     await submissionService.customApiService(Urls.application.pendingTask, {

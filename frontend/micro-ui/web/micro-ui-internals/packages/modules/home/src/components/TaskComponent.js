@@ -213,7 +213,7 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
         HomeService.customApiService(Urls.pendingTask, {
           pendingTask: {
             name: "Order Created",
-            entityType: "order-managelifecycle",
+            entityType: "order-default",
             referenceId: `MANUAL_${referenceId}`,
             status: "SAVE_DRAFT",
             assignedTo: [],

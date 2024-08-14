@@ -127,7 +127,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       await DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
           name: "Pending Payment",
-          entityType: "case",
+          entityType: "case-default",
           referenceId: `MANUAL_${caseDetails?.filingNumber}`,
           status: "PAYMENT_PENDING",
           cnrNumber: null,

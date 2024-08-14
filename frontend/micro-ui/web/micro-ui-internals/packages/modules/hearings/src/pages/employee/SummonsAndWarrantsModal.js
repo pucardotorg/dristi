@@ -123,7 +123,7 @@ const SummonsAndWarrantsModal = () => {
       hearingService.customApiService(Urls.pendingTask, {
         pendingTask: {
           name: "Order Created",
-          entityType: "order-managelifecycle",
+          entityType: "order-default",
           referenceId: `MANUAL_${res.order.orderNumber}`,
           status: "DRAFT_IN_PROGRESS",
           assignedTo: [],
