@@ -218,13 +218,13 @@ export const rolesToConfigMapping = [
 export const caseTypes = [{ name: "NIA S138", code: "NIA S138" }];
 
 export const taskTypes = [
-  { code: "case", name: "Case" },
-  { code: "hearing", name: "Hearing" },
-  { code: "order-managelifecycle", name: "Order" },
-  { code: "order-judgement", name: "Order of Judgement" },
-  { code: "async-voluntary-submission-managelifecycle", name: "Voluntary Submission" },
-  { code: "async-submission-with-response-managelifecycle", name: "Submission With Response" },
-  { code: "async-order-submission-managelifecycle", name: "Submission Without Response" },
+  { code: "case-default", name: "Case" },
+  { code: "hearing-default", name: "Hearing" },
+  { code: "order-default", name: "Order" },
+  { code: "application-voluntary-submission", name: "Voluntary Submission" },
+  { code: "application-order-submission-feedback", name: "Order Submission Feedback" },
+  { code: "application-order-submission-default", name: "Order Submission" },
+  { code: "artifact-default", name: "Evidence" },
 ];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
@@ -497,12 +497,14 @@ export const pendingTaskSubmissionWithoutResponseActions = {
   },
 };
 
+export const pendingTaskForArtifactActions = {};
+
 export const selectTaskType = {
-  case: pendingTaskCaseActions,
-  hearing: pendingTaskHearingActions,
-  "order-managelifecycle": pendingTaskOrderActions,
-  "order-judgement": pendingTaskOrderOfJudgementActions,
-  "async-voluntary-submission-managelifecycle": pendingTaskVoluntarySubmissionActions,
-  "async-submission-with-response-managelifecycle": pendingTaskSubmissionWithResponseActions,
-  "async-order-submission-managelifecycle": pendingTaskSubmissionWithoutResponseActions,
+  "case-default": pendingTaskCaseActions,
+  "hearing-default": pendingTaskHearingActions,
+  "order-default": pendingTaskOrderActions,
+  "application-voluntary-submission": pendingTaskVoluntarySubmissionActions,
+  "application-order-submission-feedback": pendingTaskSubmissionWithResponseActions,
+  "application-order-submission-default": pendingTaskSubmissionWithoutResponseActions,
+  "artifact-default": pendingTaskForArtifactActions,
 };

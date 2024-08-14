@@ -111,7 +111,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: "async-submission-with-response-managelifecycle",
+          entityType: "application-order-submission-feedback",
           filingNumber: filingNumber,
           isCompleted: false,
           assignedTo: userInfo?.uuid,
@@ -130,7 +130,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         tenantId,
         moduleName: "Pending Tasks Service",
         moduleSearchCriteria: {
-          entityType: "async-order-submission-managelifecycle",
+          entityType: "application-order-submission-default",
           filingNumber: filingNumber,
           isCompleted: false,
           assignedTo: userInfo?.uuid,

@@ -935,8 +935,7 @@ const GenerateOrders = () => {
     let referenceId = order?.orderNumber;
     let assignedRole = [];
     let additionalDetails = {};
-    let entityType =
-      formdata?.isResponseRequired?.code === "Yes" ? "async-submission-with-response-managelifecycle" : "async-order-submission-managelifecycle";
+    let entityType = formdata?.isResponseRequired?.code === "Yes" ? "application-order-submission-feedback" : "application-order-submission-default";
     let status = taskStatus;
     let stateSla = stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate;
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
@@ -981,7 +980,7 @@ const GenerateOrders = () => {
         ?.flat()
         ?.map((uuid) => ({ uuid }));
       name = t("CHOOSE_DATES_FOR_RESCHEDULE_OF_HEARING_DATE");
-      entityType = "hearing";
+      entityType = "hearing-default";
       const promises = assignees.map(async (assignee) => {
         return ordersService.customApiService(Urls.orders.pendingTask, {
           pendingTask: {
@@ -1005,7 +1004,7 @@ const GenerateOrders = () => {
     if (order?.orderType === "SUMMONS") {
       assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
       if (Array.isArray(order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels)) {
-        entityType = "order-managelifecycle";
+        entityType = "order-default";
         const promises = order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
           if (channel?.type === "Post") {
             return ordersService.customApiService(Urls.orders.pendingTask, {
@@ -1032,7 +1031,7 @@ const GenerateOrders = () => {
       }
     }
     if (order?.orderType === "WARRANT") {
-      entityType = "order-managelifecycle";
+      entityType = "order-default";
       create = true;
       assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
       name = t("PAYMENT_PENDING_FOR_WARRANT");
@@ -1047,7 +1046,7 @@ const GenerateOrders = () => {
         create = true;
         status = "CREATE_SUMMONS_ORDER";
         name = t("CREATE_ORDERS_FOR_SUMMONS");
-        entityType = "order-managelifecycle";
+        entityType = "order-default";
         additionalDetails = { ...additionalDetails, orderType: "SUMMONS", hearingID: order?.hearingNumber };
       }
     }
@@ -1077,7 +1076,7 @@ const GenerateOrders = () => {
       await ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
           name: "Completed",
-          entityType: "order-managelifecycle",
+          entityType: "order-default",
           referenceId: `MANUAL_${refId}`,
           status: "DRAFT_IN_PROGRESS",
           assignedTo: [],
