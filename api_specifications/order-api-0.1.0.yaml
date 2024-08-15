@@ -45,7 +45,7 @@ paths:
     post:
       tags:
         - Order
-      summary: update hearing requests.
+      summary: update order requests.
       requestBody:
         description: Details for the update order(s) + RequestInfo meta data.
         content:
