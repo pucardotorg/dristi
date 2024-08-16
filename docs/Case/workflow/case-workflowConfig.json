@@ -2,12 +2,12 @@
     "BusinessServices": [
         {
             "tenantId": "kl",
-            "businessService": "case",
-            "business": "case-services",
-            "businessServiceSla": null,
+            "business": "case",
+            "businessService": "case-default",
+            "businessServiceSla": 2073600000,
             "states": [
                 {
-                    "sla": null,
+                    "sla": 1728000000,
                     "state": null,
                     "applicationStatus": null,
                     "docUploadRequired": false,
@@ -24,7 +24,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "nextState": "PENDING_PAYMENT",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -32,7 +32,7 @@
                     ]
                 },
                 {
-                    "sla": null,
+                    "sla": 1728000000,
                     "state": "DRAFT_IN_PROGRESS",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
@@ -49,7 +49,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "nextState": "PENDING_PAYMENT",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -64,8 +64,8 @@
                     ]
                 },
                 {
-                    "sla": null,
-                    "state": "PAYMENT_PENDING",
+                    "sla": 86400000,
+                    "state": "PENDING_PAYMENT",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -82,7 +82,7 @@
                     ]
                 },
                 {
-                    "sla": null,
+                    "sla": 172800000,
                     "state": "UNDER_SCRUTINY",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
@@ -125,7 +125,7 @@
                     ]
                 },
                 {
-                    "sla": null,
+                    "sla": 86400000,
                     "state": "PENDING_ADMISSION",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,

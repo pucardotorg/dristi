@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "task",
-      "businessService": "task-warrant",
-      "businessServiceSla": 4320000000,
+      "businessService": "task",
+      "business": "task-default",
+      "businessServiceSla": null,
       "states": [
         {
           "sla": null,
@@ -17,7 +17,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "ISSUE_WARRANT",
+              "nextState": "IN_PROGRESS",
               "roles": [
                 "TASK_CREATOR"
               ]
@@ -25,8 +25,8 @@
           ]
         },
         {
-          "sla": 388000000,
-          "state": "ISSUE_WARRANT",
+          "sla": null,
+          "state": "IN_PROGRESS",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -34,18 +34,10 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "DELIVERED",
-              "nextState": "EXECUTED",
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
               "roles": [
-                "TASK_UPDATOR"
-              ]
-            },
-            {
-              "action": "NOT_DELIVERED",
-              "nextState": "NOT_EXECUTED",
-              "roles": [
-                "TASK_UPDATOR",
-                "AUTO_ESCALATE"
+                "TASK_CLOSER"
               ]
             },
             {
@@ -59,16 +51,7 @@
         },
         {
           "sla": null,
-          "state": "EXECUTED",
-          "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": null,
-          "state": "NOTEXECUTED",
+          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

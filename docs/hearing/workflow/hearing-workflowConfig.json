@@ -2,42 +2,49 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task-summon",
-      "business": "task-summons",
-      "businessServiceSla": 4320000000,
+      "business": "hearing",
+      "businessService": "hearing-default",
+      "businessServiceSla": null,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "PENDING_PAYMENT",
+              "nextState": "SCHEDULED",
               "roles": [
-                "TASK_CREATOR"
+                "HEARING_SCHEDULER"
               ]
             }
           ]
         },
         {
-          "sla": 172800000,
-          "state": "PENDING_PAYMENT",
+          "sla": null,
+          "state": "SCHEDULED",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
+          "docUploadRequired": false,
+          "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "MAKE_PAYMENT",
-              "nextState": "ISSUE_SUMMON",
+              "action": "RESCHEDULE",
+              "nextState": "OPTOUT",
               "roles": [
-                "TASK_UPDATOR"
+                "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "START",
+              "nextState": "IN_PROGRESS",
+              "roles": [
+                "HEARING_START"
               ]
             },
             {
@@ -50,8 +57,8 @@
           ]
         },
         {
-          "sla": 388000000,
-          "state": "ISSUE_SUMMON",
+          "sla": null,
+          "state": "OPTOUT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -59,17 +66,10 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SERVED",
-                "nextState": "DELIVERED",
+              "action": "SET_DATE",
+              "nextState": "SCHEDULED",
               "roles": [
-                "TASK_UPDATOR"
-              ]
-            },
-            {
-              "action": "NOT_SERVED",
-              "nextState": "UNDELIVERED",
-              "roles": [
-                "TASK_UPDATOR",
+                "HEARING_APPROVER",
                 "AUTO_ESCALATE"
               ]
             },
@@ -83,17 +83,33 @@
           ]
         },
         {
-          "sla": null,
-          "state": "DELIVERED",
-          "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
+          "sla": 86400000,
+          "state": "IN_PROGRESS",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
-          "isTerminateState": true
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "HEARING_CLOSER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
         },
         {
           "sla": null,
-          "state": "UNDELIVERED",
+          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

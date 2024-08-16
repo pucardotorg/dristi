@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "task",
-      "businessService": "task-warrant",
-      "businessServiceSla": 4320000000,
+      "business": "application",
+      "businessService": "application-order-submission-default",
+      "businessServiceSla": 30,
       "states": [
         {
           "sla": null,
@@ -17,35 +17,34 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "ISSUE_WARRANT",
+              "nextState": "PENDING_SUBMISSION",
               "roles": [
-                "TASK_CREATOR"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
         },
         {
-          "sla": 388000000,
-          "state": "ISSUE_WARRANT",
-          "applicationStatus": "INWORKFLOW",
+          "sla": 86400000,
+          "state": "PENDING_SUBMISSION",
+          "applicationStatus": null,
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "DELIVERED",
-              "nextState": "EXECUTED",
+              "action": "E-SIGN",
+              "nextState": "COMPLETED",
               "roles": [
-                "TASK_UPDATOR"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
-              "action": "NOT_DELIVERED",
-              "nextState": "NOT_EXECUTED",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
-                "TASK_UPDATOR",
-                "AUTO_ESCALATE"
+                "SUBMISSION_DELETE"
               ]
             },
             {
@@ -59,7 +58,7 @@
         },
         {
           "sla": null,
-          "state": "EXECUTED",
+          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -68,8 +67,8 @@
         },
         {
           "sla": null,
-          "state": "NOTEXECUTED",
-          "applicationStatus": "ACTIVE",
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "advocate",
-      "business": "advocate-services",
-      "businessServiceSla": 30,
+      "business": "user-registration",
+      "businessService": "user-registration-default",
+      "businessServiceSla": 172800000,
       "states": [
         {
           "sla": null,
@@ -17,35 +17,41 @@
           "actions": [
             {
               "action": "REGISTER",
-              "nextState": "USERREGISTRATIONREQUESTED",
-              "roles": ["USER_REGISTER"]
+              "nextState": "VERIFICATION_REQUESTED",
+              "roles": [
+                "USER_REGISTER"
+              ]
             }
           ]
         },
         {
-          "sla": null,
-          "state": "USERREGISTRATIONREQUESTED",
+          "sla": 172800000,
+          "state": "VERIFICATION_REQUESTED",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
+          "docUploadRequired": false,
+          "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "APPROVE",
-              "nextState": "USERREGISTERED",
-              "roles": ["USER_APPROVER"]
+              "nextState": "REGISTERED",
+              "roles": [
+                "REGISTRATION_APPROVER"
+              ]
             },
             {
               "action": "REJECT",
-              "nextState": "USER_REJECTED",
-              "roles": ["USER_APPROVER"]
+              "nextState": "REJECTED",
+              "roles": [
+                "REGISTRATION_APPROVER"
+              ]
             }
           ]
         },
         {
-          "sla": 5,
-          "state": "USERREGISTERED",
+          "sla": null,
+          "state": "REGISTERED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -53,8 +59,8 @@
           "isTerminateState": true
         },
         {
-          "sla": 5,
-          "state": "USER_REJECTED",
+          "sla": null,
+          "state": "REJECTED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
