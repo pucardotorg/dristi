@@ -118,9 +118,9 @@ public class CaseRegistrationValidator {
 
 	private void validateMDMSData(RequestInfo requestInfo, CourtCase courtCase){
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(),
-				config.getCaseBusinessServiceName(), createMasterDetails());
+				config.getCaseModule(), createMasterDetails());
 
-		if (mdmsData.get(config.getCaseBusinessServiceName()) == null)
+		if (mdmsData.get(config.getCaseModule()) == null)
 			throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 		if (!courtCase.getLitigants().isEmpty()) {
 			courtCase.getLitigants().forEach(litigant -> {
