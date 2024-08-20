@@ -524,12 +524,11 @@ const LitigantHomePage = () => {
           >
             <JoinOngoingCaseIcon />
             <React.Fragment>
-              <span className="header userName" style={{ fontSize: "30px" }}>{t("CS_JOIN_ONGOING_CASE")}</span>
-              <span className="subtext" style={subtextStyle}>
-                {t("CS_JOIN_ONGOING_CASE_SUBTEXT_1")}
+              <span className="header userName" style={{ fontSize: "30px" }}>
+                {t("CS_JOIN_ONGOING_CASE")}
               </span>
               <span className="subtext" style={subtextStyle}>
-                {t("CS_JOIN_ONGOING_CASE_SUBTEXT_2")}
+                {t("CS_JOIN_ONGOING_CASE_SUBTEXT_1")}
               </span>
             </React.Fragment>
             <JoinCaseHome refreshInbox={refreshInbox} t={t} />
