@@ -45,7 +45,7 @@ public class BillingUtil {
 
 		DemandRequest demandRequest = new DemandRequest();
 		demandRequest.setRequestInfo(caseRequest.getRequestInfo());
-		Demand demand = Demand.builder().build();
+		Demand demand = new Demand();
 		demand.setTenantId(caseRequest.getCases().getTenantId());
 		demand.setConsumerCode(caseRequest.getCases().getFilingNumber());
 		demand.setPayer(caseRequest.getRequestInfo().getUserInfo());

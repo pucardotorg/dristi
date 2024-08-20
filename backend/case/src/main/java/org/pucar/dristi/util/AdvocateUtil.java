@@ -42,7 +42,7 @@ public class AdvocateUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
 
-		AdvocateSearchRequest advocateSearchRequest = AdvocateSearchRequest.builder().build();
+		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
 		advocateSearchRequest.setRequestInfo(requestInfo);
 		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
 		advocateSearchCriteria.setId(advocateId);
