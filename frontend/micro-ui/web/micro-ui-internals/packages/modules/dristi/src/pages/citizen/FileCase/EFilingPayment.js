@@ -91,7 +91,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
     {
       tenantId: tenantId,
       consumerCode: caseDetails?.filingNumber,
-      businessService: "case",
+      businessService: "case-default",
     },
     {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),

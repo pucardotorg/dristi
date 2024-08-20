@@ -86,7 +86,7 @@ const ViewPaymentDetails = ({ location, match }) => {
     {
       tenantId: tenantId,
       consumerCode: caseDetails?.filingNumber,
-      businessService: "case",
+      businessService: "case-default",
     },
     {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
@@ -108,7 +108,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         Payment: {
           paymentDetails: [
             {
-              businessService: "case",
+              businessService: "case-default",
               billId: bill.id,
               totalDue: bill?.totalAmount,
               totalAmountPaid: bill?.totalAmount || 2000,
