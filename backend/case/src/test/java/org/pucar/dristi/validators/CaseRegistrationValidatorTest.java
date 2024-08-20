@@ -1,11 +1,11 @@
 package org.pucar.dristi.validators;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.DELETE_DRAFT_WORKFLOW_ACTION;
 import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
 import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_ID;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.CaseRepository;
@@ -91,6 +93,66 @@ public class CaseRegistrationValidatorTest {
     }
 
     @Test
+    void testValidateCaseRegistration_WithValidData() {
+        // Creating RequestInfo with necessary user info
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setId(1234L);
+        userInfo.setUserName("test-user");
+        requestInfo.setUserInfo(userInfo);
+
+        // Setting up CaseRequest with valid data
+        CaseRequest request = new CaseRequest();
+        request.setRequestInfo(requestInfo);
+
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setFilingDate(System.currentTimeMillis());
+
+        Document document = new Document();
+        document.setFileStore("123");
+        courtCase.setDocuments(List.of(document));
+
+        AdvocateMapping advocateMapping = new AdvocateMapping();
+        advocateMapping.setAdvocateId("123");
+        courtCase.setRepresentatives(List.of(advocateMapping));
+
+        Party party = new Party();
+        party.setIndividualId("123");
+        courtCase.setLitigants(List.of(party));
+        courtCase.setCaseCategory("criminal");
+
+        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
+        courtCase.setFilingDate(System.currentTimeMillis());
+
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+
+        request.setCases(courtCase);
+
+        when(configuration.getCaseCategoryPath()).thenReturn("$.CaseCategory[?(@.code == '{}')]");
+        when(configuration.getCaseModule()).thenReturn("$.CaseCategory");
+
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"CaseCategory\": [ { \"code\": \"criminal\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.CaseCategory[?(@.code == 'criminal')]"))
+                    .thenReturn(List.of(Map.of("code", "criminal")));
+        }
+
+        lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
+        lenient().when(fileStoreUtil.doesFileExist("pg", "123")).thenReturn(true);
+        lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
+
+        // Validate the case registration
+        assertDoesNotThrow(() -> validator.validateCaseRegistration(request));
+    }
+
+    @Test
     void testValidateCaseRegistration_WithMissingFilingDate() {
         CaseRequest request = new CaseRequest();
         request.setRequestInfo(new RequestInfo());
@@ -98,7 +160,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setTenantId("pg");
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+         assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -108,7 +170,7 @@ public class CaseRegistrationValidatorTest {
         CourtCase courtCase = new CourtCase();
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+       assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -120,7 +182,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setFilingDate(System.currentTimeMillis());
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+         assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -133,7 +195,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setCaseCategory("category1");
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+        assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -152,7 +214,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setStatutesAndSections(statuteSectionList);
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+        assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -171,7 +233,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setStatutesAndSections(statuteSectionList);
         request.setCases(courtCase);
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+        assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
@@ -195,14 +257,76 @@ public class CaseRegistrationValidatorTest {
         courtCase.setLitigants(litigantList);
         request.setCases(courtCase);
 
-         assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+        assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }
 
     @Test
-    void testvalidateUpdateRequest_ExistingApplication_INVALID_LINKEDCASE_ID() {
+    void testvalidateUpdateRequest_ExistingApplication() {
         CourtCase courtCase = new CourtCase();
         courtCase.setTenantId("pg");
-        courtCase.setCaseCategory("civil");
+        courtCase.setCaseCategory("criminal");
+        Document document = new Document();
+        document.setFileStore("123");
+        courtCase.setDocuments(List.of(document));
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+        AdvocateMapping advocateMapping = new AdvocateMapping();
+        advocateMapping.setAdvocateId("123");
+        courtCase.setRepresentatives(List.of(advocateMapping));
+        Party party = new Party();
+        party.setIndividualId("123");
+        courtCase.setLitigants(List.of(party));
+        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
+        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
+        courtCase.setFilingDate(System.currentTimeMillis());
+
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setCaseId(linkedCase.getId().toString());
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        caseCriteriaList.add(caseCriteria);
+        caseSearchRequest.setRequestInfo(new RequestInfo());
+        caseSearchRequest.setCriteria(caseCriteriaList);
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        User userInfo = new User();
+        userInfo.setId(1234L);
+        userInfo.setUserName("test-user");
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(userInfo);
+        caseRequest.setRequestInfo(requestInfo);
+
+        when(configuration.getCaseCategoryPath()).thenReturn("$.CaseCategory[?(@.code == '{}')]");
+        when(configuration.getCaseModule()).thenReturn("$.CaseCategory");
+
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"CaseCategory\": [ { \"code\": \"criminal\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.CaseCategory[?(@.code == 'criminal')]"))
+                    .thenReturn(List.of(Map.of("code", "criminal")));
+        }
+
+        lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
+        lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
+        lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
+        lenient().when(configuration.getCaseModule()).thenReturn("case");
+
+        when(caseRepository.getApplications(any(), any())).thenReturn(caseCriteriaList);
+
+        Boolean result = validator.validateUpdateRequest(caseRequest);
+        assertTrue(result);
+    }
+
+    @Test
+    void testvalidateUpdateRequest_EmptyApplication() {
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setCaseCategory("criminal");
         Document document = new Document();
         document.setFileStore("123");
         courtCase.setDocuments(List.of(document));
@@ -219,13 +343,63 @@ public class CaseRegistrationValidatorTest {
         courtCase.setLinkedCases(List.of(linkedCase));
         courtCase.setStatutesAndSections(List.of(new StatuteSection()));
         courtCase.setFilingDate(System.currentTimeMillis());
-        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-        mdmsRes.put("case", new HashMap<>());
-        List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
+
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setCaseId(linkedCase.getId().toString());
+        caseCriteria.setResponseList(new ArrayList<>());
+        caseCriteriaList.add(caseCriteria);
+        caseSearchRequest.setRequestInfo(new RequestInfo());
+        caseSearchRequest.setCriteria(caseCriteriaList);
+
+        when(configuration.getCaseCategoryPath()).thenReturn("$.CaseCategory[?(@.code == '{}')]");
+        when(configuration.getCaseModule()).thenReturn("$.CaseCategory");
+
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"CaseCategory\": [ { \"code\": \"criminal\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.CaseCategory[?(@.code == 'criminal')]"))
+                    .thenReturn(List.of(Map.of("code", "criminal")));
+        }
+
+        when(caseRepository.getApplications(any(), any())).thenReturn((Collections.singletonList(caseCriteria)));
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        User userInfo = new User();
+        userInfo.setId(1234L);
+        userInfo.setUserName("test-user");
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(userInfo);
+        caseRequest.setRequestInfo(requestInfo);
+        Boolean result = validator.validateUpdateRequest(caseRequest);
+        assertTrue(!result);
+    }
+
+    @Test
+    void testvalidateUpdateRequest_ExistingApplication_INVALID_LINKEDCASE_ID() {
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setCaseCategory("criminal");
+        Document document = new Document();
+        document.setFileStore("123");
+        courtCase.setDocuments(List.of(document));
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+        AdvocateMapping advocateMapping = new AdvocateMapping();
+        advocateMapping.setAdvocateId("123");
+        courtCase.setRepresentatives(List.of(advocateMapping));
+        Party party = new Party();
+        party.setIndividualId("123");
+        courtCase.setLitigants(List.of(party));
+        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
+        courtCase.setLinkedCases(List.of(linkedCase));
+        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
+        courtCase.setFilingDate(System.currentTimeMillis());
 
         CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
         List<CaseCriteria> caseCriteriaList = new ArrayList<>();
@@ -238,7 +412,6 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
 
-        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn("mdmsRes");
 
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
         lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
@@ -253,7 +426,6 @@ public class CaseRegistrationValidatorTest {
 
     @Test
     void testvalidateUpdateRequest_ExistingApplicationMissingTenantId() {
-        CaseCriteria caseCriteria = new CaseCriteria();
         CourtCase courtCase = new CourtCase();
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
@@ -264,7 +436,6 @@ public class CaseRegistrationValidatorTest {
     @Test
     void testvalidateUpdateRequest_ExistingApplicationMissingFilingDate() {
         CourtCase courtCase = new CourtCase();
-        CaseCriteria caseCriteria = new CaseCriteria();
         courtCase.setTenantId("pg");
         Workflow workflow = new Workflow();
         workflow.setAction("random_action");
@@ -310,13 +481,6 @@ public class CaseRegistrationValidatorTest {
         LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
         courtCase.setStatutesAndSections(List.of(new StatuteSection()));
         courtCase.setFilingDate(System.currentTimeMillis());
-        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-        mdmsRes.put("case", new HashMap<>());
-        List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
 
         CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
         List<CaseCriteria> caseCriteriaList = new ArrayList<>();
@@ -325,8 +489,6 @@ public class CaseRegistrationValidatorTest {
         caseCriteriaList.add(caseCriteria);
         caseSearchRequest.setRequestInfo(new RequestInfo());
         caseSearchRequest.setCriteria(caseCriteriaList);
-
-        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn("mdmsRes");
 
         lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenThrow(new CustomException());
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
@@ -421,7 +583,7 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setRequestInfo(new RequestInfo());
 
         lenient().when(caseRepository.getApplications(any(), any())).thenReturn(new ArrayList<>());
-       assertThrows(CustomException.class, () -> validator.validateUpdateRequest(caseRequest));
+        assertThrows(CustomException.class, () -> validator.validateUpdateRequest(caseRequest));
     }
     @Test
     public void testValidateLitigantJoinCase_ValidIndividualIdAndDocuments() {
@@ -555,4 +717,3 @@ public class CaseRegistrationValidatorTest {
         assertEquals("Invalid document details", exception.getMessage());
     }
 }
-

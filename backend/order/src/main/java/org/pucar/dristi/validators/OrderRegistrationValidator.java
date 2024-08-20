@@ -61,6 +61,7 @@ public class OrderRegistrationValidator {
     public boolean validateApplicationExistence(OrderRequest orderRequest) {
         //validate documents
         validateDocuments(orderRequest.getOrder());
+
         if(!ADMINISTRATIVE.equalsIgnoreCase(orderRequest.getOrder().getOrderCategory()) && !caseUtil.fetchCaseDetails(orderRequest.getRequestInfo(), orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber())){
             throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
         }

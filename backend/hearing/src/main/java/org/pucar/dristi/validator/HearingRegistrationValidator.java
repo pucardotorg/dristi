@@ -68,6 +68,9 @@ public class HearingRegistrationValidator {
         // Validate userInfo and tenantId
         baseValidations(requestInfo);
 
+        // Validating Hearing Type
+        validateMdms(requestInfo, hearing);
+
         // Validate individual ids
         if(config.getVerifyAttendeeIndividualId())
             validateIndividualExistence(requestInfo, hearing);
@@ -78,8 +81,6 @@ public class HearingRegistrationValidator {
         // Validate applicationNumbers
         validateApplicationExistence(requestInfo, hearing);
 
-        // Validating Hearing Type
-        validateMdms(requestInfo, hearing);
         validateDocuments(hearing);
 
     }
