@@ -303,14 +303,11 @@ export const UICustomizations = {
           );
         case "Action":
           return (
-            <span className="action-link">
-              <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
-              >
-                {" "}
-                {t("Verify")}
-              </Link>
-            </span>
+            <Link
+              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
+            >
+              <span className="action-link"> {t("Verify")}</span>
+            </Link>
           );
         case "User Type":
           return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
