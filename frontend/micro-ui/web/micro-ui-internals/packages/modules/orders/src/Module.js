@@ -16,7 +16,7 @@ import PaymentForSummonModal from "./pages/employee/PaymentForSummonModal";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
-  const moduleCode = ["orders", "common", "workflow"];
+  const moduleCode = ["orders", "hearings", "common", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({
     stateCode,
