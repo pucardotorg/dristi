@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "hearing",
-      "business": "hearing-services",
+      "businessService": "hearing-default",
+      "business": "hearing",
       "businessServiceSla": 30,
       "states": [
         {
@@ -38,6 +38,13 @@
               "nextState": "OPTOUT",
               "roles": [
                 "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "BULK_RESCHEDULE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_SCHEDULER"
               ]
             },
             {

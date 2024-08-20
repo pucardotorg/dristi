@@ -17,6 +17,8 @@ import org.pucar.dristi.validator.HearingRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -90,8 +92,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
                 .build();
 
         User user = new User();
@@ -120,8 +122,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now())
-                .toDate(LocalDate.now())
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
                 .build();
 
         User user = new User();
@@ -286,5 +288,82 @@ public class HearingServiceTest {
         assertEquals("Validation failed", exception.getMessage());
         verify(enrichmentUtil, never()).enrichHearingApplicationUponUpdate(any(HearingRequest.class));
         verify(hearingRepository, never()).updateTranscriptAdditionalAttendees(any(Hearing.class));
+    }
+
+    @Test
+    void updateStartAndTime_success() {
+        // Arrange
+        UpdateTimeRequest updateTimeRequest = new UpdateTimeRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("test-user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        updateTimeRequest.setRequestInfo(requestInfo);
+
+        Hearing hearing = new Hearing();
+        hearing.setHearingId("hearing-id");
+        hearing.setAuditDetails(new AuditDetails());
+
+        updateTimeRequest.setHearings(List.of
+                (hearing));
+
+        Hearing existingHearing = new Hearing();
+        existingHearing.setAuditDetails(new AuditDetails());
+
+        when(validator.validateHearingExistence(requestInfo, hearing)).thenReturn(existingHearing);
+
+        // Act
+        hearingService.updateStartAndTime(updateTimeRequest);
+
+        // Assert
+        assertEquals(userInfo.getUuid(), hearing.getAuditDetails().getLastModifiedBy());
+        assertNotNull(hearing.getAuditDetails().getLastModifiedTime());
+    }
+
+    @Test
+    void updateStartAndTime_missingHearingId() {
+        // Arrange
+        UpdateTimeRequest updateTimeRequest = new UpdateTimeRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("test-user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        updateTimeRequest.setRequestInfo(requestInfo);
+
+        Hearing hearing = new Hearing();
+        updateTimeRequest.setHearings(List.of(hearing));
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateStartAndTime(updateTimeRequest));
+        assertEquals("Exception while updating hearing start and end time", exception.getCode());
+        assertEquals("Hearing Id is required for updating start and end time", exception.getMessage());
+
+        verify(producer, never()).push(anyString(), any());
+    }
+
+    @Test
+    void updateStartAndTime_exception() {
+        // Arrange
+        UpdateTimeRequest updateTimeRequest = new UpdateTimeRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("test-user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        updateTimeRequest.setRequestInfo(requestInfo);
+
+        Hearing hearing = new Hearing();
+        hearing.setHearingId("hearing-id");
+        hearing.setAuditDetails(new AuditDetails());
+
+        updateTimeRequest.setHearings(List.of(hearing));
+
+        when(validator.validateHearingExistence(requestInfo, hearing)).thenThrow(new RuntimeException("Validation failed"));
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateStartAndTime(updateTimeRequest));
+        assertEquals("Exception while updating hearing start and end time", exception.getCode());
+        assertEquals("Error occurred while updating hearing start and end time: Validation failed", exception.getMessage());
+
+        verify(producer, never()).push(anyString(), any());
     }
 }

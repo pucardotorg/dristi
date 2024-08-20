@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "async-order-submission",
-      "businessService": "async-order-submission-managelifecycle",
+      "business": "application",
+      "businessService": "application-order-submission-default",
       "businessServiceSla": 30,
       "states": [
         {

@@ -122,6 +122,32 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
+  /application/v1/addcomment:
+    post:
+      tags:
+        - Application
+      summary: add comments to application
+      requestBody:
+        description: Details for the new application comment + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationAddCommentRequest'
+        required: true
+      responses:
+        "201":
+          description: success
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationAddCommentResponse'
+        "400":
+          description: application(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     ApplicationSearchRequest:
@@ -260,8 +286,8 @@ components:
           maxLength: 36
           description: could be the orderID due to which this application is filed, for example, application to revoke the penalty
         createdDate:
-          type: string
-          format: datetime
+          type: integer
+          format: int64
           description: the date on which the application was created
         createdBy:
           type: string
@@ -343,3 +369,31 @@ components:
         auditdetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
       required: [tenantId, artifactId, individualId, comment]
+      
+    ApplicationAddCommentRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        applicationAddComment:
+          $ref: '#/components/schemas/ApplicationAddComment'
+            
+    ApplicationAddCommentResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        applicationAddComment:
+          $ref: '#/components/schemas/ApplicationAddComment'
+          
+    ApplicationAddComment:
+      type: object
+      properties:
+        applicationNumber:
+          type: string
+          description: The application number for which the comment is being added
+        comment:
+          type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific application.
+          items:
+            $ref: '#/components/schemas/Comment'

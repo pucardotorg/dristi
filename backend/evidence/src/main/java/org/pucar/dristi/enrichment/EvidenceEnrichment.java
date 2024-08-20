@@ -52,6 +52,7 @@ public class EvidenceEnrichment {
                 }
 
                 evidenceRequest.getArtifact().setIsActive(true);
+                evidenceRequest.getArtifact().setCreatedDate(System.currentTimeMillis());
                 evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(0));
 
                 if (evidenceRequest.getArtifact().getFile() != null) {
@@ -129,6 +130,16 @@ public class EvidenceEnrichment {
         } catch (Exception e) {
             log.error("Error enriching evidence application upon update: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service during  update process: " + e.toString());
+        }
+    }
+
+    public void enrichCommentUponCreate(Comment comment, AuditDetails auditDetails) {
+        try {
+            comment.setId(UUID.randomUUID());
+            comment.setAuditdetails(auditDetails);
+        } catch (Exception e) {
+            log.error("Error enriching comment upon create: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching comment upon create: " + e.getMessage());
         }
     }
 }

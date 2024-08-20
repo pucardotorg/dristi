@@ -57,7 +57,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .caseId(rs.getString("caseid"))
                             .filingNumber(rs.getString("filingnumber"))
                             .referenceId(toUUID(rs.getString("referenceid")))
-                            .createdDate(rs.getString("createddate"))
+                            .createdDate(rs.getLong("createddate"))
                             .createdBy(toUUID(rs.getString("applicationcreatedby")))
                             .tenantId(rs.getString("tenantid"))
                             .id(toUUID(rs.getString("id")))

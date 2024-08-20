@@ -138,4 +138,14 @@ public class Configuration {
 
     @Value("${mdms.application.module.name}")
     private String applicationModule;
+
+    @Value("${application.kafka.comments.update.topic}")
+    private String applicationUpdateCommentsTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }

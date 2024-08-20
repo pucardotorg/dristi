@@ -135,4 +135,7 @@ public class Configuration {
 
 	@Value("${mdms.evidence.module.name}")
 	private String evidenceModule;
+
+	@Value("${evidence.kafka.comments.update.topic}")
+	private String evidenceUpdateCommentsTopic;
 }

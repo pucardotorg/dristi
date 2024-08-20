@@ -2,7 +2,7 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -96,7 +96,7 @@ public class ApplicationService {
                 applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
-                log.error("Error while fetching to search results {}", e.getMessage());
+                log.error("Error while fetching to search results {}", e.toString());
                 throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
             }
         }
@@ -106,12 +106,46 @@ public class ApplicationService {
             return applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists());
         }
         catch (CustomException e){
-            log.error("Error while checking application exist {}", e.getMessage());
+            log.error("Error while checking application exist {}", e.toString());
             throw e;
         }
         catch (Exception e){
-            log.error("Error while checking application exist {}", e.getMessage());
-            throw new CustomException(APPLICATION_EXIST_EXCEPTION,e.getMessage());
+            log.error("Error while checking application exist {}", e.toString());
+            throw new CustomException(APPLICATION_EXIST_EXCEPTION, e.getMessage());
+        }
+    }
+
+    public void addComments(ApplicationAddCommentRequest applicationAddCommentRequest) {
+        try {
+            ApplicationAddComment applicationAddComment = applicationAddCommentRequest.getApplicationAddComment();
+            List<Application> applicationList = searchApplications(ApplicationSearchRequest.builder().criteria(ApplicationCriteria.builder().applicationNumber(applicationAddComment.getApplicationNumber()).tenantId(applicationAddComment.getTenantId()).build()).requestInfo(applicationAddCommentRequest.getRequestInfo()).build());
+            if(CollectionUtils.isEmpty(applicationList)){
+                throw new CustomException(VALIDATION_ERR, "Application not found");
+            }
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdBy(applicationAddCommentRequest.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedBy(applicationAddCommentRequest.getRequestInfo().getUserInfo().getUuid())
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build();
+            applicationAddComment.getComment().forEach(comment -> enrichmentUtil.enrichCommentUponCreate(comment, auditDetails));
+            Application applicationToUpdate = applicationList.get(0);
+            if(applicationToUpdate.getComment()==null)
+                applicationToUpdate.setComment(new ArrayList<>());
+            applicationToUpdate.getComment().addAll(applicationAddComment.getComment());
+            applicationAddComment.setComment(applicationToUpdate.getComment());
+            AuditDetails applicationAuditDetails = applicationToUpdate.getAuditDetails();
+            applicationAuditDetails.setLastModifiedBy(auditDetails.getLastModifiedBy());
+            applicationAuditDetails.setLastModifiedTime(auditDetails.getLastModifiedTime());
+            producer.push(config.getApplicationUpdateCommentsTopic(), applicationToUpdate);
+        }
+        catch (CustomException e){
+            log.error("Error while adding comments {}", e.toString());
+            throw e;
+        }
+        catch (Exception e){
+            log.error("Error while adding comments {}", e.toString());
+            throw new CustomException(COMMENT_ADD_ERR, e.getMessage());
         }
     }
 }

@@ -11,6 +11,7 @@ import org.pucar.dristi.repository.HearingRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.ApplicationUtil;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class HearingRegistrationValidator {
     private final IndividualService individualService;
     private final HearingRepository repository;
     private final MdmsUtil mdmsUtil;
+    private final FileStoreUtil fileStoreUtil;
     private final Configuration config;
     private final ObjectMapper mapper;
     private final CaseUtil caseUtil;
@@ -39,6 +41,7 @@ public class HearingRegistrationValidator {
             IndividualService individualService,
             HearingRepository repository,
             MdmsUtil mdmsUtil,
+            FileStoreUtil fileStoreUtil,
             Configuration config,
             ObjectMapper mapper,
             CaseUtil caseUtil,
@@ -50,6 +53,7 @@ public class HearingRegistrationValidator {
         this.mapper = mapper;
         this.caseUtil = caseUtil;
         this.applicationUtil = applicationUtil;
+        this.fileStoreUtil = fileStoreUtil;
     }
 
     /**
@@ -62,7 +66,7 @@ public class HearingRegistrationValidator {
         Hearing hearing = hearingRequest.getHearing();
 
         // Validate userInfo and tenantId
-        baseValidations(requestInfo, hearing);
+        baseValidations(requestInfo);
 
         // Validate individual ids
         if(config.getVerifyAttendeeIndividualId())
@@ -76,10 +80,11 @@ public class HearingRegistrationValidator {
 
         // Validating Hearing Type
         validateMdms(requestInfo, hearing);
+        validateDocuments(hearing);
 
     }
 
-    private void baseValidations(RequestInfo requestInfo, Hearing hearing){
+    private void baseValidations(RequestInfo requestInfo){
         if (requestInfo.getUserInfo() == null || requestInfo.getUserInfo().getTenantId() == null)
             throw new CustomException(VALIDATION_EXCEPTION, "User info not found!!!");
     }
@@ -146,6 +151,7 @@ public class HearingRegistrationValidator {
             validateIndividualExistence(requestInfo, hearing);
 
         validateMdms(requestInfo,hearing);
+        validateDocuments(hearing);
 
         return existingHearings.get(0);
     }
@@ -185,4 +191,17 @@ public class HearingRegistrationValidator {
         masterList.add("HearingType");
         return masterList;
     }
+    private void validateDocuments(Hearing hearing){
+        if (hearing.getDocuments() != null && !hearing.getDocuments().isEmpty()) {
+            hearing.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(hearing.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+
+            });
+        }
+    }
+
 }

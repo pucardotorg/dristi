@@ -143,4 +143,14 @@ public class Configuration {
 
     @Value("${mdms.hearing.module.name}")
     private String hearingModule;
+
+    @Value("${update.start.end.time.topic}")
+    public String startEndTimeUpdateTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
 }

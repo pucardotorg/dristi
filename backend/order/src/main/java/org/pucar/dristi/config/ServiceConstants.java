@@ -52,6 +52,7 @@ public class ServiceConstants {
     public static final String CITIZEN_UPPER = "CITIZEN";
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String USER = "user";
+    public static final String ADMINISTRATIVE = "ADMINISTRATIVE";
 
     public static final String PARSING_ERROR = "PARSING ERROR";
     public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -60,6 +61,7 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
-    public static final String JUDGEMENT_ID = "2";
+    public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
+    public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
 }

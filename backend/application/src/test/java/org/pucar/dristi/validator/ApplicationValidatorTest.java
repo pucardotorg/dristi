@@ -1,5 +1,6 @@
 package org.pucar.dristi.validator;
 
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -9,8 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
@@ -21,6 +25,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_FILESTORE_ID;
 import static org.pucar.dristi.config.ServiceConstants.ORDER_EXCEPTION;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,8 +35,18 @@ public class ApplicationValidatorTest {
     private ApplicationRepository repository;
     @Mock
     private CaseUtil caseUtil;
+
+    @Mock
+    private Configuration configuration;
+
+    @Mock
+    private MdmsUtil mdmsUtil;
     @Mock
     private OrderUtil orderUtil;
+
+    @Mock
+    private FileStoreUtil fileStoreUtil;
+
     @InjectMocks
     private ApplicationValidator validator;
 
@@ -52,7 +67,6 @@ public class ApplicationValidatorTest {
     public void testValidateApplication_MissingCase() {
         User user = new User();
         application.setTenantId("tenantId");
-        application.setCreatedDate("2024-05-01");
         application.setCreatedBy(UUID.randomUUID());
         application.setCaseId("CaseId");
         requestInfo.setUserInfo(user);
@@ -149,5 +163,21 @@ public class ApplicationValidatorTest {
         // Act & Assert
         assertDoesNotThrow(() -> validator.validateOrderDetails(applicationRequest));
 
+    }
+
+    @Test
+    public void testValidateOrder_InvalidDocumentFileStore() {
+        when(fileStoreUtil.doesFileExist(anyString(), any())).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, this::invokeValidator);
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    private void invokeValidator() {
+        Document document = new Document();
+        document.setFileStore("invalidFileStore");
+        application.setDocuments(Collections.singletonList(document));
+        application.setTenantId("pg");
+        validator.validateApplicationExistence(applicationRequest.getRequestInfo(), application);
     }
 }

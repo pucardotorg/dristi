@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import net.minidev.json.JSONArray;
 
 @Component
 public class CaseRegistrationValidator {

@@ -122,3 +122,24 @@ serviceMaps:
             - jsonPath: $.auditDetails.lastModifiedBy
             - jsonPath: $.auditDetails.lastModifiedTime
             - jsonPath: $.applicationNumber
+
+    - version: 1.0
+      description: Update application comments in tables
+      fromTopic: update-application-comments-application
+      isTransaction: true
+      isAuditEnabled: true
+      module: APPLICATION
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.applicationNumber
+      auditAttributeBasePath: $
+      queryMaps:
+        - query: UPDATE dristi_application SET comment = ?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE applicationNumber=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.comment
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.applicationNumber

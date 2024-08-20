@@ -58,7 +58,7 @@ public class Application   {
         @JsonProperty("createdDate")
           @NotNull
 
-                private String createdDate = null;
+                private Long createdDate = null;
 
         @JsonProperty("createdBy")
 
@@ -89,7 +89,7 @@ public class Application   {
 
         @JsonProperty("comment")
 
-                private List<Comment> comment = null;
+                private List<Comment> comment = new ArrayList<>();
 
         @JsonProperty("isActive")
           @NotNull

@@ -60,13 +60,13 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplications() {
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),  any(),any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(), anyList()))
                 .thenReturn("SELECT * FROM documents");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplications(
@@ -74,18 +74,18 @@ import static org.mockito.Mockito.*;
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(queryBuilder, times(1)).getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
-        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQuery(any(), anyList(), anyList(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList(), anyList());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class));
     }
 
     @Test
      void testGetApplicationsEmpty() {
         advocateClerkList = new ArrayList<>();
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplications(
@@ -97,13 +97,13 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByStatus() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any()))
                 .thenReturn("SELECT * FROM documents");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByStatus(
@@ -111,18 +111,18 @@ import static org.mockito.Mockito.*;
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
-        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList(),any());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class));
     }
 
     @Test
      void testGetApplicationsByStatusWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
-        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByStatus(
@@ -134,13 +134,13 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByAppNumber() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any()))
                 .thenReturn("SELECT * FROM documents");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByAppNumber(
@@ -148,18 +148,18 @@ import static org.mockito.Mockito.*;
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
-        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList(),any());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class));
     }
 
     @Test
      void testGetApplicationsByAppNumberWithEmptySuccess() {
         advocateClerkList = new ArrayList<>();
-        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByAppNumber(
@@ -171,7 +171,7 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplications_Exception() {
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> advocateClerkRepository.getApplications(
@@ -180,7 +180,7 @@ import static org.mockito.Mockito.*;
 
     @Test
     public void testGetApplications_CustomException() {
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> advocateClerkRepository.getApplications(
@@ -189,7 +189,7 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByStatus_CustomException() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByStatus(
@@ -198,7 +198,7 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByStatus_Exception() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByStatus(
@@ -207,7 +207,7 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByAppNumber_CustomException() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByAppNumber(
@@ -216,7 +216,7 @@ import static org.mockito.Mockito.*;
 
     @Test
      void testGetApplicationsByAppNumber_Exception() {
-        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByAppNumber(

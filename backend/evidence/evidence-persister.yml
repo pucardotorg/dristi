@@ -95,3 +95,23 @@ serviceMaps:
             - jsonPath: $.artifact.auditdetails.lastModifiedBy
             - jsonPath: $.artifact.auditdetails.lastModifiedTime
             - jsonPath: $.artifact.id
+
+    - version: 1.0
+      description: Update evidence comments in tables
+      fromTopic: update-evidence-comments
+      isTransaction: true
+      isAuditEnabled: true
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.artifactNumber
+      auditAttributeBasePath: $
+      queryMaps:
+        - query: UPDATE dristi_evidence_artifact SET comments = ?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE artifactNumber=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.comments
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.auditdetails.lastModifiedBy
+            - jsonPath: $.auditdetails.lastModifiedTime
+            - jsonPath: $.artifactNumber

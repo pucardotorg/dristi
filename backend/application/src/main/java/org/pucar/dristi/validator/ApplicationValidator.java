@@ -7,6 +7,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,27 @@ public class ApplicationValidator {
     private final ApplicationRepository repository;
     private final CaseUtil caseUtil;
     private final OrderUtil orderUtil;
-
     private MdmsUtil mdmsUtil;
-
     private Configuration configuration;
+    private FileStoreUtil fileStoreUtil;
 
     @Autowired
-    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil,OrderUtil orderUtil, MdmsUtil mdmsUtil, Configuration configuration) {
+    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil,OrderUtil orderUtil, MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, Configuration configuration) {
         this.repository = repository;
         this.caseUtil = caseUtil;
-        this.orderUtil = orderUtil;
         this.mdmsUtil = mdmsUtil;
         this.configuration = configuration;
+        this.orderUtil = orderUtil;
+        this.fileStoreUtil = fileStoreUtil;
     }
 
     public void validateApplication(ApplicationRequest applicationRequest) throws CustomException {
         RequestInfo requestInfo = applicationRequest.getRequestInfo();
         Application application = applicationRequest.getApplication();
+
+        //validate documents
+        validateDocuments(application);
+
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
 
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
@@ -61,6 +66,8 @@ public class ApplicationValidator {
     }
 
     public Boolean validateApplicationExistence(RequestInfo requestInfo ,Application application) {
+        //validate documents
+        validateDocuments(application);
 
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
@@ -119,5 +126,18 @@ public class ApplicationValidator {
         List<String> masterList = new ArrayList<>();
         masterList.add("ApplicationType");
         return masterList;
+    }
+
+    private void validateDocuments(Application application){
+        if (application.getDocuments() != null && !application.getDocuments().isEmpty()) {
+            application.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(application.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+
+            });
+        }
     }
 }

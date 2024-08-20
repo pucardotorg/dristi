@@ -8,6 +8,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class OrderRegistrationValidator {
     private OrderRepository repository;
 
     private CaseUtil caseUtil;
+    private FileStoreUtil fileStoreUtil;
 
     private MdmsUtil mdmsUtil;
 
@@ -32,11 +34,12 @@ public class OrderRegistrationValidator {
 
 
     @Autowired
-    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil,  MdmsUtil mdmsUtil, Configuration configuration) {
+    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil,  MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil,Configuration configuration) {
         this.repository = repository;
         this.caseUtil = caseUtil;
         this.mdmsUtil = mdmsUtil;
         this.configuration = configuration;
+        this.fileStoreUtil = fileStoreUtil;
     }
 
     public void validateOrderRegistration(OrderRequest orderRequest) throws CustomException {
@@ -50,10 +53,17 @@ public class OrderRegistrationValidator {
 
         //validate MDMS
         validateMdms(orderRequest);
+
+        //validate documents
+        validateDocuments(orderRequest.getOrder());
     }
 
     public boolean validateApplicationExistence(OrderRequest orderRequest) {
-
+        //validate documents
+        validateDocuments(orderRequest.getOrder());
+        if(!ADMINISTRATIVE.equalsIgnoreCase(orderRequest.getOrder().getOrderCategory()) && !caseUtil.fetchCaseDetails(orderRequest.getRequestInfo(), orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber())){
+            throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
+        }
         Order order = orderRequest.getOrder();
 
         OrderExists orderExists = OrderExists.builder().build();
@@ -92,5 +102,17 @@ public class OrderRegistrationValidator {
         masterList.add("OrderCategory");
 
         return masterList;
+    }
+    private void validateDocuments(Order order){
+        if (order.getDocuments() != null && !order.getDocuments().isEmpty()) {
+            order.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(order.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+
+            });
+        }
     }
 }
