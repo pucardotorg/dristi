@@ -50,6 +50,8 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
     modalData: {},
     isAadharVerified: false,
   });
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
   const [isDisabled, setIsDisabled] = useState(false);
   const toast = useToast();
   const inputs = useMemo(
@@ -191,7 +193,13 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                   label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
                   additionalElements={{}}
                   inline
-                  text={isUserVerified ? t("CS_ID_VERIFIED_NOTE") : t("CS_AADHAR_VERIFICATION_NOTE")}
+                  text={
+                    isUserVerified
+                      ? isAdvocateFilingCase
+                        ? t("CS_ADVOCATE_VERIFY_COMPLAINANT_ID")
+                        : t("CS_ID_VERIFIED_NOTE")
+                      : t("CS_AADHAR_VERIFICATION_NOTE")
+                  }
                   textStyle={{}}
                   className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
                 />
