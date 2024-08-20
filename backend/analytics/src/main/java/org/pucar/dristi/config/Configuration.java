@@ -102,13 +102,23 @@ public class Configuration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
-	// MDMS Hearing module name
-	@Value("${egov.mdms.module.name}")
-	private String mdmsModuleName;
+	@Value("${egov.mdms.pending.task.module.name}")
+	private String mdmsPendingTaskModuleName;
 
-	// MDMS Hearing Type Master List name
-	@Value("${egov.mdms.master.name}")
-	private String mdmsMasterName;
+	@Value("${egov.mdms.pending.task.master.name}")
+	private String mdmsPendingTaskMasterName;
+
+	@Value("${egov.mdms.case.overall.status.module.name}")
+	private String mdmsCaseOverallStatusModuleName;
+
+	@Value("${egov.mdms.case.overall.status.master.name}")
+	private String mdmsCaseOverallStatusMasterName;
+
+	@Value("${egov.mdms.case.outcome.module.name}")
+	private String mdmsCaseOutcomeModuleName;
+
+	@Value("${egov.mdms.case.outcome.master.name}")
+	private String mdmsCaseOutcomeMasterName;
 
 	@Value("${egov.hearing.business.services}")
 	private String hearingBusinessServices;

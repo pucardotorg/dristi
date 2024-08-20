@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
-import org.pucar.dristi.config.PendingTaskMapConfig;
+import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +48,12 @@ public class IndexerUtils {
 
     private final ObjectMapper mapper;
 
-	private final PendingTaskMapConfig pendingTaskMapConfig;
+	private final MdmsDataConfig mdmsDataConfig;
 
 	private final CaseOverallStatusUtil caseOverallStatusUtil;
 
 	@Autowired
-    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, ObjectMapper mapper, PendingTaskMapConfig pendingTaskMapConfig, CaseOverallStatusUtil caseOverallStatusUtil) {
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, ObjectMapper mapper, MdmsDataConfig mdmsDataConfig, CaseOverallStatusUtil caseOverallStatusUtil) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
@@ -61,7 +61,7 @@ public class IndexerUtils {
         this.taskUtil = taskUtil;
         this.applicationUtil = applicationUtil;
         this.mapper = mapper;
-        this.pendingTaskMapConfig = pendingTaskMapConfig;
+        this.mdmsDataConfig = mdmsDataConfig;
         this.caseOverallStatusUtil = caseOverallStatusUtil;
     }
 
@@ -204,7 +204,7 @@ public class IndexerUtils {
 		String name = null;
 		boolean isCompleted = true;
 
-		List<PendingTaskType> pendingTaskTypeList = pendingTaskMapConfig.getPendingTaskTypeMap().get(entityType);
+		List<PendingTaskType> pendingTaskTypeList = mdmsDataConfig.getPendingTaskTypeMap().get(entityType);
 		if (pendingTaskTypeList == null) return caseDetails;
 
 		// Determine name and isCompleted based on status and action
@@ -229,7 +229,6 @@ public class IndexerUtils {
 		// Add additional details to the caseDetails map
 		caseDetails.putAll(entityDetails);
 		caseDetails.put("name", name);
-		caseDetails.put("isCompleted", Boolean.toString(isCompleted));
 
 		return caseDetails;
 	}
