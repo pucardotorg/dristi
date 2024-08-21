@@ -10,6 +10,14 @@ const displayError = ({ t, error, name }, customErrorMsg) => (
 
 const fileValidationStatus = (file, regex, maxSize, t, notSupportedError, maxFileErrorMessage) => {
   const updatedRegex = typeof regex === "string" ? new RegExp(regex.replace("/i", "").replace("/(.*?)", "(.*?)")) : regex;
+  const fileNameParts = file?.name.split(".");
+  const extension = fileNameParts.pop().toLowerCase();
+  const fileNameWithoutExtension = fileNameParts.join(".");
+  const newFileName = `${fileNameWithoutExtension}.${extension}`;
+  file = new File([file], newFileName, {
+    type: file?.type,
+    lastModified: file?.lastModified,
+  });
   const status = { valid: true, name: file?.name?.substring(0, 15), error: "" };
   if (!file) return;
 
@@ -83,7 +91,21 @@ const MultiUploadWrapper = ({
   const uploadMultipleFiles = (state, payload) => {
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
-    const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
+    const newUploads = filesData?.map((file, index) => {
+      if (file?.name) {
+        const fileNameParts = file?.name.split(".");
+        const extension = fileNameParts.pop().toLowerCase();
+        const fileNameWithoutExtension = fileNameParts.join(".");
+        const newFileName = `${fileNameWithoutExtension}.${extension}`;
+        file = new File([file], newFileName, {
+          type: file?.type,
+          lastModified: file?.lastModified,
+        });
+        return [newFileName, { file, fileStoreId: fileStoreIds[index] }];
+      } else {
+        return filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
+      }
+    });
     return [...newUploads];
   };
 

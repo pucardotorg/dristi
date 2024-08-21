@@ -86,6 +86,19 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
+    currentValue = currentValue.map((item) => {
+      if (item?.name) {
+        const fileNameParts = item?.name.split(".");
+        const extension = fileNameParts.pop().toLowerCase();
+        const fileNameWithoutExtension = fileNameParts.join(".");
+        return new File([item], `${fileNameWithoutExtension}.${extension}`, {
+          type: item?.type,
+          lastModified: item?.lastModified,
+        });
+      } else {
+        return item;
+      }
+    });
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
     if (file.size > maxFileSize) {
       setError(config.key, { message: `${t("CS_YOUR_FILE_EXCEEDED_THE")} ${input?.maxFileSize}${t("CS_COMMON_LIMIT_MB")}` });
@@ -147,7 +160,13 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
                   handleChange(data, input);
                 }}
                 name="file"
-                types={input?.fileTypes}
+                types={
+                  input?.fileTypes.includes("JPG") && !input?.fileTypes.includes("JPEG")
+                    ? [...input?.fileTypes, "JPEG"]
+                    : input?.fileTypes.includes("JPEG") && !input?.fileTypes.includes("JPG")
+                    ? [...input?.fileTypes, "JPG"]
+                    : input?.fileTypes
+                }
                 children={<DragDropJSX t={t} currentValue={currentValue} error={errors?.[config.key]} />}
                 key={input?.name}
                 onTypeError={() => {
@@ -155,11 +174,16 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
                 }}
               />
               <div className="upload-guidelines-div">
-                {input.fileTypes && input.maxFileSize ? (
+                {input?.fileTypes && input?.maxFileSize ? (
                   <p>
-                    {`${t("CS_COMMON_CHOOSE_FILE")} ${input?.fileTypes.map((type) => `.${type.toLowerCase()}`).join(` ${t("CS_COMMON_OR")} `)}. ${t(
-                      "CS_MAX_UPLOAD"
-                    )} ${input.maxFileSize}MB`}
+                    {`${t("CS_COMMON_CHOOSE_FILE")} ${
+                      input?.fileTypes.length > 1
+                        ? `${input?.fileTypes
+                            .slice(0, -1)
+                            .map((type) => `.${type.toLowerCase()}`)
+                            .join(", ")} ${t("CS_COMMON_OR")} .${input?.fileTypes[input?.fileTypes.length - 1].toLowerCase()}`
+                        : `.${input?.fileTypes[0].toLowerCase()}`
+                    }. ${t("CS_MAX_UPLOAD")} ${input.maxFileSize}MB`}
                   </p>
                 ) : (
                   <p>{input.uploadGuidelines}</p>

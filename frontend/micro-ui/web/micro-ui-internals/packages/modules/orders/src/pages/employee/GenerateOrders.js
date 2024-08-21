@@ -1673,7 +1673,6 @@ const GenerateOrders = () => {
       }
     }
     if (orderType && ["WARRANT"].includes(orderType)) {
-      debugger;
       if (!currentFormData?.bailInfo?.noOfSureties) {
         setFormErrors.current("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
         return;

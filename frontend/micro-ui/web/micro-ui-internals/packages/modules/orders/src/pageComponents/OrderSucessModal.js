@@ -17,12 +17,12 @@ function OrderSucessModal({ order, t, handleDownloadOrders, handleClose, actionS
     subHeader: "CS_ORDER_CREATED_SUBTEXT",
     caseInfo: [
       {
-        key: "ORDER_ISSUE_DATE",
+        key: t("ORDER_ISSUE_DATE"),
         value: getFormattedDate(),
         copyData: false,
       },
       {
-        key: `${t("ORDER_ID")}:${t(order?.orderType)}`,
+        key: `${t("ORDER_ID")} : ${t("ORDER_TYPE_" + order?.orderType)}`,
         value: order?.orderNumber,
         copyData: true,
       },
