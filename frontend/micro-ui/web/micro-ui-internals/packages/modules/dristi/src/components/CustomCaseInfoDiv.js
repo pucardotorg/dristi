@@ -62,11 +62,12 @@ const CustomCaseInfoDiv = ({ t, data, column = 3, children, style, ...props }) =
 
   return (
     <React.Fragment>
-      {data && data.length > 0 && (
-        <div className="custom-case-info-div">
-          <table>
-            <tbody>
-              {partitionData(data).map((row, rowIndex) => (
+      <div className="custom-case-info-div">
+        <table>
+          <tbody>
+            {data &&
+              data.length > 0 &&
+              partitionData(data).map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {row.map(({ key, value, copyData }, cellIndex) => (
                     <td key={cellIndex} className={`${props?.tableDataClassName} column-${column}`}>
@@ -90,11 +91,10 @@ const CustomCaseInfoDiv = ({ t, data, column = 3, children, style, ...props }) =
                   ))}
                 </tr>
               ))}
-            </tbody>
-          </table>
-          {children}
-        </div>
-      )}
+          </tbody>
+        </table>
+        {children}
+      </div>
     </React.Fragment>
   );
 };
