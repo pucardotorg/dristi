@@ -25,9 +25,8 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
   );
 
   const getLatLngByPincode = async (pincode) => {
-    const response = await Axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyAASfCFja6YxwDzEAzhHFc8B-17TNTCV0g`
-    );
+    const key = window?.globalConfigs?.getConfig("GMAPS_API_KEY");
+    const response = await Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=${key}`);
     return response;
   };
 
