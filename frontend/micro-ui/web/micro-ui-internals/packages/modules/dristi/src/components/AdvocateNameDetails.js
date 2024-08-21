@@ -146,9 +146,9 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
   );
 
   return (
-    <div style={{ marginTop: "20px" }}>
+    <div className={"advocate-basic-info"}>
       {formData.advocateBarRegNumberWithName && (
-        <div>
+        <React.Fragment>
           {inputs?.map((input, index) => {
             let currentValue = advocateName[input.name] || "";
             return (
@@ -166,7 +166,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
               </React.Fragment>
             );
           })}
-        </div>
+        </React.Fragment>
       )}
       {!formData.advocateBarRegNumberWithName && <div></div>}
     </div>

@@ -742,7 +742,25 @@
   }
 }
 
+.advocate-detail.disable-form,
 .advocate-detail {
+  .label-field-pair {
+    margin-bottom: 40px;
+    .advocate-basic-info {
+      .card-label {
+        margin-bottom: 8px !important;
+      }
+      .label-field-pair {
+        margin-bottom: 16px !important;
+      }
+    }
+  }
+  .user-details-form-style {
+    input {
+      margin: 0px !important;
+    }
+  }
+
   .select-wrap {
     margin: 0px !important;
     max-width: 100%;
