@@ -133,7 +133,7 @@ public class EncryptionDecryptionUtil {
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, RequestInfo requestInfo) {
 
-        if (objectToDecrypt instanceof List list) {
+        if (objectToDecrypt instanceof List<?> list) {
             if (list.isEmpty())
                 return false;
             if (list.size() > 1)
@@ -171,7 +171,7 @@ public class EncryptionDecryptionUtil {
     }
 
     private boolean isDecryptionForIndividualUser(Object objectToDecrypt) {
-        return ((List) objectToDecrypt).size() == 1;
+        return ((List<?>) objectToDecrypt).size() == 1;
     }
 
     public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, RequestInfo requestInfo) {
