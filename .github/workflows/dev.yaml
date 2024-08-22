@@ -2,10 +2,14 @@ name: dristi workflow
 on:
   push:
     branches:
-      - dev-env
+      - develop
+    paths:
+      - 'frontend/micro-ui/**'
   pull_request:
     branches:
       - develop
+    paths:
+      - 'frontend/micro-ui/**'
   workflow_dispatch:
 jobs:
   docker_image-build:
