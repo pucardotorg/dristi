@@ -304,7 +304,7 @@ components:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
           type: object
-          description: This field is meant to hold any extra information that we want to store.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:

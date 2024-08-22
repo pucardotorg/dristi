@@ -159,28 +159,28 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
 
-      HearingCriteria:
-        type: object
-        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
-        properties:
-          filingNumber:
-            type: string
-          cnrNumber:
-            type: string
-          applicationNumber:
-            type: string
-          hearingType:
-            type: string
-          hearingId:
-            type: string
-          tenantId:
-            type: string
-          fromDate:
-            type: string
-            format: date
-          toDate:
-            type: string
-            format: date
+    HearingCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        hearingType:
+          type: string
+        hearingId:
+          type: string
+        tenantId:
+          type: string
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
 
     HearingRequest:
       type: object
@@ -236,7 +236,7 @@ components:
 
     HearingExists:
       type: object
-      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple parameters are passed, then it will be a logical AND search
       properties:
         hearingId:
           type: string
@@ -363,8 +363,8 @@ components:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
 
         additionalDetails:
-          type: string
-          description: This field is meant to hold any extra information that we want to store for a hearing.
+          type: object
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:

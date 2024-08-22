@@ -267,7 +267,7 @@ components:
         - statutesAndSections
         - litigants
       oneOf:
-        - required: [filingNumber, caseNumber]
+        - required: [filingNumber, cnrNumber]
       type: object
       properties:
         id:
@@ -412,8 +412,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
-          description: >-
-            This field is meant to hold any extra information that we want to
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
             store for a case.
         auditDetails:
           $ref: >-
@@ -454,10 +453,8 @@ components:
           items:
             type: string
         additionalDetails:
-          type: string
-          description: >-
-            This field is meant to hold any extra information to be stored as
-            part of this entity.
+          type: object
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -487,10 +484,8 @@ components:
             $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         additionalDetails:
-          type: string
-          description: >-
-            This field is meant to hold any extra information to be stored as
-            part of this entity.
+          type: object
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -539,9 +534,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
     
     Party:
       type: object
@@ -594,9 +587,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
       required:
         - tenantId
         - advocateId
@@ -647,9 +638,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
     
     CaseRequest:
       type: object
@@ -725,9 +714,7 @@ components:
           type: string
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -759,9 +746,7 @@ components:
           $ref: '#/components/schemas/Party'
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails

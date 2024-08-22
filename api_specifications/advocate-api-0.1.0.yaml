@@ -369,9 +369,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
 
 
     AdvocateSearchRequest:
@@ -500,9 +498,7 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: >-
-            Any extra fields that are not captured as first class fields can be
-            stored here as key/value pairs. Implementation specific.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
     
 
 
