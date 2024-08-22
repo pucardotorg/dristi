@@ -498,6 +498,50 @@ export const newConfig = [
       },
     ],
   },
+  {
+    body: [
+      {
+        type: "component",
+        component: "CustomCheckBoxCard",
+        key: "terms_condition",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "Terms and Conditions",
+              subLabel: "Before diving in, we'll need to verify your identity for account setup.",
+              type: "multiple",
+              name: "terms_condition",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              validation: {},
+              clearFields: { aadharNumber: "" },
+              isMandatory: true,
+              disableMandatoryFieldFor: ["aadharNumber"],
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AADHAR",
+                  name: "CS_ADHAAR",
+                  subText: "CS_ADHAAR_SUB_TEXT",
+                },
+                {
+                  code: "OTHER ID",
+                  name: "CS_OTHER",
+                  subText: "CS_OTHER_SUB_TEXT",
+                },
+              ],
+              optionsCustomStyle: {
+                top: "40px",
+              },
+              styles: { flexDirection: "column" },
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
 ];
 
 export const termsAndConditionConfig = [
