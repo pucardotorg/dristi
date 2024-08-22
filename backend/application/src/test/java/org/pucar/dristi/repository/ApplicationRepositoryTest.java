@@ -85,21 +85,21 @@ class ApplicationRepositoryTest {
 
         // Use eq and any to match arguments
         when(queryBuilder.getApplicationSearchQuery(
-                any(), anyList()))
+                any(), anyList(), anyList()))
                 .thenReturn(applicationQuery);
         when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
                 .thenReturn(applicationQuery + " ORDER BY createdTime");
-        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList()))
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),any()))
                 .thenReturn(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0");
         when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
 
-        when(jdbcTemplate.query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class), eq(rowMapper)))
+        when(jdbcTemplate.query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class),any(), eq(rowMapper)))
                 .thenReturn(applications);
-        when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class)))
+        when(jdbcTemplate.queryForObject(eq(countQuery),eq(Integer.class),any(Object[].class)))
                 .thenReturn(1);
 
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(documentQuery);
-        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), eq(documentRowMapper)))
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn(documentQuery);
+        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), any(),eq(documentRowMapper)))
                 .thenReturn(new HashMap<>());
         List<Application> result = applicationRepository.getApplications(searchRequest);
 
@@ -107,14 +107,14 @@ class ApplicationRepositoryTest {
         assertEquals(applications, result);
         assertEquals(1, pagination.getTotalCount());
 
-        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList());
+        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList(),anyList());
         verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
-        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList());
+        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList(),any());
         verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
 
-        verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class), eq(rowMapper));
-        verify(jdbcTemplate, times(1)).queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class));
-        verify(jdbcTemplate, times(1)).query(eq(documentQuery), any(Object[].class), eq(documentRowMapper));
+        verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class),any(), eq(rowMapper));
+        verify(jdbcTemplate, times(1)).queryForObject(eq(countQuery),eq(Integer.class), any(Object[].class));
+        verify(jdbcTemplate, times(1)).query(eq(documentQuery), any(Object[].class),any(), eq(documentRowMapper));
     }
 
 
@@ -128,7 +128,7 @@ class ApplicationRepositoryTest {
         Pagination pagination = new Pagination();
         searchRequest.setPagination(pagination);
 
-        when(queryBuilder.getApplicationSearchQuery(any(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any(),any()))
                 .thenThrow(new CustomException("TEST_ERROR", "Test error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -150,9 +150,9 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any()))
+        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any(),anyList()))
                 .thenReturn("some SQL query");
-        lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
+        lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(),any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
         List<Application> result = applicationRepository.getApplications(applicationSearchRequest);
 
@@ -173,7 +173,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(any(), any()))
+        when(queryBuilder.getApplicationSearchQuery(any(), any(),any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -219,7 +219,7 @@ class ApplicationRepositoryTest {
         applicationExistsList.add(new ApplicationExists("123", null, null, null));
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123'");
-        when(jdbcTemplate.queryForObject(any(), any(Object[].class), eq(Integer.class))).thenReturn(1);
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class),any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -232,7 +232,7 @@ class ApplicationRepositoryTest {
         applicationExistsList.add(new ApplicationExists(null, "456", null, null));
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE cnr_number = '456'");
-        when(jdbcTemplate.queryForObject(any(), any(Object[].class), eq(Integer.class))).thenReturn(1);
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -245,7 +245,7 @@ class ApplicationRepositoryTest {
         applicationExistsList.add(new ApplicationExists(null, null, "789", null));
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE application_number = '789'");
-        when(jdbcTemplate.queryForObject(any(), any(Object[].class), eq(Integer.class))).thenReturn(1);
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -258,7 +258,7 @@ class ApplicationRepositoryTest {
         applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
-        when(jdbcTemplate.queryForObject(any(), any(Object[].class), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class),any(Object[].class))).thenThrow(new RuntimeException("Database connection failed"));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }
@@ -269,7 +269,7 @@ class ApplicationRepositoryTest {
         applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
-        when(jdbcTemplate.queryForObject(any(), any(Object[].class), eq(Integer.class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
+        when(jdbcTemplate.queryForObject(any(),eq(Integer.class), any(Object[].class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }
@@ -280,7 +280,7 @@ class ApplicationRepositoryTest {
         List<Object> preparedStmtList = new ArrayList<>();
 
         lenient().when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn(countQuery);
-        lenient().when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class))).thenReturn(42);
+        lenient().when(jdbcTemplate.queryForObject(eq(countQuery), eq(Integer.class),any(Object[].class))).thenReturn(42);
         Integer result = applicationRepository.getTotalCountApplication(baseQuery, preparedStmtList);
 
         assertNotNull(result);

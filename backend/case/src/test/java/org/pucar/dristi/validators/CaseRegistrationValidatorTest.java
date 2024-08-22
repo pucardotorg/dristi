@@ -309,7 +309,7 @@ public class CaseRegistrationValidatorTest {
         lenient().when(individualService.searchIndividual(requestInfo, "123")).thenReturn(true);
         lenient().when(fileStoreUtil.doesFileExist("pg","123")).thenReturn(true);
         lenient().when(advocateUtil.doesAdvocateExist(requestInfo, "123")).thenReturn(true);
-        lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
+        lenient().when(configuration.getCaseModule()).thenReturn("case");
 
         when(caseRepository.getApplications(any(), any())).thenReturn(caseCriteriaList);
 

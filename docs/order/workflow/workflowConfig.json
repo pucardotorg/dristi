@@ -3,7 +3,7 @@
     {
       "tenantId": "kl",
       "business": "order",
-      "businessService": "order-managelifecycle",
+      "businessService": "order-default",
       "businessServiceSla": 30,
       "states": [
         {

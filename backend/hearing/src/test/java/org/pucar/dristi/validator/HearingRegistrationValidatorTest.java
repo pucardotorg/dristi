@@ -119,24 +119,6 @@ class HearingRegistrationValidatorTest {
     }
 
     @Test
-    void testValidateHearingRegistration_MissingTenantIdOrHearingType() {
-        // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setUserInfo(new User());
-        requestInfo.getUserInfo().setTenantId("tenant1");
-
-        Hearing hearing = new Hearing();
-
-        HearingRequest hearingRequest = new HearingRequest();
-        hearingRequest.setRequestInfo(requestInfo);
-        hearingRequest.setHearing(hearing);
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
-        assertEquals("tenantId and hearing type are mandatory for creating hearing", exception.getMessage());
-    }
-
-    @Test
     void testValidateHearingRegistration_InvalidIndividualId() {
         // Arrange
         RequestInfo requestInfo = new RequestInfo();

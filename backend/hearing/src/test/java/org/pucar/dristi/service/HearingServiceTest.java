@@ -92,8 +92,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
-                .toDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
                 .build();
 
         User user = new User();
@@ -122,8 +122,8 @@ public class HearingServiceTest {
                 .cnrNumber("cnrNumber")
                 .filingNumber("filingNumber")
                 .tenantId("tenantId")
-                .fromDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
-                .toDate(LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC))
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
                 .build();
 
         User user = new User();

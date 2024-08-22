@@ -1,7 +1,5 @@
 package org.pucar.dristi.repository;
 
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Slf4j
@@ -102,6 +102,10 @@ public class CaseRepository {
                     Integer totalRecords = getTotalCount(casesQuery, preparedStmtList);
                     caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
                     casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination(),preparedStmtArgList);
+                }
+                if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                    log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+                    throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
                 }
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray() ,rowMapper);
                 if (list != null) {

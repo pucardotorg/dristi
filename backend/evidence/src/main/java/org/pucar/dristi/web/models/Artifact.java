@@ -100,7 +100,7 @@ public class Artifact {
 
 	@JsonProperty("createdDate")
 
-	private Integer createdDate = null;
+	private Long createdDate = null;
 
 	@JsonProperty("isActive")
 

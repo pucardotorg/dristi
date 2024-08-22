@@ -64,7 +64,7 @@ public class HearingRegistrationValidator {
         Hearing hearing = hearingRequest.getHearing();
 
         // Validate userInfo and tenantId
-        baseValidations(requestInfo, hearing);
+        baseValidations(requestInfo);
 
         // Validate individual ids
         if(config.getVerifyAttendeeIndividualId())
@@ -83,13 +83,9 @@ public class HearingRegistrationValidator {
 
     }
 
-    private void baseValidations(RequestInfo requestInfo, Hearing hearing){
+    private void baseValidations(RequestInfo requestInfo){
         if (requestInfo.getUserInfo() == null || requestInfo.getUserInfo().getTenantId() == null)
             throw new CustomException(VALIDATION_EXCEPTION, "User info not found!!!");
-
-        if (ObjectUtils.isEmpty(hearing.getTenantId()) || ObjectUtils.isEmpty(hearing.getHearingType())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId and hearing type are mandatory for creating hearing");
-        }
     }
 
     private void validateHearingType(RequestInfo requestInfo, Hearing hearing){

@@ -47,12 +47,6 @@ public class ApplicationValidator {
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
             }
-        if(ObjectUtils.isEmpty(application.getTenantId())) {
-                throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for creating application");
-            }
-        if(ObjectUtils.isEmpty(application.getApplicationType())){
-            throw new CustomException(VALIDATION_ERR, "applicationType is mandatory for creating application");
-        }
     }
 
     public Boolean validateApplicationExistence(RequestInfo requestInfo ,Application application) {
@@ -62,18 +56,13 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getCaseId())) {
             throw new CustomException(VALIDATION_ERR, "caseId is mandatory for updating application");
         }
+
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
         }
         if(ObjectUtils.isEmpty(application.getId())){
             throw new CustomException(VALIDATION_ERR, "id is mandatory for updating application");
-        }
-        if(ObjectUtils.isEmpty(application.getTenantId())) {
-            throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating application");
-        }
-        if(ObjectUtils.isEmpty(application.getApplicationType())){
-            throw new CustomException(VALIDATION_ERR, "applicationType is mandatory for updating application");
         }
 
         ApplicationExists applicationExists = new ApplicationExists();

@@ -10,6 +10,7 @@ import org.pucar.dristi.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class HearingQueryBuilder {
         this.mapper = mapper;
     }
 
-    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria) {
+    public String getHearingSearchQuery(List<Object> preparedStmtList, HearingCriteria criteria, List<Integer> preparedStmtArgList) {
         try {
             String cnrNumber = criteria.getCnrNumber();
             String applicationNumber = criteria.getApplicationNumber();
@@ -46,16 +47,16 @@ public class HearingQueryBuilder {
             String attendeeIndividualId = criteria.getAttendeeIndividualId();
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
-            addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, "[\"" + cnrNumber + "\"]");
-            addCriteriaString(applicationNumber, query, " AND applicationNumbers @> ?::jsonb", preparedStmtList, "[\"" + applicationNumber + "\"]");
-            addCriteriaString(hearingId, query, " AND hearingid = ?", preparedStmtList, hearingId);
-            addCriteriaString(hearingType, query, " AND hearingtype = ?", preparedStmtList, hearingType);
-            addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, "[\"" + filingNumber + "\"]");
-            addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList, tenantId);
-            addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList);
-            addCriteriaDate(toDate, query, " AND startTime < ?", preparedStmtList);
-            addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList, attendeeIndividualId);
-            addListCriteria(criteria.getStatus(), query, preparedStmtList);
+            addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, preparedStmtArgList,"[\"" + cnrNumber + "\"]");
+            addCriteriaString(applicationNumber, query, " AND applicationNumbers @> ?::jsonb", preparedStmtList, preparedStmtArgList,"[\"" + applicationNumber + "\"]");
+            addCriteriaString(hearingId, query, " AND hearingid = ?", preparedStmtList,preparedStmtArgList, hearingId);
+            addCriteriaString(hearingType, query, " AND hearingtype = ?", preparedStmtList,preparedStmtArgList, hearingType);
+            addCriteriaString(filingNumber, query, " AND filingNumber @> ?::jsonb", preparedStmtList, preparedStmtArgList,"[\"" + filingNumber + "\"]");
+            addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList,preparedStmtArgList, tenantId);
+            addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList,preparedStmtArgList);
+            addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList,preparedStmtArgList);
+            addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList,preparedStmtArgList, attendeeIndividualId);
+            addListCriteria(criteria.getStatus(), query, preparedStmtList,preparedStmtArgList);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building hearing search query");
@@ -63,33 +64,36 @@ public class HearingQueryBuilder {
         }
     }
 
-    public void addListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
+    public void addListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (itemList != null && !itemList.isEmpty()) {
-            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList);
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList,preparedStmtArgList);
         }
     }
 
-    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList) {
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (!itemList.isEmpty()) {
             query.append(" AND status").append(" IN (")
                     .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
                     .append(")");
+            itemList.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
             preparedStmtList.addAll(itemList);
 
         }
     }
 
-    void addCriteriaString(String criteria, StringBuilder query, String str, List<Object> preparedStmtList, Object listItem) {
+    void addCriteriaString(String criteria, StringBuilder query, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, Object listItem) {
         if (criteria != null && !criteria.isEmpty()) {
             query.append(str);
             preparedStmtList.add(listItem);
+            preparedStmtArgList.add(Types.VARCHAR);
         }
     }
 
-    void addCriteriaDate(Long criteria, StringBuilder query, String str, List<Object> preparedStmtList) {
+    void addCriteriaDate(Long criteria, StringBuilder query, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (criteria != null) {
             query.append(str);
             preparedStmtList.add(criteria);
+            preparedStmtArgList.add(Types.BIGINT);
         }
     }
     public String addOrderByQuery(String query, Pagination pagination) {
@@ -101,7 +105,7 @@ public class HearingQueryBuilder {
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgListDoc) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -110,6 +114,7 @@ public class HearingQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgListDoc.add(Types.VARCHAR));
             }
 
 
@@ -150,9 +155,11 @@ public class HearingQueryBuilder {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
 
-    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList, List<Integer> preparedStatementArgList) {
         preparedStatementList.add(pagination.getLimit());
+        preparedStatementArgList.add(Types.DOUBLE);
         preparedStatementList.add(pagination.getOffSet());
+        preparedStatementArgList.add(Types.DOUBLE);
         return query + " LIMIT ? OFFSET ?";
     }
 }

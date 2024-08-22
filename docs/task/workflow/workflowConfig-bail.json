@@ -3,7 +3,7 @@
     {
       "tenantId": "kl",
       "businessService": "task-bail",
-      "business": "task-bail-services",
+      "business": "task",
       "businessServiceSla": 30,
       "states": [
         {

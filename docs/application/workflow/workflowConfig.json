@@ -3,7 +3,7 @@
     {
       "tenantId": "kl",
       "business": "application",
-      "businessService": "application-managelifecycle",
+      "businessService": "application-default",
       "businessServiceSla": 30,
       "states": [
         {

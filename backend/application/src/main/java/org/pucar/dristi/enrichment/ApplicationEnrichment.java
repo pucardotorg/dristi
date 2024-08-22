@@ -39,6 +39,7 @@ public class ApplicationEnrichment {
                         .build();
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
+                application.setCreatedDate(System.currentTimeMillis());
                 application.setApplicationNumber(applicationIdList.get(0));
                 application.setIsActive(true);
 

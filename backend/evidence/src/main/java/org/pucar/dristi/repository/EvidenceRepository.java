@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_SEARCH_QUERY_EXCEPTION;
+
 @Slf4j
 @Repository
 public class    EvidenceRepository {
@@ -37,11 +39,10 @@ public class    EvidenceRepository {
     public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
 
             // Artifact query building
-            String artifactQuery = queryBuilder.getArtifactSearchQuery(
-                    preparedStmtList,evidenceSearchCriteria
-            );
+            String artifactQuery = queryBuilder.getArtifactSearchQuery(preparedStmtList,preparedStmtArgList,evidenceSearchCriteria);
             artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
             log.info("Final artifact query: {}", artifactQuery);
 
@@ -49,10 +50,14 @@ public class    EvidenceRepository {
                 Integer totalRecords = getTotalCountArtifact(artifactQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 pagination.setTotalCount(Double.valueOf(totalRecords));
-                artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList);
+                artifactQuery = queryBuilder.addPaginationQuery(artifactQuery, pagination, preparedStmtList,preparedStmtArgList);
             }
 
-            List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), evidenceRowMapper);
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+                throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch");
+            }
+            List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(),evidenceRowMapper);
             log.info("DB artifact list :: {}", artifactList);
 
             // Fetch associated comments
@@ -78,7 +83,7 @@ public class    EvidenceRepository {
     public Integer getTotalCountArtifact(String baseQuery, List<Object> preparedStmtList) {
         String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
 }
 

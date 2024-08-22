@@ -3,7 +3,7 @@
     {
       "tenantId": "kl",
       "businessService": "task-warrant",
-      "business": "task-warrant-services",
+      "business": "task",
       "businessServiceSla": 30,
       "states": [
         {
