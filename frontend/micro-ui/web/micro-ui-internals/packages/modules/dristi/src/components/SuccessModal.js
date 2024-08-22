@@ -22,15 +22,15 @@ function SuccessModal({ t, onCancel, onSubmit, bannerMessage, actionSaveLabel, a
         ></Banner>
         {["caseSendBackSuccess", "caseRegisterSuccess"].includes(type) && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", height: "30px" }}>
               <p>{t("CS_CASE_ID")}</p>
               <p>{data.caseId}</p>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", height: "30px" }}>
               <p>{t("CS_CASE_NAME")}</p>
               <p>{data.caseName}</p>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", height: "30px" }}>
               <p>{t("CS_ERRORS_MARKED")}</p>
               <p>{data.errorsMarked}</p>
             </div>

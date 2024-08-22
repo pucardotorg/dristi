@@ -47,7 +47,7 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
         {input?.icon && <Icon icon={input?.icon} />}
         <h3 className="signature-title">{data?.[input?.config?.title]}</h3>
       </div>
-      {isSigned && <div style={{ width: "inherit", borderRadius: "30px", background: "#E4F2E4", color: "#00703C", padding: "10px", width: "fit-content" }}>Signed</div>}
+      {isSigned && <span className="signed">{t("SIGNED")}</span>}
       {!isSigned && (
         <div className="signed-button-group">
           <Button

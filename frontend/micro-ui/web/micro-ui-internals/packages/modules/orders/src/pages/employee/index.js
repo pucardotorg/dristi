@@ -6,13 +6,20 @@ import OrdersResponse from "./OrdersResponse";
 import OrdersCreate from "./OrdersCreate";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
-import MakeSubmission from "./MakeSubmission";
-const bredCrumbStyle={ maxWidth: "min-content" };
+import PaymentStatus from "../../components/PaymentStatus";
+import PaymentForSummonModal from "./PaymentForSummonModal";
+import ReviewSummonsNoticeAndWarrant from "./ReviewSummonsNoticeAndWarrant";
+const bredCrumbStyle = { maxWidth: "min-content" };
+const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+let userType = "employee";
+if (userInfo) {
+  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
       content: t("HOME"),
       show: true,
     },
@@ -28,17 +35,18 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path, stateCode, userType, tenants }) => {
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer className="ground-container order-submission">
         <React.Fragment>
-          <ProjectBreadCrumb location={location} />
+          <ProjectBreadCrumb location={window.location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/orders-response`} component={() => <OrdersResponse></OrdersResponse>} />
         <PrivateRoute path={`${path}/orders-create`} component={() => <OrdersCreate />} />
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
-        <PrivateRoute path={`${path}/generate-orders`} component={() => <MakeSubmission />} />
-        
-
+        {/* <PrivateRoute path={`${path}/make-submission`} component={() => <MakeSubmission />} /> */}
+        <PrivateRoute path={`${path}/Summons&Notice`} component={() => <ReviewSummonsNoticeAndWarrant />} />
+        <PrivateRoute path={`${path}/payment-screen`} component={() => <PaymentStatus />} />
+        <PrivateRoute path={`${path}/payment-modal`} component={() => <PaymentForSummonModal />} />
       </AppContainer>
     </Switch>
   );

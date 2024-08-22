@@ -38,25 +38,44 @@ import Login from "./pages/citizen/Login";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
-const Digit = window?.Digit || {};
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
+import Modal from "./components/Modal";
+import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
+import DocViewerWrapper from "./pages/employee/docViewerWrapper";
+import CustomSortComponent from "./components/CustomSortComponent";
+import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import Button from "./components/Button";
+import MultiUploadWrapper from "./components/MultiUploadWrapper";
+import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
+import { DRISTIService } from "./services";
+import CustomChooseDate from "./components/CustomChooseDate";
+import CustomCalendar from "./components/CustomCalendar";
+import CommentComponent from "./components/CommentComponent";
+import { RightArrow } from "./icons/svgIndex";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
-  const moduleCode = "DRISTI";
+  const history = useHistory();
+  const moduleCode = ["DRISTI", "CASE", "ORDERS", "SUBMISSIONS"];
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   if (isLoading) {
     return <Loader />;
   }
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
-  if (userType === "citizen") {
+  if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
     return (
       <ToastProvider>
         <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />
       </ToastProvider>
     );
+  }
+  if (path?.includes(`/${window?.contextPath}/citizen`)) {
+    history.push(`/${window?.contextPath}/employee`);
   }
   return (
     <ToastProvider>
@@ -96,6 +115,21 @@ const componentsToRegister = {
   SelectEmptyComponent,
   ScrutinyInfo,
   AdvocateNameDetails,
+  CustomRadioInfoComponent,
+  Modal,
+  CommentComponent,
+  CustomCaseInfoDiv,
+  CustomErrorTooltip,
+  CustomSortComponent,
+  CustomButton: Button,
+  DocViewerWrapper,
+  MultiUploadWrapper,
+  Button,
+  CustomCopyTextDiv,
+  DRISTIService,
+  CustomChooseDate,
+  CustomCalendar,
+  RightArrow,
 };
 
 const overrideHooks = () => {

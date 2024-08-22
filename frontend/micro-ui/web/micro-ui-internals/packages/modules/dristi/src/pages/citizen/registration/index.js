@@ -36,7 +36,7 @@ const Registration = ({ stateCode }) => {
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
   const [newParams, setNewParams] = useState(history.location.state?.newParams || {});
-  const [userTypeRegister, setUserTypeRegister] = useState(history.location.state?.userType || {});
+  const [userTypeRegister] = useState(history.location.state?.userType || {});
 
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
@@ -48,7 +48,6 @@ const Registration = ({ stateCode }) => {
   const DEFAULT_USER = "digit-user";
   const [user, setUser] = useState(null);
   const [isOtpValid, setIsOtpValid] = useState(true);
-  const searchParams = Digit.Hooks.useQueryParams();
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [error, setError] = useState(null);
   const closeToast = () => {
@@ -156,10 +155,6 @@ const Registration = ({ stateCode }) => {
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
-      setParmas((prev) => ({
-        ...prev,
-        otp: "",
-      }));
     }
   };
   const handleOtpChange = (otp) => {

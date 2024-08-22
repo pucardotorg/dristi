@@ -1,6 +1,6 @@
 import { Loader } from "@egovernments/digit-ui-components";
 import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Button from "../../../components/Button";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
@@ -8,6 +8,21 @@ import Modal from "../../../components/Modal";
 import { FileDownloadIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+import _ from "lodash";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
+
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "ES_BANNER_LABEL",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -23,7 +38,7 @@ function CaseType({ t }) {
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
   const onCancel = () => {
-    history.push("/digit-ui/citizen/dristi/home");
+    history.push("/digit-ui/citizen/home/home-pending-task");
   };
   const onSelect = () => {
     setPage(1);
@@ -79,7 +94,6 @@ function CaseType({ t }) {
     const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
       individualData?.Individual,
     ]);
-
     const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
       {
         criteria: [{ individualId }],
@@ -112,7 +126,9 @@ function CaseType({ t }) {
       return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
-    if (isLoading || isFetching || isSearchLoading) {
+    const { isLoading: mdmsLoading, data: statuteData } = useGetStatuteSection();
+
+    if (isLoading || isFetching || isSearchLoading || mdmsLoading) {
       return <Loader />;
     }
     return (
@@ -137,13 +153,12 @@ function CaseType({ t }) {
                 resolutionMechanism: "COURT",
                 caseDescription: "Case description",
                 linkedCases: [],
-                filingDate: formatDate(new Date()),
                 caseDetails: {},
                 caseCategory: "CRIMINAL",
                 statutesAndSections: [
                   {
                     tenantId,
-                    statute: "Statute",
+                    statute: statuteData?.name,
                     sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
@@ -173,7 +188,8 @@ function CaseType({ t }) {
                   ],
                 },
                 additionalDetails: {
-                  payerMobileNo: individualData?.mobileNumber,
+                  payerMobileNo: individualData?.Individual?.[0]?.mobileNumber,
+                  payerName: `${givenName} ${familyName}`,
                   ...(advocateId
                     ? {
                         advocateDetails: {
@@ -194,7 +210,7 @@ function CaseType({ t }) {
                         },
                       }
                     : {
-                        complaintDetails: {
+                        complainantDetails: {
                           formdata: [
                             {
                               isenabled: true,
@@ -240,8 +256,8 @@ function CaseType({ t }) {
                                       city: city,
                                       state: addressLine1,
                                       coordinates: {
-                                        longitude: latitude,
-                                        latitude: longitude,
+                                        longitude: longitude,
+                                        latitude: latitude,
                                       },
                                       locality: address,
                                     },
@@ -354,15 +370,9 @@ function CaseType({ t }) {
             style={{ width: "100%" }}
           />
         ))}
+        {page === 0 && <SelectCustomNote t={t} config={customNoteConfig}></SelectCustomNote>}
       </div>
-      {page === 0 && (
-        <CitizenInfoLabel
-          style={{ maxWidth: "100%", padding: "8px", borderRadius: "4px" }}
-          info={t("ES_COMMON_NOTE")}
-          text={t("ES_BANNER_LABEL")}
-          className="doc-banner"
-        ></CitizenInfoLabel>
-      )}
+
       {page === 1 && <Submitbar />}
     </Modal>
   );
