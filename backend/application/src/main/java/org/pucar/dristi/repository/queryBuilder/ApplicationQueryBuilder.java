@@ -65,7 +65,7 @@ public class ApplicationQueryBuilder {
             firstCriteria = addCriteria(applicationCriteria.getApplicationType(), query, firstCriteria, "app.applicationType = ?", preparedStmtList,preparedStmtArgList);
             firstCriteria = addCriteria(applicationCriteria.getCnrNumber(), query, firstCriteria, "app.cnrNumber = ?", preparedStmtList,preparedStmtArgList);
             firstCriteria = addCriteria(applicationCriteria.getTenantId(), query, firstCriteria, "app.tenantId = ?", preparedStmtList,preparedStmtArgList);
-            firstCriteria = addCriteria(applicationCriteria.getStatus(), query, firstCriteria, "app.status = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addListCriteria(applicationCriteria.getStatus(), query, firstCriteria, preparedStmtList,preparedStmtArgList);
             firstCriteria = addCriteria(applicationCriteria.getOwner()!=null?applicationCriteria.getOwner().toString():null, query, firstCriteria, "app.createdBy = ?", preparedStmtList,preparedStmtArgList);
             addPartialCriteria(applicationCriteria.getApplicationNumber(), query, firstCriteria, preparedStmtList,preparedStmtArgList);
 
@@ -76,6 +76,26 @@ public class ApplicationQueryBuilder {
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
     }
+
+    private boolean addListCriteria(List<String> itemList, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (itemList != null && !itemList.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList,preparedStmtArgList);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (!itemList.isEmpty()) {
+            query.append("app.status").append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            itemList.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
+            preparedStmtList.addAll(itemList);
+        }
+    }
+
     void addPartialCriteria(String criteria, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);

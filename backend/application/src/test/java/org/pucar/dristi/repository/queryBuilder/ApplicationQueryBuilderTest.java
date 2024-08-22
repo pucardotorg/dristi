@@ -94,7 +94,7 @@ class ApplicationQueryBuilderTest {
         criteria.setFilingNumber("testFilingNumber");
         criteria.setCnrNumber("testCnrNumber");
         criteria.setTenantId("testTenantId");
-        criteria.setStatus("testStatus");
+        criteria.setStatus(Collections.singletonList("testStatus"));
         criteria.setApplicationNumber("testApplicationNumber");
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -120,7 +120,6 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgList = new ArrayList<>();
 
-
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
@@ -128,7 +127,7 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList,preparedStmtArgList);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList, preparedStmtArgList);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(0, preparedStmtList.size());
@@ -244,11 +243,11 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationSearchQueryWithStatus() {
         ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("status123");
+        criteria.setStatus(Collections.singletonList("status123"));
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQueryPart = "app.status = ?";
+        String expectedQueryPart = "app.status";
         List<Integer> preparedStmtArgList = new ArrayList<>();
 
         String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList,preparedStmtArgList);
@@ -257,21 +256,6 @@ class ApplicationQueryBuilderTest {
         assertEquals(1, preparedStmtList.size());
         assertEquals("status123", preparedStmtList.get(0));
     }
-
-    @Test
-    void testGetApplicationSearchQueryWithEmptyStatus() {
-        ApplicationCriteria criteria = new ApplicationCriteria();
-        criteria.setStatus("");
-
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Integer> preparedStmtArgList = new ArrayList<>();
-
-        String query = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList,preparedStmtArgList);
-
-        assertFalse(query.contains("app.status ="));
-        assertEquals(0, preparedStmtList.size());
-    }
-
 
 
     @Test
@@ -289,7 +273,22 @@ class ApplicationQueryBuilderTest {
         assertTrue(preparedStmtList.isEmpty());
     }
 
+    @Test
+    void testGetDocumentSearchQuery() {
+        // Arrange
+        List<String> ids = List.of("1", "2", "3");
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgListDoc = new ArrayList<>();
 
+        // Act
+        String query = applicationQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgListDoc);
+
+        // Assert
+        String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore,doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id FROM dristi_application_document doc WHERE doc.application_id IN (?,?,?)";
+
+        assertEquals(expectedQuery, query, "The query should match the expected SQL statement.");
+        assertEquals(ids, preparedStmtList, "The prepared statement list should match the input IDs.");
+    }
 
 
     @Test
@@ -419,7 +418,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryCustomException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery( new ApplicationCriteria(), new ArrayList<>(), new ArrayList<>());
+            applicationQueryBuilder.getApplicationSearchQuery( new ApplicationCriteria(), new ArrayList<>(),new ArrayList<>());
         } catch (CustomException e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getCode());
         }
@@ -451,7 +450,8 @@ class ApplicationQueryBuilderTest {
         pagination.setLimit(2d);
         pagination.setOffSet(0d);
         List<Object> preparedStmtList = new ArrayList<>();
-        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList,new ArrayList<>());
+        List<Integer> preparedStmtargList = new ArrayList<>();
+        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList,preparedStmtargList);
 
         String expectedQuery = "SELECT * FROM dristi_application app WHERE app.id = '111' LIMIT ? OFFSET ?";
 

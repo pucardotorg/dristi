@@ -149,7 +149,9 @@ components:
         taskNumber:
           type: string
         status:
-          type: string
+          type: array
+          items:
+            type: string
     TaskRequest:
       type: object
       properties:

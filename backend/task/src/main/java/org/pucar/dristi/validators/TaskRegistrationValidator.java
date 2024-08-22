@@ -2,9 +2,7 @@ package org.pucar.dristi.validators;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.TaskRepository;
-import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskExists;

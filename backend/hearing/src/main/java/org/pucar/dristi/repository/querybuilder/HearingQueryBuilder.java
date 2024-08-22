@@ -56,11 +56,28 @@ public class HearingQueryBuilder {
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList,preparedStmtArgList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList,preparedStmtArgList);
             addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList,preparedStmtArgList, attendeeIndividualId);
-
+            addListCriteria(criteria.getStatus(), query, preparedStmtList,preparedStmtArgList);
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building hearing search query");
             throw new CustomException(SEARCH_QUERY_EXCEPTION, "Error occurred while building the hearing search query: " + e.getMessage());
+        }
+    }
+
+    public void addListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (itemList != null && !itemList.isEmpty()) {
+            prepareStatementAndArgumentForListCriteria(itemList, query, preparedStmtList,preparedStmtArgList);
+        }
+    }
+
+    private static void prepareStatementAndArgumentForListCriteria(List<String> itemList, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (!itemList.isEmpty()) {
+            query.append(" AND status").append(" IN (")
+                    .append(itemList.stream().map(id -> "?").collect(Collectors.joining(",")))
+                    .append(")");
+            itemList.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
+            preparedStmtList.addAll(itemList);
+
         }
     }
 

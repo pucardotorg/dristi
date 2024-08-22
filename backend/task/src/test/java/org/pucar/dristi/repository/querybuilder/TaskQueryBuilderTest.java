@@ -9,10 +9,7 @@ import org.pucar.dristi.web.models.Pagination;
 import org.pucar.dristi.web.models.TaskCriteria;
 
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -87,7 +84,7 @@ class TaskQueryBuilderTest {
         criteria.setCnrNumber("CNR123");
         criteria.setTenantId("tenant123");
         criteria.setId("ID123");
-        criteria.setStatus("InProgress");
+        criteria.setStatus(Collections.singletonList("Open"));
         criteria.setOrderId(UUID.randomUUID());
 
         List<Object> preparedStmtList = new ArrayList<>();
@@ -97,7 +94,7 @@ class TaskQueryBuilderTest {
 
         assertTrue(result.contains("task.id = ?"));
         assertTrue(result.contains("task.tenantid = ?"));
-        assertTrue(result.contains("task.status = ?"));
+        assertTrue(result.contains("task.status"));
         assertTrue(result.contains("task.orderid = ?"));
         assertTrue(result.contains("task.cnrnumber = ?"));
         assertTrue(result.contains("task.tasknumber = ?"));

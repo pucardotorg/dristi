@@ -218,6 +218,10 @@ components:
             type: string
           tenantId:
             type: string
+          status:
+            type: array
+            items:
+              type: string
           attendeeIndividualId:
             type: string
           fromDate:
