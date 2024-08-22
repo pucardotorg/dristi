@@ -96,7 +96,7 @@ paths:
   /hearing/v1/exists:
     post:
       tags:
-      - Hearing
+        - Hearing
       summary: Hearing exits or not
       requestBody:
         description: check if the Hearing(S) exists
@@ -118,7 +118,7 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
-  
+
   /hearing/v1/updateTranscript:
     post:
       tags:
@@ -145,52 +145,9 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: hearingRequest
-  /hearing/v1/update/time:
-    post:
-      tags:
-        - Hearing
-      summary: update hearing start and end time.
-      requestBody:
-        description: Details for updating start and end time + RequestInfo meta data.
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/UpdateTimeRequest'
-        required: true
-      responses:
-        "200":
-          description: ResponseInfo with hearing(s) time updated successfully
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/UpdateTimeResponse'
-        "400":
-          description: hearing(s) time update failed
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'      
+
 components:
   schemas:
-    UpdateTimeRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
-        hearings:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hearing'
-    UpdateTimeResponse:
-      type: object
-      properties:
-        ResponseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
-        hearings:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hearing'
-            
     HearingSearchRequest:
       type: object
       properties:
@@ -200,31 +157,30 @@ components:
           $ref: '#/components/schemas/HearingCriteria'
         pagination:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination            
-      HearingCriteria:
-        type: object
-        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
-        properties:
-          filingNumber:
-            type: string
-          cnrNumber:
-            type: string
-          applicationNumber:
-            type: string
-          hearingType:
-            type: string
-          hearingId:
-            type: string
-          tenantId:
-            type: string
-          attendeeIndividualId:
-            type: string
-          fromDate:
-            type: integer
-            format: int64
-          toDate:
-            type: integer
-            format: int64
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
+    HearingCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        hearingType:
+          type: string
+        hearingId:
+          type: string
+        tenantId:
+          type: string
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
 
     HearingRequest:
       type: object
@@ -280,7 +236,7 @@ components:
 
     HearingExists:
       type: object
-      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple parameters are passed, then it will be a logical AND search
       properties:
         hearingId:
           type: string
@@ -388,9 +344,6 @@ components:
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
-              isOnline:
-                type: boolean
-                description: Set it true if attendee appears online for the hearing.
         transcript:
           type: array
           items:
@@ -410,8 +363,8 @@ components:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
 
         additionalDetails:
-          type: string
-          description: This field is meant to hold any extra information that we want to store for a hearing.
+          type: object
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:

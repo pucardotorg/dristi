@@ -129,8 +129,6 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/TaskCriteria'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     TaskCriteria:
       type: object
       description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
@@ -182,8 +180,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Task'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
+
     TaskExistsRequest:
       type: object
       properties:
@@ -261,16 +258,16 @@ components:
           type: string
           description: The CNR number of the associated case. helps in faster search
         createdDate:
-          type: integer
-          format: int64
+          type: string
+          format: date
           description: the date on which the task was created. Can be treated as the start date also
         dateCloseBy:
-          type: integer
-          format: int64
+          type: string
+          format: date
           description: the date by which the task needs to be closed
         dateClosed:
-          type: integer
-          format: int64
+          type: string
+          format: date
           nullable: true
           description: the date on which the task was actually closed
         taskDescription:
@@ -302,7 +299,7 @@ components:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
           type: object
-          description: This field is meant to hold any extra information that we want to store.
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
@@ -329,7 +326,7 @@ components:
           description: reference number for the payment made like GRN number from Treasury
         additionalDetails:
           type: object
-          description: any extra information like bank reference number for the payment
+          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
         status:
           type: string
           description: status of payment
