@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +43,9 @@ class EncryptionDecryptionUtilTest {
     @Mock
     private AdvocateUtil advocateUtil;
 
+    @Mock
+    private Configuration config;
+
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     private RequestInfo requestInfo;
@@ -58,7 +62,7 @@ class EncryptionDecryptionUtilTest {
         userInfo.setRoles(Collections.singletonList(role));
         userInfo.setUuid("user-uuid");
         requestInfo.setUserInfo(userInfo);
-        encryptionDecryptionUtil = new EncryptionDecryptionUtil(encryptionService, stateLevelTenantId, abacEnabled,individualService,advocateUtil);
+        encryptionDecryptionUtil = new EncryptionDecryptionUtil(encryptionService, stateLevelTenantId, abacEnabled,individualService,advocateUtil,config);
     }
 
     @Test
