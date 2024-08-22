@@ -53,6 +53,7 @@ import CustomChooseDate from "./components/CustomChooseDate";
 import CustomCalendar from "./components/CustomCalendar";
 import CommentComponent from "./components/CommentComponent";
 import { RightArrow } from "./icons/svgIndex";
+import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -118,6 +119,7 @@ const componentsToRegister = {
   SelectReviewAccordion,
   SelectSignature,
   CustomRadioCard,
+  CustomCheckBoxCard,
   AddressComponent,
   AdhaarInput,
   AdvocateDetailComponent,

@@ -1,0 +1,42 @@
+.terms-condition {
+  form {
+    .action-bar-wrap {
+      position: relative;
+    }
+  }
+}
+
+.custom-checkbox-card {
+  .label-field-pair {
+    .card-header {
+      font-family: Roboto;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 30px;
+      text-align: center;
+      color: #0b0c0c;
+    }
+    .card-text {
+      margin: 0px;
+      width: 100%;
+      font-family: Roboto;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      text-align: center;
+      color: #0b0c0c;
+    }
+    .field {
+      .checkbox-wrap {
+        height: 38px;
+        align-items: center;
+        .label {
+          margin: 0px 0px 0px 56px !important;
+        }
+        .custom-checkbox {
+          margin: 0px !important;
+        }
+      }
+    }
+  }
+}
