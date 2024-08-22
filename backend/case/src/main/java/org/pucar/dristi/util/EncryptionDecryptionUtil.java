@@ -6,6 +6,7 @@ import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.encryption.EncryptionService;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.web.models.Advocate;
@@ -33,18 +34,20 @@ public class EncryptionDecryptionUtil {
     private final boolean abacEnabled;
     private final IndividualService individualService;
     private final AdvocateUtil advocateUtil;
+    private final Configuration config;
 
     @Autowired
     public EncryptionDecryptionUtil(@Qualifier("caseEncryptionServiceImpl") EncryptionService encryptionService,
                                     @Value("${state.level.tenant.id}") String stateLevelTenantId,
                                     @Value("${decryption.abac.enabled}") boolean abacEnabled,
                                     IndividualService individualService,
-                                    AdvocateUtil advocateUtil) {
+                                    AdvocateUtil advocateUtil, Configuration config) {
         this.encryptionService = encryptionService;
         this.stateLevelTenantId = stateLevelTenantId;
         this.abacEnabled = abacEnabled;
         this.individualService = individualService;
         this.advocateUtil = advocateUtil;
+        this.config = config;
     }
 
     public <T> T encryptObject(Object objectToEncrypt, String key, Class<T> classType) {
@@ -175,28 +178,28 @@ public class EncryptionDecryptionUtil {
         Map<String,String> keyPurposeMap = new HashMap<>();
 
         if (!abacEnabled){
-            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
+            keyPurposeMap.put("key", config.getCaseDecryptSelf());
             keyPurposeMap.put(ServiceConstants.PURPOSE,"AbacDisabled");
         }
 
         else if (isUserDecryptingForAllowedRoles(requestInfo.getUserInfo())){
-            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
+            keyPurposeMap.put("key", config.getCaseDecryptSelf());
             keyPurposeMap.put(ServiceConstants.PURPOSE,"AllowedRole");
         }
 
         else if (isUserDecryptingForSelf(objectToDecrypt, requestInfo)){
-            keyPurposeMap.put("key", CASE_DECRYPT_SELF);
+            keyPurposeMap.put("key", config.getCaseDecryptSelf());
             keyPurposeMap.put(ServiceConstants.PURPOSE,"Self");
         }
 
 
         else if (isDecryptionForIndividualUser(objectToDecrypt)){
-            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
+            keyPurposeMap.put("key", config.getCaseDecryptOther());
             keyPurposeMap.put(ServiceConstants.PURPOSE,"SingleSearchResult");
         }
 
         else{
-            keyPurposeMap.put("key", CASE_DECRYPT_OTHER);
+            keyPurposeMap.put("key", config.getCaseDecryptOther());
             keyPurposeMap.put(ServiceConstants.PURPOSE,"BulkSearchResult");
         }
 

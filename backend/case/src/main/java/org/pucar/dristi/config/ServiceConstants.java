@@ -122,9 +122,4 @@ public class ServiceConstants {
 	public static final String ADVOCATE_ROLE = "ADVOCATE_ROLE";
 
 	public static final String EMPLOYEE = "EMPLOYEE";
-
-	//	Models for encryption decryption in MDMS
-	public static final String COURT_CASE_ENCRYPT = "CourtCase";
-	public static final String CASE_DECRYPT_SELF = "CaseDecryptSelf";
-	public static final String CASE_DECRYPT_OTHER = "CaseDecryptOther";
 }
