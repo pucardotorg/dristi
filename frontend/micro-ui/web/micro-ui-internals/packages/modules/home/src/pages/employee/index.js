@@ -1,5 +1,5 @@
 import { AppContainer, BreadCrumb, PrivateRoute } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import HearingsResponse from "./HearingsResponse";
@@ -10,13 +10,15 @@ import HomePopUp from "./HomePopUp";
 import EfilingPaymentBreakdown from "../../components/EfilingPaymentDropdown";
 import EFilingPaymentRes from "../../components/EfilingPaymentRes";
 import ScheduleHearing from "./ScheduleHearing";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const bredCrumbStyle = { maxWidth: "min-content" };
-const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-let userType = "employee";
-if (userInfo) {
-  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
-}
+
 const ProjectBreadCrumb = ({ location }) => {
+  const userInfo = window?.Digit?.UserService?.getUser()?.info;
+  let userType = "employee";
+  if (userInfo) {
+    userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+  }
   const { t } = useTranslation();
   const crumbs = [
     {
@@ -25,7 +27,7 @@ const ProjectBreadCrumb = ({ location }) => {
       show: true,
     },
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}`,
       content: t(location.pathname.split("/").pop()),
       show: true,
     },
@@ -34,9 +36,18 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {
+  const Digit = useMemo(() => window?.Digit || {}, []);
   const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
   const ReIssueSummonsModal = Digit.ComponentRegistryService.getComponent("ReIssueSummonsModal") || <React.Fragment></React.Fragment>;
   const PaymentForSummonModal = Digit.ComponentRegistryService.getComponent("PaymentForSummonModal") || <React.Fragment></React.Fragment>;
+
+  const history = useHistory();
+  const hasCitizenRoute = useMemo(() => path?.split("/").includes("citizen"), [path]);
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
+
+  if (isCitizen && !hasCitizenRoute) {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
+  }
 
   return (
     <Switch>
