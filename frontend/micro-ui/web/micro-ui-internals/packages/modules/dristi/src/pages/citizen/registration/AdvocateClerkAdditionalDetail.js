@@ -1,5 +1,5 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
@@ -12,10 +12,23 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const setFormErrors = useRef(null);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const closeToast = () => {
     setShowErrorToast(false);
+  };
+
+  const getUserForAdvocateUUID = async (barRegistrationNumber) => {
+    const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
+      criteria: [
+        {
+          barRegistrationNumber: barRegistrationNumber,
+        },
+      ],
+      tenantId,
+    });
+    return advocateDetail;
   };
 
   const validateFormData = (data) => {
@@ -57,7 +70,8 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     });
     return isValid;
   };
-  const onFormValueChange = (setValue, formData, formState) => {
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    setFormErrors.current = setError;
     const formDataCopy = structuredClone(formData);
     for (const key in formDataCopy) {
       if (Object.hasOwnProperty.call(formDataCopy, key) && key === "clientDetails") {
@@ -110,10 +124,17 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
-  const onSubmit = (formData) => {
+  const onSubmit = async (formData) => {
     if (!validateFormData(formData)) {
       setShowErrorToast(!validateFormData(formData));
       return;
+    }
+    if (formData?.clientDetails?.barRegistrationNumber) {
+      const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
+      if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
+        setFormErrors.current("barRegistrationNumber", { message: "Duplicate Bar Registration Number" });
+        return;
+      }
     }
     const data = params?.userType?.clientDetails;
     const Individual = params?.IndividualPayload ? params?.IndividualPayload : { Individual: params?.Individual?.[0] };
