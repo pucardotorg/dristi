@@ -1,7 +1,7 @@
-import { CustomDropdown, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import { CustomDropdown, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { dropdownConfig, newconfigAdvocate, newconfigClerk } from "./config";
 
 const Digit = window?.Digit || {};
@@ -18,14 +18,10 @@ const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  let isMobile = window.Digit.Utils.browser.isMobile();
+  const roles = Digit.UserService.getUser()?.info?.roles;
   const history = useHistory();
-  const location = useLocation();
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type") || "advocate";
-  const actions = urlParams.get("actions");
-  const { state } = location;
-  const [isLoading, setIsLoading] = useState(false);
   const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
   const [{ userType }, setSearchParams] = useState({
     eventStatus: [],
@@ -37,25 +33,15 @@ const Inbox = ({ tenants, parentRoute }) => {
     userType: defaultType,
     ulb: tenants?.find((tenant) => tenant?.code === tenantId),
   });
+  const hasApprovalRoles = ["ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
+    if (!res) return res;
+    res = roles.some((role) => role.code === curr);
+    return res;
+  }, true);
 
-  // delay for fetching it in inbox api
-  // useEffect(() => {
-  //   const timer = () =>
-  //     setTimeout(() => {
-  //       setIsLoading(false);
-  //     }, 1500);
-
-  //   if (state?.isSentBack) {
-  //     setIsLoading(true);
-  //     timer();
-  //     window.history.replaceState({}, "");
-  //   }
-  //   return () => clearTimeout(timer());
-  // }, [state]);
-
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
+  if (!hasApprovalRoles) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
 
   return (
     <React.Fragment>
