@@ -16,7 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -24,23 +25,28 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class AdvocateService {
 
-    @Autowired
-    private AdvocateRegistrationValidator validator;
+    private final AdvocateRegistrationValidator validator;
+    private final AdvocateRegistrationEnrichment enrichmentUtil;
+    private final WorkflowService workflowService;
+    private final AdvocateRepository advocateRepository;
+    private final Producer producer;
+    private final Configuration config;
 
     @Autowired
-    private AdvocateRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private AdvocateRepository advocateRepository;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration config;
+    public AdvocateService(
+            AdvocateRegistrationValidator validator,
+            AdvocateRegistrationEnrichment enrichmentUtil,
+            WorkflowService workflowService,
+            AdvocateRepository advocateRepository,
+            Producer producer,
+            Configuration config) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.workflowService = workflowService;
+        this.advocateRepository = advocateRepository;
+        this.producer = producer;
+        this.config = config;
+    }
 
     public Advocate createAdvocate(AdvocateRequest body) {
         try {
@@ -149,15 +155,7 @@ public class AdvocateService {
     public Advocate updateAdvocate(AdvocateRequest advocateRequest) {
 
         try {
-
-            // Validate whether the application that is being requested for update indeed exists
-            Advocate existingApplication;
-            try {
-                existingApplication = validator.validateApplicationExistence(advocateRequest.getAdvocate());
-            } catch (Exception e) {
-                log.error("Error validating existing application :: {}", e.toString());
-                throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
-            }
+            Advocate existingApplication = validateExistingApplication(advocateRequest.getAdvocate());
             existingApplication.setWorkflow(advocateRequest.getAdvocate().getWorkflow());
             advocateRequest.setAdvocate(existingApplication);
 
@@ -184,5 +182,15 @@ public class AdvocateService {
         }
 
     }
+
+    private Advocate validateExistingApplication(Advocate advocate) {
+        try {
+            return validator.validateApplicationExistence(advocate);
+        } catch (Exception e) {
+            log.error("Error validating existing application :: {}", e.toString());
+            throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
+        }
+    }
+
 
 }

@@ -212,7 +212,7 @@ public class WorkflowServiceTest {
         evidenceRequest.setArtifact(artifact);
 
         // Execute the method
-        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, evidenceRequest.getRequestInfo());
+        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact);
 
         // Assertions
         assertNotNull(processInstance);
@@ -235,7 +235,7 @@ public class WorkflowServiceTest {
         evidenceRequest.setArtifact(artifact);
 
         // Execute the method
-        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, evidenceRequest.getRequestInfo());
+        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact);
 
         // Assertions
         assertNotNull(processInstance);
@@ -260,7 +260,7 @@ public class WorkflowServiceTest {
 
         // Invoke the method and verify the exception
         CustomException exception = assertThrows(CustomException.class, () -> {
-            workflowService.getProcessInstanceForArtifact(artifact, new RequestInfo());
+            workflowService.getProcessInstanceForArtifact(artifact);
         });
 
         assertEquals("CUSTOM_ERROR", exception.getCode());
@@ -277,10 +277,10 @@ public class WorkflowServiceTest {
 
         // Invoke the method and verify the exception
         CustomException exception = assertThrows(CustomException.class, () -> {
-            workflowService.getProcessInstanceForArtifact(artifact, new RequestInfo());
+            workflowService.getProcessInstanceForArtifact(artifact);
         });
 
         assertEquals("WORKFLOW_SERVICE_EXCEPTION", exception.getCode());
-        assertEquals("General exception occurred", exception.getMessage());
+        assertEquals("java.lang.RuntimeException: General exception occurred", exception.getMessage());
     }
 }

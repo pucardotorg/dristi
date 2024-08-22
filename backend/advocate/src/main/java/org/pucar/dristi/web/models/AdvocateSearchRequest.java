@@ -1,19 +1,16 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AdvocateSearchRequest
@@ -36,9 +33,5 @@ public class AdvocateSearchRequest {
 	@Valid
 	private List<AdvocateSearchCriteria> criteria = new ArrayList<>();
 
-	public AdvocateSearchRequest addCriteriaItem(AdvocateSearchCriteria criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
 
 }

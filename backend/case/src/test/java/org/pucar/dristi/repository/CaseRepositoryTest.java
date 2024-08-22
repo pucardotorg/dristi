@@ -1,5 +1,21 @@
 package org.pucar.dristi.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -11,15 +27,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
-import org.pucar.dristi.repository.rowmapper.*;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.repository.rowmapper.CaseRowMapper;
+import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LinkedCaseDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LinkedCaseRowMapper;
+import org.pucar.dristi.repository.rowmapper.LitigantDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.LitigantRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentativeRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentingDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentingRowMapper;
+import org.pucar.dristi.repository.rowmapper.RepresentiveDocumentRowMapper;
+import org.pucar.dristi.repository.rowmapper.StatuteSectionRowMapper;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRepositoryTest {
@@ -152,45 +179,46 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.addOrderByQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
 
-        lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LinkedCaseRowMapper.class))).thenReturn(linkedCasesMap);
+        lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LinkedCaseRowMapper.class))).thenReturn(linkedCasesMap);
 
-        lenient().when(queryBuilder.getLitigantSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_litigant_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LitigantRowMapper.class))).thenReturn(litigantMap);
+        lenient().when(queryBuilder.getLitigantSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_litigant_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LitigantRowMapper.class))).thenReturn(litigantMap);
 
-        lenient().when(queryBuilder.getStatuteSectionSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_statute_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class))).thenReturn(statuteSectionsMap);
+        lenient().when(queryBuilder.getStatuteSectionSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_statute_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(StatuteSectionRowMapper.class))).thenReturn(statuteSectionsMap);
 
-        lenient().when(queryBuilder.getRepresentativesSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_representive_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentativeRowMapper.class))).thenReturn(representativeMap);
+        lenient().when(queryBuilder.getRepresentativesSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_representive_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentativeRowMapper.class))).thenReturn(representativeMap);
 
-        lenient().when(queryBuilder.getRepresentingSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_representing_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingRowMapper.class))).thenReturn(representingMap);
+        lenient().when(queryBuilder.getRepresentingSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_representing_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentingRowMapper.class))).thenReturn(representingMap);
 
-        lenient().when(queryBuilder.getDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class))).thenReturn(caseDocumentMap);
+        lenient().when(queryBuilder.getDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(DocumentRowMapper.class))).thenReturn(caseDocumentMap);
 
-        lenient().when(queryBuilder.getLitigantDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_bis_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LitigantDocumentRowMapper.class))).thenReturn(caseLitigantDocumentMap);
+        lenient().when(queryBuilder.getLitigantDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_bis_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LitigantDocumentRowMapper.class))).thenReturn(caseLitigantDocumentMap);
 
-        lenient().when(queryBuilder.getLinkedCaseDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(LinkedCaseDocumentRowMapper.class))).thenReturn(caseLinkedCaseDocumentMap);
+        lenient().when(queryBuilder.getLinkedCaseDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(LinkedCaseDocumentRowMapper.class))).thenReturn(caseLinkedCaseDocumentMap);
 
-        lenient().when(queryBuilder.getRepresentativeDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentiveDocumentRowMapper.class))).thenReturn(caseRepresentiveDocumentMap);
+        lenient().when(queryBuilder.getRepresentativeDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentiveDocumentRowMapper.class))).thenReturn(caseRepresentiveDocumentMap);
 
-        lenient().when(queryBuilder.getRepresentingDocumentSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
-        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
+        lenient().when(queryBuilder.getRepresentingDocumentSearchQuery(anyList(), any(),any())).thenReturn("SELECT * FROM dristi_document_case WHERE ...");
+        lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
 
         // Invoke the method
-        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria);
+        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria, requestInfo);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any());
-        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
+        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any(),any());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(), any(CaseRowMapper.class));
 
         // Assert result
         assertEquals(expectedCourtCaseList, resultCourtCaseList.get(0).getResponseList());
@@ -235,11 +263,11 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
@@ -282,11 +310,11 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any(),any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
@@ -351,5 +379,24 @@ class CaseRepositoryTest {
             caseRepository.checkCaseExists(caseExistsList);
         });
     }
+    @Test
+    void checkCaseExists_returnsCorrectExistenceStatus() {
+        List<CaseExists> caseExistsRequest = new ArrayList<>();
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();
+        caseExistsRequest.add(caseExists1);
+        caseExistsRequest.add(caseExists2);
 
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1);
+
+        List<CaseExists> result = caseRepository.checkCaseExists(caseExistsRequest);
+
+        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+
+        assertEquals(2, result.size());
+        assertEquals(true, result.get(0).getExists());
+        assertEquals(false, result.get(1).getExists());
+    }
 }

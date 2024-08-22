@@ -1,154 +1,134 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.Pagination;
+import org.pucar.dristi.web.models.TaskCriteria;
 
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskQueryBuilderTest {
+class TaskQueryBuilderTest {
 
+    @InjectMocks
     private TaskQueryBuilder taskQueryBuilder;
 
     @BeforeEach
-    public void setup() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        taskQueryBuilder = new TaskQueryBuilder();
     }
 
     @Test
-    public void testCheckTaskExistQuery_withCnrNumber() {
-        String cnrNumber = "123";
-        String filingNumber = null;
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = '123'";
-
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
-
-        assertEquals(expectedQuery, actualQuery);
+    void testGetTotalCountQuery() {
+        String baseQuery = "SELECT * FROM dristi_task";
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_task) total_result";
+        String result = taskQueryBuilder.getTotalCountQuery(baseQuery);
+        assertEquals(expectedQuery, result);
     }
 
     @Test
-    public void testCheckTaskExistQuery_withFilingNumber() {
-        String cnrNumber = null;
-        String filingNumber = "456";
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.filingnumber = '456'";
+    void testAddPaginationQuery() {
+        String query = "SELECT * FROM dristi_task";
+        Pagination pagination = new Pagination();
+        List<Object> preparedStatementList = new ArrayList<>();
+        List<Integer> preparedStatementArgList = new ArrayList<>();
 
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
-
-        assertEquals(expectedQuery, actualQuery);
+        String result = taskQueryBuilder.addPaginationQuery(query, pagination, preparedStatementList, preparedStatementArgList);
+        assertEquals("SELECT * FROM dristi_task LIMIT ? OFFSET ?", result);
+        assertEquals(2, preparedStatementList.size());
+        assertEquals(10.0, preparedStatementList.get(0));
+        assertEquals(0.0, preparedStatementList.get(1));
+        assertEquals(Arrays.asList(Types.DOUBLE, Types.DOUBLE), preparedStatementArgList);
     }
 
     @Test
-    public void testCheckTaskExistQuery_withCnrNumberAndFilingNumber() {
-        String cnrNumber = "123";
-        String filingNumber = "456";
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_task task WHERE task.cnrnumber = '123' AND task.filingnumber = '456'";
+    void testAddOrderByQuery() {
+        String query = "SELECT * FROM dristi_task";
+        Pagination pagination = new Pagination();
 
-        String actualQuery = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber);
+        String result = taskQueryBuilder.addOrderByQuery(query, pagination);
+        assertEquals("SELECT * FROM dristi_task ORDER BY task.createdtime DESC ", result);
 
-        assertEquals(expectedQuery, actualQuery);
+        // Test with null pagination
+        result = taskQueryBuilder.addOrderByQuery(query, null);
+        assertEquals("SELECT * FROM dristi_task ORDER BY task.createdtime DESC ", result);
     }
 
     @Test
-    public void testCheckTaskExistQuery_withException() {
-        String cnrNumber = "123";
-        taskQueryBuilder = new TaskQueryBuilder() {
-            @Override
-            public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
-                throw new RuntimeException("Forced exception");
-            }
-        };
-
-        assertThrows(Exception.class, () -> taskQueryBuilder.checkTaskExistQuery(cnrNumber, null));
-    }
-
-//    @Test
-//    public void testGetTaskSearchQuery_withAllParams() {
-//        String id = "1";
-//        String tenantId = "tenant";
-//        String status = "active";
-//        UUID orderId = UUID.randomUUID();
-//        String cnrNumber = "123";
-//        String expectedQuery =  "SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate, task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber, task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby, task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime FROM dristi_task task WHERE task.id = '1' AND task.tenantid = 'tenant' AND task.status = 'active' AND task.orderid = '72667fc1-689e-4d89-8719-b974e82c270e' AND task.cnrnumber = '123' ORDER BY task.createdtime DESC ";
-//        String actualQuery = taskQueryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber);
-//
-//        assertEquals(expectedQuery, actualQuery);
-//    }
-
-    @Test
-    public void testGetTaskSearchQuery_withException() {
-        String id = "1";
-        taskQueryBuilder = new TaskQueryBuilder() {
-            @Override
-            public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber) {
-                throw new RuntimeException("Forced exception");
-            }
-        };
-
-        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(id, null, null, null, null));
-    }
-
-    @Test
-    public void testGetDocumentSearchQuery_withIds() {
-        List<String> ids = new ArrayList<>();
-        ids.add("1");
-        ids.add("2");
+    void testCheckTaskExistQuery() {
         List<Object> preparedStmtList = new ArrayList<>();
-        String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-                " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id FROM dristi_task_document doc WHERE doc.task_id IN (?,?)";
+        String cnrNumber = "CNR123";
+        String filingNumber = "FL123";
+        UUID taskId = UUID.randomUUID();
 
-        String actualQuery = taskQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        String result = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, taskId, preparedStmtList);
 
-        assertEquals(expectedQuery, actualQuery);
-        assertEquals(ids, preparedStmtList);
+        assertTrue(result.contains("task.cnrnumber = ?"));
+        assertTrue(result.contains("task.filingnumber = ?"));
+        assertTrue(result.contains("task.id = ?"));
+        assertEquals(3, preparedStmtList.size());
+        assertEquals(cnrNumber, preparedStmtList.get(0));
+        assertEquals(filingNumber, preparedStmtList.get(1));
+        assertEquals(taskId.toString(), preparedStmtList.get(2));
     }
 
     @Test
-    public void testGetDocumentSearchQuery_withException() {
-        List<String> ids = new ArrayList<>();
-        ids.add("1");
-        taskQueryBuilder = new TaskQueryBuilder() {
-            @Override
-            public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-                throw new RuntimeException("Forced exception");
-            }
-        };
+    void testGetTaskSearchQuery() {
+        TaskCriteria criteria = new TaskCriteria();
+        criteria.setTaskNumber("TN123");
+        criteria.setCnrNumber("CNR123");
+        criteria.setTenantId("tenant123");
+        criteria.setId("ID123");
+        criteria.setStatus("InProgress");
+        criteria.setOrderId(UUID.randomUUID());
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getDocumentSearchQuery(ids, new ArrayList<>()));
-    }
-
-    @Test
-    public void testGetAmountSearchQuery_withIds() {
-        List<String> ids = new ArrayList<>();
-        ids.add("1");
-        ids.add("2");
         List<Object> preparedStmtList = new ArrayList<>();
-        String expectedQuery = "SELECT amount.id as id, amount.type as type, amount.amount as amount," +
-                " amount.paymentRefNumber as paymentRefNumber, amount.status as status, amount.additionaldetails as additionaldetails, amount.task_id as task_id FROM dristi_task_amount amount WHERE amount.task_id IN (?,?)";
+        List<Integer> preparedStmtArgList = new ArrayList<>();
 
-        String actualQuery = taskQueryBuilder.getAmountSearchQuery(ids, preparedStmtList);
+        String result = taskQueryBuilder.getTaskSearchQuery(criteria, preparedStmtList, preparedStmtArgList);
 
-        assertEquals(expectedQuery, actualQuery);
-        assertEquals(ids, preparedStmtList);
+        assertTrue(result.contains("task.id = ?"));
+        assertTrue(result.contains("task.tenantid = ?"));
+        assertTrue(result.contains("task.status = ?"));
+        assertTrue(result.contains("task.orderid = ?"));
+        assertTrue(result.contains("task.cnrnumber = ?"));
+        assertTrue(result.contains("task.tasknumber = ?"));
+
+        assertEquals(6, preparedStmtList.size());
+        assertEquals(6, preparedStmtArgList.size());
     }
 
     @Test
-    public void testGetAmountSearchQuery_withException() {
-        List<String> ids = new ArrayList<>();
-        ids.add("1");
-        taskQueryBuilder = new TaskQueryBuilder() {
-            @Override
-            public String getAmountSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-                throw new RuntimeException("Forced exception");
-            }
-        };
+    void testGetDocumentSearchQuery() {
+        List<String> ids = Arrays.asList("ID1", "ID2");
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgListDoc = new ArrayList<>();
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getAmountSearchQuery(ids, new ArrayList<>()));
+        String result = taskQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList, preparedStmtArgListDoc);
+
+        assertTrue(result.contains("doc.task_id IN (?,?)"));
+        assertEquals(2, preparedStmtList.size());
+        assertEquals(2, preparedStmtArgListDoc.size());
+    }
+
+    @Test
+    void testGetAmountSearchQuery() {
+        List<String> ids = Arrays.asList("ID1", "ID2");
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgListAm = new ArrayList<>();
+
+        String result = taskQueryBuilder.getAmountSearchQuery(ids, preparedStmtList, preparedStmtArgListAm);
+
+        assertTrue(result.contains("amount.task_id IN (?,?)"));
+        assertEquals(2, preparedStmtList.size());
+        assertEquals(2, preparedStmtArgListAm.size());
     }
 }

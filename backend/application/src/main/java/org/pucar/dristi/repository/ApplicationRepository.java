@@ -6,10 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
-import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,37 +16,50 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Slf4j
 @Repository
 public class ApplicationRepository {
+    private final ApplicationQueryBuilder queryBuilder;
+    private final JdbcTemplate jdbcTemplate;
+    private final ApplicationRowMapper rowMapper;
+    private final DocumentRowMapper documentRowMapper;
     @Autowired
-    private ApplicationQueryBuilder queryBuilder;
+    public ApplicationRepository(
+            ApplicationQueryBuilder queryBuilder,
+            JdbcTemplate jdbcTemplate,
+            ApplicationRowMapper rowMapper,
+            DocumentRowMapper documentRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.documentRowMapper = documentRowMapper;
+    }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private ApplicationRowMapper rowMapper;
-
-    @Autowired
-    private DocumentRowMapper documentRowMapper;
-
-    @Autowired
-    private StatuteSectionRowMapper statuteSectionRowMapper;
-
-    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset ) {
+    public List<Application> getApplications(ApplicationSearchRequest applicationSearchRequest) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
-            List<Object> preparedStmtListSt = new ArrayList<>();
-            List<Object> preparedStmtListDoc = new ArrayList<>();
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
+            List<Object> preparedStmtListDoc;
+
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria(), preparedStmtList,preparedStmtArgList);
+            applicationQuery = queryBuilder.addOrderByQuery(applicationQuery, applicationSearchRequest.getPagination());
             log.info("Final application search query: {}", applicationQuery);
-            List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
+            if(applicationSearchRequest.getPagination() !=  null) {
+                Integer totalRecords = getTotalCountApplication(applicationQuery, preparedStmtList);
+                log.info("Total count without pagination :: {}", totalRecords);
+                applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
+                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList,preparedStmtArgList);
+            }
+            if(preparedStmtList.size()!=preparedStmtArgList.size()){
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
+                throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch");
+            }
+            List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(),preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
                 applicationList.addAll(list);
@@ -63,23 +73,17 @@ public class ApplicationRepository {
                 return applicationList;
             }
 
-            String statueAndSectionQuery = "";
-            preparedStmtListSt = new ArrayList<>();
-            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt);
-            log.info("Final statue and sections query: {}", statueAndSectionQuery);
-            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), statuteSectionRowMapper);
-            log.info("DB statute sections map :: {}", statuteSectionsMap);
-            if (statuteSectionsMap != null) {
-                applicationList.forEach(application -> {
-                    application.setStatuteSection(statuteSectionsMap.get(application.getId()));
-                });
-            }
-
             String documentQuery = "";
             preparedStmtListDoc = new ArrayList<>();
-            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+
+            List<Integer> preparedStmtArgListDoc = new ArrayList<>();
+            documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc,preparedStmtArgListDoc);
             log.info("Final document query: {}", documentQuery);
-            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            if(preparedStmtListDoc.size()!=preparedStmtArgListDoc.size()){
+                log.info("Doc Arg size :: {}, and ArgType size :: {}", preparedStmtListDoc.size(),preparedStmtArgListDoc.size());
+                throw new CustomException(APPLICATION_SEARCH_ERR, "Arg and ArgType size mismatch for document search");
+            }
+            Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(),preparedStmtArgListDoc.stream().mapToInt(Integer::intValue).toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
                 applicationList.forEach(application -> {
@@ -97,6 +101,12 @@ public class ApplicationRepository {
         }
     }
 
+    public Integer getTotalCountApplication(String baseQuery, List<Object> preparedStmtList) {
+        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+        log.info("Final count query :: {}", countQuery);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
+    }
+
     public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {
         try {
             for (ApplicationExists applicationExist : applicationExistsList) {
@@ -106,9 +116,10 @@ public class ApplicationRepository {
                     {
                         applicationExist.setExists(false);
                 } else {
-                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber());
+                    List<Object> preparedStmtList = new ArrayList<>();
+                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber(), preparedStmtList);
                     log.info("Final application exist query: {}", applicationExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class, preparedStmtList.toArray());
                     applicationExist.setExists(count != null && count > 0);
                 }
             }

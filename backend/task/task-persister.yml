@@ -31,6 +31,8 @@ serviceMaps:
               dbType: JSONB
             - jsonPath: $.task.status
             - jsonPath: $.task.assignedTo
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.task.isActive
             - jsonPath: $.task.additionalDetails
               type: JSON
@@ -89,6 +91,8 @@ serviceMaps:
               dbType: JSONB
             - jsonPath: $.task.status
             - jsonPath: $.task.assignedTo
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.task.isActive
             - jsonPath: $.task.additionalDetails
               type: JSON
@@ -99,6 +103,7 @@ serviceMaps:
             - jsonPath: $.task.auditDetails.lastModifiedTime
 
         - query: INSERT INTO dristi_task_amount(id, amount, type, task_id, paymentRefNumber, status, additionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, paymentRefNumber = EXCLUDED.paymentRefNumber, type = EXCLUDED.type, task_id = EXCLUDED.task_id, additionalDetails = EXCLUDED.additionalDetails, status = EXCLUDED.status;
+          basePath: task.amount
           jsonMaps:
             - jsonPath: $.task.amount.id
             - jsonPath: $.task.amount.amount

@@ -1,6 +1,5 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +16,11 @@ public class DocumentRowMapperTest {
 
     private DocumentRowMapper documentRowMapper;
     private ResultSet resultSet;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setup() {
         documentRowMapper = new DocumentRowMapper();
         resultSet = mock(ResultSet.class);
-        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -49,6 +46,20 @@ public class DocumentRowMapperTest {
         assertEquals(1, result.get(taskId2).size());
         assertEquals("doc1", result.get(taskId1).get(0).getId());
         assertEquals("doc2", result.get(taskId2).get(0).getId());
+    }
+
+
+    @Test
+    public void testExtractData_CustomException() throws Exception {
+        // Simulate CustomException being thrown
+        when(resultSet.next()).thenThrow(new CustomException("ERROR_CODE", "Error Message"));
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            documentRowMapper.extractData(resultSet);
+        });
+
+        assertEquals("ERROR_CODE", exception.getCode());
+        assertEquals("Error Message", exception.getMessage());
     }
 
     @Test

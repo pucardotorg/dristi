@@ -3,6 +3,7 @@ package org.pucar.dristi.validator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -14,6 +15,7 @@ import org.pucar.dristi.repository.HearingRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.ApplicationUtil;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 
@@ -22,6 +24,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_FILESTORE_ID;
 
 @Slf4j
 class HearingRegistrationValidatorTest {
@@ -34,6 +37,9 @@ class HearingRegistrationValidatorTest {
 
     @Mock
     private MdmsUtil mdmsUtil;
+
+    @Mock
+    private FileStoreUtil fileStoreUtil;
 
     @Mock
     private Configuration config;
@@ -94,6 +100,7 @@ class HearingRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), anyString(), anyMap())).thenReturn(true);
         when(caseUtil.fetchCaseDetails(any())).thenReturn(caseExistsResponse);
         when(applicationUtil.fetchApplicationDetails(any())).thenReturn(applicationExistsResponse);
+        when(config.getVerifyAttendeeIndividualId()).thenReturn(true);
 
         // Act
         assertDoesNotThrow(() -> validator.validateHearingRegistration(hearingRequest));
@@ -107,30 +114,8 @@ class HearingRegistrationValidatorTest {
         hearingRequest.setHearing(new Hearing());
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
         assertEquals("User info not found!!!", exception.getMessage());
-    }
-
-    @Test
-    void testValidateHearingRegistration_MissingTenantIdOrHearingType() {
-        // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setUserInfo(new User());
-        requestInfo.getUserInfo().setTenantId("tenant1");
-
-        Hearing hearing = new Hearing();
-
-        HearingRequest hearingRequest = new HearingRequest();
-        hearingRequest.setRequestInfo(requestInfo);
-        hearingRequest.setHearing(hearing);
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
-        assertEquals("tenantId and hearing type are mandatory for creating hearing", exception.getMessage());
     }
 
     @Test
@@ -150,11 +135,10 @@ class HearingRegistrationValidatorTest {
         hearingRequest.setHearing(hearing);
 
         when(individualService.searchIndividual(any(), anyString(), anyMap())).thenReturn(false);
+        when(config.getVerifyAttendeeIndividualId()).thenReturn(true);
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
         assertEquals("Requested Individual not found or does not exist. ID: individual1", exception.getMessage());
     }
 
@@ -184,9 +168,7 @@ class HearingRegistrationValidatorTest {
         when(config.getMdmsHearingTypeMasterName()).thenReturn("master1");
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
         assertEquals("Could not validate Hearing Type!!!", exception.getMessage());
     }
 
@@ -224,9 +206,7 @@ class HearingRegistrationValidatorTest {
         when(caseUtil.fetchCaseDetails(any())).thenReturn(caseExistsResponse);
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
         assertEquals("Cnr Number: cnr1 does not exist ", exception.getMessage());
     }
 
@@ -268,9 +248,7 @@ class HearingRegistrationValidatorTest {
         when(applicationUtil.fetchApplicationDetails(any())).thenReturn(applicationExistsResponse);
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingRegistration(hearingRequest);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
         assertEquals("Application Number: app1 does not exist ", exception.getMessage());
     }
 
@@ -281,7 +259,7 @@ class HearingRegistrationValidatorTest {
         RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.singletonList(hearing);
 
-        when(repository.getHearings(any())).thenReturn(existingHearings);
+        when(repository.checkHearingsExist(any())).thenReturn(existingHearings);
 
         // Act
         Hearing result = validator.validateHearingExistence(requestInfo,hearing);
@@ -301,9 +279,57 @@ class HearingRegistrationValidatorTest {
         when(repository.getHearings(any())).thenReturn(existingHearings);
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingExistence(requestInfo,hearing);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingExistence(requestInfo,hearing));
         assertEquals("Hearing does not exist", exception.getMessage());
+    }
+
+    @Test
+    void testCreateCaseExistsRequest_EmptyCriteria() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        Hearing hearing = new Hearing();
+
+        // Act
+        CaseExistsRequest request = validator.createCaseExistsRequest(requestInfo, hearing);
+
+        // Assert
+        assertNotNull(request);
+        assertTrue(request.getCriteria().isEmpty());
+    }
+
+    @Test
+    void testCreateApplicationExistsRequest_EmptyCriteria() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        Hearing hearing = new Hearing();
+
+        // Act
+        ApplicationExistsRequest request = validator.createApplicationExistRequest(requestInfo, hearing);
+
+        // Assert
+        assertNotNull(request);
+        assertTrue(request.getApplicationExists().isEmpty());
+    }
+
+    @Test
+    public void testValidateOrder_InvalidDocumentFileStore() {
+        when(fileStoreUtil.doesFileExist(anyString(), anyString())).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, this::invokeValidator);
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    private void invokeValidator() {
+        Hearing hearing = new Hearing();
+        hearing.setTenantId("pg");
+
+        List<Hearing> existingHearings = Collections.singletonList(hearing);
+
+        when(repository.checkHearingsExist(any())).thenReturn(existingHearings);
+
+        Document document = new Document();
+        document.setFileStore("invalidFileStore");
+        hearing.setDocuments(Collections.singletonList(document));
+        validator.validateHearingExistence(new RequestInfo(),hearing);
     }
 }

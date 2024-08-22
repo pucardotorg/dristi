@@ -1,10 +1,12 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import java.util.UUID;
 
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-16T15:17:16.225735+05:30[Asia/Kolkata]")
@@ -15,13 +17,17 @@ import org.springframework.validation.annotation.Validated;
 public class EvidenceSearchCriteria {
     private String id;
     private String caseId;
-    private String applicationId;
+    private String applicationNumber;
+    private String artifactType;
+    private Boolean evidenceStatus;
     private String hearing;
     private String order;
     private String sourceId;
     private String sourceName;
     private String status;
-
+    private String artifactNumber;
+    private String filingNumber;
+    private UUID owner;
     // Getters and setters
 
     public String getId() {
@@ -39,14 +45,20 @@ public class EvidenceSearchCriteria {
         this.caseId = caseId;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getApplicationNumber() {
+        return applicationNumber;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+    public String getFilingNumber() {
+        return filingNumber;
     }
 
+    public void setFilingNumber(String filingNumber) {
+        this.filingNumber = filingNumber;
+    }
     public String getHearing() {
         return hearing;
     }
@@ -85,5 +97,18 @@ public class EvidenceSearchCriteria {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    public UUID getOwner() {
+        return owner;
+    }
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
+    public String getArtifactNumber() {
+        return artifactNumber;
+    }
+
+    public void setArtifactNumber(String artifactNumber) {
+        this.artifactNumber = artifactNumber;
     }
 }

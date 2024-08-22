@@ -14,9 +14,10 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateClerkRequest;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -120,7 +121,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_MissingUserInfo() {
+     void testEnrichAdvocateClerkRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         advocateClerkRequest.setClerk(new AdvocateClerk());
@@ -132,7 +133,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_CustomException() {
+     void testEnrichAdvocateClerkRegistration_CustomException() {
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         AdvocateClerk clerk = new AdvocateClerk();
         clerk.setTenantId("tenantId");
@@ -157,7 +158,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
+     void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
         AdvocateClerk clerk = new AdvocateClerk();

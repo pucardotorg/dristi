@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-withdrawal.json",
+  "$comment": "definition of the schema for issuing a withdrawal order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "appFilledOnBehalfOf": {
+      "type" : "string",
+      "description": "application filled on behalf of"
+    },
+    "partyType": {
+      "type" : "string",
+      "description": "party type"
+    },
+    "applicationStatus": {
+      "type" : "string",
+      "description": "application status"
+    }
+  }
+}

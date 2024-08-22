@@ -10,33 +10,33 @@ import org.pucar.dristi.web.models.EvidenceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class EvidenceEnrichment {
-    @Autowired
-    private IdgenUtil idgenUtil;
+    private final IdgenUtil idgenUtil;
 
+    @Autowired
+    public EvidenceEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
-            if (evidenceRequest.getRequestInfo().getUserInfo() != null) {
-                // Determine the ID format based on artifact type
-                String idFormat = getIdgenByArtifactType(evidenceRequest.getArtifact().getArtifactType());
-
-                // Generate the artifact number using the determined ID format
                 List<String> artifactRegistrationIdList = idgenUtil.getIdList(
                         evidenceRequest.getRequestInfo(),
                         evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
-                        idFormat,
+                        ARTIFACT_ID_NAME,
                         null,
                         1
                 );
 
-                int index = 0;
                 AuditDetails auditDetails = AuditDetails.builder()
                         .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
                         .createdTime(System.currentTimeMillis())
@@ -51,42 +51,74 @@ public class EvidenceEnrichment {
                     comment.setId(UUID.randomUUID());
                 }
 
-                evidenceRequest.getArtifact().setIsActive(false);
-                evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(index++));
+                evidenceRequest.getArtifact().setIsActive(true);
+                evidenceRequest.getArtifact().setCreatedDate(System.currentTimeMillis());
+                evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(0));
 
                 if (evidenceRequest.getArtifact().getFile() != null) {
                     evidenceRequest.getArtifact().getFile().setId(String.valueOf(UUID.randomUUID()));
                     evidenceRequest.getArtifact().getFile().setDocumentUid(evidenceRequest.getArtifact().getFile().getId());
                 }
-            } else {
-                throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
-            }
+
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while Enriching evidence: {}", e.getMessage());
+            log.error("Custom Exception occurred while Enriching evidence: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Error enriching evidence application: {}", e.getMessage());
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.getMessage());
+            log.error("Error enriching evidence application: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.toString());
         }
     }
 
-    String getIdgenByArtifactType(String artifactType) {
-        switch (artifactType) {
-            case "complainant":
-                return "document.evidence_complainant";
-            case "accused":
-                return "document.evidence_accused";
-            case "court":
-                return "document.evidence_court";
-            case "witness_complainant":
-                return "document.witness_complainant";
-            case "witness_accused":
-                return "document.witness_accused";
-            case "witness_court":
-                return "document.witness_court";
-            default:
-                throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
+    private static final Map<String, String> artifactSourceMap = new HashMap<>();
+
+    static {
+        artifactSourceMap.put("DOCUMENTARY_COMPLAINANT", "document.evidence_complainant");
+        artifactSourceMap.put("DOCUMENTARY_ACCUSED", "document.evidence_accused");
+        artifactSourceMap.put("DOCUMENTARY_COURT", "document.evidence_court");
+        artifactSourceMap.put("AFFIDAVIT_COMPLAINANT", "document.evidence_complainant");
+        artifactSourceMap.put("AFFIDAVIT_ACCUSED", "document.evidence_accused");
+        artifactSourceMap.put("AFFIDAVIT_COURT", "document.evidence_court");
+        artifactSourceMap.put("DEPOSITION_COMPLAINANT", "document.witness_complainant");
+        artifactSourceMap.put("DEPOSITION_ACCUSED", "document.witness_accused");
+        artifactSourceMap.put("DEPOSITION_COURT", "document.witness_court");
+    }
+
+    public String getIdgenByArtifactTypeAndSourceType(String artifactType, String sourceType) {
+        String key = artifactType + "_" + sourceType;
+        String result = artifactSourceMap.get(key);
+        if (result != null) {
+            return result;
+        } else {
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type or source type provided");
         }
+    }
+
+
+    public void enrichEvidenceNumber(EvidenceRequest evidenceRequest) {
+        try {
+            String idName = getIdgenByArtifactTypeAndSourceType(evidenceRequest.getArtifact().getArtifactType(), evidenceRequest.getArtifact().getSourceType());
+            List<String> evidenceNumberList = idgenUtil.getIdList(
+                    evidenceRequest.getRequestInfo(),
+                    evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
+                    idName,
+                    null,
+                    1
+            );
+            evidenceRequest.getArtifact().setEvidenceNumber(evidenceNumberList.get(0));
+            evidenceRequest.getArtifact().setIsEvidence(true);
+        } catch (Exception e) {
+            log.error("Error enriching evidence number upon update: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Failed to generate evidence number for " + evidenceRequest.getArtifact().getId() + ": " + e.toString());
+        }
+    }
+        public void enrichIsActive(EvidenceRequest evidenceRequest) {
+            try {
+                evidenceRequest.getArtifact().setIsActive(false);
+            }
+            catch (Exception e) {
+                log.error("Error enriching isActive status upon update: {}", e.toString());
+                throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service during isActive status update process: " + e.toString());
+            }
     }
 
 
@@ -96,8 +128,18 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching advocate application upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in order enrichment service during order update process: " + e.getMessage());
+            log.error("Error enriching evidence application upon update: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service during  update process: " + e.toString());
+        }
+    }
+
+    public void enrichCommentUponCreate(Comment comment, AuditDetails auditDetails) {
+        try {
+            comment.setId(UUID.randomUUID());
+            comment.setAuditdetails(auditDetails);
+        } catch (Exception e) {
+            log.error("Error enriching comment upon create: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching comment upon create: " + e.getMessage());
         }
     }
 }

@@ -2,11 +2,13 @@ package org.pucar.dristi.web.controllers;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.ApplicationService;
@@ -67,19 +69,21 @@ class ApplicationApiControllerTest {
 
     @Test
     public void testApplicationV1SearchPost_Success() {
+        // Arrange
         List<Application> expectedApplication = Collections.singletonList(new Application());
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
-                any(RequestInfoBody.class)))
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class)))
                 .thenReturn(expectedApplication);
-
         ResponseInfo expectedResponseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true)))
                 .thenReturn(expectedResponseInfo);
+        ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
+        requestInfoBody.setCriteria(new ApplicationCriteria());
+        requestInfoBody.setRequestInfo(new RequestInfo());
 
-        RequestInfoBody requestInfoBody = new RequestInfoBody();
-        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost("a", "b","c",
-                "d",null, null, null, null, requestInfoBody);
+        // Act
+        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(requestInfoBody);
 
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
@@ -146,34 +150,34 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1SearchPost_InvalidRequest() {
 
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
-                any(RequestInfoBody.class)))
-                .thenThrow(new IllegalArgumentException("Invalid request"));
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class))).thenThrow(new CustomException("Invalid request", "The request parameters did not meet the expected format."));
 
-        RequestInfoBody requestInfoBody = new RequestInfoBody();
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            controller.applicationV1SearchPost("a", "b","c",
-                    "d",null, null, null, null, requestInfoBody);
+        ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
+        requestInfoBody.setCriteria(new ApplicationCriteria());
+        requestInfoBody.setRequestInfo(new RequestInfo());
+
+        Exception exception = assertThrows(CustomException.class, () -> {
+            controller.applicationV1SearchPost(requestInfoBody);
         });
 
-        assertEquals("Invalid request", exception.getMessage());
+        assertEquals("The request parameters did not meet the expected format.", exception.getMessage());
     }
 
     @Test
     public void testApplicationV1SearchPost_EmptyList() {
         List<Application> emptyList = Collections.emptyList();
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
-                any(RequestInfoBody.class)))
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class)))
                 .thenReturn(emptyList);
 
         ResponseInfo expectedResponseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), any()))
                 .thenReturn(expectedResponseInfo);
 
-        RequestInfoBody requestInfoBody = new RequestInfoBody();
+        ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
+        requestInfoBody.setCriteria(new ApplicationCriteria());
+        requestInfoBody.setRequestInfo(new RequestInfo());
 
-        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost("a", "b","c",
-                "d",null, null, null, null, requestInfoBody);
+        ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(requestInfoBody);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();
@@ -231,5 +235,41 @@ class ApplicationApiControllerTest {
         assertEquals("Invalid request", exception.getMessage());
     }
 
+    @Test
+    void applicationV1AddCommentPost_Success() {
+        ApplicationAddCommentRequest requestBody = new ApplicationAddCommentRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+        requestBody.setApplicationAddComment(new ApplicationAddComment());
+
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(expectedResponseInfo);
+
+        ApplicationAddCommentResponse expectedResponse = ApplicationAddCommentResponse.builder()
+                .applicationAddComment(requestBody.getApplicationAddComment())
+                .responseInfo(expectedResponseInfo)
+                .build();
+
+        ResponseEntity<ApplicationAddCommentResponse> response = controller.applicationV1AddCommentPost(requestBody);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ApplicationAddCommentResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getApplicationAddComment(), actualResponse.getApplicationAddComment());
+        assertEquals(expectedResponse.getResponseInfo(), actualResponse.getResponseInfo());
+    }
+
+    @Test
+    void applicationV1AddCommentPost_InvalidRequest() {
+        ApplicationAddCommentRequest requestBody = new ApplicationAddCommentRequest();  // Missing required fields
+
+        Mockito.doThrow(new IllegalArgumentException("Invalid request")).when(applicationService).addComments(any(ApplicationAddCommentRequest.class));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            controller.applicationV1AddCommentPost(requestBody);
+        });
+
+        assertEquals("Invalid request", exception.getMessage());
+    }
 
 }

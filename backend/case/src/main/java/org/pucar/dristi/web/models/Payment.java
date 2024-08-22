@@ -1,15 +1,21 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -98,12 +104,5 @@ public class Payment {
     @JsonProperty("paymentStatus")
     private String paymentStatus;
 
-    public Payment addpaymentDetailsItem(PaymentDetail paymentDetail) {
-        if (this.paymentDetails == null) {
-            this.paymentDetails = new ArrayList<>();
-        }
-        this.paymentDetails.add(paymentDetail);
-        return this;
-    }
 
 }

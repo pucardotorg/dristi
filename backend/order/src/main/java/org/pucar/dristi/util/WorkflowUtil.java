@@ -15,34 +15,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
 public class WorkflowUtil {
 
-    @Autowired
     private ServiceRequestRepository repository;
 
-    @Autowired
     private ObjectMapper mapper;
 
-    @Autowired
     private Configuration configs;
 
-
+    @Autowired
+    public WorkflowUtil(ServiceRequestRepository repository, Configuration configs, ObjectMapper mapper) {
+        this.repository = repository;
+        this.configs = configs;
+        this.mapper = mapper;
+    }
 
     /**
     * Searches the BussinessService corresponding to the businessServiceCode
     * Returns applicable BussinessService for the given parameters
     * @param requestInfo
     * @param tenantId
-    * @param businessServiceCode
+    * @param businessService
     * @return
     */
-    public BusinessService getBusinessService(RequestInfo requestInfo, String tenantId, String businessServiceCode) {
+    public BusinessService getBusinessService(RequestInfo requestInfo, String tenantId, String businessService) {
 
-        StringBuilder url = getSearchURLWithParams(tenantId, businessServiceCode);
+        StringBuilder url = getSearchURLWithParams(tenantId, businessService);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object result = repository.fetchResult(url, requestInfoWrapper);
         BusinessServiceResponse response = null;
@@ -53,7 +55,7 @@ public class WorkflowUtil {
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException(BUSINESS_SERVICE_NOT_FOUND, THE_BUSINESS_SERVICE + businessServiceCode + NOT_FOUND);
+            throw new CustomException(BUSINESS_SERVICE_NOT_FOUND, THE_BUSINESS_SERVICE + businessService + NOT_FOUND);
 
         return response.getBusinessServices().get(0);
     }
@@ -76,7 +78,7 @@ public class WorkflowUtil {
 
         State state = callWorkFlow(workflowRequest);
 
-        return state.getApplicationStatus();
+        return state.getState();
     }
 
     /**
@@ -100,20 +102,20 @@ public class WorkflowUtil {
     * @param requestInfo
     * @param tenantId
     * @param businessId
-    * @param businessServiceCode
+    * @param businessService
     * @param workflow
     * @param wfModuleName
     * @return
     */
     private ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
-        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+        String businessId, String businessService, Workflow workflow, String wfModuleName) {
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(businessId);
         processInstance.setAction(workflow.getAction());
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
-        processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
+        processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessService).getBusinessService());
         processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
@@ -145,7 +147,7 @@ public class WorkflowUtil {
             List<String> userIds = null;
 
             if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
-                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+                userIds = processInstance.getAssignes().stream().map(User::getUuid).toList();
             }
 
             Workflow workflow = Workflow.builder()
@@ -172,27 +174,5 @@ public class WorkflowUtil {
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
-    }
-
-    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
-        try {
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            StringBuilder url = getSearchURLWithParams(tenantId, businessId);
-            Object res = repository.fetchResult(url, requestInfoWrapper);
-            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
-            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
-                return response.getProcessInstances().get(0);
-            return null;
-        } catch (Exception e) {
-            log.error("Error getting current workflow :: {}", e.toString());
-            throw new CustomException(GET_WORKFLOW_EXCEPTION, e.getMessage());
-        }
-    }
-
-    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
-        if(processInstance == null) {
-            return null;
-        }
-        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
     }
 }

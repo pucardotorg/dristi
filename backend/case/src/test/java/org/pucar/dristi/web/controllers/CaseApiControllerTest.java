@@ -1,5 +1,12 @@
 package org.pucar.dristi.web.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,18 +18,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.CaseExistsResponse;
+import org.pucar.dristi.web.models.CaseListResponse;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseResponse;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.JoinCaseRequest;
+import org.pucar.dristi.web.models.JoinCaseResponse;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.pucar.dristi.web.models.WitnessResponse;
+import org.pucar.dristi.web.models.WitnessSearchRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 /**
 * API tests for CaseApiController
@@ -92,7 +104,6 @@ public class CaseApiControllerTest {
         CaseSearchRequest caseRequest = new CaseSearchRequest(); // Create a mock CaseRequest object
         caseRequest.setCriteria(List.of(CaseCriteria.builder().cnrNumber("cnrNumber").build()));
         // Mocking caseService.createCase method to return a CourtCase object
-        CourtCase courtCase = new CourtCase(); // Create a mock CourtCase object
         caseService.searchCases(caseRequest);
 
         // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
@@ -106,6 +117,29 @@ public class CaseApiControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(caseRequest.getCriteria(), responseEntity.getBody().getCriteria());
     }
+
+    @Test
+    public void verifyV1JoinCaseSuccess() {
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        joinCaseRequest.setRequestInfo(requestInfo);
+
+        JoinCaseResponse joinCaseResponse = new JoinCaseResponse();
+        ResponseInfo responseInfo = new ResponseInfo();
+        // Mocking caseService.verifyJoinCaseRequest method to return a JoinCaseResponse object
+        when(caseService.verifyJoinCaseRequest(any(JoinCaseRequest.class))).thenReturn(joinCaseResponse);
+
+        // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class))).thenReturn(responseInfo);
+
+        // Call the method under test
+        ResponseEntity<JoinCaseResponse> responseEntity = caseApiController.verifyV1JoinCase(joinCaseRequest);
+
+        // Verify the response entity
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(responseInfo, responseEntity.getBody().getResponseInfo());
+    }
+
     @Test
     public void caseV1UpdatePostSuccess() {
         // Mocking request body

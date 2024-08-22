@@ -31,9 +31,4 @@ public class CaseExistsRequest {
     @Valid
     private List<CaseExists> criteria = new ArrayList<>();
 
-    public CaseExistsRequest addCriteriaItem(CaseExists criteriaItem) {
-        this.criteria.add(criteriaItem);
-        return this;
-    }
-
 }

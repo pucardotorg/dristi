@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "application",
-      "business": "application-services",
+      "business": "application",
+      "businessService": "application-default",
       "businessServiceSla": 30,
       "states": [
         {
@@ -41,6 +41,13 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
@@ -66,10 +73,17 @@
               ]
             },
             {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
               "action": "REJECT",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "APPLICATION_REJECTOR"
+                "APPLICATION_APPROVER"
               ]
             },
             {
@@ -94,15 +108,22 @@
               "action": "RESPOND",
               "nextState": "RESPONSESUBMITTED",
               "roles": [
-                "System"
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -120,14 +141,21 @@
               "action": "APPROVE",
               "nextState": "CLOSED",
               "roles": [
-                "Judge"
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "Judge"
+                "APPLICATION_APPROVER"
               ]
             },
             {
@@ -151,6 +179,15 @@
         {
           "sla": 5,
           "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "DELETED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

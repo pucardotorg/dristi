@@ -1,34 +1,45 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_ADVOCATE;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.AdvocateListResponse;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
+import org.pucar.dristi.web.models.AdvocateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class AdvocateUtil {
 
-	@Autowired
 	private RestTemplate restTemplate;
 
-	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
 	private Configuration configs;
-
-	public Boolean fetchAdvocateDetails(RequestInfo requestInfo, String advocateId) {
+	
+	@Autowired
+	public AdvocateUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
+	
+	public boolean doesAdvocateExist(RequestInfo requestInfo, String advocateId) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
 
@@ -40,8 +51,8 @@ public class AdvocateUtil {
 		criteriaList.add(advocateSearchCriteria);
 		advocateSearchRequest.setCriteria(criteriaList);
 
-		Object response = new HashMap<>();
-		AdvocateListResponse advocateResponse = new AdvocateListResponse();
+		Object response;
+		AdvocateListResponse advocateResponse;
 		try {
 			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
 			advocateResponse = mapper.convertValue(response, AdvocateListResponse.class);

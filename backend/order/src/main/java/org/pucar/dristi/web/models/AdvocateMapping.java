@@ -12,7 +12,6 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,60 +23,41 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdvocateMapping   {
-        @JsonProperty("id")
+public class AdvocateMapping {
 
-        @Valid         private String id = null;
+    @JsonProperty("id")
+    @Valid
+    private String id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
+    private String tenantId = null;
 
-                private String tenantId = null;
+    @JsonProperty("advocateId")
+    private String advocateId = null;
 
-        @JsonProperty("advocateId")
+    @JsonProperty("caseId")
+    private String caseId = null;
 
-                private String advocateId = null;
+    @JsonProperty("representing")
+    @Valid
+    @Size(min = 1)
+    private List<Party> representing = null;
 
-        @JsonProperty("caseId")
+    @JsonProperty("isActive")
+    private Boolean isActive = true;
 
-                private String caseId = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
-        @JsonProperty("representing")
-          @Valid
-        @Size(min=1)         private List<Party> representing = null;
+    @JsonProperty("auditDetails")
 
-        @JsonProperty("isActive")
+    @Valid
+    private AuditDetails auditDetails = null;
 
-                private Boolean isActive = true;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
-
-        @JsonProperty("additionalDetails")
-
-                private Object additionalDetails = null;
-
-
-        public AdvocateMapping addRepresentingItem(Party representingItem) {
-            if (this.representing == null) {
-            this.representing = new ArrayList<>();
-            }
-        this.representing.add(representingItem);
-        return this;
-        }
-
-        public AdvocateMapping addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
 
 }
