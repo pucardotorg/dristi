@@ -9,7 +9,7 @@ export const caseAndFilingSearchConfig = () => {
         // label: "Search Via Case and filing number",
         type: "search",
         apiDetails: {
-            serviceName: "/case/v1/_search",
+            serviceName: "/case/case/v1/_search",
             requestParam: {
                 "tenantId": Digit.ULBService.getCurrentTenantId()
             },

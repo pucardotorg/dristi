@@ -35,13 +35,8 @@ public class OrderListResponse {
     @Valid
     private List<Order> list = null;
 
-
-    public OrderListResponse addListItem(Order listItem) {
-        if (this.list == null) {
-            this.list = new ArrayList<>();
-        }
-        this.list.add(listItem);
-        return this;
-    }
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
 
 }

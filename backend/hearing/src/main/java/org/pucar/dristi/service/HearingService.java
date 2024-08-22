@@ -2,24 +2,17 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.HearingRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.HearingRepository;
 import org.pucar.dristi.validator.HearingRegistrationValidator;
-import org.pucar.dristi.web.models.Hearing;
-import org.pucar.dristi.web.models.HearingExists;
-import org.pucar.dristi.web.models.HearingExistsRequest;
-import org.pucar.dristi.web.models.HearingRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -27,26 +20,28 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class HearingService {
 
-    @Autowired
-    private HearingRegistrationValidator validator;
+    private final HearingRegistrationValidator validator;
+    private final HearingRegistrationEnrichment enrichmentUtil;
+    private final WorkflowService workflowService;
+    private final HearingRepository hearingRepository;
+    private final Producer producer;
+    private final Configuration config;
 
     @Autowired
-    private HearingRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private IndividualService individualService;
-
-    @Autowired
-    private HearingRepository hearingRepository;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration config;
+    public HearingService(
+            HearingRegistrationValidator validator,
+            HearingRegistrationEnrichment enrichmentUtil,
+            WorkflowService workflowService,
+            HearingRepository hearingRepository,
+            Producer producer,
+            Configuration config) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.workflowService = workflowService;
+        this.hearingRepository = hearingRepository;
+        this.producer = producer;
+        this.config = config;
+    }
 
     public Hearing createHearing(HearingRequest body) {
         try {
@@ -74,24 +69,15 @@ public class HearingService {
         }
     }
 
-    public List<Hearing> searchHearing(String cnrNumber, String applicationNumber, String hearingId, String fightingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+    public List<Hearing> searchHearing(HearingSearchRequest request) {
 
-        try{
-            RequestInfo requestInfo = new RequestInfo();
-            requestInfo.setUserInfo(new User());
-            if (limit == null || limit<1) limit =10;
-            if (offset == null || offset<0) offset =0;
-            if (!Objects.equals(sortBy, "DESC")) sortBy = "ASC";
-            List<Hearing> hearingList = hearingRepository.getHearings(cnrNumber,applicationNumber,hearingId,fightingNumber,tenentId,fromDate,toDate,limit,offset,sortBy);
-            for (Hearing hearing : hearingList){
-                hearing.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, hearing.getTenantId(), hearing.getHearingId())));
-            }
-            return hearingList;
-        }  catch (CustomException e) {
+        try {
+            return hearingRepository.getHearings(request);
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching search results");
             throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
         }
     }
@@ -101,16 +87,18 @@ public class HearingService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(),hearingRequest.getHearing());
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
 
             // Updating Hearing request
-            // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
             hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
             hearing.setStartTime(hearingRequest.getHearing().getStartTime());
             hearing.setEndTime(hearingRequest.getHearing().getEndTime());
             hearing.setTranscript(hearingRequest.getHearing().getTranscript());
             hearing.setNotes(hearingRequest.getHearing().getNotes());
             hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setDocuments(hearingRequest.getHearing().getDocuments());
+            hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
             hearingRequest.setHearing(hearing);
             workflowService.updateWorkflowStatus(hearingRequest);
 
@@ -132,14 +120,62 @@ public class HearingService {
     }
 
     public HearingExists isHearingExist(HearingExistsRequest body) {
-        HearingExists order = body.getOrder();
-        List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(),order.getApplicationNumber(), order.getHearingId(),order.getFilingNumber(),body.getRequestInfo().getUserInfo().getTenantId(),null,null,1,0,null);
-        if (!hearingList.isEmpty()){
-            order.setExists(true);
+        try {
+            HearingExists order = body.getOrder();
+            HearingCriteria criteria = HearingCriteria.builder().cnrNumber(order.getCnrNumber())
+                    .filingNumber( order.getFilingNumber()).applicationNumber(order.getApplicationNumber()).hearingId(order.getHearingId()).tenantId(body.getRequestInfo().getUserInfo().getTenantId()).build();
+            Pagination pagination = Pagination.builder().limit(1.0).offSet((double) 0).build();
+            HearingSearchRequest hearingSearchRequest = HearingSearchRequest.builder().criteria(criteria).pagination(pagination).build();
+            List<Hearing> hearingList = hearingRepository.getHearings(hearingSearchRequest);
+            order.setExists(!hearingList.isEmpty());
+            return order;
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while verifying hearing");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while verifying hearing");
+            throw new CustomException(HEARING_SEARCH_EXCEPTION, "Error occurred while searching hearing: " + e.getMessage());
         }
-        else {
-            order.setExists(false);
+    }
+
+    public Hearing updateTranscriptAdditionalAttendees(HearingRequest hearingRequest) {
+        try {
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(),hearingRequest.getHearing());
+            enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
+            hearingRepository.updateTranscriptAdditionalAttendees(hearingRequest.getHearing());
+            hearing.setTranscript(hearingRequest.getHearing().getTranscript());
+            hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
+            hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
+            hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
+            hearing.setNotes(hearingRequest.getHearing().getNotes());
+            return hearing;
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while verifying hearing");
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(HEARING_UPDATE_EXCEPTION, "Error occurred while updating hearing: " + e.getMessage());
         }
-        return order;
+    }
+
+    public void updateStartAndTime(UpdateTimeRequest body) {
+        try {
+            for(Hearing hearing : body.getHearings()){
+                if(hearing.getHearingId()==null || hearing.getHearingId().isEmpty()){
+                    throw new CustomException(HEARING_UPDATE_TIME_EXCEPTION, "Hearing Id is required for updating start and end time");
+                }
+                Hearing existingHearing = validator.validateHearingExistence(body.getRequestInfo(),hearing);
+                existingHearing.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                existingHearing.getAuditDetails().setLastModifiedBy(body.getRequestInfo().getUserInfo().getUuid());
+                hearing.setAuditDetails(existingHearing.getAuditDetails());
+                producer.push(config.getStartEndTimeUpdateTopic(), hearing);
+            }
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while updating hearing start and end time");
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(HEARING_UPDATE_TIME_EXCEPTION, "Error occurred while updating hearing start and end time: " + e.getMessage());
+        }
     }
 }

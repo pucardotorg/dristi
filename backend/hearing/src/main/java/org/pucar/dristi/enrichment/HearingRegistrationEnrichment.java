@@ -18,8 +18,12 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class HearingRegistrationEnrichment {
 
-    @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    public HearingRegistrationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     /**
      * Enrich the hearing application by setting values in different field
@@ -63,6 +67,13 @@ public class HearingRegistrationEnrichment {
             Hearing hearing = hearingRequest.getHearing();
             hearing.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
             hearing.getAuditDetails().setLastModifiedBy(hearingRequest.getRequestInfo().getUserInfo().getUuid());
+
+            if(hearing.getDocuments()!=null){
+                hearing.getDocuments().forEach(document -> {
+                    if(document.getId()==null)
+                     document.setId(String.valueOf(UUID.randomUUID()));
+                });
+            }
         } catch (Exception e) {
             log.error("Error enriching hearing application upon update: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in hearing enrichment service during hearing update process: " + e.getMessage());

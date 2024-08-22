@@ -1,15 +1,12 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
+import java.sql.Types;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -23,7 +20,7 @@ public class AdvocateQueryBuilder {
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
-    private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
+    private static final String LIMIT_OFFSET = " LIMIT ? OFFSET ?";
 
     /**   /** To build query using search criteria to search advocate
      * @param preparedStmtList
@@ -31,71 +28,57 @@ public class AdvocateQueryBuilder {
      * @param offset
      * @return
      */
-    public String getAdvocateSearchQuery(AdvocateSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset) {
+    public String getAdvocateSearchQuery(AdvocateSearchCriteria criteria, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, String tenantId, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
-            if(criteria != null) {
-                if (criteria.getId()!=null && !criteria.getId().isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.id = ?");
-                    preparedStmtList.add(criteria.getId());
-                    firstCriteria = false; // Update firstCriteria flag
-                }
+            boolean firstCriteria = true;
 
-                if (criteria.getBarRegistrationNumber()!=null && !criteria.getBarRegistrationNumber().isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.barRegistrationNumber = ?");
-                    preparedStmtList.add(criteria.getBarRegistrationNumber());
-                    firstCriteria = false; // Update firstCriteria flag
-
-                }
-
-                if (criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.applicationNumber = ?");
-                    preparedStmtList.add(criteria.getApplicationNumber());
-                    firstCriteria = false;
-                }
-
-                if (criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.individualId = ?");
-                    preparedStmtList.add(criteria.getIndividualId());
-                    firstCriteria = false;
-                }
-
-                if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getBarRegistrationNumber()!=null && !criteria.getBarRegistrationNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
-                        || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
-                    query.append(")");
-                }
+            if (criteria != null) {
+                firstCriteria = addCriteriaToQuery(criteria, query, preparedStmtList,preparedStmtArgList, firstCriteria);
 
                 if(tenantId != null && !tenantId.isEmpty()){
                     addClauseIfRequiredForTenantId(query, firstCriteria);
                     query.append("LOWER(adv.tenantid) = LOWER(?)");
                     preparedStmtList.add(tenantId.toLowerCase());
+                    preparedStmtArgList.add(Types.VARCHAR);
                 }
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
-                preparedStmtList.add(limit);
-                preparedStmtList.add(offset);
-            }
+            addPagination(preparedStmtList,preparedStmtArgList,limit,offset,query);
 
             return query.toString();
         }
-         catch (Exception e) {
-            log.error("Error while building advocate search query :: {}",e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+        catch (Exception e) {
+            log.error(ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION, e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION, ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION + e.getMessage());
         }
     }
 
-    public String getAdvocateSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+    private boolean addCriteriaToQuery(AdvocateSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList,boolean firstCriteria) {
+        firstCriteria = addSingleCriteria(criteria.getId(), "adv.id = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getBarRegistrationNumber(), "adv.barRegistrationNumber = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getApplicationNumber(), "adv.applicationNumber = ?", query, preparedStmtList, preparedStmtArgList,firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getIndividualId(), "adv.individualId = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
+
+        return firstCriteria;
+    }
+
+    private boolean addSingleCriteria(String value, String column, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgsList, boolean firstCriteria) {
+        if (value != null && !value.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(column);
+            preparedStmtList.add(value);
+            preparedStmtArgsList.add(Types.VARCHAR);
+            firstCriteria = false;
+        }
+        return firstCriteria;
+    }
+
+    public String getAdvocateSearchQueryByStatus(String status, List<Object> preparedStmtList, List<Integer> preparedStmtArguList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -106,33 +89,30 @@ public class AdvocateQueryBuilder {
                 query.append("LOWER(adv.status) LIKE LOWER(?)")
                         .append(")");
                 preparedStmtList.add(status.toLowerCase());
+                preparedStmtArguList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, firstCriteria);
                 query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
                 preparedStmtList.add(tenantId.toLowerCase());
-                firstCriteria = false;
+                preparedStmtArguList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
-                preparedStmtList.add(limit);
-                preparedStmtList.add(offset);
-            }
+            addPagination(preparedStmtList,preparedStmtArguList,limit,offset,query);
 
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate search query :: {}",e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate search by status query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
 
-    public String getAdvocateSearchQueryByApplicationNumber(String applicationNumber, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+    public String getAdvocateSearchQueryByApplicationNumber(String applicationNumber, List<Object> preparedStmtList,List<Integer> preparedStmtArgssList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -143,57 +123,66 @@ public class AdvocateQueryBuilder {
                 query.append("LOWER(adv.applicationnumber) LIKE LOWER(?)")
                         .append(")");
                 preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
+                preparedStmtArgssList.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, firstCriteria);
                 query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
                 preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
-                firstCriteria = false;
+                preparedStmtArgssList.add(Types.VARCHAR);
             }
 
             query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
-                preparedStmtList.add(limit);
-                preparedStmtList.add(offset);
-            }
+            addPagination(preparedStmtList,preparedStmtArgssList,limit,offset,query);
 
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate search query :: {}",e.toString());
-            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate search by app num query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,ADVOCATE_SEARCH_QUERY_BUILD_EXCEPTION+ e.getMessage());
         }
     }
 
-    private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
-        if (isFirstCriteria) {
-            query.append(" WHERE (");
-        } else {
-            query.append(" OR ");
-        }
-    }
-
-    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
-        if (isFirstCriteria) {
-            query.append(" WHERE (");
-        } else {
-            query.append(" AND ");
-        }
-    }
-
-    private void addClauseIfRequiredForTenantId(StringBuilder query, boolean isFirstCriteria) {
+    void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE ( ");
+        } else {
+            query.append(AND);
+        }
+    }
+
+    void addClauseIfRequiredForTenantId(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE ");
+        } else {
+            query.append(AND);
+        }
+    }
+
+    private void addPagination(List<Object> preparedStmtList,List<Integer> preparedStmtArgumentList, Integer limit, Integer offset, StringBuilder query){
+        if (limit != null && offset != null) {
+            query.append(LIMIT_OFFSET);
+            preparedStmtList.add(limit);
+            preparedStmtArgumentList.add(Types.INTEGER);
+
+            preparedStmtList.add(offset);
+            preparedStmtArgumentList.add(Types.INTEGER);
+
+        }
+    }
+
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList,List<Integer> preparedStmtArgDocList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
@@ -202,6 +191,7 @@ public class AdvocateQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
+                ids.forEach(i->preparedStmtArgDocList.add(Types.VARCHAR));
             }
 
             return query.toString();

@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -20,18 +19,13 @@ import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_UTILITY_EXCEPT
 @Slf4j
 public class IndividualUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-
-    @Autowired
-    public IndividualUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
-        this.mapper = mapper;
+    public IndividualUtil(ServiceRequestRepository serviceRequestRepository) {
         this.serviceRequestRepository = serviceRequestRepository;
     }
+
 
     /** To call the individual service for searching individualId exists or not
      * @param individualRequest

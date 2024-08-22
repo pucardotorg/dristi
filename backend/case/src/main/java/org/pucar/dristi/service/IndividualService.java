@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_SERVICE_EXCEPTION;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -10,15 +11,21 @@ import org.pucar.dristi.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_SERVICE_EXCEPTION;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class IndividualService {
-    @Autowired
+
     private IndividualUtil individualUtils;
-    @Autowired
+
     private Configuration config;
+
+    @Autowired
+    public IndividualService(IndividualUtil individualUtils, Configuration config) {
+        this.individualUtils = individualUtils;
+        this.config = config;
+    }
 
     public Boolean searchIndividual(RequestInfo requestInfo, String individualId) {
         try {

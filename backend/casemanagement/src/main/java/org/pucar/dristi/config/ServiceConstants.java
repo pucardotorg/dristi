@@ -45,6 +45,33 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+    public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/secure-temp/";
 
+    public static final String FILE_STORE_MAPPER_KEY="referenceid_filestore_mapper";
+    public static final String JSON_PARSING_ERR = "JSON_PARSING_ERR";
+
+    //ElasticSearch
+    public static final String ES_TERM_QUERY = "{\"size\":10000,\"query\":{\"term\":{\"%s\":\"%s\"}},\"sort\":[{\"%s\":{\"order\":\"%s\"}}]}";
+
+    public static final String ROOT_PATH = "$.";
+    public static final String CASE_BASE_PATH = "Data.caseDetails";
+    public static final String HEARING_BASE_PATH = "Data.hearing";
+    public static final String WITNESS_BASE_PATH = "Data.witnessDetails";
+    public static final String ORDER_BASE_PATH = "Data.orderDetails";
+    public static final String TASK_BASE_PATH = "Data.taskDetails";
+    public static final String APPLICATION_BASE_PATH = "Data.applicationDetails";
+    public static final String ARTIFACT_BASE_PATH = "Data.artifactDetails";
+
+    public static final String FILING_NUMBER = ".filingNumber.keyword";
+    public static final String ORDER_ID = ".orderId.keyword";
+    public static final String CREATED_TIME = ".createdTime";
+    public static final String CREATED_TIME_NESTED = "auditDetails.createdTime";
+    public static final String CREATED_TIME_ABSOLUTE = "Data.auditDetails.createdTime";
+
+    public static final String ORDER_ASC = "ASC";
+    public static final String ORDER_DESC = "DESC";
+
+    //JSON Path
+    public static final String ES_HITS_PATH = "$.hits.hits.*._source";
 
 }

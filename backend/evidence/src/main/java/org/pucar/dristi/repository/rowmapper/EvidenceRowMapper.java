@@ -1,14 +1,19 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.Comment;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.pucar.dristi.web.models.Artifact;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -47,15 +52,22 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .externalRefNumber(rs.getString("externalRefNumber"))
                             .caseId(rs.getString("caseId"))
                             .application(rs.getString("application"))
+                            .filingNumber(rs.getString("filingNumber"))
                             .hearing(rs.getString("hearing"))
                             .order(rs.getString("orders"))
                             .mediaType(rs.getString("mediaType"))
                             .artifactType(rs.getString("artifactType"))
+                            .sourceType(rs.getString("sourceType"))
                             .sourceID(rs.getString("sourceID"))
                             .sourceName(rs.getString("sourceName"))
-                            .applicableTo(Collections.singletonList(rs.getString("applicableTo")))
-                            .createdDate(rs.getInt("createdDate"))
+                            .applicableTo(getObjectFromJson(rs.getString("applicableTo"), new TypeReference<List<String>>() {
+                            }))
+                            .comments(getObjectFromJson(rs.getString("comments"), new TypeReference<List<Comment>>() {
+                            }))
+                            .file(getObjectFromJson(rs.getString("file"), new TypeReference<Document>(){}))
+                            .createdDate(rs.getLong("createdDate"))
                             .isActive(rs.getBoolean("isActive"))
+                            .isEvidence(rs.getBoolean("isEvidence"))
                             .status(rs.getString("status"))
                             .description(rs.getString("description"))
                             .auditdetails(auditDetails)
@@ -69,16 +81,44 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
 
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
-                    artifact.setAdditionalDetails(String.valueOf(objectMapper.readTree(additionalDetailsObject.getValue())));
+                    artifact.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));
                 }
 
                 artifactMap.put(id, artifact);
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.toString());
         }
         return new ArrayList<>(artifactMap.values());
+    }
+    public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        log.info("Converting JSON to type: {}", typeRef.getType());
+        log.info("JSON content: {}", json);
+
+        try {
+            if (json == null || json.trim().isEmpty()) {
+                // Handle null or empty JSON
+                if (isListType(typeRef)) {
+                    return (T) new ArrayList<>(); // Return an empty list for list types
+                } else {
+                    return objectMapper.readValue("{}", typeRef); // Return an empty object
+                }
+            }
+
+            // Parse the JSON
+            return objectMapper.readValue(json, typeRef);
+        } catch (IOException e) {
+            log.error("Failed to convert JSON to {}", typeRef.getType(), e);
+            throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
+        }
+    }
+
+    private <T> boolean isListType(TypeReference<T> typeRef) {
+        // Extract the raw type from the TypeReference
+        Class<?> rawClass = TypeFactory.defaultInstance().constructType(typeRef.getType()).getRawClass();
+        return List.class.isAssignableFrom(rawClass);
     }
 }
 

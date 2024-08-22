@@ -1,8 +1,28 @@
 package org.pucar.dristi.enrichment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,23 +30,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import org.pucar.dristi.web.models.AdvocateMapping;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.StatuteSection;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
+    @Mock
+    private CaseUtil caseUtil;
 
     @Mock
     private Configuration config;
@@ -102,7 +121,6 @@ class CaseRegistrationEnrichmentTest {
         User user = new User();
         user.setUuid("user-uuid");
         requestInfo.setUserInfo(user);
-        caseRequest = new CaseRequest();
         caseRequest.setRequestInfo(requestInfo);
         caseRequest.setCases(courtCase);
         // Call the method under test
@@ -157,6 +175,149 @@ class CaseRegistrationEnrichmentTest {
         caseRequest.setCases(null);
 
         assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest));
+    }
+
+    @Test
+    void enrichAccessCode_generatesAccessCode() {
+        caseRequest.setCases(new CourtCase());
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest);
+
+        assertNotNull(caseRequest.getCases().getAccessCode());
+    }
+
+    @Test
+    void enrichAccessCode_generatesUniqueAccessCodes() {
+        CaseRequest caseRequest1 = new CaseRequest();
+        CaseRequest caseRequest2 = new CaseRequest();
+        caseRequest1.setCases(new CourtCase());
+        caseRequest2.setCases(new CourtCase());
+
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest1);
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest2);
+
+        assertNotEquals(caseRequest1.getCases().getAccessCode(), caseRequest2.getCases().getAccessCode());
+    }
+
+    @Test
+    void listToString_returnsEmptyStringForEmptyList() {
+        List<String> emptyList = new ArrayList<>();
+        String result = caseRegistrationEnrichment.listToString(emptyList);
+        assertEquals("", result);
+    }
+
+    @Test
+    void listToString_returnsSingleElementForSingleItemList() {
+        List<String> singleItemList = Collections.singletonList("item1");
+        String result = caseRegistrationEnrichment.listToString(singleItemList);
+        assertEquals("item1", result);
+    }
+
+    @Test
+    void listToString_returnsCommaSeparatedStringForMultipleItemList() {
+        List<String> multipleItemList = Arrays.asList("item1", "item2", "item3");
+        String result = caseRegistrationEnrichment.listToString(multipleItemList);
+        assertEquals("item1,item2,item3", result);
+    }
+
+    @Test
+    void listToString_handlesNullList() {
+        List<String> nullList = null;
+        assertThrows(NullPointerException.class, () -> caseRegistrationEnrichment.listToString(nullList));
+    }
+
+    @Test
+    void enrichCaseNumberAndCNRNumber_generatesCaseNumberAndCNRNumber() {
+        CourtCase courtCase = new CourtCase();
+        courtCase.setFilingNumber("2022-12345");
+        caseRequest.setCases(courtCase);
+        when(idgenUtil.getIdList(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList("12345"));
+        when(caseUtil.getCNRNumber(anyString(), anyString(), anyString(), anyString())).thenReturn("KLJL01-12345-2022");
+        caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest);
+
+        assertNotNull(caseRequest.getCases().getCaseNumber());
+        assertNotNull(caseRequest.getCases().getCourtCaseNumber());
+        assertNotNull(caseRequest.getCases().getCnrNumber());
+    }
+
+    @Test
+    void enrichCaseNumberAndCNRNumber_handlesException() {
+        caseRequest.setCases(null);
+
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest));
+    }
+
+    @Test
+    void enrichAccessCode_handlesException() {
+        caseRequest.setCases(null);
+
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichAccessCode(caseRequest));
+    }
+
+    @Test
+    public void testEnrichLitigantsOnCreate() {
+        // Create a new litigant without an ID (to be created)
+        Party newParty = new Party();
+        newParty.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getLitigants().add(newParty);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        // Assert that the new party has been assigned an ID, case ID, and audit details
+        assertEquals(courtCase.getId().toString(), newParty.getCaseId());
+        assertEquals(auditDetails, newParty.getAuditDetails());
+    }
+    @Test
+    public void testEnrichRepOnCreate() {
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getRepresentatives().add(representative);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(courtCase.getId().toString(), representative.getCaseId());
+        assertEquals(auditDetails, representative.getAuditDetails());
+    }
+    @Test
+    public void testNoLitigants() {
+        // No litigants in the court case
+        courtCase.setLitigants(null);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        // Assert that nothing breaks when there are no litigants
+        assertEquals(null, courtCase.getLitigants());
+    }
+    @Test
+    public void testNoRepresentatives() {
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setRepresentatives(null);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(null, courtCase.getRepresentatives());
+    }
+    @Test
+    public void testEnrichLitigantsOnUpdate() {
+        // Create an existing litigant with an ID (to be updated)
+        Party existingParty = new Party();
+        existingParty.setId(UUID.randomUUID());
+        existingParty.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getLitigants().add(existingParty);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+
+        // Assert that the existing party's audit details have been updated
+        assertEquals(auditDetails, existingParty.getAuditDetails());
+    }
+    @Test
+    public void testEnrichRepresentativeOnUpdate() {
+        AdvocateMapping existingRepresentative = new AdvocateMapping();
+        existingRepresentative.setId("rep_id");
+        existingRepresentative.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getRepresentatives().add(existingRepresentative);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(auditDetails, existingRepresentative.getAuditDetails());
     }
 }
 

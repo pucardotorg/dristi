@@ -37,12 +37,4 @@ public class AdvocateListResponse {
 	@Valid
 	private Pagination pagination = null;
 
-	public AdvocateListResponse addAdvocatesItem(AdvocateSearchCriteria advocatesItem) {
-		if (this.advocates == null) {
-			this.advocates = new ArrayList<>();
-		}
-		this.advocates.add(advocatesItem);
-		return this;
-	}
-
 }

@@ -48,7 +48,10 @@ public class Artifact {
 
 	@Size(min = 2, max = 64)
 	private String evidenceNumber = null;
+	@JsonProperty("filingNumber")
+	@NotNull
 
+	private String filingNumber = null;
 	@JsonProperty("externalRefNumber")
 
 	@Size(min = 2, max = 128)
@@ -79,6 +82,10 @@ public class Artifact {
 
 	private String artifactType = null;
 
+	@JsonProperty("sourceType")
+
+	private String sourceType = null;
+
 	@JsonProperty("sourceID")
 
 	private String sourceID = null;
@@ -93,11 +100,15 @@ public class Artifact {
 
 	@JsonProperty("createdDate")
 
-	private Integer createdDate = null;
+	private Long createdDate = null;
 
 	@JsonProperty("isActive")
 
 	private Boolean isActive = true;
+
+	@JsonProperty("isEvidence")
+
+	private Boolean isEvidence = false;
 
 	@JsonProperty("status")
 
@@ -122,7 +133,7 @@ public class Artifact {
 
 	@JsonProperty("additionalDetails")
 
-	private String additionalDetails = null;
+	private Object additionalDetails = null;
 
 	@JsonProperty("auditdetails")
 

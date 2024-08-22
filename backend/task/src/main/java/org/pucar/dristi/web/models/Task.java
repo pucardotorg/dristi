@@ -54,20 +54,16 @@ public class Task {
     private String cnrNumber = null;
 
     @JsonProperty("createdDate")
-    @NotNull
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate createdDate = null;
+    private Long createdDate = null;
 
     @JsonProperty("dateCloseBy")
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate dateCloseBy = null;
+    private Long dateCloseBy = null;
 
     @JsonProperty("dateClosed")
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate dateClosed = null;
+    private Long dateClosed = null;
 
     @JsonProperty("taskDescription")
     private String taskDescription = null;
@@ -88,10 +84,7 @@ public class Task {
     private String status = null;
 
     @JsonProperty("assignedTo")
-    private Object assignedTo = null;
-
-    @JsonProperty("validate")
-    private Boolean validate = null;
+    private AssignedTo assignedTo = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;

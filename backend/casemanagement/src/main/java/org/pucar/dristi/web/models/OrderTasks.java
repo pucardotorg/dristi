@@ -1,20 +1,15 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.pucar.dristi.web.models.Order;
-import org.pucar.dristi.web.models.Task;
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * OrderTasks
@@ -25,23 +20,23 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderTasks   {
-        @JsonProperty("order")
+public class OrderTasks {
+    @JsonProperty("order")
 
-          @Valid
-                private Order order = null;
+    @Valid
+    private Order order = null;
 
-        @JsonProperty("tasks")
-          @Valid
-                private List<Task> tasks = null;
+    @JsonProperty("tasks")
+    @Valid
+    private List<Task> tasks = null;
 
 
-        public OrderTasks addTasksItem(Task tasksItem) {
-            if (this.tasks == null) {
+    public OrderTasks addTasksItem(Task tasksItem) {
+        if (this.tasks == null) {
             this.tasks = new ArrayList<>();
-            }
+        }
         this.tasks.add(tasksItem);
         return this;
-        }
+    }
 
 }

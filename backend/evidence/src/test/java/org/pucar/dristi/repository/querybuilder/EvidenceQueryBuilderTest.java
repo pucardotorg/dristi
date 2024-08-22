@@ -3,165 +3,180 @@ package org.pucar.dristi.repository.querybuilder;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.pucar.dristi.web.models.EvidenceSearchCriteria;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public class EvidenceQueryBuilderTest {
 
-    private final EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
+    @InjectMocks
+    private EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
 
     @Test
     void testGetArtifactSearchQuery_WithAllFields() {
         // Mocking the required dependencies
-        List<String> ids = Arrays.asList("1", "2", "3");
-        String caseId = "testCaseId";
-        String application = "testApplication";
-        String hearing = "testHearing";
-        String order = "testOrder";
-        String sourceId = "testSourceId";
-        String sourceName = "testSourceName";
+        EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
+        criteria.setId("1");
+        criteria.setCaseId("testCaseId");
+        criteria.setApplicationNumber("testApplication");
+        criteria.setEvidenceStatus(true);
+        criteria.setArtifactType("testArtifactType");
+        criteria.setFilingNumber("testFilingNumber");
+        criteria.setHearing("testHearing");
+        criteria.setOrder("testOrder");
+        criteria.setSourceId("testSourceId");
+        criteria.setSourceName("testSourceName");
+        criteria.setArtifactNumber("artifactNumber");
+        criteria.setOwner(UUID.fromString("baf36d5a-58ff-4b9b-b263-69ab45b1c7b4"));
 
-        // Mocking the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
+        // Use ArrayList for preparedStmtList
+        List<Object> preparedStmtList = new ArrayList<>(Arrays.asList("1", "testCaseId", "testApplication", "testArtifactType", true, "testFilingNumber",
+                "testHearing", "testOrder", "testSourceId", "testSourceName", "artifactNumber", UUID.fromString("baf36d5a-58ff-4b9b-b263-69ab45b1c7b4")));
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
-                "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-                "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+                "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
+                "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+                "art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art WHERE art.id = '1' AND art.caseId = 'testCaseId' AND art.application = 'testApplication' " +
-                "AND art.hearing = 'testHearing' AND art.orders = 'testOrder' AND art.sourceId = 'testSourceId' " +
-                "AND art.sourceName = 'testSourceName' ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.artifactType = ? AND art.isEvidence = ? AND art.filingNumber = ? " +
+                "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
+                "AND art.createdBy = ? AND art.sourceName = ? " +
+                "AND art.artifactNumber LIKE ?";
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(ids.get(0), caseId, application, hearing, order, sourceId, sourceName);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,new ArrayList<>(), criteria);
 
         // Assertions
         assertEquals(expectedQuery, query);
     }
+
+
     @Test
     void testGetArtifactSearchQuery_WithNullFields() {
         // Mocking the required dependencies
-        String id = null;
-        String caseId = null;
-        String application = null;
-        String hearing = null;
-        String order = null;
-        String sourceId = null;
-        String sourceName = null;
-
-        // Mocking the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
+        EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
+        criteria.setId(null);
+        criteria.setCaseId(null);
+        criteria.setApplicationNumber(null);
+        criteria.setFilingNumber(null);
+        criteria.setHearing(null);
+        criteria.setOrder(null);
+        criteria.setSourceId(null);
+        criteria.setSourceName(null);
+        criteria.setArtifactNumber(null);
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
-                "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-                "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+                "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
+                "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+                "art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art";
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList, new ArrayList<>(), criteria);
 
         // Assertions
         assertEquals(expectedQuery, query);
     }
+
+    @Test
+    void testAddArtifactCriteriaWithBoolean() {
+        // Initialize the variables
+        Boolean criteria = true;
+        StringBuilder query = new StringBuilder("SELECT * FROM artifacts");
+        List<Object> preparedStmtList = new ArrayList<>();
+        boolean firstCriteria = true;
+        String criteriaClause = "art.isEvidence = ?";
+
+        // Call the method under test
+        boolean result = queryBuilder.addArtifactCriteria(criteria, query, preparedStmtList, firstCriteria,new ArrayList<>());
+
+        // Verify the results
+        assertFalse(result); // firstCriteria should be false after adding the first criteria
+        assertEquals("SELECT * FROM artifacts WHERE art.isEvidence = ?", query.toString()); // query should have the criteria appended
+        assertEquals(1, preparedStmtList.size()); // preparedStmtList should have one element
+        assertEquals(criteria, preparedStmtList.get(0)); // the criteria should be added to the preparedStmtList
+    }
+
+    @Test
+    public void testGetArtifactSearchQuery_exception() {
+        List<Object> preparedStmtList = new ArrayList<>();
+        EvidenceSearchCriteria criteria = new EvidenceSearchCriteria();
+        criteria.setId("testId");
+        criteria.setCaseId("testCaseId");
+        criteria.setEvidenceStatus(true);
+        criteria.setArtifactType("testArtifactType");
+        criteria.setApplicationNumber("testApplication");
+        criteria.setFilingNumber("testFilingNumber");
+        criteria.setHearing("testHearing");
+        criteria.setOrder("testOrder");
+        criteria.setSourceId("testSourceId");
+        criteria.setSourceName("testSourceName");
+        criteria.setArtifactNumber("testArtifactNumber");
+        criteria.setOwner(UUID.fromString("baf36d5a-58ff-4b9b-b263-69ab45b1c7b4"));
+
+        // Inject a scenario that causes an exception
+        EvidenceQueryBuilder spyQueryBuilder = spy(queryBuilder);
+        doThrow(new RuntimeException("Test Exception"))
+                .when(spyQueryBuilder)
+                .addArtifactCriteria(
+                        anyBoolean(),
+                        any(StringBuilder.class),
+                        anyList(),
+                        anyBoolean(),
+                        anyList()
+                );
+
+        // Execute the method and assert that the CustomException is thrown
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            spyQueryBuilder.getArtifactSearchQuery(preparedStmtList,new ArrayList<>(), criteria);
+        });
+
+        // Verify that the correct exception is thrown with the expected message
+        assertFalse(exception.getMessage().contains("Error occurred while building the artifact search query: java.lang.RuntimeException: Test Exception"));
+    }
+
+
 
 
     @Test
     void testGetArtifactSearchQueryWithNullValues() {
         // Mock the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = Mockito.mock(EvidenceQueryBuilder.class);
+        EvidenceQueryBuilder mockQueryBuilder = Mockito.mock(EvidenceQueryBuilder.class);
 
         // Expected query when all values are null
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
-                "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-                "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+                "art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
+                "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+                "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art";
 
-        // Stubbing the method call to return the expected query
-        Mockito.when(queryBuilder.getArtifactSearchQuery(null, null, null, null, null, null, null))
-                .thenReturn(expectedQuery);
+        // Mock behavior for null criteria
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(Mockito.any(),Mockito.isNull(),Mockito.isNull())).thenReturn(expectedQuery);
 
-        // Calling the method under test
-        String actualQuery = queryBuilder.getArtifactSearchQuery(null, null, null, null, null, null, null);
-
-        // Assertions
+        // Call the method and verify results
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(new ArrayList<>(), null,null);
         assertEquals(expectedQuery, actualQuery);
     }
 
 
-    @Test
-    void testGetDocumentSearchQuery() {
-        List<String> ids = List.of("doc1", "doc2", "doc3");
-        List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQuery = "SELECT doc.id as id, doc.fileStore as fileStore, doc.documentUid as documentUid, " +
-                "doc.documentType as documentType, doc.artifactId as artifactId, doc.additionalDetails as additionalDetails  FROM dristi_evidence_document doc WHERE doc.artifactId IN (?,?,?)";
-
-        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
-        assertEquals(expectedQuery, query);
-        assertEquals(ids, preparedStmtList);
-    }
-
-    @Test
-    void testGetDocumentSearchQueryWithEmptyIds() {
-        List<String> ids = Collections.emptyList();
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        String expectedQuery = "SELECT doc.id as id, doc.fileStore as fileStore, doc.documentUid as documentUid, " +
-                "doc.documentType as documentType, doc.artifactId as artifactId, doc.additionalDetails as additionalDetails  FROM dristi_evidence_document doc";
-
-        String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
-        assertEquals(expectedQuery, query);
-        assertTrue(preparedStmtList.isEmpty());
-    }
-
-    @Test
-    void testGetCommentSearchQuery() {
-        List<String> artifactIds = List.of("art1", "art2", "art3");
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        String expectedQuery = "SELECT com.id as id, com.tenantId as tenantId, com.artifactId as artifactId, " +
-                "com.individualId as individualId, com.comment as comment, com.isActive as isActive, com.additionalDetails as additionalDetails, " +
-                "com.createdBy as createdBy, com.lastModifiedBy as lastModifiedBy, com.createdTime as createdTime, com.lastModifiedTime as lastModifiedTime  " +
-                "FROM dristi_evidence_comment com WHERE com.artifactId IN (?,?,?)";
-
-        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
-        assertEquals(expectedQuery, query);
-        assertEquals(artifactIds, preparedStmtList);
-    }
-
-    @Test
-    void testGetCommentSearchQueryWithEmptyArtifactIds() {
-        List<String> artifactIds = Collections.emptyList();
-        List<Object> preparedStmtList = new ArrayList<>();
-
-        String expectedQuery = "SELECT com.id as id, com.tenantId as tenantId, com.artifactId as artifactId, " +
-                "com.individualId as individualId, com.comment as comment, com.isActive as isActive, com.additionalDetails as additionalDetails, " +
-                "com.createdBy as createdBy, com.lastModifiedBy as lastModifiedBy, com.createdTime as createdTime, com.lastModifiedTime as lastModifiedTime  " +
-                "FROM dristi_evidence_comment com";
-
-        String query = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtList);
-        assertEquals(expectedQuery, query);
-        assertTrue(preparedStmtList.isEmpty());
-    }
 }

@@ -18,8 +18,11 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class OrderRegistrationEnrichment {
 
-    @Autowired
     private IdgenUtil idgenUtil;
+
+    public OrderRegistrationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {
@@ -41,6 +44,7 @@ public class OrderRegistrationEnrichment {
                 }
 
                 orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
+                orderRequest.getOrder().setCreatedDate(System.currentTimeMillis());
             }
 
         } catch (CustomException e) {
@@ -58,6 +62,12 @@ public class OrderRegistrationEnrichment {
             orderRequest.getOrder().getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
             orderRequest.getOrder().getAuditDetails().setLastModifiedBy(orderRequest.getRequestInfo().getUserInfo().getUuid());
 
+            if (orderRequest.getOrder().getDocuments() != null) {
+                orderRequest.getOrder().getDocuments().forEach(document -> {
+                    if(document.getId()==null)
+                     document.setId(String.valueOf(UUID.randomUUID()));
+                });
+            }
         } catch (Exception e) {
             log.error("Error enriching advocate application upon update :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in order enrichment service during order update process: " + e.getMessage());

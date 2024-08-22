@@ -1,33 +1,43 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_CREATING_DEMAND_FOR_CASE;
+import static org.pucar.dristi.config.ServiceConstants.TAX_AMOUNT;
+import static org.pucar.dristi.config.ServiceConstants.TAX_HEADMASTER_CODE;
+import static org.pucar.dristi.config.ServiceConstants.TAX_PERIOD_FROM;
+import static org.pucar.dristi.config.ServiceConstants.TAX_PERIOD_TO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.Demand;
+import org.pucar.dristi.web.models.DemandDetail;
+import org.pucar.dristi.web.models.DemandRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class BillingUtil {
 
-	@Autowired
 	private RestTemplate restTemplate;
 
-	@Autowired
-	private ObjectMapper mapper;
+	private Configuration configs;
 
 	@Autowired
-	private Configuration configs;
+	public BillingUtil(RestTemplate restTemplate, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.configs = configs;
+	}
 
 	public void createDemand(CaseRequest caseRequest) {
 		StringBuilder uri = new StringBuilder();
@@ -54,7 +64,7 @@ public class BillingUtil {
 		demands.add(demand);
 		demandRequest.setDemands(demands);
 
-		Object response = new HashMap<>();
+		Object response;
 		try {
 			response = restTemplate.postForObject(uri.toString(), demandRequest, Map.class);
 			log.info("Demand response :: {}", response);

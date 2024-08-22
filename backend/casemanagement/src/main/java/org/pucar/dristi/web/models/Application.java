@@ -1,16 +1,6 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.models.Workflow;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,124 +8,142 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Application
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-17T10:19:47.222225+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:12:15.132164900+05:30[Asia/Calcutta]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Application   {
-        @JsonProperty("id")
+public class Application {
+	@JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+	@Valid
+	private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("tenantId")
+	@NotNull
 
-                private String tenantId = null;
+	private String tenantId = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("caseId")
+	@NotNull
+	private String caseId = null;
 
-                private String filingNumber = null;
+	@JsonProperty("filingNumber")
 
-        @JsonProperty("cnrNumber")
+	private String filingNumber = null;
 
-                private String cnrNumber = null;
+	@JsonProperty("cnrNumber")
 
-        @JsonProperty("referenceId")
+	private String cnrNumber = null;
 
-          @Valid
-                private UUID referenceId = null;
+	@JsonProperty("referenceId")
 
-        @JsonProperty("createdDate")
-          @NotNull
+	@Valid
+	private UUID referenceId = null;
 
-                private String createdDate = null;
+	@JsonProperty("createdDate")
+	@NotNull
 
-        @JsonProperty("createdBy")
+	private String createdDate = null;
 
-          @Valid
-                private UUID createdBy = null;
+	@JsonProperty("createdBy")
 
-        @JsonProperty("onBehalfOf")
-          @Valid
-                private List<UUID> onBehalfOf = null;
+	@Valid
+	private UUID createdBy = null;
 
-        @JsonProperty("applicationType")
-          @NotNull
-          @Valid
-                private List<UUID> applicationType = new ArrayList<>();
+	@JsonProperty("onBehalfOf")
+	@Valid
+	private List<UUID> onBehalfOf = null;
 
-        @JsonProperty("applicationNumber")
+	@JsonProperty("applicationType")
+	@NotNull
+	@Valid
+	private String applicationType = null;
 
-        @Size(min=24,max=48)         private String applicationNumber = null;
+	@JsonProperty("applicationNumber")
 
-        @JsonProperty("issuedBy")
+	@Size(min = 24, max = 48)
+	private String applicationNumber = null;
 
-                private Object issuedBy = null;
+	@JsonProperty("issuedBy")
 
-        @JsonProperty("status")
-          @NotNull
+	private IssuedBy issuedBy = null;
 
-                private String status = null;
+	@JsonProperty("status")
+	@NotNull
 
-        @JsonProperty("comment")
+	private String status = null;
 
-                private String comment = null;
+	@JsonProperty("comment")
 
-        @JsonProperty("isActive")
-          @NotNull
+	private String comment = null;
 
-                private Boolean isActive = null;
+	@JsonProperty("isActive")
+	@NotNull
 
-        @JsonProperty("statuteSection")
+	private Boolean isActive = null;
 
-          @Valid
-                private StatuteSection statuteSection = null;
+	@JsonProperty("statuteSection")
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+	@Valid
+	private StatuteSection statuteSection = null;
 
-        @JsonProperty("additionalDetails")
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-                private String additionalDetails = null;
+	@JsonProperty("additionalDetails")
 
-        @JsonProperty("auditDetails")
+	private Object additionalDetails = null;
 
-          @Valid
-                private AuditDetails auditDetails = null;
+	@JsonProperty("auditDetails")
 
-        @JsonProperty("workflow")
+	@Valid
+	private AuditDetails auditDetails = null;
 
-          @Valid
-                private Workflow workflow = null;
+	@JsonProperty("workflow")
+
+	@Valid
+	private Workflow workflow = null;
 
 
-        public Application addOnBehalfOfItem(UUID onBehalfOfItem) {
-            if (this.onBehalfOf == null) {
-            this.onBehalfOf = new ArrayList<>();
-            }
-        this.onBehalfOf.add(onBehalfOfItem);
-        return this;
-        }
+	public Application addOnBehalfOfItem(UUID onBehalfOfItem) {
+		if (this.onBehalfOf == null) {
+			this.onBehalfOf = new ArrayList<>();
+		}
+		this.onBehalfOf.add(onBehalfOfItem);
+		return this;
+	}
 
-        public Application addApplicationTypeItem(UUID applicationTypeItem) {
-        this.applicationType.add(applicationTypeItem);
-        return this;
-        }
+	public Application addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
-        public Application addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
-
+	public boolean isResponseRequired() {
+		if (additionalDetails instanceof Map) {
+			Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
+			if (detailsMap.containsKey("isResponseRequired")) {
+				return (boolean) detailsMap.get("isResponseRequired");
+			}
+		}
+		return false;
+	}
 }

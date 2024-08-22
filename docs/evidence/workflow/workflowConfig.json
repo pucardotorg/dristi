@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "evidence",
-      "business": "evidence-services",
+      "businessService": "artifact-default",
+      "business": "evidence",
       "businessServiceSla": 30,
       "states": [
         {

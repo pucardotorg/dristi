@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-reschedule-hearing.json",
+  "$comment": "definition of the schema for issuing reschedule of hearing order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "hearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of new hearing"
+    },
+    "originalHearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of original nearing"
+    }
+  }
+}

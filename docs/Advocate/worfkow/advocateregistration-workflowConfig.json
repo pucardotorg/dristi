@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "advocate",
-      "business": "advocate-services",
+      "businessService": "user-registration-advocate",
+      "business": "user-registration",
       "businessServiceSla": 30,
       "states": [
         {

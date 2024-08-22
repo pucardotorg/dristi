@@ -23,129 +23,142 @@ import lombok.NoArgsConstructor;
  * Artifact
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-17T10:19:47.222225+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-16T15:17:16.225735+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Artifact   {
-        @JsonProperty("id")
+public class Artifact {
+	@JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+	@Valid
+	private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("tenantId")
+	@NotNull
 
-                private String tenantId = null;
+	private String tenantId = null;
 
-        @JsonProperty("artifactNumber")
+	@JsonProperty("artifactNumber")
 
-        @Size(min=2,max=64)         private String artifactNumber = null;
+	@Size(min = 2, max = 64)
+	private String artifactNumber = null;
 
-        @JsonProperty("evidenceNumber")
+	@JsonProperty("evidenceNumber")
 
-        @Size(min=2,max=64)         private String evidenceNumber = null;
+	@Size(min = 2, max = 64)
+	private String evidenceNumber = null;
+	@JsonProperty("filingNumber")
+	@NotNull
 
-        @JsonProperty("externalRefNumber")
+	private String filingNumber = null;
+	@JsonProperty("externalRefNumber")
 
-        @Size(min=2,max=128)         private String externalRefNumber = null;
+	@Size(min = 2, max = 128)
+	private String externalRefNumber = null;
 
-        @JsonProperty("caseId")
-          @NotNull
+	@JsonProperty("caseId")
+	@NotNull
 
-                private String caseId = null;
+	private String caseId = null;
 
-        @JsonProperty("application")
+	@JsonProperty("application")
 
-                private String application = null;
+	private String application = null;
 
-        @JsonProperty("hearing")
+	@JsonProperty("hearing")
 
-                private String hearing = null;
+	private String hearing = null;
 
-        @JsonProperty("order")
+	@JsonProperty("order")
 
-                private String order = null;
+	private String order = null;
 
-        @JsonProperty("mediaType")
+	@JsonProperty("mediaType")
 
-                private String mediaType = null;
+	private String mediaType = null;
 
-        @JsonProperty("artifactType")
+	@JsonProperty("artifactType")
 
-                private String artifactType = null;
+	private String artifactType = null;
 
-        @JsonProperty("sourceID")
+	@JsonProperty("sourceType")
 
-                private String sourceID = null;
+	private String sourceType = null;
 
-        @JsonProperty("sourceName")
+	@JsonProperty("sourceID")
 
-                private String sourceName = null;
+	private String sourceID = null;
 
-        @JsonProperty("applicableTo")
+	@JsonProperty("sourceName")
 
-                private List<String> applicableTo = null;
+	private String sourceName = null;
 
-        @JsonProperty("createdDate")
+	@JsonProperty("applicableTo")
 
-                private Integer createdDate = null;
+	private List<String> applicableTo = null;
 
-        @JsonProperty("isActive")
+	@JsonProperty("createdDate")
 
-                private Boolean isActive = true;
+	private Integer createdDate = null;
 
-        @JsonProperty("status")
+	@JsonProperty("isActive")
 
-                private String status = null;
+	private Boolean isActive = true;
 
-        @JsonProperty("file")
+	@JsonProperty("isEvidence")
 
-          @Valid
-                private Document file = null;
+	private Boolean isEvidence = false;
 
-        @JsonProperty("description")
+	@JsonProperty("status")
 
-                private String description = null;
+	private String status = null;
 
-        @JsonProperty("artifactDetails")
+	@JsonProperty("file")
 
-                private Object artifactDetails = null;
+	@Valid
+	private Document file = null;
 
-        @JsonProperty("comments")
-          @Valid
-                private List<Comment> comments = null;
+	@JsonProperty("description")
 
-        @JsonProperty("additionalDetails")
+	private String description = null;
 
-                private String additionalDetails = null;
+	@JsonProperty("artifactDetails")
 
-        @JsonProperty("auditdetails")
+	private Object artifactDetails = null;
 
-          @Valid
-                private AuditDetails auditdetails = null;
+	@JsonProperty("comments")
+	@Valid
+	private List<Comment> comments = null;
 
-        @JsonProperty("workflow")
+	@JsonProperty("additionalDetails")
 
-          @Valid
-                private Workflow workflow = null;
+	private Object additionalDetails = null;
 
+	@JsonProperty("auditdetails")
 
-        public Artifact addApplicableToItem(String applicableToItem) {
-            if (this.applicableTo == null) {
-            this.applicableTo = new ArrayList<>();
-            }
-        this.applicableTo.add(applicableToItem);
-        return this;
-        }
+	@Valid
+	private AuditDetails auditdetails = null;
 
-        public Artifact addCommentsItem(Comment commentsItem) {
-            if (this.comments == null) {
-            this.comments = new ArrayList<>();
-            }
-        this.comments.add(commentsItem);
-        return this;
-        }
+	@JsonProperty("workflow")
+
+	@Valid
+	private Workflow workflow = null;
+
+	public Artifact addApplicableToItem(String applicableToItem) {
+		if (this.applicableTo == null) {
+			this.applicableTo = new ArrayList<>();
+		}
+		this.applicableTo.add(applicableToItem);
+		return this;
+	}
+
+	public Artifact addCommentsItem(Comment commentsItem) {
+		if (this.comments == null) {
+			this.comments = new ArrayList<>();
+		}
+		this.comments.add(commentsItem);
+		return this;
+	}
 
 }

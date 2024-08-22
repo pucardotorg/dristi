@@ -75,41 +75,13 @@ paths:
       summary: search for orders
       description: |
         search order(s) based on different parameters
-      parameters:
-        - name: id
-          in: query
-          description: id of the order being searched
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: tenantId whose order(s) are being searched
-          schema:
-            type: string
-        - name: applicationNumber
-          in: query
-          description: the aapplicationNumber whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: filingNumber
-          in: query
-          description: the filingNumber of the case whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose order(s) are being queried
-          required: true
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: the status of the order(s) being searched
-          schema:
-            type: string
+      requestBody:
+        description: Details for the search order(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/OrderSearchRequest'
+        required: true
       responses:
         "200":
           description: ResponseInfo with order list
@@ -152,6 +124,15 @@ paths:
 
 components:
   schemas:
+    OrderSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/OrderCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     OrderRequest:
       type: object
       properties:
@@ -178,7 +159,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Order'
-
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     OrderExistsRequest:
       type: object
       properties:
@@ -197,11 +179,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderExists'
-
+    OrderCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        tenantId:
+          type: string
+        id:
+          type: string
+        orderNumber:
+          type: string
+        orderType:
+          type: string  
+        applicationNumber:
+          type: string
+        status:
+          type: string
     OrderExists:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
         filingNumber:
           type: string
         cnrNumber:
@@ -212,7 +218,20 @@ components:
           type: string
         exists:
           type: boolean
-
+    IssuedBy:
+      type: object
+      properties:
+        benchID:
+          type: string
+        judgeID:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+        courtID:
+          type: string
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
       type: object
@@ -241,45 +260,33 @@ components:
             description: application number the order is based on. Could be null if not based on any application
         hearingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
           type: string
           minLength: 24
           maxLength: 256
           description: Order date and Case Name For example it will be Order number 1 for Rajpal et all vs State of Kerala
-        createdDate:
+        linkedOrderNumber:
           type: string
-          format: date
+          minLength: 24
+          maxLength: 256
+          description: Linked orderNumber for reissue of orders (for summons and warrants et)
+        createdDate:
+          type: integer
+          format: int64
           description: the date on which the order was created. Can be treated as the start date also
         issuedBy:
-          type: object
-          properties:
-            benchID:
-              type: string
-            judgeID:
-              type: array
-              items:
-                type: string
-                format: uuid
-                minLength: 36
-                maxLength: 36
-            courtID:
-              type: string
+          $ref: '#/components/schemas/IssuedBy'
         orderType:
-          type: array
-          items:
-            type: integer
-            format: uuid
-            minLength: 36
-            maxLength: 36
-          description: array of Master Data ID since an order can be of multiple order types
+          type: string
+          description: Master Data ID from OrderType master
         orderCategory:
           type: string
           description: Master data ID
           example: Intermediate, Judgement
+        orderDetails:
+          type: object
+          description: schema to define fields that required to creation of ORDER PDFs. will be used to validate the fields before creating the PDF          
         status:
           type: string
           description: workflow status
@@ -296,7 +303,7 @@ components:
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
-          type: string
+          type: object
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'

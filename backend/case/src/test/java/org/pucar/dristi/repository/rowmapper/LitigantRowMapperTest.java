@@ -1,5 +1,18 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,15 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.jdbc.core.ResultSetExtractor;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class LitigantRowMapperTest {
@@ -46,7 +50,7 @@ class LitigantRowMapperTest {
         when(rs.getLong("createdtime")).thenReturn(1000000L);
         when(rs.getString("lastmodifiedby")).thenReturn("modifier");
         when(rs.getLong("lastmodifiedtime")).thenReturn(1000001L);
-        when(rs.getString("isactive")).thenReturn("true");
+        when(rs.getBoolean("isactive")).thenReturn(true);
 
         PGobject pgObject = mock(PGobject.class);
         when(pgObject.getValue()).thenReturn("{\"key\":\"value\"}");

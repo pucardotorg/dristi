@@ -2,35 +2,31 @@ import { AppContainer, BreadCrumb, PrivateRoute } from "@egovernments/digit-ui-r
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
+import HearingsResponse from "./HearingsResponse";
+import InsideHearingMainPage from "./InsideHearingMainPage";
+import GenerateOrders from "./GenerateOrders";
 import AddParty from "./AddParty";
 import AdjournHearing from "./AdjournHearing";
-import CaseHistory from "./CaseHistory";
 import EndHearing from "./EndHearing";
-import GenerateOrders from "./GenerateOrders";
-import HearingPopup from "./HearingPopUp";
-import HearingsResponse from "./HearingsResponse";
-import HomeViewHearing from "./HomeViewHearing";
-import InsideHearingMainPage from "./InsideHearingMainPage";
 import Orders from "./Orders";
-import Parties from "./Parties";
-import RescheduleHearing from "./ReSchedulHearing";
 import Submission from "./Submission";
-import ViewCase from "./ViewCase";
+import CaseHistory from "./CaseHistory";
+import Parties from "./Parties";
+import HomeViewHearing from "./HomeViewHearing";
 import ViewHearing from "./ViewHearing";
-import ViewPendingTask from "./ViewPendingTask";
+import RescheduleHearing from "./ReSchedulHearing";
 import ViewTranscript from "./ViewTranscript";
 import ViewWitnessDeposition from "./ViewWitnessDeposition";
+import ViewPendingTask from "./ViewPendingTask";
+import HearingPopup from "./HearingPopUp";
+import InsideHearing from "./InsideHearing";
+import ViewCase from "./ViewCase";
 const bredCrumbStyle={ maxWidth: "min-content" };
-const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-let userType = "employee";
-if (userInfo) {
-  userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
-}
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
+      path: `/${window?.contextPath}/employee`,
       content: t("HOME"),
       show: true,
     },
@@ -62,6 +58,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/home`} component={() => <HomeViewHearing></HomeViewHearing>} />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/hearing-popup`} component={() => <HearingPopup></HearingPopup>} />
+        <PrivateRoute path={`${path}/inside-hearings`} component={() => <InsideHearing></InsideHearing>} />
         <PrivateRoute path={`${path}/view-case`} component={() => <ViewCase></ViewCase>} />
         <PrivateRoute path={`${path}/reschedule-hearing`} component={() => <RescheduleHearing></RescheduleHearing>} />
         <PrivateRoute path={`${path}/view-transcript`} component={() => <ViewTranscript></ViewTranscript>} />

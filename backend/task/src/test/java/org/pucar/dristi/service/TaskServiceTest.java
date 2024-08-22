@@ -14,14 +14,10 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.TaskRegistrationValidator;
-import org.pucar.dristi.web.models.Task;
-import org.pucar.dristi.web.models.TaskExists;
-import org.pucar.dristi.web.models.TaskExistsRequest;
-import org.pucar.dristi.web.models.TaskRequest;
+import org.pucar.dristi.web.models.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,6 +58,7 @@ public class TaskServiceTest {
         task.setTenantId("tenant-id");
         task.setCnrNumber("cnr-number");
         task.setTaskNumber("task-number");
+        task.setTaskType("doc");
 
         requestInfo = RequestInfo.builder().build();
 
@@ -76,47 +73,70 @@ public class TaskServiceTest {
         when(config.getTaskBusinessName()).thenReturn("task-business-name");
         when(config.getTaskCreateTopic()).thenReturn("task-create-topic");
 
-        doNothing().when(validator).validateCaseRegistration(any(TaskRequest.class));
+        doNothing().when(validator).validateTaskRegistration(any(TaskRequest.class));
         doNothing().when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
 
         Task result = taskService.createTask(taskRequest);
 
         assertEquals(task, result);
-        verify(validator, times(1)).validateCaseRegistration(any(TaskRequest.class));
+        verify(validator, times(1)).validateTaskRegistration(any(TaskRequest.class));
         verify(enrichmentUtil, times(1)).enrichTaskRegistration(any(TaskRequest.class));
         verify(workflowUtil, times(1)).updateWorkflowStatus(any(RequestInfo.class), anyString(), anyString(), anyString(), any(), anyString());
         verify(producer, times(1)).push(anyString(), any(TaskRequest.class));
     }
 
     @Test
-    void testCreateTaskThrowsException() {
-        doThrow(new CustomException(CREATE_TASK_ERR, "Error")).when(validator).validateCaseRegistration(any(TaskRequest.class));
+    public void testCreateTask_CustomException() {
+        doThrow(new CustomException("VALIDATION_ERROR", "Validation failed")).when(validator).validateTaskRegistration(any(TaskRequest.class));
 
         CustomException exception = assertThrows(CustomException.class, () -> taskService.createTask(taskRequest));
 
+        verify(validator, times(1)).validateTaskRegistration(taskRequest);
+        assertEquals("VALIDATION_ERROR", exception.getCode());
+        assertEquals("Validation failed", exception.getMessage());
+    }
+
+    @Test
+    public void testCreateTask_Exception() {
+
+        doThrow(new RuntimeException("Unexpected error")).when(validator).validateTaskRegistration(any(TaskRequest.class));
+
+        CustomException exception = assertThrows(CustomException.class, () -> taskService.createTask(taskRequest));
+
+        verify(validator, times(1)).validateTaskRegistration(taskRequest);
         assertEquals(CREATE_TASK_ERR, exception.getCode());
-        assertEquals("Error", exception.getMessage());
+        assertEquals("Unexpected error", exception.getMessage());
     }
 
     @Test
     void testSearchTaskSuccess() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString())).thenReturn(Collections.singletonList(task));
-        when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(null);
+        when(taskRepository.getApplications(any(),any())).thenReturn(Collections.singletonList(task));
 
-        List<Task> result = taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", requestInfo);
+        List<Task> result = taskService.searchTask(new TaskSearchRequest());
 
         assertEquals(1, result.size());
-        verify(taskRepository, times(1)).getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString());
+        verify(taskRepository, times(1)).getApplications(any(),any());
     }
 
     @Test
     void testSearchTaskThrowsException() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
+        doThrow(new RuntimeException("Unexpected error")).when(taskRepository).getApplications(any(TaskCriteria.class),any());
+        assertThrows(CustomException.class, this::invokeSearchTask);
+    }
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", requestInfo));
+
+    @Test
+    void testSearchTaskThrows_CustomException() {
+        when(taskRepository.getApplications(any(),any())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
+
+        CustomException exception = assertThrows(CustomException.class, this::invokeSearchTask);
 
         assertEquals(SEARCH_TASK_ERR, exception.getCode());
         assertEquals("Error", exception.getMessage());
+    }
+
+    private void invokeSearchTask() {
+        taskService.searchTask(new TaskSearchRequest());
     }
 
     @Test
@@ -124,7 +144,7 @@ public class TaskServiceTest {
         when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(true);
         when(config.getTaskBusinessServiceName()).thenReturn("task-business-service");
         when(config.getTaskBusinessName()).thenReturn("task-business-name");
-        when(config.getTaskCreateTopic()).thenReturn("task-create-topic");
+        when(config.getTaskUpdateTopic()).thenReturn("task-update-topic");
 
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(TaskRequest.class));
 
@@ -138,13 +158,24 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testUpdateTaskThrowsException() {
+    void testUpdateTaskThrows_CustomException() {
         when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class, () -> taskService.updateTask(taskRequest));
 
         assertEquals(VALIDATION_ERR, exception.getCode());
         assertEquals("Task Application does not exist", exception.getMessage());
+    }
+
+    @Test
+     void testUpdateTaskThrowsException() {
+        doThrow(new RuntimeException("Unexpected error")).when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
+        when(validator.validateApplicationExistence(any(Task.class), any(RequestInfo.class))).thenReturn(true);
+        assertThrows(CustomException.class, this::invokeUpdateTask);
+    }
+
+    private void invokeUpdateTask() {
+        taskService.updateTask(new TaskRequest());
     }
 
     @Test
@@ -162,7 +193,18 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testExistTaskThrowsException() {
+    void testExistTaskThrows_Exception() {
+
+        doThrow(new RuntimeException("Unexpected error")).when(taskRepository).checkTaskExists(any());
+        assertThrows(CustomException.class,  this::invokeExistTask);
+    }
+
+    private void invokeExistTask() {
+        taskService.existTask(new TaskExistsRequest());
+    }
+
+    @Test
+    void testExistTaskThrows_CustomException() {
         when(taskRepository.checkTaskExists(any(TaskExists.class))).thenThrow(new CustomException(EXIST_TASK_ERR, "Error"));
 
         TaskExistsRequest taskExistsRequest = new TaskExistsRequest();
@@ -172,5 +214,69 @@ public class TaskServiceTest {
 
         assertEquals(EXIST_TASK_ERR, exception.getCode());
         assertEquals("Error", exception.getMessage());
+    }
+
+    @Test
+    void testWorkflowUpdate_BailTask() {
+        task.setTaskType("bail"); // Task type in lowercase
+        task.setTenantId("tenant1");
+        task.setTaskNumber("T123");
+
+        taskRequest.setTask(task);
+
+        when(config.getTaskBailBusinessServiceName()).thenReturn("bail_service");
+        when(config.getTaskBailBusinessName()).thenReturn("bail_business");
+
+        taskService.createTask(taskRequest);
+
+        verify(workflowUtil).updateWorkflowStatus(any(), eq("tenant1"), eq("T123"), eq("bail_service"), any(), eq("bail_business"));
+    }
+
+    @Test
+    void testWorkflowUpdate_SummonTask() {
+        task.setTaskType("summon"); // Task type in lowercase
+        task.setTenantId("tenant2");
+        task.setTaskNumber("T456");
+
+        taskRequest.setTask(task);
+
+        when(config.getTaskSummonBusinessServiceName()).thenReturn("task-summon-service");
+        when(config.getTaskSummonBusinessName()).thenReturn("task-summon");
+
+        taskService.createTask(taskRequest);
+
+        verify(workflowUtil).updateWorkflowStatus(any(), eq("tenant2"), eq("T456"), eq("task-summon-service"), any(), eq("task-summon"));
+    }
+
+    @Test
+    void testWorkflowUpdate_WarrantTask() {
+        task.setTaskType("warrant"); // Task type in lowercase
+        task.setTenantId("tenant3");
+        task.setTaskNumber("T789");
+
+        taskRequest.setTask(task);
+
+        when(config.getTaskWarrantBusinessServiceName()).thenReturn("warrant_service");
+        when(config.getTaskWarrantBusinessName()).thenReturn("warrant_business");
+
+        taskService.createTask(taskRequest);
+
+        verify(workflowUtil).updateWorkflowStatus(any(), eq("tenant3"), eq("T789"), eq("warrant_service"), any(), eq("warrant_business"));
+    }
+
+    @Test
+    void testWorkflowUpdate_DefaultTask() {
+        task.setTaskType("unknown_task"); // Task type not recognized
+        task.setTenantId("tenant4");
+        task.setTaskNumber("T999");
+
+        taskRequest.setTask(task);
+
+        when(config.getTaskBusinessServiceName()).thenReturn("default_service");
+        when(config.getTaskBusinessName()).thenReturn("default_business");
+
+        taskService.createTask(taskRequest);
+
+        verify(workflowUtil).updateWorkflowStatus(any(), eq("tenant4"), eq("T999"), eq("default_service"), any(), eq("default_business"));
     }
 }

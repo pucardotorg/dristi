@@ -1,15 +1,16 @@
 package org.pucar.dristi.web.models;
 
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * AdvocateSearchCriteria
@@ -37,11 +38,4 @@ public class AdvocateSearchCriteria {
 	@Valid
 	private List<Advocate> responseList = null;
 
-	public AdvocateSearchCriteria addResponseListItem(Advocate responseListItem) {
-		if (this.responseList == null) {
-			this.responseList = new ArrayList<>();
-		}
-		this.responseList.add(responseListItem);
-		return this;
-	}
 }
