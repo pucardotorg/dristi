@@ -18,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IndividualService {
 
-    private IndividualUtil individualUtils;
+    private final IndividualUtil individualUtils;
 
-    private Configuration config;
+    private final Configuration config;
 
     @Autowired
     public IndividualService(IndividualUtil individualUtils, Configuration config) {
@@ -39,8 +39,7 @@ public class IndividualService {
 
             StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
             uri.append("?limit=1").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
-            Boolean isIndividualValid = individualUtils.individualExists(individualSearchRequest, uri);
-            return isIndividualValid;
+            return individualUtils.individualExists(individualSearchRequest, uri);
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {

@@ -119,7 +119,6 @@ class EncryptionDecryptionUtilTest {
         // Mock behavior for successful decryption
         Object objectToDecrypt = new Object();
         objectToDecrypt = (Object) Collections.singletonList(objectToDecrypt);
-        RequestInfo requestInfo = new RequestInfo();
         Object decryptedObject = new Object();
         when(encryptionService.decryptJson(any(), any(), anyString(), anyString(), any())).thenReturn(decryptedObject);
 
@@ -134,7 +133,6 @@ class EncryptionDecryptionUtilTest {
         when(encryptionService.decryptJson(any(), any(), anyString(), anyString(), any())).thenReturn(null);
 
         Object object = new Object();
-        RequestInfo requestInfo = new RequestInfo();
         CustomException exception = assertThrows(CustomException.class, () ->
                 encryptionDecryptionUtil.decryptObject(object, "key", Object.class, requestInfo));
         assertEquals("DECRYPTION_NULL_ERROR", exception.getCode());
@@ -146,7 +144,6 @@ class EncryptionDecryptionUtilTest {
         when(encryptionService.decryptJson(any(), any(), anyString(), anyString(), any()))
                 .thenThrow(new IOException("Decryption error"));
         Object object = new Object();
-        RequestInfo requestInfo = new RequestInfo();
         CustomException exception = assertThrows(CustomException.class, () ->
             encryptionDecryptionUtil.decryptObject(object, "key", Object.class, requestInfo));
         assertEquals("DECRYPTION_SERVICE_ERROR", exception.getCode());
