@@ -37,15 +37,13 @@ public class Main {
 			SSLContext ctx = SSLContext.getInstance("TLS");
 			X509TrustManager tm = new X509TrustManager() {
 				public void checkClientTrusted(X509Certificate[] xcs, String string) {
-					// No implementation needed for trusting all certificates
 				}
 
 				public void checkServerTrusted(X509Certificate[] xcs, String string) {
-					// No implementation needed for trusting all certificates
 				}
 
 				public X509Certificate[] getAcceptedIssuers() {
-					return new X509Certificate[0];
+					return null;
 				}
 			};
 			ctx.init(null, new TrustManager[]{tm}, null);

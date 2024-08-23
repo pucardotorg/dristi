@@ -68,7 +68,7 @@ class ConfigurationTest {
         configuration.setApplicationSearchPath("/application/search");
         configuration.setOrderHost("http://order-host");
         configuration.setOrderSearchPath("/order/search");
-        configuration.setApiCallDelayInSeconds(10);
+        configuration.setApiCallDelayInSeconds(10L);
         configuration.setMdmsHost("http://mdms-host");
         configuration.setMdmsEndPoint("/mdms/search");
         configuration.setMdmsPendingTaskModuleName("moduleName");
@@ -98,7 +98,7 @@ class ConfigurationTest {
         assertEquals("/application/search", configuration.getApplicationSearchPath());
         assertEquals("http://order-host", configuration.getOrderHost());
         assertEquals("/order/search", configuration.getOrderSearchPath());
-        assertEquals(10, configuration.getApiCallDelayInSeconds());
+        assertEquals(10L, configuration.getApiCallDelayInSeconds());
         assertEquals("http://mdms-host", configuration.getMdmsHost());
         assertEquals("/mdms/search", configuration.getMdmsEndPoint());
         assertEquals("moduleName", configuration.getMdmsPendingTaskModuleName());
