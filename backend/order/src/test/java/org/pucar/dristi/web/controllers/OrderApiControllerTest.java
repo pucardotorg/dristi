@@ -73,7 +73,7 @@ class OrderApiControllerTest {
     @Test
     void testOrderV1Exist_Success() {
         // Mock OrderService response
-        OrderExists orderExists = new OrderExists();
+        OrderExists orderExists = OrderExists.builder().build();
         List<OrderExists> orders = new ArrayList<>();
         orders.add(orderExists);
         when(orderRegistrationService.existsOrder(any(OrderExistsRequest.class)))
@@ -85,7 +85,7 @@ class OrderApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Create mock OrderRequest
-        OrderExistsRequest requestBody = new OrderExistsRequest();
+        OrderExistsRequest requestBody = OrderExistsRequest.builder().build();
         requestBody.setRequestInfo(new RequestInfo());
 
         // Perform POST request

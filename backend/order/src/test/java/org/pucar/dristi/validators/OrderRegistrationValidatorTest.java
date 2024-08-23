@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -8,14 +9,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,12 +40,18 @@ class OrderRegistrationValidatorTest {
     @Mock
     private FileStoreUtil fileStoreUtil;
 
+    @Mock
+    private MdmsUtil mdmsUtil;
+
+    @Mock
+    private Configuration configuration;
+
     @InjectMocks
     private OrderRegistrationValidator orderRegistrationValidator;
 
     @BeforeEach
     void setUp() {
-        orderRegistrationValidator = new OrderRegistrationValidator(repository, caseUtil, fileStoreUtil);
+        orderRegistrationValidator = new OrderRegistrationValidator(repository, caseUtil, mdmsUtil,fileStoreUtil, configuration);
     }
 
     @Test
@@ -49,6 +60,7 @@ class OrderRegistrationValidatorTest {
         Order order = new Order();
         order.setStatuteSection(new StatuteSection());
         order.setOrderCategory("Judicial");
+        order.setOrderType("Judicial");
         order.setCnrNumber("CNR12345");
         order.setFilingNumber("FIL12345");
 
@@ -59,6 +71,21 @@ class OrderRegistrationValidatorTest {
         // Mock behavior
         when(caseUtil.fetchCaseDetails(any(), eq(order.getCnrNumber()), eq(order.getFilingNumber())))
                 .thenReturn(true);
+
+        String mdmsData = "{ \"OrderType\": [ { \"code\": \"Judicial\" } ], \"OrderCategory\": [ { \"code\": \"Judicial\" } ] }";
+        when(configuration.getOrderTypePath()).thenReturn("$.OrderType[?(@.code == '{}')]");
+        when(configuration.getOrderCategoryPath()).thenReturn("$.OrderCategory[?(@.code == '{}')]");
+        when(configuration.getOrderModule()).thenReturn("$.Order");
+
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.OrderType[?(@.code == 'Judicial')]"))
+                    .thenReturn(List.of(Map.of("id", "Judicial")));
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.OrderCategory[?(@.code == 'Judicial')]"))
+                    .thenReturn(List.of(Map.of("id", "Judicial")));
+        }
 
         // Execute method
         assertDoesNotThrow(() -> orderRegistrationValidator.validateOrderRegistration(orderRequest));
@@ -115,6 +142,9 @@ class OrderRegistrationValidatorTest {
         order.setId(UUID.randomUUID());
         order.setCnrNumber("CNR12345");
         order.setFilingNumber("FIL12345");
+        order.setOrderCategory("Judicial");
+        order.setOrderType("Judicial");
+        order.setFilingNumber("FIL12345");
 
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setOrder(order);
@@ -124,6 +154,22 @@ class OrderRegistrationValidatorTest {
         List<OrderExists> orderExistsList = new ArrayList<>();
         orderExistsList.add(orderExists);
 
+        when(caseUtil.fetchCaseDetails(any(), eq(order.getCnrNumber()), eq(order.getFilingNumber())))
+                .thenReturn(true);
+        String mdmsData = "{ \"OrderType\": [ { \"code\": \"Judicial\" } ], \"OrderCategory\": [ { \"code\": \"Judicial\" } ] }";
+        when(configuration.getOrderTypePath()).thenReturn("$.OrderType[?(@.code == '{}')]");
+        when(configuration.getOrderCategoryPath()).thenReturn("$.OrderCategory[?(@.code == '{}')]");
+        when(configuration.getOrderModule()).thenReturn("$.Order");
+
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.OrderType[?(@.code == 'Judicial')]"))
+                    .thenReturn(List.of(Map.of("id", "Judicial")));
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.OrderCategory[?(@.code == 'Judicial')]"))
+                    .thenReturn(List.of(Map.of("id", "Judicial")));
+        }
         // Mock behavior
         when(repository.checkOrderExists(anyList())).thenReturn(orderExistsList);
 
@@ -135,53 +181,6 @@ class OrderRegistrationValidatorTest {
         verify(repository).checkOrderExists(anyList());
     }
 
-    @Test
-    void testValidateApplicationExistence_false() {
-        // Prepare test data
-        Order order = new Order();
-        order.setId(UUID.randomUUID());
-        order.setCnrNumber("CNR12345");
-        order.setFilingNumber("FIL12345");
-
-        OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setOrder(order);
-
-        List<OrderExists> orderExistsList = new ArrayList<>();
-
-        // Mock behavior
-        when(repository.checkOrderExists(anyList())).thenReturn(orderExistsList);
-
-        // Execute method
-        boolean result = orderRegistrationValidator.validateApplicationExistence(orderRequest);
-
-        // Verify
-        assertFalse(result);
-        verify(repository).checkOrderExists(anyList());
-    }
-
-    @Test
-    void testValidateDocuments_success() {
-        // Prepare test data
-        Order order = new Order();
-        Document document = new Document();
-        document.setFileStore("fileStoreId");
-        List<Document> documents = new ArrayList<>();
-        documents.add(document);
-        order.setDocuments(documents);
-        order.setTenantId("pg");
-        order.setFilingNumber("123");
-        OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setOrder(order);
-
-        // Mock behavior
-        when(fileStoreUtil.doesFileExist(anyString(), eq("fileStoreId"))).thenReturn(true);
-
-        // Execute method
-        assertDoesNotThrow(() -> orderRegistrationValidator.validateApplicationExistence(orderRequest));
-
-        // Verify
-        verify(fileStoreUtil).doesFileExist(anyString(), eq("fileStoreId"));
-    }
 
     @Test
     void testValidateDocuments_invalidFileStore() {

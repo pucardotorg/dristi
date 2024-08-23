@@ -105,8 +105,7 @@ public class CourtCase {
 	private Object caseDetails = null;
 
 	@JsonProperty("caseCategory")
-	//@NotNull
-	//@Size(min = 2, max = 64)
+	@NotNull
 	private String caseCategory = null;
 
 	@JsonProperty("judgeId")

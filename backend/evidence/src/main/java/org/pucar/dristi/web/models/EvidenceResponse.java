@@ -39,9 +39,5 @@ public class EvidenceResponse {
 	@Valid
 	private Pagination pagination = null;
 
-	public EvidenceResponse addArtifact(Artifact artifact) {
-		this.artifact = artifact;
-		return this;
-	}
 
 }

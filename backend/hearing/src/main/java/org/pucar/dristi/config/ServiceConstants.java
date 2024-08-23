@@ -21,6 +21,7 @@ public class ServiceConstants {
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
     public static final String FAILED = "failed";
+    public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 
     public static final String URL = "url";
     public static final String URL_SHORTENING_ERROR_CODE = "URL_SHORTENING_ERROR";

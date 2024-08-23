@@ -33,9 +33,5 @@ public class EvidenceRequest {
 	@Valid
 	private Artifact artifact;
 
-	public EvidenceRequest addArtifact(Artifact artifact) {
-		this.artifact = artifact;
-		return this;
-	}
 
 }

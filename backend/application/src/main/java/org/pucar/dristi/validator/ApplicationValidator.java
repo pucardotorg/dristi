@@ -1,9 +1,12 @@
 package org.pucar.dristi.validator;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.*;
@@ -13,20 +16,25 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.config.ServiceConstants.ORDER_EXCEPTION;
 
 @Component
 public class ApplicationValidator {
     private final ApplicationRepository repository;
     private final CaseUtil caseUtil;
     private final OrderUtil orderUtil;
-    private final FileStoreUtil fileStoreUtil;
+    private MdmsUtil mdmsUtil;
+    private Configuration configuration;
+    private FileStoreUtil fileStoreUtil;
+
     @Autowired
-    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil, OrderUtil orderUtil, FileStoreUtil fileStoreUtil) {
+    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil,OrderUtil orderUtil, MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, Configuration configuration) {
         this.repository = repository;
         this.caseUtil = caseUtil;
+        this.mdmsUtil = mdmsUtil;
+        this.configuration = configuration;
         this.orderUtil = orderUtil;
         this.fileStoreUtil = fileStoreUtil;
     }
@@ -38,24 +46,28 @@ public class ApplicationValidator {
         //validate documents
         validateDocuments(application);
 
-        if(ObjectUtils.isEmpty(application.getCaseId())) {
-            throw new CustomException(VALIDATION_ERR, "caseId is mandatory for creating application");
-        }
-
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
 
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
-            }
+        }
+        //validate mdms
+        validateMdms(requestInfo,application);
+    }
+
+    private void validateMdms(RequestInfo requestInfo ,Application application){
+        String applicationType = application.getApplicationType();
+        String mdmsData = mdmsUtil.fetchMdmsData(requestInfo, application.getTenantId(), configuration.getApplicationModule(), createMasterDetails());
+
+        List<Map<String, Object>> applicationTypeResults = JsonPath.read(mdmsData, configuration.getApplicationTypePath().replace("{}",applicationType));
+        if (applicationTypeResults.isEmpty()) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid ApplicationType");
+        }
     }
 
     public Boolean validateApplicationExistence(RequestInfo requestInfo ,Application application) {
         //validate documents
         validateDocuments(application);
-
-        if(ObjectUtils.isEmpty(application.getCaseId())) {
-            throw new CustomException(VALIDATION_ERR, "caseId is mandatory for updating application");
-        }
 
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
@@ -72,6 +84,9 @@ public class ApplicationValidator {
         List<ApplicationExists> criteriaList = new ArrayList<>();
         criteriaList.add(applicationExists);
         List<ApplicationExists> applicationExistsList = repository.checkApplicationExists(criteriaList);
+
+        //validate mdms
+        validateMdms(requestInfo,application);
 
         return applicationExistsList.get(0).getExists();
     }
@@ -105,6 +120,12 @@ public class ApplicationValidator {
                 throw new CustomException(ORDER_EXCEPTION, "Order does not exist");
             }
         }
+    }
+
+    private List<String> createMasterDetails() {
+        List<String> masterList = new ArrayList<>();
+        masterList.add("ApplicationType");
+        return masterList;
     }
 
     private void validateDocuments(Application application){

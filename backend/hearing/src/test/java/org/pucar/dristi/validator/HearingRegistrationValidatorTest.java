@@ -1,6 +1,7 @@
 package org.pucar.dristi.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.Document;
@@ -59,6 +60,18 @@ class HearingRegistrationValidatorTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(config.getHearingModule()).thenReturn("HearingType");
+        when(config.getHearingTypePath()).thenReturn("$.HearingType[?(@.code == '{}')]");
+
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"HearingType\": [ { \"code\": \"hearingType\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.HearingType[?(@.code == 'hearingType')]"))
+                    .thenReturn(List.of(Map.of("code", "hearingType")));
+        }
     }
 
     @Test
@@ -70,7 +83,7 @@ class HearingRegistrationValidatorTest {
 
         Hearing hearing = new Hearing();
         hearing.setTenantId("tenant1");
-        hearing.setHearingType("type1");
+        hearing.setHearingType("hearingType");
         hearing.setAttendees(Collections.singletonList( Attendee.builder().individualId("Attendee1").build()));
         hearing.setCnrNumbers(Collections.singletonList("cnr1"));
         hearing.setFilingNumber(Collections.singletonList("filing1"));
@@ -93,7 +106,6 @@ class HearingRegistrationValidatorTest {
         ApplicationExistsResponse applicationExistsResponse = new ApplicationExistsResponse();
         applicationExistsResponse.setApplicationExists(Collections.singletonList(ApplicationExists.builder().applicationNumber("app1").exists(true).build()));
 
-        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
         when(config.getMdmsHearingModuleName()).thenReturn("module1");
         when(config.getMdmsHearingTypeMasterName()).thenReturn("master1");
         when(mapper.convertValue(any(), eq(HearingType.class))).thenReturn(HearingType.builder().type("type1").build());
@@ -127,7 +139,7 @@ class HearingRegistrationValidatorTest {
 
         Hearing hearing = new Hearing();
         hearing.setTenantId("tenant1");
-        hearing.setHearingType("type1");
+        hearing.setHearingType("hearingType");
         hearing.setAttendees(Collections.singletonList( Attendee.builder().individualId("individual1").build()));
 
         HearingRequest hearingRequest = new HearingRequest();
@@ -151,25 +163,19 @@ class HearingRegistrationValidatorTest {
 
         Hearing hearing = new Hearing();
         hearing.setTenantId("tenant1");
-        hearing.setHearingType("type1");
+        hearing.setHearingType("hearingType1");
 
         HearingRequest hearingRequest = new HearingRequest();
         hearingRequest.setRequestInfo(requestInfo);
         hearingRequest.setHearing(hearing);
 
-        JSONArray hearingTypeList = new JSONArray();
-
-        Map<String, Map<String, JSONArray>> mdmsData = Map.of(
-                "module1", Map.of("master1", hearingTypeList)
-        );
-
-        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
-        when(config.getMdmsHearingModuleName()).thenReturn("module1");
-        when(config.getMdmsHearingTypeMasterName()).thenReturn("master1");
+        CaseExistsResponse caseExistsResponse = new CaseExistsResponse();
+        caseExistsResponse.setCriteria(new ArrayList<>());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(caseExistsResponse);
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingRegistration(hearingRequest));
-        assertEquals("Could not validate Hearing Type!!!", exception.getMessage());
+        assertEquals("Invalid HearingType", exception.getMessage());
     }
 
     @Test
@@ -181,7 +187,7 @@ class HearingRegistrationValidatorTest {
 
         Hearing hearing = new Hearing();
         hearing.setTenantId("tenant1");
-        hearing.setHearingType("type1");
+        hearing.setHearingType("hearingType");
         hearing.setCnrNumbers(Collections.singletonList("cnr1"));
 
         HearingRequest hearingRequest = new HearingRequest();
@@ -198,7 +204,6 @@ class HearingRegistrationValidatorTest {
         CaseExistsResponse caseExistsResponse = new CaseExistsResponse();
         caseExistsResponse.setCriteria(Collections.singletonList(CaseExists.builder().cnrNumber("cnr1").exists(false).build()));
 
-        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
         when(config.getMdmsHearingModuleName()).thenReturn("module1");
         when(config.getMdmsHearingTypeMasterName()).thenReturn("master1");
         when(mapper.convertValue(any(), eq(HearingType.class))).thenReturn(HearingType.builder().type("type1").build());
@@ -219,7 +224,7 @@ class HearingRegistrationValidatorTest {
 
         Hearing hearing = new Hearing();
         hearing.setTenantId("tenant1");
-        hearing.setHearingType("type1");
+        hearing.setHearingType("hearingType");
         hearing.setApplicationNumbers(Collections.singletonList("app1"));
 
         HearingRequest hearingRequest = new HearingRequest();
@@ -239,7 +244,6 @@ class HearingRegistrationValidatorTest {
         ApplicationExistsResponse applicationExistsResponse = new ApplicationExistsResponse();
         applicationExistsResponse.setApplicationExists(Collections.singletonList(ApplicationExists.builder().applicationNumber("app1").exists(false).build()));
 
-        when(mdmsUtil.fetchMdmsData(any(), anyString(), anyString(), anyList())).thenReturn(mdmsData);
         when(config.getMdmsHearingModuleName()).thenReturn("module1");
         when(config.getMdmsHearingTypeMasterName()).thenReturn("master1");
         when(mapper.convertValue(any(), eq(HearingType.class))).thenReturn(HearingType.builder().type("type1").build());
@@ -256,6 +260,7 @@ class HearingRegistrationValidatorTest {
     void testValidateHearingExistence_Success() {
         // Arrange
         Hearing hearing = new Hearing();
+        hearing.setHearingType("hearingType");
         RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.singletonList(hearing);
 
@@ -321,6 +326,7 @@ class HearingRegistrationValidatorTest {
 
     private void invokeValidator() {
         Hearing hearing = new Hearing();
+        hearing.setHearingType("hearingType");
         hearing.setTenantId("pg");
 
         List<Hearing> existingHearings = Collections.singletonList(hearing);

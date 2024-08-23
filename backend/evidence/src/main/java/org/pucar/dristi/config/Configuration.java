@@ -123,6 +123,19 @@ public class Configuration {
 	@Value("${egov.hearing.path}")
 	private String hearingExistsPath;
 
+	//MDMS validation
+	@Value("${mdms.artifact.type.path}")
+	private String artifactTypePath;
+
+	@Value("$mdms.source.type.path}")
+	private String sourceTypePath;
+
+	@Value("${mdms.media.type.path}")
+	private String mediaTypePath;
+
+	@Value("${mdms.evidence.module.name}")
+	private String evidenceModule;
+
 	@Value("${evidence.kafka.comments.update.topic}")
 	private String evidenceUpdateCommentsTopic;
 }

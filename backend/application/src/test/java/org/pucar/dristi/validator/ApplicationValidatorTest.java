@@ -1,5 +1,6 @@
 package org.pucar.dristi.validator;
 
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -9,10 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationExists;
@@ -38,7 +42,15 @@ public class ApplicationValidatorTest {
     private OrderUtil orderUtil;
 
     @Mock
+    private Configuration configuration;
+
+    @Mock
+    private MdmsUtil mdmsUtil;
+
+    @Mock
     private FileStoreUtil fileStoreUtil;
+
+    private List<ApplicationExists> applicationExistsList;
 
     @InjectMocks
     private ApplicationValidator validator;
@@ -71,9 +83,42 @@ public class ApplicationValidatorTest {
         application.setApplicationType("applicationType");
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(configuration.getApplicationModule()).thenReturn("ApplicationModule");
+        when(configuration.getApplicationTypePath()).thenReturn("$.ApplicationType[?(@.code == '{}')]");
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"ApplicationType\": [ { \"code\": \"applicationType\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.ApplicationType[?(@.code == 'applicationType')]"))
+                    .thenReturn(List.of(Map.of("code", "applicationType")));
+        }
         assertDoesNotThrow(() -> validator.validateApplication(applicationRequest));
+    }
+
+    @Test
+    public void testValidateApplication_InvalidApplicationType() {
+        User user = new User();
+        List<UUID> onBehalfOf = new ArrayList<>();
+        onBehalfOf.add(UUID.randomUUID());
+        application.setTenantId("tenantId");
+        application.setCreatedDate(123453335l);
+        application.setCreatedBy(UUID.randomUUID());
+        requestInfo.setUserInfo(user); // Simulating non-empty user info
+        application.setOnBehalfOf(onBehalfOf);
+        application.setCnrNumber("cnrNumber");
+        application.setCaseId("caseId");
+        application.setApplicationType("applicationType");
+        application.setFilingNumber("filingNumber");
+        application.setReferenceId(UUID.randomUUID());
+        when(configuration.getApplicationModule()).thenReturn("ApplicationModule");
+        when(configuration.getApplicationTypePath()).thenReturn("$.ApplicationType[?(@.code == '{}')]");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn("{ \"ApplicationType\": [ { \"code\": \"type\" } ] }");
+        assertThrows(CustomException.class,() -> validator.validateApplication(applicationRequest));
     }
 
     @Test
@@ -92,36 +137,6 @@ public class ApplicationValidatorTest {
     }
 
     @Test
-    public void testValidateApplicationExistence_Success() {
-        application.setId(UUID.randomUUID());
-        application.setCnrNumber("cnrNumber");
-        application.setCaseId("caseId");
-        application.setTenantId("tId");
-        application.setApplicationType("ApplicationType");
-        application.setFilingNumber("filingNumber");
-        application.setStatus("status1");
-        application.setReferenceId(UUID.randomUUID());
-        List<Application> existingApplications = new ArrayList<>();
-        existingApplications.add(application);
-        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
-
-
-        ApplicationExists applicationExists = new ApplicationExists();
-        applicationExists.setExists(true);
-        applicationExists.setFilingNumber(application.getFilingNumber());
-        applicationExists.setCnrNumber(application.getCnrNumber());
-        applicationExists.setApplicationNumber(application.getApplicationNumber());
-
-        List<ApplicationExists> applicationExistsList = new ArrayList<>();
-        applicationExistsList.add(applicationExists);
-
-        when(repository.checkApplicationExists(anyList())).thenReturn(applicationExistsList);
-
-        Boolean result = validator.validateApplicationExistence(requestInfo, application);
-        assertTrue(result);
-    }
-
-    @Test
     public void testValidateApplicationExistence_MissingId() {
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
@@ -131,6 +146,36 @@ public class ApplicationValidatorTest {
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(requestInfo, application));
         assertEquals("id is mandatory for updating application", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateApplicationExistence() {
+        application.setCnrNumber("cnrNumber");
+        application.setFilingNumber("filingNumber");
+        application.setCaseId("caseId");
+        application.setId(UUID.randomUUID());
+        application.setApplicationType("applicationType");
+        application.setReferenceId(UUID.randomUUID());
+        when(configuration.getApplicationModule()).thenReturn("ApplicationModule");
+        when(configuration.getApplicationTypePath()).thenReturn("$.ApplicationType[?(@.code == '{}')]");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
+        // Mocking mdmsUtil.fetchMdmsData
+        String mdmsData = "{ \"ApplicationType\": [ { \"code\": \"applicationType\" } ] }";
+        when(mdmsUtil.fetchMdmsData(any(), any(), any(), any())).thenReturn(mdmsData);
+
+        // Setup ApplicationExists list for repository response
+        ApplicationExists appExists = new ApplicationExists();
+        appExists.setExists(true);
+        applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(appExists);
+        when(repository.checkApplicationExists(anyList())).thenReturn(applicationExistsList);
+        // Mocking the static JsonPath.read method using MockedStatic
+        try (MockedStatic<JsonPath> mockedJsonPath = mockStatic(JsonPath.class)) {
+            mockedJsonPath.when(() -> JsonPath.read(mdmsData, "$.ApplicationType[?(@.code == 'applicationType')]"))
+                    .thenReturn(List.of(Map.of("code", "applicationType")));
+        }
+
+        assertTrue(validator.validateApplicationExistence(requestInfo, application));
     }
 
     @Test

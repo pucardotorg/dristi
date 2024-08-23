@@ -132,6 +132,13 @@ public class Configuration {
     @Value("${egov.workflow.async.voluntary.submission.business.service.name}")
     private String asyncVoluntarySubBusinessServiceName;
 
+    //MDMS validation
+    @Value("${mdms.application.type.path}")
+    private String applicationTypePath;
+
+    @Value("${mdms.application.module.name}")
+    private String applicationModule;
+
     @Value("${application.kafka.comments.update.topic}")
     private String applicationUpdateCommentsTopic;
 
