@@ -1,5 +1,5 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import AddressComponent from "./components/AddressComponent";
 import SelectComponents from "./components/SelectComponents";
@@ -55,16 +55,27 @@ import CommentComponent from "./components/CommentComponent";
 import { RightArrow } from "./icons/svgIndex";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
+  const Digit = useMemo(() => window?.Digit || {}, []);
   const { path } = useRouteMatch();
   const history = useHistory();
   const moduleCode = ["DRISTI", "CASE", "ORDERS", "SUBMISSIONS"];
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const hasCitizenRoute = useMemo(() => path?.includes(`/${window?.contextPath}/citizen`), [path]);
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
+
   if (isLoading) {
     return <Loader />;
   }
+
+  if (isCitizen && !hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
+  } else if (!isCitizen && hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
+
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
   if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
