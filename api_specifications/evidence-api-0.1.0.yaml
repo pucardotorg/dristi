@@ -2,14 +2,14 @@ openapi: 3.0.0
 info:
   title: Evidence
   description: |
-    API specs for uploading artifacts/marking as evidence etc..Chain of custody and other details of evidence history are not handled in this version. Artifacts can be uploaded voluntarily or because of an order or hearing. They can be marked as "EVIDENCE" by the judge anytime during the course of a case. This is modeled as workflow.
+   API specs for uploading artifacts/marking as evidence etc..Chain of custody and other details of evidence history are not handled in this version. Artifacts can be uploaded voluntarily or because of an order or hearing. They can be marked as "EVIDENCE" by the judge anytime during the course of a case. This is modeled as workflow.
   version: 0.1.0
 tags:
   - name: Evidence
     description: APIs required to upload digital artifacts for evidence consideration
-
+  
 paths:
-  /artifacts/v1/_create:
+  /v1/_create:
     post:
       tags:
         - Evidence
@@ -38,7 +38,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
       x-codegen-request-body-name: ArtifactRequest
-  /artifacts/v1/_update:
+  /v1/_update:
     post:
       tags:
         - Evidence
@@ -57,14 +57,14 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  #/components/schemas/EvidenceResponse
+                 #/components/schemas/EvidenceResponse
         '400':
           description: Case(s) updation failed
           content:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
-  /artifacts/v1/_search:
+  /v1/_search:
     post:
       tags:
         - Evidence
@@ -87,6 +87,33 @@ paths:
                 $ref: '#/components/schemas/EvidenceSearchResponse'
         '400':
           description: Artifacts search failed. Refer to the response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  /v1/addcomment:
+    post:
+      tags:
+        - Evidence
+      summary: Add comment in artifacts
+      description: |
+        API used to add comment in artifacts
+      requestBody:
+        description: Comments to be added + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/EvidenceAddCommentRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with comment
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EvidenceAddCommentResponse'
+        '400':
+          description: Add comment failed. Refer to the response body for specifics.
           content:
             '*/*':
               schema:
@@ -159,12 +186,12 @@ components:
           example: Mr. Sundar, Assistant DGP
         applicableTo:
           type: array
-          description: An array of individualIds of the litigants for whom this evidence has been provided.
+          description: An array of individualIds of the litigants for whom this evidence has been provided. 
           items:
             type: string
         createdDate:
           type: integer
-          format: date
+          format: int64
           description: Date this artifact was created. This may be different from the upload time which will be captured in the audit details.
         isActive:
           type: boolean
@@ -181,28 +208,30 @@ components:
             Workflow service will hold the entire history of the case.
         file:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
+              https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
         description:
           type: string
           description: Field that describes the artifact and its relevance to the case.
         artifactDetails:
           type: object
-          description: Each evidence type may have specific fields depending on case type.
+          description: Each evidence type may have specific fields depending on case type. 
         comments:
           type: array
           description: An array of comments representing the discussion between the parties of the case on this specific artifact.
           items:
             $ref: '#/components/schemas/Comment'
         additionalDetails:
-          type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          type: string
+          description: >-
+            This field is meant to hold any extra information that we want to
+            store for a case.
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow
-
+    
     Comment:
       type: object
       properties:
@@ -232,12 +261,14 @@ components:
           description: Field to indicate soft delete of records
           default: true
         additionalDetails:
-          type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          type: string
+          description: >-
+            This field is meant to hold any extra information that we want to
+            store for this entity.
         auditdetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
       required: [tenantId, artifactId, individualId, comment]
-
+   
     EvidenceRequest:
       type: object
       properties:
@@ -263,20 +294,20 @@ components:
       properties:
         RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
-        tenantid:
+        tenantid: 
           type: string
         criteria:
           $ref: '#/components/schemas/EvidenceSearchCriteria'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
-
+          
     EvidenceSearchResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
-        tenantid:
-          type: string
+        tenantid: 
+          type: string    
         artifacts:
           type: array
           description: his is an output field and will contain the list of artifacts found as per the search criteria
@@ -284,7 +315,7 @@ components:
             $ref: '#/components/schemas/Artifact'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
-
+          
     EvidenceSearchCriteria:
       type: object
       description: the fields specified will be used in a logical AND condition
@@ -293,12 +324,15 @@ components:
           type: string
         applicationId:
           type: string
+        owner:
+          type: UUID
+          description: UUID of user
         filingNumber:
           type: string
         artifactType:
           type: string
         evidenceStatus:
-          type: string
+          type: string  
         hearing:
           type: string
         order:
@@ -309,5 +343,31 @@ components:
           type: string
         status:
           type: string
+        artifactNumber:
+          type: string
+    EvidenceAddCommentRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddCommentResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        evidenceAddComment:
+          $ref: '#/components/schemas/EvidenceAddComment'
+
+    EvidenceAddComment:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        comment:
+          type: array
+          description: An array of comments representing the discussion between the parties of the case on this specific artifact.
         artifactNumber:
           type: string

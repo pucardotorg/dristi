@@ -199,7 +199,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_update:
-    post:
+     post:
       tags:
         - Witness
       summary: API to update or remove a witness to a case. Update is accomplished through the isActive flag.
@@ -226,9 +226,9 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-
+  
   /case/witness/v1/_search:
-    post:
+     post:
       tags:
         - Witness
       summary: API to search for a witness in a case.
@@ -267,7 +267,7 @@ components:
         - statutesAndSections
         - litigants
       oneOf:
-        - required: [filingNumber, cnrNumber]
+        - required: [filingNumber, caseNumber]
       type: object
       properties:
         id:
@@ -327,19 +327,15 @@ components:
           type: string
           description: >-
             The courtroom or other ADR entity ID that will be trying/hearing the
-            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms.
+            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. 
           minLength: 2
           maxLength: 64
         judgeId:
           type: string
         stage:
           type: string
-          description: the main/primary stage of the case
-          example: Pre-Trial, Trial, Post-Trial
-        subStage:
+        substage:
           type: string
-          description: the secondary level of stage within the primary stage
-          example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
         benchId:
           type: string
           description: The bench a case is assigned to. A court has multiple benches and each bench can comprise of one or more arbitrators. The relationships to be defined in master data. The unique master data ID for a bench is stored here.
@@ -358,11 +354,11 @@ components:
         judgementDate:
           type: integer
           format: int64
-          description: date of judgement (will mostly also mean closure of case) in epoch time (milliseconds). this will be same as judgement hearing date
+          description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
         registrationDate:
           type: integer
           format: int64
-          description: Date when case was admitted by the judge in epoch time (milliseconds). Can also be derived from a WF state change
+          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
         caseDetails:
           type: object
           description: Field to store all case type specific details. These can vary depending on case type.
@@ -395,10 +391,6 @@ components:
         status:
           type: string
           description: The current status of the case as pulled from the Workflow service. Workflow service will hold the entire history of the case.
-        outcome:
-          type: string
-          format: uuid
-          description: case outcome from master data like Withdrawn, Settled, Transferred, Dismissed, Convicted, etc.
         documents:
           type: array
           items:
@@ -407,22 +399,28 @@ components:
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
+        outcome:
+          type: string
+          description: >-
+            The outcome of the case. This can be a judgement, a settlement or
+            any other outcome.
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          description: >-
+            This field is meant to hold any extra information that we want to
             store for a case.
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-
+    
     StatuteSection:
       type: object
       description: >-
         Holds the statute ID and the corresponding section & subsections
-        applicable to the case.
+        applicable to the case. 
       required: [tenantId, statuteId]
       properties:
         id:
@@ -440,7 +438,7 @@ components:
         statute:
           type: string
           description: >-
-            The statute ID from master data.
+            The statute ID from master data. 
         sections:
           type: array
           items:
@@ -453,8 +451,10 @@ components:
           items:
             type: string
         additionalDetails:
-          type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          type: string
+          description: >-
+            This field is meant to hold any extra information to be stored as
+            part of this entity.
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -484,8 +484,10 @@ components:
             $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         additionalDetails:
-          type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          type: string
+          description: >-
+            This field is meant to hold any extra information to be stored as
+            part of this entity.
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -534,8 +536,10 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
-
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+    
     Party:
       type: object
       properties:
@@ -587,7 +591,9 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
       required:
         - tenantId
         - advocateId
@@ -597,14 +603,14 @@ components:
         - required:
             - userId
             - organisationID
-
+    
     Witness:
       type: object
       required: [individualId]
       oneOf:
         - required:
-            - cnrNumber
-            - filingNumber
+          - cnrNumber
+          - filingNumber
       properties:
         id:
           type: string
@@ -638,8 +644,10 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
-
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+    
     CaseRequest:
       type: object
       properties:
@@ -647,8 +655,8 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         case:
-          $ref: '#/components/schemas/CourtCase'
-
+            $ref: '#/components/schemas/CourtCase'
+    
     CaseResponse:
       type: object
       properties:
@@ -659,7 +667,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtCase'
-
+    
     CaseSearchRequest:
       type: object
       properties:
@@ -693,7 +701,7 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-
+    
     CaseExistsResponse:
       type: object
       properties:
@@ -714,42 +722,43 @@ components:
           type: string
         additionalDetails:
           type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-
     AddWitnessResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+           https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         addWitnessRequest:
-          $ref: '#/components/schemas/AddWitnessRequest'
-
+          $ref: '#/components/schemas/AddWitnessRequest'          
+            
     JoinCaseRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        accessCode:
-          type: string
-        caseFilingNumber:
-          type: string
-        representative:
-          type: object
-          $ref: '#/components/schemas/AdvocateMapping'
-        litigant:
-          type: object
-          $ref: '#/components/schemas/Party'
-        additionalDetails:
-          type: object
-          description: Any extra fields that are not captured as first class fields can be stored here as key/value pairs. Implementation specific
-        auditDetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        type: object
+        properties:
+          RequestInfo:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+          accessCode:
+            type: string
+          caseFilingNumber:
+            type: string
+          representative:
+            $ref: '#/components/schemas/AdvocateMapping'
+          litigant:
+            $ref: '#/components/schemas/Party'
+          additionalDetails:
+            type: object
+            description: >-
+              Any extra fields that are not captured as first class fields can be
+              stored here as key/value pairs. Implementation specific.
+          auditDetails:
+            $ref: >-
+               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
 
     JoinCaseResponse:
       type: object
@@ -784,7 +793,9 @@ components:
         advocateId:
           type: string
         status:
-          type: string
+          type: array
+          items:
+            type: string
         filingFromDate:
           type: integer
           format: int64
@@ -804,8 +815,8 @@ components:
           items:
             $ref: '#/components/schemas/CourtCase'
         pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
     CaseExists:
       type: object
       properties:
@@ -819,7 +830,7 @@ components:
           type: string
         exists:
           type: boolean
-
+    
     WitnessSearchCriteria:
       type: object
       properties:
@@ -830,7 +841,7 @@ components:
         includeInactive:
           type: boolean
           default: false
-
+    
     WitnessRequest:
       type: object
       properties:
@@ -841,7 +852,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Witness'
-
+    
     WitnessResponse:
       type: object
       properties:
