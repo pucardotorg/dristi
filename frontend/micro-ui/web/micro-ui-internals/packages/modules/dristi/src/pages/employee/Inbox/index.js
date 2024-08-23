@@ -33,11 +33,7 @@ const Inbox = ({ tenants, parentRoute }) => {
     userType: defaultType,
     ulb: tenants?.find((tenant) => tenant?.code === tenantId),
   });
-  const hasApprovalRoles = ["ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
-    if (!res) return res;
-    res = roles.some((role) => role.code === curr);
-    return res;
-  }, true);
+  const hasApprovalRoles = ["ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].every((requiredRole) => roles.some((role) => role.code === requiredRole));
 
   if (!hasApprovalRoles) {
     history.push(`/${window?.contextPath}/employee/home/home-pending-task`);

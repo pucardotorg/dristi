@@ -45,11 +45,7 @@ const HomeView = () => {
 
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const isCourtRoomRole = useMemo(() => roles?.some((role) => role?.code === "COURT_ADMIN"), [roles]);
-  const isNyayMitra = ["NYAY_MITRA_ROLE"].reduce((res, curr) => {
-    if (!res) return res;
-    res = roles.some((role) => role.code === curr);
-    return res;
-  }, true);
+  const isNyayMitra = roles.some((role) => role.code === "NYAY_MITRA_ROLE");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const userInfo = Digit?.UserService?.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);

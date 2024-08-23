@@ -17,11 +17,7 @@ function PaymentInbox() {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const history = useHistory();
 
-  const isNyayMitra = ["NYAY_MITRA_ROLE"].reduce((res, curr) => {
-    if (!res) return res;
-    res = roles.some((role) => role.code === curr);
-    return res;
-  }, true);
+  const isNyayMitra = roles.some((role) => role.code === "NYAY_MITRA_ROLE");
 
   if (!isNyayMitra) {
     history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
