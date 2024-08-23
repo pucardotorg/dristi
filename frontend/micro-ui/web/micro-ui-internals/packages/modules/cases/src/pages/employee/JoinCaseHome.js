@@ -461,6 +461,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       { tenantId, limit: 1000, offset: 0 }
     );
     setUserUUID(individualData?.Individual?.[0]?.userUuid);
+    return individualData;
   };
 
   const getUserForAdvocateUUID = async (barRegistrationNumber) => {
@@ -1367,6 +1368,73 @@ const JoinCaseHome = ({ refreshInbox }) => {
     return shorthand;
   };
 
+  const getComplainantList = async (formdata) => {
+    const complainantList = await Promise.all(
+      formdata?.map(async (data, index) => {
+        try {
+          const response = await getUserUUID(data?.data?.complainantVerification?.individualDetails?.individualId);
+          console.log("response :>> ", response);
+          const fullName = `${response?.Individual?.[0]?.name?.givenName} ${
+            response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
+          }${response?.Individual?.[0]?.name?.familyName}`;
+          return {
+            ...data?.data,
+            label: `${fullName} ${t(JoinHomeLocalisation.COMPLAINANT_BRACK)}`,
+            fullName: fullName,
+            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+            isComplainant: true,
+            individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+          };
+        } catch (error) {
+          console.error(error);
+        }
+      })
+    );
+    setComplainantList(complainantList);
+  };
+
+  const getRespondentList = async (formdata) => {
+    if (userType === "Advocate") {
+      const complainantList = await Promise.all(
+        formdata?.map(async (data, index) => {
+          try {
+            const response = await getUserUUID(data?.data?.respondentVerification?.individualDetails?.individualId);
+            const fullName = `${response?.Individual?.[0]?.name?.givenName} ${
+              response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
+            }${response?.Individual?.[0]?.name?.familyName}`;
+            return {
+              ...data?.data,
+              label: `${fullName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+              fullName: fullName,
+              index: index,
+              partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+              isRespondent: true,
+              individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
+            };
+          } catch (error) {
+            console.error(error);
+          }
+        })
+      );
+      setRespondentList(complainantList?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)?.map((data) => data));
+    } else {
+      setRespondentList(
+        formdata
+          ?.map((data, index) => ({
+            ...data?.data,
+            label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+              data?.data?.respondentLastName
+            } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+            index: index,
+            partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+            isRespondent: true,
+            individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
+          }))
+          ?.map((data) => data)
+      );
+    }
+  };
+
   useEffect(() => {
     if (caseDetails?.caseCategory) {
       setCaseInfo([
@@ -1390,49 +1458,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
         },
       ]);
 
-      setComplainantList(
-        caseDetails?.additionalDetails?.complainantDetails?.formdata?.map((data, index) => ({
-          ...data?.data,
-          label: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName} ${t(
-            JoinHomeLocalisation.COMPLAINANT_BRACK
-          )}`,
-          fullName: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName}`,
-          partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-          isComplainant: true,
-          individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
-        }))
-      );
-      setRespondentList(
-        userType === "Advocate"
-          ? caseDetails?.additionalDetails?.respondentDetails?.formdata
-              ?.map((data, index) => ({
-                ...data?.data,
-                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-                fullName: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                }`,
-                index: index,
-                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
-                isRespondent: true,
-                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
-              }))
-              ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
-              ?.map((data) => data)
-          : caseDetails?.additionalDetails?.respondentDetails?.formdata
-              ?.map((data, index) => ({
-                ...data?.data,
-                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-                index: index,
-                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
-                isRespondent: true,
-                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
-              }))
-              ?.map((data) => data)
-      );
+      getComplainantList(caseDetails?.additionalDetails?.complainantDetails?.formdata);
+      getRespondentList(caseDetails?.additionalDetails?.respondentDetails?.formdata);
     }
   }, [caseDetails, t, userType]);
 
