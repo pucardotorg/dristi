@@ -128,7 +128,7 @@ function RenderFileCard({
           selectedDocs={[fileData]}
           t={t}
           anchorRef={popupAnchor}
-          showFlag={showImageModal ? false : true}
+          showFlag={!showImageModal}
           handleCloseModal={() => {
             if (showImageModal) {
               setShowImageModal(false);
