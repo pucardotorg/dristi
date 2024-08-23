@@ -32,6 +32,7 @@ const DocViewerWrapper = ({
   documentName,
   selectedDocs = [],
   docViewerCardClassName,
+  docViewerStyle,
   showDownloadOption = true,
   docWidth = "262px",
   docHeight = "206px",
@@ -50,7 +51,7 @@ const DocViewerWrapper = ({
       }));
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
-      <Card className={docViewerCardClassName}>
+      <Card className={docViewerCardClassName} style={docViewerStyle}>
         {documents?.length != 0 && (
           <>
             <DocViewer
