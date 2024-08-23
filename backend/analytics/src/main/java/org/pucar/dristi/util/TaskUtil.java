@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -8,6 +9,7 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static org.pucar.dristi.config.ServiceConstants.PARSING_ERROR;
 import static org.pucar.dristi.config.ServiceConstants.TASK_PATH;
 
 @Slf4j
@@ -44,7 +46,7 @@ public class TaskUtil {
 			return tasks.length() > 0 ? tasks.get(0) : null;
 		} catch (Exception e) {
 			log.error("Error while fetching or processing the task response for URL: {} with request: {}", url, request, e);
-			throw new RuntimeException("Error while fetching or processing the task response", e);
+			throw new CustomException(PARSING_ERROR,"Error while processing task response :: " + e.getMessage());
 		}
 	}
 

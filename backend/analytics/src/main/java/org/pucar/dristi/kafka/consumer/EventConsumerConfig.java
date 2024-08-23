@@ -46,13 +46,17 @@ public class EventConsumerConfig implements ApplicationRunner {
 	@Value("${kafka.topics.consumer}")
 	private String consumerTopics;
 
-	@Autowired
-	private KafkaConsumerErrorHandler kafkaConsumerErrorHandler;
+	private final KafkaConsumerErrorHandler kafkaConsumerErrorHandler;
+
+	private final EventListener indexerMessageListener;
 
 	@Autowired
-	private EventListener indexerMessageListener;
+    public EventConsumerConfig(KafkaConsumerErrorHandler kafkaConsumerErrorHandler, EventListener indexerMessageListener) {
+        this.kafkaConsumerErrorHandler = kafkaConsumerErrorHandler;
+        this.indexerMessageListener = indexerMessageListener;
+    }
 
-	public static boolean pauseContainer() {
+    public static boolean pauseContainer() {
 		try {
 			kafkContainer.stop();
 		} catch (Exception e) {
@@ -71,13 +75,13 @@ public class EventConsumerConfig implements ApplicationRunner {
 			log.error("Container couldn't be started: ", e);
 			return false;
 		}
-		log.info("Custom KakfaListenerContainer STARTED...");
+		log.info("Custom KakfaListenerContainer RESUMED...");
 
 		return true;
 	}
 
 	@Override
-	public void run(final ApplicationArguments arg0) throws Exception {
+	public void run(final ApplicationArguments arg0) {
 		try {
 			log.info("Starting kafka listener container......");
 			initializeContainer();
@@ -120,7 +124,7 @@ public class EventConsumerConfig implements ApplicationRunner {
 
 	}
 
-	public KafkaMessageListenerContainer<String, String> container() throws Exception {
+	public KafkaMessageListenerContainer<String, String> container() {
 		setTopics();
 		ContainerProperties properties = new ContainerProperties(this.topics); // set more properties
 		properties.setMessageListener(indexerMessageListener);

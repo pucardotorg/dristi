@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static org.pucar.dristi.config.ServiceConstants.HEARING_PATH;
+import static org.pucar.dristi.config.ServiceConstants.PARSING_ERROR;
 
 @Slf4j
 @Component
@@ -31,8 +33,8 @@ public class HearingUtil {
 
 		request.put("tenantId", tenantId);
 		JSONObject criteria = new JSONObject();
-		if (!(applicationNumber == null)) criteria.put("applicationNumber", applicationNumber);
-		if (!(cnrNumber == null)) criteria.put("cnrNumber", cnrNumber);
+		if (applicationNumber != null) criteria.put("applicationNumber", applicationNumber);
+		if (cnrNumber != null) criteria.put("cnrNumber", cnrNumber);
 		criteria.put("hearingId",hearingId);
 		criteria.put("tenantId", tenantId);
 		request.put("criteria", criteria);
@@ -47,7 +49,7 @@ public class HearingUtil {
 			return hearings.length() > 0 ? hearings.get(0) : null;
 		} catch (Exception e) {
 			log.error("Error while fetching or processing the hearing response", e);
-			throw new RuntimeException("Error while fetching or processing the hearing response", e);
+			throw new CustomException(PARSING_ERROR,"Error while processing hearing response :: " + e.getMessage());
 		}
 	}
 

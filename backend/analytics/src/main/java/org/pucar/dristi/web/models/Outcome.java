@@ -26,16 +26,16 @@ public class Outcome {
     private String tenantId = null;
 
     @JsonProperty("outcome")
-    private String outcome = null;
+    private String outcomeValue = null;
 
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
 
-    public Outcome(String filingNumber, String tenantId, String outcome) {
+    public Outcome(String filingNumber, String tenantId, String outcomeValue) {
         this.filingNumber = filingNumber;
         this.tenantId = tenantId;
-        this.outcome = outcome;
+        this.outcomeValue = outcomeValue;
     }
 
 }

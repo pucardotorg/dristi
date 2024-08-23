@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.Pending_Task_Exception;
+import static org.pucar.dristi.config.ServiceConstants.PENDING_TASK_EXCEPTION;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import org.pucar.dristi.web.models.PendingTaskRequest;
 import org.egov.tracer.model.CustomException;
 
 @Slf4j
-public class PendingTaskServiceTest {
+class PendingTaskServiceTest {
 
     @InjectMocks
     private PendingTaskService pendingTaskService;
@@ -36,7 +36,7 @@ public class PendingTaskServiceTest {
     }
 
     @Test
-    void testCreatePendingTask_Success() throws Exception {
+    void testCreatePendingTask_Success() {
         // Arrange
         PendingTaskRequest request = new PendingTaskRequest();
         PendingTask task = new PendingTask();
@@ -58,7 +58,7 @@ public class PendingTaskServiceTest {
     }
 
     @Test
-    void testCreatePendingTask_CustomException() throws Exception {
+    void testCreatePendingTask_CustomException() {
         // Arrange
         PendingTaskRequest request = new PendingTaskRequest();
         when(indexerUtils.buildPayload(any())).thenThrow(new CustomException("Custom Exception","Test Message"));
@@ -72,7 +72,7 @@ public class PendingTaskServiceTest {
     }
 
     @Test
-    void testCreatePendingTask_GeneralException() throws Exception {
+    void testCreatePendingTask_GeneralException() {
         // Arrange
         PendingTaskRequest request = new PendingTaskRequest();
         when(indexerUtils.buildPayload(any())).thenThrow(new RuntimeException("General Exception"));
@@ -80,7 +80,7 @@ public class PendingTaskServiceTest {
         // Act & Assert
         CustomException thrown = assertThrows(CustomException.class, () -> pendingTaskService.createPendingTask(request));
 
-        assertEquals(Pending_Task_Exception, thrown.getCode());
+        assertEquals(PENDING_TASK_EXCEPTION, thrown.getCode());
         assertEquals("General Exception", thrown.getMessage());
         verify(indexerUtils, times(1)).buildPayload(any());
         verify(indexerUtils, times(0)).esPostManual(anyString(), anyString());

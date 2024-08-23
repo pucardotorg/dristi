@@ -17,7 +17,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 
 @Slf4j
-public class ApplicationUtilTest {
+class ApplicationUtilTest {
 
     @InjectMocks
     private ApplicationUtil applicationUtil;
@@ -123,7 +123,7 @@ public class ApplicationUtilTest {
         // Act & Assert
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> applicationUtil.getApplication(request, tenantId, applicationNumber));
 
-        assertEquals("Error while processing application response", thrown.getMessage());
+        assertEquals("Error while processing application response :: Repository error", thrown.getMessage());
 
         // Verify interactions
         verify(config, times(1)).getApplicationHost();

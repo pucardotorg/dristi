@@ -76,17 +76,15 @@ class EvidenceUtilTest {
     }
 
     @Test
-    void testGetEvidence_Exception() throws Exception {
+    void testGetEvidence_Exception() {
         JSONObject request = new JSONObject();
         String tenantId = "tenant1";
         String artifactNumber = "ART123";
 
         when(repository.fetchResult(any(StringBuilder.class), any(JSONObject.class))).thenThrow(new RuntimeException("Error fetching evidence"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            evidenceUtil.getEvidence(request, tenantId, artifactNumber);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> evidenceUtil.getEvidence(request, tenantId, artifactNumber));
 
-        assertEquals("Error while fetching or processing the evidence response", exception.getMessage());
+        assertEquals("Error while processing evidence response :: Error fetching evidence", exception.getMessage());
     }
 }

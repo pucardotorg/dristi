@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.PROCESS_INSTANCE_PATH;
 
-public class IndexerServiceTest {
+class IndexerServiceTest {
 
     @InjectMocks
     private IndexerService indexerService;

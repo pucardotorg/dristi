@@ -6,6 +6,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.MdmsDataConfig;
@@ -44,7 +45,7 @@ public class CaseOverallStatusUtil {
 	public Object checkCaseOverAllStatus(String entityType, String referenceId, String status, String action, String tenantId, JSONObject requestInfo) {
 		try {
 			JSONObject request = new JSONObject();
-			request.put("RequestInfo", requestInfo);
+			request.put(REQUEST_INFO, requestInfo);
 			caseOverallStatusTypeList = mdmsDataConfig.getCaseOverallStatusTypeMap().get(entityType);
 			if(config.getCaseBusinessServiceList().contains(entityType)){
 				return processCaseOverallStatus(request, referenceId, action, tenantId);
@@ -58,7 +59,7 @@ public class CaseOverallStatusUtil {
 		} catch (InterruptedException e) {
 			log.error("Processing interrupted for entityType: {}", entityType, e);
 			Thread.currentThread().interrupt(); // Restore the interrupted status
-			throw new RuntimeException(e);
+			throw new CustomException(CUSTOM_EXCEPTION,e.getMessage());
 		}
 	}
 
@@ -87,7 +88,7 @@ public class CaseOverallStatusUtil {
 		}
 		else {
 			log.info("Inside indexer util processHearingCaseOverallStatus:: Filing number not present");
-			throw new RuntimeException("Filing number not present for case overall status");
+			throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"Filing number not present for case overall status");
 		}
 		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
 		publishToCaseOverallStatus(determineHearingStage( filingNumber, tenantId, hearingType, action ), request);
@@ -127,7 +128,7 @@ public class CaseOverallStatusUtil {
 				log.error("Filing number not present for Case overall workflow update");
 			}
 			else{
-				RequestInfo requestInfo = mapper.readValue(request.getJSONObject("RequestInfo").toString(), RequestInfo.class);
+				RequestInfo requestInfo = mapper.readValue(request.getJSONObject(REQUEST_INFO).toString(), RequestInfo.class);
 				AuditDetails auditDetails = new AuditDetails();
 				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
 				auditDetails.setLastModifiedTime(System.currentTimeMillis());
@@ -186,7 +187,7 @@ public class CaseOverallStatusUtil {
 				log.error("Filing number not present for case outcome update");
 			}
 			else{
-				RequestInfo requestInfo = mapper.readValue(request.getJSONObject("RequestInfo").toString(), RequestInfo.class);
+				RequestInfo requestInfo = mapper.readValue(request.getJSONObject(REQUEST_INFO).toString(), RequestInfo.class);
 				AuditDetails auditDetails = new AuditDetails();
 				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
 				auditDetails.setLastModifiedTime(System.currentTimeMillis());

@@ -15,13 +15,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EventListener implements MessageListener<String, String> {
 
-	@Autowired
-	private IndexerService indexerService;
+	private final IndexerService indexerService;
+
+	private final Configuration config;
 
 	@Autowired
-	private Configuration config;
+    public EventListener(IndexerService indexerService, Configuration config) {
+        this.indexerService = indexerService;
+        this.config = config;
+    }
 
-	@Override
+    @Override
 	/**
 	 * Messages listener which acts as consumer. This message listener is injected
 	 * inside a kafkaContainer. This consumer is a start point to the following

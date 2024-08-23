@@ -31,7 +31,7 @@ class EventConsumerConfigTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(eventConsumerConfig, "brokerAddress", "localhost:9092");
         ReflectionTestUtils.setField(eventConsumerConfig, "consumerGroup", "test-group");
         ReflectionTestUtils.setField(eventConsumerConfig, "consumerTopics", "test-topic1,test-topic2");
@@ -70,7 +70,7 @@ class EventConsumerConfigTest {
     }
 
     @Test
-    void testContainer() throws Exception {
+    void testContainer() {
         KafkaMessageListenerContainer<String, String> container = eventConsumerConfig.container();
         assertNotNull(container);
         assertEquals("test-topic1", Objects.requireNonNull(container.getContainerProperties().getTopics())[0]);

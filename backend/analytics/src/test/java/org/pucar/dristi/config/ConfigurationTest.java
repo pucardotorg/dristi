@@ -74,6 +74,9 @@ class ConfigurationTest {
         configuration.setMdmsPendingTaskModuleName("moduleName");
         configuration.setMdmsPendingTaskMasterName("masterName");
 
+        assertValues();
+    }
+    void assertValues(){
         assertEquals("http://localhost:9200", configuration.getEsHostUrl());
         assertEquals("30", configuration.getPollInterval());
         assertEquals("indexName", configuration.getIndex());

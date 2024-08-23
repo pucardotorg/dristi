@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.ES_INDEX_DOCUMENT_FORMAT;
 import static org.pucar.dristi.config.ServiceConstants.ES_INDEX_HEADER_FORMAT;
 
-public class IndexerUtilsTest {
+class IndexerUtilsTest {
 
     @InjectMocks
     private IndexerUtils indexerUtils;
@@ -90,7 +90,7 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testIsNullOrEmpty() {
+    void testIsNullOrEmpty() {
         assertTrue(IndexerUtils.isNullOrEmpty(null));
         assertTrue(IndexerUtils.isNullOrEmpty(""));
         assertTrue(IndexerUtils.isNullOrEmpty(" "));
@@ -98,7 +98,7 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testGetESEncodedCredentials() {
+    void testGetESEncodedCredentials() {
         when(config.getEsUsername()).thenReturn("user");
         when(config.getEsPassword()).thenReturn("pass");
 
@@ -112,13 +112,13 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testBuildString_NullException() {
+    void testBuildString_NullException() {
         // Act
         assertThrows(NullPointerException.class, () -> indexerUtils.buildString(null));
     }
 
     @Test
-    public void testBuildString_ValidObject() {
+    void testBuildString_ValidObject() {
         // Arrange
         Object obj = "key1:value1,key2:value2";
 
@@ -130,7 +130,7 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testEsPost_Success() {
+    void testEsPost_Success() {
         // Arrange
         String uri = "http://localhost:9200/_bulk";
         String request = "{\"index\":{}}";
@@ -143,7 +143,7 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testEsPostManual_Success() throws Exception {
+    void testEsPostManual_Success() {
         // Arrange
         String uri = "http://localhost:9200/_bulk";
         String request = "{\"index\":{\"test\":\"test\"}}";
@@ -159,7 +159,7 @@ public class IndexerUtilsTest {
     }
 
     @Test()
-    public void testEsPostManual_Failure() {
+    void testEsPostManual_Failure() {
         // Arrange
         String uri = "http://localhost:9200/_bulk";
         String request = "{\"index\":{}}";
@@ -172,7 +172,7 @@ public class IndexerUtilsTest {
 
 
     @Test
-    public void testBuildPayloadWithPendingTask() throws Exception {
+    void testBuildPayloadWithPendingTask() throws Exception {
         PendingTask pendingTask = getPendingTask();
 
         when(mapper.writeValueAsString(any())).thenReturn("{\"key\":\"value\"}");
@@ -189,7 +189,7 @@ public class IndexerUtilsTest {
     }
 
     @Test
-    public void testBuildPayloadWithJsonString() throws Exception {
+    void testBuildPayloadWithJsonString() throws Exception {
         String jsonItem = "{"
                 + "\"id\": \"id\","
                 + "\"businessService\": \"entityType\","

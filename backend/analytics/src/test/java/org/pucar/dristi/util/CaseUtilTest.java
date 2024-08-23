@@ -157,6 +157,6 @@ class CaseUtilTest {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, caseId));
 
-        assertEquals("Error while processing case response", exception.getMessage());
+        assertEquals("Error while processing case response :: Error fetching case", exception.getMessage());
     }
 }
