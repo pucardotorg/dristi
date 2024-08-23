@@ -1,8 +1,6 @@
 package org.pucar.dristi.util;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -117,5 +116,73 @@ public class AdvocateUtilTest {
         assertFalse(result);
         verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));
         verify(mapper, times(1)).convertValue(any(), eq(AdvocateListResponse.class));
+    }
+
+    @Test
+    public void testFetchAdvocatesByIndividualIdSuccess() {
+
+        RequestInfo requestInfo = new RequestInfo();
+        String individualId = "individualId";
+
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setIndividualId(individualId);
+        Advocate advocate = Advocate.builder().id(UUID.randomUUID()).applicationNumber("appNumber").individualId(individualId).isActive(true).build();
+        List<Advocate> advocates = List.of(advocate);
+        criteria.setResponseList(advocates);
+        // Mock the fetchAdvocates method to return a list of advocates
+        when(restTemplate.postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class)))
+                .thenReturn(new HashMap<>());
+
+        AdvocateListResponse advocateResponse = new AdvocateListResponse();
+        advocateResponse.setAdvocates(List.of(criteria));
+        when(mapper.convertValue(any(), eq(AdvocateListResponse.class))).thenReturn(advocateResponse);
+
+        List<Advocate> result = advocateUtil.fetchAdvocatesByIndividualId(requestInfo, individualId);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(advocates, result);
+        assertEquals(result.get(0).getIndividualId(),individualId);
+
+        verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));
+        verify(mapper, times(1)).convertValue(any(), eq(AdvocateListResponse.class));
+    }
+
+    @Test
+    public void testFetchAdvocatesByIndividualIdEmptyResponse() {
+        RequestInfo requestInfo = new RequestInfo();
+        String individualId = "individualId";
+
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setIndividualId(individualId);
+        Advocate advocate = Advocate.builder().id(UUID.randomUUID()).applicationNumber("appNumber").individualId(individualId).isActive(false).build();
+        List<Advocate> advocates = List.of(advocate);
+        criteria.setResponseList(advocates);
+        Map<String, Object> response = new HashMap<>();
+        when(restTemplate.postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class)))
+                .thenReturn(response);
+
+        AdvocateListResponse advocateResponse = new AdvocateListResponse();
+        advocateResponse.setAdvocates(List.of(criteria));
+        when(mapper.convertValue(any(), eq(AdvocateListResponse.class))).thenReturn(advocateResponse);
+
+        List<Advocate> result = advocateUtil.fetchAdvocatesByIndividualId(requestInfo, individualId);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));
+        verify(mapper, times(1)).convertValue(any(), eq(AdvocateListResponse.class));
+    }
+
+    @Test
+    public void testFetchAdvocatesByIndividualIdException() {
+        RequestInfo requestInfo = new RequestInfo();
+        String individualId = "individualId";
+
+        when(restTemplate.postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class)))
+                .thenThrow(new RuntimeException("Error"));
+
+        assertThrows(CustomException.class, () -> advocateUtil.fetchAdvocatesByIndividualId(requestInfo, individualId));
     }
 }

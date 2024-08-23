@@ -25,4 +25,8 @@ public class SpringContext implements ApplicationContextAware {
         Assert.state(context != null, "ApplicationContext has not been set");
         return context;
     }
+
+    public static synchronized void clearApplicationContext() {
+        context = null;
+    }
 }
