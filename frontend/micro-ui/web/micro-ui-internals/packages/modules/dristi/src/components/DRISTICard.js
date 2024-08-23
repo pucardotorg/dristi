@@ -5,13 +5,14 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import JudgeScreen from "../pages/employee/Judge/JudgeScreen";
 
 const DRISTICard = () => {
-  const Digit = window?.Digit || {};
+  const Digit = useMemo(() => window?.Digit || {}, []);
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
   const isCourtOfficer = useMemo(() => roles.some((role) => role.code === "HEARING_CREATOR"), [roles]);
   const isBenchClerk = useMemo(() => roles.some((role) => role.code === "BENCHCLERK_ROLE"), [roles]);
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
   const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
     if (!res) return res;
     res = roles.some((role) => role.code === curr);
@@ -19,7 +20,9 @@ const DRISTICard = () => {
   }, true);
 
   if (isScrutiny || isJudge || isCourtOfficer || isBenchClerk) {
-    history.push("/digit-ui/employee/home/home-pending-task");
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  } else if (isCitizen) {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
   }
 
   let roleType = isJudge ? "isJudge" : "default";
