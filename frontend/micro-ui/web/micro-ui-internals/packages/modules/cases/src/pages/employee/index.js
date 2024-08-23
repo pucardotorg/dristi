@@ -40,11 +40,14 @@ const App = ({ path, stateCode, userType, tenants }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const Digit = useMemo(() => window?.Digit || {}, []);
-  const hasCitizenRoute = useMemo(() => path?.split("/").includes("citizen"), [path]);
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const hasCitizenRoute = useMemo(() => path?.includes(`/${window?.contextPath}/citizen`), [path]);
   const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
 
-  if (isCitizen && !hasCitizenRoute) {
+  if (isCitizen && !hasCitizenRoute && Boolean(userInfo)) {
     history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
+  } else if (!isCitizen && hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
   }
 
   return (
