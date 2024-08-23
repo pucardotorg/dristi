@@ -57,6 +57,7 @@ class CaseEncryptionServiceRestConnection {
             ResponseEntity<JsonNode> response = this.restTemplate.postForEntity(this.encProperties.getEgovEncHost() + this.encProperties.getEgovEncDecryptPath(), ciphertext, JsonNode.class,(Object) new Object[0]);
             return response.getBody();
         } catch (Exception var3) {
+            log.error("Error during decryption process: {}", var3.getMessage());
             throw new CustomException("ENCRYPTION_SERVICE_ERROR", ServiceConstants.ENCRYPTION_SERVICE_ERROR);
         }
     }
