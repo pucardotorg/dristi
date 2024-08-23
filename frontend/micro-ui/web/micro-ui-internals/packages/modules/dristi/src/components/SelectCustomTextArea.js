@@ -1,6 +1,7 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmptyObject } from "../Utils";
+import isEqual from "lodash/isEqual";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
@@ -16,6 +17,12 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   );
 
   const [formdata, setFormData] = useState(formData);
+
+  useEffect(() => {
+    if (!isEqual(formdata, formData)) {
+      setFormData(formData);
+    }
+  }, [formData]);
 
   function setValue(value, input) {
     let updatedValue = {
