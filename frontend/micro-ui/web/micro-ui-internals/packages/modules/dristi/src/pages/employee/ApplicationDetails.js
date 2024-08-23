@@ -52,7 +52,7 @@ const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
 
   const toast = useToast();
-
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const individualId = urlParams.get("individualId");
   const applicationNo = urlParams.get("applicationNo");
   const type = urlParams.get("type") || "advocate";
@@ -110,9 +110,13 @@ const ApplicationDetails = ({ location, match }) => {
       cacheTime: 0,
     },
   });
-  const actions = useMemo(() => workFlowDetails?.processInstances?.[0]?.state?.actions?.map((action) => action.action), [
-    workFlowDetails?.processInstances,
-  ]);
+  const actions = useMemo(
+    () =>
+      workFlowDetails?.processInstances?.[0]?.state?.actions
+        ?.filter((action) => action.roles.every((role) => userRoles.includes(role)))
+        .map((action) => action.action),
+    [workFlowDetails?.processInstances, userRoles]
+  );
 
   const searchResult = useMemo(() => {
     return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
