@@ -1,6 +1,6 @@
 import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
 import { CardLabel, CloseSvg, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
 import { InfoIconRed } from "../icons/svgIndex";
@@ -50,6 +50,35 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     },
     timeLeft > 0 ? 1000 : null
   );
+
+  const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
+
+  const otp = useMemo(() => formData[config.key]?.[input?.name], [formData[config.key]?.[input?.name]]);
+
+  const modalOnSubmit = () => {
+    if (!otp)
+      setState((prev) => ({
+        ...prev,
+        isUserVerified: false,
+        showModal: true,
+        errorMsg: "CS_INVALID_OTP",
+      }));
+    else selectOtp(input);
+  };
+
+  const handleKeyDown = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter" && otp?.length === 6 && showModal) {
+      modalOnSubmit();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [otp]);
 
   const sendOtp = async (data) => {
     try {
@@ -248,8 +277,6 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     }
   };
 
-  const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
-
   return (
     <div className="phone-number-verification">
       <LabelFieldPair>
@@ -331,16 +358,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
           actionCancelOnSubmit={() => {}}
           actionSaveLabel={t("VERIFY")}
-          actionSaveOnSubmit={() => {
-            if (!formData[config.key]?.[input?.name])
-              setState((prev) => ({
-                ...prev,
-                isUserVerified: false,
-                showModal: true,
-                errorMsg: "CS_INVALID_OTP",
-              }));
-            else selectOtp(input);
-          }}
+          actionSaveOnSubmit={() => modalOnSubmit()}
           formId="modal-action"
           isDisabled={formData?.[config.key]?.[input.name]?.length !== 6 || errorMsg}
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}

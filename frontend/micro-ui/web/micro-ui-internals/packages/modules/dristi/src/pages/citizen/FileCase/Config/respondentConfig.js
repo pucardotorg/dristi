@@ -40,6 +40,15 @@ const respondentFromconfig = [
   },
   {
     head: "CS_RESPONDENT_NAME",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_COMMON_ENTITY_DETAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_NAME",
+    },
     dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
@@ -122,6 +131,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_PHONE",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_PHONE",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_PHONE",
+    },
     body: [
       {
         type: "component",
@@ -186,6 +204,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_EMAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_EMAIL",
+    },
     body: [
       {
         type: "component",
