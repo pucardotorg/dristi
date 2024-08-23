@@ -6,12 +6,13 @@ import AdjournHearing from "./AdjournHearing";
 import MonthlyCalendar from "./CalendarView";
 import EndHearing from "./EndHearing";
 import InsideHearingMainPage from "./InsideHearingMainPage";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const bredCrumbStyle = { maxWidth: "min-content" };
 
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = window?.Digit?.UserService?.getUser?.()?.info;
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const crumbs = [
     {
@@ -20,7 +21,7 @@ const ProjectBreadCrumb = ({ location }) => {
       show: true,
     },
     {
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/${userType}`,
       content: t(location.pathname.split("/").filter(Boolean).pop()),
       show: true,
     },
@@ -29,6 +30,18 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path }) => {
+  const history = useHistory();
+  const Digit = useMemo(() => window?.Digit || {}, []);
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const hasCitizenRoute = useMemo(() => path?.includes(`/${window?.contextPath}/citizen`), [path]);
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
+
+  if (isCitizen && !hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
+  } else if (!isCitizen && hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
+
   return (
     <Switch>
       <AppContainer className="ground-container hearing-action-block">
