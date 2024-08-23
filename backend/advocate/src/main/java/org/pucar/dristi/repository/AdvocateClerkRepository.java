@@ -37,7 +37,7 @@ public class AdvocateClerkRepository {
         this.documentRowMapper = documentRowMapper;
     }
 
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset) {
+    public List<AdvocateClerk> getClerkApplications(List<AdvocateClerkSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset) {
         try {
             List<AdvocateClerk> advocateClerkList = new ArrayList<>();
             for (AdvocateClerkSearchCriteria advocateSearchCriteria : searchCriteria) {
