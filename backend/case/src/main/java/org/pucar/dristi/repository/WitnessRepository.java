@@ -1,37 +1,38 @@
 package org.pucar.dristi.repository;
 
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.Document;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_WITNESS_ERR;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.querybuilder.WitnessQueryBuilder;
-import org.pucar.dristi.repository.rowmapper.*;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.repository.rowmapper.WitnessRowMapper;
+import org.pucar.dristi.web.models.Witness;
+import org.pucar.dristi.web.models.WitnessSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_WITNESS_ERR;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @Repository
 public class WitnessRepository {
 
-    @Autowired
     private WitnessQueryBuilder queryBuilder;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     private WitnessRowMapper rowMapper;
+
+    @Autowired
+    public WitnessRepository(WitnessQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, WitnessRowMapper rowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+    }
 
     public List<Witness> getApplications(List<WitnessSearchCriteria> searchCriteria) {
 

@@ -12,7 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 @Repository
 @Slf4j

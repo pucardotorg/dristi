@@ -1,5 +1,17 @@
 package org.pucar.dristi.validators;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +24,6 @@ import org.pucar.dristi.repository.WitnessRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class WitnessRegistrationValidatorTest {
 
@@ -70,7 +74,7 @@ public class WitnessRegistrationValidatorTest {
         request.setWitness(witnessWithValidCaseId);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+         assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
                 "Validation should fail when caseId is null");
     }
 
@@ -86,7 +90,7 @@ public class WitnessRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), any())).thenReturn(false);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+       assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
                 "Validation should fail when caseId is null");
     }
 
@@ -181,7 +185,7 @@ public class WitnessRegistrationValidatorTest {
         when(individualService.searchIndividual(any(), any())).thenReturn(false);
 
         // Ensure validation fails for the witness with null caseId
-        Exception exception = assertThrows(Exception.class, () -> validator.validateApplicationExistence(new RequestInfo(), witnessWithValidCaseId),
+       assertThrows(Exception.class, () -> validator.validateApplicationExistence(new RequestInfo(), witnessWithValidCaseId),
                 "Validation should fail when caseId is null");
     }
 }

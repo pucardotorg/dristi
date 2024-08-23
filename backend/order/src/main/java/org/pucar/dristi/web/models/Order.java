@@ -14,7 +14,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,24 +49,27 @@ public class Order {
 
     @JsonProperty("hearingNumber")
     @Valid
-    private UUID hearingNumber = null;
+    private String hearingNumber = null;
 
     @JsonProperty("orderNumber")
     @Size(min = 24, max = 256)
     private String orderNumber = null;
 
+    @JsonProperty("linkedOrderNumber")
+    @Size(min = 24, max = 256)
+    private String linkedOrderNumber = null;
+
     @JsonProperty("createdDate")
-    @NotNull
     @Valid
-    private LocalDate createdDate = null;
+    private Long createdDate = null;
 
     @JsonProperty("issuedBy")
-    private Object issuedBy = null;
+    private IssuedBy issuedBy = null;
 
     @JsonProperty("orderType")
     @NotNull
     @Valid
-    private List<Integer> orderType = new ArrayList<>();
+    private String orderType = null;
 
     @JsonProperty("orderCategory")
     private String orderCategory = null;
@@ -91,6 +93,9 @@ public class Order {
     @Valid
     private List<Document> documents = null;
 
+    @JsonProperty("orderDetails")
+    private Object orderDetails = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
@@ -101,24 +106,5 @@ public class Order {
     @JsonProperty("workflow")
     @Valid
     private Workflow workflow = null;
-
-
-    public Order addApplicationIdsItem(String applicationNumbersItem) {
-        this.applicationNumber.add(applicationNumbersItem);
-        return this;
-    }
-
-    public Order addOrderTypeItem(Integer orderTypeItem) {
-        this.orderType.add(orderTypeItem);
-        return this;
-    }
-
-    public Order addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        this.documents.add(documentsItem);
-        return this;
-    }
 
 }

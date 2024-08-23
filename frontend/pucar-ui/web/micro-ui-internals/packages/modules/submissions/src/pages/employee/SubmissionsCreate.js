@@ -13,7 +13,7 @@ const SubmissionsCreate = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const reqCreate = {
-    url: `/application/v1/create`,
+    url: `/application/application/v1/create`,
     params: {},
     body: {},
     config: {
@@ -37,7 +37,7 @@ const SubmissionsCreate = () => {
     console.log(data, "data");
     await mutation.mutate(
       {
-        url: `application/v1/create`,
+        url: `application/application/v1/create`,
         params: { tenantId },
         body: transformCreateData(data),
         config: {

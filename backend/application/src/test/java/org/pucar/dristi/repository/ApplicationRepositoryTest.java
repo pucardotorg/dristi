@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository;
 
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
-import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.web.models.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
@@ -22,6 +20,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,13 +38,9 @@ class ApplicationRepositoryTest {
     @Mock
     private DocumentRowMapper documentRowMapper;
 
-    @Mock
-    private StatuteSectionRowMapper statuteSectionRowMapper;
-
     @InjectMocks
     private ApplicationRepository applicationRepository;
 
-    private List<Application> applicationList;
     private List<Document> documentList;
     private Map<UUID, StatuteSection> statuteSectionsMap;
     private Map<UUID, List<Document>> documentMap;
@@ -55,7 +50,6 @@ class ApplicationRepositoryTest {
         // Setting up sample data
         Application application = new Application();
         application.setId(UUID.randomUUID());
-        applicationList = Collections.singletonList(application);
 
         Document document = new Document();
         documentList = Collections.singletonList(document);
@@ -69,37 +63,98 @@ class ApplicationRepositoryTest {
     }
 
     @Test
-    void testGetApplications_Success() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
-                .thenReturn("some SQL query");
-        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
+    void testGetApplicationsSuccess() {
+        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        ApplicationCriteria criteria = new ApplicationCriteria();
+        String applicationId = UUID.randomUUID().toString();
+        criteria.setId(applicationId);
 
-        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
-                .thenReturn("statute section SQL query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
-                .thenReturn(statuteSectionsMap);
+        String applicationType = "type1"; // Set an example application type
+        criteria.setApplicationType(applicationType); // Ensure the application type is set in the criteria
 
-        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
-                .thenReturn("document SQL query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
-                .thenReturn(documentMap);
+        searchRequest.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        searchRequest.setPagination(pagination);
 
-        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", "status1", 10, 0);
+        String applicationQuery = "SELECT * FROM applications";
+        String documentQuery = "SELECT * FROM documents WHERE applicationId IN (?)";
+        String countQuery = "SELECT COUNT(*) FROM applications";
+
+        List<Application> applications = Arrays.asList(new Application());
+        applications.get(0).setId(UUID.randomUUID());
+
+        // Use eq and any to match arguments
+        when(queryBuilder.getApplicationSearchQuery(
+                any(), anyList(), anyList()))
+                .thenReturn(applicationQuery);
+        when(queryBuilder.addOrderByQuery(anyString(), any(Pagination.class)))
+                .thenReturn(applicationQuery + " ORDER BY createdTime");
+        when(queryBuilder.addPaginationQuery(anyString(), any(Pagination.class), anyList(),any()))
+                .thenReturn(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0");
+        when(queryBuilder.getTotalCountQuery(anyString())).thenReturn(countQuery);
+
+        when(jdbcTemplate.query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class),any(), eq(rowMapper)))
+                .thenReturn(applications);
+        when(jdbcTemplate.queryForObject(eq(countQuery),eq(Integer.class),any(Object[].class)))
+                .thenReturn(1);
+
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList(),any())).thenReturn(documentQuery);
+        when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), any(),eq(documentRowMapper)))
+                .thenReturn(new HashMap<>());
+        List<Application> result = applicationRepository.getApplications(searchRequest);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(applicationList.size(), result.size());
-        assertEquals(documentList, result.get(0).getDocuments());
-        assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
+        assertEquals(applications, result);
+        assertEquals(1, pagination.getTotalCount());
+
+        verify(queryBuilder, times(1)).getApplicationSearchQuery(any(), anyList(),anyList());
+        verify(queryBuilder, times(1)).addOrderByQuery(anyString(), any(Pagination.class));
+        verify(queryBuilder, times(1)).addPaginationQuery(anyString(), any(Pagination.class), anyList(),any());
+        verify(queryBuilder, times(1)).getTotalCountQuery(anyString());
+
+        verify(jdbcTemplate, times(1)).query(eq(applicationQuery + " ORDER BY createdTime LIMIT 10 OFFSET 0"), any(Object[].class),any(), eq(rowMapper));
+        verify(jdbcTemplate, times(1)).queryForObject(eq(countQuery),eq(Integer.class), any(Object[].class));
+        verify(jdbcTemplate, times(1)).query(eq(documentQuery), any(Object[].class),any(), eq(documentRowMapper));
+    }
+
+
+
+
+    @Test
+    public void testGetApplicationsThrowsCustomException() {
+        ApplicationSearchRequest searchRequest = new ApplicationSearchRequest();
+        ApplicationCriteria criteria = new ApplicationCriteria();
+        searchRequest.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        searchRequest.setPagination(pagination);
+
+        when(queryBuilder.getApplicationSearchQuery(any(), any(),any()))
+                .thenThrow(new CustomException("TEST_ERROR", "Test error"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                applicationRepository.getApplications(searchRequest));
+
+        assertEquals("TEST_ERROR", exception.getCode());
+        assertEquals("Test error", exception.getMessage());
     }
 
     @Test
     void testGetApplications_EmptyResult() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+        lenient().when(queryBuilder.getApplicationSearchQuery(any(), any(),anyList()))
                 .thenReturn("some SQL query");
-        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
+        lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(),any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
-        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", "status1", 10, 0);
+        List<Application> result = applicationRepository.getApplications(applicationSearchRequest);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -107,11 +162,22 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_Exception() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+
+        when(queryBuilder.getApplicationSearchQuery(any(), any(),any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationRepository.getApplications("1", "123", "CNR123", "tenant1",null,  10, 0)
+                applicationRepository.getApplications(applicationSearchRequest)
         );
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
@@ -120,21 +186,17 @@ class ApplicationRepositoryTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
     @Test
-    public void testGetApplications_ThrowsCustomException() {
+    void testGetApplications_ThrowsCustomException() {
         // Arrange
-        String id = "testId";
-        String filingNumber = "testFilingNumber";
-        String cnrNumber = "testCnrNumber";
-        String tenantId = "testTenantId";
-        String status = "status";
-        Integer limit = 10;
-        Integer offset = 0;
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        applicationSearchRequest.setCriteria(new ApplicationCriteria());
 
         doThrow(new RuntimeException("Database error")).when(jdbcTemplate).query(anyString(), any(ApplicationRowMapper.class));
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+            applicationRepository.getApplications(applicationSearchRequest);
         });
 
         // Assert
@@ -156,8 +218,8 @@ class ApplicationRepositoryTest {
         List<ApplicationExists> applicationExistsList = new ArrayList<>();
         applicationExistsList.add(new ApplicationExists("123", null, null, null));
 
-        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123'");
-        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class),any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -169,8 +231,8 @@ class ApplicationRepositoryTest {
         List<ApplicationExists> applicationExistsList = new ArrayList<>();
         applicationExistsList.add(new ApplicationExists(null, "456", null, null));
 
-        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE cnr_number = '456'");
-        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE cnr_number = '456'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -182,8 +244,8 @@ class ApplicationRepositoryTest {
         List<ApplicationExists> applicationExistsList = new ArrayList<>();
         applicationExistsList.add(new ApplicationExists(null, null, "789", null));
 
-        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE application_number = '789'");
-        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class), any(Object[].class))).thenReturn(1);
 
         List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
 
@@ -195,9 +257,35 @@ class ApplicationRepositoryTest {
         List<ApplicationExists> applicationExistsList = new ArrayList<>();
         applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
 
-        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
-        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class),any(Object[].class))).thenThrow(new RuntimeException("Database connection failed"));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
+    }
+
+    @Test
+    void testCheckApplicationExists_Throws_CustomException() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(),eq(Integer.class), any(Object[].class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
+
+        assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
+    }
+    @Test
+    void testGetTotalCountApplication() {
+        String baseQuery = "SELECT * FROM applications";
+        String countQuery = "SELECT COUNT(*) FROM applications";
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        lenient().when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn(countQuery);
+        lenient().when(jdbcTemplate.queryForObject(eq(countQuery), eq(Integer.class),any(Object[].class))).thenReturn(42);
+        Integer result = applicationRepository.getTotalCountApplication(baseQuery, preparedStmtList);
+
+        assertNotNull(result);
+        assertEquals(42, result);
+
+        verify(queryBuilder, times(1)).getTotalCountQuery(baseQuery);
     }
 }

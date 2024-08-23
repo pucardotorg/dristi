@@ -1,18 +1,16 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CaseSummaryResponse
@@ -23,23 +21,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseSummaryResponse   {
-        @JsonProperty("requestInfo")
+public class CaseSummaryResponse {
+	@JsonProperty("requestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+	@Valid
+	private RequestInfo requestInfo = null;
 
-        @JsonProperty("criteria")
-          @Valid
-                private List<CaseSummary> criteria = null;
+	@JsonProperty("criteria")
+	@Valid
+	private List<CaseSummary> criteria = null;
 
 
-        public CaseSummaryResponse addCriteriaItem(CaseSummary criteriaItem) {
-            if (this.criteria == null) {
-            this.criteria = new ArrayList<>();
-            }
-        this.criteria.add(criteriaItem);
-        return this;
-        }
+	public CaseSummaryResponse addCriteriaItem(CaseSummary criteriaItem) {
+		if (this.criteria == null) {
+			this.criteria = new ArrayList<>();
+		}
+		this.criteria.add(criteriaItem);
+		return this;
+	}
 
 }

@@ -1,11 +1,14 @@
 package org.pucar.dristi.web.controllers;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.HearingService;
@@ -14,6 +17,9 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,14 +77,30 @@ public class HearingApiControllerTest {
 
     @Test
     public void testHearingV1SearchPost_Success() {
-        String cnrNumber = "12345";
-        String applicationNumber = "67890";
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
+                .build();
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .build();
         List<Hearing> hearingList = List.of(new Hearing());
         int totalCount = hearingList.size();
 
-        when(hearingService.searchHearing(anyString(), anyString(), any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(hearingList);
 
-        ResponseEntity<HearingListResponse> response = hearingApiController.hearingV1SearchPost(cnrNumber, applicationNumber, null, null, null, null, null, null, null, null);
+        when(hearingService.searchHearing(any())).thenReturn(hearingList);
+
+        ResponseEntity<HearingListResponse> response = hearingApiController.hearingV1SearchPost(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -101,5 +123,60 @@ public class HearingApiControllerTest {
         assertNotNull(response.getBody());
         assertEquals(hearing, response.getBody().getHearing());
         assertEquals(responseInfo, response.getBody().getResponseInfo());
+    }
+
+    @Test
+    void testHearingV1UpdateTranscriptPost_Success() {
+        HearingRequest hearingRequest = new HearingRequest();  // Set up the request
+        Hearing hearing = new Hearing();  // Set up the response
+        ResponseInfo responseInfo = new ResponseInfo();
+
+        when(hearingService.updateTranscriptAdditionalAttendees(any(HearingRequest.class))).thenReturn(hearing);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(responseInfo);
+
+        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateHearingTranscriptAdditionAuditDetailsPost(hearingRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(hearing, response.getBody().getHearing());
+        assertEquals(responseInfo, response.getBody().getResponseInfo());
+        assertTrue(response.getBody().getHearing().getTranscript().isEmpty());
+    }
+
+    @Test
+    void hearingV1UpdateTimePost_Success() {
+        UpdateTimeRequest requestBody = new UpdateTimeRequest();
+        requestBody.setRequestInfo(new RequestInfo());
+        requestBody.setHearings(Collections.singletonList(new Hearing()));
+
+        ResponseInfo expectedResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
+                .thenReturn(expectedResponseInfo);
+
+        UpdateTimeResponse expectedResponse = UpdateTimeResponse.builder()
+                .hearings(requestBody.getHearings())
+                .responseInfo(expectedResponseInfo)
+                .build();
+
+        ResponseEntity<UpdateTimeResponse> response = hearingApiController.hearingV1UpdateTimePost(requestBody);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        UpdateTimeResponse actualResponse = response.getBody();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getHearings(), actualResponse.getHearings());
+        assertEquals(expectedResponse.getResponseInfo(), actualResponse.getResponseInfo());
+    }
+
+    @Test
+    void hearingV1UpdateTimePost_InvalidRequest() {
+        UpdateTimeRequest requestBody = new UpdateTimeRequest();  // Missing required fields
+
+        Mockito.doThrow(new IllegalArgumentException("Invalid request")).when(hearingService).updateStartAndTime(any(UpdateTimeRequest.class));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            hearingApiController.hearingV1UpdateTimePost(requestBody);
+        });
+
+        assertEquals("Invalid request", exception.getMessage());
     }
 }

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.egov.common.contract.response.ResponseInfo;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -30,13 +30,5 @@ public class AdvocateResponse {
         @Valid
         private List<Advocate> advocates = null;
 
-
-        public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
-            if (this.advocates == null) {
-            this.advocates = new ArrayList<>();
-            }
-        this.advocates.add(advocatesItem);
-        return this;
-        }
 
 }

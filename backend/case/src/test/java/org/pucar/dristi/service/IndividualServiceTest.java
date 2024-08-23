@@ -1,5 +1,10 @@
 package org.pucar.dristi.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.IndividualResponse;
@@ -13,15 +18,6 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class IndividualServiceTest {
@@ -42,7 +38,6 @@ public class IndividualServiceTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(new CourtCase());
         caseRequest.setRequestInfo(RequestInfo.builder().userInfo(User.builder().tenantId("pg").build()).build()); // Mock or provide necessary data
-        Map<String, String> individualUserUUID = new HashMap<>();
 
         // Mock the behavior of dependent components
         IndividualResponse individualResponse = new IndividualResponse(); // Mock or provide necessary data

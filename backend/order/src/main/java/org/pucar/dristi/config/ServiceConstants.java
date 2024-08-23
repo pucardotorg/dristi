@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceConstants {
 
+    private ServiceConstants() {
+    }
+
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
     public static final String ORDER_EXISTS_EXCEPTION = "ORDER_EXISTS_EXCEPTION";
@@ -25,7 +28,7 @@ public class ServiceConstants {
     public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
     public static final String ERROR_WHILE_FETCHING_FROM_CASE = "Exception occurred while fetching case details: ";
     public static final String CREATE_ORDER_ERR = "Exception occurred while validating order details: ";
-    public static final String MDMS_DATA_NOT_FOUND = "MDMS data doesn't exist: ";
+    public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
@@ -49,6 +52,7 @@ public class ServiceConstants {
     public static final String CITIZEN_UPPER = "CITIZEN";
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String USER = "user";
+    public static final String ADMINISTRATIVE = "ADMINISTRATIVE";
 
     public static final String PARSING_ERROR = "PARSING ERROR";
     public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -57,5 +61,8 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+    public static final String JUDGEMENT = "JUDGEMENT";
+    public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
+    public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
 }

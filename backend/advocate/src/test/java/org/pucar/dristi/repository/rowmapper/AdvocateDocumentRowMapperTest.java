@@ -1,8 +1,5 @@
 package org.pucar.dristi.repository.rowmapper;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,14 +7,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-public class AdvocateDocumentRowMapperTest {
+ class AdvocateDocumentRowMapperTest {
 
     @Mock
     private ResultSet rs;
@@ -69,6 +71,5 @@ public class AdvocateDocumentRowMapperTest {
 
         // Execution & Verification
         assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
-//        assertTrue(exception.getMessage().contains("Error occurred while processing document ResultSet: Database error"));
     }
 }

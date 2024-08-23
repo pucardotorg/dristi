@@ -1,17 +1,16 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import lombok.extern.slf4j.Slf4j;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.WitnessSearchCriteria;
-import org.springframework.stereotype.Component;
+import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.WitnessSearchCriteria;
+import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -71,7 +70,6 @@ public class WitnessQueryBuilder {
                             .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(includeInactives);
-                    firstCriteria = false;
                 }
 
             }

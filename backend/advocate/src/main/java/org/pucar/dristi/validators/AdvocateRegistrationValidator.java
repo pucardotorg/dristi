@@ -12,22 +12,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
 public class AdvocateRegistrationValidator {
-    @Autowired
-    private IndividualService individualService;
-    @Autowired
-    private AdvocateRepository repository;
+    private final IndividualService individualService;
+    private final AdvocateRepository repository;
 
+    @Autowired
+    public AdvocateRegistrationValidator(IndividualService individualService, AdvocateRepository repository) {
+        this.individualService = individualService;
+        this.repository = repository;
+    }
 
     /**
      * @param advocateRequest  advocate application request

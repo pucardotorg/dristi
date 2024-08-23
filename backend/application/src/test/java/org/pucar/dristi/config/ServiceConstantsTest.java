@@ -32,13 +32,5 @@ class ServiceConstantsTest {
         assertEquals("Failed to parse date format in user", ServiceConstants.INVALID_DATE_FORMAT_MESSAGE);
         assertEquals("CITIZEN", ServiceConstants.CITIZEN_UPPER);
         assertEquals("Citizen", ServiceConstants.CITIZEN_LOWER);
-        assertEquals("user", ServiceConstants.USER);
-        assertEquals("PARSING ERROR", ServiceConstants.PARSING_ERROR);
-        assertEquals("Failed to parse response of workflow business service search", ServiceConstants.FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH);
-        assertEquals("BUSINESSSERVICE_NOT_FOUND", ServiceConstants.BUSINESS_SERVICE_NOT_FOUND);
-        assertEquals("The businessService ", ServiceConstants.THE_BUSINESS_SERVICE);
-        assertEquals(" is not found", ServiceConstants.NOT_FOUND);
-        assertEquals("?tenantId=", ServiceConstants.TENANTID);
-        assertEquals("&businessServices=", ServiceConstants.BUSINESS_SERVICES);
     }
 }

@@ -1,6 +1,16 @@
 package org.pucar.dristi.web.models;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,14 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.models.Workflow;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Advocate
@@ -74,10 +76,5 @@ public class Advocate {
 
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
-
-	public Advocate addDocumentsItem(Document documentsItem) {
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

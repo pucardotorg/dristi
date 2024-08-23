@@ -19,7 +19,7 @@ const AdvocateRegistration = () => {
   const location = useLocation();
   const propData = location.state || {};
   const reqCreate = {
-    url: `/case/v1/_update`,
+    url: `/case/case/v1/_update`,
     params: {},
     body: {},
     config: {
@@ -32,7 +32,7 @@ const AdvocateRegistration = () => {
   const onSubmit = async (data) => {
     await mutation.mutate(
       {
-        url: `/case/v1/_update`,
+        url: `/case/case/v1/_update`,
         params: { tenantId },
         body: transformCreateData(propData),
         config: {

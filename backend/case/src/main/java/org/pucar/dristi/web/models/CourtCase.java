@@ -1,23 +1,19 @@
 package org.pucar.dristi.web.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,7 +36,7 @@ public class CourtCase {
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	//@NotNull
+	@NotNull
 	//@Size(min = 2, max = 64)
 	private String tenantId = null;
 
@@ -65,7 +61,7 @@ public class CourtCase {
 
 	@JsonProperty("courtCaseNumber")
 	//@Size(min=10,max=24)
-	private String courCaseNumber = null;
+	private String courtCaseNumber = null;
 
 	@JsonProperty("caseNumber")
 
@@ -78,6 +74,9 @@ public class CourtCase {
 
 	@JsonProperty("accessCode")
 	private String accessCode = null;
+
+	@JsonProperty("outcome")
+	private String outcome = null;
 
 	@JsonProperty("courtId")
 	//@Size(min = 2, max = 64)
@@ -94,12 +93,13 @@ public class CourtCase {
 	@JsonProperty("filingDate")
 	//@NotNull
 	@Valid
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate filingDate = null;
+	private Long filingDate = null;
 
 	@JsonProperty("registrationDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate registrationDate = null;
+	private Long registrationDate = null;
+
+	@JsonProperty("judgementDate")
+	private Long judgementDate = null;
 
 	@JsonProperty("caseDetails")
 	private Object caseDetails = null;
@@ -108,6 +108,15 @@ public class CourtCase {
 	//@NotNull
 	//@Size(min = 2, max = 64)
 	private String caseCategory = null;
+
+	@JsonProperty("judgeId")
+	private String judgeId = null;
+
+	@JsonProperty("stage")
+	private String stage = null;
+
+	@JsonProperty("substage")
+	private String substage = null;
 
 	@JsonProperty("natureOfPleading")
 	//@Size(min = 2, max = 64)
@@ -148,30 +157,5 @@ public class CourtCase {
 	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditdetails = null;
-
-	public CourtCase addLinkedCasesItem(LinkedCase linkedCasesItem) {
-		this.linkedCases.add(linkedCasesItem);
-		return this;
-	}
-
-	public CourtCase addStatutesAndSectionsItem(StatuteSection statutesAndSectionsItem) {
-		this.statutesAndSections.add(statutesAndSectionsItem);
-		return this;
-	}
-
-	public CourtCase addLitigantsItem(Party litigantsItem) {
-		this.litigants.add(litigantsItem);
-		return this;
-	}
-
-	public CourtCase addRepresentativesItem(AdvocateMapping representativesItem) {
-		this.representatives.add(representativesItem);
-		return this;
-	}
-
-	public CourtCase addDocumentsItem(Document documentsItem) {
-		this.documents.add(documentsItem);
-		return this;
-	}
 
 }

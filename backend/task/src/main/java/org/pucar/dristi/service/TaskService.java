@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -9,16 +10,12 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.TaskRegistrationValidator;
-import org.pucar.dristi.web.models.Task;
-import org.pucar.dristi.web.models.TaskExists;
-import org.pucar.dristi.web.models.TaskExistsRequest;
-import org.pucar.dristi.web.models.TaskRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -27,21 +24,26 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class TaskService {
 
     private TaskRegistrationValidator validator;
+    private final TaskRegistrationEnrichment enrichmentUtil;
+    private final TaskRepository taskRepository;
+    private final WorkflowUtil workflowUtil;
+    private final Configuration config;
+    private final Producer producer;
 
     @Autowired
-    private TaskRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private WorkflowUtil workflowUtil;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private Producer producer;
+    public TaskService(TaskRegistrationValidator validator,
+                       TaskRegistrationEnrichment enrichmentUtil,
+                       TaskRepository taskRepository,
+                       WorkflowUtil workflowUtil,
+                       Configuration config,
+                       Producer producer) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.taskRepository = taskRepository;
+        this.workflowUtil = workflowUtil;
+        this.config = config;
+        this.producer = producer;
+    }
 
     @Autowired
     public void setValidator(@Lazy TaskRegistrationValidator validator) {
@@ -51,37 +53,32 @@ public class TaskService {
 
     public Task createTask(TaskRequest body) {
         try {
-            validator.validateCaseRegistration(body);
+            validator.validateTaskRegistration(body);
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                    config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
+            workflowUpdate(body);
 
             producer.push(config.getTaskCreateTopic(), body);
 
             return body.getTask();
 
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while creating task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating task :: {}",e.toString());
+            log.error("Error occurred while creating task :: {}", e.toString());
             throw new CustomException(CREATE_TASK_ERR, e.getMessage());
         }
     }
 
-    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, RequestInfo requestInfo) {
+    public List<Task> searchTask(TaskSearchRequest request) {
 
         try {
-            // Fetch applications from database according to the given search criteria
-            List<Task> tasks = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
-
-            // If no applications are found matching the given criteria, return an empty list
-            tasks.forEach(task -> task.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, task.getTaskNumber()))));
-            ;
-
-            return tasks;
+            // Fetch tasks from database according to the given search criteria
+            return taskRepository.getApplications(request.getCriteria(), request.getPagination());
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while searching task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching task results :: {}", e.toString());
@@ -89,27 +86,31 @@ public class TaskService {
         }
     }
 
-    public Task updateTask(TaskRequest taskRequest) {
+    public Task updateTask(TaskRequest body) {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-            if (!validator.validateApplicationExistence(taskRequest.getTask(), taskRequest.getRequestInfo()))
+            if (!validator.validateApplicationExistence(body.getTask(), body.getRequestInfo()))
                 throw new CustomException(VALIDATION_ERR, "Task Application does not exist");
 
             // Enrich application upon update
-            enrichmentUtil.enrichCaseApplicationUponUpdate(taskRequest);
+            enrichmentUtil.enrichCaseApplicationUponUpdate(body);
 
-            workflowUtil.updateWorkflowStatus(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(),
-                    taskRequest.getTask().getTaskNumber(), config.getTaskBusinessServiceName(), taskRequest.getTask().getWorkflow(), config.getTaskBusinessName());
+            workflowUpdate(body);
 
-            producer.push(config.getTaskCreateTopic(), taskRequest);
+            String status = body.getTask().getStatus();
+            if (ISSUESUMMON.equalsIgnoreCase(status))
+                producer.push(config.getTaskIssueSummonTopic(), body);
 
-            return taskRequest.getTask();
+            producer.push(config.getTaskUpdateTopic(), body);
+
+            return body.getTask();
 
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while updating task :: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating task :: {}",e.toString());
+            log.error("Error occurred while updating task :: {}", e.toString());
             throw new CustomException(UPDATE_TASK_ERR, "Error occurred while updating task: " + e.getMessage());
         }
 
@@ -119,10 +120,34 @@ public class TaskService {
         try {
             return taskRepository.checkTaskExists(taskExistsRequest.getTask());
         } catch (CustomException e) {
+            log.error("Custom Exception occurred while exist task check :: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist task :: {}",e.toString());
+            log.error("Error while fetching to exist task :: {}", e.toString());
             throw new CustomException(EXIST_TASK_ERR, e.getMessage());
         }
+    }
+
+    private void workflowUpdate(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        RequestInfo requestInfo = taskRequest.getRequestInfo();
+
+        String taskType = task.getTaskType().toUpperCase();
+        String tenantId = task.getTenantId();
+        String taskNumber = task.getTaskNumber();
+        Workflow workflow = task.getWorkflow();
+
+        String status = switch (taskType) {
+            case BAIL -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskBailBusinessServiceName(), workflow, config.getTaskBailBusinessName());
+            case SUMMON -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskSummonBusinessServiceName(), workflow, config.getTaskSummonBusinessName());
+            case WARRANT -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskWarrantBusinessServiceName(), workflow, config.getTaskWarrantBusinessName());
+            default -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskBusinessServiceName(), workflow, config.getTaskBusinessName());
+        };
+
+        task.setStatus(status);
     }
 }

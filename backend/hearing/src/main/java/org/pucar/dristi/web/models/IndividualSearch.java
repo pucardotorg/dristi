@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.user.enums.Gender;
+import org.egov.common.data.query.annotations.Exclude;
+import org.egov.common.models.individual.Identifier;
+import org.egov.common.models.individual.Name;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
