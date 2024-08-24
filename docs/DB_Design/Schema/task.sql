@@ -1,80 +1,80 @@
 CREATE TABLE dristi_task (
     id varchar(36) PRIMARY KEY,
-    tenantId varchar(64) NOT NULL,
-    orderId varchar(36) NULL,
-    filingNumber VARCHAR(64),
-    cnrNumber varchar(64) NULL,
-    taskNumber varchar(64) NULL,
-    createdDate int8,
-    dateCloseBy int8,
-    dateClosed int8,
-    taskDescription varchar(512) NULL,
+    tenant_id varchar(64) NOT NULL,
+    order_id varchar(36) NULL,
+    filing_number varchar(64),
+    cnr_number varchar(64) NULL,
+    task_number varchar(64) NULL,
+    created_date int8,
+    date_close_by int8,
+    date_closed int8,
+    task_description varchar(512) NULL,
     task_type_id varchar(64) NULL,
-    taskDetails jsonb NULL,
-    wfStatus varchar(64) NULL,
-    assignedTo varchar(64) NULL,
-    isActive bool DEFAULT TRUE,
-    additionalDetails jsonb,
-    createdBy varchar(36) NOT NULL,
-    lastModifiedBy varchar(36) NOT NULL,
-    createdTime int8 NOT NULL,
-    lastModifiedTime int8 NOT NULL
+    task_details jsonb NULL,
+    wf_status varchar(64) NULL,
+    assigned_to varchar(64) NULL,
+    is_active bool DEFAULT TRUE,
+    additional_details jsonb,
+    created_by varchar(36) NOT NULL,
+    last_modified_by varchar(36) NOT NULL,
+    created_time int8 NOT NULL,
+    last_modified_time int8 NOT NULL
 );
 
 -- Indexes
-CREATE INDEX idx_dristi_task_tenantId ON dristi_task(tenantId);
-CREATE INDEX idx_dristi_task_orderId ON dristi_task(orderId);
-CREATE INDEX idx_dristi_task_filingNumber ON dristi_task(filingNumber);
-CREATE INDEX idx_dristi_task_cnrNumber ON dristi_task(cnrNumber);
-CREATE INDEX idx_dristi_task_taskNumber ON dristi_task(taskNumber);
-CREATE INDEX idx_dristi_task_createdDate ON dristi_task(createdDate);
-CREATE INDEX idx_dristi_task_dateCloseBy ON dristi_task(dateCloseBy);
-CREATE INDEX idx_dristi_task_dateClosed ON dristi_task(dateClosed);
+CREATE INDEX idx_dristi_task_tenant_id ON dristi_task(tenant_id);
+CREATE INDEX idx_dristi_task_order_id ON dristi_task(order_id);
+CREATE INDEX idx_dristi_task_filing_number ON dristi_task(filing_number);
+CREATE INDEX idx_dristi_task_cnr_number ON dristi_task(cnr_number);
+CREATE INDEX idx_dristi_task_task_number ON dristi_task(task_number);
+CREATE INDEX idx_dristi_task_created_date ON dristi_task(created_date);
+CREATE INDEX idx_dristi_task_date_close_by ON dristi_task(date_close_by);
+CREATE INDEX idx_dristi_task_date_closed ON dristi_task(date_closed);
 CREATE INDEX idx_dristi_task_task_type_id ON dristi_task(task_type_id);
-CREATE INDEX idx_dristi_task_wfStatus ON dristi_task(wfStatus);
-CREATE INDEX idx_dristi_task_assignedTo ON dristi_task(assignedTo);
-CREATE INDEX idx_dristi_task_isActive ON dristi_task(isActive);
+CREATE INDEX idx_dristi_task_wf_status ON dristi_task(wf_status);
+CREATE INDEX idx_dristi_task_assigned_to ON dristi_task(assigned_to);
+CREATE INDEX idx_dristi_task_is_active ON dristi_task(is_active);
 
 CREATE TABLE dristi_task_document (
     id varchar(64) NOT NULL PRIMARY KEY,
-    fileStore varchar(64) NULL,
-    documentUid varchar(64)  NULL,
-    documentType varchar(64) NULL,
-    task_id varchar(64)  NULL,
-    additionalDetails JSONB NULL,
-    isActive bool DEFAULT TRUE,
-    createdBy varchar(36) NOT NULL,
-    lastModifiedBy varchar(36) NOT NULL,
-    createdTime int8 NOT NULL,
-    lastModifiedTime int8 NOT NULL,
+    filestore_id varchar(64) NULL,
+    document_uid varchar(64) NULL,
+    document_type varchar(64) NULL,
+    task_id varchar(64) NULL,
+    additional_details jsonb NULL,
+    is_active bool DEFAULT TRUE,
+    created_by varchar(36) NOT NULL,
+    last_modified_by varchar(36) NOT NULL,
+    created_time int8 NOT NULL,
+    last_modified_time int8 NOT NULL,
     FOREIGN KEY (task_id) REFERENCES dristi_task(id)
 );
 
 -- Indexes
 CREATE INDEX idx_dristi_task_document_task_id ON dristi_task_document(task_id);
-CREATE INDEX idx_dristi_task_document_documentUid ON dristi_task_document(documentUid);
-CREATE INDEX idx_dristi_task_document_documentType ON dristi_task_document(documentType);
-CREATE INDEX idx_dristi_task_document_isActive ON dristi_task_document(isActive);
+CREATE INDEX idx_dristi_task_document_document_uid ON dristi_task_document(document_uid);
+CREATE INDEX idx_dristi_task_document_document_type ON dristi_task_document(document_type);
+CREATE INDEX idx_dristi_task_document_is_active ON dristi_task_document(is_active);
 
 CREATE TABLE dristi_task_amount (
     id varchar(64) NOT NULL PRIMARY KEY,
-    amount varchar(64) NULL,
-    type varchar(64)  NULL,
-    paymentRefNumber varchar(64) NULL,
-    task_id varchar(64)  NULL,
-    wfStatus varchar(64)  NULL,
-    isActive bool DEFAULT TRUE,
-    additionalDetails JSONB NULL,
-    createdBy varchar(36) NOT NULL,
-    lastModifiedBy varchar(36) NOT NULL,
-    createdTime int8 NOT NULL,
-    lastModifiedTime int8 NOT NULL,
+    amount float NULL,
+    type varchar(64) NULL,
+    payment_ref_number varchar(64) NULL,
+    task_id varchar(64) NULL,
+    wf_status varchar(64) NULL,
+    is_active bool DEFAULT TRUE,
+    additional_details jsonb NULL,
+    created_by varchar(36) NOT NULL,
+    last_modified_by varchar(36) NOT NULL,
+    created_time int8 NOT NULL,
+    last_modified_time int8 NOT NULL,
     FOREIGN KEY (task_id) REFERENCES dristi_task(id)
 );
 
 -- Indexes
 CREATE INDEX idx_dristi_task_amount_task_id ON dristi_task_amount(task_id);
 CREATE INDEX idx_dristi_task_amount_type ON dristi_task_amount(type);
-CREATE INDEX idx_dristi_task_amount_paymentRefNumber ON dristi_task_amount(paymentRefNumber);
-CREATE INDEX idx_dristi_task_amount_status ON dristi_task_amount(wfStatus);
-CREATE INDEX idx_dristi_task_amount_isActive ON dristi_task_amount(isActive);
+CREATE INDEX idx_dristi_task_amount_payment_ref_number ON dristi_task_amount(payment_ref_number);
+CREATE INDEX idx_dristi_task_amount_wf_status ON dristi_task_amount(wf_status);
+CREATE INDEX idx_dristi_task_amount_is_active ON dristi_task_amount(is_active);
