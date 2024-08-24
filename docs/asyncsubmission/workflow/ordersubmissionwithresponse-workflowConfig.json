@@ -2,31 +2,31 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "task",
-      "businessService": "task-warrant",
-      "businessServiceSla": 4320000000,
+      "business": "application",
+      "businessService": "application-order-submission-feedback",
+      "businessServiceSla": 345600000,
       "states": [
         {
           "sla": null,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "ISSUE_WARRANT",
+              "nextState": "PENDING_SUBMISSION",
               "roles": [
-                "TASK_CREATOR"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
         },
         {
-          "sla": 388000000,
-          "state": "ISSUE_WARRANT",
+          "sla": 86400000,
+          "state": "PENDING_SUBMISSION",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -34,18 +34,50 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "DELIVERED",
-              "nextState": "EXECUTED",
+              "action": "E-SIGN",
+              "nextState": "PENDING_RESPONSE",
               "roles": [
-                "TASK_UPDATOR"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
-              "action": "NOT_DELIVERED",
-              "nextState": "NOT_EXECUTED",
+              "action": "DELETE",
+              "nextState": "DELETED",
               "roles": [
-                "TASK_UPDATOR",
+                "SUBMISSION_DELETE"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 259200000,
+          "state": "PENDING_RESPONSE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "RESPOND",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_RESPONDER",
                 "AUTO_ESCALATE"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "SUBMISSION_DELETE"
               ]
             },
             {
@@ -59,7 +91,7 @@
         },
         {
           "sla": null,
-          "state": "EXECUTED",
+          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -68,8 +100,8 @@
         },
         {
           "sla": null,
-          "state": "NOTEXECUTED",
-          "applicationStatus": "ACTIVE",
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
