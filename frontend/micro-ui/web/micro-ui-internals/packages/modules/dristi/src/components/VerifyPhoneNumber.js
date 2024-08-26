@@ -280,7 +280,9 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
   return (
     <div className="phone-number-verification">
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller">{t(config.label)}</CardLabel>
+        <CardLabel className="card-label-smaller" style={{ fontWeight: "700" }}>
+          {t(config.label)}
+        </CardLabel>
       </LabelFieldPair>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 24 }}>
         <div className="field user-details-form-style" style={{ display: "flex", width: "100%" }}>
@@ -324,8 +326,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           </div>
         ) : (
           <Button
-            label={t("VERIFY_OTP")}
-            style={{ alignItems: "center" }}
+            label={t("VERIFY_MOBILE_NUMBER")}
+            style={{ alignItems: "center", minWidth: "210px" }}
             className={"secondary-button-selector"}
             labelClassName={"secondary-label-selector"}
             isDisabled={
@@ -361,7 +363,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           actionSaveOnSubmit={() => modalOnSubmit()}
           formId="modal-action"
           isDisabled={formData?.[config.key]?.[input.name]?.length !== 6 || errorMsg}
-          headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
+          headerBarMain={<Heading label={t("VERIFY_MOBILE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={"verify-mobile-modal"}
         >
