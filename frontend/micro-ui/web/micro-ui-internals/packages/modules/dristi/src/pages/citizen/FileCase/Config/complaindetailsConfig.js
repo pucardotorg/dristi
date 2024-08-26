@@ -318,6 +318,7 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                maxLength: 300,
               },
               isMandatory: true,
             },

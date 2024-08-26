@@ -229,7 +229,12 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                maxLength: 150,
+                pattern: {
+                  patternType: "email",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
                 isArray: true,
               },
             },
