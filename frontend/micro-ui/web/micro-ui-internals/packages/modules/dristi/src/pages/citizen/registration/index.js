@@ -47,7 +47,7 @@ const Registration = ({ stateCode }) => {
   const location = useLocation();
   const DEFAULT_USER = "digit-user";
   const [user, setUser] = useState(null);
-  const [isOtpValid, setIsOtpValid] = useState(true);
+  const [otpError, setOtpError] = useState(false);
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [error, setError] = useState(null);
   const closeToast = () => {
@@ -119,7 +119,7 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
-      setIsOtpValid(true);
+      setOtpError(false);
       setState((prev) => ({
         ...prev,
         showOtpModal: true,
@@ -133,7 +133,7 @@ const Registration = ({ stateCode }) => {
   const selectOtp = async () => {
     try {
       setNewParams({ ...newParams, otp: "" });
-      setIsOtpValid(true);
+      setOtpError(false);
       setCanSubmitOtp(false);
       const { mobileNumber, otp, name } = newParams;
       const requestData = {
@@ -154,7 +154,7 @@ const Registration = ({ stateCode }) => {
       history.push(`${path}/user-name`);
     } catch (err) {
       setCanSubmitOtp(true);
-      setIsOtpValid(false);
+      setOtpError(err?.response?.data?.error_description === "Account locked" ? t("MAX_RETRIES_EXCEEDED") : t("CS_INVALID_OTP"));
     }
   };
   const handleOtpChange = (otp) => {
@@ -162,7 +162,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
-    setIsOtpValid(true);
+    setOtpError(false);
     setState((prev) => ({
       ...prev,
       showOtpModal: true,
@@ -317,7 +317,7 @@ const Registration = ({ stateCode }) => {
               onSelect={!isAdhaar ? selectOtp : onAadharOtpSelect}
               setParams={setNewParams}
               otp={!isAdhaar ? newParams?.otp : newParams?.aadharOtp}
-              error={isOtpValid}
+              error={otpError}
               canSubmit={!isAdhaar ? canSubmitOtp : canSubmitAadharOtp}
               params={newParams}
               path={!isAdhaar ? `${path}/mobile-number` : pathOnRefresh}
