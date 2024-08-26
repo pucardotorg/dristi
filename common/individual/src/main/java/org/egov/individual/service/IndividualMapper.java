@@ -1,13 +1,13 @@
 package org.egov.individual.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.AddressType;
-import org.egov.common.models.individual.Individual;
 import org.egov.common.models.user.RoleRequest;
 import org.egov.common.models.user.UserRequest;
 import org.egov.common.models.user.UserType;
 import org.egov.individual.config.IndividualProperties;
+import org.egov.individual.web.models.Address;
+import org.egov.individual.web.models.Individual;
 
 import java.util.Random;
 import java.util.UUID;

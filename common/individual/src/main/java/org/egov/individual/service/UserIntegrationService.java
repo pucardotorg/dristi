@@ -4,11 +4,11 @@ import digit.models.coremodels.UserSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.models.individual.Individual;
 import org.egov.common.models.user.CreateUserRequest;
 import org.egov.common.models.user.UserRequest;
 import org.egov.common.service.UserService;
 import org.egov.individual.config.IndividualProperties;
+import org.egov.individual.web.models.Individual;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
