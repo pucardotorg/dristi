@@ -1,0 +1,209 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "business": "application",
+      "businessService": "application-default",
+      "businessServiceSla": 259200000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "PENDING_REVIEW",
+              "roles": [
+                "APPLICATION_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDING_REVIEW",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "REQUEST_RESPONSE",
+              "nextState": "PENDING_RESPONSE_APPROVAL",
+              "roles": [
+                "APPLICATION_RESPONDER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_RESPONSE_APPROVAL",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "PENDING_RESPONSE",
+              "roles": [
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "PENDING_REVIEW",
+              "roles": [
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_RESPONSE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "RESPOND",
+              "nextState": "RESPONSE_SUBMITTED",
+              "roles": [
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "RESPONSE_SUBMITTED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "CLOSED",
+              "roles": [
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
+              "action": "DELETE",
+              "nextState": "DELETED",
+              "roles": [
+                "APPLICATION_DELETE"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "APPLICATION_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "CLOSED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "DELETED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "ABATED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}
