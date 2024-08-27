@@ -1,0 +1,50 @@
+name: Individual workflow
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'common/individual/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'common/individual/**'
+  workflow_dispatch:
+jobs:
+  docker_image-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Azure Container Registry
+        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+
+      - name: Build and Push Docker image for individual
+        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: |
+          docker build --build-arg WORK_DIR="common/individual" -t individual:v1.0.0-${{ github.sha }} -f build/maven-java8/Dockerfile .
+          docker tag individual:v1.0.0-${{ github.sha }} pucardev.azurecr.io/individual:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/individual:v1.0.0-${{ github.sha }}
+
+      - name: Build and Push Docker image for individual_DB
+        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: |
+          docker build -t individual_db:v1.0.0-${{ github.sha }}  .
+          docker tag individual_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/individual_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/individual_db:v1.0.0-${{ github.sha }}
+        working-directory: common/individual/src/main/resources/db
+      - name: Trigger Deployment Pipeline
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+          -d '{"ref":"Dev-0"}'
