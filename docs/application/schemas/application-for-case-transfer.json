@@ -3,7 +3,7 @@
   "$id": "http://dristi.pucar.org/schemas/order-case-transfer.json",
   "$comment": "definition of the schema for issuing case transfer order",
   "$version": "0.1.0",
-  "orderDetails":
+  "applicationDetails":
   {
     "selectRequestedCourt": {
       "type": "string",

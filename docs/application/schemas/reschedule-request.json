@@ -8,7 +8,7 @@
     "initialHearingDate": {
       "type": "integer",
       "format": "int64",
-      "description": "date of initial nearing"
+      "description": "date of initial hearing"
     },
     "newHearingScheduledDate": {
       "type": "integer",
