@@ -2,8 +2,8 @@ package org.egov.individual.helper;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.helper.RequestInfoTestBuilder;
-import org.egov.common.models.individual.Individual;
-import org.egov.common.models.individual.IndividualRequest;
+import org.egov.individual.web.models.Individual;
+import org.egov.individual.web.models.IndividualRequest;
 
 
 public class IndividualRequestTestBuilder {
