@@ -1,0 +1,131 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "business": "hearing",
+      "businessService": "hearing-default",
+      "businessServiceSla": null,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_SCHEDULER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "SCHEDULED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "RESCHEDULE",
+              "nextState": "OPT_OUT",
+              "roles": [
+                "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "START",
+              "nextState": "IN_PROGRESS",
+              "roles": [
+                "HEARING_START"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "OPT_OUT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SET_DATE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_APPROVER",
+                "AUTO_ESCALATE"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "IN_PROGRESS",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "HEARING_CLOSER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "COMPLETED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "ABATED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}
