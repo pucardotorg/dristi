@@ -23,13 +23,13 @@ jobs:
         uses: docker/setup-buildx-action@v1
       - name: Login to Azure Container Registry
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+        run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
 
       - name: Build and Push Docker image for dristi-pdf
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
-          docker build --build-arg WORK_DIR="utilities/dristi-pdf" -t pucardev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }} -f utilities/dristi-pdf/Dockerfile .
-          docker push pucardev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }}
+          docker build --build-arg WORK_DIR="utilities/dristi-pdf" -t pucarsolutionsdev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }} -f utilities/dristi-pdf/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/dristi-pdf:v1.0.0-${{ github.sha }}
       - name: trigger deployment pipeline
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
@@ -37,4 +37,4 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
           https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
-          -d '{"ref":"Dev-0"}'
+          -d '{"ref":"Solutions-Pipeline"}'

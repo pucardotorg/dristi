@@ -1,0 +1,49 @@
+name: dristi-case-pdf Image Build workflow
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'backend/dristi-case-pdf/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'backend/dristi-case-pdf/**'
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  docker_image-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+
+      # Login to Azure Container Registry
+      - name: Login to Azure Container Registry
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
+
+      - name: Build and Push Docker image for dristi-case-pdf
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          docker build --build-arg WORK_DIR="backend/dristi-case-pdf" -t pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:v1.0.0-${{ github.sha }} -f backend/dristi-case-pdf/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:v1.0.0-${{ github.sha }}
+
+
+  Workflow_Trigger:
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: docker_image-build
+    steps:
+      - name: Trigger Deployment Pipeline for Solutions Dev
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/solutions-dev.yaml/dispatches \
+          -d '{"ref":"Solutions-Pipeline"}'
