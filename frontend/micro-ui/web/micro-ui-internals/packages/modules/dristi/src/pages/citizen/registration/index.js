@@ -345,7 +345,7 @@ const Registration = ({ stateCode }) => {
             <UploadIdType t={t} config={[stepItems[9]]} pathOnRefresh={pathOnRefresh} onDocumentUpload={onDocumentUpload} params={newParams} />
           </Route>
           <Route path={`${path}/terms-condition`}>
-            <TermsCondition t={t} config={[stepItems[10]]} pathOnRefresh={pathOnRefresh} path={path} />
+            <TermsCondition params={newParams} setParams={setNewParams} t={t} config={[stepItems[10]]} pathOnRefresh={pathOnRefresh} path={path} />
           </Route>
           {error && <Toast error={true} label={error} onClose={closeToast} />}
         </React.Fragment>

@@ -1,12 +1,12 @@
 import { CardHeader, CardLabelError, CardText, CheckBox, LabelFieldPair } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label }) => {
   const inputs = useMemo(() => config?.populators?.inputs, [config?.populators?.inputs]);
   const [value, setValue] = useState([]);
 
   function setFormValue(value, name, input) {
-    onSelect(config.key, { ...formData[config.key], [name]: value });
+    onSelect(config.key, value);
   }
 
   return (
@@ -25,7 +25,7 @@ const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label 
                 {t(input.subLabel)}
               </CardText>
 
-              <div className="field">
+              <div className="field multi-select-checkbox-wrapper">
                 {input?.options?.map((option, index) => (
                   <CheckBox
                     onChange={(e) => {
@@ -43,10 +43,9 @@ const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label 
                     label={t(option?.name)}
                   />
                 ))}
-
-                {currentValue && currentValue.length > 0 && input.validation && (
-                  <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                    <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                {errors[input.name] && (
+                  <CardLabelError>
+                    {errors[input.name]?.message ? errors[input.name]?.message : t(errors[input.name]) || t(input.error)}
                   </CardLabelError>
                 )}
               </div>
