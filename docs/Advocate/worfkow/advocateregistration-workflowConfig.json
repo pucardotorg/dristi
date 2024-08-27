@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "user-registration-advocate",
       "business": "user-registration",
-      "businessServiceSla": 30,
+      "businessService": "user-registration-advocate",
+      "businessServiceSla": 172800000,
       "states": [
         {
           "sla": null,
@@ -17,10 +17,9 @@
           "actions": [
             {
               "action": "REGISTER",
-              "nextState": "VERIFICATIONREQUESTED",
+              "nextState": "VERIFICATION_REQUESTED",
               "roles": [
-                "CITIZEN",
-                "EMPLOYEE"
+                "USER_REGISTER"
               ]
             }
           ]
