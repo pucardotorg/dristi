@@ -2,12 +2,12 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "task",
-      "businessService": "task-warrant",
-      "businessServiceSla": 4320000000,
+      "business": "artifact",
+      "businessService": "artifact-default",
+      "businessServiceSla": 518400000,
       "states": [
         {
-          "sla": null,
+          "sla": 172800000,
           "state": null,
           "applicationStatus": null,
           "docUploadRequired": true,
@@ -16,17 +16,42 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "CREATE",
-              "nextState": "ISSUE_WARRANT",
+              "action": "TYPE_DEPOSITION",
+              "nextState": "PENDING_SIGNATURE",
               "roles": [
-                "TASK_CREATOR"
+                "DEPOSITION_CREATOR"
               ]
             }
           ]
         },
         {
-          "sla": 388000000,
-          "state": "ISSUE_WARRANT",
+          "sla": 172800000,
+          "state": "PENDING_SIGNATURE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "E-SIGN",
+              "nextState": "PENDING_APPROVAL",
+              "roles": [
+                "DEPOSITION_ESIGN"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_APPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -34,18 +59,10 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "DELIVERED",
-              "nextState": "EXECUTED",
+              "action": "E-SIGN",
+              "nextState": "PUBLISHED",
               "roles": [
-                "TASK_UPDATOR"
-              ]
-            },
-            {
-              "action": "NOT_DELIVERED",
-              "nextState": "NOT_EXECUTED",
-              "roles": [
-                "TASK_UPDATOR",
-                "AUTO_ESCALATE"
+                "DEPOSITION_PUBLISHER"
               ]
             },
             {
@@ -59,16 +76,7 @@
         },
         {
           "sla": null,
-          "state": "EXECUTED",
-          "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": null,
-          "state": "NOTEXECUTED",
+          "state": "PUBLISHED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
