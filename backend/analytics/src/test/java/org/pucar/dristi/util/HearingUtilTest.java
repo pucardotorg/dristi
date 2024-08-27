@@ -76,7 +76,7 @@ class HearingUtilTest {
 
         Exception exception = assertThrows(RuntimeException.class, () -> hearingUtil.getHearing(request, applicationNumber, cnrNumber, hearingId, tenantId));
 
-        assertEquals("Fetch error", exception.getCause().getMessage());
+        assertEquals("Error while processing hearing response :: Fetch error", exception.getMessage());
 
         verify(repository, times(1)).fetchResult(any(StringBuilder.class), any(JSONObject.class));
         verify(util, times(0)).constructArray(anyString(), anyString());

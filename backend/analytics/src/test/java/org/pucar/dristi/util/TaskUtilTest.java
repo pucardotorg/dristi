@@ -110,7 +110,7 @@ class TaskUtilTest {
         try {
             taskUtil.getTask(request, tenantId, taskNumber);
         } catch (RuntimeException e) {
-            assertEquals("Error while fetching or processing the task response", e.getMessage());
+            assertEquals("Error while processing task response :: Error while fetching or processing the task response", e.getMessage());
         }
     }
 }

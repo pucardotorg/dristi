@@ -86,8 +86,8 @@ public class IndexerUtils {
 					try {
                         String url = config.getEsHostUrl() + "/_search";
 						final HttpHeaders headers = new HttpHeaders();
-						headers.add("Authorization", getESEncodedCredentials());
-						final HttpEntity entity = new HttpEntity(headers);
+						headers.add(AUTHORIZATION, getESEncodedCredentials());
+						final HttpEntity<Void> entity = new HttpEntity<>(headers);
 						response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 					} catch (Exception e) {
 						log.error("ES is DOWN..");
@@ -144,7 +144,7 @@ public class IndexerUtils {
 			additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
 		}catch (Exception e){
 			log.error("Error while building API payload",e);
-			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
+			throw new CustomException(PENDING_TASK_EXCEPTION, "Error occurred while preparing pending task: " + e);
 		}
 
 
@@ -179,8 +179,8 @@ public class IndexerUtils {
 		Map<String, String> details = processEntity(entityType, referenceId, status, action, object, requestInfo);
 
 		// Validate details map using the utility function
-		String cnrNumber = details.get("cnrNumber");
-		String filingNumber = details.get("filingNumber");
+		String cnrNumber = details.get(CNR_NUMBER);
+		String filingNumber = details.get(FILING_NUMBER);
 		String name = details.get("name");
 		isCompleted = isNullOrEmpty(name);
 
@@ -188,7 +188,7 @@ public class IndexerUtils {
 			additionalDetails = mapper.writeValueAsString(new HashMap<String,Object>());
 		} catch (Exception e){
 			log.error("Error while building listener payload");
-			throw new CustomException(Pending_Task_Exception, "Error occurred while preparing pending task: " + e);
+			throw new CustomException(PENDING_TASK_EXCEPTION, "Error occurred while preparing pending task: " + e);
 		}
 
 		return String.format(
@@ -254,7 +254,7 @@ public class IndexerUtils {
 		} catch (InterruptedException e) {
 			log.error("Processing interrupted for entityType: {}", entityType, e);
 			Thread.currentThread().interrupt(); // Restore the interrupted status
-			throw new RuntimeException(e);
+			throw new CustomException(CUSTOM_EXCEPTION,e.getMessage());
 		}
 	}
 
@@ -280,8 +280,8 @@ public class IndexerUtils {
 			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 		}
 
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", filingNumber);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, filingNumber);
 		return caseDetails;
 	}
 
@@ -291,8 +291,8 @@ public class IndexerUtils {
         Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, referenceId, null);
 		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", referenceId);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, referenceId);
 
 		return caseDetails;
 	}
@@ -305,8 +305,8 @@ public class IndexerUtils {
 		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber, null);
 		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", filingNumber);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, filingNumber);
 
 		return caseDetails;
 	}
@@ -318,8 +318,8 @@ public class IndexerUtils {
 		String cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(taskObject.toString(), FILING_NUMBER_PATH);
 
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", filingNumber);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, filingNumber);
 
 		return caseDetails;
 	}
@@ -331,18 +331,18 @@ public class IndexerUtils {
 		String cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(applicationObject.toString(), FILING_NUMBER_PATH);
 
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", filingNumber);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, filingNumber);
 
 		return caseDetails;
 	}
 
-	private Map<String, String> processOrderEntity(Object orderObject) throws InterruptedException {
+	private Map<String, String> processOrderEntity(Object orderObject) {
 		Map<String, String> caseDetails = new HashMap<>();
 		String cnrNumber = JsonPath.read(orderObject.toString(), CNR_NUMBER_PATH);
 		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
-		caseDetails.put("cnrNumber", cnrNumber);
-		caseDetails.put("filingNumber", filingNumber);
+		caseDetails.put(CNR_NUMBER, cnrNumber);
+		caseDetails.put(FILING_NUMBER, filingNumber);
 		return caseDetails;
 	}
 
@@ -351,8 +351,8 @@ public class IndexerUtils {
             log.debug("Record being indexed: {}", request);
 
 			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			headers.add("Authorization", getESEncodedCredentials());
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.add(AUTHORIZATION, getESEncodedCredentials());
 			final HttpEntity<String> entity = new HttpEntity<>(request, headers);
 
 			String response = restTemplate.postForObject(uri, entity, String.class);
@@ -368,20 +368,20 @@ public class IndexerUtils {
 		}
 	}
 
-	public void esPostManual(String uri, String request) throws Exception {
+	public void esPostManual(String uri, String request) {
 		try {
 			log.debug("Record being indexed manually: {}", request);
 
 			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			headers.add("Authorization", getESEncodedCredentials());
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.add(AUTHORIZATION, getESEncodedCredentials());
 			final HttpEntity<String> entity = new HttpEntity<>(request, headers);
 
 			String response = restTemplate.postForObject(uri, entity, String.class);
 			if (uri.contains("_bulk") && JsonPath.read(response, ERRORS_PATH).equals(true)) {
 				log.info("Manual Indexing FAILED!!!!");
 				log.info("Response from ES for manual push: {}", response);
-				throw new Exception("Error while updating index");
+				throw new CustomException(CUSTOM_EXCEPTION, "Error while updating index");
 			}
 		}
 		catch (Exception e) {

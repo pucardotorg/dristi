@@ -41,7 +41,7 @@ public class PendingTaskService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating hearing");
-            throw new CustomException(Pending_Task_Exception, e.getMessage());
+            throw new CustomException(PENDING_TASK_EXCEPTION, e.getMessage());
         }
     }
 

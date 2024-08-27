@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -44,7 +45,7 @@ public class OrderUtil {
 			return orders.length() > 0 ? orders.get(0) : null;
 		} catch (Exception e) {
 			log.error("Error while fetching or processing the order response", e);
-			throw new RuntimeException("Error while fetching or processing the order response", e);
+			throw new CustomException(PARSING_ERROR,"Error while processing order response :: " + e.getMessage());
 		}
 	}
 

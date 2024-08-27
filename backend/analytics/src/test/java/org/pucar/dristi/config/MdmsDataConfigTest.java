@@ -18,11 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 class MdmsDataConfigTest {
 
@@ -139,6 +137,16 @@ class MdmsDataConfigTest {
         mdmsDataConfig.loadConfigData();
 
         // Verify the results for pendingTaskTypeMap
+        verifyPendingTaskTypeMap();
+
+        // Verify the results for caseOverallStatusTypeMap
+        verifyCaseOverallStatusTypeMap();
+
+        // Verify the results for caseOutcomeTypeMap
+        verifyCaseOutcomeTypeMap();
+    }
+
+    void verifyPendingTaskTypeMap(){
         assertNotNull(mdmsDataConfig.getPendingTaskTypeMap());
         assertEquals(2, mdmsDataConfig.getPendingTaskTypeMap().size());
 
@@ -151,8 +159,9 @@ class MdmsDataConfigTest {
         assertNotNull(module2Tasks);
         assertEquals(1, module2Tasks.size());
         assertEquals("module2", module2Tasks.get(0).getWorkflowModule());
+    }
 
-        // Verify the results for caseOverallStatusTypeMap
+    void verifyCaseOverallStatusTypeMap(){
         assertNotNull(mdmsDataConfig.getCaseOverallStatusTypeMap());
         assertEquals(2, mdmsDataConfig.getCaseOverallStatusTypeMap().size());
 
@@ -169,8 +178,9 @@ class MdmsDataConfigTest {
         assertEquals("module2", module2StatusTypes.get(0).getWorkflowModule());
         assertEquals("Trial", module2StatusTypes.get(0).getStage());
         assertEquals("Evidence", module2StatusTypes.get(0).getSubstage());
+    }
 
-        // Verify the results for caseOutcomeTypeMap
+    void verifyCaseOutcomeTypeMap(){
         assertNotNull(mdmsDataConfig.getCaseOutcomeTypeMap());
         assertEquals(2, mdmsDataConfig.getCaseOutcomeTypeMap().size());
 
@@ -181,5 +191,101 @@ class MdmsDataConfigTest {
         CaseOutcomeType outcomeType2 = mdmsDataConfig.getCaseOutcomeTypeMap().get("order2");
         assertNotNull(outcomeType2);
         assertEquals("order2", outcomeType2.getOrderType());
+    }
+
+    @Test
+    void testLoadPendingTaskMap_Exception() {
+        // Prepare mock MDMS data for pendingTaskTypeMap
+        JSONArray pendingTaskTypeList = new JSONArray();
+        JSONObject pendingTaskTypeJson1 = new JSONObject();
+        pendingTaskTypeJson1.put("workflowModule", "module1");
+        pendingTaskTypeList.add(pendingTaskTypeJson1);
+
+        JSONObject pendingTaskTypeJson2 = new JSONObject();
+        pendingTaskTypeJson2.put("workflowModule", "module2");
+        pendingTaskTypeList.add(pendingTaskTypeJson2);
+
+        // Prepare mock MDMS data for caseOverallStatusTypeMap
+        JSONArray caseOverallStatusTypeList = new JSONArray();
+        JSONObject caseOverallStatusTypeJson1 = new JSONObject();
+        caseOverallStatusTypeJson1.put("workflowModule", "module1");
+        caseOverallStatusTypeJson1.put("stage", "Pre-Trial");
+        caseOverallStatusTypeJson1.put("substage", "Filing");
+        caseOverallStatusTypeList.add(caseOverallStatusTypeJson1);
+
+        JSONObject caseOverallStatusTypeJson2 = new JSONObject();
+        caseOverallStatusTypeJson2.put("workflowModule", "module2");
+        caseOverallStatusTypeJson2.put("stage", "Trial");
+        caseOverallStatusTypeJson2.put("substage", "Evidence");
+        caseOverallStatusTypeList.add(caseOverallStatusTypeJson2);
+
+        // Prepare mock MDMS data for caseOutcomeTypeMap
+        JSONArray caseOutcomeTypeList = new JSONArray();
+        JSONObject caseOutcomeTypeJson1 = new JSONObject();
+        caseOutcomeTypeJson1.put("orderType", "order1");
+        caseOutcomeTypeList.add(caseOutcomeTypeJson1);
+
+        JSONObject caseOutcomeTypeJson2 = new JSONObject();
+        caseOutcomeTypeJson2.put("orderType", "order2");
+        caseOutcomeTypeList.add(caseOutcomeTypeJson2);
+
+        Map<String, JSONArray> pendingTaskMasterData = new HashMap<>();
+        pendingTaskMasterData.put("mdmsPendingTaskMasterName", pendingTaskTypeList);
+
+        Map<String, JSONArray> caseOverallStatusMasterData = new HashMap<>();
+        caseOverallStatusMasterData.put("mdmsCaseOverallStatusMasterName", caseOverallStatusTypeList);
+
+        Map<String, JSONArray> caseOutcomeMasterData = new HashMap<>();
+        caseOutcomeMasterData.put("mdmsCaseOutcomeMasterName", caseOutcomeTypeList);
+
+        Map<String, Map<String, JSONArray>> mdmsModuleData = new HashMap<>();
+        mdmsModuleData.put("mdmsPendingTaskModuleName", pendingTaskMasterData);
+        mdmsModuleData.put("mdmsCaseOverallStatusModuleName", caseOverallStatusMasterData);
+        mdmsModuleData.put("mdmsCaseOutcomeModuleName", caseOutcomeMasterData);
+
+        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), any(String.class), any(String.class), anyList())).thenReturn(mdmsModuleData);
+
+        // Mock objectMapper behavior for pendingTaskTypeMap
+        PendingTaskType pendingTaskType1 = new PendingTaskType();
+        pendingTaskType1.setWorkflowModule("module1");
+        when(objectMapper.convertValue(pendingTaskTypeJson1, PendingTaskType.class)).thenReturn(pendingTaskType1);
+
+        PendingTaskType pendingTaskType2 = new PendingTaskType();
+        pendingTaskType2.setWorkflowModule("module2");
+        when(objectMapper.convertValue(pendingTaskTypeJson2, PendingTaskType.class)).thenReturn(pendingTaskType2);
+
+        // Mock objectMapper behavior for caseOverallStatusTypeMap
+        CaseOverallStatusType caseOverallStatusType1 = new CaseOverallStatusType();
+        caseOverallStatusType1.setWorkflowModule("module1");
+        caseOverallStatusType1.setStage("Pre-Trial");
+        caseOverallStatusType1.setSubstage("Filing");
+        when(objectMapper.convertValue(caseOverallStatusTypeJson1, CaseOverallStatusType.class)).thenReturn(caseOverallStatusType1);
+
+        CaseOverallStatusType caseOverallStatusType2 = new CaseOverallStatusType();
+        caseOverallStatusType2.setWorkflowModule("module2");
+        caseOverallStatusType2.setStage("Trial");
+        caseOverallStatusType2.setSubstage("Evidence");
+        when(objectMapper.convertValue(caseOverallStatusTypeJson2, CaseOverallStatusType.class)).thenReturn(caseOverallStatusType2);
+
+        // Mock objectMapper behavior for caseOutcomeTypeMap
+        CaseOutcomeType caseOutcomeType1 = new CaseOutcomeType();
+        caseOutcomeType1.setOrderType("order1");
+        when(objectMapper.convertValue(caseOutcomeTypeJson1, CaseOutcomeType.class)).thenReturn(caseOutcomeType1);
+
+        CaseOutcomeType caseOutcomeType2 = new CaseOutcomeType();
+        caseOutcomeType2.setOrderType("order2");
+        when(objectMapper.convertValue(caseOutcomeTypeJson2, CaseOutcomeType.class)).thenReturn(caseOutcomeType2);
+
+        when(objectMapper.convertValue(any(), eq(PendingTaskType.class))).thenThrow(new RuntimeException("Mocked conversion exception"));
+        when(objectMapper.convertValue(any(), eq(CaseOverallStatusType.class))).thenThrow(new RuntimeException("Mocked conversion exception"));
+        when(objectMapper.convertValue(any(), eq(CaseOutcomeType.class))).thenThrow(new RuntimeException("Mocked conversion exception"));
+
+        mdmsDataConfig.loadConfigData();
+
+        // Validate that the map is null or empty due to exception
+        assertEquals(0,mdmsDataConfig.getPendingTaskTypeMap().size());
+        assertEquals(0,mdmsDataConfig.getCaseOverallStatusTypeMap().size());
+        assertEquals(0,mdmsDataConfig.getCaseOutcomeTypeMap().size());
+        verify(mdmsUtil,times(3)).fetchMdmsData(any(), any(), any(), anyList());
     }
 }

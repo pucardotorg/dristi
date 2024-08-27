@@ -93,7 +93,7 @@ public class Configuration {
 	private String orderSearchPath;
 
 	@Value("${api.call.delay.in.seconds}")
-	private Integer apiCallDelayInSeconds;
+	private Long apiCallDelayInSeconds;
 
 	// MDMS Config
 	@Value("${egov.mdms.host}")

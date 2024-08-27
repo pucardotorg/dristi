@@ -2,6 +2,7 @@ package org.pucar.dristi;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.*;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.TimeZone;
 
@@ -21,6 +21,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
 @Configuration
+@Slf4j
 public class Main {
 	/**
 	 * ES8 cluster default configuration with security enabled forces the use of https for communication to the ES cluster.
@@ -35,10 +36,10 @@ public class Main {
 		try {
 			SSLContext ctx = SSLContext.getInstance("TLS");
 			X509TrustManager tm = new X509TrustManager() {
-				public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+				public void checkClientTrusted(X509Certificate[] xcs, String string) {
 				}
 
-				public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+				public void checkServerTrusted(X509Certificate[] xcs, String string) {
 				}
 
 				public X509Certificate[] getAcceptedIssuers() {
@@ -49,17 +50,13 @@ public class Main {
 			SSLContext.setDefault(ctx);
 
 			// Disable hostname verification
-			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-				public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
-					return true;
-				}
-			});
+			HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error(ex.getMessage());
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
 	}
 
