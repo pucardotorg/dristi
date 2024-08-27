@@ -552,7 +552,7 @@ components:
             - respondent.primary
         isPartyInPerson:
           type: boolean
-          description: Whether the litigant is representing himself/herself. In this case also, the litigant will need to be registered as an advocate. That ID will be in the representativeId.
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId
         isActive:
           type: boolean
           description: >-

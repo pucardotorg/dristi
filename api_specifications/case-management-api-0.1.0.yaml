@@ -17,9 +17,9 @@ paths:
     post:
       tags:
         - Case Management Service
-      summary: Provides a summary of the case given a case identifier
+      summary: returns public fields of the case given a case identifier
       description: |
-        API to retrieve a case summary. A case summary consists of basic case details, status and the final judgement/order that was passed in the case.
+        The API exposes only the required public fields for querying a case. Use this summary API for generic searches by anyone not related to the case
       requestBody:
         description: Details for the new court case + RequestInfo meta data.
         content:
@@ -149,7 +149,7 @@ components:
           minItems: 1
     
     CaseSummary:
-      description: Representation of the case summary. It will expose only the required public fields. Anytime anyone (not related to case), wants to query the case, this summary API should be used (As a generic search item).
+      description: Representation of the case summary.
       type: object
       required:
         - tenantId
@@ -162,7 +162,7 @@ components:
       properties:
         tenantId:
           type: string
-          description: This is tenantId of the case.
+          description: This is tenantId where the case is being managed.
           minLength: 2
           maxLength: 64
         caseTitle:
@@ -174,11 +174,12 @@ components:
         filingDate:
           type: integer
           format: int64
-          description: Date of case filing in epoch time (milliseconds). This is the date when the case entered the judicial system.
+          description: The date of case filing is in epoch time (milliseconds). This is the date when the case entered the judicial system.
           example: 1709542147
         statutesAndSections:
           type: string
-          description: This will be a string of statute and sections, concatenated into a single string. It will be first statute + all sections comma separated, then semicolon followed by second statute + all sections comma separated
+          description: A string of statute and sections, concatenated into a single string. Format - first statute + all sections comma separated, then semicolon followed by second statute + all sections comma separated and so on
+          example: "NIA 138, 142(1)(a), 145; CrPC 100, 402(a)"
         stage:
           type: string
           description: the main/primary stage of the case
@@ -199,7 +200,7 @@ components:
 
     PartySummary:
       type: object
-      description: created from the Party entity in CaseAPI. Only those parties should be added, for whom the 'isActive' is true
+      description: created from the Party entity in CaseAPI. Includes only active parties ('isActive' is true)
       required:
         - partyCategory
         - partyType
@@ -230,11 +231,10 @@ components:
           description: name of the individual from the Individual registry. This is made part of this API to avoid making additional trips just to get the names
         organisationID:
           type: string
-          description: If the party is an organisation, refers to the org ID which will
-            contain details of the org, otherwise null
+          description: Refers to the organization ID if the party is an organisation, otherwise null
         isPartyInPerson:
           type: boolean
-          description: Whether the litigant is representing himself/herself. In this case also, the litigant will need to be registered as an advocate. That ID will be in the representativeId.
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId.
 
     RepresentativeSummary:
       type: object
