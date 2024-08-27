@@ -12,8 +12,6 @@ const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label 
   return (
     <div className="custom-checkbox-card">
       {inputs?.map((input, index) => {
-        let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
-        console.log("currentValue :>> ", currentValue);
         return (
           <React.Fragment key={index}>
             <LabelFieldPair style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -29,7 +27,6 @@ const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label 
                 {input?.options?.map((option, index) => (
                   <CheckBox
                     onChange={(e) => {
-                      console.log("e.target.checked :>> ", e.target.checked);
                       let tempData = value;
                       const isFound = value?.some((val) => val?.code === option?.code);
                       if (isFound) tempData = value?.filter((val) => val?.code !== option?.code);

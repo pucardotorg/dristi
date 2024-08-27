@@ -1,27 +1,15 @@
-import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
 const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
-  console.log("params :>> ", params);
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  console.log("config :>> ", config);
-  const [showErrorToast, setShowErrorToast] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const setFormError = useRef(null);
-
-  const closeToast = () => {
-    setShowErrorToast(false);
-  };
-  useEffect(() => {
-    setTimeout(() => {
-      closeToast();
-    }, 2000);
-  });
 
   const onDocumentUpload = async (fileData) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
