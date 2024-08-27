@@ -199,7 +199,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_update:
-     post:
+    post:
       tags:
         - Witness
       summary: API to update or remove a witness to a case. Update is accomplished through the isActive flag.
@@ -226,9 +226,9 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  
+
   /case/witness/v1/_search:
-     post:
+    post:
       tags:
         - Witness
       summary: API to search for a witness in a case.
@@ -328,7 +328,7 @@ components:
           type: string
           description: >-
             The courtroom or other ADR entity ID that will be trying/hearing the
-            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. 
+            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms.
           minLength: 2
           maxLength: 64
         judgeId:
@@ -343,7 +343,7 @@ components:
             The bench a case is assigned to. A court has multiple benches and
             each bench can comprise of one or more arbitrators. The
             relationships to be defined in master data. The unique master data
-            ID for a bench is stored here. 
+            ID for a bench is stored here.
           minLength: 2
           maxLength: 64
         linkedCases:
@@ -431,12 +431,12 @@ components:
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-    
+
     StatuteSection:
       type: object
       description: >-
         Holds the statute ID and the corresponding section & subsections
-        applicable to the case. 
+        applicable to the case.
       required: [tenantId, statuteId]
       properties:
         id:
@@ -454,7 +454,7 @@ components:
         statute:
           type: string
           description: >-
-            The statute ID from master data. 
+            The statute ID from master data.
         sections:
           type: array
           items:
@@ -507,7 +507,7 @@ components:
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
- 
+
     Party:
       type: object
       properties:
@@ -552,7 +552,7 @@ components:
             - respondent.primary
         isPartyInPerson:
           type: boolean
-          description: Whether the litigant is representing himself/herself. In this case also, the litigant will need to be registered as an advocate. That ID will be in the representativeId.
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId
         isActive:
           type: boolean
           description: >-
@@ -584,7 +584,7 @@ components:
         - required:
             - userId
             - organisationID
-    
+
     Representative:
       type: object
       properties:
@@ -597,9 +597,9 @@ components:
           readOnly: true
         partyId:
           type: string
-        advocateId: 
+        advocateId:
           type: string
-        individualId: 
+        individualId:
           type: string
         advocateType:
           type: string
@@ -621,8 +621,8 @@ components:
       type: object
       oneOf:
         - required:
-          - cnrNumber
-          - filingNumber
+            - cnrNumber
+            - filingNumber
       properties:
         id:
           type: string
@@ -668,7 +668,7 @@ components:
           description: >-
             Any extra fields that are not captured as first class fields can be
             stored here as key/value pairs. Implementation specific.
-    
+
     CaseRequest:
       type: object
       properties:
@@ -676,8 +676,8 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         case:
-            $ref: '#/components/schemas/CourtCase'
-    
+          $ref: '#/components/schemas/CourtCase'
+
     CaseResponse:
       type: object
       properties:
@@ -688,7 +688,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtCase'
-    
+
     CaseSearchRequest:
       type: object
       properties:
@@ -722,7 +722,7 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    
+
     CaseExistsResponse:
       type: object
       properties:
@@ -754,32 +754,32 @@ components:
       properties:
         ResponseInfo:
           $ref: >-
-           https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         addWitnessRequest:
-          $ref: '#/components/schemas/AddWitnessRequest'          
-            
+          $ref: '#/components/schemas/AddWitnessRequest'
+
     JoinCaseRequest:
-        type: object
-        properties:
-          RequestInfo:
-            $ref: >-
-              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-          accessCode:
-            type: string
-          caseFilingNumber:
-            type: string
-          representative:
-            $ref: '#/components/schemas/AdvocateMapping'
-          litigant:
-            $ref: '#/components/schemas/Party'
-          additionalDetails:
-            type: object
-            description: >-
-              Any extra fields that are not captured as first class fields can be
-              stored here as key/value pairs. Implementation specific.
-          auditDetails:
-            $ref: >-
-               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        accessCode:
+          type: string
+        caseFilingNumber:
+          type: string
+        representative:
+          $ref: '#/components/schemas/Representative'
+        litigant:
+          $ref: '#/components/schemas/Party'
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
 
     JoinCaseResponse:
       type: object
@@ -844,7 +844,7 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-            
+
     CaseExists:
       type: object
       properties:
@@ -858,7 +858,7 @@ components:
           type: string
         exists:
           type: boolean
-    
+
     WitnessSearchCriteria:
       type: object
       properties:
@@ -869,7 +869,7 @@ components:
         includeInactive:
           type: boolean
           default: false
-    
+
     WitnessRequest:
       type: object
       properties:
@@ -880,7 +880,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Witness'
-    
+
     WitnessResponse:
       type: object
       properties:
@@ -902,4 +902,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WitnessSearchCriteria'
-
