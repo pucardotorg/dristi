@@ -7,6 +7,7 @@ import { InfoIconRed } from "../icons/svgIndex";
 import { DRISTIService } from "../services";
 import Button from "./Button";
 import Modal from "./Modal";
+import OTPInput from "./OTPInput";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -330,7 +331,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
           actionCancelOnSubmit={() => {}}
-          actionSaveLabel={t("VERIFY")}
+          actionSaveLabel={t("VERIFY_MOBILE_NUMER")}
           actionSaveOnSubmit={() => {
             if (!formData[config.key]?.[input?.name])
               setState((prev) => ({
@@ -365,23 +366,10 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               </CardLabel>
               <div className="field">
                 {input?.type === "text" && (
-                  <TextInput
-                    className={`field desktop-w-full verify-mobile-otp-input ${
-                      formData?.[config.key][input.name] &&
-                      formData?.[config.key][input.name].length > 0 &&
-                      !["documentUpload", "radioButton"].includes(input.type) &&
-                      input.validation &&
-                      !formData?.[config.key][input.name].match(
-                        window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
-                      ) &&
-                      "error"
-                    }`}
-                    key={input.name}
-                    value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
-                    onChange={(e) => {
-                      const { value } = e.target;
-                      let updatedValue = value;
-                      updatedValue = value?.replace(/[^0-9]/g, "");
+                  <OTPInput
+                    length={6}
+                    onChange={(otp) => {
+                      const updatedValue = otp?.replace(/[^0-9]/g, "");
                       if (errorMsg) {
                         setState((prev) => {
                           return {
@@ -392,9 +380,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                       }
                       onSelect(config?.key, { ...formData?.[config.key], [input?.name]: updatedValue });
                     }}
-                    disable={input.isDisabled}
-                    defaultValue={undefined}
-                    {...input.validation}
+                    value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                   />
                 )}
                 {formData?.[config.key][input.name] &&
