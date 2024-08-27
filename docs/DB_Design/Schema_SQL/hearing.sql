@@ -1,5 +1,5 @@
 CREATE TABLE dristi_hearing (
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id uuid NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     hearing_id varchar(64) NOT NULL, -- Formatted ID
     hearing_type varchar(64) NOT NULL, -- Master data ID for hearing type
@@ -24,9 +24,9 @@ CREATE INDEX idx_dristi_hearing_hearing_type ON dristi_hearing(hearing_type);
 CREATE INDEX idx_dristi_hearing_wf_status ON dristi_hearing(wf_status);
 
 CREATE TABLE hearing_presided_by (
-    id varchar(36) PRIMARY KEY,
+    id uuid PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     case_id varchar(36),
     judge_id varchar(36),
     court_id varchar(36),
@@ -36,6 +36,7 @@ CREATE TABLE hearing_presided_by (
     last_modified_by varchar(36) NOT NULL,
     created_time int8 NOT NULL,
     last_modified_time int8 NOT NULL
+    FOREIGN KEY (hearing_id) REFERENCES dristi_hearing(id)
 );
 
 -- Composite indexes
@@ -53,7 +54,7 @@ CREATE INDEX idx_hearing_presided_judge_id ON hearing_presided_by(judge_id);
 CREATE TABLE hearing_filing_numbers (
     id serial PRIMARY KEY,
     tenant_id varchar(36) NOT NULL,
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     filing_number varchar(64) NOT NULL,
     created_by varchar(64) NOT  NULL, -- Audit details
     last_modified_by varchar(64) NOT NULL,
@@ -70,7 +71,7 @@ CREATE INDEX idx_hearing_filing_numbers_filing_number ON hearing_filing_numbers(
 
 CREATE TABLE hearing_cnr_numbers (
     id serial PRIMARY KEY,
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     cnr_number varchar(64) NOT NULL,
     created_by varchar(36) NOT NULL, -- Audit details
     last_modified_by varchar(36) NOT NULL,
@@ -87,7 +88,7 @@ CREATE INDEX idx_hearing_cnr_numbers_cnr_number ON hearing_cnr_numbers(cnr_numbe
 
 CREATE TABLE hearing_application_numbers (
     id serial PRIMARY KEY,
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     application_number varchar(64) NOT NULL,
     created_by varchar(64) NOT NULL, -- Audit details
     last_modified_by varchar(64) NOT NULL,
@@ -104,7 +105,7 @@ CREATE INDEX idx_hearing_application_numbers_application_number ON hearing_appli
 
 CREATE TABLE hearing_attendees (
     id serial PRIMARY KEY,
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     attendee_individual_id varchar(64),
     attendee_name varchar(64),
     attendee_type varchar(64), -- Have masters been defined for this? Store master ID below
@@ -130,11 +131,11 @@ CREATE INDEX idx_hearing_attendees_is_online ON hearing_attendees(is_online);
 CREATE INDEX idx_hearing_attendees_present ON hearing_attendees(present);
 
 CREATE TABLE dristi_hearing_documents (
-    id varchar(64) NOT NULL PRIMARY KEY,
+    id uuid NOT NULL PRIMARY KEY,
     filestore_id varchar(64),
     document_uid varchar(64),
     document_type varchar(64),
-    hearing_id varchar(36) NOT NULL,
+    hearing_id uuid NOT NULL,
     additional_details jsonb,
     is_active boolean DEFAULT TRUE,
     created_by varchar(64) NULL, -- Audit details
