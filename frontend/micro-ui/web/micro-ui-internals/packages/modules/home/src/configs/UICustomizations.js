@@ -90,8 +90,8 @@ export const UICustomizations = {
       const tenantId = window?.Digit.ULBService.getStateId();
       const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
         select: (data) => {
-          return _.get(data, "case.OutcomeType", []).flatMap((item) => {
-            return item?.judgementList && item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          return (data?.case?.OutcomeType || []).flatMap((item) => {
+            return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
           });
         },
       });
@@ -265,8 +265,8 @@ export const UICustomizations = {
       const tenantId = window?.Digit.ULBService.getStateId();
       const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
         select: (data) => {
-          return _.get(data, "case.OutcomeType", []).flatMap((item) => {
-            return item?.judgementList && item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          return (data?.case?.OutcomeType || []).flatMap((item) => {
+            return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
           });
         },
       });

@@ -96,7 +96,7 @@ const HomeView = () => {
   }, [searchResult, userType]);
 
   const advocateId = useMemo(() => {
-    return searchResult?.[0]?.responseList?.[0]?.id;
+    return searchResult?.[0]?.id;
   }, [searchResult]);
 
   const additionalDetails = useMemo(() => {
@@ -131,8 +131,8 @@ const HomeView = () => {
     [{ name: "OutcomeType" }],
     {
       select: (data) => {
-        return _.get(data, "case.OutcomeType", []).flatMap((item) => {
-          return item?.judgementList && item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+        return (data?.case?.OutcomeType || []).flatMap((item) => {
+          return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
         });
       },
     }
