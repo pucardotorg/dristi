@@ -239,7 +239,7 @@ export const UICustomizations = {
   },
   registrationRequestsConfig: {
     customValidationCheck: (data) => {
-      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+      return !data?.applicationNumber_WILDCARD.trim() ? { label: "Please enter a valid application Number", error: true } : false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
