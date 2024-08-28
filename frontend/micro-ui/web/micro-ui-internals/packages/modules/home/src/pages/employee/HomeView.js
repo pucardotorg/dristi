@@ -72,8 +72,8 @@ const HomeView = () => {
     },
     {},
     individualId,
-    userType,
-    "/advocate/advocate/v1/_search"
+    Boolean(userType !== "LITIGANT"),
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {
@@ -81,8 +81,18 @@ const HomeView = () => {
   }, [userType]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+  const isApprovalPending = useMemo(() => {
+    return (
+      userType !== "LITIGANT" &&
+      Array.isArray(searchResult) &&
+      searchResult?.length > 0 &&
+      searchResult?.[0]?.isActive === false &&
+      searchResult?.[0]?.status !== "INACTIVE"
+    );
+  }, [searchResult, userType]);
 
   const advocateId = useMemo(() => {
     return searchResult?.[0]?.responseList?.[0]?.id;
@@ -273,7 +283,7 @@ const HomeView = () => {
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
-        <LitigantHomePage />
+        <LitigantHomePage isApprovalPending={isApprovalPending} />
       ) : (
         <React.Fragment>
           <div className="left-side">

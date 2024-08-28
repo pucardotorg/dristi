@@ -32,7 +32,7 @@ export const newconfigAdvocate = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          applicationNumber_WILDCARD: "",
           isActive: false,
         },
         fields: [
@@ -42,7 +42,7 @@ export const newconfigAdvocate = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "applicationNumber_WILDCARD",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -96,7 +96,7 @@ export const newconfigAdvocate = {
     },
   },
   additionalSections: {},
-  additionalDetails: "applicationNumber",
+  additionalDetails: "applicationNumber_WILDCARD",
 };
 
 export const newconfigClerk = {
@@ -133,7 +133,7 @@ export const newconfigClerk = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          applicationNumber_WILDCARD: "",
           isActive: false,
         },
         fields: [
@@ -143,7 +143,7 @@ export const newconfigClerk = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "applicationNumber_WILDCARD",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -197,7 +197,7 @@ export const newconfigClerk = {
     },
   },
   additionalSections: {},
-  additionalDetails: "applicationNumber",
+  additionalDetails: "applicationNumber_WILDCARD",
 };
 
 // export const configAdvocate = {
