@@ -207,8 +207,7 @@ export const initCoreComponents = () => {
 
   const setupLibraries = (Library, props) => {
     window.Digit = window.Digit || {};
-    window.Digit[Library] = window.Digit[Library] || {};
-    window.Digit[Library] = { ...window.Digit[Library], ...props };
+    window.Digit[Library] = { ...(window.Digit[Library] || {}), ...props };
   };
 
   setupLibraries("SessionStorage", Storage);
