@@ -73,7 +73,10 @@ function ApplicationAwaitingPage({ individualId }) {
         <CardHeader> {t("APPROVAL_WAITING")}</CardHeader>
       </div>
       <div style={{ "text-align": "center", maxWidth: "50%" }}>
-        <CardText>{`${t("RG_YOUR_REGISTRATION_NUMBER")} (ID: ${applicationNumber}).${t("RG_RECEIVE_MESSAGE")}`}</CardText>
+        <CardText>
+          {`${t("RG_YOUR_REGISTRATION_NUMBER")}`} <span className="card-text" style={{ whiteSpace: "nowrap" }}>{` (ID: ${applicationNumber}) `}</span>{" "}
+          {`${t("RG_RECEIVE_MESSAGE")}`}
+        </CardText>
       </div>
       <div>
         <Button
