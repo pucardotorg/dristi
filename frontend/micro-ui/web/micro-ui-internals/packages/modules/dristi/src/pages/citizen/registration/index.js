@@ -65,7 +65,7 @@ const Registration = ({ stateCode }) => {
     if (!user) {
       return;
     }
-    Digit.SessionStorage.set("citizen.userRequestObject", user);
+    localStorage.setItem("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     localStorage.setItem("citizen.refresh-token", user?.refresh_token);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
