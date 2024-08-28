@@ -88,6 +88,13 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
       const tenantId = window?.Digit.ULBService.getStateId();
+      const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
+        select: (data) => {
+          return _.get(data, "case.OutcomeType", []).flatMap((item) => {
+            return item?.judgementList && item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          });
+        },
+      });
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
@@ -97,6 +104,12 @@ export const UICustomizations = {
           ...("sortBy" in additionalDetails && {
             [additionalDetails.sortBy]: undefined,
             sortBy: undefined,
+          }),
+          ...(requestCriteria?.body?.criteria[0]["outcome"] && {
+            outcome: outcomeTypeData,
+          }),
+          ...(requestCriteria?.state?.searchForm?.outcome && {
+            outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
@@ -250,6 +263,13 @@ export const UICustomizations = {
     },
     preProcess: (requestCriteria, additionalDetails) => {
       const tenantId = window?.Digit.ULBService.getStateId();
+      const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
+        select: (data) => {
+          return _.get(data, "case.OutcomeType", []).flatMap((item) => {
+            return item?.judgementList && item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          });
+        },
+      });
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
@@ -260,8 +280,11 @@ export const UICustomizations = {
             [additionalDetails.sortBy]: undefined,
             sortBy: undefined,
           }),
+          ...(requestCriteria?.body?.criteria[0]["outcome"] && {
+            outcome: outcomeTypeData,
+          }),
           ...(requestCriteria?.state?.searchForm?.outcome && {
-            outcome: [requestCriteria?.state?.searchForm?.outcome],
+            outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
