@@ -132,7 +132,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     if (formData?.clientDetails?.barRegistrationNumber) {
       const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
       if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
-        setFormErrors.current("barRegistrationNumber", { message: "Duplicate Bar Registration Number" });
+        setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
         return;
       }
     }

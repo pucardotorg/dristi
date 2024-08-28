@@ -115,7 +115,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
                     disabled={config?.disable || input?.disabled || input.isDisabled}
                     extraStyles={{
                       closeIconStyles: { fill: "#3D3C3C" },
-                      tagStyles: { background: "#E8E8E8", textAlign: "center" },
+                      tagStyles: { background: "#E8E8E8", textAlign: "center", maxWidth: "100%" },
                       textStyles: { display: "flex", alignItems: "center" },
                     }}
                     key={index}
