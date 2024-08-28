@@ -155,6 +155,7 @@ export const initCoreComponents = () => {
     try {
       return "sessionStorage" in window && window["sessionStorage"] !== null;
     } catch (e) {
+      console.error("Failed to access sessionStorage:", e);
       return false;
     }
   };
