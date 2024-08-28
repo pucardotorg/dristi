@@ -498,6 +498,52 @@ export const newConfig = [
       },
     ],
   },
+  {
+    body: [
+      {
+        type: "component",
+        component: "CustomCheckBoxCard",
+        key: "terms_condition",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "Terms and Conditions",
+              subLabel: "Before diving in, we'll need to verify your identity for account setup.",
+              type: "multiple",
+              name: "terms_condition",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AGREE_MESSAGE",
+                  name:
+                    "By using this app, you agree to abide by our community guidelines, fostering a respectful and inclusive environment for all users",
+                },
+                {
+                  code: "PRIVACY_MESSAGE",
+                  name:
+                    "Your privacy is paramount. Rest assured, your data is securely handled and never shared with third parties without your consent",
+                },
+                {
+                  code: "LAWFUL_MESSAGE",
+                  name:
+                    "Please refrain from engaging in any unlawful activities while using our app, ensuring a safe and compliant platform for everyone",
+                },
+                {
+                  code: "MODIFICATION_MESSAGE",
+                  name:
+                    "We reserve the right to modify our services and terms at any time, keeping you informed of any updates through our communication channels",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
 ];
 
 export const termsAndConditionConfig = [
