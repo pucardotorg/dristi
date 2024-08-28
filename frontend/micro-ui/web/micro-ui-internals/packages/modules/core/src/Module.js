@@ -173,7 +173,7 @@ export const initCoreComponents = () => {
         }
         return item.value;
       } else if (typeof window !== "undefined") {
-        return window?.eGov?.Storage && window.eGov.Storage[k(key)].value;
+        return window?.eGov?.Storage?.[k(key)]?.value;
       } else {
         return null;
       }

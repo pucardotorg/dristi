@@ -123,11 +123,11 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
                   name: "Citizen",
                   tenantId: tenantId,
                 },
-                ...userType?.clientDetails?.selectUserType?.role?.map((role) => ({
+                ...(userType?.clientDetails?.selectUserType?.role?.map((role) => ({
                   code: role,
                   name: role,
                   tenantId: tenantId,
-                })),
+                })) || []),
               ]
             : [
                 {
