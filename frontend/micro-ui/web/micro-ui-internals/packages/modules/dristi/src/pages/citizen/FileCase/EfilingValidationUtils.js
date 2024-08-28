@@ -1333,7 +1333,7 @@ export const updateCaseDetails = async ({
         ...representative,
         caseId: caseDetails?.id,
         representing: representative?.advocateId
-          ? [...litigants].map((item, index) => ({
+          ? [litigants[0]].map((item, index) => ({
               ...(caseDetails.representatives?.[idx]?.representing?.[index] ? caseDetails.representatives?.[idx]?.representing?.[index] : {}),
               ...item,
             }))
@@ -1930,7 +1930,7 @@ export const updateCaseDetails = async ({
             representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
               ? [
                   ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
+                    ? [caseDetails?.litigants[0]]?.map((data, key) => ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),
