@@ -59,9 +59,7 @@ function CaseType({ t }) {
     [{ name: "ComplainantRespondentType" }],
     {
       select: (data) => {
-        return (data?.case?.ComplainantRespondentType || []).flatMap((item) => {
-          return item;
-        });
+        return data?.case?.ComplainantRespondentType || [];
       },
     }
   );
