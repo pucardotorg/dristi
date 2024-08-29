@@ -442,7 +442,7 @@ const containerJoinFileCaseStyle = {
   border: "1px solid #e8e8e8",
   borderRadius: "8px",
 };
-const LitigantHomePage = () => {
+const LitigantHomePage = ({ isApprovalPending }) => {
   const userName = Digit.SessionStorage.get("User");
   const { t } = useTranslation();
   const today = new Date();
@@ -454,6 +454,9 @@ const LitigantHomePage = () => {
     SetCallRefetch(true);
     history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
   };
+  if (isApprovalPending) {
+    history.push(`/${window?.contextPath}/${userType}/dristi/home`);
+  }
   return (
     <div className="upcoming-hearing-container" style={{ width: "100%", padding: 40 }}>
       <div className="header" style={{ fontSize: "30px" }}>

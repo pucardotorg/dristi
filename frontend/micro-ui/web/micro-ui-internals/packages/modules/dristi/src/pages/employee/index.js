@@ -1,5 +1,5 @@
 import { BackButton, HelpOutlineIcon, PrivateRoute, Toast } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
@@ -54,12 +54,17 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
       isLast: true,
     },
     {
-      path: ``,
+      path: `${path}/registration-requests/details`,
       content: t("ES_APPLICATION_DETAILS"),
       show: location.pathname.includes("/registration-requests/details"),
       isLast: true,
     },
   ];
+
+  const showBreadCrumbs = useMemo(() => location.pathname.includes("/pending-payment-inbox") || location.pathname.includes("/view-case") || true, [
+    location.pathname,
+  ]);
+
   return (
     <Switch>
       <React.Fragment>
@@ -80,9 +85,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
                 )}
               </div>
             )}
-          {(location.pathname.includes("/pending-payment-inbox") || location.pathname.includes("/view-case")) && (
-            <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
-          )}
+          {showBreadCrumbs && <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>}
           <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/pending-payment-inbox`} component={PaymentInbox} />

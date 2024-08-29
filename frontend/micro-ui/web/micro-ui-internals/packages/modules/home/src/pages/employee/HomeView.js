@@ -45,8 +45,9 @@ const HomeView = () => {
 
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const isCourtRoomRole = useMemo(() => roles?.some((role) => role?.code === "COURT_ADMIN"), [roles]);
+  const isNyayMitra = roles.some((role) => role.code === "NYAY_MITRA_ROLE");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const userInfo = Digit?.UserService?.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const { data: individualData, isLoading, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -71,8 +72,8 @@ const HomeView = () => {
     },
     {},
     individualId,
-    userType,
-    "/advocate/advocate/v1/_search"
+    Boolean(userType !== "LITIGANT"),
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {
@@ -80,8 +81,18 @@ const HomeView = () => {
   }, [userType]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+  const isApprovalPending = useMemo(() => {
+    return (
+      userType !== "LITIGANT" &&
+      Array.isArray(searchResult) &&
+      searchResult?.length > 0 &&
+      searchResult?.[0]?.isActive === false &&
+      searchResult?.[0]?.status !== "INACTIVE"
+    );
+  }, [searchResult, userType]);
 
   const advocateId = useMemo(() => {
     return searchResult?.[0]?.responseList?.[0]?.id;
@@ -250,6 +261,10 @@ const HomeView = () => {
     history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
   }
 
+  if (isNyayMitra) {
+    history.push(`/${window?.contextPath}/employee`);
+  }
+
   const data = [
     {
       logo: <InboxIcon />,
@@ -268,7 +283,7 @@ const HomeView = () => {
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
-        <LitigantHomePage />
+        <LitigantHomePage isApprovalPending={isApprovalPending} />
       ) : (
         <React.Fragment>
           <div className="left-side">
