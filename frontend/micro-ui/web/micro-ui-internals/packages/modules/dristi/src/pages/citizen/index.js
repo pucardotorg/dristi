@@ -138,6 +138,9 @@ const App = ({ stateCode, tenantId, result, fileStoreId }) => {
     console.log(fileStoreId, "fileStoreId");
     localStorage.setItem("fileStoreId", fileStoreId);
   }
+
+  console.log(result, fileStoreId, "resultC");
+
   if (isUserLoggedIn && retrievedObject) {
     history.push(`${retrievedObject?.path}${retrievedObject?.param}`);
     localStorage.removeItem("eSignWindowObject");

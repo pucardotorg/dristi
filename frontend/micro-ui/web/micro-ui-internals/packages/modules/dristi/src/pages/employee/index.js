@@ -76,6 +76,9 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute, result, fileSt
   if (fileStoreId) {
     localStorage.setItem("fileStoreId", fileStoreId);
   }
+
+  console.log(result, fileStoreId, "resultE");
+
   if (isUserLoggedIn && retrievedObject) {
     history.push(`${retrievedObject?.path}${retrievedObject?.param}`);
     localStorage.removeItem("eSignWindowObject");
