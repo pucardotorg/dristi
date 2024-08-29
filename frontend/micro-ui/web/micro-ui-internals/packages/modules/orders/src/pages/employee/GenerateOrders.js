@@ -44,6 +44,7 @@ import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 
 const configKeys = {
   SECTION_202_CRPC: configsOrderSection202CRPC,
@@ -76,6 +77,11 @@ function applyMultiSelectDropdownFix(setValue, formData, keys) {
     }
   });
 }
+
+export const paymentType = {
+  TASK_SUMMON: "task-summon",
+  TASK_SUMMON_ADVANCE_CARRYFORWARD: "TASK_SUMMON_ADVANCE_CARRYFORWARD",
+};
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -1384,38 +1390,62 @@ const GenerateOrders = () => {
             gender: "",
           };
         }
-        await ordersService.customApiService(Urls.orders.taskCreate, {
-          task: {
-            taskDetails: payload,
-            workflow: {
-              action: "CREATE",
-              comments: orderType,
-              documents: [
-                {
-                  documentType: null,
-                  fileStore: null,
-                  documentUid: null,
-                  additionalDetails: {},
-                },
-              ],
-              assignes: null,
-              rating: null,
+        await ordersService
+          .customApiService(Urls.orders.taskCreate, {
+            task: {
+              taskDetails: payload,
+              workflow: {
+                action: "CREATE",
+                comments: orderType,
+                documents: [
+                  {
+                    documentType: null,
+                    fileStore: null,
+                    documentUid: null,
+                    additionalDetails: {},
+                  },
+                ],
+                assignes: null,
+                rating: null,
+              },
+              createdDate: new Date().getTime(),
+              orderId: orderData?.id,
+              filingNumber,
+              cnrNumber,
+              taskType: orderType,
+              status: "INPROGRESS",
+              tenantId,
+              amount: {
+                type: "FINE",
+                status: "DONE",
+                amount: "100",
+              },
             },
-            createdDate: new Date().getTime(),
-            orderId: orderData?.id,
-            filingNumber,
-            cnrNumber,
-            taskType: orderType,
-            status: "INPROGRESS",
             tenantId,
-            amount: {
-              type: "FINE",
-              status: "DONE",
-              amount: "100",
-            },
-          },
-          tenantId,
-        });
+          })
+          .then(async (data) => {
+            if (orderType === "SUMMONS") {
+              await DRISTIService.createDemand({
+                Demands: [
+                  {
+                    tenantId,
+                    consumerCode: data?.taskNumber,
+                    consumerType: paymentType.TASK_SUMMON,
+                    businessService: paymentType.TASK_SUMMON,
+                    taxPeriodFrom: Date.now().toString(),
+                    taxPeriodTo: Date.now().toString(),
+                    demandDetails: [
+                      {
+                        taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
+                        taxAmount: 4,
+                        collectionAmount: 0,
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+          });
       });
     } else if (Object.keys(payload || {}).length > 0) {
       await ordersService.customApiService(Urls.orders.taskCreate, {

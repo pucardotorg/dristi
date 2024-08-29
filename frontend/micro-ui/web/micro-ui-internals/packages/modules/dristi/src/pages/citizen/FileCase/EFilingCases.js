@@ -18,7 +18,6 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
-import { formatDate } from "./CaseType";
 import { sideMenuConfig } from "./Config";
 import EditFieldsModal from "./EditFieldsModal";
 import {
@@ -42,7 +41,7 @@ import {
   updateCaseDetails,
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
-import _, { isEqual, isMatch } from "lodash";
+import { isEqual, isMatch } from "lodash";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
@@ -253,13 +252,16 @@ function EFilingCases({ path }) {
     return keys;
   }, []);
 
-  const deleteWarningText = useCallback((pageName) => {
-    return (
-      <div className="delete-warning-text">
-        <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName?.toLowerCase()} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
-      </div>
-    );
-  }, []);
+  const deleteWarningText = useCallback(
+    (pageName) => {
+      return (
+        <div className="delete-warning-text">
+          <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName?.toLowerCase()} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
+        </div>
+      );
+    },
+    [t]
+  );
 
   const mandatoryFieldsRemainingText = useCallback(() => {
     return (
@@ -267,15 +269,18 @@ function EFilingCases({ path }) {
         <h3>{t("ENSURE_ALL_MANDATORY_ARE_FILLED")}</h3>
       </div>
     );
-  }, []);
+  }, [t]);
 
-  const optionalFieldsRemainingText = useCallback((count) => {
-    return (
-      <div>
-        <h3>{`${t("MORE_INFO_HELPS_FIRST_HALF")} ${count} ${t("MORE_INFO_HELPS_SECOND_HALF")}`}</h3>
-      </div>
-    );
-  }, []);
+  const optionalFieldsRemainingText = useCallback(
+    (count) => {
+      return (
+        <div>
+          <h3>{`${t("MORE_INFO_HELPS_FIRST_HALF")} ${count} ${t("MORE_INFO_HELPS_SECOND_HALF")}`}</h3>
+        </div>
+      );
+    },
+    [t]
+  );
 
   const pagesLabels = useMemo(() => {
     let keyValuePairs = {};
@@ -287,7 +292,7 @@ function EFilingCases({ path }) {
       }
     });
     return keyValuePairs;
-  }, [sideMenuConfig]);
+  }, []);
 
   const nextSelected = useMemo(() => {
     const index = getAllKeys.indexOf(selected);
@@ -314,36 +319,39 @@ function EFilingCases({ path }) {
     return caseDetails?.additionalDetails?.judge || null;
   }, [caseDetails]);
 
-  const countSectionErrors = (section) => {
-    let total = 0;
-    let sectionErrors = 0;
-    let inputErrors = 0;
-    let pages = new Set();
-    Object.keys(section)?.forEach((key) => {
-      let pageErrorCount = 0;
-      if (section[key]) {
-        if (section[key]?.scrutinyMessage?.FSOError) {
-          total++;
-          sectionErrors++;
-          pageErrorCount++;
-        }
-        section[key]?.form?.forEach((item) => {
-          Object.keys(item)?.forEach((field) => {
-            if (item[field]?.FSOError && field != "image" && field != "title") {
-              total++;
-              inputErrors++;
-              pageErrorCount++;
-            }
+  const countSectionErrors = useCallback(
+    (section) => {
+      let total = 0;
+      let sectionErrors = 0;
+      let inputErrors = 0;
+      let pages = new Set();
+      Object.keys(section)?.forEach((key) => {
+        let pageErrorCount = 0;
+        if (section[key]) {
+          if (section[key]?.scrutinyMessage?.FSOError) {
+            total++;
+            sectionErrors++;
+            pageErrorCount++;
+          }
+          section[key]?.form?.forEach((item) => {
+            Object.keys(item)?.forEach((field) => {
+              if (item[field]?.FSOError && field !== "image" && field !== "title") {
+                total++;
+                inputErrors++;
+                pageErrorCount++;
+              }
+            });
           });
-        });
-      }
-      if (pageErrorCount) {
-        pages.add({ key, label: pagesLabels[key], errorCount: pageErrorCount });
-      }
-    });
+        }
+        if (pageErrorCount) {
+          pages.add({ key, label: pagesLabels[key], errorCount: pageErrorCount });
+        }
+      });
 
-    return { total, inputErrors, sectionErrors, pages: [...pages] };
-  };
+      return { total, inputErrors, sectionErrors, pages: [...pages] };
+    },
+    [pagesLabels]
+  );
 
   const scrutinyErrors = useMemo(() => {
     const errorCount = {};
@@ -362,7 +370,7 @@ function EFilingCases({ path }) {
       }
     }
     return errorCount;
-  }, [scrutinyObj]);
+  }, [countSectionErrors, scrutinyObj]);
 
   const errorPages = useMemo(() => {
     const pages = Object.values(scrutinyErrors)
@@ -373,7 +381,7 @@ function EFilingCases({ path }) {
       const keyB = b.key;
       return getAllKeys.indexOf(keyA) - getAllKeys.indexOf(keyB);
     });
-  }, [scrutinyErrors]);
+  }, [getAllKeys, scrutinyErrors]);
 
   const sectionWiseErrors = useMemo(() => {
     let obj = {};
@@ -419,28 +427,31 @@ function EFilingCases({ path }) {
 
   useEffect(() => {
     if (Object.keys(caseDetails).length !== 0) {
-      const fieldsRemainingCopy = structuredClone(fieldsRemaining);
-      const additionalDetailsArray = ["complainantDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
-      const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
-      for (const key of additionalDetailsArray) {
-        if (caseDetails?.additionalDetails?.[key]) {
-          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
-          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.additionalDetails?.[key]?.formdata, key);
+      const getFieldsRemaining = (fieldsRemaining) => {
+        const fieldsRemainingCopy = structuredClone(fieldsRemaining);
+        const additionalDetailsArray = ["complainantDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
+        const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
+        for (const key of additionalDetailsArray) {
+          if (caseDetails?.additionalDetails?.[key]) {
+            const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+            fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.additionalDetails?.[key]?.formdata, key);
+          }
         }
-      }
-      for (const key of caseDetailsArray) {
-        if (caseDetails?.caseDetails?.[key]) {
-          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
-          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
+        for (const key of caseDetailsArray) {
+          if (caseDetails?.caseDetails?.[key]) {
+            const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+            fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
+          }
         }
-      }
+        return fieldsRemainingCopy;
+      };
       if (isDraftInProgress) {
-        setFieldsRemaining(fieldsRemainingCopy);
+        setFieldsRemaining((prev) => getFieldsRemaining(prev));
       } else {
         setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
       }
     }
-  }, [caseDetails]);
+  }, [caseDetails, isDraftInProgress]);
 
   useEffect(() => {
     const data =
@@ -452,7 +463,7 @@ function EFilingCases({ path }) {
     if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
-  }, [selected, caseDetails]);
+  }, [selected, caseDetails, isLoading]);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -478,7 +489,7 @@ function EFilingCases({ path }) {
     if (!errorCaseDetails && isCaseReAssigned) {
       setErrorCaseDetails(caseDetails);
     }
-  }, [caseDetails, errorCaseDetails]);
+  }, [caseDetails, errorCaseDetails, isCaseReAssigned]);
 
   const getDefaultValues = useCallback(
     (index) => {
@@ -1047,7 +1058,7 @@ function EFilingCases({ path }) {
                 modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || judgeObj ? false : true;
 
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
-                  if (formComponent.component == "SelectUploadFiles") {
+                  if (formComponent.component === "SelectUploadFiles") {
                     if (formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name in scrutiny?.[selected]?.form?.[index]) {
                       key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                     }
@@ -1102,8 +1113,12 @@ function EFilingCases({ path }) {
     formConfig,
     caseDetails?.additionalDetails,
     caseDetails?.caseDetails,
+    errorCaseDetails?.additionalDetails,
+    errorCaseDetails?.caseDetails,
     t,
+    state,
     scrutinyObj,
+    judgeObj,
   ]);
 
   const activeForms = useMemo(() => {
@@ -1712,7 +1727,14 @@ function EFilingCases({ path }) {
               </span>
             </div>
             <p>
-              {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
+              {t("CS_UNDER")}{" "}
+              <a
+                href="https://districts.ecourts.gov.in/sites/default/files/study%20circles.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="act-name"
+              >{`S-${caseType.section}, ${caseType.act}`}</a>{" "}
+              {t("CS_IN")}
               <span className="place-name">{` ${caseType.courtName}.`}</span>
             </p>
           </div>

@@ -6,6 +6,7 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
+import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
 
 const paymentCalculation = [
   { key: "Amount Due", value: 600, currency: "Rs" },
@@ -42,7 +43,8 @@ const paymentOptionConfig = {
   isMandatory: true,
   options: paymentOption,
   styles: {
-    width: "50%",
+    width: "100%",
+    maxWidth: "100%",
   },
 };
 
@@ -172,6 +174,19 @@ const ViewPaymentDetails = ({ location, match }) => {
     }
   };
 
+  const orderModalInfo = useMemo(
+    () => ({
+      caseInfo: [
+        {
+          key: t("CS_CASE_ID"),
+          value: caseDetails?.filingNumber,
+          copyData: false,
+        },
+      ],
+    }),
+    [caseDetails, t]
+  );
+
   if (isCaseSearchLoading || isFetchBillLoading) {
     return <Loader />;
   }
@@ -182,86 +197,97 @@ const ViewPaymentDetails = ({ location, match }) => {
           <div className="header">{t("CS_RECORD_PAYMENT_HEADER_TEXT")}</div>
           <div className="sub-header">{t("CS_RECORD_PAYMENT_SUBHEADER_TEXT")}</div>
         </div>
-        <div className="payment-calculator-wrapper">
-          {paymentCalculation.map((item) => (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderTop: item.isTotalFee && "1px solid #BBBBBD",
-                paddingTop: item.isTotalFee && "20px",
-              }}
-            >
-              <span>{item.key}</span>
-              <span>
-                {item.currency} {item.value}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 40 }}>
-          <div className="payment-case-name">{`${t("CS_CASE_ID")}: ${caseDetails?.filingNumber}`}</div>
-          <div className="payment-case-detail-wrapper" style={{ maxHeight: 400 }}>
-            <LabelFieldPair>
-              <CardLabel>{`${t("CORE_COMMON_PAYER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                style={{ width: "50%" }}
-                type={"text"}
-                isMandatory={false}
-                name="name"
-                disable={true}
-                value={payerName}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  let updatedValue = value
-                    .replace(/[^a-zA-Z\s]/g, "")
-                    .trimStart()
-                    .replace(/ +/g, " ")
-                    .toLowerCase()
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
-                  setPayer(updatedValue);
+        <div style={{ display: "flex", flexDirection: "row-reverse", gap: 40, justifyContent: "space-between", width: "100%" }}>
+          <div className="payment-calculator-wrapper" style={{ width: "33%" }}>
+            {paymentCalculation.map((item) => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderTop: item.isTotalFee && "1px solid #BBBBBD",
+                  paddingTop: item.isTotalFee && "20px",
                 }}
+              >
+                <span>{item.key}</span>
+                <span>
+                  {item.currency} {item.value}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div style={{ width: "63%" }}>
+            <div>
+              {/* {`${t("CS_CASE_ID")}: ${caseDetails?.filingNumber}`} */}
+              <CustomCopyTextDiv
+                t={t}
+                keyStyle={{ margin: "8px 0px" }}
+                valueStyle={{ margin: "8px 0px", fontWeight: 700 }}
+                data={orderModalInfo?.caseInfo}
               />
-            </LabelFieldPair>
-            <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
-              <CardLabel>{t(paymentOptionConfig.label)}</CardLabel>
-              <CustomDropdown
-                label={paymentOptionConfig.label}
-                t={t}
-                defaulValue={paymentOption[0]}
-                onChange={(e) => {
-                  setModeOfPayment(e);
-                  setAdditionalDetails("");
-                }}
-                value={modeOfPayment}
-                config={paymentOptionConfig}
-              ></CustomDropdown>
-            </LabelFieldPair>
-            {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DD") && (
-              <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
-                <CardLabel>{t(modeOfPayment?.code === "CHEQUE" ? t("Cheque number") : t("Demand Draft number"))}</CardLabel>
+            </div>
+            <div className="payment-case-detail-wrapper" style={{ maxHeight: 400, padding: 0, border: "none" }}>
+              <LabelFieldPair>
+                <CardLabel>{`${t("CORE_COMMON_PAYER")}`}</CardLabel>
                 <TextInput
                   t={t}
-                  style={{ width: "50%" }}
+                  style={{ width: "100%" }}
+                  textInputStyle={{ width: "100%", maxWidth: "100%" }}
                   type={"text"}
                   isMandatory={false}
                   name="name"
-                  value={additionDetails}
+                  disable={true}
+                  value={payerName}
                   onChange={(e) => {
                     const { value } = e.target;
-
-                    let updatedValue = value?.replace(/\D/g, "");
-                    if (updatedValue?.length > 6) {
-                      updatedValue = updatedValue?.substring(0, 6);
-                    }
-
-                    setAdditionalDetails(updatedValue);
+                    let updatedValue = value
+                      .replace(/[^a-zA-Z\s]/g, "")
+                      .trimStart()
+                      .replace(/ +/g, " ")
+                      .toLowerCase()
+                      .replace(/\b\w/g, (char) => char.toUpperCase());
+                    setPayer(updatedValue);
                   }}
                 />
               </LabelFieldPair>
-            )}
+              <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
+                <CardLabel>{t(paymentOptionConfig.label)}</CardLabel>
+                <CustomDropdown
+                  label={paymentOptionConfig.label}
+                  t={t}
+                  defaulValue={paymentOption[0]}
+                  onChange={(e) => {
+                    setModeOfPayment(e);
+                    setAdditionalDetails("");
+                  }}
+                  value={modeOfPayment}
+                  config={paymentOptionConfig}
+                ></CustomDropdown>
+              </LabelFieldPair>
+              {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DD") && (
+                <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
+                  <CardLabel>{t(modeOfPayment?.code === "CHEQUE" ? t("Cheque number") : t("Demand Draft number"))}</CardLabel>
+                  <TextInput
+                    t={t}
+                    style={{ width: "50%" }}
+                    type={"text"}
+                    isMandatory={false}
+                    name="name"
+                    value={additionDetails}
+                    onChange={(e) => {
+                      const { value } = e.target;
+
+                      let updatedValue = value?.replace(/\D/g, "");
+                      if (updatedValue?.length > 6) {
+                        updatedValue = updatedValue?.substring(0, 6);
+                      }
+
+                      setAdditionalDetails(updatedValue);
+                    }}
+                  />
+                </LabelFieldPair>
+              )}
+            </div>
           </div>
         </div>
         <ActionBar>

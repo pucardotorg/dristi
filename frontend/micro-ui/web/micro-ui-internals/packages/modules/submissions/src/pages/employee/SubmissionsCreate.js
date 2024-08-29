@@ -402,6 +402,7 @@ const SubmissionsCreate = () => {
     assignedRole = [],
   }) => {
     let entityType = "application-voluntary-submission";
+    let taxHeadMasterCode = "ASYNC_VOLUNTARY_SUNMISSION_ADVANCE_CARRYFORWARD";
     if (orderNumber) {
       entityType =
         orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true
@@ -409,6 +410,28 @@ const SubmissionsCreate = () => {
           : "application-order-submission-default";
     }
     const assignes = !isAssignedRole ? [userInfo?.uuid] || [] : [];
+
+    if (status === "MAKE_PAYMENT_SUBMISSION") {
+      await DRISTIService.createDemand({
+        Demands: [
+          {
+            tenantId,
+            consumerCode: refId,
+            consumerType: entityType,
+            businessService: entityType,
+            taxPeriodFrom: Date.now().toString(),
+            taxPeriodTo: Date.now().toString(),
+            demandDetails: [
+              {
+                taxHeadMasterCode: taxHeadMasterCode,
+                taxAmount: 4,
+                collectionAmount: 0,
+              },
+            ],
+          },
+        ],
+      });
+    }
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
         name,
@@ -571,7 +594,7 @@ const SubmissionsCreate = () => {
     const res = await createSubmission();
     const newapplicationNumber = res?.application?.applicationNumber;
     if (newapplicationNumber) {
-      if (isCitizen) {
+      if (isCitizen && hasSubmissionRole) {
         await createPendingTask({
           name: t("ESIGN_THE_SUBMISSION"),
           status: "ESIGN_THE_SUBMISSION",
