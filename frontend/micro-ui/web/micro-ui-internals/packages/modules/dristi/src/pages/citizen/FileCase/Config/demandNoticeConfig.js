@@ -17,14 +17,11 @@ const demandNoticeFormConfig = [
               error: "CORE_REQUIRED_FIELD_ERROR",
               required: false,
               isMandatory: true,
-              options: [
-                {
-                  code: "POST",
-                  name: "POST",
-                  commonFields: true,
-                  isEnabled: true,
-                },
-              ],
+              mdmsConfig: {
+                masterName: "DispatchMode",
+                moduleName: "case",
+                select: "(data) => {return data['case'].DispatchMode?.map((item) => {return item;});}",
+              },
             },
           ],
         },

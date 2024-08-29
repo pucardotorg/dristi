@@ -53,6 +53,18 @@ function CaseType({ t }) {
       </div>
     );
   };
+  const { data: complainantRespondentTypeData, isLoading: isComplainantRespondentTypeLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "ComplainantRespondentType" }],
+    {
+      select: (data) => {
+        return (data?.case?.ComplainantRespondentType || []).flatMap((item) => {
+          return item;
+        });
+      },
+    }
+  );
   const Submitbar = () => {
     const token = window.localStorage.getItem("token");
     const isUserLoggedIn = Boolean(token);
@@ -128,7 +140,7 @@ function CaseType({ t }) {
 
     const { isLoading: mdmsLoading, data: statuteData } = useGetStatuteSection();
 
-    if (isLoading || isFetching || isSearchLoading || mdmsLoading) {
+    if (isLoading || isFetching || isSearchLoading || mdmsLoading || isComplainantRespondentTypeLoading) {
       return <Loader />;
     }
     return (
@@ -215,15 +227,7 @@ function CaseType({ t }) {
                             {
                               isenabled: true,
                               data: {
-                                complainantType: {
-                                  code: "INDIVIDUAL",
-                                  name: "Individual",
-                                  showCompanyDetails: false,
-                                  complainantLocation: true,
-                                  commonFields: true,
-                                  isEnabled: true,
-                                  isIndividual: true,
-                                },
+                                complainantType: complainantRespondentTypeData.find((item) => item.id === 1),
                                 "addressDetails-select": {
                                   pincode: pincode,
                                   district: addressLine2,
