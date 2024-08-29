@@ -3,8 +3,8 @@
     {
       "tenantId": "kl",
       "businessService": "task",
-      "business": "task-summons",
-      "businessServiceSla": 4147200000,
+      "business": "task-notice",
+      "businessServiceSla": 4320000000,
       "states": [
         {
           "sla": null,
@@ -35,7 +35,7 @@
           "actions": [
             {
               "action": "MAKE_PAYMENT",
-              "nextState": "ISSUE_SUMMON",
+              "nextState": "ISSUE_NOTICE",
               "roles": [
                 "TASK_UPDATOR"
               ]
@@ -50,8 +50,8 @@
           ]
         },
         {
-          "sla": 3888000000,
-          "state": "ISSUE_SUMMON",
+          "sla": 1728000000,
+          "state": "ISSUE_NOTICE",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -92,7 +92,7 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "NEW_SUMMON",
+              "action": "NEW_NOTICE",
               "nextState": "UNDELIVERED",
               "roles": [
                 "TASK_UPDATOR"
