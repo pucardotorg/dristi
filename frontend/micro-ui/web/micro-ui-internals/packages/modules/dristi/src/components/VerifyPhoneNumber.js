@@ -243,7 +243,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         ...prev,
         isUserVerified: false,
         showModal: true,
-        errorMsg: "CS_INVALID_OTP",
+        errorMsg: err?.response?.data?.error_description === "Account locked" ? t("MAX_RETRIES_EXCEEDED") : t("CS_INVALID_OTP"),
       }));
     }
   };
