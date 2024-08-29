@@ -144,9 +144,11 @@ const InsideHearingMainPage = () => {
           value: witness.data.uuid,
         }))
       );
-      const selectedWitness = responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {};
-      setSelectedWitness(selectedWitness);
-      setWitnessDepositionText(hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition);
+      const selectedWitnessDefault = responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {};
+      setSelectedWitness(selectedWitnessDefault);
+      setWitnessDepositionText(
+        hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitnessDefault.uuid)?.deposition
+      );
     }
   }, [caseDataResponse]);
 
