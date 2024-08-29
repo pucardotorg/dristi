@@ -94,6 +94,9 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
           isDisabled = true;
         }
+        if (input?.name == "barRegistrationNumber" && formData?.clientDetails?.barRegistrationNumber?.length < input?.validation?.minlength) {
+          isDisabled = true;
+        }
       });
     });
     if (isDisabled) {
@@ -184,7 +187,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                     getUserDetails(refreshToken).then((res) => {
                       const { ResponseInfo, UserRequest: info, ...tokens } = res;
                       const user = { info, ...tokens };
-                      window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                      localStorage.setItem("citizen.userRequestObject", user);
                       window?.Digit.UserService.setUser(user);
                       setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
                       history.push(`/${window?.contextPath}/citizen/dristi/home`);
@@ -271,7 +274,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                 getUserDetails(refreshToken).then((res) => {
                   const { ResponseInfo, UserRequest: info, ...tokens } = res;
                   const user = { info, ...tokens };
-                  window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                  localStorage.setItem("citizen.userRequestObject", user);
                   window?.Digit.UserService.setUser(user);
                   setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);

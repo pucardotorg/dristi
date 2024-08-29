@@ -66,14 +66,31 @@
           disable: false,
           populators: { name: "datePartyAvailable", error: "Required"},
         },
+        // {
+        //   inline: true,
+        //   label: "DELAY_REASON",
+        //   isMandatory: true,
+        //   key: "delayReason",
+        //   type: "textarea",
+        //   disable: false,
+        //   populators: { name: "delayReason", error: " Required ", validation: { pattern: /^[A-Za-z]+$/i } },
+        // },
         {
           inline: true,
           label: "DELAY_REASON",
           isMandatory: true,
           key: "delayReason",
-          type: "textarea",
+          type: "component",
+          component: "SelectTranscriptTextArea",
           disable: false,
-          populators: { name: "delayReason", error: " Required ", validation: { pattern: /^[A-Za-z]+$/i } },
+          populators: {
+            input: {
+              name: "delayReason",
+              type: "TranscriptionTextAreaComponent",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+            },
+            validation: { pattern: /^[A-Za-z]+$/i },
+          },
         },
          {
           inline: true,

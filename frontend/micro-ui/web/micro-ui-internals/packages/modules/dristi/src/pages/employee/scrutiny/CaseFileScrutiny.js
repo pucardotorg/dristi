@@ -50,7 +50,7 @@ function CaseFileScrutiny({ t }) {
   const onSubmit = () => {};
   const onSaveDraft = () => {};
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
+    if (JSON.stringify(formData) !== JSOformDataformDataN.stringify(formdata.data)) {
       setFormdata((prev) => {
         return { ...prev, data: formData };
       });

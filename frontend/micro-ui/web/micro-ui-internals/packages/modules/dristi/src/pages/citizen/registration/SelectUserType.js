@@ -100,9 +100,9 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : data?.adhaarNumber;
     const identifierIdDetails = uploadedDocument
       ? {
-        fileStoreId: identifierId,
-        filename: uploadedDocument?.filename,
-      }
+          fileStoreId: identifierId,
+          filename: uploadedDocument?.filename,
+        }
       : {};
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     setParams({ ...params, userType });
@@ -118,24 +118,24 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           username: Digit.UserService.getUser()?.info?.userName,
           roles: userType?.clientDetails?.selectUserType?.role
             ? [
-              {
-                code: "CITIZEN",
-                name: "Citizen",
-                tenantId: tenantId,
-              },
-              ...userType?.clientDetails?.selectUserType?.role?.map((role) => ({
-                code: role,
-                name: role,
-                tenantId: tenantId,
-              })),
-            ]
+                {
+                  code: "CITIZEN",
+                  name: "Citizen",
+                  tenantId: tenantId,
+                },
+                ...userType?.clientDetails?.selectUserType?.role?.map((role) => ({
+                  code: role,
+                  name: role,
+                  tenantId: tenantId,
+                })),
+              ]
             : [
-              {
-                code: "CITIZEN",
-                name: "Citizen",
-                tenantId: tenantId,
-              },
-            ],
+                {
+                  code: "CITIZEN",
+                  name: "Citizen",
+                  tenantId: tenantId,
+                },
+              ],
           type: Digit.UserService.getUser()?.info?.type,
         },
         userUuid: Digit.UserService.getUser()?.info?.uuid,
@@ -246,7 +246,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
                   getUserDetails(refreshToken).then((res) => {
                     const { ResponseInfo, UserRequest: info, ...tokens } = res;
                     const user = { info, ...tokens };
-                    window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                    localStorage.setItem("citizen.userRequestObject", user);
                     window?.Digit.UserService.setUser(user);
                     setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
                     history.push(`/${window?.contextPath}/citizen/dristi/home`);

@@ -1,14 +1,31 @@
 const complainantDetailsFormConfig = [
   {
-    head: "SELECT_COMPLAINANT_TYPE",
     body: [
       {
-        type: "radio",
+        head: "SELECT_COMPLAINANT_TYPE",
+        type: "component",
+        component: "CustomRadioInfoComponent",
         key: "complainantType",
-        // label: "SELECT_COMPLAINANT_TYPE",
         withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
+        noteDependentOn: "complainantVerification.individualDetails",
+        notes: {
+          type: "component",
+          component: "SelectCustomNote",
+          key: "personalDetailsNote",
+          withoutLabel: true,
+          populators: {
+            inputs: [
+              {
+                infoHeader: "CS_PLEASE_COMMON_NOTE",
+                infoText: "CS_PLEASE_CONTACT_NYAY_MITRA_TEXT",
+                infoTooltipMessage: "CS_NOTE_TOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+                type: "InfoComponent",
+              },
+            ],
+          },
+        },
         populators: {
           label: "SELECT_COMPLAINANT_TYPE",
           type: "radioButton",
@@ -29,7 +46,7 @@ const complainantDetailsFormConfig = [
             },
             {
               code: "REPRESENTATIVE",
-              name: "Representative of an Entity",
+              name: "Entity",
               showCompanyDetails: true,
               isIndividual: false,
               commonFields: true,
@@ -66,8 +83,11 @@ const complainantDetailsFormConfig = [
           inputs: [
             {
               label: "COMPLAINANT_ID",
+              updateLabelOn: "complainantType.showCompanyDetails",
+              updateLabel: { key: "label", value: "CS_ENTITY_ID" },
+              defaultLabel: { key: "label", value: "COMPLAINANT_ID" },
               name: "complainantId",
-              verificationOn: "complainantVerification.isUserVerified",
+              verificationOn: "complainantVerification.individualDetails",
             },
           ],
           customStyle: {
@@ -80,6 +100,9 @@ const complainantDetailsFormConfig = [
   {
     dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
+    updateLabelOn: "complainantType.showCompanyDetails",
+    updateLabel: { key: "head", value: "CS_COMMON_ENTITY_DETAIL" },
+    defaultLabel: { key: "head", value: "CS_COMMON_COMPLAINANT_DETAIL" },
     body: [
       {
         type: "text",
@@ -162,7 +185,7 @@ const complainantDetailsFormConfig = [
         ],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
-        disableConfigKey: "isUserVerified",
+        disableConfigKey: "individualDetails",
         isMandatory: true,
         validation: {
           required: true,
@@ -180,7 +203,7 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "text",
-        key: "company_Name",
+        key: "companyName",
         label: "company_Name",
         isMandatory: true,
         populators: {
@@ -227,7 +250,7 @@ const complainantDetailsFormConfig = [
             {
               label: "CS_LOCATION",
               type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
+              name: ["pincode", "state", "district", "city", "coordinates", "locality"],
               key: "locationSearch",
             },
             {

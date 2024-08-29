@@ -30,6 +30,21 @@ const SelectOtp = ({
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(25);
+
+  const handleKeyDown = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter" && otp?.length === 6 && canSubmit) {
+      onSelect();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [otp]);
+
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
@@ -54,7 +69,11 @@ const SelectOtp = ({
     });
   };
   const Heading = (props) => {
-    return <h1 className="heading-m">{props.label}</h1>;
+    return (
+      <h1 style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }} className="heading-m">
+        {props.label}
+      </h1>
+    );
   };
   const CloseBtn = (props) => {
     return (
@@ -86,28 +105,14 @@ const SelectOtp = ({
             {t("CS_RESEND_OTP")}
           </p>
         )}
-        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+        {error && <CardLabelError>{error}</CardLabelError>}
       </Fragment>
     );
   }
 
-  const handleKeyDown = (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter") {
-      onSelect();
-    }
-  };
-
   const onModalSubmit = () => {
     onSelect();
   };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   return (
     <Modal
@@ -119,7 +124,9 @@ const SelectOtp = ({
       headerBarMain={
         <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
+          <CardText>
+            {isAdhaar ? t("ENTER_OTP_TO_THE_REGISTERED_AADHAR_NO") : `${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}
+          </CardText>
         </React.Fragment>
       }
       className={"otp-modal-class"}
@@ -140,7 +147,7 @@ const SelectOtp = ({
             </span>
           </p>
         </div>
-        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+        {error && <CardLabelError>{error}</CardLabelError>}
       </FormStep>
     </Modal>
   );

@@ -32,17 +32,29 @@ export const delayAppConfig = [
   },
   {
     body: [
+      // {
+      //   type: "component",
+      //   component: "SelectCustomTextArea",
+      //   key: "delayApplicationReason",
+      //   populators: {
+      //     inputs: [
+      //       {
+      //         textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+      //         type: "TextAreaComponent",
+      //       },
+      //     ],
+      //   },
+      // },
       {
         type: "component",
-        component: "SelectCustomTextArea",
+        component: "SelectTranscriptTextArea",
         key: "delayApplicationReason",
+        withoutLabel: true,
         populators: {
-          inputs: [
-            {
-              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
-              type: "TextAreaComponent",
-            },
-          ],
+          input: {
+            textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+            type: "TranscriptionTextAreaComponent",
+          },
         },
       },
     ],

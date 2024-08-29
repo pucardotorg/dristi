@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
-import ButtonSelector from "./ButtonSelector";
 import { HeaderBar, PopUp, Toast } from "@egovernments/digit-ui-react-components";
+import ButtonSelector from "./ButtonSelector";
 
 const Modal = ({
   headerBarMain,
@@ -23,7 +23,8 @@ const Modal = ({
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
   submitTextClassName = "",
-  className
+  className,
+  cancelButtonBody,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -52,21 +53,31 @@ const Modal = ({
             }
           >
             {actionCancelLabel ? (
-              <ButtonSelector textStyles={{ margin: "0px" }} theme="border" label={actionCancelLabel} onSubmit={actionCancelOnSubmit} style={style} />
+              <ButtonSelector
+                textStyles={{ margin: "0px", color: "#007E7E" }}
+                theme="border"
+                label={actionCancelLabel}
+                onSubmit={actionCancelOnSubmit}
+                style={{ border: "1px solid #007E7E", backgroundColor: "white" }}
+                ButtonBody={cancelButtonBody}
+              />
             ) : (
               <div></div>
             )}
-            {!hideSubmit ? (
-              <ButtonSelector
-                textStyles={{ margin: "0px" }}
-                label={actionSaveLabel}
-                onSubmit={actionSaveOnSubmit}
-                formId={formId}
-                isDisabled={isDisabled}
-                style={style}
-                textClassName={submitTextClassName}
-              />
-            ) : null}
+            {actionSaveLabel && !hideSubmit
+              ? (console.log(style),
+                (
+                  <ButtonSelector
+                    textStyles={{ margin: "0px" }}
+                    label={actionSaveLabel}
+                    onSubmit={actionSaveOnSubmit}
+                    formId={formId}
+                    isDisabled={isDisabled}
+                    style={style}
+                    textClassName={submitTextClassName}
+                  />
+                ))
+              : null}
           </div>
         </div>
       </div>

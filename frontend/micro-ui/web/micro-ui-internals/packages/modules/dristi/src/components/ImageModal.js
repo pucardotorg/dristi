@@ -4,7 +4,14 @@ import { FlagIcon, LeftArrow } from "../icons/svgIndex";
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef }) {
+function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef, showFlag, isPrevScrutiny }) {
+  let showFlagNew = !imageInfo?.disableScrutiny && showFlag;
+
+  if (isPrevScrutiny && !imageInfo?.disableScrutiny) {
+    showFlagNew = imageInfo?.inputlist?.some((key) => {
+      return Boolean(imageInfo?.dataError?.[key]?.FSOError);
+    });
+  }
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const Heading = (props) => {
     return (
@@ -22,15 +29,25 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef
   const HeaderBarEnd = () => {
     return (
       <React.Fragment>
-        <div
-          ref={anchorRef}
-          className="flag-icon"
-          onClick={(e) => {
-            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.index, imageInfo.fieldName, imageInfo.inputlist);
-          }}
-        >
-          <FlagIcon />
-        </div>
+        {showFlagNew && (
+          <div
+            ref={anchorRef}
+            className="flag-icon"
+            onClick={(e) => {
+              handleOpenPopup(
+                null,
+                imageInfo.configKey,
+                imageInfo.name,
+                imageInfo.index,
+                imageInfo.fieldName,
+                imageInfo.inputlist,
+                imageInfo?.data?.fileName
+              );
+            }}
+          >
+            <FlagIcon />
+          </div>
+        )}
         <div className="close-icon" onClick={handleCloseModal}>
           <CloseSvg />
         </div>
