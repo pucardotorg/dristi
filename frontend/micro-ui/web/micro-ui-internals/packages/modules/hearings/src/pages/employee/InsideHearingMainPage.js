@@ -94,7 +94,17 @@ const InsideHearingMainPage = () => {
     },
   });
 
-  const updateTranscriptRequest = useMemo(() => debounce(_updateTranscriptRequest, 1000), [_updateTranscriptRequest]);
+  const updateTranscriptRequest = useMemo(
+    () =>
+      debounce(
+        (...args) =>
+          _updateTranscriptRequest(...args).then((res) => {
+            setHearing(res.hearing);
+          }),
+        1000
+      ),
+    [_updateTranscriptRequest]
+  );
 
   const { data: caseDataResponse, refetch: refetchCase } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -138,7 +148,7 @@ const InsideHearingMainPage = () => {
       setSelectedWitness(selectedWitness);
       setWitnessDepositionText(hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition);
     }
-  }, [caseDataResponse, hearing]);
+  }, [caseDataResponse]);
 
   const handleModal = () => {
     setIsOpen(!isOpen);
@@ -196,7 +206,7 @@ const InsideHearingMainPage = () => {
 
   const isDepositionSaved = useMemo(() => {
     return hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition.length;
-  }, [selectedWitness]);
+  }, [selectedWitness, hearing]);
 
   const saveWitnessDeposition = () => {
     const updatedHearing = structuredClone(hearing);

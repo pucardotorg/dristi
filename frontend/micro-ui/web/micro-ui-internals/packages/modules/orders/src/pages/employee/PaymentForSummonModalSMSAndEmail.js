@@ -259,7 +259,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
               pendingTask: {
                 name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
                 entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-                referenceId: `MANUAL_${orderNumber}_${referenceId}`,
+                referenceId: `MANUAL_${referenceId}_${orderNumber}`,
                 status: status,
                 assignedTo: [],
                 assignedRole: [],

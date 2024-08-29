@@ -266,7 +266,7 @@ const PaymentForSummonModal = ({ path }) => {
                 name: "Show Summon-Warrant Status",
                 entityType: paymentType.ORDER_MANAGELIFECYCLE,
                 referenceId: hearingsData?.HearingList?.[0]?.hearingId,
-                status: paymentType.ORDER_MANAGELIFECYCLE,
+                status: paymentType.SUMMON_WARRANT_STATUS,
                 assignedTo: [],
                 assignedRole: ["JUDGE_ROLE"],
                 cnrNumber: filteredTasks?.[0]?.cnrNumber,
@@ -283,7 +283,7 @@ const PaymentForSummonModal = ({ path }) => {
               pendingTask: {
                 name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
                 entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-                referenceId: `MANUAL_${orderNumber}_Post`,
+                referenceId: `MANUAL_Post_${orderNumber}`,
                 status: paymentType.PAYMENT_PENDING_POST,
                 assignedTo: [],
                 assignedRole: [],

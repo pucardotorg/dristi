@@ -1051,7 +1051,7 @@ const GenerateOrders = () => {
               pendingTask: {
                 name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
                 entityType,
-                referenceId: `MANUAL_${currentOrder?.orderNumber}_${channel.type}`,
+                referenceId: `MANUAL_${channel.type}_${currentOrder?.orderNumber}`,
                 status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
                 assignedTo: assignees,
                 assignedRole,

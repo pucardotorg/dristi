@@ -782,7 +782,9 @@ const AdmittedCases = () => {
                       {showOtherMenu && (
                         <Menu
                           options={[t("DOWNLOAD_CASE_FILE")]}
-                          // onSelect={() => {}}
+                          onSelect={() => {
+                            downloadPdf(tenantId, caseDetails?.additionalDetails?.signedCaseDocument);
+                          }}
                         ></Menu>
                       )}
                     </div>
