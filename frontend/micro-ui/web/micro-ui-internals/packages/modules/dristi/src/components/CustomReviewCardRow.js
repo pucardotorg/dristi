@@ -3,6 +3,7 @@ import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useMemo } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import ReactTooltip from "react-tooltip";
 
 const LocationIcon = () => (
   <svg width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,6 +35,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 
 const CustomReviewCardRow = ({
   isScrutiny,
+  isJudge,
   data,
   handleOpenPopup,
   titleIndex,
@@ -45,11 +47,17 @@ const CustomReviewCardRow = ({
   config,
   titleHeading,
   handleClickImage,
+  prevDataError,
+  isPrevScrutiny,
+  setShowImageModal,
+  isCaseReAssigned,
+  disableScrutiny,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
+  const { type = null, label = null, value = null, badgeType = null, textDependentOn = null, textDependentValue = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
   const extractValue = (data, key) => {
-    if (!key.includes(".")) {
+    if (!key?.includes(".")) {
       return data[key];
     }
     const keyParts = key.split(".");
@@ -64,61 +72,111 @@ const CustomReviewCardRow = ({
     return value;
   };
   const handleImageClick = useCallback(
-    (configKey, name, dataIndex, fieldName, data) => {
+    (configKey, name, dataIndex, fieldName, data, inputlist, dataError) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, [type, fieldName]);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError, disableScrutiny);
       }
       return null;
     },
     [handleClickImage, isScrutiny]
   );
   const renderCard = useMemo(() => {
+    let bgclassname = "";
+    let showFlagIcon = isScrutiny && !disableScrutiny ? true : false;
+    if (isPrevScrutiny && !disableScrutiny) {
+      showFlagIcon = prevDataError ? true : false;
+    }
+    if (isScrutiny) {
+      if (typeof prevDataError === "string" && (dataError || prevDataError)) {
+        bgclassname = dataError === prevDataError ? "preverror" : "error";
+      } else {
+        bgclassname = dataError ? "error" : "";
+      }
+    }
+    bgclassname = dataError && isCaseReAssigned ? "preverrorside" : bgclassname;
     switch (type) {
       case "title":
+        const titleError = dataError?.title?.FSOError;
+        const prevTitleError = prevDataError?.title?.FSOError;
+        if (isPrevScrutiny && !prevTitleError && !disableScrutiny) {
+          showFlagIcon = false;
+        }
         let title = "";
         if (Array.isArray(value)) {
           title = value.map((key) => extractValue(data, key)).join(" ");
         } else {
           title = extractValue(data, value);
         }
+        bgclassname = isScrutiny && titleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
+        bgclassname = titleError && isCaseReAssigned ? "preverrorside" : bgclassname;
         return (
-          <div className={`title-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
+              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("CS_NOT_AVAILABLE")}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(
+                      e,
+                      configKey,
+                      name,
+                      dataIndex,
+                      Array.isArray(value) ? type : value,
+                      Array.isArray(value) ? [...value, type] : [value, type]
+                    );
                   }}
                   key={dataIndex}
                 >
                   {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
-                  {dataError ? <EditPencilIcon /> : <FlagIcon />}
+                  {titleError ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
-            {dataError && isScrutiny && (
+            {titleError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
-                {dataError}
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
+
+                {titleError}
               </div>
             )}
           </div>
         );
       case "text":
         const textValue = extractValue(data, value);
+        const dependentOnValue = extractValue(data, textDependentOn);
         return (
-          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`text-main ${bgclassname}`}>
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(textValue) && textValue}
+                {Array.isArray(textValue)
+                  ? textValue.length > 0
+                    ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : textValue && typeof textValue === "object"
+                  ? textValue?.text || ""
+                  : textValue || (dependentOnValue && textDependentValue) || t("CS_NOT_AVAILABLE")}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -126,13 +184,29 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -144,11 +218,11 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`text-main`}>
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
-                label={t(data?.[value]?.header)}
+                label={t(isScrutiny || isJudge ? data?.[value]?.scrutinyHeader || data?.[value]?.header : data?.[value]?.header)}
                 additionalElements={[
                   <React.Fragment>
                     {Array.isArray(data?.[value]?.data) && (
@@ -170,12 +244,14 @@ const CustomReviewCardRow = ({
         );
 
       case "amount":
+        let amountValue = extractValue(data, value);
+        amountValue = amountValue ? `₹${amountValue}` : t("CS_NOT_AVAILABLE");
         return (
-          <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
               <div className="label">{t(label)}</div>
-              <div className="value"> {`₹${extractValue(data, value)}`} </div>
-              {isScrutiny && (
+              <div className="value"> {amountValue} </div>
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -183,13 +259,29 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -198,14 +290,19 @@ const CustomReviewCardRow = ({
       case "phonenumber":
         const numbers = extractValue(data, value);
         return (
-          <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`phone-number-main ${bgclassname}`}>
             <div className="phone-number">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
+                {Array.isArray(numbers)
+                  ? numbers.length > 0
+                    ? numbers.map((number, index) => <div key={index}>{`+91-${number}`}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : numbers
+                  ? `+91-${numbers}`
+                  : t("CS_NOT_AVAILABLE")}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -213,19 +310,65 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
           </div>
         );
       case "image":
+        let FSOErrors = [];
+        let systemErrors = [];
+        let valuesAvailable = [];
+        if (typeof dataError === "object") {
+          value?.forEach((val) => {
+            if (dataError?.[val]?.FSOError) {
+              FSOErrors.push(dataError?.[val]);
+            }
+          });
+        }
+        if (typeof dataError === "object") {
+          value?.forEach((val) => {
+            if (dataError?.[val]?.systemError) {
+              systemErrors.push(dataError?.[val]);
+            }
+          });
+        }
+        bgclassname =
+          isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
+        bgclassname =
+          FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : isScrutiny && systemErrors?.length > 0 ? "system-error-class" : bgclassname;
+        if (isPrevScrutiny && !disableScrutiny) {
+          showFlagIcon = prevDataError?.[type]?.FSOError;
+        }
+        value?.forEach((val) => {
+          const getFile = extractValue(data, val);
+          if (getFile && getFile?.length > 0) {
+            valuesAvailable.push(val);
+          }
+        });
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -237,12 +380,12 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`image-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`image-main ${bgclassname}`}>
             <div className={`image ${!isScrutiny ? "column" : ""}`}>
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
                 {Array.isArray(files)
-                  ? files?.map((file) =>
+                  ? files?.map((file, fileIndex) =>
                       file && Array.isArray(file) ? (
                         file?.map((data, index) => {
                           if (data?.fileStore) {
@@ -250,7 +393,19 @@ const CustomReviewCardRow = ({
                               <div
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  handleImageClick(configKey, name, dataIndex, value, data);
+                                  handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
+                                  if (!isScrutiny)
+                                    setShowImageModal({
+                                      openModal: true,
+                                      imageInfo: {
+                                        configKey,
+                                        name,
+                                        index: dataIndex,
+                                        fieldName: value[fileIndex],
+                                        data,
+                                        inputlist: [value[fileIndex]],
+                                      },
+                                    });
                                 }}
                               >
                                 <DocViewerWrapper
@@ -271,7 +426,19 @@ const CustomReviewCardRow = ({
                                 <div
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    handleImageClick(configKey, name, dataIndex, value, data);
+                                    handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
+                                    if (!isScrutiny)
+                                      setShowImageModal({
+                                        openModal: true,
+                                        imageInfo: {
+                                          configKey,
+                                          name,
+                                          index: dataIndex,
+                                          fieldName: value[fileIndex],
+                                          data,
+                                          inputlist: [value[fileIndex]],
+                                        },
+                                      });
                                   }}
                                 >
                                   <DocViewerWrapper
@@ -295,7 +462,7 @@ const CustomReviewCardRow = ({
                         <div
                           style={{ cursor: "pointer" }}
                           onClick={() => {
-                            handleImageClick(configKey, name, dataIndex, value, data);
+                            handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
                           }}
                         >
                           <DocViewerWrapper
@@ -313,22 +480,78 @@ const CustomReviewCardRow = ({
                     )
                   : null}
               </div>
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
-                }}
-                key={dataIndex}
-              >
-                {isScrutiny && (dataError ? <EditPencilIcon /> : <FlagIcon />)}
-              </div>
+              {showFlagIcon && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...valuesAvailable, type]);
+                  }}
+                  key={dataIndex}
+                >
+                  {isScrutiny &&
+                    (FSOErrors?.length > 0 ? (
+                      <React.Fragment>
+                        <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                          {" "}
+                          <EditPencilIcon />
+                        </span>
+                        <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                          {t("CS_CLICK_TO_EDIT")}
+                        </ReactTooltip>
+                      </React.Fragment>
+                    ) : (
+                      <FlagIcon />
+                    ))}
+                </div>
+              )}
             </div>
-            {dataError && isScrutiny && (
-              <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
-                {dataError}
-              </div>
-            )}
+            {FSOErrors?.length > 0 &&
+              isScrutiny &&
+              FSOErrors.map((error, ind) => {
+                return (
+                  <div className="scrutiny-error input" key={ind}>
+                    {bgclassname === "preverror" ? (
+                      <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                    ) : (
+                      <FlagIcon isError={true} />
+                    )}
+                    {`${error.fileName ? t(error.fileName) + " : " : ""}${error.FSOError}`}
+                  </div>
+                );
+              })}
+            {!(FSOErrors?.length > 0) &&
+              systemErrors?.length > 0 &&
+              isScrutiny &&
+              systemErrors.map((error, ind) => {
+                return (
+                  <div
+                    style={{
+                      width: "fit-content",
+                    }}
+                    className="scrutiny-error input"
+                    key={ind}
+                  >
+                    {bgclassname === "preverror" ? (
+                      <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                    ) : (
+                      <h4
+                        style={{
+                          margin: "0px",
+                          fontFamily: "Roboto",
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          lineHeight: "20px",
+                          textAlign: "left",
+                          color: "#9E400A",
+                        }}
+                      >
+                        Potential Error:
+                      </h4>
+                    )}
+                    {`${error.fileName ? t(error.fileName) + " : " : ""}${error.systemError}`}
+                  </div>
+                );
+              })}
           </div>
         );
       case "address":
@@ -337,21 +560,31 @@ const CustomReviewCardRow = ({
         if (Array.isArray(addressDetails)) {
           address = addressDetails.map(({ addressDetails }) => {
             return {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address:
+                typeof addressDetails === "string"
+                  ? addressDetails
+                  : `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                      addressDetails?.state || ""
+                    } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             };
           });
         } else {
           address = [
             {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address:
+                typeof addressDetails === "string"
+                  ? addressDetails
+                  : `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                      addressDetails?.state || ""
+                    } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             },
           ];
         }
 
         return (
-          <div className={`address-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`address-main ${bgclassname}`}>
             <div className="address">
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`}>
@@ -365,7 +598,7 @@ const CustomReviewCardRow = ({
                 })}
               </div>
 
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -373,13 +606,29 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -392,10 +641,10 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(defaulValue) && defaulValue}
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
+                {(!Array.isArray(defaulValue) && defaulValue) || t("CS_NOT_AVAILABLE")}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -403,34 +652,58 @@ const CustomReviewCardRow = ({
                   }}
                   key={dataIndex}
                 >
-                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
                 </div>
               )}
             </div>
             <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
+              {bgclassname === "preverror" ? (
+                <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+              ) : (
+                <FlagIcon isError={true} />
+              )}
               {dataError}
             </div>
           </div>
         );
     }
   }, [
-    badgeType,
-    configKey,
-    data,
-    dataError,
-    dataIndex,
-    handleImageClick,
-    handleOpenPopup,
     isScrutiny,
-    label,
-    name,
-    t,
-    tenantId,
-    titleHeading,
-    titleIndex,
+    disableScrutiny,
+    isPrevScrutiny,
+    dataError,
+    isCaseReAssigned,
     type,
+    prevDataError,
     value,
+    titleIndex,
+    titleHeading,
+    t,
+    badgeType,
+    data,
+    dataIndex,
+    textDependentOn,
+    label,
+    textDependentValue,
+    isJudge,
+    handleOpenPopup,
+    configKey,
+    name,
+    tenantId,
+    handleImageClick,
+    setShowImageModal,
   ]);
 
   return renderCard;

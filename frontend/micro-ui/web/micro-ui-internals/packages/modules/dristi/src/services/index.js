@@ -76,6 +76,14 @@ export const DRISTIService = {
       data,
       params,
     }),
+  generateCasePdf: (data, params) =>
+    Request({
+      url: Urls.dristi.casePfGeneration,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
   updateEvidence: (data, params) =>
     Request({
       url: Urls.dristi.evidenceUpdate,
@@ -92,9 +100,62 @@ export const DRISTIService = {
       data,
       params,
     }),
+  searchEvidence: (data) => {
+    return Request({
+      url: Urls.dristi.evidenceSearch,
+      useCache: false,
+      userService: false,
+      data,
+    });
+  },
   searchHearings: (data, params) => {
     return Request({
       url: Urls.dristi.searchHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  startHearing: ({ hearing }, params) => {
+    return Request({
+      url: Urls.dristi.updateHearings,
+      useCache: false,
+      userService: false,
+      data: { hearing: { ...hearing, workflow: { action: "START" } } },
+      params,
+    });
+  },
+  createHearings: (data, params) => {
+    return Request({
+      url: Urls.dristi.createHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  searchOrders: (data, params) => {
+    return Request({
+      url: Urls.dristi.ordersSearch,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  searchSubmissions: (data, params) => {
+    return Request({
+      url: Urls.dristi.submissionsSearch,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  updateSubmissions: (data, params) => {
+    return Request({
+      url: Urls.dristi.submissionsUpdate,
       useCache: false,
       userService: false,
       data,
@@ -109,4 +170,118 @@ export const DRISTIService = {
       data,
       params,
     }),
+  customApiService: (url, data, params, useCache = false, userService = true) =>
+    Request({
+      url: url,
+      useCache: useCache,
+      userService: true,
+      data,
+      params,
+    }),
+  addWitness: (data, params) =>
+    Request({
+      url: Urls.case.addWitness,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  getPendingTaskService: (data, params) =>
+    Request({
+      url: Urls.dristi.getPendingTaskFields,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  eSignService: (data, params) => {
+    return Request({
+      url: Urls.dristi.eSign,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  createDemand: (data, params) =>
+    Request({
+      url: Urls.dristi.demandCreate,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  getPaymentBreakup: (data, params) =>
+    Request({
+      url: Urls.dristi.paymentCalculator,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  callFetchBill: (data, params) =>
+    Request({
+      url: Urls.dristi.fetchBill,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  callETreasury: (data, params) =>
+    Request({
+      url: Urls.dristi.eTreasury,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  callSearchBill: (data, params) =>
+    Request({
+      url: Urls.dristi.searchBill,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  fetchBillFileStoreId: (data, params) =>
+    Request({
+      url: Urls.dristi.billFileStoreId,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  sendDocuemntForOCR: (data, params) =>
+    Request({
+      url: Urls.dristi.sendOCR,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  getOCRData: (data, params) =>
+    Request({
+      url: Urls.dristi.receiveOCR,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  getTaskDocuments: (data, params) =>
+    Request({
+      url: Urls.dristi.taskDocuments,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+  judgeAvailabilityDates: (data, params) => {
+    return Request({
+      url: Urls.dristi.judgeAvailabilityDates,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
 };

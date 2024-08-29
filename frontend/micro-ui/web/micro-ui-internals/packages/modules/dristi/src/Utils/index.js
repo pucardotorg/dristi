@@ -1,4 +1,5 @@
 import { Request } from "@egovernments/digit-ui-libraries";
+import isEmpty from "lodash/isEmpty";
 
 export const ServiceRequest = async ({
   serviceName,
@@ -59,4 +60,31 @@ export const formatDateInMonth = (date) => {
   const month = monthNames[date.getMonth()];
   const year = date.getFullYear();
   return `${day} ${month} ${year}`;
+};
+
+export function isEmptyObject(obj) {
+  // Check if the object is empty
+  if (isEmpty(obj)) {
+    return true;
+  }
+
+  // Check if all properties are empty
+  for (const key in obj) {
+    if (Array.isArray(obj[key])) {
+      return obj[key].length === 0;
+    } else if (typeof obj[key] === "object" && isEmptyObject(obj[key])) {
+      continue;
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 };

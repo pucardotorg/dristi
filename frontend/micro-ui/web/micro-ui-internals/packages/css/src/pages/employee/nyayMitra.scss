@@ -8,6 +8,7 @@
     .hambuger-back-wrapper {
       display: flex !important;
       gap: 16px;
+      cursor: pointer;
       img {
         width: fit-content !important;
       }
@@ -255,5 +256,13 @@
       padding: 16px !important;
       margin: 0px !important;
     }
+  }
+}
+
+.dristi-employee-main {
+  background-color: #ffffff;
+  .bread-crumb {
+    border-top: 1px #e8e8e8 solid;
+    border-bottom: 0.5px #edeeef solid;
   }
 }

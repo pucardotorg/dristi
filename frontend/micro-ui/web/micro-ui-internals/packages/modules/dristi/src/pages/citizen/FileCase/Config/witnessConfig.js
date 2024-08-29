@@ -128,7 +128,7 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           inputs: [
-            { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
             {
               label: "PINCODE",
               type: "text",
@@ -188,10 +188,11 @@ const witnessFormConfig = [
         populators: {
           inputs: [
             {
+              isOptional: true,
               name: "text",
-              textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
+              textAreaSubHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
               placeholder: "CS_TEXTAREA_PLACEHOLDER_ADDITIONAL_DETAIL",
-              headerClassName: "dristi-font-bold",
+              subHeaderClassName: "dristi-font-bold",
               type: "TextAreaComponent",
             },
           ],

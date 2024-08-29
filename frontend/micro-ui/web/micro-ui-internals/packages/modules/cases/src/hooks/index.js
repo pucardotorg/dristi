@@ -1,16 +1,18 @@
 import { useIndividualView } from "./useIndividualView";
 import utils from "../utils";
+import { CASEService } from "./services";
+
 const cases = {
-  useIndividualView
+  useIndividualView,
 };
 
 const Hooks = {
-  cases
+  cases,
 };
 
 const Utils = {
   browser: {
-    cases: () => { },
+    cases: () => {},
   },
   cases: {
     ...utils,
@@ -20,4 +22,5 @@ const Utils = {
 export const CustomisedHooks = {
   Hooks,
   Utils,
+  CASEService,
 };

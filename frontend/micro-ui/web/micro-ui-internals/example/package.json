@@ -9,14 +9,15 @@
     "start": "react-scripts start"
   },
   "devDependencies": {
-    "@egovernments/digit-ui-libraries": "1.8.1-beta.2",
+    "@egovernments/digit-ui-libraries": "1.8.1-beta.3",
     "@egovernments/digit-ui-module-dristi": "0.0.1",
     "@egovernments/digit-ui-module-submissions": "0.0.1",
     "@egovernments/digit-ui-module-orders": "0.0.1",
     "@egovernments/digit-ui-module-hearings": "0.0.1",
     "@egovernments/digit-ui-module-cases": "0.0.1",
+    "@egovernments/digit-ui-module-home": "0.0.1",
     "@egovernments/digit-ui-module-core": "1.8.1-beta.6",
-    "@egovernments/digit-ui-react-components": "1.8.2-beta.5",
+    "@egovernments/digit-ui-react-components": "1.8.2-beta.11",
     "@egovernments/digit-ui-components": "0.0.1-beta.28",
     "http-proxy-middleware": "^1.0.5",
     "react": "17.0.2",
