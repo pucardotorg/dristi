@@ -196,7 +196,7 @@ const PaymentForSummonModal = ({ path }) => {
 
     const tasksWithPostChannel = tasksWithMatchingOrderId.filter((task) => {
       try {
-        const taskDetails = task?.taskDetails ? JSON.parse(task.taskDetails) : null;
+        const taskDetails = task?.taskDetails;
         return taskDetails?.deliveryChannels?.channelName === "Post";
       } catch (error) {
         console.error("Error parsing taskDetails JSON:", error);

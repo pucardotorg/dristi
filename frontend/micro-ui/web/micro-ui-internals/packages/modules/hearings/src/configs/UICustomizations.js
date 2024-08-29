@@ -257,7 +257,7 @@ export const UICustomizations = {
             const taskData = data?.list
               ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
               ?.map((data) => {
-                const taskDetail = JSON.parse(data?.taskDetails || "{}");
+                const taskDetail = data?.taskDetails;
                 const channelDetailsEnum = {
                   SMS: "phone",
                   Email: "email",

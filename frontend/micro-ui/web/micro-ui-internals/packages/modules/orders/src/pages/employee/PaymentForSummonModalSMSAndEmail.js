@@ -177,7 +177,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
 
     const tasksWithRequiredChannel = tasksWithMatchingOrderId.filter((task) => {
       try {
-        const taskDetails = task?.taskDetails ? JSON.parse(task.taskDetails) : null;
+        const taskDetails = task?.taskDetails;
         return taskDetails?.deliveryChannels?.channelName === requiredChannel;
       } catch (error) {
         console.error("Error parsing taskDetails JSON:", error);
@@ -374,7 +374,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     const name = `${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.firstName} ${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.lastName}`;
 
     const task = filteredTasks?.[0];
-    const taskDetails = task?.taskDetails ? JSON.parse(task.taskDetails) : null;
+    const taskDetails = task?.taskDetails;
     const deliveryChannel = taskDetails?.deliveryChannels?.channelName || "";
 
     let contactDetail = "";
