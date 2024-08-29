@@ -1,5 +1,5 @@
 CREATE TABLE dristi_advocate_clerk (
-    id uuid,
+    id varchar(64),
     tenant_id varchar(64) NOT NULL,
     application_number varchar(64),
     wf_status varchar(64),
@@ -21,7 +21,7 @@ CREATE INDEX idx_dristi_advocate_clerk_status ON dristi_advocate_clerk(tenant_id
 CREATE INDEX idx_dristi_advocate_clerk_individual_id ON dristi_advocate_clerk(individual_id);
 
 CREATE TABLE dristi_advocate (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     application_number varchar(64) NOT NULL,
     wf_status varchar(64),
@@ -44,11 +44,11 @@ CREATE INDEX idx_dristi_advocate_individual_id ON dristi_advocate(individual_id)
 CREATE INDEX idx_dristi_advocate_bar_registration_number ON dristi_advocate(bar_registration_number);
 
 CREATE TABLE dristi_advocate_document (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     filestore_id varchar(36) NOT NULL,
     document_uid varchar(36),
     document_type varchar(64),
-    advocate_id uuid NOT NULL,
+    advocate_id varchar(64) NOT NULL,
     is_active bool DEFAULT true,
     additional_details jsonb,
     -- Audit details
@@ -65,11 +65,11 @@ CREATE INDEX idx_dristi_advocate_document_filestore_id ON dristi_advocate_docume
 CREATE INDEX idx_dristi_advocate_document_advocate_id ON dristi_advocate_document(advocate_id);
 
 CREATE TABLE dristi_advocate_clerk_document (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     filestore_id varchar(36) NOT NULL,
     document_uid varchar(36),
     document_type varchar(64),
-    clerk_id uuid NOT NULL,
+    clerk_id varchar(64) NOT NULL,
     is_active bool DEFAULT true,
     additional_details jsonb,
 

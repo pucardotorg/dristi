@@ -1,5 +1,5 @@
 CREATE TABLE dristi_task (
-    id uuid PRIMARY KEY,
+    id varchar(64) PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     order_id varchar(36) NULL,
     filing_number varchar(64),
@@ -36,11 +36,11 @@ CREATE INDEX idx_dristi_task_assigned_to ON dristi_task(assigned_to);
 CREATE INDEX idx_dristi_task_is_active ON dristi_task(is_active);
 
 CREATE TABLE dristi_task_document (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     filestore_id varchar(64) NULL,
     document_uid varchar(64) NULL,
     document_type varchar(64) NULL,
-    task_id uuid NULL,
+    task_id varchar(64) NULL,
     additional_details jsonb NULL,
     is_active bool DEFAULT TRUE,
     created_by varchar(36) NOT NULL,
@@ -57,11 +57,11 @@ CREATE INDEX idx_dristi_task_document_document_type ON dristi_task_document(docu
 CREATE INDEX idx_dristi_task_document_is_active ON dristi_task_document(is_active);
 
 CREATE TABLE dristi_task_amount (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     amount float NULL,
     type varchar(64) NULL,
     payment_ref_number varchar(64) NULL,
-    task_id uuid NULL,
+    task_id varchar(64) NULL,
     wf_status varchar(64) NULL,
     is_active bool DEFAULT TRUE,
     additional_details jsonb NULL,
