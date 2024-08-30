@@ -762,6 +762,7 @@ const GenerateOrders = () => {
       updatedFormdata.originalHearingDate =
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
+    setCurrentFormData(updatedFormdata);
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, filingNumber, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
@@ -1429,7 +1430,7 @@ const GenerateOrders = () => {
                 Demands: [
                   {
                     tenantId,
-                    consumerCode: data?.taskNumber,
+                    consumerCode: data?.task?.taskNumber,
                     consumerType: paymentType.TASK_SUMMON,
                     businessService: paymentType.TASK_SUMMON,
                     taxPeriodFrom: Date.now().toString(),

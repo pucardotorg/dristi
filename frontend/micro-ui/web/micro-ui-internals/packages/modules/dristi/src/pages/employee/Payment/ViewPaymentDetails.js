@@ -57,7 +57,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const [additionDetails, setAdditionalDetails] = useState("");
   const toast = useToast();
   const [isDisabled, setIsDisabled] = useState(false);
-  const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
+  const { caseId, filingNumber, consumerCode, businessService } = window?.Digit.Hooks.useQueryParams();
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
     {
@@ -87,8 +87,8 @@ const ViewPaymentDetails = ({ location, match }) => {
   const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
     {
       tenantId: tenantId,
-      consumerCode: caseDetails?.filingNumber,
-      businessService: "case-default",
+      consumerCode: consumerCode,
+      businessService: businessService,
     },
     {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
@@ -110,7 +110,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         Payment: {
           paymentDetails: [
             {
-              businessService: "case-default",
+              businessService: businessService,
               billId: bill.id,
               totalDue: bill?.totalAmount,
               totalAmountPaid: bill?.totalAmount || 2000,
@@ -119,9 +119,10 @@ const ViewPaymentDetails = ({ location, match }) => {
           tenantId,
           paymentMode: modeOfPayment.code,
           paidBy: "PAY_BY_OWNER",
+          status: "PAID",
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
-          totalAmountPaid: 2000,
+          totalAmountPaid: bill?.totalAmount || 2000,
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
         },
@@ -129,7 +130,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       await DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
           name: "Pending Payment",
-          entityType: "case-default",
+          entityType: businessService,
           referenceId: `MANUAL_${caseDetails?.filingNumber}`,
           status: "PAYMENT_PENDING",
           cnrNumber: null,

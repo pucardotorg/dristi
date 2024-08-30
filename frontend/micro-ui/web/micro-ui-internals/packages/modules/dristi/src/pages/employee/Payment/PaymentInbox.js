@@ -33,13 +33,19 @@ function PaymentInbox() {
       const updatedTabData = await Promise.all(
         tabConfig?.TabSearchConfig?.map(async (configItem, index) => {
           const response = await DRISTIService.customApiService(configItem?.apiDetails?.serviceName, {
-            tenantId,
-            criteria: [
-              {
-                ...configItem?.apiDetails?.requestBody?.criteria?.[0],
-                pagination: { offSet: 0, limit: 1 },
+            inbox: {
+              tenantId,
+              processSearchCriteria: {
+                ...configItem?.apiDetails?.requestBody?.inbox?.processSearchCriteria,
+                tenantId,
               },
-            ],
+              moduleSearchCriteria: {
+                ...configItem?.apiDetails?.requestBody?.inbox?.moduleSearchCriteria,
+                tenantId,
+              },
+              offset: 0,
+              limit: 1,
+            },
           });
           const totalCount = response?.criteria?.[0]?.pagination?.totalCount;
           return {

@@ -3373,7 +3373,7 @@ export const configsJudgement = [
       {
         label: "DESCRIPTION_OF_ACCUSED",
         isMandatory: false,
-        disable: true,
+        disable: false,
         key: "nameofRespondent",
         schemaKeyPath: "respondentDetails.name",
         type: "text",

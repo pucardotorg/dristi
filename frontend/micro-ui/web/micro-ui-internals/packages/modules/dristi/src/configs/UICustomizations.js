@@ -404,34 +404,26 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
       const tenantId = window?.Digit.ULBService.getStateId();
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          tenantId,
-          ...("sortBy" in additionalDetails && {
-            [additionalDetails.sortBy]: undefined,
-          }),
-          pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
-            ...("sortBy" in additionalDetails && {
-              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
-            }),
-          },
-        },
-      ];
+      const moduleSearchCriteria = {
+        ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
+        ...requestCriteria?.state?.searchForm,
+        tenantId: tenantId,
+      };
+
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
-          criteria,
-          tenantId,
-        },
-        config: {
-          ...requestCriteria?.config,
-          select: (data) => {
-            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          inbox: {
+            ...requestCriteria?.body?.inbox,
+            moduleSearchCriteria: {
+              ...moduleSearchCriteria,
+            },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: tenantId,
+            },
+            tenantId: tenantId,
           },
         },
       };
@@ -449,35 +441,79 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const caseId = row?.businessObject?.billDetails?.caseTitleFilingNumber.split(",")[1];
+      const consumerCode = row?.businessObject?.billDetails?.consumerCode;
+      const service = row?.businessObject?.billDetails?.service;
+      const billStatus = row?.businessObject?.billDetails?.billStatus;
+      const amount = row?.businessObject?.billDetails?.amount;
       switch (key) {
         case "Case ID":
-          return (
+          return billStatus === "ACTIVE" ? (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${value}`}>
-                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              <Link
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}`}
+              >
+                {String(caseId || t("ES_COMMON_NA"))}
               </Link>
             </span>
+          ) : (
+            billStatus === "PAID" && (
+              <span className="link">
+                <Link
+                  to={{
+                    pathName: `/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`,
+                    state: {
+                      success: true,
+                      receiptData: {
+                        caseInfo: [
+                          {
+                            key: "Mode of Payment",
+                            value: "CASH",
+                            copyData: false,
+                          },
+                          {
+                            key: "Amount",
+                            value: amount,
+                            copyData: false,
+                          },
+                          {
+                            key: "Transaction ID",
+                            value: "fb322njkds",
+                            copyData: true,
+                          },
+                        ],
+                        isArrow: false,
+                        showTable: true,
+                        showCopytext: true,
+                      },
+                    },
+                  }}
+                >
+                  {String(caseId || t("ES_COMMON_NA"))}
+                </Link>
+              </span>
+            )
           );
-        case "Case Type":
-          return <span>NIA S138</span>;
-        case "Stage":
-          return <span>E-filing</span>;
+        case "Case Name":
+          return <span>{String(value ? value.split(",")[0] : t("ES_COMMON_NA"))}</span>;
         case "Amount Due":
-          return <span>Rs 2000</span>;
+          return <span>{`Rs ${value}`}</span>;
         case "Action":
           return (
-            <span className="action-link">
-              <Link
-                style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
-                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}
-              >
-                {" "}
-                <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
-                  {t("CS_RECORD_PAYMENT")}
-                </span>{" "}
-                <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
-              </Link>
-            </span>
+            billStatus === "ACTIVE" && (
+              <span className="action-link">
+                <Link
+                  style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
+                  to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}`}
+                >
+                  {" "}
+                  <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
+                    {t("CS_RECORD_PAYMENT")}
+                  </span>{" "}
+                  <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
+                </Link>
+              </span>
+            )
           );
         default:
           return t("ES_COMMON_NA");
