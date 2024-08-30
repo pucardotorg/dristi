@@ -34,32 +34,11 @@ const complainantDetailsFormConfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          options: [
-            {
-              code: "INDIVIDUAL",
-              name: "Individual",
-              showCompanyDetails: false,
-              complainantLocation: true,
-              commonFields: true,
-              isEnabled: true,
-              isIndividual: true,
-            },
-            {
-              code: "REPRESENTATIVE",
-              name: "Entity",
-              showCompanyDetails: true,
-              isIndividual: false,
-              commonFields: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
-              isEnabled: true,
-              apiDetails: {
-                serviceName: "/advocate/advocate/v1/_create",
-                requestKey: "advocates",
-                AdditionalFields: ["barRegistrationNumber"],
-              },
-            },
-          ],
+          mdmsConfig: {
+            masterName: "ComplainantRespondentType",
+            moduleName: "case",
+            select: "(data) => {return data['case'].ComplainantRespondentType?.map((item) => {return item;});}",
+          },
           customStyle: {
             gap: "40px",
             flexDirection: "row",

@@ -4,30 +4,6 @@ const defaultSearchValues = {
   substage: "",
 };
 
-export const subStageOptions = [
-  "Filing",
-  "Cognizance",
-  "Inquiry",
-  "Appearance",
-  "Framing of charges",
-  "Evidence",
-  "Arguments",
-  "Judgment",
-  "Post-Judgement",
-];
-
-export const outcomesOptions = [
-  "Withdrawn",
-  "Settled",
-  "Transferred",
-  "Dismissed",
-  "Allowed",
-  "Partly allowed",
-  "Convicted",
-  "Partly convicted",
-  "Abated",
-];
-
 export const userTypeOptions = [
   {
     code: "LITIGANT",
@@ -194,7 +170,11 @@ export const TabFSOSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",

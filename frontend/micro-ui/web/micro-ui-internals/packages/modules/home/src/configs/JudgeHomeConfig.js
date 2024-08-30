@@ -12,29 +12,6 @@ export const CaseWorkflowState = {
   PENDING_ADMISSION: "PENDING_ADMISSION",
 };
 
-export const subStageOptions = [
-  "Filing",
-  "Cognizance",
-  "Inquiry",
-  "Appearance",
-  "Framing of charges",
-  "Evidence",
-  "Arguments",
-  "Judgment",
-  "Post-Judgement",
-];
-export const outcomesOptions = [
-  "Withdrawn",
-  "Settled",
-  "Transferred",
-  "Dismissed",
-  "Allowed",
-  "Partly allowed",
-  "Convicted",
-  "Partly convicted",
-  "Abated",
-];
-
 export const userTypeOptions = [
   {
     code: "LITIGANT",
@@ -181,7 +158,11 @@ export const TabJudgeSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",
@@ -302,7 +283,11 @@ export const TabJudgeSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",
@@ -452,7 +437,11 @@ export const TabJudgeSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",
@@ -516,7 +505,7 @@ export const TabJudgeSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              outcome: outcomesOptions,
+              outcome: [],
             },
           ],
         },
@@ -591,7 +580,13 @@ export const TabJudgeSearchConfig = {
                 disable: false,
                 populators: {
                   name: "outcome",
-                  options: outcomesOptions,
+                  optionsKey: "outcome",
+                  mdmsConfig: {
+                    masterName: "OutcomeType",
+                    moduleName: "case",
+                    select:
+                      "(data) => {return data['case'].OutcomeType?.flatMap((item) => {return item.judgementList && item.judgementList.length > 0 ? item.judgementList.map(it => ({outcome: it})) : [item];});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",

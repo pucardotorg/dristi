@@ -8,7 +8,7 @@ import HomeCard from "./components/HomeCard";
 export const HomeModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["home", "common", "workflow"];
+  const moduleCode = ["home", "common", "workflow", "orders"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
