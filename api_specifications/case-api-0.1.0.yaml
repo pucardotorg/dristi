@@ -335,7 +335,7 @@ components:
           description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
           minLength: 2
           maxLength: 64
-        courCaseNumber:
+        courtCaseNumber:
           type: string
           description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
           minLength: 10
@@ -621,6 +621,26 @@ components:
             - complainant.primary
             - complainant.additional
             - respondent.primary
+        isPartyInPerson:
+          type: boolean
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId
+        name:
+          type: string
+          description: Name as entered by the complainant
+        email:
+          type: array
+          items:
+            type: string
+            minLength: 3
+            maxLength: 100
+        phoneNumber:
+          type: array
+          items:
+            type: string
+        address:
+          type: array
+          items:
+            type: string
         isActive:
           type: boolean
           description: >-
