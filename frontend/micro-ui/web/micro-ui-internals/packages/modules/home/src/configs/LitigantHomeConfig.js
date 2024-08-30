@@ -410,20 +410,6 @@ export const TabLitigantSearchConfig = {
                   },
                 },
               },
-              {
-                label: "Case ID",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "filingNumber",
-                  error: "BR_PATTERN_ERR_MSG",
-                  validation: {
-                    pattern: {},
-                    minlength: 2,
-                  },
-                },
-              },
             ],
           },
 
