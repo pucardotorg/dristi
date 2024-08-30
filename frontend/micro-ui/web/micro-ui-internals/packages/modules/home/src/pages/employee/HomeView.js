@@ -12,6 +12,7 @@ import LitigantHomePage from "./LitigantHomePage";
 import { TabLitigantSearchConfig } from "../../configs/LitigantHomeConfig";
 import ReviewCard from "../../components/ReviewCard";
 import { InboxIcon, DocumentIcon } from "../../../homeIcon";
+import _ from "lodash";
 
 const defaultSearchValues = {
   filingNumber: "",
@@ -95,7 +96,7 @@ const HomeView = () => {
   }, [searchResult, userType]);
 
   const advocateId = useMemo(() => {
-    return searchResult?.[0]?.responseList?.[0]?.id;
+    return searchResult?.[0]?.id;
   }, [searchResult]);
 
   const additionalDetails = useMemo(() => {
@@ -124,6 +125,19 @@ const HomeView = () => {
     state && state.taskType && setTaskType(state.taskType);
   }, [state]);
 
+  const { isLoading: isOutcomeLoading, data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "OutcomeType" }],
+    {
+      select: (data) => {
+        return (data?.case?.OutcomeType || []).flatMap((item) => {
+          return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+        });
+      },
+    }
+  );
+
   const getTotalCountForTab = useCallback(
     async function (tabConfig) {
       const updatedTabData = await Promise.all(
@@ -135,6 +149,9 @@ const HomeView = () => {
                 ...configItem?.apiDetails?.requestBody?.criteria?.[0],
                 ...defaultSearchValues,
                 ...additionalDetails,
+                ...(configItem?.apiDetails?.requestBody?.criteria[0]["outcome"] && {
+                  outcome: outcomeTypeData,
+                }),
                 pagination: { offSet: 0, limit: 1 },
               },
             ],
@@ -149,11 +166,11 @@ const HomeView = () => {
       );
       setTabData(updatedTabData);
     },
-    [additionalDetails, tenantId]
+    [additionalDetails, outcomeTypeData, tenantId]
   );
 
   useEffect(() => {
-    if (!(isLoading && isFetching && isSearchLoading && isFetchCaseLoading)) {
+    if (!(isLoading && isFetching && isSearchLoading && isFetchCaseLoading && isOutcomeLoading)) {
       if (state?.role && rolesToConfigMapping?.find((item) => item[state.role])[state.role]) {
         const rolesToConfigMappingData = rolesToConfigMapping?.find((item) => item[state.role]);
         const tabConfig = rolesToConfigMappingData.config;
@@ -179,7 +196,7 @@ const HomeView = () => {
         getTotalCountForTab(tabConfig);
       }
     }
-  }, [additionalDetails, getTotalCountForTab, isFetchCaseLoading, isFetching, isLoading, isSearchLoading, roles, state, tenantId]);
+  }, [additionalDetails, getTotalCountForTab, isOutcomeLoading, isFetchCaseLoading, isFetching, isLoading, isSearchLoading, roles, state, tenantId]);
 
   // calling case api for tab's count
   useEffect(() => {

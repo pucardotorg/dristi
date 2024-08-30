@@ -234,7 +234,8 @@ export const newConfig = [
                 errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
                 isRequired: true,
-                minlength: 2,
+                minlength: 1,
+                maxlength: 16,
                 title: "",
               },
               isMandatory: true,
@@ -378,18 +379,6 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "CS_ADHAAR",
-                  subText: "CS_ADHAAR_SUB_TEXT",
-                },
-                {
-                  code: "OTHER ID",
-                  name: "CS_OTHER",
-                  subText: "CS_OTHER_SUB_TEXT",
-                },
-              ],
               optionsCustomStyle: {
                 top: "40px",
               },
@@ -458,7 +447,7 @@ export const newConfig = [
               label: "CS_ID_TYPE",
               type: "dropdown",
               name: "selectIdType",
-              optionsKey: "name",
+              optionsKey: "type",
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "", ID_Proof: [] },
@@ -466,16 +455,11 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "AADHAR",
-                },
-                {
-                  code: "PAN",
-                  name: "PAN",
-                },
-              ],
+              mdmsConfig: {
+                masterName: "IdentifierType",
+                moduleName: "User Registration",
+                select: "(data) => {return data['User Registration'].IdentifierType?.map((item) => {return item;});}",
+              },
               optionsCustomStyle: {
                 top: "40px",
               },
