@@ -1,5 +1,5 @@
 import { TextArea } from "@egovernments/digit-ui-components";
-import { ActionBar, CardLabel, Dropdown, LabelFieldPair, Button } from "@egovernments/digit-ui-react-components";
+import { ActionBar, CardLabel, Dropdown, LabelFieldPair, Button, Loader } from "@egovernments/digit-ui-react-components";
 import debounce from "lodash/debounce";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -66,7 +66,7 @@ const InsideHearingMainPage = () => {
       hearingId: hearingId,
     },
   };
-  const { data: hearingsData, refetch: refetchHearing } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingsData, refetch: refetchHearing, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     reqBody,
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
@@ -85,7 +85,7 @@ const InsideHearingMainPage = () => {
 
   const updateTranscriptRequest = useMemo(() => debounce(_updateTranscriptRequest, 1000), [_updateTranscriptRequest]);
 
-  const { data: caseDataResponse, refetch: refetchCase } = Digit.Hooks.dristi.useSearchCaseService(
+  const { data: caseDataResponse, refetch: refetchCase, isLoading: isCaseLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -204,6 +204,10 @@ const InsideHearingMainPage = () => {
   };
 
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
+
+  if (isCaseLoading || isHearingLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="admitted-case" style={{ display: "flex", height: "100vh" }}>
