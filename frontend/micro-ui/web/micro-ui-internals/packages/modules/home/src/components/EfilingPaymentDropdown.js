@@ -113,7 +113,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
   );
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
-    { tenantId, consumerCode: caseDetails?.filingNumber, service: "case" },
+    { tenantId, consumerCode: caseDetails?.filingNumber, service: "case-default" },
     "dristi",
     Boolean(caseDetails?.filingNumber)
   );
@@ -173,7 +173,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
           ],
         });
       }
-      const bill = await fetchBill(caseDetails?.filingNumber, tenantId, "case");
+      const bill = await fetchBill(caseDetails?.filingNumber, tenantId, "case-default");
       if (bill?.Bill?.length) {
         const paymentStatus = await openPaymentPortal(bill);
         if (paymentStatus) {
