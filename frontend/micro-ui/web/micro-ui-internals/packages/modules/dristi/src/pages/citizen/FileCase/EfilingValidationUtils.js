@@ -786,11 +786,8 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
-    if (
-      formData?.delayCondonationType?.code === "NO" &&
-      (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
-    ) {
-      setFormErrors("condonationFileUpload", { type: "required" });
+    if (formData?.delayCondonationType?.code === "NO" && !formData?.delayApplicationReason?.reasonForDelay?.length > 0) {
+      setFormErrors("delayApplicationReason", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
