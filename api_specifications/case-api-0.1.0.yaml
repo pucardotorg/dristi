@@ -554,12 +554,19 @@ components:
         isPartyInPerson:
           type: boolean
           description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId
+        name:
+          type: string
+          description: Name as entered by the complainant
         email:
-          type: string
-          minLength: 3
-          maxLength: 100
+          type: array
+          items:
+            type: string
+            minLength: 3
+            maxLength: 100
         phoneNumber:
-          type: string
+          type: array
+          items:
+            type: string
         address:
           type: array
           items:
