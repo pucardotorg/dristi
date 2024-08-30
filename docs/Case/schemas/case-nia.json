@@ -39,7 +39,7 @@
       "minLength": 11,
       "maxLength": 11,
       "pattern": "^[a-zA-Z]{4}0[a-zA-Z0-9]{6}$",
-      "description": "11 character string. first for alphabets. fifth 0. last six mostly numeric, but alphanumeric allowed"
+      "description": "11 character string. first four alphabets. fifth 0. last six mostly numeric, but alphanumeric allowed"
     },
     "cheque": {
       "type": "string",
