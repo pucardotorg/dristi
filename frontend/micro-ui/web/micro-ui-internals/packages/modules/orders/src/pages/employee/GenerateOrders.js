@@ -1287,7 +1287,7 @@ const GenerateOrders = () => {
           },
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress[0],
+            address: respondentAddress?.[0],
             phone: respondentPhoneNo[0] || "",
             email: respondentEmail[0] || "",
             age: "",
@@ -1399,7 +1399,13 @@ const GenerateOrders = () => {
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : address || "",
+            address: ["Post", "Via Police"].includes(item?.type)
+              ? {
+                  ...address,
+                  locality: item?.value?.locality || address?.locality,
+                  coordinates: item?.value?.coordinates || address?.coordinates,
+                }
+              : address || "",
             phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
             email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",
