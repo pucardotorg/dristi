@@ -62,7 +62,7 @@ CREATE TABLE dristi_task_amount (
     type varchar(64) NULL,
     payment_ref_number varchar(64) NULL,
     task_id uuid NULL,
-    wf_status varchar(64) NULL,
+    payment_status varchar(64) NULL,
     is_active bool DEFAULT TRUE,
     additional_details jsonb NULL,
     created_by varchar(36) NOT NULL,

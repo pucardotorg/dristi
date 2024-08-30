@@ -67,7 +67,7 @@ CREATE INDEX idx_dristi_application_document_filestore ON dristi_application_doc
 CREATE INDEX idx_dristi_application_document_type ON dristi_application_document(document_type);
 CREATE INDEX idx_dristi_application_document_application_id ON dristi_application_document(application_id);
 
-CREATE TABLE dristi_application_approved_by (
+CREATE TABLE dristi_application_issued_by (
     id uuid NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     application_id uuid NOT NULL,

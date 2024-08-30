@@ -13,7 +13,7 @@ serviceMaps:
       auditAttributeBasePath: application
       queryMaps:
 
-        - query: INSERT INTO dristi_application(id, tenantId, caseId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, statuteSection,issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application(id, tenant_id, case_id, filing_number, cnr_number, reference_id, created_date, application_created_by, on_behalf_of, application_type, application_number, wf_status, comments, is_active, additional_details, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
@@ -25,16 +25,8 @@ serviceMaps:
             - jsonPath: $.application.createdDate
             - jsonPath: $.application.createdBy
             - jsonPath: $.application.onBehalfOf
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.application.applicationType
             - jsonPath: $.application.applicationNumber
-            - jsonPath: $.application.statuteSection
-              type: JSON
-              dbType: JSONB
-            - jsonPath: $.application.issuedBy
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.application.status
             - jsonPath: $.application.comment
               type: JSON
@@ -48,7 +40,7 @@ serviceMaps:
             - jsonPath: $.application.auditDetails.createdTime
             - jsonPath: $.application.auditDetails.lastModifiedTime
 
-        - query: INSERT INTO dristi_application_document(id, fileStore, documentUid, documentType, application_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application_document(id, filestore_id, document_uid, document_type, application_id, additional_details, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application.documents.*
           jsonMaps:
             - jsonPath: $.application.documents.*.id
@@ -59,6 +51,40 @@ serviceMaps:
             - jsonPath: $.application.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
+            - jsonPath: $.application.documents.*.auditDetails.createdBy
+            - jsonPath: $.application.documents.*.auditDetails.lastModifiedBy
+            - jsonPath: $.application.documents.*.auditDetails.createdTime
+            - jsonPath: $.application.documents.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_statutes_and_sections(id, tenant_id, statute_id, section_id, application_id, additional_details, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET statute_id = EXCLUDED.statute_id, section_id = EXCLUDED.section_id, application_id = EXCLUDED.application_id, additional_details = EXCLUDED.additional_details, last_modified_by = EXCLUDED.last_modified_by, last_modified_time = EXCLUDED.last_modified_time, created_time = EXCLUDED.created_time, created_by = EXCLUDED.created_by;
+          basePath: application.statuteSection
+          jsonMaps:
+            - jsonPath: $.application.statuteSection.id
+            - jsonPath: $.application.statuteSection.tenantId
+            - jsonPath: $.application.statuteSection.statute
+            - jsonPath: $.application.statuteSection.sections.*
+            - jsonPath: $.application.id
+            - jsonPath: $.application.statuteSection.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.statuteSection.auditDetails.createdBy
+            - jsonPath: $.application.statuteSection.auditDetails.lastModifiedBy
+            - jsonPath: $.application.statuteSection.auditDetails.createdTime
+            - jsonPath: $.application.statuteSection.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_application_issued_by(id, tenant_id, statute_id, section_id, application_id, additional_details, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET statute_id = EXCLUDED.statute_id, section_id = EXCLUDED.section_id, application_id = EXCLUDED.application_id, additional_details = EXCLUDED.additional_details, last_modified_by = EXCLUDED.last_modified_by, last_modified_time = EXCLUDED.last_modified_time, created_time = EXCLUDED.created_time, created_by = EXCLUDED.created_by;
+          basePath: application.issuedBy
+          jsonMaps:
+            - jsonPath: $.application.issuedBy.id
+            - jsonPath: $.application.issuedBy.tenantId
+            - jsonPath: $.application.issuedBy.judgeId.*
+            - jsonPath: $.application.issuedBy.benchId
+            - jsonPath: $.application.issuedBy.courtId
+            - jsonPath: $.application.id
+            - jsonPath: $.application.issuedBy.auditDetails.createdBy
+            - jsonPath: $.application.issuedBy.auditDetails.lastModifiedBy
+            - jsonPath: $.application.issuedBy.auditDetails.createdTime
+            - jsonPath: $.application.issuedBy.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update application details in tables
@@ -71,10 +97,9 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: application
       queryMaps:
-        - query: UPDATE dristi_application SET tenantId=?,caseId=?,filingNumber=?,cnrNumber=?,referenceId=?,createdDate=?,applicationCreatedBy=?,onBehalfOf=?,applicationType=?,applicationNumber=?,statuteSection=?,issuedBy=?,status=?,comment=?,isActive=?,additionalDetails=?,lastModifiedBy=?,lastModifiedTime=? WHERE id=? ;
+        - query: UPDATE dristi_application SET caseId=?,filingNumber=?,cnrNumber=?,referenceId=?,createdDate=?,applicationCreatedBy=?,onBehalfOf=?,applicationType=?,applicationNumber=?,statuteSection=?,issuedBy=?,status=?,comment=?,isActive=?,additionalDetails=?,lastModifiedBy=?,lastModifiedTime=? WHERE id=? ;
           basePath: application
           jsonMaps:
-            - jsonPath: $.application.tenantId
             - jsonPath: $.application.caseId
             - jsonPath: $.application.filingNumber
             - jsonPath: $.application.cnrNumber
@@ -103,6 +128,18 @@ serviceMaps:
             - jsonPath: $.application.auditDetails.lastModifiedBy
             - jsonPath: $.application.auditDetails.lastModifiedTime
             - jsonPath: $.application.id
+
+        - query: INSERT INTO dristi_application_document(id, fileStore, documentUid, documentType, application_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET fileStore = EXCLUDED.fileStore, documentUid = EXCLUDED.documentUid, documentType = EXCLUDED.documentType, application_id = EXCLUDED.application_id, additionalDetails = EXCLUDED.additionalDetails;
+          basePath: application.documents.*
+          jsonMaps:
+            - jsonPath: $.application.documents.*.id
+            - jsonPath: $.application.documents.*.fileStore
+            - jsonPath: $.application.documents.*.documentUid
+            - jsonPath: $.application.documents.*.documentType
+            - jsonPath: $.application.id
+            - jsonPath: $.application.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
 
     - version: 1.0
       description: Update application status in tables
