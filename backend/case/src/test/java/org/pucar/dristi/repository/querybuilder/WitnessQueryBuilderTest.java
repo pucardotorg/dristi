@@ -24,6 +24,9 @@ public class WitnessQueryBuilderTest {
     @Mock
     private List<Object> preparedStmtList;
 
+    @Mock
+    private List<Integer> preparedStmtArgsList;
+
     @BeforeEach
     public void setUp() {
         // Set up mock behavior or fields if needed
@@ -74,9 +77,10 @@ public class WitnessQueryBuilderTest {
         List<WitnessSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.add(new WitnessSearchCriteria(null, null, false));
         preparedStmtList = null;
+        preparedStmtArgsList = null;
 
         // Assert
-        assertThrows(CustomException.class, () -> witnessQueryBuilder.getWitnessesSearchQuery(criteriaList, preparedStmtList, new ArrayList<>()));
+        assertThrows(CustomException.class, () -> witnessQueryBuilder.getWitnessesSearchQuery(criteriaList, preparedStmtList, preparedStmtArgsList));
     }
 
 }
