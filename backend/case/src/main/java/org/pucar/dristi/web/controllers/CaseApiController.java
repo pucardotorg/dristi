@@ -62,8 +62,9 @@ public class CaseApiController {
     @PostMapping(value = "/v1/_search")
     public ResponseEntity<CaseListResponse> caseV1SearchPost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
-
+        //TODO: Atul: do we need to really pass the entire requestbody. Can we not just pass body.getCriteria()?
         caseService.searchCases(body);
+
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         CaseListResponse caseResponse = CaseListResponse.builder().criteria(body.getCriteria()).responseInfo(responseInfo).build();
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
