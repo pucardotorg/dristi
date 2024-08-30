@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 import org.slf4j.Logger;
@@ -38,16 +39,16 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = "123";
         String cnrNumber = "456";
         String filingNumber = "789";
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCaseId(caseId);
+        caseExists.setCourtCaseNumber(courtCaseNumber);
+        caseExists.setCnrNumber(cnrNumber);
+        caseExists.setFilingNumber(filingNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE " +
-                "cases.id = '111' AND " +
-                "cases.courtcasenumber = '123' AND " +
-                "cases.cnrnumber = '456' AND " +
-                "cases.filingnumber = '789';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.id = ? AND cases.cnrNumber = ? AND cases.filingnumber = ? AND cases.courtcasenumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -58,14 +59,16 @@ class CaseQueryBuilderTest {
         String cnrNumber = "456";
         String filingNumber = null;
         String caseId = null;
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCaseId(caseId);
+        caseExists.setCourtCaseNumber(courtCaseNumber);
+        caseExists.setCnrNumber(cnrNumber);
+        caseExists.setFilingNumber(filingNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE " +
-                "cases.courtcasenumber = '123' AND " +
-                "cases.cnrnumber = '456';";
+        String expectedQuery =" SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.cnrNumber = ? AND cases.courtcasenumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -76,13 +79,16 @@ class CaseQueryBuilderTest {
         String cnrNumber = null;
         String filingNumber = "789";
         String caseId = null;
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCaseId(caseId);
+        caseExists.setCourtCaseNumber(courtCaseNumber);
+        caseExists.setCnrNumber(cnrNumber);
+        caseExists.setFilingNumber(filingNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases " +
-                "WHERE cases.courtcasenumber = '123' AND cases.filingnumber = '789';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.filingnumber = ? AND cases.courtcasenumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -93,13 +99,17 @@ class CaseQueryBuilderTest {
         String cnrNumber = "456";
         String filingNumber = "789";
         String caseId = null;
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCaseId(caseId);
+        caseExists.setCourtCaseNumber(courtCaseNumber);
+        caseExists.setCnrNumber(cnrNumber);
+        caseExists.setFilingNumber(filingNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.cnrnumber = '456' AND cases.filingnumber = '789';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.cnrNumber = ? AND cases.filingnumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -110,13 +120,14 @@ class CaseQueryBuilderTest {
         String cnrNumber = null;
         String filingNumber = null;
         String caseId = null;
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCourtCaseNumber(courtCaseNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.courtcasenumber = '123';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.courtcasenumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -127,12 +138,13 @@ class CaseQueryBuilderTest {
         String cnrNumber = "456";
         String filingNumber = null;
         String caseId = null;
-
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCnrNumber(cnrNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.cnrnumber = '456';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.cnrNumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
@@ -144,12 +156,14 @@ class CaseQueryBuilderTest {
         String filingNumber = "123";
         String caseId = null;
 
+        CaseExists caseExists = new CaseExists();
+        caseExists.setFilingNumber(filingNumber);
         // Act
-        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseExists, new ArrayList<>(), new ArrayList<>());
 
 
         // Assert
-        String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.filingnumber = '123';";
+        String expectedQuery = " SELECT COUNT(*) FROM dristi_cases cases  WHERE cases.filingnumber = ?;";
         assertEquals(expectedQuery, query);
     }
 
