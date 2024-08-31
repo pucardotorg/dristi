@@ -665,12 +665,11 @@ components:
             stored here as key/value pairs. Implementation specific.
       required:
         - tenantId
-        - advocateId
-        - referenceId
         - partyCategory
       oneOf:
         - required:
-            - userId
+            - individualId
+            - name
             - organisationID
     
     Witness:
@@ -918,6 +917,8 @@ components:
     CaseCodeCriteria:
       type: object
       properties:
+        tenantId:
+          type: string
         code:
           type: string
           description: access that needs verification
