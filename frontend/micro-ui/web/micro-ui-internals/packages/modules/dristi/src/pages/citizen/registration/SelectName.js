@@ -27,11 +27,10 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
         const oldValue = formDataCopy[key];
         let value = oldValue;
         if (typeof value === "string") {
-          let updatedValue = value.replace(/[^a-zA-Z\s]/g, "")
+          let updatedValue = value
+            .replace(/[^a-zA-Z\s]/g, "")
             .trimStart()
-            .replace(/ +/g, " ")
-            .toLowerCase()
-            .replace(/\b\w/g, char => char.toUpperCase());
+            .replace(/ +/g, " ");
           if (updatedValue !== oldValue) {
             const element = document.querySelector(`[name="${key}"]`);
             const start = element?.selectionStart;

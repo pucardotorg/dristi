@@ -1,0 +1,53 @@
+@startuml
+title "Judge registers a case"
+autonumber
+actor Judge as J
+participant HomeScreenUI as H order 1
+participant PendingTasksUI as I order 2
+participant ViewCaseUI as CI order 3
+participant OrderUI as OI order 4
+participant CaseSvc order 6
+participant HearingSvc order 7
+participant OrderSvc order 8
+participant TaskSvc order 9
+participant Workflow order 10
+participant ESign order 15
+
+J->I: View Inbox with cases pending registration
+J->CI: Click on case
+CI->CaseSvc++: Search for case by\n case number
+return Case
+CI->CI: Display case details
+alt "Register Case"
+J -> CI: Register case
+CI->CaseSvc++: Call update with workflow action
+CaseSvc->CaseSvc: Generate CNR,CMP
+CaseSvc->Workflow++: Update workflow to "registered" status
+return workflow
+CaseSvc->CI: Return updated case payload
+CI-> OI: Show the order for admission hearing
+J->OI: Click on "Issue order"
+OI->OrderSvc++:Create order of type "Schedule Admission Hearing"
+return Order
+OI->ESign++:Sign the order
+return Signed order doc
+OI->OrderSvc++: Update order with signed doc \nand update workflow state to "PUBLISHED"
+return order
+OI->HearingSvc++: Hearing create with workflow action \n("SCHEDULED") and attach orderID
+return "Hearing date"
+J->OI: Show the order for notice UI
+...Judge fills in details...
+J ->OI: Click on "Issue order"
+OI->OrderSvc++:Create order of type notice (follow summons flow)
+return order
+OI->ESign++:Sign the order
+return Signed order doc
+OI->OrderSvc++: Update order with signed doc \nand update workflow state to "PUBLISHED"
+return order
+OI->TaskSvc++: Create task type notice & attach workflow (follow summons flow)
+return task
+OI->CaseSvc++: Update case workflow "PENDING_RESPONSE"
+return case
+OI->H: Redirect to home page
+end
+@enduml

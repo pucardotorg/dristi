@@ -92,6 +92,34 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /case/v1/code/_verify:
+    post:
+      tags:
+        - Case
+      summary: verify the access code
+      requestBody:
+        description: verify that the access code provided to join a case is indeed the code the case has
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseCodeRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with enriched litigants and representatives
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JoinCaseResponse'
+        '400':
+          description: Failed to verify the given litigants and representatives to be added to the case
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
   /case/v1/_verify:
     post:
       tags:
@@ -304,22 +332,28 @@ components:
           maxLength: 10000
         filingNumber:
           type: string
-          description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
+          description: The formatted number given at filing time (from draft). When a case is drafted, it is assigned a filing number. Format - KL-[XXXXXX]-[YYYY]. Unique per state
           minLength: 2
           maxLength: 64
-        courCaseNumber:
+          example: KL-000001-2024
+        courtCaseNumber:
           type: string
-          description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
+          description: Calendar Case (CC) or Summary Trail (ST) number. Unique per court room. Format - ST/[X]/[cy:YYYY] OR CC/[X]/[cy:YYYY]
           minLength: 10
           maxLength: 24
-          example: CC/023443/2024
+          example: CC/023443/2024 OR ST/1/2024
         cnrNumber:
           type: string
-          description: >-
-            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
-          minLength: 2
+          description: This refers to the case number record (CNR). This is generated after a case is registered by the judge with/without an admission hearing. The case number format is different from the filing number format. Format - [STATE][DISTRICT][ESTABLISHMENT][XXXXXX][cy:YYYY]
+          minLength: 18
           maxLength: 32
           example: PBJL01-123556-2024
+        cmpNumber:
+          type: string
+          description: refers to CMP number assigned along with CNR number to a case. Unique per court Room. Format - CMP/[X]/[cy:YYYY]
+          minLength: 10
+          maxLength: 24
+          example: CMP/1/2024
         accessCode:
           type: string
           description: Case access code string to enable anyone to join & access the case details. Should be system generated as per a specified format and stored in an encrypted fashion.
@@ -328,9 +362,10 @@ components:
           type: string
           description: >-
             The courtroom or other ADR entity ID that will be trying/hearing the
-            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. 
+            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. it is the basis of generating CNR number
           minLength: 2
           maxLength: 64
+          example: KLKM52
         judgeId:
           type: string
         stage:
@@ -593,6 +628,26 @@ components:
             - complainant.primary
             - complainant.additional
             - respondent.primary
+        isPartyInPerson:
+          type: boolean
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId
+        name:
+          type: string
+          description: Name as entered by the complainant
+        email:
+          type: array
+          items:
+            type: string
+            minLength: 3
+            maxLength: 100
+        phoneNumber:
+          type: array
+          items:
+            type: string
+        address:
+          type: array
+          items:
+            type: string
         isActive:
           type: boolean
           description: >-
@@ -617,12 +672,11 @@ components:
             stored here as key/value pairs. Implementation specific.
       required:
         - tenantId
-        - advocateId
-        - referenceId
         - partyCategory
       oneOf:
         - required:
-            - userId
+            - individualId
+            - name
             - organisationID
     
     Witness:
@@ -813,8 +867,6 @@ components:
             type: string
         substage:
           type: string
-        courtCaseNumber:
-          type: string
         litigantId:
           type: string
         advocateId:
@@ -850,14 +902,42 @@ components:
       properties:
         caseId:
           type: string
-        courtCaseNumber:
-          type: string
         cnrNumber:
           type: string
         filingNumber:
           type: string
         exists:
           type: boolean
+
+    CaseCodeRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        code:
+          $ref: '#/components/schemas/CaseCodeCriteria'
+
+    CaseCodeCriteria:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        code:
+          type: string
+          description: access that needs verification
+        filingNumber:
+          type: string
+          description: filing number of the case whose code is being verified
+
+    CaseCodeResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        isValid:
+          type: boolean
+          description: true is code matches. false if either code is incorrect or case doesn't exists
     
     WitnessSearchCriteria:
       type: object

@@ -88,7 +88,7 @@ const Login = ({ stateCode }) => {
     if (!user) {
       return;
     }
-    Digit.SessionStorage.set("citizen.userRequestObject", user);
+    localStorage.setItem("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     if (params.isRememberMe) {
       localStorage.setItem("refresh-token", user?.refresh_token);
