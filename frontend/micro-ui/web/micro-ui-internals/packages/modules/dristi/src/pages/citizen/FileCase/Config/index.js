@@ -219,11 +219,6 @@ export const sideMenuConfig = [
         initialMandatoryFieldCount: 1,
         dependentMandatoryFields: [
           { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayCondonationType", dependentOnKey: "showForm" },
-          {
-            field: "condonationFileUpload.document",
-            dependentOn: "delayCondonationType",
-            dependentOnKey: "showForm",
-          },
         ],
         optionalFields: [],
         dependentOptionalFields: [],
