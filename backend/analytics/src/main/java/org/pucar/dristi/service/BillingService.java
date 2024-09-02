@@ -68,7 +68,6 @@ public class BillingService {
             for (int i = 0; i < paymentDetailsArray.length(); i++) {
 
                 JSONObject paymentDetails = paymentDetailsArray.getJSONObject(i);
-//                tenantId= paymentDetails.getString("tenantId");
                 JSONArray billDetailsArray = util.constructArray(paymentDetails.toString(), PAYMENT_PAYMENT_BILL_DETAILS_PATH);
 
                 for (int j = 0; j < billDetailsArray.length(); j++) {
@@ -82,9 +81,8 @@ public class BillingService {
 
             }
 
-            //todo : two approach either call demand then make payload and create or  fetch es and update
-            //for now going with demand
-            List<String> demandList = new ArrayList<>();
+            //  todo : two approach either call demand then make payload and create or  fetch es and update
+            //  fetch demand based approach
             for (String demandId : demandSet) {
                 String demand = billingUtil.getDemand(tenantId, demandId, requestInfo);
                 JSONArray demandArray = util.constructArray(demand, DEMAND_PATH);
@@ -97,11 +95,9 @@ public class BillingService {
                 JSONObject demandRequest = new JSONObject();
                 demandRequest.put("RequestInfo", requestInfo);
                 demandRequest.put("Demands", demandArray);
-
                 processDemand(demandRequest.toString());
 
             }
-
 
         } catch (Exception e) {
 
@@ -118,21 +114,13 @@ public class BillingService {
 
             LinkedHashMap<String, Object> requestInfoMap = JsonPath.read(demands, REQUEST_INFO_PATH);
             JSONObject requestInfo = new JSONObject(requestInfoMap);
-//            JSONObject userInfo = requestInfo.getJSONObject("userInfo");
-//            JSONArray roles = userInfo.getJSONArray("roles");
-//
-//            // Create the new role
-//            JSONObject newRole = new JSONObject();
-//            newRole.put("code", "INTERNAL_MICROSERVICE_ROLE");
-//            // Append the new role to the roles array
-//            roles.put(newRole);
+
             StringBuilder bulkRequest = buildBulkRequest(kafkaJsonArray, requestInfo);
 
             if (!bulkRequest.isEmpty()) {
                 String uri = config.getEsHostUrl() + config.getBulkPath();
                 indexerUtils.esPost(uri, bulkRequest.toString());
             }
-            log.info("remove me ");
         } catch (Exception e) {
 
         }

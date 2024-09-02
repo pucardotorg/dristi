@@ -20,10 +20,8 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class BillingUtil {
 
     private final Configuration config;
-
     private final IndexerUtils indexerUtil;
     private final ServiceRequestRepository requestRepository;
-
     private final CaseUtil caseUtil;
 
     @Autowired
@@ -42,18 +40,6 @@ public class BillingUtil {
         String consumerCode = JsonPath.read(jsonItem, CONSUMER_CODE_PATH);
         String status = JsonPath.read(jsonItem, STATUS_PATH);
         String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
-//        String consumerType = JsonPath.read(jsonItem, CONSUMER_TYPE_PATH);
-
-//        // Extract numeric fields
-//        Long taxPeriodFrom = JsonPath.read(jsonItem, TAX_PERIOD_FROM_PATH);
-//        Long taxPeriodTo = JsonPath.read(jsonItem, TAX_PERIOD_TO_PATH);
-//        Double minimumAmountPayable = ((Integer) JsonPath.read(jsonItem, MINIMUM_AMOUNT_PAYABLE_PATH)).doubleValue();
-//        Long billExpiryTime = JsonPath.read(jsonItem, BILL_EXPIRY_TIME_PATH);
-//
-//        // Extract complex objects
-//        Object additionalDetails = JsonPath.read(jsonItem, ADDITIONAL_DETAILS_PATH);
-//        Object fixedBillExpiryDate = JsonPath.read(jsonItem, FIXED_BILL_EXPIRY_DATE_PATH);
-//        Object payer = JsonPath.read(jsonItem, PAYER_PATH);
 
         // Extract demandDetails array
         List<Map<String, Object>> demandDetails = JsonPath.read(jsonItem, DEMAND_DETAILS_PATH);

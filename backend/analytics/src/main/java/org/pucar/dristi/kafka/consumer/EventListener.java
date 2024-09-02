@@ -38,13 +38,9 @@ public class EventListener implements MessageListener<String, String> {
         try {
 
             if (config.getDemandGenerateTopic().equals(data.topic()) || config.getPaymentCollectTopic().equals(data.topic())) {
-
                 billingService.process(data.topic(), data.value());
-
             } else {
-
                 indexerService.esIndexer(data.topic(), data.value());
-
             }
 
         } catch (Exception e) {
