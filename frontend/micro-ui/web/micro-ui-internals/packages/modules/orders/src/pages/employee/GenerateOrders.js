@@ -756,6 +756,7 @@ const GenerateOrders = () => {
       updatedFormdata.originalHearingDate =
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
     }
+    setCurrentFormData(updatedFormdata);
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, filingNumber, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
