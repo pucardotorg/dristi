@@ -706,6 +706,7 @@ class CaseQueryBuilderTest {
         assertEquals(0d, prepareList.get(1));
     }
 
+    @Test
     void addOrderByQuery_ShouldAppendDefaultOrderBy_WhenPaginationIsNull() {
         // Arrange
         String baseQuery = "SELECT * FROM dristi_cases";

@@ -167,7 +167,9 @@ public class CaseQueryBuilder {
                 query.append(" WHERE cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
             }
             preparedStmtList.add(criteria.getRegistrationFromDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
             preparedStmtList.add(criteria.getRegistrationToDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
         }
     }
 
@@ -179,7 +181,9 @@ public class CaseQueryBuilder {
                 query.append(" WHERE cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
             }
             preparedStmtList.add(criteria.getFilingFromDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
             preparedStmtList.add(criteria.getFilingToDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
             firstCriteria = false;
         }
         return firstCriteria;
