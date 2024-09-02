@@ -114,7 +114,7 @@ public class CaseRepository {
                     caseCriteria.setResponseList(list);
                     log.info("Case list size :: {}", list.size());
                 }
-                //TODO: Atul: What's this code for? Remove it
+                //TODO: Atul: There is no concept of default fields. There is a summary API to return a smaller subset.
                 if (caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()) {
                     continue;
                 }

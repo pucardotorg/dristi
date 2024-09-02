@@ -423,6 +423,9 @@ components:
             case is filed
           items:
             $ref: '#/components/schemas/StatuteSection'
+        createdBy:
+          type: string
+          description: the individualId of the person (Advocate or complainant) who created this case. Is also useful to check access
         litigants:
           type: array
           items:

@@ -65,6 +65,7 @@ public class CourtCase {
 
 	@JsonProperty("caseNumber")
 
+	//TODO: Atul: replace with cmpNumber with min max as 10, 24
 	//@Size(min = 2, max = 32)
 	private String caseNumber = null;
 
@@ -126,6 +127,8 @@ public class CourtCase {
 	//@NotNull
 	@Valid
 	private List<StatuteSection> statutesAndSections = new ArrayList<>();
+
+	//TODO: Atul: add createdBy field
 
 	@JsonProperty("litigants")
 	//@NotNull
