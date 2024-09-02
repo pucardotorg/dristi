@@ -1,5 +1,5 @@
 CREATE TABLE dristi_application (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     case_id varchar(36) NOT NULL,
     filing_number varchar(64),
@@ -28,11 +28,11 @@ CREATE INDEX idx_dristi_application_number ON dristi_application(application_num
 CREATE INDEX idx_dristi_application_wf_status ON dristi_application(wf_status);
 
 CREATE TABLE dristi_statutes_and_sections (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64),
     statute_id varchar(64) NOT NULL,
     section_id varchar(64) NOT NULL,
-    application_id uuid NOT NULL,
+    application_id varchar(64) NOT NULL,
     additional_details jsonb,
     created_by varchar(36) NOT NULL,
     last_modified_by varchar(36) NOT NULL,
@@ -48,11 +48,11 @@ CREATE INDEX idx_statutes_sections_section_id ON dristi_statutes_and_sections(te
 CREATE INDEX idx_statutes_sections_application_id ON dristi_statutes_and_sections(statute_id, application_id);
 
 CREATE TABLE dristi_application_document (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     filestore_id varchar(64) NOT NULL,
     document_uid varchar(64),
     document_type varchar(64), -- Doc type ID from MDMS
-    application_id uuid,
+    application_id varchar(64),
     additional_details jsonb,
     created_by varchar(36) NOT NULL,
     last_modified_by varchar(36) NOT NULL,
@@ -68,9 +68,9 @@ CREATE INDEX idx_dristi_application_document_type ON dristi_application_document
 CREATE INDEX idx_dristi_application_document_application_id ON dristi_application_document(application_id);
 
 CREATE TABLE dristi_application_approved_by (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    application_id uuid NOT NULL,
+    application_id varchar(64) NOT NULL,
     judge_id varchar(36),
     court_id varchar(36) NOT NULL,
     bench_id varchar(36),

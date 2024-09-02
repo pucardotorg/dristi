@@ -1,5 +1,5 @@
 CREATE TABLE dristi_orders (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     order_number varchar(64) NOT NULL, -- Formatted order number
     linked_order_number varchar(64) NULL, -- Formatted order number to which this is linked
@@ -35,7 +35,7 @@ CREATE INDEX idx_dristi_orders_wf_status ON dristi_orders(wf_status);
 CREATE TABLE dristi_order_application_numbers (
     id varchar(36) PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    order_id uuid NOT NULL,
+    order_id varchar(64) NOT NULL,
     application_number varchar(64) NOT NULL,
     created_by varchar(36) NOT NULL,
     last_modified_by varchar(36) NOT NULL,
@@ -51,7 +51,7 @@ CREATE INDEX idx_dristi_order_application_numbers_app_number ON dristi_order_app
 CREATE TABLE dristi_order_issued_by (
     id varchar(36) PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    order_id uuid NOT NULL,
+    order_id varchar(64) NOT NULL,
     court_id varchar(36) NOT NULL,
     judge_id varchar(36),
     bench_id varchar(36),
@@ -69,12 +69,12 @@ CREATE INDEX idx_dristi_order_issued_by_bench_id ON dristi_order_issued_by(bench
 CREATE INDEX idx_dristi_order_issued_by_judge_id ON dristi_order_issued_by(judge_id);
 
 CREATE TABLE dristi_order_document (
-    id uuid PRIMARY KEY,
+    id varchar(64) PRIMARY KEY,
     tenant_id varchar(64),
     filestore_id varchar(64) NULL,
     document_uid varchar(64) NULL,
     document_type varchar(64) NULL,
-    order_id uuid NOT NULL,
+    order_id varchar(64) NOT NULL,
     created_by varchar(36) NULL,
     last_modified_by varchar(36) NULL,
     created_time int8 NULL,
@@ -87,9 +87,9 @@ CREATE INDEX idx_dristi_order_document_order_id ON dristi_order_document(order_i
 CREATE INDEX idx_dristi_order_document_doc_uid ON dristi_order_document(document_uid);
 
 CREATE TABLE dristi_order_statute_section (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    order_id uuid NOT NULL,
+    order_id varchar(64) NOT NULL,
     statute_id varchar(64) NULL,
     section_id varchar(64) NULL,
     created_by varchar(36) NULL,

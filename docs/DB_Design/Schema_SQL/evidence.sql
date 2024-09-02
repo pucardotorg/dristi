@@ -1,5 +1,5 @@
 CREATE TABLE dristi_evidence_artifact (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(64) NOT NULL PRIMARY KEY,
     tenant_id varchar(36) NOT NULL,
     artifact_number varchar(64) NOT NULL,
     evidence_number varchar(64),
@@ -44,7 +44,7 @@ CREATE TABLE dristi_evidence_document (
     filestore_id varchar(64),
     document_uid varchar(64),
     document_type varchar(64),
-    artifact_id uuid,
+    artifact_id varchar(64),
     additional_details jsonb,
     CONSTRAINT fk_document_artifact_id FOREIGN KEY(artifact_id) REFERENCES dristi_evidence_artifact(id)
 );
