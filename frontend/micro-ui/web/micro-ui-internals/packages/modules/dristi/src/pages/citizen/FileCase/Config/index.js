@@ -1,3 +1,4 @@
+import { debtliabilityconfig } from "./debtLiabilityConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
 
 export const sideMenuConfig = [
@@ -215,11 +216,6 @@ export const sideMenuConfig = [
         initialMandatoryFieldCount: 1,
         dependentMandatoryFields: [
           { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayCondonationType", dependentOnKey: "showForm" },
-          {
-            field: "condonationFileUpload.document",
-            dependentOn: "delayCondonationType",
-            dependentOnKey: "showForm",
-          },
         ],
         optionalFields: [],
         dependentOptionalFields: [],
