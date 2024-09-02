@@ -1,0 +1,23 @@
+CREATE TABLE summons_delivery (
+    summons_delivery_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    task_number VARCHAR(255) NOT NULL,
+    case_id VARCHAR(255) NOT NULL,
+    tenant_id VARCHAR(255) NOT NULL,
+    doc_type VARCHAR(50) NOT NULL,
+    doc_sub_type VARCHAR(50) NOT NULL,
+    party_type VARCHAR(50) NOT NULL,
+    channel_name VARCHAR(255) NOT NULL,
+    payment_fees VARCHAR(255) NULL,
+    payment_transaction_id VARCHAR(255) NULL,
+    payment_status VARCHAR(255) NULL,
+    is_accepted_by_channel BOOLEAN NULL,
+    channel_acknowledgement_id VARCHAR(255),
+    delivery_request_date VARCHAR(50) NULL,
+    delivery_status VARCHAR(255) NULL,
+    additional_fields jsonb NULL,
+    created_by varchar(64) NULL,
+    last_modified_by varchar(64) NULL,
+    created_time int8 NULL,
+    last_modified_time int8 NULL,
+    row_version int4 NULL
+);

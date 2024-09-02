@@ -1,0 +1,76 @@
+serviceMaps:
+  serviceName: SummonsService
+  mappings:
+    - version: 1.0
+      description: Persists summons
+      fromTopic: insert-summons
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: INSERT INTO summons_delivery (summon_id, case_id, tenant_id, doc_type, doc_sub_type, party_type, channel_name, payment_fees, payment_transaction_id, payment_status, is_accepted_by_channel, channel_acknowledgement_id, delivery_request_date, delivery_status, additional_fields, created_by, last_modified_by, created_time, last_modified_time, row_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: c.*
+          jsonMaps:
+            - jsonPath: $.SummonsDelivery.summonId
+
+            - jsonPath: $.SummonsDelivery.orderId
+
+            - jsonPath: $.SummonsDelivery.tenantId
+
+            - jsonPath: $.SummonsDelivery.docType
+
+            - jsonPath: $.SummonsDelivery.docSubType
+
+            - jsonPath: $.SummonsDelivery.partyType
+
+            - jsonPath: $.SummonsDelivery.channelName
+
+            - jsonPath: $.SummonsDelivery.paymentFees
+
+            - jsonPath: $.SummonsDelivery.paymentTransactionId
+
+            - jsonPath: $.SummonsDelivery.paymentStatus
+
+            - jsonPath: $.SummonsDelivery.isAcceptedByChannel
+
+            - jsonPath: $.SummonsDelivery.channelAcknowledgementId
+
+            - jsonPath: $.SummonsDelivery.deliveryRequestDate
+
+            - jsonPath: $.SummonsDelivery.deliveryStatus
+
+            - jsonPath: $.SummonsDelivery.additionalFields
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.SummonsDelivery.auditDetails.createdBy
+
+            - jsonPath: $.SummonsDelivery.auditDetails.createdTime
+
+            - jsonPath: $.SummonsDelivery.auditDetails.lastModifiedBy
+
+            - jsonPath: $.SummonsDelivery.auditDetails.lastModifiedTime
+
+            - jsonPath: $.SummonsDelivery.rowVersion
+
+    - version: 1.0
+      description: Updates Summons
+      fromTopic: update-summons
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: UPDATE summons_delivery SET is_accepted_by_channel = ?, delivery_status = ?, additional_fields = ?, last_modified_by = ?, last_modified_time = ?, row_version = ? WHERE summons_id = ?;
+          basePath: Summons.*
+          jsonMaps:
+            - jsonPath: $.SummonsDelivery.isAcceptedByChannel
+
+            - jsonPath: $.SummonsDelivery.deliveryStatus
+
+            - jsonPath: $.SummonsDelivery.additionalFields
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.SummonsDelivery.auditDetails.lastModifiedBy
+
+            - jsonPath: $.SummonsDelivery.auditDetails.lastModifiedTime
+
+            - jsonPath: $.SummonsDelivery.rowVersion
+
+            - jsonPath: $.SummonsDelivery.summonId
