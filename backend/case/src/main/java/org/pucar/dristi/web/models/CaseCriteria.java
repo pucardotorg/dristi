@@ -55,8 +55,8 @@ public class CaseCriteria {
     @JsonProperty("registrationToDate")
     @Valid
     private Long registrationToDate = null;
-    //todo judgeid, stage, substage
 
+    //TODO: Atul: Change judgeId to courtId as Judges are assigned to a court and they need to look at those cases for the court
     @JsonProperty("judgeId")
     private String judgeId = null;
 

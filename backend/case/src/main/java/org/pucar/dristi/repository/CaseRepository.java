@@ -83,6 +83,7 @@ public class CaseRepository {
         this.representingRowMapper = representingRowMapper;
     }
 
+    //TODO: Atul: change the method name. We are not getting applications, but are getting cases
     public List<CaseCriteria> getApplications(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
 
         try {
@@ -103,6 +104,7 @@ public class CaseRepository {
                     caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
                     casesQuery = queryBuilder.addPaginationQuery(casesQuery, preparedStmtList, caseCriteria.getPagination(),preparedStmtArgList);
                 }
+                //TODO: Atul: This check should happen immediately after the getCaseSearchQuery API call done earlier
                 if(preparedStmtList.size()!=preparedStmtArgList.size()){
                     log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(),preparedStmtArgList.size());
                     throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
@@ -112,20 +114,22 @@ public class CaseRepository {
                     caseCriteria.setResponseList(list);
                     log.info("Case list size :: {}", list.size());
                 }
-
+                //TODO: Atul: There is no concept of default fields. There is a summary API to return a smaller subset.
                 if (caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()) {
                     continue;
                 }
 
                 List<String> ids = new ArrayList<>();
-
+                //TODO: Atul: Please explain why are we creating a new list of only CaseIDs?
                 for (CourtCase courtCase : caseCriteria.getResponseList()) {
                     ids.add(courtCase.getId().toString());
                 }
                 if (ids.isEmpty()) {
                     caseCriteria.setResponseList(new ArrayList<>());
+                    //TODO: Atul: What is the purpose of the following 'continue' statement? if we want to avoid the following enrichCaseCriteria API call, then we could have called it in a NOT If condition
                     continue;
                 }
+                //TODO: Atul: the following function is calling all other tables and joins it in code. This is not acceptable. this should all happen as JOINS in the tables.
                 enrichCaseCriteria(caseCriteria,ids,preparedStmtListDoc);
             }
             return searchCriteria;
