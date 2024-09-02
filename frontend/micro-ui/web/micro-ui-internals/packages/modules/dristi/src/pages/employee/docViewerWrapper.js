@@ -86,7 +86,7 @@ const DocViewerWrapper = ({
       </Card>
       {showDownloadOption && (
         <Link
-          to={uri}
+          to={{ pathname: uri }}
           target="_blank"
           rel="noreferrer"
           style={{
