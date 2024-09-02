@@ -9,12 +9,13 @@ CaseUtil->*CaseRepoSvc:verifyCodeExists(TABLE_CNR_MASTER, KLKM52)
         loop DB TRANSACTION
             CaseRepoSvc->CaseRepoSvc: CNR = get SEQ_CNR
             CaseRepoSvc->CaseRepoSvc: Increment SEQ_CNR and save to TABLE_CNR_MASTER
+            CaseRepoSvc-->CaseUtil: return (SEQ_CNR-1)
         end
     else code doesn't exists
         CaseRepoSvc->CaseRepoSvc: createCode(TABLE_CNR_MASTER, KLKM52) 
         CaseRepoSvc->CaseRepoSvc: Set (SEQ_CNR = 1) for KLKM52
+        CaseRepoSvc-->CaseUtil: return SEQ_CNR
     end
-    CaseRepoSvc-->CaseUtil: return SEQ_CNR
 
 CaseUtil->CaseUtil: year=getCurrentYear (YYYY)
 CaseUtil->CaseUtil: pad(%06d, SEQ_CNR)
@@ -23,17 +24,19 @@ CaseUtil->CaseSvc: return CNR
 CaseSvc->CaseSvc: enrich case (Set cnrNumber = CNR)
 
 CaseSvc->CaseUtil: generateCMP (pass CNR)
-CaseUtil->*CaseRepoSvc: verifyCodeExists(CASE_NUMBER_TABLE, SEQ_CMP)
+CaseUtil->CaseRepoSvc: verifyCodeExists(CASE_NUMBER_TABLE, SEQ_CMP)
     alt Code exists
         loop DB TRANSACTION
             CaseRepoSvc->CaseRepoSvc: CMP = get SEQ_CMP
             CaseRepoSvc->CaseRepoSvc: Increment SEQ_CMP and save to CASE_NUMBER_TABLE
+            CaseRepoSvc-->CaseUtil: return (SEQ_CMP-1)
         end
     else code doesn't exists
         CaseRepoSvc->CaseRepoSvc: createCode(CASE_NUMBER_TABLE, SEQ_CMP) 
         CaseRepoSvc->CaseRepoSvc: Set (SEQ_CMP = 1)
+        CaseRepoSvc-->CaseUtil: return SEQ_CMP
     end
-    CaseRepoSvc-->CaseUtil: return SEQ_CMP
+    
     destroy CaseRepoSvc
 CaseUtil->CaseUtil: year=getCurrentYear (YYYY)
 CaseUtil->CaseUtil: CMP = string.concatenate(CMP+"/"+SEQ_CMP+"/"+year)
