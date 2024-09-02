@@ -1,0 +1,7 @@
+ALTER TABLE POSTAL_HUB
+ALTER COLUMN pincode
+TYPE character varying(64);
+
+ALTER TABLE POSTAL_SERVICE
+ALTER COLUMN pincode
+TYPE character varying(64);

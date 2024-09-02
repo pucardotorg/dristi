@@ -1,0 +1,58 @@
+serviceMaps:
+  serviceName: payment-calculator
+  mappings:
+    - version: 1.0
+      description: Persists Postal service
+      fromTopic: postal-create
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO postal_service (postal_service_id, tenant_id, pincode, postal_hub_id, distance_km, row_version, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.postalServiceId
+
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.pincode
+
+            - jsonPath: $.*.postalHubId
+
+            - jsonPath: $.*.distanceKM
+
+            - jsonPath: $.*.rowVersion
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update postal service
+      fromTopic: postal-update
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE postal_service SET tenant_id =?, pincode =?, postal_hub_id =?, distance_km =?, row_version =?, created_by =?, last_modified_by =?, created_time =?, last_modified_time =? WHERE postal_service_id=?;
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.pincode
+
+            - jsonPath: $.*.postalHubId
+
+            - jsonPath: $.*.distanceKM
+
+            - jsonPath: $.*.rowVersion
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.*.postalServiceId

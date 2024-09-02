@@ -1,0 +1,86 @@
+serviceMaps:
+  serviceName: payment-calculator
+  mappings:
+    - version: 1.0
+      description: Persists Postal details in tables
+      fromTopic: postal-hub-create
+      isTransaction: true
+      queryMaps:
+      - query: INSERT INTO postal_hub(hub_id, name, pincode, addressId, distance_km, created_by, last_modified_by, created_time, last_modified_time, row_version, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        basePath: $.*
+        jsonMaps:
+          - jsonPath: $.*.hubId
+
+          - jsonPath: $.*.name
+
+          - jsonPath: $.*.pincode
+
+          - jsonPath: $.*.address.id
+
+          - jsonPath: $.*.distanceKm
+
+          - jsonPath: $.*.auditDetails.createdBy
+
+          - jsonPath: $.*.auditDetails.lastModifiedBy
+
+          - jsonPath: $.*.auditDetails.createdTime
+
+          - jsonPath: $.*.auditDetails.lastModifiedTime
+
+          - jsonPath: $.*.rowVersion
+
+          - jsonPath: $.*.tenantId
+
+    - version: 1.0
+      description: Update postal details in table
+      fromTopic: postal-hub-update
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE postal_hub SET name =?, pincode =?, addressId =?, distance_km=?, created_by =?, last_modified_by =?, created_time =?, last_modified_time =?, row_version =?, tenant_id =? WHERE hub_id=?;
+          basePath: $.*
+          jsonMaps:
+                - jsonPath: $.*.name
+
+                - jsonPath: $.*.pincode
+
+                - jsonPath: $.*.address.id
+
+                - jsonPath: $.*.distanceKm
+
+                - jsonPath: $.*.auditDetails.createdBy
+
+                - jsonPath: $.*.auditDetails.lastModifiedBy
+
+                - jsonPath: $.*.auditDetails.createdTime
+
+                - jsonPath: $.*.auditDetails.lastModifiedTime
+
+                - jsonPath: $.*.rowVersion
+
+                - jsonPath: $.*.tenantId
+
+                - jsonPath: $.*.hubId
+
+    - version: 1.0
+      description: Update postal details in table
+      fromTopic: postal-hub-update
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO address(id, tenantid, doorno, latitude, longitude, locationAccuracy, type, addressline1, addressline2, landmark, city, pincode, buildingName, street, localityCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: $.*.address
+          jsonMaps:
+            - jsonPath: $.*.address.id
+            - jsonPath: $.*.address.tenantId
+            - jsonPath: $.*.address.doorNo
+            - jsonPath: $.*.address.latitude
+            - jsonPath: $.*.address.longitude
+            - jsonPath: $.*.address.locationAccuracy
+            - jsonPath: $.*.address.type
+            - jsonPath: $.*.address.addressLine1
+            - jsonPath: $.*.address.addressLine2
+            - jsonPath: $.*.address.landmark
+            - jsonPath: $.*.address.city
+            - jsonPath: $.*.address.pincode
+            - jsonPath: $.*.address.buildingName
+            - jsonPath: $.*.address.street
+            - jsonPath: $.*.address.localityCode
