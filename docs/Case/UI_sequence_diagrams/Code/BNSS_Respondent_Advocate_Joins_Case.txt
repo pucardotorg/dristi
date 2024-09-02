@@ -18,10 +18,12 @@ R->UR: Login & register \n(follow user registration sequence diagram)
 R->H: Click on "Join a case"
 H->J: Transition to Join case screen
 R->J: Enter filing number
-J->CMS++: Call the summary/_search API
+J->CMS++: Call the summary/_search API (filingNumber, tenandId)
+CMS->CMS: search Case Repo
+CMS->CMS: fill respondent details from Case.AdditionalDetails
 return "Public Case Details"
 R->J: Enter access code
-J->CaseSvc++: Call validate API to validate access code
+J->CaseSvc++: Call validate API to validate access code (accessCode, filingNumber, tenandId)
 return validateResponse
 alt "Incorrect access code"
 rnote over J
