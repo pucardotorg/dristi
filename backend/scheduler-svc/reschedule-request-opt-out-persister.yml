@@ -1,0 +1,69 @@
+serviceMaps:
+  serviceName: reschedule-service
+  mappings:
+    - version: 1.0
+      description: Persists reschedule request opt-out details
+      fromTopic: reschedule-opt-out
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO reschedule_request_opt_out_detail (individual_id, judge_id, case_id, reschedule_request_id, opt_out_dates, created_by, created_time, last_modified_by, last_modified_time, tenant_id ,row_version)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?);
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.individualId
+
+            - jsonPath: $.judgeId
+
+            - jsonPath: $.caseId
+
+            - jsonPath: $.rescheduleRequestId
+
+            - jsonPath: $.optOutDates
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.auditDetails.createdBy
+
+            - jsonPath: $.auditDetails.createdTime
+
+            - jsonPath: $.auditDetails.lastModifiedBy
+
+            - jsonPath: $.auditDetails.lastModifiedTime
+
+            - jsonPath: $.tenantId
+
+            - jsonPath: $.rowVersion
+
+    - version: 1.0
+      description: Updates reschedule request opt-out details
+      fromTopic: update-reschedule-opt-out
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE reschedule_request_opt_out_detail
+            SET judge_id = ?, case_id = ?, reschedule_request_id = ?, opt_out_dates = ?, created_by = ?, created_time = ?, last_modified_by = ?, last_modified_time = ?, tenant_id = ?
+            WHERE individual_id = ? AND reschedule_request_id = ?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.judgeId
+
+            - jsonPath: $.caseId
+
+            - jsonPath: $.optOutDates
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.auditDetails.createdBy
+
+            - jsonPath: $.auditDetails.createdTime
+
+            - jsonPath: $.auditDetails.lastModifiedBy
+
+            - jsonPath: $.auditDetails.lastModifiedTime
+
+            - jsonPath: $.tenantId
+
+            - jsonPath: $.individualId
+
+            - jsonPath: $.rescheduleRequestId
+
+            - jsonPath: $.rowVersion

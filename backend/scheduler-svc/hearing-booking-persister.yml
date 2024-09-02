@@ -1,0 +1,90 @@
+serviceMaps:
+  serviceName: scheduler-services
+  mappings:
+    - version: 1.0
+      description: Persists Hearing details in tables
+      fromTopic: schedule-hearing
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO hearing_booking (court_id,judge_id,case_id,hearing_booking_id,hearing_date,hearing_type,title,description,status,start_time,end_time,created_by,last_modified_by,created_time, last_modified_time,row_version,tenant_id ,reschedule_request_id) VALUES (? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?);
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.courtId
+
+            - jsonPath: $.*.judgeId
+
+            - jsonPath: $.*.caseId
+
+            - jsonPath: $.*.hearingBookingId
+
+            - jsonPath: $.*.hearingDate
+
+            - jsonPath: $.*.hearingType
+
+            - jsonPath: $.*.title
+
+            - jsonPath: $.*.description
+
+            - jsonPath: $.*.status
+
+            - jsonPath: $.*.startTime
+
+            - jsonPath: $.*.endTime
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.*.rowVersion
+
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.rescheduleRequestId
+
+
+
+    - version: 1.0
+      description: Update hearing applications in table
+      fromTopic: update-schedule-hearing
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE hearing_booking SET court_id =?,judge_id=?,case_id =?,hearing_date =?,hearing_type=?,title =?,description =?,status =?,start_time =?,end_time =?,created_by =?,last_modified_by =?,created_time =?, last_modified_time =? ,row_version =row_version+1, tenant_id =? ,reschedule_request_id =? WHERE hearing_booking_id=?;
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.courtId
+
+            - jsonPath: $.*.judgeId
+
+            - jsonPath: $.*.caseId
+
+            - jsonPath: $.*.hearingDate
+
+            - jsonPath: $.*.hearingType
+
+            - jsonPath: $.*.title
+
+            - jsonPath: $.*.description
+
+            - jsonPath: $.*.status
+
+            - jsonPath: $.*.startTime
+
+            - jsonPath: $.*.endTime
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.rescheduleRequestId
+
+            - jsonPath: $.*.hearingBookingId
