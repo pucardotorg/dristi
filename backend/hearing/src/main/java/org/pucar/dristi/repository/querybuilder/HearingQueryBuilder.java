@@ -80,7 +80,7 @@ public class HearingQueryBuilder {
         }
     }
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (isaBoolean(pagination) || pagination.getSortBy().contains(";")) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
@@ -88,7 +88,7 @@ public class HearingQueryBuilder {
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
-    private static boolean isaBoolean(Pagination pagination) {
+    private static boolean isPaginationInvalid(Pagination pagination) {
         return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
 
