@@ -328,15 +328,15 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
-        lenient().when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        lenient().when(jdbcTemplate.queryForObject(anyString(), any(), any(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         // Invoke the method
         List<CaseExists> result = caseRepository.checkCaseExists(caseExistsList);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+        verify(queryBuilder, times(1)).checkCaseExistQuery(any(), anyList(), anyList());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(), any(), any(Class.class));
 
         // Assert result
         assertEquals(2, result.size());
@@ -354,7 +354,7 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new RuntimeException());
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenThrow(new RuntimeException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(Exception.class, () -> {
@@ -372,7 +372,7 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new CustomException());
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenThrow(new CustomException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(CustomException.class, () -> {
@@ -387,13 +387,13 @@ class CaseRepositoryTest {
         caseExistsRequest.add(caseExists1);
         caseExistsRequest.add(caseExists2);
 
-        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
-        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1);
+        when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(), any(),any(Class.class))).thenReturn(1);
 
         List<CaseExists> result = caseRepository.checkCaseExists(caseExistsRequest);
 
-        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+        verify(queryBuilder, times(1)).checkCaseExistQuery(any(), anyList(), anyList());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(), any(), any(Class.class));
 
         assertEquals(2, result.size());
         assertEquals(true, result.get(0).getExists());

@@ -21,7 +21,7 @@ public class WitnessQueryBuilder {
     private static final String FROM_WITNESS_TABLE = " FROM dristi_witness witness";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY witness.createdtime DESC ";
 
-    public String getWitnessesSearchQuery(List<WitnessSearchCriteria> criteriaList, List<Object> preparedStmtList) {
+    public String getWitnessesSearchQuery(List<WitnessSearchCriteria> criteriaList, List<Object> preparedStmtList, List<Integer> preparedStmtArgsList) {
         try {
             StringBuilder query = new StringBuilder(BASE_WITNESS_QUERY);
             query.append(FROM_WITNESS_TABLE);
@@ -51,6 +51,7 @@ public class WitnessQueryBuilder {
                             .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(ids);
+                    preparedStmtArgsList.addAll(ids.stream().map(id -> java.sql.Types.VARCHAR).toList());
                     firstCriteria = false; // Update firstCriteria flag
                 }
 
@@ -60,6 +61,7 @@ public class WitnessQueryBuilder {
                             .append(individualIds.stream().map(reg -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(individualIds);
+                    preparedStmtArgsList.addAll(individualIds.stream().map(id -> java.sql.Types.VARCHAR).toList());
                     firstCriteria = false; // Update firstCriteria flag
 
                 }
@@ -70,6 +72,7 @@ public class WitnessQueryBuilder {
                             .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(includeInactives);
+                    preparedStmtArgsList.addAll(includeInactives.stream().map(id -> java.sql.Types.BOOLEAN).toList());
                 }
 
             }

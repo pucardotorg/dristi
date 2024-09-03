@@ -5,6 +5,7 @@ import static org.pucar.dristi.config.ServiceConstants.SEARCH_WITNESS_ERR;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.models.auth.In;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.WitnessQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.WitnessRowMapper;
@@ -39,10 +40,11 @@ public class WitnessRepository {
         try {
             List<Witness> witnessList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgsList= new ArrayList<>();
             String casesQuery = "";
-            casesQuery = queryBuilder.getWitnessesSearchQuery(searchCriteria, preparedStmtList);
+            casesQuery = queryBuilder.getWitnessesSearchQuery(searchCriteria, preparedStmtList, preparedStmtArgsList);
             log.info("Final case query :: {}", casesQuery);
-            List<Witness> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
+            List<Witness> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), preparedStmtArgsList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
             if (list != null) {
                 witnessList.addAll(list);
             }
