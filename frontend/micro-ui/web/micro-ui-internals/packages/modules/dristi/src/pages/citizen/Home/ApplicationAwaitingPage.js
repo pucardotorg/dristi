@@ -74,7 +74,8 @@ function ApplicationAwaitingPage({ individualId }) {
       </div>
       <div style={{ "text-align": "center", maxWidth: "50%" }}>
         <CardText>
-          {`Your registration (ID: ${applicationNumber}) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.`}
+          {`${t("RG_YOUR_REGISTRATION_NUMBER")}`} <span className="card-text" style={{ whiteSpace: "nowrap" }}>{` (ID: ${applicationNumber}) `}</span>{" "}
+          {`${t("RG_RECEIVE_MESSAGE")}`}
         </CardText>
       </div>
       <div>
@@ -82,7 +83,7 @@ function ApplicationAwaitingPage({ individualId }) {
           onButtonClick={() => {
             history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
           }}
-          label={t("View My Application")}
+          label={t("VIEW_MY_APPLICATION")}
           style={{
             flex: 1,
             boxShadow: "none",

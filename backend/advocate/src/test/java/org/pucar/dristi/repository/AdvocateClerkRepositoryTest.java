@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkDocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
-        List<AdvocateClerk> result = advocateClerkRepository.getApplications(
+        List<AdvocateClerk> result = advocateClerkRepository.getClerks(
                 searchCriteriaList, "tenantId", 10, 0);
 
         assertNotNull(result);
@@ -88,7 +88,7 @@ import static org.mockito.Mockito.*;
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
 
-        List<AdvocateClerk> result = advocateClerkRepository.getApplications(
+        List<AdvocateClerk> result = advocateClerkRepository.getClerks(
                 searchCriteriaList, "tenantId", 10, 0);
 
         assertNotNull(result);
@@ -174,7 +174,7 @@ import static org.mockito.Mockito.*;
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException());
 
-        assertThrows(Exception.class, () -> advocateClerkRepository.getApplications(
+        assertThrows(Exception.class, () -> advocateClerkRepository.getClerks(
                 searchCriteriaList, "tenantId", 10, 0));
     }
 
@@ -183,7 +183,7 @@ import static org.mockito.Mockito.*;
         when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(),any(), anyString(), anyInt(), anyInt()))
                 .thenThrow(new CustomException());
 
-        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplications(
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getClerks(
                 searchCriteriaList, "tenantId", 10, 0));
     }
 

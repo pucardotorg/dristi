@@ -1,0 +1,62 @@
+@startuml
+autonumber
+Title "Summons Order Payment(Online) & Status Update"
+actor Advocate as A order -2
+participant LoginScreen as L order -1
+participant HomeScreen as H order 0
+participant ViewCaseUI as V order 1
+participant PendingTasksUI as P order 2
+participant PaymentUI as PUI order 4
+participant PaymentSuccessUI as PSUI order 4
+participant TaskSvc order 7
+Queue Kafka order 8
+participant AnalyticsSvc order 9
+Database ElasticSearch as ES order 10
+participant PaymentGatewayAdapter as PGA order 11
+boundary PaymentGateway order 13
+boundary ExternalDeliveryPartner order 15
+A -> LoginScreen : Log in to system with credentials
+L -> H: Transition to home screen after authentication is successful
+H -> P: Pending tasks loads on the side 
+P -> ES: Fetch pending tasks from pending-tasks index
+return pending tasks
+P -> P: Display pending tasks
+A -> P: Click on summons payment task
+rnote over P
+Payment task is per delivery channel per address
+end rnote
+P -> PUI: Transition to payment screen
+PUI -> PUI: Show separate payments for court and delivery partners
+rnote over PUI
+Advocate has to make separate payments for court and delivery partners
+end rnote
+A -> PUI: Click on "Pay Online"
+... GO THROUGH UI FLOW FOR PAYMENT ...
+PUI -> PGA: Send payment
+PGA -> PG++: Post payment
+return "Payment Status"
+PGA -> CollectionSvc: Payment completed
+CollectionSvc -> BillingSvc: Update bill and demand status
+alt "Payment failed"
+PUI -> PSUI: Show payment failed UI
+PSUI -> H: Go back to home screen
+end
+PUI -> PSUI: Show payment success UI
+PSUI -> TaskSvc++: Move workflow to ISSUE_SUMMON
+return "Task updated"
+TaskSvc -> WorkflowSvc++: Move workflow state
+return workflow state
+WorkflowSvc -> Kafka: Post workflow transition payload
+AnalyticsSvc -> Kafka: Catch workflow transition
+AnalyticsSvc -> ES: Close current pending task
+AnalyticsSvc -> ES: Create new pending task for the new state
+TaskSvc -> Kafka: Post task update payload
+DeliveryChannelAdapter -> Queue: Listen for summons type task updation topic
+rnote over DeliveryChannelAdapter
+"Watch for ISSUE_SUMMON state of workflow"
+end rnote
+DeliveryChannelAdapter -> ExternalDeliveryPartner: Post payload for summons delivery
+DeliveryChannelAdapter -> ExternalDeliveryPartner: Keep polling for status
+DeliveryChannelAdapter -> TaskSvc++: Update delivery status and \n move workflow status to SERVED or NOT_SERVED
+return "Task updated successfully"
+@enduml

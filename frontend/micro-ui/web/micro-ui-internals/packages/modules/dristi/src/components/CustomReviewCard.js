@@ -6,6 +6,7 @@ function CustomReviewCard({
   config,
   data,
   isScrutiny,
+  isJudge,
   t,
   dataIndex,
   handleOpenPopup,
@@ -13,7 +14,11 @@ function CustomReviewCard({
   dataErrors,
   configKey,
   titleHeading,
-  handleClickImage
+  handleClickImage,
+  prevDataErrors,
+  isPrevScrutiny,
+  setShowImageModal,
+  isCaseReAssigned,
 }) {
   if (data?.isAdvocateRepresenting?.code === "NO") {
     return null;
@@ -21,7 +26,8 @@ function CustomReviewCard({
   return (
     <div className="item-body">
       {config.map((item, i) => {
-        const dataError = Array.isArray(item.value) ? dataErrors?.[item.type]?.FSOError : dataErrors?.[item.value]?.FSOError;
+        const dataError = Array.isArray(item.value) ? dataErrors : dataErrors?.[item.value]?.FSOError;
+        const prevDataError = Array.isArray(item.value) ? prevDataErrors : prevDataErrors?.[item.value]?.FSOError;
         return (
           <CustomReviewCardRow
             config={item}
@@ -29,14 +35,20 @@ function CustomReviewCard({
             data={data}
             handleOpenPopup={handleOpenPopup}
             isScrutiny={isScrutiny}
+            isJudge={isJudge}
             titleIndex={titleIndex}
             dataIndex={dataIndex}
             name={input.name}
             configKey={configKey}
             dataError={dataError}
+            prevDataError={prevDataError}
+            isPrevScrutiny={isPrevScrutiny}
             t={t}
             titleHeading={titleHeading}
             handleClickImage={handleClickImage}
+            setShowImageModal={setShowImageModal}
+            isCaseReAssigned={isCaseReAssigned}
+            disableScrutiny={input?.disableScrutiny}
           />
         );
       })}

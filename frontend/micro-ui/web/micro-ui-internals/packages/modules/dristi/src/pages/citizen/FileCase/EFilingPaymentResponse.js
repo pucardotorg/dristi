@@ -1,10 +1,25 @@
 import { Banner, Card, CardLabel, CardText, CloseSvg, Modal, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import Button from "../../../components/Button";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "PAYMENT_FAILED_NOTE_MSG",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 const mockSubmitModalInfo = {
   header: "CS_PAYMENT_SUCCESSFUL",
+  subHeader: "CS_PAYMENT_SUCCESSFUL_SUB_TEXT",
   backButtonText: "Back to Home",
   nextButtonText: "Schedule next hearing",
   isArrow: false,
@@ -24,23 +39,33 @@ const Heading = (props) => {
 };
 
 function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000 }) {
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const history = useHistory();
-  const onCancel = () => {
-    setShowPaymentModal(false);
-  };
+  const location = useLocation();
+  const receiptData = location.state.state.receiptData;
   return (
     <div className=" user-registration">
-      <div className="e-filing-payment" style={{ maxHeight: "330px" }}>
+      <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%" }}>
         <Banner
           whichSvg={"tick"}
           successful={true}
-          message={submitModalInfo?.header}
+          message={t(submitModalInfo?.header)}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
-        {submitModalInfo?.subHeader && <CardLabel>{submitModalInfo?.subHeader}</CardLabel>}
-        <div className="button-field" style={{ width: "100%" }}>
+        {submitModalInfo?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitModalInfo?.subHeader)}</CardLabel>}
+        {receiptData ? (
+          <CustomCopyTextDiv
+            t={t}
+            keyStyle={{ margin: "8px 0px" }}
+            valueStyle={{ margin: "8px 0px", fontWeight: 700 }}
+            data={receiptData?.caseInfo}
+            tableDataClassName={"e-filing-table-data-style"}
+            tableValueClassName={"e-filing-table-value-style"}
+          />
+        ) : (
+          <SelectCustomNote t={t} config={customNoteConfig} />
+        )}
+        <div className="button-field" style={{ width: "100%", marginTop: 16 }}>
           <Button
             variation={"secondary"}
             className={"secondary-button-selector"}
@@ -53,7 +78,6 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
             label={t("CS_GO_TO_HOME")}
             labelClassName={"tertiary-label-selector"}
             onButtonClick={() => {
-              setShowPaymentModal(true);
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
           />

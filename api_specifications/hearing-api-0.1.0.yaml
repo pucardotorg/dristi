@@ -199,33 +199,32 @@ components:
         criteria:
           $ref: '#/components/schemas/HearingCriteria'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination            
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
 
-      HearingCriteria:
-        type: object
-        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
-        properties:
-          filingNumber:
-            type: string
-          cnrNumber:
-            type: string
-          applicationNumber:
-            type: string
-          hearingType:
-            type: string
-          hearingId:
-            type: string
-          tenantId:
-            type: string
-          attendeeIndividualId:
-            type: string
-          fromDate:
-            type: integer
-            format: int64
-          toDate:
-            type: integer
-            format: int64
+    HearingCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        hearingType:
+          type: string
+        hearingId:
+          type: string
+        tenantId:
+          type: string
+        attendeeIndividualId:
+          type: string
+        fromDate:
+          type: integer
+          format: int64
+        toDate:
+          type: integer
+          format: int64
 
     HearingRequest:
       type: object

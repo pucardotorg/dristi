@@ -17,9 +17,9 @@ paths:
     post:
       tags:
         - Case Management Service
-      summary: Provides a summary of the case given a case identifier
+      summary: returns public fields of the case given a case identifier
       description: |
-        API to retrieve a case summary. A case summary consists of basic case details, status and the final judgement/order that was passed in the case.
+        The API exposes only the required public fields for querying a case. Use this summary API for generic searches by anyone not related to the case
       requestBody:
         description: Details for the new court case + RequestInfo meta data.
         content:
@@ -149,94 +149,106 @@ components:
           minItems: 1
     
     CaseSummary:
-      description: Representation of the case summary. 
+      description: Representation of the case summary.
       type: object
       required:
+        - tenantId
         - caseTitle
-        - caseDescription
-        - filingNumber
-        - cnrNumber
-        - registrationDate
-        - caseDetails
-        - caseCategory
-        - natureOfPleading
+        - filingDate
         - statutesAndSections
-        - status
+        - stage
+        - subStage
+        - litigants
       properties:
-        resolutionMechanism:
+        tenantId:
           type: string
-          description: >-
-            The mechanism used for dispute resolution. These can be e-courts,
-            Lok Adalats or some other entity. Values to be defined in master
-            data. The value stored in this field should be a master data ID.
-          example: COURT, ADR.MEDIATION, ADR.CONCILIATION, ODR.ARBITRATION, Lok Adalat
+          description: This is tenantId where the case is being managed.
           minLength: 2
-          maxLength: 128
+          maxLength: 64
         caseTitle:
           type: string
           description: A simple one-liner summary title used to refer to the case.
           minLength: 2
           maxLength: 512
           readOnly: true
-        caseDescription:
-          type: string
-          description: Description/summary/prayer for relief
-          minLength: 2
-          maxLength: 10000
-        filingNumber:
-          type: string
-          description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
-          minLength: 2
-          maxLength: 64
-        courCaseNumber:
-          type: string
-          description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
-          minLength: 10
-          maxLength: 24
-          example: CC/023443/2024
-        cnrNumber:
-          type: string
-          description: >-
-            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
-          minLength: 2
-          maxLength: 32
-          example: PBJL01-123556-2024
         filingDate:
-          type: string
-          format: date
-          description: >-
-            Date of case filing in epoch time. This is the date when the case
-            entered the judicial system.
+          type: integer
+          format: int64
+          description: The date of case filing is in epoch time (milliseconds). This is the date when the case entered the judicial system.
           example: 1709542147
-        registrationDate:
-          type: string
-          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
-        caseDetails:
-          type: object
-          description: Field to store all case type specific details. These can vary depending on case type.
-        caseCategory:
-          type: string
-          description: Case category from master data
-          example: CIVIL, CRIMINAL
-          minLength: 2
-          maxLength: 64
         statutesAndSections:
+          type: string
+          description: A string of statute and sections, concatenated into a single string. Format - first statute + all sections comma separated, then semicolon followed by second statute + all sections comma separated and so on
+          example: "NIA 138, 142(1)(a), 145; CrPC 100, 402(a)"
+        stage:
+          type: string
+          description: the main/primary stage of the case
+          example: Pre-Trial, Trial, Post-Trial
+        subStage:
+          type: string
+          description: the secondary level of stage within the primary stage
+          example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
+        litigants:
           type: array
-          description: >-
-            The legal provisions -- acts/sections/subsections -- under which a
-            case is filed
           items:
-            $ref: './case-api-0.1.0.yaml#/components/schemas/StatuteSection'
-        status:
+            $ref: '#/components/schemas/PartySummary'
+        representatives:
+          type: array
+          description: The advocate/representative representing the party in this case. This is not the individualID, rather the ID given to the advocate when they register in the system.
+          items:
+            $ref: '#/components/schemas/RepresentativeSummary'
+
+    PartySummary:
+      type: object
+      description: created from the Party entity in CaseAPI. Includes only active parties ('isActive' is true)
+      required:
+        - partyCategory
+        - partyType
+        - individualId
+        - individualName
+        - organizationId
+      properties:
+        partyCategory:
           type: string
-          description: >-
-            The current status of the case as pulled from the Workflow service.
-            Workflow service will hold the entire history of hte case.
-        remarks:
+          description: Is Individual or organisation or something else. Master data ID to
+            be stored here.
+          example: INDIVIDUAL, ORGANISATION
+        partyType:
           type: string
-          description: This field can hold any other additional remarks about the case
-        judgement:
-          $ref: './order-api-0.1.0.yaml#/components/schemas/Order'
+          description: This field holds information about type of party (name spaced Master Data).
+          example:
+            - complainant.primary
+            - complainant.additional
+            - respondent.primary
+        individualId:
+          type: string
+          description: The individual ID of the complainant. In case party is of type org, this
+            is the person representing the company in the case. This entity
+            holds all the details of the user including their name, address,
+            contact etc..
+        individualName:
+          type: string
+          description: name of the individual from the Individual registry. This is made part of this API to avoid making additional trips just to get the names
+        organisationID:
+          type: string
+          description: Refers to the organization ID if the party is an organisation, otherwise null
+        isPartyInPerson:
+          type: boolean
+          description: Indicates whether the litigant is representing themselves. In this case litigant's individual ID will be added in the representativeId.
+
+    RepresentativeSummary:
+      type: object
+      properties:
+        partyId:
+          type: string
+        advocateId:
+          type: string
+        advocateType:
+          type: string
+          enum:
+            - primary
+            - support
+
 
     CaseFile:
       description: Representation of the case file. This is an aggregation of all the entities across the case lifecycle.
@@ -283,6 +295,8 @@ components:
         requestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
         caseId:
           type: string
           description: The UUID of the case for which the case file is requested.

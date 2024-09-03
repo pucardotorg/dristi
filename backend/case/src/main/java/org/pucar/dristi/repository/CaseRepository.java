@@ -83,7 +83,7 @@ public class CaseRepository {
         this.representingRowMapper = representingRowMapper;
     }
 
-    public List<CaseCriteria> getApplications(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
+    public List<CaseCriteria> getCases(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
 
         try {
 
@@ -414,9 +414,11 @@ public class CaseRepository {
                 ) {
                     caseExists.setExists(false);
                 } else {
-                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCaseId(), caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
+                    List<Object> preparedStmtList = new ArrayList<>();
+                    List<Integer> preparedStmtListArgs = new ArrayList<>();
+                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists, preparedStmtList, preparedStmtListArgs);
                     log.info("Final case exist query :: {}", casesExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(casesExistQuery, preparedStmtList.toArray(), preparedStmtListArgs.stream().mapToInt(Integer::intValue).toArray(), Integer.class);
                     caseExists.setExists(count != null && count > 0);
                 }
             }

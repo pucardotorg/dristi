@@ -54,8 +54,6 @@ body {
   padding: 0;
 }
 .bread-crumb--item {
-  margin-left: 5px;
-
   &:not(:last-child):after {
     content: "  /";
     color: #0b0c0c !important;
