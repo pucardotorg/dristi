@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task-warrant",
       "business": "task",
-      "businessServiceSla": 30,
+      "businessService": "task-warrant",
+      "businessServiceSla": 4320000000,
       "states": [
         {
           "sla": null,
@@ -17,7 +17,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "ISSUEWARRANT",
+              "nextState": "ISSUE_WARRANT",
               "roles": [
                 "TASK_CREATOR"
               ]
@@ -25,26 +25,27 @@
           ]
         },
         {
-          "sla": null,
-          "state": "ISSUEWARRANT",
+          "sla": 388000000,
+          "state": "ISSUE_WARRANT",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
+          "docUploadRequired": false,
+          "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
               "action": "DELIVERED",
-              "nextState": "COMPLETED",
+              "nextState": "EXECUTED",
               "roles": [
                 "TASK_UPDATOR"
               ]
             },
             {
-              "action": "NOT DELIVERED",
-              "nextState": "COMPLETED",
+              "action": "NOT_DELIVERED",
+              "nextState": "NOT_EXECUTED",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_UPDATOR",
+                "AUTO_ESCALATE"
               ]
             },
             {
@@ -57,8 +58,8 @@
           ]
         },
         {
-          "sla": 5,
-          "state": "COMPLETED",
+          "sla": null,
+          "state": "EXECUTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -66,7 +67,16 @@
           "isTerminateState": true
         },
         {
-          "sla": 5,
+          "sla": null,
+          "state": "NOTEXECUTED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
           "state": "ABATED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
