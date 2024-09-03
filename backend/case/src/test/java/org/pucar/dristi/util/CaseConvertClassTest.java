@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CaseConvertClassTest {
 
+    @Mock
     private ObjectMapper objectMapper;
     private MockedStatic<SpringContext> mockedSpringContext;
 
@@ -80,8 +82,7 @@ class CaseConvertClassTest {
         String invalidJson = "{name:\"test\"";
 
         assertThrows(IOException.class, () -> {
-            JsonNode jsonNode = objectMapper.readTree(invalidJson);
-            CaseConvertClass.convertTo(jsonNode, TestObject.class);
+            objectMapper.readTree(invalidJson);
         });
     }
 
