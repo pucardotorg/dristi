@@ -1,0 +1,58 @@
+@startuml
+autonumber
+title "Litigant Registration Flow"
+actor Litigant as L #lightGreen
+participant LandingPage as LangUI
+participant LoginUI as LUI 
+participant UserTypeSelection as UTS
+participant RegistrationUI as R
+participant IdentityUI as I
+participant TermsConditions as TC
+participant SuccessModal as SM
+participant HomeScreen as H
+participant LocalisationSvc as LS
+participant UserSvc as U
+participant IndividualSvc as Ind
+participant OtpSvc as OTP
+boundary AadharVerification as AV #blue
+L -> LangUI: Navigate to the litigant portal
+L -> LangUI: Select language
+LangUI -> LS++: Fetch localisation for selected language by passing module names
+return "Localisation strings"
+LangUI -> LUI: Transition to login page
+L -> LUI: Click on "Register"
+L -> LUI: Enter mobile number
+L -> OTP: Send registration OTP request
+alt "Mobile number already exists"
+OTP -> L: 400. OTP request for register failed
+else "New mobile number registration"
+OTP -> L: 200 OK. Send OTP to litigant's phone
+end
+L -> LUI: Enter OTP received
+LUI -> OTP: Send OTP entered
+alt "OTP verified"
+return "200 OK with isSuccessful True"
+LUI -> U++: Create user with mobile number and OTP
+return "User details & access token"
+LUI -> I++: Search if Individual already present based on uuid
+return "Individual list"
+alt "Individual empty. User is entering system for the first time"
+LUI -> R: Transition to user details registration screen
+... ENTER USER DETAILS ...
+R -> I: Transition to identity verification UI
+L -> I: Select "Aadhar"
+L -> I: Enter Aadhar number
+I -> AV: Integrate with external Aadhar verification provider
+L -> I: Enter OTP
+I -> AV: Verify OTP
+I -> UTS: Transition to user type selection screen
+L -> UTS: Select user type as litigant
+UTS -> TC: Show terms and conditions
+TC -> Ind++: Create individual in the system
+return individual
+TC -> SM: Show registration success modal
+L -> SM: Click on "Go to home"
+SM -> H: Go to home screen
+end
+end
+@enduml

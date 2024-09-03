@@ -1,0 +1,62 @@
+@startuml
+autonumber
+title "Respondent Advocate joins the case after receiving notice"
+actor "Respondent Advocate" as R
+participant UserRegistrationUI as UR order 0
+participant HomeScreenUI as H order 1
+participant JoinCaseUI as J order 2
+participant PendingTasksUI as I order 3
+participant ViewCaseUI as CI order 4
+participant CaseManagementSvc as CMS order 5
+participant CaseSvc order 6
+participant FileStoreSvc order 7
+participant EvidenceSvc order 8
+participant Workflow order 10
+participant ESign order 15
+
+R->UR: Login & register \n(follow user registration sequence diagram)
+R->H: Click on "Join a case"
+H->J: Transition to Join case screen
+R->J: Enter filing number
+J->CMS++: Call the summary/_search API
+return "Public Case Details"
+R->J: Enter access code
+J->CaseSvc++: Call validate API to validate access code
+return validateResponse
+alt "Incorrect access code"
+rnote over J
+ Flow ends. User is redirected.
+endrnote
+J->H: "Show error UI and redirect back to Home"
+else "Correct access code"
+R->J: Select "Advocate" role
+J->J: Show litigants list
+R->J: Select the party being represented
+alt "Respondent has not joined the case yet"
+J->J: Is individualId for selected \n respondent present in the payload?
+J->UR: Register respondent
+...Follow user registration sequence...
+UR->J: Return individualID of newly registered respondent
+J->CaseSvc++: Update case service "Party" attributes with respondent.primary type
+return case
+end
+...Enter vakalathnama and other details...
+J->CaseSvc++: Update case service with new \n advocate details & Vakalathnama (if applicable)
+return Case
+R->J: Click on "Submit Response"
+R->J: Upload document
+J->FileStoreSvc++: Upload response document to filestore service
+return fileStoreId
+J->EvidenceSvc++: Call update API with response document
+return evidence
+J->ESign++: Esign the document
+return Signed Doc
+J->FileStoreSvc++: Upload signed document to filestore service
+return fileStoreId
+J->EvidenceSvc++: Call update API with signed response document
+return evidence
+J->CaseSvc++: Update case workflow to "Pending Admission"
+return case
+J->CI: Redirect to view case UI
+end
+@enduml
