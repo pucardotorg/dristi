@@ -76,7 +76,7 @@ public class TaskService {
 
         try {
             // Fetch tasks from database according to the given search criteria
-            return taskRepository.getApplications(request.getCriteria(), request.getPagination());
+            return taskRepository.getTasks(request.getCriteria(), request.getPagination());
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching task :: {}", e.toString());
             throw e;
