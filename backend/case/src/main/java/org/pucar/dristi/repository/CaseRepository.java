@@ -83,7 +83,7 @@ public class CaseRepository {
         this.representingRowMapper = representingRowMapper;
     }
 
-    public List<CaseCriteria> getApplications(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
+    public List<CaseCriteria> getCases(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
 
         try {
 
