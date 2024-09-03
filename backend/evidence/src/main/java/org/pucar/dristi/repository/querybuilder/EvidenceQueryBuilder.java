@@ -101,7 +101,7 @@ public class EvidenceQueryBuilder {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (isaBoolean(pagination) || pagination.getSortBy().contains(";")) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
@@ -109,7 +109,7 @@ public class EvidenceQueryBuilder {
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
 
-    private static boolean isaBoolean(Pagination pagination) {
+    private static boolean isPaginationInvalid(Pagination pagination) {
         return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
 
