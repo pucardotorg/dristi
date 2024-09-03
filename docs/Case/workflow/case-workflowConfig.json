@@ -24,7 +24,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "nextState": "PENDING_PAYMENT",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -179,7 +179,7 @@
                         },
                         {
                             "action": "SEND_BACK",
-                            "nextState": "CASE_RE_ASSIGNED",
+                            "nextState": "CASE_REASSIGNED",
                             "roles": [
                                 "CASE_APPROVER"
                             ]
