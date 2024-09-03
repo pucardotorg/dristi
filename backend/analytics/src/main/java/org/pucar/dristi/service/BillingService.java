@@ -92,9 +92,9 @@ public class BillingService {
                     demandObject.put("status", "PAID");
                 }
 
-                JSONObject demandRequest = new JSONObject();
-                demandRequest.put("RequestInfo", requestInfo);
+                JSONObject demandRequest = new JSONObject(requestInfo);
                 demandRequest.put("Demands", demandArray);
+                demandRequest.put("RequestInfo",requestInfoMap);
                 processDemand(demandRequest.toString());
 
             }
