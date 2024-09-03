@@ -594,6 +594,33 @@ const GenerateOrders = () => {
           };
         });
       }
+      if (orderType === "JUDGEMENT") {
+        orderTypeForm = orderTypeForm?.map((section) => {
+          return {
+            ...section,
+            body: section.body.map((field) => {
+              if (field.key === "witnessNote" || field.key === "evidenceNote") {
+                return {
+                  ...field,
+                  populators: {
+                    ...field.populators,
+                    inputs: [
+                      {
+                        ...field.populators.inputs[0],
+                        caseId: caseDetails?.id,
+                        filingNumber: caseDetails?.filingNumber,
+                        tab: field?.key === "witnessNote" ? "Complaint" : field?.key === "evidenceNote" ? "Documents" : "Overview",
+                        customFunction: () => handleSaveDraft({ showReviewModal: false }),
+                      },
+                    ],
+                  },
+                };
+              }
+              return field;
+            }),
+          };
+        });
+      }
       newConfig = [...newConfig, ...orderTypeForm];
     }
     const updatedConfig = newConfig.map((config) => {
@@ -632,7 +659,7 @@ const GenerateOrders = () => {
       };
     });
     return updatedConfig;
-  }, [complainants, currentOrder, orderType, respondents, t, unJoinedLitigant, witnesses]);
+  }, [caseDetails, complainants, currentOrder, orderType, respondents, t, unJoinedLitigant, witnesses]);
   const multiSelectDropdownKeys = useMemo(() => {
     const foundKeys = [];
     modifiedFormConfig.forEach((config) => {

@@ -612,6 +612,7 @@ export const TabJudgeSearchConfig = {
               {
                 label: "Outcome",
                 jsonPath: "outcome",
+                additionalCustomization: true,
               },
               {
                 label: "Case ID",

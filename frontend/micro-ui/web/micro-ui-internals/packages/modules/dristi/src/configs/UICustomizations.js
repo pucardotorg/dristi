@@ -976,7 +976,7 @@ export const UICustomizations = {
       case "userName":
         return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
       case "address":
-        return /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{2,256}$/i;
+        return /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i;
       default:
         return;
     }
