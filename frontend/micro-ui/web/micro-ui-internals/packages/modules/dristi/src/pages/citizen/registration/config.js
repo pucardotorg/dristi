@@ -234,7 +234,8 @@ export const newConfig = [
                 errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
                 isRequired: true,
-                minlength: 2,
+                minlength: 1,
+                maxlength: 16,
                 title: "",
               },
               isMandatory: true,
@@ -378,18 +379,6 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "CS_ADHAAR",
-                  subText: "CS_ADHAAR_SUB_TEXT",
-                },
-                {
-                  code: "OTHER ID",
-                  name: "CS_OTHER",
-                  subText: "CS_OTHER_SUB_TEXT",
-                },
-              ],
               optionsCustomStyle: {
                 top: "40px",
               },
@@ -458,7 +447,7 @@ export const newConfig = [
               label: "CS_ID_TYPE",
               type: "dropdown",
               name: "selectIdType",
-              optionsKey: "name",
+              optionsKey: "type",
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "", ID_Proof: [] },
@@ -466,16 +455,11 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "AADHAR",
-                },
-                {
-                  code: "PAN",
-                  name: "PAN",
-                },
-              ],
+              mdmsConfig: {
+                masterName: "IdentifierType",
+                moduleName: "User Registration",
+                select: "(data) => {return data['User Registration'].IdentifierType?.map((item) => {return item;});}",
+              },
               optionsCustomStyle: {
                 top: "40px",
               },
@@ -494,6 +478,52 @@ export const newConfig = [
             },
           ],
           validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "CustomCheckBoxCard",
+        key: "terms_condition",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "Terms and Conditions",
+              subLabel: "Before diving in, we'll need to verify your identity for account setup.",
+              type: "multiple",
+              name: "terms_condition",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AGREE_MESSAGE",
+                  name:
+                    "By using this app, you agree to abide by our community guidelines, fostering a respectful and inclusive environment for all users",
+                },
+                {
+                  code: "PRIVACY_MESSAGE",
+                  name:
+                    "Your privacy is paramount. Rest assured, your data is securely handled and never shared with third parties without your consent",
+                },
+                {
+                  code: "LAWFUL_MESSAGE",
+                  name:
+                    "Please refrain from engaging in any unlawful activities while using our app, ensuring a safe and compliant platform for everyone",
+                },
+                {
+                  code: "MODIFICATION_MESSAGE",
+                  name:
+                    "We reserve the right to modify our services and terms at any time, keeping you informed of any updates through our communication channels",
+                },
+              ],
+            },
+          ],
         },
       },
     ],

@@ -19,8 +19,6 @@ import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { formatDate } from "../../utils";
-import { FileUploadIcon } from "../../../../dristi/src/icons/svgIndex";
-import { getFilestoreId } from "@egovernments/digit-ui-module-dristi/src/Utils/fileStoreUtil";
 
 const CloseBtn = (props) => {
   return (
@@ -239,9 +237,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
-  const [pageModule, setPageModule] = useState("en");
-  const { handleEsign, checkJoinACaseESignStatus } = Digit.Hooks.orders.useESign();
-  const fileStoreId = getFilestoreId();
 
   const documentUploaderConfig = {
     key: "vakalatnama",
@@ -466,7 +461,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
       { tenantId, limit: 1000, offset: 0 }
     );
     setUserUUID(individualData?.Individual?.[0]?.userUuid);
+    return individualData;
   };
+
   const getUserForAdvocateUUID = async (barRegistrationNumber) => {
     const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
       criteria: [
@@ -478,6 +475,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     });
     setUserUUID(advocateDetail?.advocates?.[0]?.responseList?.[0]?.auditDetails?.createdBy);
   };
+
   useEffect(() => {
     if (step === 0 && !caseNumber) {
       setErrors({
@@ -633,162 +631,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
     { key: "Total Fees", value: 2000, currency: "Rs", isTotalFee: true },
   ];
 
-  const saveStateToLocalStorage = () => {
-    const state = {
-      show,
-      step,
-      caseNumber,
-      caseDetails,
-      searchCaseResult,
-      userType,
-      barRegNumber,
-      barDetails,
-      selectedParty,
-      representingYourself,
-      roleOfNewAdvocate,
-      parties,
-      advocateDetail,
-      advocateDetailForm,
-      replaceAdvocateDocuments,
-      primaryAdvocateDetail,
-      isSearchingCase,
-      party,
-      validationCode,
-      isDisabled,
-      errors,
-      caseInfo,
-      formData,
-      affidavitText,
-      success,
-      advocateId,
-      userUUID,
-      individualId,
-      individualAddress,
-      name,
-      isSignedAdvocate,
-      isSignedParty,
-      complainantList,
-      respondentList,
-      individualDoc,
-      advocateName,
-      joinCaseRequest,
-    };
-
-    localStorage.setItem("appState", JSON.stringify(state));
-    saveFileToLocalStorage(adovacteVakalatnama);
-  };
-
-  const saveFileToLocalStorage = (adovacteVakalatnama) => {
-    const file = adovacteVakalatnama?.adcVakalatnamaFileUpload?.document[0];
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const base64String = e.target.result;
-
-        const fileData = {
-          fileName: file.name,
-          base64String: base64String,
-          lastModified: file.lastModified,
-          size: file.size,
-          type: file.type,
-        };
-
-        const storedData = {
-          ...adovacteVakalatnama,
-          adcVakalatnamaFileUpload: {
-            ...adovacteVakalatnama.adcVakalatnamaFileUpload,
-            document: [fileData],
-          },
-        };
-
-        localStorage.setItem("adovacteVakalatnama", JSON.stringify(storedData));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const loadFileFromLocalStorage = () => {
-    const storedData = localStorage.getItem("adovacteVakalatnama");
-
-    if (storedData) {
-      const storedObject = JSON.parse(storedData);
-      const fileData = storedObject.adcVakalatnamaFileUpload.document[0];
-
-      const byteString = atob(fileData.base64String.split(",")[1]);
-
-      const mimeType = fileData.base64String.split(",")[0].match(/:(.*?);/)[1];
-
-      const byteArray = new Uint8Array(byteString.length);
-      for (let i = 0; i < byteString.length; i++) {
-        byteArray[i] = byteString.charCodeAt(i);
-      }
-
-      const restoredFile = new File([byteArray], fileData.fileName, { type: mimeType });
-
-      const restoredObject = {
-        ...storedObject,
-        adcVakalatnamaFileUpload: {
-          ...storedObject.adcVakalatnamaFileUpload,
-          document: [restoredFile],
-        },
-      };
-
-      return restoredObject;
-    }
-
-    return {};
-  };
-
-  const loadStateFromLocalStorage = () => {
-    const storedState = localStorage.getItem("appState");
-    const restoredVakalatnamaFile = loadFileFromLocalStorage();
-
-    if (storedState) {
-      const state = JSON.parse(storedState);
-
-      setShow(state.show);
-      setStep(state.step);
-      setCaseNumber(state.caseNumber);
-      setCaseDetails(state.caseDetails);
-      setSearchCaseResult(state.searchCaseResult);
-      setUserType(state.userType);
-      setBarRegNumber(state.barRegNumber);
-      setBarDetails(state.barDetails);
-      setSelectedParty(state.selectedParty);
-      setRepresentingYourself(state.representingYourself);
-      setRoleOfNewAdvocate(state.roleOfNewAdvocate);
-      setParties(state.parties);
-      setAdvocateDetail(state.advocateDetail);
-      setAdvocateDetailForm(state.advocateDetailForm);
-      setReplaceAdvocateDocuments(state.replaceAdvocateDocuments);
-      setPrimaryAdvocateDetail(state.primaryAdvocateDetail);
-      setIsSearchingCase(state.isSearchingCase);
-      setParty(state.party);
-      setValidationCode(state.validationCode);
-      setIsDisabled(state.isDisabled);
-      setErrors(state.errors);
-      setCaseInfo(state.caseInfo);
-      setFormData(state.formData);
-      setAffidavitText(state.affidavitText);
-      setSuccess(state.success);
-      setMessageHeader(state.messageHeader);
-      setAdvocateId(state.advocateId);
-      setUserUUID(state.userUUID);
-      setAdovacteVakalatnama(restoredVakalatnamaFile);
-      setIndividualId(state.individualId);
-      setIndividualAddress(state.individualAddress);
-      setName(state.name);
-      setIsSignedAdvocate(state.isSignedAdvocate);
-      setIsSignedParty(state.isSignedParty);
-      setComplainantList(state.complainantList);
-      setRespondentList(state.respondentList);
-      setIndividualDoc(state.individualDoc);
-      setAdvocateName(state.advocateName);
-      setJoinCaseRequest(state.joinCaseRequest);
-    }
-  };
-
   const modalItem = [
     // 0
     {
@@ -859,24 +701,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
                       <div className="case-info-value">
-                        <span>
-                          {caseDetails?.additionalDetails?.complainantDetails?.formdata
-                            ?.map(
-                              (data) =>
-                                `${data?.data?.firstName}${data?.data?.middleName ? " " + data?.data?.middleName + " " : " "} ${data?.data?.lastName}`
-                            )
-                            .join(", ")}
-                        </span>
+                        <span>{complainantList?.map((complainant) => complainant?.fullName).join(", ")}</span>
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
                       <div className="case-info-value">
-                        <span>
-                          {caseDetails?.additionalDetails?.respondentDetails?.formdata
-                            ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
-                            .join(", ")}
-                        </span>
+                        <span>{respondentList?.map((respondent) => respondent?.fullName).join(", ")}</span>
                       </div>
                     </div>
                   </div>
@@ -1294,23 +1125,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                       label={"E-Sign"}
                       onButtonClick={() => {
                         setIsDisabled(false);
-                        // setIsSignedAdvocate(true);
-                        saveStateToLocalStorage();
-                        handleEsign("Advocate", pageModule, fileStoreId);
+                        setIsSignedAdvocate(true);
                       }}
                       className={"aadhar-sign-in"}
                       labelClassName={"aadhar-sign-in"}
-                    ></CustomButton>
-                    <CustomButton
-                      icon={<FileUploadIcon />}
-                      label={t("Upload Signature")}
-                      onButtonClick={() => {
-                        // setOpenUploadSignatureModal(true);
-                        // setIsSigned(true);
-                        setIsSignedAdvocate(true);
-                      }}
-                      className={"upload-signature"}
-                      labelClassName={"upload-signature-label"}
                     ></CustomButton>
                   </div>
                 )}
@@ -1333,23 +1151,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     <CustomButton
                       label={"E-Sign"}
                       onButtonClick={() => {
-                        // setIsSignedParty(true);
-                        saveStateToLocalStorage();
-                        handleEsign("Party", pageModule, fileStoreId);
+                        setIsSignedParty(true);
                       }}
                       className={"aadhar-sign-in"}
                       labelClassName={"aadhar-sign-in"}
-                    ></CustomButton>
-                    <CustomButton
-                      icon={<FileUploadIcon />}
-                      label={t("Upload Signature")}
-                      onButtonClick={() => {
-                        // setOpenUploadSignatureModal(true);
-                        // setIsSigned(true);
-                        setIsSignedParty(true);
-                      }}
-                      className={"upload-signature"}
-                      labelClassName={"upload-signature-label"}
                     ></CustomButton>
                   </div>
                 )}
@@ -1481,27 +1286,13 @@ const JoinCaseHome = ({ refreshInbox }) => {
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
                       <div className="case-info-value">
-                        <span>
-                          {caseDetails?.additionalDetails?.complainantDetails?.formdata
-                            ?.map(
-                              (data) => `${data?.data?.firstName}${data?.data?.middleName && " " + data?.data?.middleName} ${data?.data?.lastName}`
-                            )
-                            .join(", ")}
-                        </span>
+                        <span>{complainantList?.map((complainant) => complainant?.fullName).join(", ")}</span>
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
                       <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
                       <div className="case-info-value">
-                        <span>
-                          {joinCaseRequest?.additionalDetails
-                            ? joinCaseRequest?.additionalDetails?.respondentDetails?.formdata
-                                ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
-                                .join(", ")
-                            : caseDetails?.additionalDetails?.respondentDetails?.formdata
-                                ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
-                                .join(", ")}
-                        </span>
+                        <span>{respondentList?.map((respondent) => respondent?.fullName).join(", ")}</span>
                       </div>
                     </div>
                   </div>
@@ -1521,12 +1312,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   label={
                     roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)
                       ? t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
-                      : t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
+                      : t(JoinHomeLocalisation.CONFIRM_ATTENDANCE)
                   }
                   onButtonClick={() => {
                     if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
-                      history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
-                    } else {
                       history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
                     }
                   }}
@@ -1554,6 +1343,68 @@ const JoinCaseHome = ({ refreshInbox }) => {
     return shorthand;
   };
 
+  const getComplainantList = async (formdata) => {
+    const complainantList = await Promise.all(
+      formdata?.map(async (data, index) => {
+        try {
+          const response = await getUserUUID(data?.data?.complainantVerification?.individualDetails?.individualId);
+          console.log("response :>> ", response);
+          const fullName = `${response?.Individual?.[0]?.name?.givenName} ${
+            response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
+          }${response?.Individual?.[0]?.name?.familyName}`;
+          return {
+            ...data?.data,
+            label: `${fullName} ${t(JoinHomeLocalisation.COMPLAINANT_BRACK)}`,
+            fullName: fullName,
+            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+            isComplainant: true,
+            individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+          };
+        } catch (error) {
+          console.error(error);
+        }
+      })
+    );
+    setComplainantList(complainantList);
+  };
+
+  const getRespondentList = async (formdata) => {
+    const complainantList = await Promise.all(
+      formdata?.map(async (data, index) => {
+        try {
+          let response = undefined;
+          let fullName = "";
+          if (data?.data?.respondentVerification?.individualDetails?.individualId) {
+            response = await getUserUUID(data?.data?.respondentVerification?.individualDetails?.individualId);
+          }
+          if (response) {
+            fullName = `${response?.Individual?.[0]?.name?.givenName} ${
+              response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
+            }${response?.Individual?.[0]?.name?.familyName}`;
+          } else {
+            fullName = `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
+              data?.data?.respondentLastName
+            }`;
+          }
+          return {
+            ...data?.data,
+            label: `${fullName} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
+            fullName: fullName,
+            index: index,
+            partyType: index === 0 ? "respondent.primary" : "respondent.additional",
+            isRespondent: true,
+            individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
+          };
+        } catch (error) {
+          console.error(error);
+        }
+      })
+    );
+    userType === "Advocate"
+      ? setRespondentList(complainantList?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)?.map((data) => data))
+      : setRespondentList(complainantList?.map((data) => data));
+  };
+
   useEffect(() => {
     if (caseDetails?.caseCategory) {
       setCaseInfo([
@@ -1576,50 +1427,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
           value: caseDetails?.stage,
         },
       ]);
-
-      setComplainantList(
-        caseDetails?.additionalDetails?.complainantDetails?.formdata?.map((data, index) => ({
-          ...data?.data,
-          label: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName} ${t(
-            JoinHomeLocalisation.COMPLAINANT_BRACK
-          )}`,
-          fullName: `${data?.data?.firstName} ${data?.data?.middleName ? data?.data?.middleName + " " : ""}${data?.data?.lastName}`,
-          partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-          isComplainant: true,
-          individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
-        }))
-      );
-      setRespondentList(
-        userType === "Advocate"
-          ? caseDetails?.additionalDetails?.respondentDetails?.formdata
-              ?.map((data, index) => ({
-                ...data?.data,
-                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-                fullName: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                }`,
-                index: index,
-                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
-                isRespondent: true,
-                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
-              }))
-              ?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)
-              ?.map((data) => data)
-          : caseDetails?.additionalDetails?.respondentDetails?.formdata
-              ?.map((data, index) => ({
-                ...data?.data,
-                label: `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-                  data?.data?.respondentLastName
-                } ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
-                index: index,
-                partyType: index === 0 ? "respondent.primary" : "respondent.additional",
-                isRespondent: true,
-                individualId: data?.data?.respondentVerification?.individualDetails?.individualId,
-              }))
-              ?.map((data) => data)
-      );
+      getComplainantList(caseDetails?.additionalDetails?.complainantDetails?.formdata);
+      getRespondentList(caseDetails?.additionalDetails?.respondentDetails?.formdata);
     }
   }, [caseDetails, t, userType]);
 
@@ -1659,8 +1468,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
     setAdvocateDetailForm({});
     setReplaceAdvocateDocuments({});
     setAdovacteVakalatnama({});
-    localStorage.removeItem("adovacteVakalatnama");
-    localStorage.removeItem("appState");
+    setComplainantList([]);
+    setRespondentList([]);
   };
 
   const submitJoinCase = async (data) => {
@@ -1777,18 +1586,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
       }
     } else if (step === 3) {
       setIsDisabled(true);
-      if (searchLitigantInRepresentives().isFound) setStep(step + 1);
-      else setStep(step + 1);
+      if (searchLitigantInRepresentives().isFound) setStep(step + 3);
+      else setStep(step + 4);
     } else if (step === 4) {
-      localStorage.removeItem("adovacteVakalatnama");
-      localStorage.removeItem("appState");
-      // setStep(step + 1); // uncomment when you need payment modal
-      // remove the below condition to add payment modal
-      if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
-        setStep(step + 2);
-      } else {
-        setStep(step + 3);
-      }
+      setStep(step + 1);
       setIsDisabled(false);
     } else if (step === 5) {
       if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
@@ -2170,6 +1971,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
           );
           if (res) {
             setJoinCaseRequest(res?.joinCaseRequest);
+            setRespondentList(
+              respondentList?.map((respondent) => {
+                if (respondent?.index === selectedParty?.index)
+                  return {
+                    ...respondent,
+                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  };
+                else return respondent;
+              })
+            );
             setStep(step + 1);
             setSuccess(true);
           } else {
@@ -2372,6 +2183,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
           );
           if (res) {
             setJoinCaseRequest(res?.joinCaseRequest);
+            setRespondentList(
+              respondentList?.map((respondent) => {
+                if (respondent?.index === selectedParty?.index)
+                  return {
+                    ...respondent,
+                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  };
+                else return respondent;
+              })
+            );
             setStep(step + 1);
             setSuccess(true);
           } else {
@@ -2445,19 +2266,6 @@ const JoinCaseHome = ({ refreshInbox }) => {
     };
   }, [handleKeyDown]);
 
-  useEffect(() => {
-    loadStateFromLocalStorage();
-    const isSignSuccess = localStorage.getItem("esignProcess");
-    if (isSignSuccess) {
-      // setStep(4);
-      setShow(true);
-      // setShowsignatureModal(true);
-      localStorage.removeItem("esignProcess");
-    }
-    checkJoinACaseESignStatus(setIsSignedAdvocate, setIsSignedParty);
-    // localStorage.removeItem("appState");
-  }, []);
-
   return (
     <div>
       <Button
@@ -2475,12 +2283,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
             if (step === 0 && caseDetails?.caseNumber) {
               setCaseDetails({});
             } else if (step === 6) {
-              setStep(step - 2);
+              setStep(step - 3);
             } else if (step === 7) {
-              if (userType === "Litigant") setStep(step - 3);
+              if (userType === "Litigant") setStep(step - 5);
               else {
                 if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) setStep(step - 1);
-                else setStep(step - 3);
+                else setStep(step - 4);
               }
               setValidationCode("");
               setErrors({

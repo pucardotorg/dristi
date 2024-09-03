@@ -220,7 +220,7 @@ function AdmissionActionModal({
 
       {modalInfo?.page == 0 && modalInfo?.type === "schedule" && (
         <Modal
-          headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
+          headerBarMain={<Heading label={scheduleHearing ? t("CS_SCHEDULE_HEARING") : t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
           popupStyles={{ width: "917px" }}

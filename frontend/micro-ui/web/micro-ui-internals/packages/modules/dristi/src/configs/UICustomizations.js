@@ -240,7 +240,7 @@ export const UICustomizations = {
   },
   registrationRequestsConfig: {
     customValidationCheck: (data) => {
-      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+      return !data?.applicationNumber_WILDCARD.trim() ? { label: "Please enter a valid application Number", error: true } : false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
@@ -304,14 +304,11 @@ export const UICustomizations = {
           );
         case "Action":
           return (
-            <span className="action-link">
-              <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
-              >
-                {" "}
-                {t("Verify")}
-              </Link>
-            </span>
+            <Link
+              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
+            >
+              <span className="action-link"> {t("Verify")}</span>
+            </Link>
           );
         case "User Type":
           return usertype === "clerk" ? "Advocate Clerk" : "Advocate";

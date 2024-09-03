@@ -54,6 +54,7 @@ import CustomCalendar from "./components/CustomCalendar";
 import UploadSignatureModal from "./components/UploadSignatureModal";
 import CommentComponent from "./components/CommentComponent";
 import { RightArrow } from "./icons/svgIndex";
+import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 import useBillSearch from "./hooks/dristi/useBillSearch";
 import SelectTranscriptTextArea from "./components/SelectTranscriptTextArea";
 
@@ -132,6 +133,7 @@ const componentsToRegister = {
   SelectReviewAccordion,
   SelectSignature,
   CustomRadioCard,
+  CustomCheckBoxCard,
   AddressComponent,
   AdhaarInput,
   AdvocateDetailComponent,

@@ -168,18 +168,6 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
             color: "#007E7E",
             margin: "0px",
           }}
-          style={{
-            backgroundColor: "transparent",
-          }}
-          textStyles={{
-            fontFamily: "Lato",
-            fontSize: "16px",
-            fontWeight: 700,
-            lineHeight: "19.2px",
-            textAlign: "left",
-            color: "#007E7E",
-            margin: "0px",
-          }}
         ></Button>
       </div>
       <div className="search-tabs-container" style={{ marginBottom: "24px" }}>

@@ -472,13 +472,13 @@
   margin-bottom: 80px;
 
   .jk-digit-secondary-btn.previous-button {
-      h2 {
-        font-size: inherit;
-        font-weight: inherit !important;
-        font-family: inherit;
-        color: #007e7e;
-      }
+    h2 {
+      font-size: inherit;
+      font-weight: inherit !important;
+      font-family: inherit;
+      color: #007e7e;
     }
+  }
   .custom-sub-header {
     font-family: Roboto;
     font-size: 16px;
@@ -750,7 +750,25 @@
   }
 }
 
+.advocate-detail.disable-form,
 .advocate-detail {
+  .label-field-pair {
+    margin-bottom: 40px;
+    .advocate-basic-info {
+      .card-label {
+        margin-bottom: 8px !important;
+      }
+      .label-field-pair {
+        margin-bottom: 16px !important;
+      }
+    }
+  }
+  .user-details-form-style {
+    input {
+      margin: 0px !important;
+    }
+  }
+
   .select-wrap {
     margin: 0px !important;
     max-width: 100%;

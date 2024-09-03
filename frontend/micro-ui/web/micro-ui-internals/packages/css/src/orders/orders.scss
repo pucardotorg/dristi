@@ -241,12 +241,45 @@
   }
 }
 
+.custom-submit-modal {
+  display: flex;
+  flex-direction: column;
+  .success-wrap {
+    margin: 0px !important;
+    padding: 16px 40px !important;
+  }
+  .success-card-label {
+    margin-top: 16px;
+    font-family: Roboto;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 28.5px;
+    text-align: center;
+    color: #505a5f;
+  }
+  .custom-case-info-div {
+    margin-top: 16px;
+    margin-bottom: 40px;
+  }
+}
+
+.copy-key-text {
+  font-family: Roboto;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 28.5px;
+  color: #505a5f;
+  margin: 0px;
+}
+
 .orders-success-modal {
   &.popup-module {
     width: 40vw;
 
     .popup-module-main {
+      padding: 40px !important;
       .popup-module-action-bar {
+        margin: 0px !important;
         .selector-button-border {
           border: 1px solid #007e7e !important;
           display: flex;
@@ -254,7 +287,7 @@
           justify-content: center;
           align-items: center;
           height: 40px;
-          width: 276px;
+          width: 50%;
           padding: 8px 24px;
 
           h2 {
@@ -274,7 +307,7 @@
 
         .selector-button-primary {
           height: 40px;
-          width: 276px;
+          width: 50%;
           padding: 8px 24px;
 
           h2 {

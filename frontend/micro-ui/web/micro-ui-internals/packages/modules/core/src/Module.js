@@ -155,6 +155,7 @@ export const initCoreComponents = () => {
     try {
       return "sessionStorage" in window && window["sessionStorage"] !== null;
     } catch (e) {
+      console.error("Failed to access sessionStorage:", e);
       return false;
     }
   };
@@ -173,7 +174,7 @@ export const initCoreComponents = () => {
         }
         return item.value;
       } else if (typeof window !== "undefined") {
-        return window?.eGov?.Storage && window.eGov.Storage[k(key)].value;
+        return window?.eGov?.Storage?.[k(key)]?.value;
       } else {
         return null;
       }
@@ -206,8 +207,7 @@ export const initCoreComponents = () => {
 
   const setupLibraries = (Library, props) => {
     window.Digit = window.Digit || {};
-    window.Digit[Library] = window.Digit[Library] || {};
-    window.Digit[Library] = { ...window.Digit[Library], ...props };
+    window.Digit[Library] = { ...(window.Digit[Library] || {}), ...props };
   };
 
   setupLibraries("SessionStorage", Storage);

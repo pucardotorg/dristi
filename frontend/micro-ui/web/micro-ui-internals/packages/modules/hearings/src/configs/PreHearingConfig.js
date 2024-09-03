@@ -7,18 +7,6 @@ const defaultSearchValues = {
   sortCaseListByStartDate: "",
 };
 
-export const subStageOptions = [
-  { stage: ["Filing"] },
-  { stage: ["Cognizance"] },
-  { stage: ["Inquiry"] },
-  { stage: ["Appearance"] },
-  { stage: ["Framing of charges"] },
-  { stage: ["Evidence"] },
-  { stage: ["Arguments"] },
-  { stage: ["Judgment"] },
-  { stage: ["Post-Judgement"] },
-];
-
 export const preHearingConfig = {
   label: "ES_COMMON_HEARING",
   type: "search",
@@ -94,8 +82,11 @@ export const preHearingConfig = {
               styles: { width: "150px" },
               name: "stage",
               error: "Required",
-              optionsKey: "stage",
-              options: subStageOptions,
+              mdmsConfig: {
+                masterName: "SubStage",
+                moduleName: "case",
+                select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+              },
             },
           },
           {

@@ -1348,7 +1348,7 @@ export const updateCaseDetails = async ({
         ...representative,
         caseId: caseDetails?.id,
         representing: representative?.advocateId
-          ? [...litigants].map((item, index) => ({
+          ? [litigants[0]].map((item, index) => ({
               ...(caseDetails.representatives?.[idx]?.representing?.[index] ? caseDetails.representatives?.[idx]?.representing?.[index] : {}),
               ...item,
             }))
@@ -1395,6 +1395,26 @@ export const updateCaseDetails = async ({
                       document
                     );
                   }
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                    fileName: "Affidavit documents",
+                  };
+                }
+              })
+            );
+          }
+          if (
+            data?.data?.companyDetailsUpload?.document &&
+            Array.isArray(data?.data?.companyDetailsUpload?.document) &&
+            data?.data?.companyDetailsUpload?.document.length > 0
+          ) {
+            documentData.companyDetailsUpload = {};
+            documentData.companyDetailsUpload.document = await Promise.all(
+              data?.data?.companyDetailsUpload?.document?.map(async (document) => {
+                if (document) {
+                  const uploadedData = await onDocumentUpload(document, document.name, tenantId);
                   return {
                     documentType: uploadedData.fileType || document?.documentType,
                     fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
@@ -1963,7 +1983,7 @@ export const updateCaseDetails = async ({
             representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
               ? [
                   ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
+                    ? [caseDetails?.litigants[0]]?.map((data, key) => ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),

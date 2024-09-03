@@ -30,10 +30,14 @@ const paymentOptionConfig = {
   label: "CS_MODE_OF_PAYMENT",
   type: "dropdown",
   name: "selectIdTypeType",
-  optionsKey: "i18nKey",
+  optionsKey: "name",
   validation: {},
   isMandatory: true,
-  options: paymentOption,
+  mdmsConfig: {
+    masterName: "OfflinePaymentMode",
+    moduleName: "case",
+    select: "(data) => {return data['case'].OfflinePaymentMode?.map((item) => {return item;});}",
+  },
   styles: {
     width: "50%",
   },
@@ -309,7 +313,6 @@ const ViewPaymentDetails = ({ location, match }) => {
               <CustomDropdown
                 label={paymentOptionConfig.label}
                 t={t}
-                defaulValue={paymentOption[0]}
                 onChange={(e) => {
                   setModeOfPayment(e);
                   setAdditionalDetails("");

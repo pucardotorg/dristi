@@ -15,8 +15,30 @@
 .print-documents-box {
   border: 1px solid #bbbbbd;
   display: flex;
-  gap: 24px;
-  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.print-documents-box-text {
+  font-size: 16px;
+  color: #505a5f;
+  font-weight: 700;
+  line-height: 18.75px;
+  display: flex;
+  align-items: center;
+}
+
+.print-button {
+  font-weight: 400;
+  font-size: 16px;
+  color: #007e7e;
+  background-color: white;
+  line-height: 18.75px;
+  display: flex;
+  align-items: center;
 }
 
 .document-details-container {

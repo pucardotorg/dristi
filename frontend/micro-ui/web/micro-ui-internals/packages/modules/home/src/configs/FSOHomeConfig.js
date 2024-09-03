@@ -194,7 +194,11 @@ export const TabFSOSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",

@@ -80,7 +80,7 @@ function ApplicationAwaitingPage({ individualId }) {
           onButtonClick={() => {
             history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
           }}
-          label={t("View My Application")}
+          label={t("VIEW_MY_APPLICATION")}
           style={{
             flex: 1,
             boxShadow: "none",

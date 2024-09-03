@@ -33,11 +33,13 @@ const Search = ({ path }) => {
       toDate: convertDateToEpoch(_data?.toDate),
     };
 
-    setPayload(
-      Object.keys(data)
-        .filter((k) => data[k])
-        .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key] : data[key] }), {})
-    );
+    const filteredData = Object.keys(data)
+      .filter((k) => data[k])
+      .reduce((acc, key) => {
+        acc[key] = typeof data[key] === "object" ? data[key] : data[key];
+        return acc;
+      }, {});
+    setPayload(filteredData);
   }
   useEffect(() => {
     const storedPayload = Digit.SessionStorage.get("AUDIT_APPLICATION_DETAIL") || {};

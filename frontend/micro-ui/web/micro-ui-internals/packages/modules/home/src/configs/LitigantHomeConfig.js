@@ -176,7 +176,11 @@ export const TabLitigantSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: subStageOptions,
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",
@@ -355,7 +359,7 @@ export const TabLitigantSearchConfig = {
         requestParam: {},
         requestBody: {
           tenantId: "pg",
-          criteria: [{ outcome: outcomesOptions }],
+          criteria: [{ outcome: [] }],
         },
         masterName: "commonUiConfig",
         moduleName: "homeLitigantUiConfig",
@@ -373,6 +377,20 @@ export const TabLitigantSearchConfig = {
             minReqFields: 0,
             defaultValues: defaultSearchValues,
             fields: [
+              {
+                label: "Case ID",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "filingNumber",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 2,
+                  },
+                },
+              },
               {
                 label: "Case Type",
                 isMandatory: false,
@@ -392,14 +410,20 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "Stage",
+                label: "Outcome",
                 isMandatory: false,
                 key: "outcome",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "outcome",
-                  options: outcomesOptions,
+                  optionsKey: "outcome",
+                  mdmsConfig: {
+                    masterName: "OutcomeType",
+                    moduleName: "case",
+                    select:
+                      "(data) => {return data['case'].OutcomeType?.flatMap((item) => {return item.judgementList && item.judgementList.length > 0 ? item.judgementList.map(it => ({outcome: it})) : [item];});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",

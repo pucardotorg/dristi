@@ -71,6 +71,7 @@ const selectCompMultiConfig = {
         name: "locality",
         validation: {
           isRequired: true,
+          maxlength: 300,
         },
         isMandatory: true,
       },

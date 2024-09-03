@@ -305,6 +305,16 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
           />
         )}
         <div className="button-field">
+          {/* <Button
+            variation={"secondary"}
+            className={"secondary-button-selector"}
+            label={t("CS_GO_TO_HOME")}
+            labelClassName={"secondary-label-selector"}
+            style={{ minWidth: "30%" }}
+            onButtonClick={() => {
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+            }}
+          /> */}
           <Button
             variation={"secondary"}
             className={"secondary-button-selector"}

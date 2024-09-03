@@ -1,6 +1,7 @@
 import { CardLabelError } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmptyObject } from "../Utils";
+import isEqual from "lodash/isEqual";
 
 function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
@@ -8,7 +9,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
       config?.populators?.inputs || [
         {
           textAreaHeader: "custom note",
-          textAreaSubHeader: "please provide some more details.", 
+          textAreaSubHeader: "please provide some more details.",
           isOptional: false,
         },
       ],
@@ -16,6 +17,12 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   );
 
   const [formdata, setFormData] = useState(formData);
+
+  useEffect(() => {
+    if (!isEqual(formdata, formData)) {
+      setFormData(formData);
+    }
+  }, [formData]);
 
   function setValue(value, input) {
     let updatedValue = {
@@ -81,7 +88,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
             handleChange(data, input);
           }}
           rows={5}
-          // maxLength={400}
+          maxLength={400}
           className={`custom-textarea-style${errors[config.key] ? " alert-error-border" : ""}`}
           placeholder={t(input?.placeholder)}
           disabled={config.disable}

@@ -147,6 +147,8 @@ const GenerateOrders = () => {
   const [createdSummon, setCreatedSummon] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
+  const setFormErrors = useRef(null);
+  const [currentFormData, setCurrentFormData] = useState(null);
   const roles = Digit.UserService.getUser()?.info?.roles;
   const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
   const setSelectedOrder = (orderIndex) => {
@@ -156,9 +158,11 @@ const GenerateOrders = () => {
   const closeToast = () => {
     setShowErrorToast(null);
   };
-  // const hearingsList = useMemo(() => hearingsData?.HearingList?.sort((a, b) => b.startTime - a.startTime), [hearingsData]);
-  const { data: courtRoomDetails, isLoading: isCourtIdsLoading } = useGetStatuteSection("common-masters", [{ name: "Court_Rooms" }]);
+  const { data: courtRoomDetails, isLoading: isCourtIdsLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "Court_Rooms" },
+  ]);
   const courtRooms = useMemo(() => courtRoomDetails?.Court_Rooms || [], [courtRoomDetails]);
+
   const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
@@ -181,8 +185,6 @@ const GenerateOrders = () => {
     }),
     [caseData]
   );
-  const setFormErrors = useRef(null);
-  const [currentFormData, setCurrentFormData] = useState(null);
 
   const { data: courtRoomData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Court_Rooms" }], {
     select: (data) => {
@@ -197,6 +199,7 @@ const GenerateOrders = () => {
       return newData;
     },
   });
+
   const { data: orderTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Order", [{ name: "OrderType" }], {
     select: (data) => {
       return _.get(data, "Order.OrderType", [])
@@ -241,7 +244,6 @@ const GenerateOrders = () => {
         }) || []
     );
   }, [caseDetails, allAdvocates]);
-  console.log(complainants, "COMPL", allAdvocates);
 
   const unJoinedLitigant = useMemo(() => {
     return (
@@ -255,6 +257,7 @@ const GenerateOrders = () => {
         }) || []
     );
   }, [caseDetails]);
+
   const witnesses = useMemo(() => {
     return (
       caseDetails?.additionalDetails?.witnessDetails?.formdata?.map((data) => {
@@ -265,6 +268,7 @@ const GenerateOrders = () => {
       }) || []
     );
   }, [caseDetails]);
+
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     {
       tenantId,
@@ -749,7 +753,6 @@ const GenerateOrders = () => {
       }
     }
     if (orderType === "WARRANT") {
-      console.debug(hearingDetails);
       if (hearingDetails?.startTime) {
         updatedFormdata.dateOfHearing = formatDate(new Date(hearingDetails?.startTime));
       }
@@ -768,7 +771,6 @@ const GenerateOrders = () => {
     return updatedFormdata;
   }, [currentOrder, orderType, applicationDetails, t, hearingDetails, caseDetails, orderTypeData]);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    console.log(formData, "FOERMDATAA");
     applyMultiSelectDropdownFix(setValue, formData, multiSelectDropdownKeys);
 
     if (orderType && ["MANDATORY_SUBMISSIONS_RESPONSES"].includes(orderType)) {
@@ -959,7 +961,6 @@ const GenerateOrders = () => {
     taskStatus = "CREATE_SUBMISSION",
     taskName = "",
   }) => {
-    console.log(orderEntityType, "PENDING");
     const formdata = order?.additionalDetails?.formdata;
     let create = createTask;
     let name = taskName;
@@ -1069,6 +1070,13 @@ const GenerateOrders = () => {
         });
         return await Promise.all(promises);
       }
+    }
+    if (order?.orderType === "WARRANT") {
+      entityType = "order-default";
+      create = true;
+      assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
+      name = t("PAYMENT_PENDING_FOR_WARRANT");
+      status = `PAYMENT_PENDING_FOR_WARRANT`;
     }
 
     if (isAssignedRole) {
@@ -1439,7 +1447,6 @@ const GenerateOrders = () => {
             gender: "",
           };
         }
-
         await ordersService.customApiService(Urls.orders.taskCreate, {
           task: {
             taskDetails: payload,
@@ -1670,6 +1677,10 @@ const GenerateOrders = () => {
         },
       });
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
+      if (orderType === "SCHEDULE_OF_HEARING_DATE") {
+        closeManualPendingTask(filingNumber);
+      }
+      closeManualPendingTask(currentOrder?.orderNumber);
       if (orderType === "SUMMONS") {
         closeManualPendingTask(currentOrder?.hearingNumber || hearingDetails?.hearingId);
       }
@@ -1748,7 +1759,6 @@ const GenerateOrders = () => {
       }
     }
     if (orderType && ["WARRANT"].includes(orderType)) {
-      debugger;
       if (!currentFormData?.bailInfo?.noOfSureties) {
         setFormErrors.current("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
         return;
@@ -1774,6 +1784,7 @@ const GenerateOrders = () => {
     }
     handleSaveDraft({ showReviewModal: true });
   };
+
   const handleClose = async () => {
     if (successModalActionSaveLabel === t("CS_COMMON_CLOSE")) {
       history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {

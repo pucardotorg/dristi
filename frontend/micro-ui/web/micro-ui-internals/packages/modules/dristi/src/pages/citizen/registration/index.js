@@ -13,6 +13,7 @@ import SelectId from "../Login/SelectId";
 import EnterAdhaar from "./EnterAdhaar";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import UploadIdType from "./UploadIdType";
+import TermsCondition from "./TermsCondition";
 
 const TYPE_REGISTER = { type: "REGISTER" };
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -337,10 +338,14 @@ const Registration = ({ stateCode }) => {
               params={newParams}
               userTypeRegister={userTypeRegister}
               onSelect={handleUserTypeSave}
+              path={path}
             />
           </Route>
           <Route path={`${path}/upload-id`}>
             <UploadIdType t={t} config={[stepItems[9]]} pathOnRefresh={pathOnRefresh} onDocumentUpload={onDocumentUpload} params={newParams} />
+          </Route>
+          <Route path={`${path}/terms-condition`}>
+            <TermsCondition params={newParams} setParams={setNewParams} t={t} config={[stepItems[10]]} pathOnRefresh={pathOnRefresh} path={path} />
           </Route>
           {error && <Toast error={true} label={error} onClose={closeToast} />}
         </React.Fragment>

@@ -14,7 +14,7 @@ const ApplicationInfoComponent = ({ infos, links }) => {
                   <h3>{t(info?.key)}</h3>
                 </div>
                 <div className="info-value">
-                  <h3>{info?.value}</h3>
+                  <h3>{t(info?.value)}</h3>
                 </div>
               </div>
             ))}

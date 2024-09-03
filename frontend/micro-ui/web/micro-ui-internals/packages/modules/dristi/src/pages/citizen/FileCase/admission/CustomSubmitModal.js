@@ -1,7 +1,7 @@
 import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import CustomCaseInfoDiv from "./CustomCaseInfoDiv";
-import CustomCopyTextDiv from "./CustomCopyTextDiv";
+import CustomCopyTextDiv from "../../../../components/CustomCopyTextDiv";
 
 const mockSubmitModalInfo = {
   header: "The case file has been admitted successfully.",
@@ -35,6 +35,8 @@ const mockSubmitModalInfo = {
 };
 
 function CustomSubmitModal({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo }) {
+  const CustomCaseInfoDivCustom = window?.Digit?.ComponentRegistryService?.getComponent("CustomCaseInfoDiv");
+
   return (
     <div
       style={{
