@@ -3,8 +3,10 @@ import React, { useMemo } from "react";
 import CustomCard from "./CustomCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import JudgeScreen from "../pages/employee/Judge/JudgeScreen";
+import { useTranslation } from "react-i18next";
 
 const DRISTICard = () => {
+  const { t } = useTranslation();
   const Digit = useMemo(() => window?.Digit || {}, []);
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -42,18 +44,18 @@ const DRISTICard = () => {
                 <Header className="main-card-header">{"What do you wish to do?"}</Header>
                 <div className="main-inner-div">
                   <CustomCard
-                    label={"View Registrations"}
-                    subLabel={"Review new platform registration requests from Advocates"}
-                    buttonLabel={"View Requests"}
+                    label={t("CS_VIEW_REGISTRATION")}
+                    subLabel={t("CS_VIEW_REGISTRATION_SUB_TEXT")}
+                    buttonLabel={t("CS_VIEW_PENDING_REQUESTS")}
                     className="custom-card-style"
                     onClick={() => {
                       history.push("/digit-ui/employee/dristi/registration-requests");
                     }}
                   />
                   <CustomCard
-                    label={"View Cases"}
-                    subLabel={"Explore cases and support on-going case queries"}
-                    buttonLabel={"View Cases"}
+                    label={t("CS_VIEW_PENDING_PAYMENTS")}
+                    subLabel={t("CS_VIEW_PENDING_PAYMENTS_SUB_TEXT")}
+                    buttonLabel={t("CS_VIEW_PENDING_PAYMENTS")}
                     className="custom-card-style"
                     onClick={() => {
                       isNyayMitra ? history.push("/digit-ui/employee/dristi/pending-payment-inbox") : history.push("/digit-ui/employee/dristi/cases");

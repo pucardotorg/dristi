@@ -19,7 +19,7 @@ const CustomCard = ({ Icon, label, style, onClick, subLabel, buttonLabel, classN
         }
       }}
     >
-      <CardLabel style={{ fontSize: "24px", fontWeight: "600", marginBottom: "0px" }}>{label}</CardLabel>
+      <CardLabel style={{ fontSize: "24px", fontWeight: "600", marginBottom: "5px" }}>{label}</CardLabel>
       <CardText style={{ fontSize: "14px", fontWeight: "400", marginBottom: "10px" }}> {subLabel}</CardText>
       {buttonLabel && <SubmitBar label={buttonLabel} onSubmit={onClick} />}
       {Icon ? Icon : null}

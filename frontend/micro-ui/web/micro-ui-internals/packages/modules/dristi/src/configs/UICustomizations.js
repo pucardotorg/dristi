@@ -447,71 +447,48 @@ export const UICustomizations = {
       const billStatus = row?.businessObject?.billDetails?.billStatus;
       const amount = row?.businessObject?.billDetails?.amount;
       switch (key) {
-        case "Case ID":
+        case "Case Name & ID":
           return billStatus === "ACTIVE" ? (
             <span className="link">
               <Link
                 to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}`}
               >
-                {String(caseId || t("ES_COMMON_NA"))}
+                {String(value || t("ES_COMMON_NA"))}
+              </Link>
+            </span>
+          ) : (
+            billStatus === "PAID" && <span>{String(value || t("ES_COMMON_NA"))}</span>
+          );
+        case "Amount Due":
+          return <span>{`Rs. ${value}/-`}</span>;
+        case "Action":
+          return billStatus === "ACTIVE" ? (
+            <span className="action-link">
+              <Link
+                style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}`}
+              >
+                {" "}
+                <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
+                  {t("CS_RECORD_PAYMENT")}
+                </span>{" "}
+                <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
               </Link>
             </span>
           ) : (
             billStatus === "PAID" && (
-              <span className="link">
-                <Link
-                  to={{
-                    pathName: `/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`,
-                    state: {
-                      success: true,
-                      receiptData: {
-                        caseInfo: [
-                          {
-                            key: "Mode of Payment",
-                            value: "CASH",
-                            copyData: false,
-                          },
-                          {
-                            key: "Amount",
-                            value: amount,
-                            copyData: false,
-                          },
-                          {
-                            key: "Transaction ID",
-                            value: "fb322njkds",
-                            copyData: true,
-                          },
-                        ],
-                        isArrow: false,
-                        showTable: true,
-                        showCopytext: true,
-                      },
-                    },
-                  }}
-                >
-                  {String(caseId || t("ES_COMMON_NA"))}
-                </Link>
-              </span>
-            )
-          );
-        case "Case Name":
-          return <span>{String(value ? value.split(",")[0] : t("ES_COMMON_NA"))}</span>;
-        case "Amount Due":
-          return <span>{`Rs ${value}`}</span>;
-        case "Action":
-          return (
-            billStatus === "ACTIVE" && (
-              <span className="action-link">
-                <Link
-                  style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
-                  to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}`}
-                >
-                  {" "}
-                  <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
-                    {t("CS_RECORD_PAYMENT")}
-                  </span>{" "}
-                  <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
-                </Link>
+              <span
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: "15px",
+                  display: "inline-block",
+                  fontSize: "0.9rem",
+                  textAlign: "center",
+                  backgroundColor: "rgb(228, 242, 228)",
+                  color: "rgb(0, 112, 60)",
+                }}
+              >
+                {String(t("CS_AMOUNT_PAID") || t("ES_COMMON_NA"))}
               </span>
             )
           );
