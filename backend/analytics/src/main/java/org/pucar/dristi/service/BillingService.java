@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,11 +10,15 @@ import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.util.IndexerUtils;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -28,13 +33,15 @@ public class BillingService {
     private final Configuration config;
 
     private final IndexerUtils indexerUtils;
+    private final MdmsUtil mdmsUtil;
 
     @Autowired
-    public BillingService(BillingUtil billingUtil, Util util, Configuration config, IndexerUtils indexerUtils) {
+    public BillingService(BillingUtil billingUtil, Util util, Configuration config, IndexerUtils indexerUtils, MdmsUtil mdmsUtil) {
         this.billingUtil = billingUtil;
         this.util = util;
         this.config = config;
         this.indexerUtils = indexerUtils;
+        this.mdmsUtil = mdmsUtil;
     }
 
     public void process(String topic, String kafkaJson) {
@@ -145,11 +152,34 @@ public class BillingService {
     void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest, JSONObject requestInfo) {
         try {
             String stringifiedObject = billingUtil.buildString(jsonObject);
-            String payload = billingUtil.buildPayload(stringifiedObject, requestInfo);
-            if (payload != null && !payload.isEmpty())
-                bulkRequest.append(payload);
+            String consumerCode = JsonPath.read(stringifiedObject, CONSUMER_CODE_PATH);
+            String[] consumerCodeSplitArray = consumerCode.split("_", 2);
+
+            if (isOfflinePaymentAvailable(consumerCodeSplitArray[1])) {
+                throw new CustomException("OFFLINE_PAYMENT_NOT_SUPPORTED", "Offline paymnet is not supported");
+
+            } else {
+                String payload = billingUtil.buildPayload(stringifiedObject, requestInfo);
+                if (payload != null && !payload.isEmpty())
+                    bulkRequest.append(payload);
+
+            }
+
         } catch (Exception e) {
             log.error("Error while processing JSON object: {}", jsonObject, e);
         }
+    }
+
+    private boolean isOfflinePaymentAvailable(String suffix) {
+
+        RequestInfo requestInfo = RequestInfo.builder().build();
+        net.minidev.json.JSONArray paymentMode = mdmsUtil.fetchMdmsData(requestInfo, "pg", PAYMENT_MODULE_NAME, List.of(PAYMENT_MODE_MASTER_NAME))
+                .get(PAYMENT_MODULE_NAME).get(PAYMENT_MODE_MASTER_NAME);
+
+        String filterString = String.format(FILTER_PAYMENT_MODE, suffix, OFFLINE);
+
+        net.minidev.json.JSONArray payment = JsonPath.read(paymentMode, filterString);
+        return !payment.isEmpty();
+
     }
 }

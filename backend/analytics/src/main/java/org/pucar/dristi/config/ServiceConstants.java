@@ -139,4 +139,17 @@ public class ServiceConstants {
     public static final String DEMAND_TAX_AMOUNT_PATH = "$.taxAmount";
     public static final String DEMAND_AUDIT_DETAILS_PATH = "$.auditDetails";
 
+
+    public static final String PAYMENT_MODE_MASTER_NAME = "paymentMode";
+    public static final String PAYMENT_MODULE_NAME = "payment";
+    public static final String PAYMENT_TYPE_MASTER_NAME = "paymentType";
+
+
+    public static final String FILTER_PAYMENT_MODE = "$.[?(@.suffix == '%s' && '%s' in @.paymentMode)]";
+    public static final String OFFLINE = "OFFLINE";
+
+    public static final String FILTER_PAYMENT_TYPE = "$.[?(@.suffix == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+
+
+
 }
