@@ -34,7 +34,6 @@ function SelectCustomNote({ t, config, onClick = () => {} }) {
                   style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}
                   onClick={() => {
                     if (input.key === "witnessNote" || input.key === "evidenceNote") {
-                      debugger;
                       if (input?.customFunction) {
                         input?.customFunction();
                       }
