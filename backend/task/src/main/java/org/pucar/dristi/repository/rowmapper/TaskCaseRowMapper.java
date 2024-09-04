@@ -8,6 +8,7 @@ import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.AssignedTo;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -21,24 +22,25 @@ import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
-@Component
+
 @Slf4j
-public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
+@Component
+public class TaskCaseRowMapper implements ResultSetExtractor<List<TaskCase>> {
 
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public TaskRowMapper(ObjectMapper objectMapper) {
+    public TaskCaseRowMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    public List<Task> extractData(ResultSet rs) {
-        Map<String, Task> taskMap = new LinkedHashMap<>();
+    public List<TaskCase> extractData(ResultSet rs) {
+        Map<String, TaskCase> taskMap = new LinkedHashMap<>();
 
         try {
             while (rs.next()) {
                 String uuid = rs.getString("id");
-                Task task = taskMap.get(uuid);
+                TaskCase task = taskMap.get(uuid);
 
                 if (task == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -53,24 +55,27 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .lastModifiedTime(lastModifiedTime)
                             .build();
 
-                    task = Task.builder()
+                    task = TaskCase.builder()
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
                             .orderId(UUID.fromString(rs.getString("orderid")))
                             .filingNumber(rs.getString("filingnumber"))
                             .taskNumber(rs.getString("tasknumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
-                            .createdDate(rs.getLong("createddate"))
-                            .dateCloseBy(rs.getLong("datecloseby"))
-                            .dateClosed(rs.getLong("dateclosed"))
+                            .createdDate(stringToLocalDate(rs.getString("createddate")))
+                            .dateCloseBy(stringToLocalDate(rs.getString("datecloseby")))
+                            .dateClosed(stringToLocalDate(rs.getString("dateclosed")))
                             .taskDescription(rs.getString("taskdescription"))
-                            .taskDetails(objectMapper.readValue(rs.getString("taskdetails"), Object.class))
+                            .taskDetails(rs.getString("taskdetails"))
                             .taskType(rs.getString("tasktype"))
                             .status(rs.getString("status"))
+                            .documentStatus(rs.getString("documentStatus"))
                             .assignedTo(getObjectFromJson(rs.getString("assignedto"), new TypeReference<AssignedTo>() {
                             }))
                             .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .auditDetails(auditdetails)
+                            .caseName(rs.getString("casename"))
+                            .orderType(rs.getString("ordertype"))
                             .build();
                 }
 
@@ -89,6 +94,20 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
         return new ArrayList<>(taskMap.values());
     }
 
+    private LocalDate stringToLocalDate(String str) {
+        LocalDate localDate = null;
+        if (str != null)
+            try {
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            } catch (DateTimeParseException e) {
+                log.error("Date parsing failed for input: {}", str, e);
+                throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
+            }
+
+        return localDate;
+    }
+
     public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
         if (json == null || json.trim().isEmpty()) {
             try {
@@ -103,4 +122,5 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
             throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
         }
     }
+
 }

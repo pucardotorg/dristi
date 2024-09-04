@@ -150,4 +150,27 @@ public class TaskService {
 
         task.setStatus(status);
     }
+
+
+    public Task uploadDocument(TaskRequest body) {
+        try {
+            // Validate whether the application that is being requested for update indeed exists
+            if (!validator.validateApplicationExistence(body.getTask(), body.getRequestInfo()))
+                throw new CustomException(VALIDATION_ERR, "Task Application does not exist");
+
+            // Enrich application upon update
+            enrichmentUtil.enrichCaseApplicationUponUpdate(body);
+
+            producer.push(config.getTaskUpdateTopic(), body);
+
+            return body.getTask();
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while uploading document into task :: {}", e.toString());
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while uploading document into task :: {}", e.toString());
+            throw new CustomException(DOCUMENT_UPLOAD_QUERY_EXCEPTION, "Error occurred while uploading document into task: " + e.getMessage());
+        }
+    }
 }

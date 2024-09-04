@@ -78,4 +78,12 @@ public class TaskApiController {
         return new ResponseEntity<>(taskResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/v1/uploadDocument", method = RequestMethod.POST)
+    public ResponseEntity<TaskResponse> taskV1UploadDocument(@Parameter(in = ParameterIn.DEFAULT, description = "details for the update of task", schema = @Schema()) @Valid @RequestBody TaskRequest body) {
+        Task task = taskService.uploadDocument(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        TaskResponse taskResponse = TaskResponse.builder().task(task).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(taskResponse, HttpStatus.OK);
+    }
+
 }

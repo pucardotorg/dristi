@@ -77,7 +77,7 @@ public class TaskRepositoryTest {
                 .thenReturn(mockTaskList);
 
         // Test the method
-        List<Task> result = taskRepository.getApplications(new TaskCriteria(),null);
+        List<Task> result = taskRepository.getApplications( TaskCriteria.builder().build(), null);
 
         // Verify the result
         assertNotNull(result);
@@ -98,7 +98,7 @@ public class TaskRepositoryTest {
                 .thenReturn(new ArrayList<>());
 
         // Test the method
-        List<Task> result = taskRepository.getApplications(new TaskCriteria(),null);
+        List<Task> result = taskRepository.getApplications( TaskCriteria.builder().build(), null);
 
         // Verify the result
         assertNotNull(result);

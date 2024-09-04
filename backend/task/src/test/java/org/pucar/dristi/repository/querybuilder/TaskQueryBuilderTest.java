@@ -82,13 +82,15 @@ class TaskQueryBuilderTest {
 
     @Test
     void testGetTaskSearchQuery() {
-        TaskCriteria criteria = new TaskCriteria();
-        criteria.setTaskNumber("TN123");
-        criteria.setCnrNumber("CNR123");
-        criteria.setTenantId("tenant123");
-        criteria.setId("ID123");
-        criteria.setStatus("InProgress");
-        criteria.setOrderId(UUID.randomUUID());
+        TaskCriteria criteria =  TaskCriteria.builder()
+                .taskNumber("TN123")
+                .cnrNumber("CNR123")
+                .tenantId("tenant123")
+                .id("ID123")
+                .status("InProgress")
+                .orderId(UUID.randomUUID())
+                .build();
+
 
         List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgList = new ArrayList<>();
