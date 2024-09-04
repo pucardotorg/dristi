@@ -86,15 +86,6 @@ public class Application {
     @NotNull
     private Boolean isActive = null;
 
-    @JsonProperty("applicationRaisedBy")
-    private String applicationRaisedBy = null;
-
-    @JsonProperty("representedBy")
-    private String representedBy = null;
-
-    @JsonProperty("partyType")
-    private String partyType = null;
-
     @JsonProperty("reasonForApplication")
     private String reasonForApplication = null;
 

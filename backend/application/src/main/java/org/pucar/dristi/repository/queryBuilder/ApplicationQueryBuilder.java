@@ -22,9 +22,6 @@ public class ApplicationQueryBuilder {
                     " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                     " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                     " app.additionaldetails as additionaldetails,"+
-                    " app.application_raised_by as application_raised_by,"+
-                    " app.represented_by as represented_by,"+
-                    " app.party_type as party_type,"+
                     " app.reason_for_application as reason_for_application,"+
                     " app.application_details as application_details,"+
                     " app.createdby as createdby," +

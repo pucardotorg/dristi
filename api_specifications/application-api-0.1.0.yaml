@@ -310,15 +310,6 @@ components:
           example: Application 1 of the year 2024
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
-        applicationRaisedBy:
-          type: string
-          description: Application Raised by (Party Name of the advocate raising application)
-        representedBy:
-          type: string
-          description: Represented by (Advocate Name)
-        partyType:
-          type: string
-          description: Party Type (Complainant/Respondent)
         reasonForApplication:
           type: string
           description : Reason For Application eg.- Reason for Rescheduling, Reason for Extension
