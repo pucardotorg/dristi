@@ -4,7 +4,7 @@
       "tenantId": "kl",
       "businessService": "task",
       "business": "task-summons",
-      "businessServiceSla": 4320000000,
+      "businessServiceSla": 4147200000,
       "states": [
         {
           "sla": null,
@@ -50,7 +50,7 @@
           ]
         },
         {
-          "sla": 388000000,
+          "sla": 3888000000,
           "state": "ISSUE_SUMMON",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
@@ -67,7 +67,7 @@
             },
             {
               "action": "NOT_SERVED",
-              "nextState": "UNDELIVERED",
+              "nextState": "RE_ISSUE",
               "roles": [
                 "TASK_UPDATOR",
                 "AUTO_ESCALATE"
@@ -78,6 +78,24 @@
               "nextState": "ABATED",
               "roles": [
                 "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "RE_ISSUE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "NEW_SUMMON",
+              "nextState": "UNDELIVERED",
+              "roles": [
+                "TASK_UPDATOR"
               ]
             }
           ]
@@ -94,7 +112,7 @@
         {
           "sla": null,
           "state": "UNDELIVERED",
-          "applicationStatus": "ACTIVE",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

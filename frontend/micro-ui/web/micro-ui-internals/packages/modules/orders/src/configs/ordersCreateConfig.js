@@ -13,6 +13,7 @@ export const applicationTypeConfig = [
           name: "orderType",
           optionsKey: "name",
           error: "required ",
+          styles: { maxWidth: "100%" },
           mdmsConfig: {
             moduleName: "Order",
             masterName: "OrderType",
@@ -491,6 +492,7 @@ export const configsOrderMandatorySubmissions = [
           name: "documentType",
           optionsKey: "value",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
           mdmsConfig: {
@@ -555,6 +557,7 @@ export const configsOrderMandatorySubmissions = [
         populators: {
           name: "submissionDeadline",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -675,6 +678,7 @@ export const configsOrderMandatorySubmissions = [
                 isResponseRequired: ["code"],
               },
               error: "CORE_REQUIRED_FIELD_ERROR",
+              textInputStyle: { maxWidth: "100%" },
               validation: {
                 min: new Date().toISOString().split("T")[0],
               },
@@ -920,6 +924,7 @@ export const configsOrderTranferToADR = [
           name: "ADRMode",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
           mdmsConfig: {
@@ -1017,6 +1022,7 @@ export const configsScheduleHearingDate = [
           name: "hearingPurpose",
           optionsKey: "code",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
           hideInForm: false,
@@ -2998,6 +3004,7 @@ export const configsCreateOrderWarrant = [
           name: "orderType",
           optionsKey: "code",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           mdmsConfig: {
             masterName: "OrderType",
             moduleName: "Order",
@@ -3025,6 +3032,7 @@ export const configsCreateOrderWarrant = [
         populators: {
           name: "warrantFor",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
         },
       },
       {
@@ -3037,6 +3045,7 @@ export const configsCreateOrderWarrant = [
           name: "warrantType",
           optionsKey: "code",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           options: [
             {
               code: "Warrant_Type_1",
@@ -3109,6 +3118,7 @@ export const configsCreateOrderWarrant = [
               type: "text",
               name: "bailableAmount",
               error: "CORE_REQUIRED_FIELD_ERROR",
+              textInputStyle: { maxWidth: "100%" },
               isDependentOn: "isBailable",
               dependentKey: {
                 isBailable: ["code"],
@@ -3373,7 +3383,7 @@ export const configsJudgement = [
       {
         label: "DESCRIPTION_OF_ACCUSED",
         isMandatory: false,
-        disable: true,
+        disable: false,
         key: "nameofRespondent",
         schemaKeyPath: "respondentDetails.name",
         type: "text",
@@ -3543,6 +3553,7 @@ export const configsJudgement = [
           name: "findings",
           optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
+          styles: { maxWidth: "100%" },
           required: true,
           isMandatory: true,
           mdmsConfig: {
@@ -3577,6 +3588,75 @@ export const configsJudgement = [
               masterName: "alphaNumericValidation",
             },
           },
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "content",
+        schemaKeyPath: "caseDetails.content",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "CONTENT",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericValidation",
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "witnessNote",
+        populators: {
+          inputs: [
+            {
+              key: "witnessNote",
+              infoHeader: "CS_ORDER_WITNESSES",
+              infoText: "CS_ORDER_WITNESSES_SUB_TEXT",
+              infoTooltipMessage: "TYPE_HERE_PLACEHOLDER",
+              linkText: "CLICK_HERE",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "evidenceNote",
+        populators: {
+          inputs: [
+            {
+              key: "evidenceNote",
+              infoHeader: "CS_ORDER_MARKED_EVIDENCE",
+              infoText: "CS_ORDER_MARKED_EVIDENCE_SUB_TEXT",
+              infoTooltipMessage: "TYPE_HERE_PLACEHOLDER",
+              linkText: "CLICK_HERE",
+              type: "InfoComponent",
+            },
+          ],
         },
       },
     ],

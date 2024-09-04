@@ -34,32 +34,11 @@ const complainantDetailsFormConfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          options: [
-            {
-              code: "INDIVIDUAL",
-              name: "Individual",
-              showCompanyDetails: false,
-              complainantLocation: true,
-              commonFields: true,
-              isEnabled: true,
-              isIndividual: true,
-            },
-            {
-              code: "REPRESENTATIVE",
-              name: "Entity",
-              showCompanyDetails: true,
-              isIndividual: false,
-              commonFields: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
-              isEnabled: true,
-              apiDetails: {
-                serviceName: "/advocate/advocate/v1/_create",
-                requestKey: "advocates",
-                AdditionalFields: ["barRegistrationNumber"],
-              },
-            },
-          ],
+          mdmsConfig: {
+            masterName: "ComplainantRespondentType",
+            moduleName: "case",
+            select: "(data) => {return data['case'].ComplainantRespondentType?.map((item) => {return item;});}",
+          },
           customStyle: {
             gap: "40px",
             flexDirection: "row",
@@ -307,6 +286,8 @@ const complainantDetailsFormConfig = [
               name: "city",
               inputFieldClassName: "user-details-form-style",
               validation: {
+                patternType: "Name",
+                errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
                 isRequired: true,
               },
               isMandatory: true,
@@ -318,7 +299,14 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
-                maxLength: 300,
+                maxlength: 256,
+                minlength: 2,
+                pattern: {
+                  patternType: "address",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
+                errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
               },
               isMandatory: true,
             },
@@ -401,6 +389,8 @@ const complainantDetailsFormConfig = [
               shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
+                patternType: "Name",
+                errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
                 isRequired: true,
               },
               isMandatory: true,
@@ -412,6 +402,14 @@ const complainantDetailsFormConfig = [
               shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
+                minlength: 2,
+                maxlength: 256,
+                pattern: {
+                  patternType: "address",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
+                errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
                 isRequired: true,
               },
               isMandatory: true,

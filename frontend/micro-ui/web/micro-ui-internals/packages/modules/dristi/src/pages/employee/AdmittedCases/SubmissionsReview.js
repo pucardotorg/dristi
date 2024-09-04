@@ -220,10 +220,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
               onClick={() => {
                 userRoles.includes("CITIZEN")
                   ? history.push(
-                      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${app.referenceId
-                        .split("_")
-                        .slice(1)
-                        .join("_")}`
+                      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${app.referenceId.split("_").pop()}`
                     )
                   : docSetFunc(app);
               }}

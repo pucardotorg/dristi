@@ -19,6 +19,7 @@ import ViewAllOrderDrafts from "./ViewAllOrderDrafts";
 import PublishedOrderModal from "./PublishedOrderModal";
 import ViewAllSubmissions from "./ViewAllSubmissions";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
+import HearingTranscriptModal from "./HearingTranscriptModal";
 
 const defaultSearchValues = {};
 
@@ -36,7 +37,9 @@ const AdmittedCases = () => {
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [showOrderReviewModal, setShowOrderReviewModal] = useState(false);
+  const [showHearingTranscriptModal, setShowHearingTranscriptModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
+  const [currentHearing, setCurrentHearing] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [toast, setToast] = useState(false);
   const [orderDraftModal, setOrderDraftModal] = useState(false);
@@ -188,6 +191,11 @@ const AdmittedCases = () => {
       }
     };
 
+    const takeActionFunc = (hearingData) => {
+      setCurrentHearing(hearingData);
+      setShowHearingTranscriptModal(true);
+    };
+
     return TabSearchconfig?.TabSearchconfig.map((tabConfig) => {
       return tabConfig.label === "Parties"
         ? {
@@ -292,6 +300,20 @@ const AdmittedCases = () => {
                     },
                     ...tabConfig.sections.search.uiConfig.fields,
                   ],
+                },
+              },
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    return column.label === "Actions"
+                      ? {
+                          ...column,
+                          clickFunc: takeActionFunc,
+                        }
+                      : column;
+                  }),
                 },
               },
             },
@@ -460,9 +482,7 @@ const AdmittedCases = () => {
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
 
   const isTabDisabled = useMemo(() => {
-    return isFSO
-      ? true
-      : caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED";
+    return isFSO ? true : caseDetails?.status !== "CASE_ADMITTED" && caseDetails?.status !== "ADMISSION_HEARING_SCHEDULED";
   }, [caseDetails?.status, config?.label, isFSO]);
 
   useEffect(() => {
@@ -912,6 +932,10 @@ const AdmittedCases = () => {
           showSubmissionButtons={showSubmissionButtons}
           handleOrdersTab={handleOrdersTab}
         />
+      )}
+
+      {showHearingTranscriptModal && (
+        <HearingTranscriptModal t={t} hearing={currentHearing} setShowHearingTranscriptModal={setShowHearingTranscriptModal} />
       )}
 
       {showScheduleHearingModal && (

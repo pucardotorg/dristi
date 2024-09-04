@@ -37,7 +37,7 @@ public class AdvocateRepository {
         this.advocateDocumentRowMapper = advocateDocumentRowMapper;
     }
 
-    public List<AdvocateSearchCriteria> getApplications(List<AdvocateSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset ) {
+    public List<AdvocateSearchCriteria> getAdvocates(List<AdvocateSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset ) {
 
         try {
             for (AdvocateSearchCriteria advocateSearchCriteria : searchCriteria) {
