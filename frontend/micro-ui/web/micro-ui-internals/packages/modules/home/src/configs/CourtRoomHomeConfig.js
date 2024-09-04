@@ -615,6 +615,7 @@ export const TabCourtRoomSearchConfig = {
               {
                 label: "Outcome",
                 jsonPath: "outcome",
+                additionalCustomization: true,
               },
               {
                 label: "Case ID",

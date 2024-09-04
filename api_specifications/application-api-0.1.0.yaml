@@ -310,6 +310,12 @@ components:
           example: Application 1 of the year 2024
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
+        reasonForApplication:
+          type: string
+          description : Reason For Application eg.- Reason for Rescheduling, Reason for Extension
+        applicationDetails:
+          type: object
+          description: application schema
         status:
           type: string
           description: workflow status

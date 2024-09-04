@@ -57,9 +57,9 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   }
 
   const handleChange = (event, input) => {
-    let newText = event.target.value;
+    let newText = event.target.value.trimStart().replace(/ +/g, " ");
     if (typeof config?.populators?.validation?.pattern === "object") {
-      newText = newText.replace(config?.populators?.validation?.pattern, "").trimStart().replace(/ +/g, " ");
+      newText = newText.replace(config?.populators?.validation?.pattern, "");
     }
     setValue(newText, input?.name);
   };
