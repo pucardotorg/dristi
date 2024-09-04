@@ -81,7 +81,7 @@ public class PaymentUpdateService {
                 .build();
         List<CaseCriteria> criterias = new ArrayList<>();
         criterias.add(criteria);
-        List<CaseCriteria> caseCriterias = repository.getApplications(criterias, requestInfo);
+        List<CaseCriteria> caseCriterias = repository.getCases(criterias, requestInfo);
 
         if (CollectionUtils.isEmpty(caseCriterias.get(0).getResponseList()))
             throw new CustomException("INVALID RECEIPT",

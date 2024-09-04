@@ -785,11 +785,8 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
-    if (
-      formData?.delayCondonationType?.code === "NO" &&
-      (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
-    ) {
-      setFormErrors("condonationFileUpload", { type: "required" });
+    if (formData?.delayCondonationType?.code === "NO" && !formData?.delayApplicationReason?.reasonForDelay?.length > 0) {
+      setFormErrors("delayApplicationReason", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
@@ -1333,7 +1330,7 @@ export const updateCaseDetails = async ({
         ...representative,
         caseId: caseDetails?.id,
         representing: representative?.advocateId
-          ? [...litigants].map((item, index) => ({
+          ? [litigants[0]].map((item, index) => ({
               ...(caseDetails.representatives?.[idx]?.representing?.[index] ? caseDetails.representatives?.[idx]?.representing?.[index] : {}),
               ...item,
             }))
@@ -1930,7 +1927,7 @@ export const updateCaseDetails = async ({
             representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
               ? [
                   ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
+                    ? [caseDetails?.litigants[0]]?.map((data, key) => ({
                         ...(caseDetails.representatives?.[index]?.representing?.[key]
                           ? caseDetails.representatives?.[index]?.representing?.[key]
                           : {}),

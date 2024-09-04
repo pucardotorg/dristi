@@ -88,6 +88,13 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
       const tenantId = window?.Digit.ULBService.getStateId();
+      const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
+        select: (data) => {
+          return (data?.case?.OutcomeType || []).flatMap((item) => {
+            return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          });
+        },
+      });
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
@@ -97,6 +104,12 @@ export const UICustomizations = {
           ...("sortBy" in additionalDetails && {
             [additionalDetails.sortBy]: undefined,
             sortBy: undefined,
+          }),
+          ...(requestCriteria?.body?.criteria[0]["outcome"] && {
+            outcome: outcomeTypeData,
+          }),
+          ...(requestCriteria?.state?.searchForm?.outcome && {
+            outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
@@ -135,6 +148,8 @@ export const UICustomizations = {
           );
         case "Case Type":
           return <span>NIA S138</span>;
+        case "Outcome":
+          return t(value);
         case "Stage":
           return t(row?.status);
         case "Filing Date":
@@ -250,6 +265,13 @@ export const UICustomizations = {
     },
     preProcess: (requestCriteria, additionalDetails) => {
       const tenantId = window?.Digit.ULBService.getStateId();
+      const { data: outcomeTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [{ name: "OutcomeType" }], {
+        select: (data) => {
+          return (data?.case?.OutcomeType || []).flatMap((item) => {
+            return item?.judgementList?.length > 0 ? item.judgementList : [item?.outcome];
+          });
+        },
+      });
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
@@ -260,8 +282,11 @@ export const UICustomizations = {
             [additionalDetails.sortBy]: undefined,
             sortBy: undefined,
           }),
+          ...(requestCriteria?.body?.criteria[0]["outcome"] && {
+            outcome: outcomeTypeData,
+          }),
           ...(requestCriteria?.state?.searchForm?.outcome && {
-            outcome: [requestCriteria?.state?.searchForm?.outcome],
+            outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
@@ -293,6 +318,8 @@ export const UICustomizations = {
           return <span>NIA S138</span>;
         case "Filing Date":
           return <span>{formatDate(new Date(value))}</span>;
+        case "Outcome":
+          return t(value);
         case "Stage":
           return t(row?.status);
         default:

@@ -114,7 +114,7 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
     `${path}/home/registration/upload-id`,
-    `${path}/home/application-details`,
+    `${path}/home/registration/terms-condition`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
 

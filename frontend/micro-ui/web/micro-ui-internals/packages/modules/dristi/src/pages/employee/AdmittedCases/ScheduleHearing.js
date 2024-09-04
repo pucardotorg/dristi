@@ -129,7 +129,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
   return (
     <React.Fragment>
       <Modal
-        headerBarMain={<Heading label={t(modalConfig[2].headModal)} />}
+        headerBarMain={<Heading label={t("CS_SCHEDULE_HEARING")} />}
         headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
         hideSubmit={true}
         popupStyles={{ width: "917px" }}
@@ -156,6 +156,7 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           disabled={false}
           isCaseAdmitted={true}
           caseAdmittedSubmit={caseAdmittedSubmit}
+          scheduleHearing={true}
         />
       </Modal>
     </React.Fragment>
