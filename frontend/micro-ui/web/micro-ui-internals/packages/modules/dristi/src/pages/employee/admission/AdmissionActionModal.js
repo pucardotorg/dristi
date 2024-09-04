@@ -58,7 +58,7 @@ function AdmissionActionModal({
   caseAdmittedSubmit = () => {},
   caseAdmitLoader,
   caseDetails,
-  scheduleHearing,
+  scheduleHearing = false,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
