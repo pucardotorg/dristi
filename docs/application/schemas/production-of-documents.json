@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/production-of-documents.json",
+  "$comment": "definition of the schema for production of documents application",
+  "$version": "0.1.0",
+  "applicationDetails":
+  {
+    "documentName": {
+      "type": "string",
+      "description": "document name"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
+    }
+  }
+}
