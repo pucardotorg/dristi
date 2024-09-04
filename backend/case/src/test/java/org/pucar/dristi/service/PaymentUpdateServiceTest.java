@@ -93,7 +93,7 @@ public class PaymentUpdateServiceTest {
 
 
         when(mapper.convertValue(record, PaymentRequest.class)).thenReturn(paymentRequest);
-        when(repository.getApplications(any(), any())).thenReturn(Collections.singletonList(caseCriteria));
+        when(repository.getCases(any(), any())).thenReturn(Collections.singletonList(caseCriteria));
         when(configuration.getCaseUpdateStatusTopic()).thenReturn("kafkaUpdateTopic");
 
         when(workflowService.callWorkFlow(any())).thenReturn(new State());

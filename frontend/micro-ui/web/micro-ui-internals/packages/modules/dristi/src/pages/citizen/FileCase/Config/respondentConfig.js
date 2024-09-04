@@ -15,31 +15,26 @@ const respondentFromconfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-          options: [
-            {
-              code: "INDIVIDUAL",
-              name: "Individual",
-              showCompanyDetails: false,
-              commonFields: true,
-              isEnabled: true,
-            },
-            {
-              code: "REPRESENTATIVE",
-              name: "Representative of an Entity",
-              showCompanyDetails: true,
-              commonFields: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
-              isEnabled: true,
-            },
-          ],
+          mdmsConfig: {
+            masterName: "ComplainantRespondentType",
+            moduleName: "case",
+            select: "(data) => {return data['case'].ComplainantRespondentType?.map((item) => {return item;});}",
+          },
         },
       },
     ],
   },
   {
     head: "CS_RESPONDENT_NAME",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_COMMON_ENTITY_DETAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_NAME",
+    },
     dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
@@ -122,6 +117,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_PHONE",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_PHONE",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_PHONE",
+    },
     body: [
       {
         type: "component",
@@ -186,6 +190,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_EMAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_EMAIL",
+    },
     body: [
       {
         type: "component",
@@ -202,7 +215,12 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                maxLength: 150,
+                pattern: {
+                  patternType: "email",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
                 isArray: true,
               },
             },

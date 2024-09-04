@@ -46,7 +46,7 @@ public class WitnessRepositoryTest {
     public void testGetApplicationsEmptySuccess() {
         // Mock the behavior of getWitnessesSearchQuery
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
-        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+        when(queryBuilder.getWitnessesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM witnesses");
 
         // Mock the behavior of JdbcTemplate to return an empty list
         when(jdbcTemplate.query(anyString(), (PreparedStatementSetter) any(), any(WitnessRowMapper.class)))
@@ -66,10 +66,10 @@ public class WitnessRepositoryTest {
         List<Witness> list = new ArrayList<>();
         list.add(witness);
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
-        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+        when(queryBuilder.getWitnessesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM witnesses");
 
         // Mock the behavior of JdbcTemplate to return an empty list
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(WitnessRowMapper.class)))
                 .thenReturn(list);
 
         // Call the method under test
@@ -86,10 +86,10 @@ public class WitnessRepositoryTest {
         List<Witness> list = new ArrayList<>();
         list.add(witness);
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
-        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+        when(queryBuilder.getWitnessesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM witnesses");
 
         // Mock the behavior of JdbcTemplate to return an empty list
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(),  any(WitnessRowMapper.class)))
                 .thenThrow(new RuntimeException("Error"));
 
         // Assert
@@ -103,10 +103,10 @@ public class WitnessRepositoryTest {
         List<Witness> list = new ArrayList<>();
         list.add(witness);
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
-        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+        when(queryBuilder.getWitnessesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM witnesses");
 
         // Mock the behavior of JdbcTemplate to return an empty list
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(WitnessRowMapper.class)))
                 .thenThrow(new CustomException());
 
         // Assert

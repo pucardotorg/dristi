@@ -1,0 +1,37 @@
+@startuml
+title "FSO Scrutinizes Case"
+autonumber
+actor FSO
+participant HomeScreen as HS
+participant PendingTasksUI as I
+participant ViewCaseUI as CI
+participant AssignJudgeUI as AJ
+FSO->HS: FSO logs in and views home screen
+I->InboxV2++: Fetch pending tasks for user based on filters
+return pending tasks
+I->I: Render pending tasks
+FSO->I: View pending tasks with status "Pending Scrutiny"
+FSO->I: Click on a case
+I->CI: Transition to view a case page
+CI->CaseSvc++: Search for case by filing number
+return case details
+FSO->CI: Review case
+alt "Scrutiny Passes"
+FSO->CI: Click on "Approve"
+CI->CaseSvc++: Update workflow status to "PENDING_REGISTRATION"
+return case
+CaseSvc->WorkflowSvc++: Call workflow to update status
+return workflow status
+CI->AJ: Transition to "Assign judge and court UI"
+rnote over AJ
+Enter judge and court details
+end rnote
+FSO->AJ: Click on "Assign Judge"
+AJ->CaseSvc: Update judge and court ID in the case\n and move case to "Pending Registration"
+return updated case
+else "Scrutiny Failed"
+FSO->CI: Send back to advocate
+CI->CaseSvc++: Move workflow status to "SEND_BACK"
+return updated case
+end
+@enduml

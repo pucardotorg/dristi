@@ -1,5 +1,5 @@
 CREATE TABLE dristi_case (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     resolution_mechanism varchar(128),
     case_title varchar(512),
@@ -43,13 +43,13 @@ CREATE INDEX idx_dristi_case_wf_status ON dristi_case(wf_status);
 CREATE INDEX idx_dristi_case_stage ON dristi_case(stage, substage);
 
 CREATE TABLE dristi_case_documents (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     filestore_id varchar(64),
     document_uid varchar(64),
     document_name varchar(128),
     document_type varchar(64),
-    case_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
     is_active bool NOT NULL,
     additional_details jsonb,
     created_by varchar(36) NOT NULL,
@@ -68,13 +68,13 @@ CREATE INDEX idx_dristi_case_document_type ON dristi_case_documents(case_id, doc
 
 -- Table to store other linked cases
 CREATE TABLE dristi_linked_case (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     -- MDMS ID of the relationship type between cases
     relationship_type varchar(64) NULL,
     -- CNR number of the linked case
     cnr_number varchar(64) NULL,
     is_active bool NULL,
-    case_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
     additional_details jsonb NULL,
     created_by varchar(64) NULL,
     last_modified_by varchar(64) NULL,
@@ -88,13 +88,13 @@ CREATE TABLE dristi_linked_case (
 CREATE INDEX idx_dristi_linked_case_case_id ON dristi_linked_case(case_id);
 
 CREATE TABLE dristi_linked_case_documents (
-    id uuid PRIMARY KEY,
+    id varchar(36) PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     filestore_id varchar(64) NOT NULL,
     document_uid varchar(64),
     document_name varchar(128),
     document_type varchar(64),
-    case_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
     is_active bool NOT NULL,
     additional_details jsonb,
     created_by varchar(36) NOT NULL,
@@ -107,13 +107,13 @@ CREATE TABLE dristi_linked_case_documents (
 );
 
 CREATE TABLE dristi_case_statutes_and_sections (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     -- Master data IDs of statute and section
     statute_id varchar(64) NOT NULL,
     section_id varchar(64),
-    -- UUID of case
-    case_id uuid NOT NULL,
+    -- varchar(36) of case
+    case_id varchar(36) NOT NULL,
     additional_details jsonb,
     -- Audit details
     created_by varchar(36) NOT NULL,
@@ -132,7 +132,7 @@ CREATE INDEX idx_dristi_case_statutes_statute_id ON dristi_case_statutes_and_sec
 CREATE INDEX idx_dristi_case_statutes_section_id ON dristi_case_statutes_and_sections(section_id);
 
 CREATE TABLE dristi_case_litigants (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     party_category_id varchar(36) NOT NULL,
     individual_id varchar(36),
@@ -140,7 +140,7 @@ CREATE TABLE dristi_case_litigants (
     party_type_id varchar(36),
     is_representing_self bool DEFAULT FALSE,
     is_active bool NOT NULL,
-    case_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
     additional_details jsonb,
     created_by varchar(36),
     last_modified_by varchar(36),
@@ -160,10 +160,10 @@ CREATE INDEX idx_dristi_case_litigants_individual_id ON dristi_case_litigants(in
 CREATE INDEX idx_dristi_case_litigants_organisation_id ON dristi_case_litigants(organisation_id);
 
 CREATE TABLE dristi_case_representatives (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    case_id uuid,
-    party_id uuid NOT NULL,
+    case_id varchar(36),
+    party_id varchar(36) NOT NULL,
     individual_id varchar(36),
     advocate_id varchar(36),
     is_active BOOLEAN DEFAULT true,
@@ -185,14 +185,14 @@ CREATE INDEX idx_dristi_case_rep_individual_id ON dristi_case_representatives(ca
 CREATE INDEX idx_dristi_case_rep_advocate_id ON dristi_case_representatives(case_id, advocate_id);
 
 CREATE TABLE dristi_representative_documents (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
-    case_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
     filestore_id varchar(64) NOT NULL,
     document_uid varchar(64),
     document_name varchar(128),
     document_type varchar(64),
-    representative_id uuid NOT NULL,
+    representative_id varchar(36) NOT NULL,
     is_active bool NOT NULL,
     additional_details jsonb,
     created_by varchar(36) NOT NULL,
@@ -230,14 +230,14 @@ CREATE INDEX idx_dristi_rep_documents_doc_name ON dristi_representative_document
 
 
 CREATE TABLE dristi_litigant_documents (
-    id uuid NOT NULL PRIMARY KEY,
+    id varchar(36) NOT NULL PRIMARY KEY,
     tenant_id varchar(64) NOT NULL,
     filestore_id varchar(64),
     document_uid varchar(64),
     document_name varchar(128),
     document_type varchar(64),
-    case_id uuid NOT NULL,
-    party_id uuid NOT NULL,
+    case_id varchar(36) NOT NULL,
+    party_id varchar(36) NOT NULL,
     representative_id varchar(64) NOT NULL,
     is_active bool DEFAULT true,
     additional_details jsonb,
@@ -257,9 +257,42 @@ CREATE INDEX idx_dristi_litigant_docs_case_id ON dristi_litigant_documents(tenan
 CREATE INDEX idx_dristi_litigant_docs_advocate_id ON dristi_litigant_documents(representative_id);
 CREATE INDEX idx_dristi_litigant_docs_party_id ON dristi_litigant_documents(party_id);
 
+-- Holds the sequence number for CNR for each courtID. A courtID represent StateDistrictEstablishment (court room) and a CNR is specific to that. Eample for courtID - KLKM52
+CREATE TABLE dristi_cnr_master (
+    id varchar(36) NOT NULL PRIMARY KEY,
+    tenant_id varchar(64) NOT NULL,
+    court_id varchar(64),
+    cnr_seq_num integer DEFAULT 1,
+    created_by varchar(64) NOT NULL,
+    last_modified_by varchar(64) NOT NULL,
+    created_time int8 NULL,
+    last_modified_time int8 NULL,
+    CONSTRAINT fk_cnr_master_case
+        FOREIGN KEY(court_id)
+        REFERENCES dristi_case(court_id)
+);
+CREATE INDEX idx_dristi_cnr_master_court_id ON dristi_cnr_master(tenant_id, court_id);
+
+-- Holds the sequence numbers for different types of numbers used in a Case
+CREATE TABLE dristi_case_numbering(
+    id varchar(36) NOT NULL PRIMARY KEY,
+    tenant_id varchar(64) NOT NULL,
+    cnr_number varchar(32) NOT NULL,
+    seq_num_lable varchar(64) NOT NULL,
+    case_seq_num integer DEFAULT 1,
+    created_by varchar(64) NOT NULL,
+    last_modified_by varchar(64) NOT NULL,
+    created_time int8 NULL,
+    last_modified_time int8 NULL,
+    CONSTRAINT fk_case_numbering_case
+        FOREIGN KEY(case_id) 
+        REFERENCES dristi_case(cnr_number)
+);
+CREATE INDEX idx_dristi_case_numbering_seq_num ON dristi_case_numbering(tenant_id, cnr_number,seq_num_lable);
+
 CREATE TABLE dristi_witness (
-    id uuid NOT NULL PRIMARY KEY,
-    case_id uuid NOT NULL,
+    id varchar(36) NOT NULL PRIMARY KEY,
+    case_id varchar(36) NOT NULL,
     filing_number varchar(64),
     cnr_number varchar(64),
     witness_identifier varchar(64),

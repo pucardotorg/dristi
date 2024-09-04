@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
 import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
@@ -71,32 +72,26 @@ public class CaseQueryBuilder {
             " rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_REPRESENTING_TABLE = " FROM dristi_case_representing rpst";
 
-    private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_cases cases WHERE ";
+    private static final String BASE_CASE_EXIST_QUERY = " SELECT COUNT(*) FROM dristi_cases cases ";
 
     public static final String AND = " AND ";
 
-    public String checkCaseExistQuery(String caseId, String courtCaseNumber, String cnrNumber, String filingNumber) {
+    public String checkCaseExistQuery(CaseExists caseExists, List<Object> preparedStmtList, List<Integer> preparedStmtListArgs) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
-            List<String> conditions = new ArrayList<>();
+            boolean firstCriteria = true;
 
-            if (caseId != null && !caseId.isEmpty()) {
-                conditions.add("cases.id = '" + caseId + "'");
-            }
-            if (courtCaseNumber != null && !courtCaseNumber.isEmpty()) {
-                conditions.add("cases.courtcasenumber = '" + courtCaseNumber + "'");
-            }
-            if (cnrNumber != null && !cnrNumber.isEmpty()) {
-                conditions.add("cases.cnrnumber = '" + cnrNumber + "'");
-            }
-            if (filingNumber != null && !filingNumber.isEmpty()) {
-                conditions.add("cases.filingnumber = '" + filingNumber + "'");
-            }
+            if(caseExists != null){
+                firstCriteria = addCriteria(caseExists.getCaseId(), query, firstCriteria, "cases.id = ?", preparedStmtList, preparedStmtListArgs, Types.VARCHAR);
 
-            if (!conditions.isEmpty()) {
-                query.append(String.join(AND, conditions)).append(";");
-            }
+                firstCriteria = addCriteria(caseExists.getCnrNumber(), query, firstCriteria, "cases.cnrNumber = ?", preparedStmtList, preparedStmtListArgs, Types.VARCHAR);
 
+                firstCriteria = addCriteria(caseExists.getFilingNumber(), query, firstCriteria, "cases.filingnumber = ?", preparedStmtList, preparedStmtListArgs, Types.VARCHAR);
+
+                addCriteria(caseExists.getCourtCaseNumber(), query, firstCriteria, "cases.courtcasenumber = ?", preparedStmtList, preparedStmtListArgs, Types.VARCHAR);
+
+                query.append(";");
+            }
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building case exist query", e);
@@ -133,9 +128,9 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addListCriteria(criteria.getStatus(), query, firstCriteria, "cases.status", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addFilingDateCriteria(criteria, firstCriteria, query);
+                firstCriteria = addFilingDateCriteria(criteria, firstCriteria, query, preparedStmtList, preparedStmtArgList);
 
-                addRegistrationDateCriteria(criteria, firstCriteria, query);
+                addRegistrationDateCriteria(criteria, firstCriteria, query, preparedStmtList, preparedStmtArgList);
             }
 
             return query.toString();
@@ -164,23 +159,31 @@ public class CaseQueryBuilder {
         }
     }
 
-    private static void addRegistrationDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
+    private static void addRegistrationDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtListArgs) {
         if (criteria.getRegistrationFromDate() != null && criteria.getRegistrationToDate() != null) {
             if (!firstCriteria)
-                query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
+                query.append(" OR cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
             else {
-                query.append(" WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(AND).append(criteria.getRegistrationToDate()).append(" ");
+                query.append(" WHERE cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
             }
+            preparedStmtList.add(criteria.getRegistrationFromDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
+            preparedStmtList.add(criteria.getRegistrationToDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
         }
     }
 
-    private static boolean addFilingDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
+    private static boolean addFilingDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtListArgs) {
         if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
             if (!firstCriteria)
-                query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
+                query.append(" OR cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
             else {
-                query.append(" WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(AND).append(criteria.getFilingToDate()).append(" ");
+                query.append(" WHERE cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
             }
+            preparedStmtList.add(criteria.getFilingFromDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
+            preparedStmtList.add(criteria.getFilingToDate());
+            preparedStmtListArgs.add(Types.TIMESTAMP);
             firstCriteria = false;
         }
         return firstCriteria;
@@ -442,11 +445,15 @@ public class CaseQueryBuilder {
 
     }
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+        if (isEmptyPagination(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
+    }
+
+    private boolean isEmptyPagination(Pagination pagination) {
+        return pagination == null || pagination.getSortBy()==null || pagination.getOrder() == null;
     }
 }

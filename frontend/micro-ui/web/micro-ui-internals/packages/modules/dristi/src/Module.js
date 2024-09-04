@@ -53,6 +53,7 @@ import CustomChooseDate from "./components/CustomChooseDate";
 import CustomCalendar from "./components/CustomCalendar";
 import CommentComponent from "./components/CommentComponent";
 import { RightArrow } from "./icons/svgIndex";
+import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -62,7 +63,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
-  const userInfo = Digit?.UserService?.getUser()?.info;
+  const userInfo = useMemo(() => Digit?.UserService?.getUser()?.info, [Digit]);
   const hasCitizenRoute = useMemo(() => path?.includes(`/${window?.contextPath}/citizen`), [path]);
   const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
 
@@ -118,6 +119,7 @@ const componentsToRegister = {
   SelectReviewAccordion,
   SelectSignature,
   CustomRadioCard,
+  CustomCheckBoxCard,
   AddressComponent,
   AdhaarInput,
   AdvocateDetailComponent,

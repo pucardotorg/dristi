@@ -295,6 +295,8 @@ components:
         requestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
         caseId:
           type: string
           description: The UUID of the case for which the case file is requested.
