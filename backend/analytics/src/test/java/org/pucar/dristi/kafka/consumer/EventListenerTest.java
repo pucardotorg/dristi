@@ -57,6 +57,8 @@ class EventListenerTest {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("test-topic", 0, 0L, "key", "value");
 
         when(config.getStateLevelTenantId()).thenReturn("tenant-id");
+        when(config.getDemandGenerateTopic()).thenReturn("demand-generate-topic");
+        when(config.getPaymentCollectTopic()).thenReturn("payment-collect-topic");
 
         eventListener.onMessage(record);
 
