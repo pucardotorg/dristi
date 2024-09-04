@@ -8,6 +8,10 @@
     "applicationTitle": {
       "type": "string",
       "description": "title of application"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
     }
   }
 }

@@ -22,6 +22,10 @@
       "type": "integer",
       "format": "int64",
       "description": "requested extension date"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
     }
   }
 }

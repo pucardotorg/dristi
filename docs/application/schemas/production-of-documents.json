@@ -8,6 +8,10 @@
     "documentName": {
       "type": "string",
       "description": "document name"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
     }
   }
 }

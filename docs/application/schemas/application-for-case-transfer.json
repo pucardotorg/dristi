@@ -12,6 +12,10 @@
     "groundsForSeekingTransfer": {
       "type": "string",
       "description": "grounds for seeking transfer"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
     }
   }
 }
