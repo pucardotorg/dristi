@@ -27,11 +27,8 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class BillingService {
 
     private final BillingUtil billingUtil;
-
     private final Util util;
-
     private final Configuration config;
-
     private final IndexerUtils indexerUtils;
     private final MdmsUtil mdmsUtil;
 
@@ -178,7 +175,7 @@ public class BillingService {
     private boolean isOfflinePaymentAvailable(String suffix) {
 
         RequestInfo requestInfo = RequestInfo.builder().build();
-        net.minidev.json.JSONArray paymentMode = mdmsUtil.fetchMdmsData(requestInfo, "pg", PAYMENT_MODULE_NAME, List.of(PAYMENT_MODE_MASTER_NAME))
+        net.minidev.json.JSONArray paymentMode = mdmsUtil.fetchMdmsData(requestInfo, config.getStateLevelTenantId(), PAYMENT_MODULE_NAME, List.of(PAYMENT_MODE_MASTER_NAME))
                 .get(PAYMENT_MODULE_NAME).get(PAYMENT_MODE_MASTER_NAME);
 
         String filterString = String.format(FILTER_PAYMENT_MODE, suffix, OFFLINE);
