@@ -79,6 +79,7 @@ public class ServiceConstants {
 
     public static final String CASE_STAGE_PATH = "$.stage";
     public static final String CASE_ID_PATH = "$.caseId";
+    public static final String CASE_STATUTES_AND_SECTIONS = "$.statutesAndSections";
     public static final String FILING_NUMBER_PATH = "$.filingNumber";
     public static final String ERRORS_PATH = "$.errors";
     public static final String ORDER_TYPE_PATH = "$.orderType";

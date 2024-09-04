@@ -61,55 +61,60 @@ public class BillingService {
 
     }
 
-    private void processPayment(String payment) {
 
+    private void processPayment(String payment) {
         try {
             JSONArray paymentDetailsArray = util.constructArray(payment, PAYMENT_PAYMENT_DETAILS_PATH);
-
             LinkedHashMap<String, Object> requestInfoMap = JsonPath.read(payment, REQUEST_INFO_PATH);
             JSONObject requestInfo = new JSONObject();
-            requestInfo.put("RequestInfo",requestInfoMap);
-            Set<String> demandSet = new HashSet<>();
-
-            String tenantId = config.getStateLevelTenantId(); // check how to set stateleveltenantid
-            for (int i = 0; i < paymentDetailsArray.length(); i++) {
-
-                JSONObject paymentDetails = paymentDetailsArray.getJSONObject(i);
-                JSONArray billDetailsArray = util.constructArray(paymentDetails.toString(), PAYMENT_PAYMENT_BILL_DETAILS_PATH);
-
-                for (int j = 0; j < billDetailsArray.length(); j++) {
-
-                    JSONObject billDetails = billDetailsArray.getJSONObject(i);
-
-                    String demandId = billDetails.getString("demandId");
-                    demandSet.add(demandId);
-
-                }
-
-            }
-
-            //  todo : two approach either call demand then make payload and create or  fetch es and update
-            //  fetch demand based approach
-            for (String demandId : demandSet) {
-                String demand = billingUtil.getDemand(tenantId, demandId, requestInfo);
-                JSONArray demandArray = util.constructArray(demand, DEMAND_PATH);
-
-                for (int i = 0; i < demandArray.length(); i++) {
-                    JSONObject demandObject = demandArray.getJSONObject(i);
-                    demandObject.put("status", "PAID");
-                }
-
-                JSONObject demandRequest = new JSONObject(requestInfo);
-                demandRequest.put("Demands", demandArray);
-                demandRequest.put("RequestInfo",requestInfoMap);
-                processDemand(demandRequest.toString());
-
-            }
-
+            requestInfo.put("RequestInfo", requestInfoMap);
+            Set<String> demandSet = extractDemandIds(paymentDetailsArray);
+            String tenantId = config.getStateLevelTenantId();
+            updateDemandStatus(demandSet, tenantId, requestInfo);
         } catch (Exception e) {
+            log.error("Error processing payment", e);
+        }
+    }
 
-            log.error("ERROR");
+    private Set<String> extractDemandIds(JSONArray paymentDetailsArray) throws JSONException {
+        Set<String> demandSet = new HashSet<>();
+        for (int i = 0; i < paymentDetailsArray.length(); i++) {
+            JSONObject paymentDetails = paymentDetailsArray.getJSONObject(i);
+            JSONArray billDetailsArray = null;
+            try {
+                billDetailsArray = util.constructArray(paymentDetails.toString(), PAYMENT_PAYMENT_BILL_DETAILS_PATH);
+            } catch (Exception e) {
+                log.error("Error processing bill details array", e);
+                throw new CustomException("EXTRACT_DEMAND_ID_ERROR", e.getMessage());
+            }
+            for (int j = 0; j < billDetailsArray.length(); j++) {
+                JSONObject billDetails = billDetailsArray.getJSONObject(i);
+                String demandId = billDetails.getString("demandId");
+                demandSet.add(demandId);
+            }
+        }
+        return demandSet;
+    }
 
+    private void updateDemandStatus(Set<String> demandSet, String tenantId, JSONObject requestInfo) throws JSONException {
+        for (String demandId : demandSet) {
+            String demand = billingUtil.getDemand(tenantId, demandId, requestInfo);
+            JSONArray demandArray = null;
+            try {
+                demandArray = util.constructArray(demand, DEMAND_PATH);
+            } catch (Exception e) {
+
+                log.error("Error processing bill details array", e);
+                throw new CustomException("UPDATE_DEMAND_ERROR", e.getMessage());
+            }
+            for (int i = 0; i < demandArray.length(); i++) {
+                JSONObject demandObject = demandArray.getJSONObject(i);
+                demandObject.put("status", "PAID");
+            }
+            JSONObject demandRequest = new JSONObject();
+            demandRequest.put("RequestInfo", requestInfo);
+            demandRequest.put("Demands", demandArray);
+            processDemand(demandRequest.toString());
         }
 
     }

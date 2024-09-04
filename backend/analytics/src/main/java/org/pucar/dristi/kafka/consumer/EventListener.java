@@ -24,7 +24,9 @@ public class EventListener implements MessageListener<String, String> {
     @Autowired
     private Configuration config;
 
+
     @Override
+
     /**
      * Messages listener which acts as consumer. This message listener is injected
      * inside a kafkaContainer. This consumer is a start point to the following
@@ -33,18 +35,38 @@ public class EventListener implements MessageListener<String, String> {
      */
     public void onMessage(ConsumerRecord<String, String> data) {
         log.info("Topic from CoreIndexMessageListener: " + data.topic());
-        // Adding in MDC so that tracer can add it in header
         MDC.put(ServiceConstants.TENANTID_MDC_STRING, config.getStateLevelTenantId());
+
+        if (config.getDemandGenerateTopic().equals(data.topic())) {
+            handleDemandGenerateTopic(data.value());
+        } else if (config.getPaymentCollectTopic().equals(data.topic())) {
+            handlePaymentCollectTopic(data.value());
+        } else {
+            handleOtherTopics(data.topic(), data.value());
+        }
+    }
+
+    private void handleDemandGenerateTopic(String message) {
         try {
-
-            if (config.getDemandGenerateTopic().equals(data.topic()) || config.getPaymentCollectTopic().equals(data.topic())) {
-                billingService.process(data.topic(), data.value());
-            } else {
-                indexerService.esIndexer(data.topic(), data.value());
-            }
-
+            billingService.process(config.getDemandGenerateTopic(), message);
         } catch (Exception e) {
-            log.error("error while updating ES document: ", e);
+            log.error("Error while processing demand generate topic: ", e);
+        }
+    }
+
+    private void handlePaymentCollectTopic(String message) {
+        try {
+            billingService.process(config.getPaymentCollectTopic(), message);
+        } catch (Exception e) {
+            log.error("Error while processing payment collect topic: ", e);
+        }
+    }
+
+    private void handleOtherTopics(String topic, String message) {
+        try {
+            indexerService.esIndexer(topic, message);
+        } catch (Exception e) {
+            log.error("Error while updating ES document: ", e);
         }
     }
 
