@@ -158,13 +158,11 @@ public class BillingService {
             String[] consumerCodeSplitArray = consumerCode.split("_", 2);
 
             if (isOfflinePaymentAvailable(consumerCodeSplitArray[1])) {
-                throw new CustomException("OFFLINE_PAYMENT_NOT_SUPPORTED", "Offline paymnet is not supported");
-
-            } else {
                 String payload = billingUtil.buildPayload(stringifiedObject, requestInfo);
                 if (payload != null && !payload.isEmpty())
                     bulkRequest.append(payload);
-
+            } else {
+                throw new CustomException("OFFLINE_PAYMENT_NOT_SUPPORTED", "Offline paymnet is not supported");
             }
 
         } catch (Exception e) {

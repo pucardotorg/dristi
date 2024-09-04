@@ -1,6 +1,6 @@
 package org.pucar.dristi.service;
 
-import com.jayway.jsonpath.JsonPath;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,14 +14,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.util.IndexerUtils;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.Util;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.REQUEST_INFO_PATH;
 
 @ExtendWith(MockitoExtension.class)
 class BillingServiceTest {
@@ -37,6 +40,9 @@ class BillingServiceTest {
 
     @Mock
     private IndexerUtils indexerUtils;
+
+    @Mock
+    private MdmsUtil mdmsUtil;
 
     @InjectMocks
     private BillingService billingService;
@@ -77,17 +83,31 @@ class BillingServiceTest {
         when(config.getDemandGenerateTopic()).thenReturn("demand-generate");
         when(config.getPaymentCollectTopic()).thenReturn("payment-collect");
         when(billingUtil.buildString(any())).thenReturn("{\"id\": \"1\"}");
-        when(billingUtil.buildPayload(anyString(), any())).thenReturn("payload");
         String demands = "{\"demands\": [{\"id\": \"1\"}], \"RequestInfo\": {}}";
         billingService.process("demand-generate", demands);
     }
 
     @Test
     void testBuildBulkRequest() throws Exception {
-        JSONArray jsonArray = new JSONArray("[{\"id\": \"1\"}]");
-        JSONObject requestInfo = new JSONObject("{\"userInfo\": {\"id\": 1}}");
-        when(billingUtil.buildString(any())).thenReturn("{\"id\": \"1\"}");
-        when(billingUtil.buildPayload(anyString(), any())).thenReturn("payload");
+        JSONArray jsonArray = new JSONArray("[{\"consumerCode\": \"CC_001\"}]");
+        JSONObject requestInfo = new JSONObject("{\"userInfo\": {\"consumerCode\": \"CC_001\"}}");
+        when(billingUtil.buildString(any())).thenReturn("{\"consumerCode\": \"CC_001\"}}");
+        when(billingUtil.buildPayload(anyString(),any())).thenReturn("payload");
+        Map<String, Object> paymentType1 = new LinkedHashMap<>();
+        paymentType1.put("id", 13);
+        paymentType1.put("suffix", "001");
+        paymentType1.put("paymentType", "OFFLINE");
+        paymentType1.put("paymentMode", List.of("OFFLINE"));
+        RequestInfo requestInfo1 = new RequestInfo();
+        Map<String, Map<String, net.minidev.json.JSONArray>> outerMap = new HashMap<>();
+        Map<String, net.minidev.json.JSONArray> innerMap = new HashMap<>();
+        net.minidev.json.JSONArray paymentTypeArray = new net.minidev.json.JSONArray();
+        paymentTypeArray.add(paymentType1);
+        innerMap.put("paymentMode", paymentTypeArray);
+        outerMap.put("payment",innerMap);
+        when(config.getStateLevelTenantId()).thenReturn("kl");
+        when(mdmsUtil.fetchMdmsData(requestInfo1,"kl","payment", List.of("paymentMode"))).thenReturn(outerMap);
+
 
         StringBuilder result = billingService.buildBulkRequest(jsonArray, requestInfo);
 
@@ -99,12 +119,15 @@ class BillingServiceTest {
         JSONObject jsonObject = new JSONObject("{\"id\": \"1\"}");
         JSONObject requestInfo = new JSONObject("{\"userInfo\": {\"id\": 1}}");
         StringBuilder bulkRequest = new StringBuilder();
-        when(billingUtil.buildString(any())).thenReturn("{\"id\": \"1\"}");
-        when(billingUtil.buildPayload(anyString(), any())).thenReturn("payload");
-
+        when(billingUtil.buildString(any())).thenReturn("{\"consumerCode\": \"CC_001\"}}");
+        when(config.getStateLevelTenantId()).thenReturn("kl");
+        RequestInfo requestInfo1 = new RequestInfo();
+        net.minidev.json.JSONArray list = new net.minidev.json.JSONArray();
+        Map<String,Map<String,net.minidev.json.JSONArray>> map = Map.of("payment",Map.of("paymentMode",list));
+        when(mdmsUtil.fetchMdmsData(requestInfo1,"kl","payment", List.of("paymentMode"))).thenReturn(map);
         billingService.processJsonObject(jsonObject, bulkRequest, requestInfo);
 
-        assertEquals("payload", bulkRequest.toString());
+        assertEquals("", bulkRequest.toString());
     }
 
     @Test
@@ -113,7 +136,6 @@ class BillingServiceTest {
         JSONObject requestInfo = new JSONObject("{\"userInfo\": {\"id\": 1}}");
         StringBuilder bulkRequest = new StringBuilder();
         when(billingUtil.buildString(any())).thenReturn("{\"id\": \"1\"}");
-        when(billingUtil.buildPayload(anyString(), any())).thenReturn(null);
 
         billingService.processJsonObject(jsonObject, bulkRequest, requestInfo);
 

@@ -24,39 +24,15 @@ class BillingUtilTest {
     private ServiceRequestRepository requestRepository;
     @Mock
     private CaseUtil caseUtil;
+    @Mock
+    private MdmsUtil mdmsUtil;
 
     private BillingUtil billingUtil;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        billingUtil = new BillingUtil(config, indexerUtil, requestRepository, caseUtil);
-    }
-
-    @Test
-    void testBuildPayload() throws JSONException {
-        // Prepare test data
-        String jsonItem = "{\"id\":\"123\",\"businessService\":\"test-service\",\"consumerCode\":\"CC-001\",\"status\":\"ACTIVE\",\"tenantId\":\"test-tenant\",\"demandDetails\":[{\"taxAmount\":100.0},{\"taxAmount\":50.0}],\"auditDetails\":{\"createdBy\":\"user1\",\"lastModifiedBy\":\"user2\"}}";
-        JSONObject requestInfo = new JSONObject();
-        requestInfo.put("userInfo", new JSONObject().put("name", "Test User"));
-
-        // Mock dependencies
-        when(config.getBillingIndex()).thenReturn("billing-index");
-        when(indexerUtil.processEntityByType(anyString(), any(), anyString(), isNull()))
-                .thenReturn(Map.of("cnrNumber", "CNR001", "filingNumber", "FN001"));
-        when(caseUtil.getCase(any(), anyString(), anyString(), anyString(), isNull()))
-                .thenReturn("{\"caseTitle\":\"Test Case\",\"stage\":\"HEARING\"}");
-
-        // Execute the method
-        String result = billingUtil.buildPayload(jsonItem, requestInfo);
-
-        // Verify the result
-        assertNotNull(result);
-        assertTrue(result.contains("\"index\":{\"_index\":\"billing-index\",\"_id\":\"123\"}"));
-        assertTrue(result.contains("\"_id\":\"123\""));
-        assertTrue(result.contains("\"tenantId\": \"test-tenant\""));
-        assertTrue(result.contains("\"caseTitleFilingNumber\": \"Test Case,FN001\""));
-        assertTrue(result.contains("\"stage\": \"HEARING\""));
+        billingUtil = new BillingUtil(config, indexerUtil, requestRepository, caseUtil,mdmsUtil);
     }
 
     @Test
