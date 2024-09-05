@@ -1701,9 +1701,9 @@ function EFilingCases({ path }) {
 
   const caseType = {
     cateogry: "Criminal",
-    act: "Negotiable Instrument Act",
+    act: "Negotiable Instruments Act",
     section: "138",
-    courtName: "Kollam S 138 Special Court",
+    courtName: "Kollam S-138 Special Court",
   };
 
   const takeUserToRemainingMandatoryFieldsPage = () => {

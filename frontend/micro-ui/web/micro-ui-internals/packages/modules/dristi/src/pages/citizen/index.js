@@ -115,7 +115,6 @@ const App = ({ stateCode, tenantId, result, fileStoreId }) => {
     `${path}/home/registration/additional-details`,
     `${path}/home/registration/upload-id`,
     `${path}/home/registration/terms-condition`,
-    `${path}/home/application-details`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
   const eSignWindowObject = localStorage.getItem("eSignWindowObject");

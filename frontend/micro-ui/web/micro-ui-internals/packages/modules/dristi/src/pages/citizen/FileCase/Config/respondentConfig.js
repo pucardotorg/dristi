@@ -285,9 +285,10 @@ const respondentFromconfig = [
         populators: {
           inputs: [
             {
-              isMandatory: true,
+              isMandatory: false,
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              isOptional: "CS_IS_OPTIONAL",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

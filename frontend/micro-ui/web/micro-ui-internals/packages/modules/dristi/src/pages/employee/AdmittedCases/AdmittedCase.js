@@ -66,7 +66,7 @@ const AdmittedCases = () => {
     caseId,
     caseId
   );
-  const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
+  const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList?.[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
   const showTakeAction =
     (userRoles.includes("JUDGE_ROLE") || userRoles.includes("BENCHCLERK_ROLE")) && caseData?.criteria[0]?.responseList[0]?.status === "CASE_ADMITTED";

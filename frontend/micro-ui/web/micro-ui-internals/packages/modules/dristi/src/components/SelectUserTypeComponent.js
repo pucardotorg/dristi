@@ -206,6 +206,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       }}
                       min={input?.validation?.min}
                       disable={input.isDisabled}
+                      textInputStyle={input?.textInputStyle}
                       style={{ paddingRight: "3px" }}
                       defaultValue={undefined}
                       errorStyle={errors?.[input.name]}
@@ -249,6 +250,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                         }
                         setValue(updatedValue, input.name, input);
                       }}
+                      textInputStyle={input?.textInputStyle}
                       errorStyle={errors?.[input.name]}
                       disable={input.isDisabled}
                       defaultValue={undefined}

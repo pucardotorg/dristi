@@ -202,6 +202,8 @@ export const UICustomizations = {
           );
         case "Case Type":
           return <span>NIA S138</span>;
+        case "Outcome":
+          return t(value);
         case "Stage":
           return t(row?.status);
         case "Filing Date":
@@ -370,6 +372,8 @@ export const UICustomizations = {
           return <span>NIA S138</span>;
         case "Filing Date":
           return <span>{formatDate(new Date(value))}</span>;
+        case "Outcome":
+          return t(value);
         case "Stage":
           return t(row?.status);
         default:

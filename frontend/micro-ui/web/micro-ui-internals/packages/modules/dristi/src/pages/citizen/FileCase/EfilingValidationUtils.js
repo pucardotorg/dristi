@@ -581,17 +581,6 @@ export const respondentValidation = ({
         return false;
       }
     }
-
-    if (
-      formData?.respondentType?.code === "REPRESENTATIVE" &&
-      ["companyDetailsUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)
-    ) {
-      setFormErrors("companyDetailsUpload", { type: "required" });
-      setShowErrorToast(true);
-      return true;
-    } else {
-      return false;
-    }
   }
 
   const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
@@ -680,14 +669,6 @@ export const advocateDetailsFileValidation = ({ formData, selected, setShowError
 
 export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast, setFormErrors, clearFormDataErrors }) => {
   if (selected === "complainantDetails") {
-    const formDataCopy = structuredClone(formData);
-    if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
-      if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
-        setFormErrors("companyDetailsUpload", { type: "required" });
-        setShowErrorToast(true);
-        return true;
-      }
-    }
     if (!formData?.complainantId?.complainantId) {
       setShowErrorToast(true);
       return true;

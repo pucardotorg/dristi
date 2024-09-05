@@ -202,9 +202,10 @@ const complainantDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              isMandatory: true,
+              isMandatory: false,
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              isOptional: "CS_IS_OPTIONAL",
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
@@ -286,6 +287,8 @@ const complainantDetailsFormConfig = [
               name: "city",
               inputFieldClassName: "user-details-form-style",
               validation: {
+                patternType: "Name",
+                errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
                 isRequired: true,
               },
               isMandatory: true,
@@ -297,7 +300,14 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
-                maxLength: 300,
+                maxlength: 256,
+                minlength: 2,
+                pattern: {
+                  patternType: "address",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
+                errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
               },
               isMandatory: true,
             },
@@ -380,6 +390,8 @@ const complainantDetailsFormConfig = [
               shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
+                patternType: "Name",
+                errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
                 isRequired: true,
               },
               isMandatory: true,
@@ -391,6 +403,14 @@ const complainantDetailsFormConfig = [
               shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
+                minlength: 2,
+                maxlength: 256,
+                pattern: {
+                  patternType: "address",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
+                errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
                 isRequired: true,
               },
               isMandatory: true,

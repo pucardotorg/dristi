@@ -170,11 +170,11 @@ const CustomReviewCardRow = ({
               <div className="value">
                 {Array.isArray(textValue)
                   ? textValue.length > 0
-                    ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
+                    ? textValue.map((text, index) => <div key={index}>{t(text) || t("CS_NOT_AVAILABLE")}</div>)
                     : t("CS_NOT_AVAILABLE")
                   : textValue && typeof textValue === "object"
-                  ? textValue?.text || ""
-                  : textValue || (dependentOnValue && textDependentValue) || t("CS_NOT_AVAILABLE")}
+                  ? t(textValue?.text) || ""
+                  : t(textValue) || (dependentOnValue && textDependentValue) || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
