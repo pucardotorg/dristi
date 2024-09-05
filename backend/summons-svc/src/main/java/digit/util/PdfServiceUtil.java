@@ -70,7 +70,7 @@ public class PdfServiceUtil {
                 .caseYear(extractCaseYear(filingNUmber))
                 .judgeName(task.getTaskDetails().getCaseDetails().getJudgeName())
                 .courtName(task.getTaskDetails().getCaseDetails().getCourtName())
-                .hearingDate(task.getTaskDetails().getCaseDetails().getHearingDate())
+                .hearingDate(task.getTaskDetails().getCaseDetails().getHearingDate().toString())
                 .respondentName(task.getTaskDetails().getRespondentDetails().getName())
                 .respondentAddress(task.getTaskDetails().getRespondentDetails().getAddress().toString())
                 .build();

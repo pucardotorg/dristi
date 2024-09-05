@@ -20,6 +20,9 @@ public class CaseDetails {
     @JsonProperty("caseId")
     private String caseId;
 
+    @JsonProperty("courtId")
+    private String courtId;
+
     @JsonProperty("caseTitle")
     private String caseTitle;
 
@@ -30,7 +33,7 @@ public class CaseDetails {
     private String caseCharge;
 
     @JsonProperty("hearingDate")
-    private String hearingDate;
+    private Long hearingDate;
 
     @JsonProperty("judgeName")
     private String judgeName;

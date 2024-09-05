@@ -73,6 +73,9 @@ public class Configuration {
     @Value("${egov.task.service.update.endpoint}")
     private String taskServiceUpdateEndpoint;
 
+    @Value("${egov.task.service.search.endpoint}")
+    private String taskServiceSearchEndpoint;
+
     @Value("${egov.task.service.update.document.endpoint}")
     private String taskServiceUpdateDocumentEndpoint;
 
@@ -105,6 +108,12 @@ public class Configuration {
 
     @Value("${task.taxhead.master.code}")
     private String taskTaxHeadMasterCode;
+
+    @Value("${task.taxhead.master.court.code}")
+    private String taskTaxHeadCourtMasterCode;
+
+    @Value("${task.taxhead.master.epost.code}")
+    private String taskTaxHeadEPostMasterCode;
 
     @Value("${egov.tax.period.to}")
     private Long taxPeriodTo;
@@ -148,4 +157,10 @@ public class Configuration {
 
     @Value("${egov.epost.request.endpoint}")
     private String ePostRequestEndPoint;
+
+    @Value("${egov.mdms.payment.business.service.name}")
+    private String paymentBusinessServiceName;
+
+    @Value("${egov.is.test}")
+    private boolean isTest;
 }

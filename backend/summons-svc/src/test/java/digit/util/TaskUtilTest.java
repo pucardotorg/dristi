@@ -78,7 +78,7 @@ class TaskUtilTest {
         String uri = "http://localhost/search-endpoint";
 
         when(config.getTaskServiceHost()).thenReturn("http://localhost");
-        when(config.getTaskServiceUpdateEndpoint()).thenReturn("/search-endpoint");
+        when(config.getTaskServiceSearchEndpoint()).thenReturn("/search-endpoint");
         when(restTemplate.postForEntity(eq(uri), any(HttpEntity.class), eq(TaskListResponse.class)))
                 .thenReturn(ResponseEntity.ok(expectedResponse));
 

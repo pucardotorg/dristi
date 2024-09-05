@@ -27,7 +27,6 @@ public class ComplainantDetails {
     private Integer age;
 
     @JsonProperty("gender")
-    @NotNull
     private String gender;
 
     @JsonProperty("phone")

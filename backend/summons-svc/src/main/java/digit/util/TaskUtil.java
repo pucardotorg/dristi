@@ -51,7 +51,7 @@ public class TaskUtil {
         try {
             StringBuilder uri = new StringBuilder();
             uri.append(config.getTaskServiceHost())
-                    .append(config.getTaskServiceUpdateEndpoint());
+                    .append(config.getTaskServiceSearchEndpoint());
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
