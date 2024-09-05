@@ -2,15 +2,15 @@ name: Advocate Workflow
 
 on:
   push:
-    branches:
-      - develop
-    paths:
-      - 'backend/advocate/**'
+    # branches:
+    #   - develop
+    # paths:
+    #   - 'backend/advocate/**'
   pull_request:
-    branches:
-      - develop
-    paths:
-      - 'backend/advocate/**'
+    # branches:
+    #   - develop
+    # paths:
+    #   - 'backend/advocate/**'
   workflow_dispatch:
 
 jobs:
