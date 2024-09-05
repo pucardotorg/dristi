@@ -1,0 +1,78 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+title "Judge Accept/Reject Voluntary Submission"
+
+actor Judge as J
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant ApplicationsUI as AU
+participant ApplicationReviewUI as ARU
+participant OrderUI as OU
+
+box DRISTI Services
+participant CaseSvc as CS #gold
+participant ApplicationSvc as AS #gold
+participant AnalyticsSvc as AAS #gold
+end box
+
+box DIGIT Services
+participant Workflow as W #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+Database ESIndexer as DBES #gray
+end box
+
+J->HU: login
+J->HU: select a case to view 
+HU->VU: redirect to View Case screen (filing or CNR number)
+opt
+J->VU: Click pending task for reviewing submission
+VU->ARU: redirects to Application review screen (applicationNumber)
+else
+J->VU: Click on "Applications" tab
+VU->AU: redirect to Applications screen
+AU->AS++: search applications (CNR)
+return list of applications
+J->AU: click on a application (pending approval)
+AU->ARU: redirects to Application review screen (applicationNumber)
+end
+
+J->ARU: Review application and comments if any
+alt approve application
+J->ARU: Click "Accept"
+ARU->AS++: updateAppication (approved)
+AS->W++: action "APPROVE"
+W->K: post state transition event
+return "COMPLETED"
+return 200 approved successfully
+opt
+ARU->OU: redirect to order UI (acceptance order)
+note right of ARU: Follow Judge Create Order flow
+end
+
+AAS->K: listen to state transition event
+opt
+AAS->DBES: post to indexer
+note right of AAS: close pending task for judge approval
+end
+
+else reject application
+J->ARU: Click "Reject"
+ARU->AS++: updateAppication (rejected)
+AS->W++: action "REJECT"
+W->K: post state transition event
+return "REJECTED"
+return 200 rejected successfully
+ARU->OU: redirect to order UI (rejection order)
+note right of ARU: Follow Judge Create Order flow
+end
+
+AAS->K: listen to state transition event
+opt
+AAS->DBES: post to indexer
+note right of AAS: close pending task for judge approval
+end
+
+@enduml

@@ -1,0 +1,117 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Voluntary Submission by Advocate"
+
+actor Advocate as A
+
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant ApplicationSubmisionUI as AU
+participant ApplicationReviewUI as ARU
+participant OrderUI as OU
+participant PaymentUI as PU
+
+box DRISIT Services
+participant CaseSvc as CS #gold
+participant ApplicationSvc as AS #gold
+participant ApplicationUtilSvc as AUS #gold
+participant ArtifactSvc as ARS #gold
+participant ArtifactUtilSvc as ARUS #gold
+participant AnalyticsSvc as AAS #gold
+end box
+
+participant ESignSvc as ES #orange
+
+box DIGIT Services #lightgray
+participant FilestoreSvc as FS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant Workflow as W #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+Database ESIndexer as DBES #gray
+end box
+
+== Application Submission ==
+A->HU: login
+A->HU: select a case to view
+HU->VU: redirects to View Case screen
+A->VU: Click "Make a Submission"
+VU->AU: redirects to Application submission screen
+A->AU: Fill in the Application details
+A->AU: upload relevant documents
+A->AU: Click "Review Submission"
+AU->PS++: generate application PDF
+return PDF
+AU->FS++: store application PDF
+return filestoreID
+AU->AS++: createApplication (application payload, CNR, filestoreID)
+AS->CS: validate exists (application.CaseID)
+alt invalid caseID
+CS->AS: return false
+AS->AU: return Error (cannot create application)
+else valid caseID
+AS->AUS ++: generate Application Number (CNR)
+return applicationNumber
+AS->AS: enrich applicationID, applicationNumber
+AS->W++: action "CREATE"
+W->K: post state transition event
+return "PENDING_E-SIGN"
+
+AS-> K: Push Application payload to topic
+return 201 (new application)
+P-> K: Read payload
+P-> DB: Create record in DB
+AAS->K: listen to state transition event
+opt
+AAS->DBES: post to indexer
+end
+
+A->AU: Click "Submit"
+== Save Artifact ==
+AU->AS++: search Application (applicationNumber)
+return application (with list of artifact documents)
+loop for each document in application
+AU->FS++: save document
+return filestoreID
+AU->ARS++: saveArtifact(artifact payload, filestoreID, CNR)
+ARS->ARUS++: generate ArtifactNumber (CNR)
+return artifactNumber
+return 201 (new artifact)
+end
+
+==Continue Application Submission==
+
+AU->ES++: e-sign application PDF
+AU->FS++: save document
+return filestoreID
+return signed application
+AU->AS++: updateApplication (filestoreID)
+
+AS->W++: action "E-SIGN"
+W->K: post state transition event
+return "PENDING_PAYMENT"
+return 200 (application updated)
+AAS->K: listen to state transition event
+opt
+AAS->DBES: post to indexer
+end
+AS->K: Push Application update payload to topic
+P-> K: Read payload
+P-> DB: update record in DB
+
+AU->PU: redirect to payment screen
+A->PU: Click "Make Payment"
+PU->AS++: updateApplication (record payment)
+AS->W++: action "MAKE_PAYMENT"
+W->K: post state transition event
+return "PENDING_APPROVAL"
+return 200 application update success
+AAS->K: listen to state transition event
+opt
+AAS->DBES: post to indexer
+end
+
+@enduml

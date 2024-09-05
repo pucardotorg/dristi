@@ -7,9 +7,9 @@ import digit.models.coremodels.user.enums.UserType;
 import org.egov.common.models.individual.AdditionalFields;
 import org.egov.common.models.individual.BloodGroup;
 import org.egov.common.models.individual.Gender;
-import org.egov.common.models.individual.Name;
 import org.egov.common.models.individual.UserDetails;
 import org.egov.individual.web.models.Individual;
+import org.egov.individual.web.models.Name;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
