@@ -34,18 +34,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
       - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@1.1.0
         id: Depcheck
-        env:
-          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.12-7/x64
         with:
           project: 'advocatw'
           path: 'backend/advocate'
           format: 'HTML'
-          out: 'reports'
-          args:
-             --failOnCVSS 7
-             --enableRetired
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
