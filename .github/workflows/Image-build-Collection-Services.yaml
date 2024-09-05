@@ -4,12 +4,12 @@ on:
     branches:
       - develop
     paths:
-      - 'backend/collection-services/**'
+      - 'common/collection-services/**'
   pull_request:
     branches:
       - develop
     paths:
-      - 'backend/collection-services/**'
+      - 'common/collection-services/**'
   workflow_dispatch:
   workflow_call:
 
@@ -30,14 +30,14 @@ jobs:
 
       - name: Build and Push Docker image for Collection-Service
         run: |
-          docker build --build-arg WORK_DIR="backend/collection-services" -t pucarsolutionsdev.azurecr.io/pucar_collection:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker build --build-arg WORK_DIR="common/collection-services" -t pucarsolutionsdev.azurecr.io/pucar_collection:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_collection:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for Collection-Service_DB
         run: |
           docker build  -t pucarsolutionsdev.azurecr.io/pucar_collection_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_collection_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/collection-services/src/main/resources/db
+        working-directory: common/collection-services/src/main/resources/db
 
   Workflow_Trigger:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'

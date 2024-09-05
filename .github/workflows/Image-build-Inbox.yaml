@@ -1,15 +1,15 @@
-name: Individual Image Build workflow
+name: Inbox Image Build workflow
 on:
   push:
     branches:
       - develop
     paths:
-      - 'common/individual/**'
+      - 'common/inbox/**'
   pull_request:
     branches:
       - develop
     paths:
-      - 'common/individual/**'
+      - 'common/inbox/**'
   workflow_dispatch:
   workflow_call:
 
@@ -28,16 +28,10 @@ jobs:
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
 
-      - name: Build and Push Docker image for Individual
+      - name: Build and Push Docker image for inbox
         run: |
-          docker build --build-arg WORK_DIR="common/individual" -t pucarsolutionsdev.azurecr.io/individual:v1.0.0-${{ github.sha }} -f build/maven-java8/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/individual:v1.0.0-${{ github.sha }}
-
-      - name: Build and Push Docker image for Individual_DB
-        run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/individual_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/individual_db:v1.0.0-${{ github.sha }}
-        working-directory: common/individual/src/main/resources/db
+          docker build --build-arg WORK_DIR="common/inbox" -t pucarsolutionsdev.azurecr.io/inbox:v1.0.0-${{ github.sha }} -f build/maven-java8/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/inbox:v1.0.0-${{ github.sha }}
 
   Workflow_Trigger:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'

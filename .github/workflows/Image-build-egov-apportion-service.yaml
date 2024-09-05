@@ -1,15 +1,15 @@
-name: Individual Image Build workflow
+name: Egov Apportion Service Image Build workflow
 on:
   push:
     branches:
       - develop
     paths:
-      - 'common/individual/**'
+      - 'common/egov-apportion-service/**'
   pull_request:
     branches:
       - develop
     paths:
-      - 'common/individual/**'
+      - 'common/egov-apportion-service/**'
   workflow_dispatch:
   workflow_call:
 
@@ -28,16 +28,16 @@ jobs:
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
 
-      - name: Build and Push Docker image for Individual
+      - name: Build and Push Docker image for Egov Apportion Service
         run: |
-          docker build --build-arg WORK_DIR="common/individual" -t pucarsolutionsdev.azurecr.io/individual:v1.0.0-${{ github.sha }} -f build/maven-java8/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/individual:v1.0.0-${{ github.sha }}
+          docker build --build-arg WORK_DIR="common/egov-apportion-service" -t pucarsolutionsdev.azurecr.io/apportion-service:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/apportion-service:v1.0.0-${{ github.sha }}
 
-      - name: Build and Push Docker image for Individual_DB
+      - name: Build and Push Docker image for Egov Apportion Service DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/individual_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/individual_db:v1.0.0-${{ github.sha }}
-        working-directory: common/individual/src/main/resources/db
+          docker build  -t pucarsolutionsdev.azurecr.io/apportion-service-db:v1.0.0-${{ github.sha }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/apportion-service-db:v1.0.0-${{ github.sha }}
+        working-directory: common/egov-apportion-service/src/main/resources/db
 
   Workflow_Trigger:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'

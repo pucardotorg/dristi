@@ -4,12 +4,12 @@ on:
     branches:
       - develop
     paths:
-      - 'backend/billing-service/**'
+      - 'common/billing-service/**'
   pull_request:
     branches:
       - develop
     paths:
-      - 'backend/billing-service/**'
+      - 'common/billing-service/**'
   workflow_dispatch:
   workflow_call:
 
@@ -30,14 +30,14 @@ jobs:
 
       - name: Build and Push Docker image for Billing-Service
         run: |
-          docker build --build-arg WORK_DIR="backend/billing-service" -t pucarsolutionsdev.azurecr.io/pucar_billing:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker build --build-arg WORK_DIR="common/billing-service" -t pucarsolutionsdev.azurecr.io/pucar_billing:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_billing:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for Billing-Service_DB
         run: |
           docker build  -t pucarsolutionsdev.azurecr.io/pucar_billing_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_billing_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/billing-service/src/main/resources/db
+        working-directory: common/billing-service/src/main/resources/db
 
   Workflow_Trigger:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
