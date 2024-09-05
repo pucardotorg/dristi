@@ -132,4 +132,20 @@ public class Configuration {
 
     @Value("${egov.order.path}")
     private String orderPath;
+
+    @Value("${summons.court.fees.sufix}")
+    private String summonsCourtFeesSufix;
+
+    @Value("${summons.epost.fees.sufix}")
+    private String summonsEpostFeesSufix;
+
+
+    @Value("${egov.billingservice.host}")
+    private String billingServiceHost;
+
+    @Value("${egov.billingservice.search.bill}")
+    private String searchBillEndpoint;
+
+    @Value(("${task.business.service}"))
+    private String taskBusinessService;
 }

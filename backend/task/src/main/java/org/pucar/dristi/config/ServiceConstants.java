@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class ServiceConstants {
     private ServiceConstants() {
     }
+
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -63,7 +64,15 @@ public class ServiceConstants {
     public static final String WARRANT = "WARRANT";
     public static final String ISSUESUMMON = "ISSUESUMMON";
 
-    public static final String DOCUMENT_UPLOAD_QUERY_EXCEPTION= "DOCUMENT_UPLOAD_QUERY_EXCEPTION";
+    public static final String DOCUMENT_UPLOAD_QUERY_EXCEPTION = "DOCUMENT_UPLOAD_QUERY_EXCEPTION";
+
+
+    public static final String PAYMENT_MODULE_NAME = "payment";
+    public static final String PAYMENT_TYPE_MASTER_NAME = "paymentType";
+
+    public static final String FILTER_PAYMENT_TYPE = "$.[?(@.suffix == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+
+    public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s' && @.businessService[?(@.businessCode == '%s')])]";
 
 
 }
