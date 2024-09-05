@@ -91,7 +91,6 @@ class IndividualRepositoryTest {
                 .byUserUUID()
                 .byGender()
                 .byName()
-                .byDateOfBirth()
                 .byBoundaryCode()
                 .build();
         Individual individual = IndividualTestBuilder.builder()
@@ -149,7 +148,6 @@ class IndividualRepositoryTest {
                 .byUserUUID()
                 .byGender()
                 .byName()
-                .byDateOfBirth()
                 .byBoundaryCode()
                 .byIdentifier()
                 .build();

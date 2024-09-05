@@ -58,7 +58,6 @@ public class Individual {
     private String userUuid = null;
 
     @JsonProperty("name")
-    @NotNull
     @Valid
     private Name name = null;
 
