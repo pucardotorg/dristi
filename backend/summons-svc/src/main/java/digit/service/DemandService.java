@@ -183,7 +183,7 @@ public class DemandService {
                 .tenantId(tenantId)
                 .consumerCode(consumerCode)
                 .consumerType(config.getTaxConsumerType())
-                .businessService(config.getTaskModuleCode())
+                .businessService(config.getTaskBusinessService())
                 .taxPeriodFrom(config.getTaxPeriodFrom()).taxPeriodTo(config.getTaxPeriodTo())
                 .demandDetails(demandDetailList)
                 .build();
