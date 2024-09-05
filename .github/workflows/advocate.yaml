@@ -36,6 +36,8 @@ jobs:
       - name: Depcheck
         uses: dependency-check/Dependency-Check_Action@main
         id: Depcheck
+        env:
+          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.12-7/x64
         with:
           project: 'advocatw'
           path: 'backend/advocate'
