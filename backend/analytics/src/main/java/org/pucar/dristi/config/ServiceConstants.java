@@ -151,6 +151,36 @@ public class ServiceConstants {
 
     public static final String FILTER_PAYMENT_TYPE = "$.[?(@.suffix == '%s' && @.businessService[?(@.businessCode == '%s')])]";
 
+    public static final String DEMAND_SERVICE_EXCEPTION = "DEMAND_SERVICE_EXCEPTION : {} ";
+    public static final String DEMAND_SERVICE_EXCEPTION_MESSAGE = "Exception Occurred while calling the demand service";
 
+    public static final String REQUEST_INFO = "RequestInfo";
+    public static final String FILING_NUMBER = "filingNumber";
+    public static final String CNR_NUMBER_KEY = "cnrNumber";
+    public static final String STRING_FORMAT = "%s?tenantId=%s&demandId=%s";
 
+    public static final String PAYMENT_TYPE_PATH = "$.[*].paymentType";
+
+    public static final String STATUTE = "statute";
+    public static final String STATUTE_DEFAULT_VALUE = "Negotiable Instruments Act 1881";
+
+    public static final String TAX_AMOUNT = "taxAmount";
+
+    public static final String UNKNOWN_TOPIC_EXCEPTION = "UNKNOWN_TOPIC_EXCEPTION";
+
+    public static final String EXTRACT_DEMAND_ID_ERROR = "EXTRACT_DEMAND_ID_ERROR";
+
+    public static final String DEMAND_ID = "demandId";
+
+    public static final String UPDATE_DEMAND_ERROR = "UPDATE_DEMAND_ERROR";
+
+    public static final String STATUS_KEY = "status";
+
+    public static final String STATUS_PAID = "PAID";
+
+    public static final String DEMANDS = "Demands";
+
+    public static final String OFFLINE_PAYMENT_ERROR = "OFFLINE_PAYMENT_NOT_SUPPORTED";
+
+    public static final String OFFLINE_PAYMENT_ERROR_MESSAGE = "Offline paymnet is not supported";
 }
