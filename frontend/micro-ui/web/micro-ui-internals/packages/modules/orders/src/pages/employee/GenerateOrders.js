@@ -873,7 +873,7 @@ const GenerateOrders = () => {
       }
       if (
         formData?.bailInfo?.bailableAmount &&
-        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] !== "." &&
+        formData?.bailInfo?.bailableAmount?.slice(-1) !== "." &&
         Object.keys(formState?.errors).includes("bailableAmount")
       ) {
         clearErrors("bailableAmount");
@@ -882,7 +882,7 @@ const GenerateOrders = () => {
       } else if (
         formState?.submitCount &&
         formData?.bailInfo?.isBailable?.code === true &&
-        formData?.bailInfo?.bailableAmount[formData?.bailInfo?.bailableAmount?.length - 1] === "." &&
+        formData?.bailInfo?.bailableAmount?.slice(-1) === "." &&
         !Object.keys(formState?.errors).includes("bailableAmount")
       ) {
         setError("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
@@ -1787,11 +1787,14 @@ const GenerateOrders = () => {
       }
     }
     if (orderType && ["WARRANT"].includes(orderType)) {
-      if (!currentFormData?.bailInfo?.noOfSureties) {
+      if (!currentFormData?.bailInfo?.noOfSureties && currentFormData?.bailInfo?.isBailable?.code === true) {
         setFormErrors.current("noOfSureties", { message: t("CORE_REQUIRED_FIELD_ERROR") });
         return;
       }
-      if (!currentFormData?.bailInfo?.bailableAmount) {
+      if (
+        (!currentFormData?.bailInfo?.bailableAmount || currentFormData?.bailInfo?.bailableAmount?.slice(-1) === ".") &&
+        currentFormData?.bailInfo?.isBailable?.code === true
+      ) {
         setFormErrors.current("bailableAmount", { message: t("CS_VALID_AMOUNT_DECIMAL") });
         return;
       }

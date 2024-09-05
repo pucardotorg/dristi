@@ -7,25 +7,6 @@ import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 
-const paymentOption = [
-  {
-    code: "CASH",
-    i18nKey: "Cash",
-  },
-  {
-    code: "CHEQUE",
-    i18nKey: "Cheque",
-  },
-  {
-    code: "DD",
-    i18nKey: "Demand Draft",
-  },
-  {
-    code: "STAMP",
-    i18nKey: "Stamp",
-  },
-];
-
 const paymentOptionConfig = {
   label: "CS_MODE_OF_PAYMENT",
   type: "dropdown",
