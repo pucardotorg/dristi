@@ -1,0 +1,59 @@
+name: SonarCloud Scan for Develop Branch
+
+# This workflow is triggered manually or on push to develop
+on:
+  workflow_dispatch:  # Allows manual trigger from the GitHub Actions tab
+  push:
+    branches:
+      - develop  # Trigger on pushes to the 'develop' branch
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full history is checked out
+
+      # Optional: Set up Java (if your project uses Java or another language requiring setup)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: Cache SonarCloud scanner
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+
+      # Install dependencies (replace with your specific project command)
+      - name: Install dependencies
+        run: |
+          # If you're using a specific build tool, add the install/build step here
+          mvn install  # Replace with your build tool if necessary
+
+      - name: Run SonarCloud scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Your SonarCloud token stored in GitHub secrets
+        run: |
+          mvn sonar:sonar \
+          -Dsonar.projectKey=pucardotorg_dristi \
+          -Dsonar.organization=pucardotorg \
+          -Dsonar.branch.name=develop \  # Specify 'develop' branch for analysis
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload results to GitHub Code Scanning
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.GHUB_TOKEN_2 }}" \
+          https://api.github.com/repos/${{ github.repository }}/code-scanning/alerts
