@@ -47,7 +47,7 @@ const SBIEpostPayment = () => {
             tenantId: tenantId,
             billId: bill?.Bill?.[0]?.billDetails?.[0]?.billId,
             totalDue: 35.0,
-            businessService: "task-summon",
+            businessService: "task-summons",
             serviceNumber: consumerCode,
             payerName: "John Doe",
             paidBy: "John Doe",
