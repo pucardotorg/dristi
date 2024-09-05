@@ -817,9 +817,9 @@ export const UICustomizations = {
           label: "View transcript",
           id: "view_transcript",
           hide: false,
-          disabled: true,
-          action: (history) => {
-            alert("Not Yet Implemented");
+          disabled: false,
+          action: (history, column, row) => {
+            column.clickFunc(row);
           },
         },
         {

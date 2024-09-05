@@ -742,6 +742,53 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.popup-module.view-hearing-transcript-modal {
+  .header-wrap {
+    .header-content {
+      margin-left: 5px;
+    }
+  }
+  .popup-module-main {
+    .transcript-header {
+      border: solid 1px grey;
+      border-bottom: none;
+      margin-bottom: 0px;
+      padding-bottom: 8px;
+      color: #3d3c3c;
+      font-size: 16px;
+      font-weight: 700;
+      padding-top: 8px;
+      padding-left: 5px;
+    }
+    .digit-card-textarea-field {
+      padding: 5px;
+    }
+    .submit-bar-div {
+      display: flex !important;
+      justify-content: flex-end;
+      margin-top: 15px;
+      .primary-label-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 89px;
+        max-height: 35px;
+        box-shadow: none;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        .header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
 .popup-module.request-processing-info-modal {
   .header-wrap {
     height: 35px;
