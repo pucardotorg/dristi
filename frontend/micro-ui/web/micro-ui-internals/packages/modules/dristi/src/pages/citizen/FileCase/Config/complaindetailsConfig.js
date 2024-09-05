@@ -161,7 +161,7 @@ const complainantDetailsFormConfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        isMandatory: true,
+        // isMandatory: false,
         populators: {
           name: "lastName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",

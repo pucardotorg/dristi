@@ -75,7 +75,6 @@ const respondentFromconfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        isMandatory: true,
         populators: {
           name: "respondentLastName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",

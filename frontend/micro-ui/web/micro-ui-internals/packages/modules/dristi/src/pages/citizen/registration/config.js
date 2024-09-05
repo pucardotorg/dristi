@@ -314,7 +314,6 @@ export const newConfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        isMandatory: true,
         populators: {
           name: "lastName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE_ONE_CHAR",
