@@ -6,7 +6,6 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.ServiceCallException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -61,7 +60,7 @@ public class BillingUtil {
 
         JSONObject request = new JSONObject();
         request.put(REQUEST_INFO, requestInfo);
-        Map<String, String> details = indexerUtil.processEntityByType(businessService, request, consumerCode, null);
+        Map<String, String> details = indexerUtil.processEntityByType(businessService, request, consumerCodeSplitArray[0], null);
 
         String cnrNumber = details.get(CNR_NUMBER_KEY);
         String filingNumber = details.get(FILING_NUMBER);
@@ -70,7 +69,7 @@ public class BillingUtil {
         Object caseObject = caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, null);
         String caseTitle = JsonPath.read(caseObject.toString(), CASE_TITLE_PATH);
         String caseStage = JsonPath.read(caseObject.toString(), CASE_STAGE_PATH);
-        JSONArray statutesAndSections = JsonPath.read(caseObject, CASE_STATUTES_AND_SECTIONS);
+        net.minidev.json.JSONArray statutesAndSections = JsonPath.read(caseObject.toString(), CASE_STATUTES_AND_SECTIONS);
         String caseType = getCaseType(statutesAndSections);
 
         return String.format(
@@ -113,15 +112,15 @@ public class BillingUtil {
         return paymentTypes.get(0).toString();
     }
 
-    private String getCaseType(JSONArray jsonArray) {
+    private String getCaseType(net.minidev.json.JSONArray jsonArray) {
 
         StringBuilder caseTypeBuilder = new StringBuilder();
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
+        for (Object obj : jsonArray) {
+            JSONObject jsonObject = new org.json.JSONObject(new Gson().toJson(obj));
             String caseType = jsonObject.optString(STATUTE, STATUTE_DEFAULT_VALUE); // TODO: remove when data is fixed
 
-            if (!caseTypeBuilder.isEmpty()) {
+            if (caseTypeBuilder.length() > 0) {
                 caseTypeBuilder.append(",");
             }
             caseTypeBuilder.append(caseType);
@@ -129,6 +128,7 @@ public class BillingUtil {
 
         return caseTypeBuilder.toString();
     }
+
 
     private Double getTotalAmount(List<Map<String, Object>> demandDetails) {
         Double totalAmount = 0.0;
