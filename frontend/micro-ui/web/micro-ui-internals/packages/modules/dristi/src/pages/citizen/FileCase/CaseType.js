@@ -11,7 +11,7 @@ import { userTypeOptions } from "../registration/config";
 import SelectCustomNote from "../../../components/SelectCustomNote";
 import _ from "lodash";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
-
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 const customNoteConfig = {
   populators: {
     inputs: [
@@ -37,6 +37,7 @@ function CaseType({ t }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { downloadPdf } = useDownloadCasePdf();
   const onCancel = () => {
     history.push("/digit-ui/citizen/home/home-pending-task");
   };
@@ -137,13 +138,20 @@ function CaseType({ t }) {
     }, [searchResult]);
 
     const { isLoading: mdmsLoading, data: statuteData } = useGetStatuteSection();
-
-    if (isLoading || isFetching || isSearchLoading || mdmsLoading || isComplainantRespondentTypeLoading) {
+    const { data: requiredDocumentsData, isLoading: isLoadingRequiredDocumentsData } = useGetStatuteSection("case", [{ name: "RequiredDocuments" }]);
+    const RequiredDocuments = requiredDocumentsData?.RequiredDocuments;
+    const requiredDocumentsPdfNIA = RequiredDocuments?.filter((item) => item?.caseType == "NIA-138")?.[0];
+    if (isLoading || isFetching || isSearchLoading || mdmsLoading || isComplainantRespondentTypeLoading || isLoadingRequiredDocumentsData) {
       return <Loader />;
     }
     return (
       <div className="submit-bar-div">
-        <Button icon={<FileDownloadIcon />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
+        <Button
+          icon={<FileDownloadIcon />}
+          className="download-button"
+          label={t("CS_COMMON_DOWNLOAD")}
+          onButtonClick={() => downloadPdf(tenantId, requiredDocumentsPdfNIA?.fileStoreId)}
+        />
         <div className="right-div">
           <Button
             className="cancel-button"
