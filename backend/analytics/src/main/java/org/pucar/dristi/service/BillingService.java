@@ -67,7 +67,7 @@ public class BillingService {
             requestInfo.put(REQUEST_INFO, requestInfoMap);
             Set<String> demandSet = extractDemandIds(paymentDetailsArray);
             String tenantId = config.getStateLevelTenantId();
-            updateDemandStatus(demandSet, tenantId, requestInfo);
+            updateDemandStatus(demandSet, tenantId, requestInfoMap);
         } catch (Exception e) {
             log.error("Error processing payment", e);
         }
@@ -93,8 +93,12 @@ public class BillingService {
         return demandSet;
     }
 
-    private void updateDemandStatus(Set<String> demandSet, String tenantId, JSONObject requestInfo) throws JSONException {
+    private void updateDemandStatus(Set<String> demandSet, String tenantId, LinkedHashMap<String, Object> requestInfoMap) throws JSONException {
+
+        JSONObject requestInfo = new JSONObject();
+        requestInfo.put(REQUEST_INFO, requestInfoMap);
         for (String demandId : demandSet) {
+
             String demand = billingUtil.getDemand(tenantId, demandId, requestInfo);
             JSONArray demandArray = null;
             try {
@@ -109,7 +113,7 @@ public class BillingService {
                 demandObject.put(STATUS_KEY, STATUS_PAID);
             }
             JSONObject demandRequest = new JSONObject();
-            demandRequest.put(REQUEST_INFO, requestInfo);
+            demandRequest.put(REQUEST_INFO, requestInfoMap);
             demandRequest.put(DEMANDS, demandArray);
             processDemand(demandRequest.toString());
         }
