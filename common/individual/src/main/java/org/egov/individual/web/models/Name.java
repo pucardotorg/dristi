@@ -17,7 +17,7 @@ public class Name {
     ) String givenName = null;
     @JsonProperty("familyName")
     private @Size(
-            min = 2,
+            min = 0,
             max = 200
     ) String familyName = null;
     @JsonProperty("otherNames")
