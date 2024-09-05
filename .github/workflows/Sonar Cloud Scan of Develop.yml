@@ -29,6 +29,10 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
+      # Change to the directory where pom.xml is located
+      - name: Change directory to the project root
+        run: cd backend  # Replace `myproject` with the actual folder name
+
 
       - name: Cache SonarCloud scanner
         uses: actions/cache@v3
