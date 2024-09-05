@@ -17,7 +17,7 @@ public class SummonsDetails {
     private String summonId = null;
 
     @JsonProperty("issueDate")
-    private String issueDate;
+    private Long issueDate;
 
     @JsonProperty("docType")
     private String docType;
