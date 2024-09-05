@@ -4,10 +4,10 @@ import org.egov.common.helper.AuditDetailsTestBuilder;
 import org.egov.common.models.individual.AddressType;
 import org.egov.common.models.individual.Gender;
 import org.egov.common.models.individual.Identifier;
-import org.egov.common.models.individual.Name;
 import org.egov.common.models.individual.Skill;
 import org.egov.individual.web.models.Address;
 import org.egov.individual.web.models.Individual;
+import org.egov.individual.web.models.Name;
 
 import java.util.Arrays;
 

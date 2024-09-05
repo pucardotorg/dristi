@@ -49,5 +49,8 @@ return task
 OI->CaseSvc++: Update case workflow "PENDING_RESPONSE"
 return case
 OI->H: Redirect to home page
+else
+J -> CI: Send back
+CI->H: Redirect to home page
 end
 @enduml
