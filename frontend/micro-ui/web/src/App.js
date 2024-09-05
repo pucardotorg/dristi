@@ -12,6 +12,8 @@ import { initHearingsComponents } from "@egovernments/digit-ui-module-hearings";
 import { initCasesComponents } from "@egovernments/digit-ui-module-cases";
 import { initHomeComponents } from "@egovernments/digit-ui-module-home";
 
+import "@egovernments/digit-ui-css/dist/index.min.css";
+
 window.contextPath =
   window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
 
