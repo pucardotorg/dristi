@@ -49,7 +49,7 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_Success() {
+    public void testgetTasks_Success() {
         // Mock data
         UUID id1 = UUID.randomUUID();
         UUID id2 = UUID.randomUUID();
@@ -77,7 +77,7 @@ public class TaskRepositoryTest {
                 .thenReturn(mockTaskList);
 
         // Test the method
-        List<Task> result = taskRepository.getApplications( TaskCriteria.builder().build(), null);
+        List<Task> result = taskRepository.getTasks(new TaskCriteria(),null);
 
         // Verify the result
         assertNotNull(result);
@@ -88,7 +88,7 @@ public class TaskRepositoryTest {
 
 
     @Test
-    public void testGetApplications_EmptyResult() {
+    public void testgetTasks_EmptyResult() {
         // Mock query builder method
         when(queryBuilder.getTaskSearchQuery(any(), anyList(),anyList()))
                 .thenReturn("SELECT * FROM tasks WHERE ...");
@@ -98,7 +98,7 @@ public class TaskRepositoryTest {
                 .thenReturn(new ArrayList<>());
 
         // Test the method
-        List<Task> result = taskRepository.getApplications( TaskCriteria.builder().build(), null);
+        List<Task> result = taskRepository.getTasks(new TaskCriteria(),null);
 
         // Verify the result
         assertNotNull(result);
