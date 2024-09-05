@@ -491,14 +491,11 @@ const LitigantHomePage = ({ isApprovalPending }) => {
           >
             <FileNewCaseIcon />
             <React.Fragment>
-              <span className="header userName" style={{ fontSize: "30px" }}>
+              <span className="header userName" style={{ fontSize: "30px", textAlign: "center" }}>
                 {t("CS_JOIN_NEW_CASE")}
               </span>
               <span className="subtext" style={subtextStyle}>
-                {t("CS_JOIN_NEW_CASE_SUBTEXT_1")}
-              </span>
-              <span className="subtext" style={subtextStyle}>
-                {t("CS_JOIN_NEW_CASE_SUBTEXT_2")}
+                {t("CS_FILE_A_CASE_SUBTEXT")}
               </span>
             </React.Fragment>
             <Button
@@ -527,7 +524,7 @@ const LitigantHomePage = ({ isApprovalPending }) => {
           >
             <JoinOngoingCaseIcon />
             <React.Fragment>
-              <span className="header userName" style={{ fontSize: "30px" }}>
+              <span className="header userName" style={{ fontSize: "30px", textAlign: "center" }}>
                 {t("CS_JOIN_ONGOING_CASE")}
               </span>
               <span className="subtext" style={subtextStyle}>
