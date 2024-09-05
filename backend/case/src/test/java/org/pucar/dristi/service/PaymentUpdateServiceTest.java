@@ -76,7 +76,7 @@ public class PaymentUpdateServiceTest {
         paymentRequest.getPayment().setPaymentDetails(Collections.singletonList(paymentDetail));
         Bill bill = new Bill();
         bill.setTenantId("tenantId");
-        bill.setConsumerCode("consumerCode");
+        bill.setConsumerCode("consumerCode-suffix");
         paymentDetail.setBill(bill);
 
         CourtCase courtCase = new CourtCase();
