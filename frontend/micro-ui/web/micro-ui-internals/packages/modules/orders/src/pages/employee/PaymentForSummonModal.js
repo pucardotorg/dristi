@@ -221,9 +221,15 @@ const PaymentForSummonModal = ({ path }) => {
     totalAmount: "4",
   });
 
-  const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
+  const { data: courtBillResponse, isLoading: isCourtBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
-    { tenantId, consumerCode: filteredTasks?.[0]?.taskNumber, service: paymentType.TASK_SUMMON },
+    { tenantId, consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`, service: paymentType.TASK_SUMMON },
+    "dristi",
+    Boolean(filteredTasks?.[0]?.taskNumber)
+  );
+  const { data: ePostBillResponse, isLoading: isEPOSTBillLoading } = Digit.Hooks.dristi.useBillSearch(
+    {},
+    { tenantId, consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`, service: paymentType.TASK_SUMMON },
     "dristi",
     Boolean(filteredTasks?.[0]?.taskNumber)
   );
@@ -231,12 +237,12 @@ const PaymentForSummonModal = ({ path }) => {
   const onPayOnline = async () => {
     console.log("clikc");
     try {
-      if (billResponse?.Bill?.length === 0) {
+      if (courtBillResponse?.Bill?.length === 0) {
         await DRISTIService.createDemand({
           Demands: [
             {
               tenantId,
-              consumerCode: filteredTasks?.[0]?.taskNumber,
+              consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
               consumerType: paymentType.TASK_SUMMON,
               businessService: paymentType.TASK_SUMMON,
               taxPeriodFrom: Date.now().toString(),
@@ -252,7 +258,7 @@ const PaymentForSummonModal = ({ path }) => {
           ],
         });
       }
-      const bill = await fetchBill(filteredTasks?.[0]?.taskNumber, tenantId, paymentType.TASK_SUMMON);
+      const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_POST_COURT`, tenantId, paymentType.TASK_SUMMON);
       if (bill?.Bill?.length) {
         const billPaymentStatus = await openPaymentPortal(bill);
         console.log(billPaymentStatus);
@@ -365,6 +371,42 @@ const PaymentForSummonModal = ({ path }) => {
     }
   };
 
+  const onPayOnlineSBI = async () => {
+    try {
+      if (ePostBillResponse?.Bill?.length === 0) {
+        await DRISTIService.createDemand({
+          Demands: [
+            {
+              tenantId,
+              consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
+              consumerType: paymentType.TASK_SUMMON,
+              businessService: paymentType.TASK_SUMMON,
+              taxPeriodFrom: Date.now().toString(),
+              taxPeriodTo: Date.now().toString(),
+              demandDetails: [
+                {
+                  taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
+                  taxAmount: 4,
+                  collectionAmount: 0,
+                },
+              ],
+            },
+          ],
+        });
+      }
+      const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`, tenantId, paymentType.TASK_SUMMON);
+      history.push(`/${window?.contextPath}/citizen/home/sbi-epost-payment`, {
+        state: {
+          billData: bill,
+          consumerCode: filteredTasks?.[0]?.taskNumber,
+          service: paymentType.TASK_SUMMON,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const feeOptions = useMemo(() => {
     const taskAmount = filteredTasks?.[0]?.amount?.amount || 0;
 
@@ -376,7 +418,7 @@ const PaymentForSummonModal = ({ path }) => {
           action: "Actions",
         },
         { label: "Court Fees", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
-        { label: "Delivery Partner Fee", amount: taskAmount, action: "offline-process", onClick: onPayOnline },
+        { label: "Delivery Partner Fee", amount: taskAmount, action: "Pay Online", onClick: onPayOnlineSBI },
       ],
       "registered-post": [
         {

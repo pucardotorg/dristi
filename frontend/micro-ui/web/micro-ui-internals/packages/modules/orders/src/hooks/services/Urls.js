@@ -22,4 +22,7 @@ export const Urls = {
     uploadDoc: "/task/v1/uploadDocument",
     updateTask: "/task/v1/update",
   },
+  SBIPayment: {
+    payment: "/sbi-backend/payment/v1/_processTransaction",
+  },
 };

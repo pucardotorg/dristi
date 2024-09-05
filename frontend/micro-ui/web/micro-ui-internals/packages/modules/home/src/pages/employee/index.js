@@ -46,6 +46,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
   const PaymentForSummonModalSMSAndEmail = Digit.ComponentRegistryService.getComponent("PaymentForSummonModalSMSAndEmail") || (
     <React.Fragment></React.Fragment>
   );
+  const SBIEpostPayment = Digit.ComponentRegistryService.getComponent("SBIEpostPayment") || <React.Fragment></React.Fragment>;
 
   const history = useHistory();
   const userInfo = Digit?.UserService?.getUser()?.info;
@@ -85,6 +86,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
           path={`${path}/home-pending-task/email-payment-modal`}
           component={() => <PaymentForSummonModalSMSAndEmail></PaymentForSummonModalSMSAndEmail>}
         />
+        <PrivateRoute path={`${path}/sbi-epost-payment`} component={() => <SBIEpostPayment></SBIEpostPayment>} />
         <PrivateRoute path={`${path}/post-payment-screen`} component={() => <PaymentStatus></PaymentStatus>} />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />

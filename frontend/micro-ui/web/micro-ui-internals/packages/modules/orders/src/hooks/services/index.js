@@ -108,3 +108,14 @@ export const taskService = {
       params,
     }),
 };
+
+export const SBIPaymentService = {
+  SBIPayment: (data, params) =>
+    Request({
+      url: Urls.SBIPayment.payment,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
+};

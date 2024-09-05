@@ -45,6 +45,7 @@ module.exports = function (app) {
     "/task",
     "/ocr-service",
     "/scheduler",
+    "/sbi-backend"
 
   ].forEach((location) => app.use(location, createProxy));
 };
