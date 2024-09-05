@@ -60,11 +60,11 @@ public class BillingUtil {
         log.info("Inside billing utils build payload:: entityType: {}, referenceId: {}, status: {},  tenantId: {}", businessService, consumerCode, status, tenantId);
 
         JSONObject request = new JSONObject();
-        request.put("RequestInfo", requestInfo);
+        request.put(REQUEST_INFO, requestInfo);
         Map<String, String> details = indexerUtil.processEntityByType(businessService, request, consumerCode, null);
 
-        String cnrNumber = details.get("cnrNumber");
-        String filingNumber = details.get("filingNumber");
+        String cnrNumber = details.get(CNR_NUMBER_KEY);
+        String filingNumber = details.get(FILING_NUMBER);
 
         // fetch case detail
         Object caseObject = caseUtil.getCase(request, tenantId, cnrNumber, filingNumber, null);
@@ -87,13 +87,13 @@ public class BillingUtil {
     public String getDemand(String tenantId, String demandId, JSONObject requestInfo) {
 
         String baseUrl = config.getDemandHost() + config.getDemandEndPoint();
-        String url = String.format("%s?tenantId=%s&demandId=%s", baseUrl, tenantId, demandId);
+        String url = String.format(STRING_FORMAT, baseUrl, tenantId, demandId);
         String response = null;
         try {
             response = requestRepository.fetchResult(new StringBuilder(url), requestInfo);
         } catch (ServiceCallException e) {
             // we are not throwing error here
-            log.error("DEMAND_SERVICE_EXCEPTION,Exception Occurred while calling the demand service");
+            log.error(DEMAND_SERVICE_EXCEPTION, DEMAND_SERVICE_EXCEPTION_MESSAGE);
         }
 
         return response;
@@ -101,13 +101,14 @@ public class BillingUtil {
 
     private String getPaymentType(String suffix, String businessService) {
         RequestInfo requestInfo = RequestInfo.builder().build();
-        net.minidev.json.JSONArray paymentMode = mdmsUtil.fetchMdmsData(requestInfo, "pg", PAYMENT_MODULE_NAME, List.of(PAYMENT_TYPE_MASTER_NAME))
+        String tenantId = config.getStateLevelTenantId();
+        net.minidev.json.JSONArray paymentMode = mdmsUtil.fetchMdmsData(requestInfo, tenantId, PAYMENT_MODULE_NAME, List.of(PAYMENT_TYPE_MASTER_NAME))
                 .get(PAYMENT_MODULE_NAME).get(PAYMENT_TYPE_MASTER_NAME);
 
         String filterString = String.format(FILTER_PAYMENT_TYPE, suffix, businessService);
 
         net.minidev.json.JSONArray payment = JsonPath.read(paymentMode, filterString);
-        net.minidev.json.JSONArray paymentTypes = JsonPath.read(payment.toJSONString(), "$.[*].paymentType");
+        net.minidev.json.JSONArray paymentTypes = JsonPath.read(payment.toJSONString(), PAYMENT_TYPE_PATH);
 
         return paymentTypes.get(0).toString();
     }
@@ -118,7 +119,7 @@ public class BillingUtil {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String caseType = jsonObject.optString("statute", "Negotiable Instruments Act 1881"); // TODO: remove when data is fixed
+            String caseType = jsonObject.optString(STATUTE, STATUTE_DEFAULT_VALUE); // TODO: remove when data is fixed
 
             if (!caseTypeBuilder.isEmpty()) {
                 caseTypeBuilder.append(",");
@@ -133,7 +134,7 @@ public class BillingUtil {
         Double totalAmount = 0.0;
         for (Map<String, Object> demandDetail : demandDetails) {
 
-            Double taxAmount = Double.parseDouble(demandDetail.get("taxAmount").toString());
+            Double taxAmount = Double.parseDouble(demandDetail.get(TAX_AMOUNT).toString());
             totalAmount += taxAmount;
 
         }

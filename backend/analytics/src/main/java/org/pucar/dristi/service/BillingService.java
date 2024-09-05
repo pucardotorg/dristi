@@ -53,7 +53,7 @@ public class BillingService {
         } else if (topic.equals(paymentCollectTopic)) {
             processPayment(kafkaJson);
         } else {
-            throw new CustomException("UNKNOWN_TOPIC_EXCEPTION", "Unexpected topic: " + topic);
+            throw new CustomException(UNKNOWN_TOPIC_EXCEPTION, "Unexpected topic: " + topic);
         }
 
     }
@@ -64,7 +64,7 @@ public class BillingService {
             JSONArray paymentDetailsArray = util.constructArray(payment, PAYMENT_PAYMENT_DETAILS_PATH);
             LinkedHashMap<String, Object> requestInfoMap = JsonPath.read(payment, REQUEST_INFO_PATH);
             JSONObject requestInfo = new JSONObject();
-            requestInfo.put("RequestInfo", requestInfoMap);
+            requestInfo.put(REQUEST_INFO, requestInfoMap);
             Set<String> demandSet = extractDemandIds(paymentDetailsArray);
             String tenantId = config.getStateLevelTenantId();
             updateDemandStatus(demandSet, tenantId, requestInfo);
@@ -82,11 +82,11 @@ public class BillingService {
                 billDetailsArray = util.constructArray(paymentDetails.toString(), PAYMENT_PAYMENT_BILL_DETAILS_PATH);
             } catch (Exception e) {
                 log.error("Error processing bill details array", e);
-                throw new CustomException("EXTRACT_DEMAND_ID_ERROR", e.getMessage());
+                throw new CustomException(EXTRACT_DEMAND_ID_ERROR, e.getMessage());
             }
             for (int j = 0; j < billDetailsArray.length(); j++) {
                 JSONObject billDetails = billDetailsArray.getJSONObject(i);
-                String demandId = billDetails.getString("demandId");
+                String demandId = billDetails.getString(DEMAND_ID);
                 demandSet.add(demandId);
             }
         }
@@ -102,15 +102,15 @@ public class BillingService {
             } catch (Exception e) {
 
                 log.error("Error processing bill details array", e);
-                throw new CustomException("UPDATE_DEMAND_ERROR", e.getMessage());
+                throw new CustomException(UPDATE_DEMAND_ERROR, e.getMessage());
             }
             for (int i = 0; i < demandArray.length(); i++) {
                 JSONObject demandObject = demandArray.getJSONObject(i);
-                demandObject.put("status", "PAID");
+                demandObject.put(STATUS_KEY, STATUS_PAID);
             }
             JSONObject demandRequest = new JSONObject();
-            demandRequest.put("RequestInfo", requestInfo);
-            demandRequest.put("Demands", demandArray);
+            demandRequest.put(REQUEST_INFO, requestInfo);
+            demandRequest.put(DEMANDS, demandArray);
             processDemand(demandRequest.toString());
         }
 
@@ -162,7 +162,7 @@ public class BillingService {
                 if (payload != null && !payload.isEmpty())
                     bulkRequest.append(payload);
             } else {
-                throw new CustomException("OFFLINE_PAYMENT_NOT_SUPPORTED", "Offline paymnet is not supported");
+                throw new CustomException(OFFLINE_PAYMENT_ERROR, OFFLINE_PAYMENT_ERROR_MESSAGE);
             }
 
         } catch (Exception e) {
