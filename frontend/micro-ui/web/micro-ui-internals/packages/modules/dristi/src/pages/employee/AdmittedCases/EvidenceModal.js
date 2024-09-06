@@ -75,9 +75,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       }
       return (
         userRoles.includes("JUDGE_ROLE") &&
-        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW, SubmissionWorkflowState.PENDINGRESPONSE].includes(
-          applicationStatus
-        )
+        [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(applicationStatus)
       );
     } else {
       if (modalType === "Documents") {
