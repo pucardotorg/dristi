@@ -23,7 +23,7 @@ jobs:
       - name: TruffleHog
         uses: trufflesecurity/trufflehog@v3.76.1
       - name: Run Semgrep action
-        uses: r7kamura/semgrepper@v0.1.0
+        uses: semgrep/semgrep-action@v1
 
       - name: Upload Semgrep results
         uses: actions/upload-artifact@v2
