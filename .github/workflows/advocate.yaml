@@ -24,6 +24,8 @@ jobs:
         uses: trufflesecurity/trufflehog@v3.76.1
       - name: Run Semgrep action
         uses: semgrep/semgrep-action@v1
+        with:
+          config: auto 
 
       - name: Upload Semgrep results
         uses: actions/upload-artifact@v2
