@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task",
-      "business": "task-summons",
+      "business": "task",
+      "businessService": "task-summons",
       "businessServiceSla": 4147200000,
       "states": [
         {
