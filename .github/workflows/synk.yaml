@@ -29,10 +29,12 @@ jobs:
 
       - name: Snyk Test for Node.js and Maven
         env:
-            SNYK_DISABLE_ANALYTICS: 'true'
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
-          snyk test --all-projects --sarif --debug > snyk-results.sarif
+          cd backend/advocate
+          mvn clean install
+          snyk test --sarif --debug > snyk-results.sarif
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
