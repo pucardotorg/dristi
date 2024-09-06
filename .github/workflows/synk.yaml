@@ -17,6 +17,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20' # Specify the Node.js version you are using
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
 
       - name: Install Snyk CLI
         run: npm install -g snyk
@@ -25,7 +31,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          npm install
+          cd backend/advocate
           snyk test --sarif > snyk-results.sarif
 
       - name: Upload SARIF results to the GitHub Security Dashboard
