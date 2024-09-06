@@ -23,6 +23,16 @@ jobs:
   # uses: trufflesecurity/trufflehog@ead9dd57486f43830ba2279f3a3c49d4b9c36633
       - name: TruffleHog
         uses: trufflesecurity/trufflehog@v3.76.1
+      - name: Run Semgrep action
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: auto  # Automatically detects rules to scan based on your project.
+
+      - name: Upload Semgrep results
+        uses: actions/upload-artifact@v2
+        with:
+          name: semgrep-results
+          path: semgrep.sarif 
           
       - name: Build and analyze advocate
         env:
