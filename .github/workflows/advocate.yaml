@@ -53,8 +53,6 @@
 #         if: always()
 name: advocate workflow
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 permissions:
   security-events: write
