@@ -103,7 +103,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           filename: uploadedDocument?.filename,
         }
       : {};
-    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
+    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.type : "AADHAR";
     setParams({ ...params, userType });
     let Individual = {
       Individual: {
