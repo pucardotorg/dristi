@@ -28,8 +28,6 @@ jobs:
         run: npm install -g snyk
 
       - name: Snyk Test for Node.js and Maven
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
           snyk test --all-projects --sarif --debug > snyk-results.sarif
