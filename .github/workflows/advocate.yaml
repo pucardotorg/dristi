@@ -56,6 +56,9 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+permissions:
+  security-events: write
+  contents: read
 jobs:
   docker_image-build:
     runs-on: ubuntu-latest
