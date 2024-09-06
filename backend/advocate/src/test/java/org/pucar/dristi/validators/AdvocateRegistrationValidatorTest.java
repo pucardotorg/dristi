@@ -106,7 +106,7 @@ import static org.mockito.Mockito.*;
         advocateSearchCriteria.setResponseList(advocates);
 
         existingApplications.add(advocateSearchCriteria);
-        when(repository.getApplications(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getAdvocates(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act
         Advocate result = validator.validateApplicationExistence(advocate);
@@ -130,7 +130,7 @@ import static org.mockito.Mockito.*;
 
         existingApplications.add(advocateSearchCriteria);
 
-        when(repository.getApplications(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getAdvocates(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act + Assert
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocate));

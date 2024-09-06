@@ -10,7 +10,7 @@ const getLocation = (places, code) => {
   })?.long_name;
   return location ? location : null;
 };
-const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex }) => {
+const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex, disable = false }) => {
   const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const inputs = useMemo(
     () =>
@@ -25,9 +25,8 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
   );
 
   const getLatLngByPincode = async (pincode) => {
-    const response = await Axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyAASfCFja6YxwDzEAzhHFc8B-17TNTCV0g`
-    );
+    const key = window?.globalConfigs?.getConfig("GMAPS_API_KEY");
+    const response = await Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=${key}`);
     return response;
   };
 
@@ -175,6 +174,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                       );
                       isFirstRender = false;
                     }}
+                    disable={input.isDisabled || disable}
                   />
                 ) : (
                   <TextInput
@@ -183,7 +183,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                     onChange={(e) => {
                       setValue(e.target.value, input.name);
                     }}
-                    disable={input.isDisabled}
+                    disable={input.isDisabled || disable}
                     defaultValue={undefined}
                     {...input.validation}
                   />

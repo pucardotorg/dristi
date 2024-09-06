@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
+import org.pucar.dristi.service.BillingService;
 import org.pucar.dristi.service.IndexerService;
 import org.slf4j.MDC;
 
@@ -28,6 +29,9 @@ class EventListenerTest {
     @Mock
     private Configuration config;
 
+    @Mock
+    private BillingService billingService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -38,6 +42,8 @@ class EventListenerTest {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("test-topic", 0, 0L, "key", "value");
 
         when(config.getStateLevelTenantId()).thenReturn("tenant-id");
+        when(config.getDemandGenerateTopic()).thenReturn("demand-generate-topic");
+        when(config.getPaymentCollectTopic()).thenReturn("payment-collect-topic");
 
         eventListener.onMessage(record);
 
@@ -51,12 +57,26 @@ class EventListenerTest {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("test-topic", 0, 0L, "key", "value");
 
         when(config.getStateLevelTenantId()).thenReturn("tenant-id");
-        doThrow(new RuntimeException("ES indexing error")).when(indexerService).esIndexer(anyString(), anyString());
+        when(config.getDemandGenerateTopic()).thenReturn("demand-generate-topic");
+        when(config.getPaymentCollectTopic()).thenReturn("payment-collect-topic");
 
         eventListener.onMessage(record);
 
         verify(config, times(1)).getStateLevelTenantId();
-        verify(indexerService, times(1)).esIndexer(record.topic(), record.value());
+        Assertions.assertEquals("tenant-id", MDC.get(ServiceConstants.TENANTID_MDC_STRING));
+    }
+
+    @Test
+    void testOnMessage_success_billing_service() {
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("test-topic", 0, 0L, "key", "value");
+
+        when(config.getStateLevelTenantId()).thenReturn("tenant-id");
+        when(config.getDemandGenerateTopic()).thenReturn("test-topic");
+
+        eventListener.onMessage(record);
+
+        verify(config, times(1)).getStateLevelTenantId();
+        verify(billingService, times(1)).process(record.topic(), record.value());
         Assertions.assertEquals("tenant-id", MDC.get(ServiceConstants.TENANTID_MDC_STRING));
     }
 }

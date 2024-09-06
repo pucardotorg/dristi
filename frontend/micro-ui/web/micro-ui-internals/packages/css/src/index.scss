@@ -114,6 +114,7 @@
 @import "./components/loaderWithGap.scss";
 
 /* @import "./dristi"; */
+@import "./dristi/components/termsCondition.scss";
 @import "./dristi/components/customDragDrop.scss";
 @import "./dristi/components/delayApplication.scss";
 @import "./dristi/components/chequeDetails.scss";
@@ -123,6 +124,7 @@
 @import "./dristi/components/customRadioSelector.scss";
 @import "./dristi/components/customErrorTooltip.scss";
 @import "./dristi/eFiling.scss";
+@import "./dristi/admission.scss";
 @import "./dristi/components/selectUserTypeComponent.scss";
 @import "./dristi/pages/citizen/caseType.scss";
 @import "./dristi/pages/citizen/userRegistration.scss";
@@ -130,6 +132,8 @@
 @import "./dristi/components/customPopup.scss";
 @import "../src/pages/employee/nyayMitra.scss";
 @import "../src/dristi/pages/citizen/Home/litigantHome.scss";
+@import "../src/orders/orders.scss";
+@import "../src/submissions/submissionApplication.scss";
 
 @import "./components/microplanning.scss";
 @import "./pages/employee/index.scss";
@@ -138,6 +142,15 @@
 @import "./components/upcomingHearing.scss";
 @import "./pages/employee/taskcomponent.scss";
 @import "./pages/employee/homehearing.scss";
+@import "./cases/pages/employeee/joinCaseHome.scss";
+@import "./orders/reviewsummons.scss";
+@import "./orders/paymentstatus.scss";
+@import "./hearings/pages/employee/SummonsNWarrantsModal.scss";
+@import "./hearings/pages/employee/AdjournHearing.scss";
+@import "./hearings/prehearing.scss";
+/* @import "./home"; */
+@import "./home/home.scss";
+@import "./home//components/reviewCard.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -920,5 +933,10 @@ input[type="number"] {
 }
 
 .dristi-font-bold {
-  font-weight: 700;
+  font-weight: 700 !important;
+}
+
+.dristi-font-big-bold {
+  font-size: 19px !important;
+  font-weight: 700 !important;
 }

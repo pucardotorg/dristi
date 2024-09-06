@@ -1,3 +1,4 @@
+import { CardLabelError } from "@egovernments/digit-ui-components";
 import { Button, CardLabel, RemoveableTag, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 
@@ -68,7 +69,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     const chipList = (formData && formData[config.key] && formData[config.key][input.name]) || "";
     return (
       <div className={`bulk-input-class ${input.className || ""}`} style={{ width: "100%" }}>
-        <h3 className="bulk-input-header">{t(input.label)}</h3>
+        {!config?.disableScrutinyHeader && <h3 className="bulk-input-header">{t(input.label)}</h3>}
         <div className="bulk-input-main">
           <div className="input-main">
             {input?.componentInFront ? <span className="citizen-card-input citizen-card-input--front">{input?.componentInFront}</span> : null}
@@ -80,10 +81,10 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
               name={input.name}
               minlength={input?.validation?.minLength}
               maxlength={input?.validation?.maxLength}
-              validation={input?.validation}
-              ValidationRequired={input?.validation}
+              // validation={input?.validation}
+              // ValidationRequired={input?.validation}
               title={input?.validation?.title}
-              disable={input?.disable ? input?.disable : false}
+              disable={input?.disable || config?.disable}
               // textInputStyle={{ flex: 1 }}
               // inputStyle={{ flex: 1, width: "100%" }}
               // style={{ width: "100%" }}
@@ -94,21 +95,27 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
           <Button
             label={"Add"}
             style={{ alignItems: "center" }}
-            isDisabled={!enableAdd}
+            isDisabled={!enableAdd || errors?.[config?.key]?.[input.name]}
             onButtonClick={() => {
               handleAdd(currentValue, input);
             }}
           />
         </div>
+        {errors?.[config?.key]?.[input.name] && (
+          <CardLabelError className={errors?.[config?.key]?.[input.name] && "error-text"} style={{ margin: 0 }}>
+            {t(errors?.[config?.key]?.[input.name] && errors?.[config?.key]?.[input.name])}
+          </CardLabelError>
+        )}
         {chipList?.length > 0 ? (
           <div className="tag-container" style={{ width: "100%" }}>
             {chipList?.length > 0 &&
               chipList?.map((value, index) => {
                 return (
                   <RemoveableTag
+                    disabled={config?.disable || input?.disabled || input.isDisabled}
                     extraStyles={{
                       closeIconStyles: { fill: "#3D3C3C" },
-                      tagStyles: { background: "#E8E8E8", textAlign: "center" },
+                      tagStyles: { background: "#E8E8E8", textAlign: "center", maxWidth: "100%" },
                       textStyles: { display: "flex", alignItems: "center" },
                     }}
                     key={index}

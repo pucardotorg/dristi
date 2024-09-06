@@ -41,13 +41,8 @@ class ApplicationQueryBuilderTest {
 
         List<Object> preparedStmtList = new ArrayList<>();
         List<Integer> preparedStmtArgList = new ArrayList<>();
-        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
-                " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
-                " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
-                " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
-                " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ?";
 
+        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber, app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby, app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber, app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive, app.additionaldetails as additionaldetails, app.reason_for_application as reason_for_application, app.application_details as application_details, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status  FROM dristi_application app WHERE app.id = ? AND app.tenantId = ?";
         String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList,preparedStmtArgList);
 
         assertEquals(expectedQuery, actualQuery);
@@ -121,12 +116,7 @@ class ApplicationQueryBuilderTest {
         List<Integer> preparedStmtArgList = new ArrayList<>();
 
 
-        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
-                " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
-                " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
-                " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
-                " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app";
+        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber, app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby, app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber, app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive, app.additionaldetails as additionaldetails, app.reason_for_application as reason_for_application, app.application_details as application_details, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status  FROM dristi_application app";
 
         String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(criteria, preparedStmtList,preparedStmtArgList);
 

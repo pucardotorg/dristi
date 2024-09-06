@@ -1,0 +1,42 @@
+@startuml
+title Complainant Advocate files a case
+autonumber
+actor Advocate as A
+participant HomeScreen as H
+participant CaseFilingUI as C
+participant ESignUI as E
+participant EgovPDF as PDF
+participant PaymentUI as P
+A->H: Advocate logs in and navigates to home screen
+A->H: Click on "File a case"
+H->C: Transition to case filing screen
+A->C: File a case on behalf of complainant
+rnote over C
+Follow UI screen flow & fill out details
+end rnote
+A->C: Click on "Submit Case"
+C->CaseSvc++: Create a case & attach workflow. \n Goes to "Pending E-sign" state
+return "Case filing number"
+C -> E: Transition to E-sign screen
+E-> PDF++: Fetch case PDF
+return case pdf
+A -> E: Click on e-sign of case PDF
+rnote over E
+Follow e-signing screen flow
+end rnote
+E -> FileStoreSvc++: Upload signed PDF document
+return filestoreId
+C -> CaseSvc ++: Move workflow status to "Pending payment" & \n store updated signed doc in case service
+return "Updated case"
+C -> P
+A -> P++: "Make online payment"
+rnote over P
+Demand, billing, collection flow happens
+end rnote
+return "Show payment success"
+P -> CaseSvc++: Update workflow status to "Pending Scrutiny"
+return "updated payload"
+rnote over C
+Action pending with FSO now
+end rnote
+@enduml

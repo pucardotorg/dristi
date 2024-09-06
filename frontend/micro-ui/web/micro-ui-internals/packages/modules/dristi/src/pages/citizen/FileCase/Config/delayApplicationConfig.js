@@ -3,7 +3,7 @@ const delayApplicationFormConfig = [
     body: [
       {
         type: "radio",
-        key: "delayApplicationType",
+        key: "delayCondonationType",
         label: "CS_QUESTION_DELAY_APPLICATION",
         isMandatory: true,
         populators: {
@@ -36,7 +36,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -57,7 +57,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -78,18 +78,20 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
         component: "SelectCustomDragDrop",
         key: "condonationFileUpload",
+        isMandatory: false,
         withoutLabel: true,
         populators: {
           inputs: [
             {
               name: "document",
               documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

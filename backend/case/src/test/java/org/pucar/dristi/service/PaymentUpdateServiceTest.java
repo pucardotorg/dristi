@@ -76,7 +76,7 @@ public class PaymentUpdateServiceTest {
         paymentRequest.getPayment().setPaymentDetails(Collections.singletonList(paymentDetail));
         Bill bill = new Bill();
         bill.setTenantId("tenantId");
-        bill.setConsumerCode("consumerCode");
+        bill.setConsumerCode("consumerCode-suffix");
         paymentDetail.setBill(bill);
 
         CourtCase courtCase = new CourtCase();
@@ -93,7 +93,7 @@ public class PaymentUpdateServiceTest {
 
 
         when(mapper.convertValue(record, PaymentRequest.class)).thenReturn(paymentRequest);
-        when(repository.getApplications(any(), any())).thenReturn(Collections.singletonList(caseCriteria));
+        when(repository.getCases(any(), any())).thenReturn(Collections.singletonList(caseCriteria));
         when(configuration.getCaseUpdateStatusTopic()).thenReturn("kafkaUpdateTopic");
 
         when(workflowService.callWorkFlow(any())).thenReturn(new State());

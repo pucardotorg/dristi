@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.request.User;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,17 +15,14 @@ import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.http.*;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.ES_INDEX_DOCUMENT_FORMAT;
-import static org.pucar.dristi.config.ServiceConstants.ES_INDEX_HEADER_FORMAT;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 public class IndexerUtilsTest {
 
@@ -223,4 +221,41 @@ public class IndexerUtilsTest {
         assertEquals(expected, result);
     }
 
+    @Test
+    public void testEsPost_ResourceAccessException() {
+        // Arrange
+        String uri = "http://localhost:9200/_bulk";
+        String request = "{\"index\":{}}";
+        when(restTemplate.postForObject(eq(uri), any(), eq(String.class)))
+                .thenThrow(new ResourceAccessException("Connection refused"));
+
+        // We need to mock the orchestrateListenerOnESHealth method to avoid actually running it
+        IndexerUtils spyIndexerUtils = spy(indexerUtils);
+        doNothing().when(spyIndexerUtils).orchestrateListenerOnESHealth();
+
+        // Act
+        spyIndexerUtils.esPost(uri, request);
+
+        // Assert
+        verify(restTemplate, times(1)).postForObject(eq(uri), any(), eq(String.class));
+        verify(spyIndexerUtils, times(1)).orchestrateListenerOnESHealth();
+    }
+
+    @Test
+    public void testEsPost_Success_1() {
+        // Arrange
+        String uri = "http://localhost:9200/_bulk";
+        String request = "{\"index\":{}}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        headers.add("Authorization", "Basic bnVsbDpudWxs");
+        HttpEntity<String> entity = new HttpEntity<>(request, headers);
+        when(restTemplate.postForObject(uri,entity,String.class)).thenReturn("{\"errors\":true}");
+
+        // Act
+        indexerUtils.esPost(uri, request);
+
+        // Assert
+        verify(restTemplate, times(1)).postForObject(eq(uri), any(HttpEntity.class), eq(String.class));
+    }
 }

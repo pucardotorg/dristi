@@ -177,12 +177,16 @@ public class OrderQueryBuilder {
     }
 
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
+    }
+
+    private static boolean isPaginationInvalid(Pagination pagination) {
+        return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {

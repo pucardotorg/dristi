@@ -91,7 +91,6 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
             : true;
         return (
           <React.Fragment key={index}>
-            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
             <div className={`${input?.type}`} style={{ width: "100%" }}>
               {input?.type !== "infoBox" && (
                 <CardLabel className="card-label-smaller" style={{ width: "100%", fontSize: "16px" }}>
@@ -131,6 +130,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                     pattern={input.validation.pattern}
                     errMsg={input.validation.errMsg}
                     maxlength={input.validation.maxlength}
+                    minlength={input.validation.minlength}
                     style={{ minWidth: "500px" }}
                   />
                 )}
@@ -146,6 +146,12 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                   )}
               </div>
             </div>
+            {errors[input.name] && (
+              <CardLabelError style={{ color: "#FF0000", marginTop: "5px", fontSize: "14px" }}>
+                {errors[input.name]?.message ? errors[input.name]?.message : t(errors[input.name]) || t(input.error)}
+                {t(input.error)}
+              </CardLabelError>
+            )}
             {/* )} */}
           </React.Fragment>
         );

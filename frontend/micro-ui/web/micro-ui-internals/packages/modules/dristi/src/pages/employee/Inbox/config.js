@@ -8,14 +8,11 @@ export const newconfigAdvocate = {
     requestBody: {
       inbox: {
         processSearchCriteria: {
-          businessService: ["advocate"],
+          businessService: ["user-registration-advocate"],
           moduleName: "Advocate services",
-          tenantId: "pg",
         },
-        moduleSearchCriteria: {
-          tenantId: "pg",
-        },
-        tenantId: "pg",
+        moduleSearchCriteria: {},
+
         limit: 10,
         offset: 0,
       },
@@ -35,9 +32,8 @@ export const newconfigAdvocate = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          applicationNumber_WILDCARD: "",
           isActive: false,
-          tenantId: "pg",
         },
         fields: [
           {
@@ -46,7 +42,7 @@ export const newconfigAdvocate = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "applicationNumber_WILDCARD",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -100,7 +96,7 @@ export const newconfigAdvocate = {
     },
   },
   additionalSections: {},
-  additionalDetails: "applicationNumber",
+  additionalDetails: "applicationNumber_WILDCARD",
 };
 
 export const newconfigClerk = {
@@ -113,14 +109,11 @@ export const newconfigClerk = {
     requestBody: {
       inbox: {
         processSearchCriteria: {
-          businessService: ["advocateclerk"],
+          businessService: ["user-registration-advocate-clerk"],
           moduleName: "Advocate Clerk Service",
-          tenantId: "pg",
         },
-        moduleSearchCriteria: {
-          tenantId: "pg",
-        },
-        tenantId: "pg",
+        moduleSearchCriteria: {},
+
         limit: 10,
         offset: 0,
       },
@@ -140,9 +133,8 @@ export const newconfigClerk = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          applicationNumber_WILDCARD: "",
           isActive: false,
-          tenantId: "pg",
         },
         fields: [
           {
@@ -151,7 +143,7 @@ export const newconfigClerk = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "applicationNumber_WILDCARD",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -205,7 +197,7 @@ export const newconfigClerk = {
     },
   },
   additionalSections: {},
-  additionalDetails: "applicationNumber",
+  additionalDetails: "applicationNumber_WILDCARD",
 };
 
 // export const configAdvocate = {
@@ -216,7 +208,7 @@ export const newconfigClerk = {
 //     requestParam: {},
 //     requestBody: {
 //       applicationNumber: "",
-//       tenantId: "pg",
+//
 //       status: ["INWORKFLOW"],
 //     },
 //     minParametersForSearchForm: 1,
@@ -307,7 +299,7 @@ export const newconfigClerk = {
 //     requestParam: {},
 //     requestBody: {
 //       applicationNumber: "",
-//       tenantId: "pg",
+//
 //       status: ["INWORKFLOW"],
 //     },
 //     minParametersForSearchForm: 1,

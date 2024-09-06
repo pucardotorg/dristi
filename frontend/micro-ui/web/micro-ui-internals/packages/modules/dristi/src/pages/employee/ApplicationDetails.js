@@ -8,6 +8,7 @@ import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
 import { useToast } from "../../components/Toast/useToast";
+import { ErrorInfoIcon, SuccessIcon } from "../../icons/svgIndex";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -52,7 +53,7 @@ const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
 
   const toast = useToast();
-
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const individualId = urlParams.get("individualId");
   const applicationNo = urlParams.get("applicationNo");
   const type = urlParams.get("type") || "advocate";
@@ -60,6 +61,7 @@ const ApplicationDetails = ({ location, match }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState({ isOpen: false, status: "" });
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
@@ -110,9 +112,13 @@ const ApplicationDetails = ({ location, match }) => {
       cacheTime: 0,
     },
   });
-  const actions = useMemo(() => workFlowDetails?.processInstances?.[0]?.state?.actions?.map((action) => action.action), [
-    workFlowDetails?.processInstances,
-  ]);
+  const actions = useMemo(
+    () =>
+      workFlowDetails?.processInstances?.[0]?.state?.actions
+        ?.filter((action) => action.roles.every((role) => userRoles.includes(role)))
+        .map((action) => action.action),
+    [workFlowDetails?.processInstances, userRoles]
+  );
 
   const searchResult = useMemo(() => {
     return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
@@ -145,17 +151,14 @@ const ApplicationDetails = ({ location, match }) => {
       .then(() => {
         setShowModal(false);
         if (action === "APPROVE") {
-          toast.success(t("ES_USER_APPROVED"));
+          setShowInfoModal({ isOpen: true, status: "ES_USER_APPROVED" });
         } else if (action === "REJECT") {
-          toast.error(t("ES_USER_REJECTED"));
+          setShowInfoModal({ isOpen: true, status: "ES_USER_REJECTED" });
         }
       })
       .catch(() => {
         setShowModal(false);
-        toast.error(t("ES_API_ERROR"));
-      })
-      .then(() => {
-        history.push(`/digit-ui/employee/dristi/registration-requests`);
+        setShowInfoModal({ isOpen: true, status: "ES_API_ERROR" });
       });
   }
 
@@ -286,6 +289,42 @@ const ApplicationDetails = ({ location, match }) => {
                 <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
                 <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
               </Card>
+            </Modal>
+          )}
+          {showInfoModal?.isOpen && (
+            <Modal
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    setShowInfoModal({ isOpen: false, status: "" });
+                    history.push(
+                      userType === "ADVOCATE_CLERK"
+                        ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
+                        : `/digit-ui/employee/dristi/registration-requests?type=advocate`,
+                      { isSentBack: true }
+                    );
+                  }}
+                />
+              }
+              actionSaveLabel={t("GO TO HOME")}
+              actionSaveOnSubmit={() => {
+                setShowInfoModal({ isOpen: false, status: "" });
+                history.push(
+                  userType === "ADVOCATE_CLERK"
+                    ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
+                    : `/digit-ui/employee/dristi/registration-requests?type=advocate`,
+                  { isSentBack: true }
+                );
+              }}
+              style={{ backgroundColor: "#BB2C2F" }}
+              popmoduleClassName="request-processing-info-modal"
+            >
+              <div className="main-div">
+                <div className="icon-div">{showInfoModal?.status === "ES_API_ERROR" ? <ErrorInfoIcon /> : <SuccessIcon />}</div>
+                <div className="info-div">
+                  <h1>{t(showInfoModal?.status)}</h1>
+                </div>
+              </div>
             </Modal>
           )}
         </div>

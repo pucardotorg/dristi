@@ -10,14 +10,14 @@ const CustomCopyTextDiv = ({ data }) => {
 
   return (
     <div style={{ borderRadius: "10px", backgroundColor: "#F7F5F3", padding: "10px", width: "100%" }}>
-      {data.map(({ key, value }, index) => (
+      {data.map(({ key, value, showCopy }, index) => (
         <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
           <div style={{ flex: 1 }}>
             <CardText>{t(key)}</CardText>
           </div>
           <div style={{ display: "flex", alignItems: "center", paddingLeft: "10px" }}>
-            <CardText>{t(value)}</CardText>
-            <button onClick={() => handleCopy(value)}>Copy</button>
+            <CardText>{value}</CardText>
+            {showCopy && <button onClick={() => handleCopy(value)}>Copy</button>}
           </div>
         </div>
       ))}

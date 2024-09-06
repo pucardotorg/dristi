@@ -62,7 +62,7 @@ function SendCaseBackModal({ totalErrors, onCancel, onSubmit, t, heading, type, 
           }}
         />
       </div>
-      <p style={{ padding: 20 }}>{subtexts[type]}</p>
+      <p style={{ padding: "0px 25px" }}>{subtexts[type]}</p>
     </Modal>
   );
 }

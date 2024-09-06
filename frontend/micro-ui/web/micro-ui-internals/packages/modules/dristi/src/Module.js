@@ -1,5 +1,5 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import AddressComponent from "./components/AddressComponent";
 import SelectComponents from "./components/SelectComponents";
@@ -38,25 +38,56 @@ import Login from "./pages/citizen/Login";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
-const Digit = window?.Digit || {};
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
+import Modal from "./components/Modal";
+import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
+import DocViewerWrapper from "./pages/employee/docViewerWrapper";
+import CustomSortComponent from "./components/CustomSortComponent";
+import CustomErrorTooltip from "./components/CustomErrorTooltip";
+import Button from "./components/Button";
+import MultiUploadWrapper from "./components/MultiUploadWrapper";
+import CustomCopyTextDiv from "./components/CustomCopyTextDiv";
+import { DRISTIService } from "./services";
+import CustomChooseDate from "./components/CustomChooseDate";
+import CustomCalendar from "./components/CustomCalendar";
+import CommentComponent from "./components/CommentComponent";
+import { RightArrow } from "./icons/svgIndex";
+import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
+  const Digit = useMemo(() => window?.Digit || {}, []);
   const { path } = useRouteMatch();
-  const moduleCode = "DRISTI";
+  const history = useHistory();
+  const moduleCode = ["DRISTI", "CASE", "ORDERS", "SUBMISSIONS"];
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const userInfo = useMemo(() => Digit?.UserService?.getUser()?.info, [Digit]);
+  const hasCitizenRoute = useMemo(() => path?.includes(`/${window?.contextPath}/citizen`), [path]);
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
+
   if (isLoading) {
     return <Loader />;
   }
+
+  if (isCitizen && !hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
+  } else if (!isCitizen && hasCitizenRoute && Boolean(userInfo)) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
+
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
-  if (userType === "citizen") {
+  if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
     return (
       <ToastProvider>
         <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />
       </ToastProvider>
     );
+  }
+  if (path?.includes(`/${window?.contextPath}/citizen`)) {
+    history.push(`/${window?.contextPath}/employee`);
   }
   return (
     <ToastProvider>
@@ -88,6 +119,7 @@ const componentsToRegister = {
   SelectReviewAccordion,
   SelectSignature,
   CustomRadioCard,
+  CustomCheckBoxCard,
   AddressComponent,
   AdhaarInput,
   AdvocateDetailComponent,
@@ -96,6 +128,21 @@ const componentsToRegister = {
   SelectEmptyComponent,
   ScrutinyInfo,
   AdvocateNameDetails,
+  CustomRadioInfoComponent,
+  Modal,
+  CommentComponent,
+  CustomCaseInfoDiv,
+  CustomErrorTooltip,
+  CustomSortComponent,
+  CustomButton: Button,
+  DocViewerWrapper,
+  MultiUploadWrapper,
+  Button,
+  CustomCopyTextDiv,
+  DRISTIService,
+  CustomChooseDate,
+  CustomCalendar,
+  RightArrow,
 };
 
 const overrideHooks = () => {
