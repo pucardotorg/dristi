@@ -25,7 +25,8 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          snyk test backend/advocate --sarif > snyk-results.sarif
+          cd backend/advocate
+          snyk test --sarif > snyk-results.sarif
 
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
