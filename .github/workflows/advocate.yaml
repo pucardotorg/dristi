@@ -1,10 +1,10 @@
 name: advocate workflow
 on:
   push:
-    branches:
-      - develop
-    paths:
-      - 'backend/advocate/**'
+    # # # branches:
+    # # #   - develop
+    # # paths:
+    #   - 'backend/advocate/**'
   pull_request:
     branches:
       - develop
@@ -33,30 +33,45 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
-
-      - name: Login to Azure Container Registry
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
-
-      - name: Build and Push Docker image for advocate
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      - name: Create GitHub Issues for SonarCloud issues
         run: |
-          docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
-          docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+          # Get SonarCloud issues (example using curl)
+          sonar_issues=$(curl -s -u ${{ secrets.SONARCLOUD_TOKEN }}: \
+            "https://sonarcloud.io/api/issues/search?componentKeys=pucar_advocate&types=BUG,VULNERABILITY&statuses=OPEN")
+
+          # Loop through the issues and create GitHub issues
+          echo "$sonar_issues" | jq -c '.issues[]' | while read issue; do
+            title=$(echo $issue | jq -r '.message')
+            description=$(echo $issue | jq -r '.rule')
+
+            # Create a GitHub issue for each SonarCloud issue
+            curl -X POST -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+              -d "{\"title\":\"SonarCloud Issue: $title\", \"body\":\"SonarCloud rule: $description\"}" \
+              https://api.github.com/repos/pucardotorg/dristi/issues
+          done
+      # - name: Login to Azure Container Registry
+      #   if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      #   run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+
+      # - name: Build and Push Docker image for advocate
+      #   if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      #   run: |
+      #     docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+      #     docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+      #     docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
           
-      - name: Build and Push Docker image for advocate_DB
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        run: |
-          docker build -t pucar_advocate_db:v1.0.0-${{ github.sha }}  .
-          docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/advocate/src/main/resources/db
-      - name: Trigger Deployment Pipeline
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
-          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
-          -d '{"ref":"Dev-0"}'
+      # - name: Build and Push Docker image for advocate_DB
+      #   if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      #   run: |
+      #     docker build -t pucar_advocate_db:v1.0.0-${{ github.sha }}  .
+      #     docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+      #     docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+      #   working-directory: backend/advocate/src/main/resources/db
+      # - name: Trigger Deployment Pipeline
+      #   if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+      #   run: |
+      #     curl -X POST \
+      #     -H "Accept: application/vnd.github.v3+json" \
+      #     -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+      #     https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+      #     -d '{"ref":"Dev-0"}'
