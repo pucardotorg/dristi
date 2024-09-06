@@ -3,7 +3,7 @@
     {
       "tenantId": "kl",
       "businessService": "task",
-      "business": "task-notice",
+      "businessService": "task-notice",
       "businessServiceSla": 4320000000,
       "states": [
         {
