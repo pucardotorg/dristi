@@ -12,6 +12,7 @@ import { ordersService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
 import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
+import { taskService } from "../../hooks/services";
 
 const modeOptions = [
   { label: "E-Post (3-5 days)", value: "e-post" },
@@ -243,36 +244,54 @@ const PaymentForSummonModal = ({ path }) => {
   const onPayOnline = async () => {
     console.log("clikc");
     try {
-      if (courtBillResponse?.Bill?.length === 0) {
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
-              consumerType: paymentType.TASK_SUMMON,
-              businessService: paymentType.TASK_SUMMON,
-              taxPeriodFrom: Date.now().toString(),
-              taxPeriodTo: Date.now().toString(),
-              demandDetails: [
-                {
-                  taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
-      const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_POST_COURT`, tenantId, paymentType.TASK_SUMMON);
-      if (bill?.Bill?.length) {
-        const billPaymentStatus = await openPaymentPortal(bill);
-        console.log(billPaymentStatus);
-        if (billPaymentStatus === true) {
-          console.log("YAAAYYYYY");
-          const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
+      // if (courtBillResponse?.Bill?.length === 0) {
+      //   await DRISTIService.createDemand({
+      //     Demands: [
+      //       {
+      //         tenantId,
+      //         consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
+      //         consumerType: paymentType.TASK_SUMMON,
+      //         businessService: paymentType.TASK_SUMMON,
+      //         taxPeriodFrom: Date.now().toString(),
+      //         taxPeriodTo: Date.now().toString(),
+      //         demandDetails: [
+      //           {
+      //             taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
+      //             taxAmount: 4,
+      //             collectionAmount: 0,
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   });
+      // }
+      // const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_POST_COURT`, tenantId, paymentType.TASK_SUMMON);
+      // if (bill?.Bill?.length) {
+      //   const billPaymentStatus = await openPaymentPortal(bill);
+      //   console.log(billPaymentStatus);
+      //   if (billPaymentStatus === true) {
+      //     console.log("YAAAYYYYY");
+      // const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
 
-          await Promise.all([
+      const updatedTask = {
+        ...filteredTasks?.[0], // Keep all the existing properties
+        taskType: "SUMMONS", // Change the taskType to SUMMON
+        workflow: {
+          // Add the workflow object with the desired action
+          action: "MAKE PAYMENT",
+        },
+      };
+
+      await taskService
+        .updateTask(
+          {
+            task: updatedTask,
+            tenantId: tenantId,
+          },
+          {}
+        )
+        .then(() => {
+          return Promise.all([
             ordersService.customApiService(Urls.orders.pendingTask, {
               pendingTask: {
                 name: "Show Summon-Warrant Status",
@@ -308,70 +327,71 @@ const PaymentForSummonModal = ({ path }) => {
               },
             }),
           ]);
+        });
 
-          fileStoreId &&
-            history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-              state: {
-                success: true,
-                receiptData: {
-                  ...mockSubmitModalInfo,
-                  caseInfo: [
-                    {
-                      key: "Case Name & ID",
-                      value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-                      copyData: false,
-                    },
-                    {
-                      key: "ORDER ID",
-                      value: orderData?.list?.[0]?.orderNumber,
-                      copyData: false,
-                    },
-                    {
-                      key: "Transaction ID",
-                      value: filteredTasks?.[0]?.taskNumber,
-                      copyData: true,
-                    },
-                  ],
-                  isArrow: false,
-                  showTable: true,
-                  showCopytext: true,
-                },
-                fileStoreId: fileStoreId?.Document?.fileStore,
+      // fileStoreId &&
+      history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
+        state: {
+          success: true,
+          receiptData: {
+            ...mockSubmitModalInfo,
+            caseInfo: [
+              {
+                key: "Case Name & ID",
+                value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
+                copyData: false,
               },
-            });
-        } else {
-          console.log("NAAAYYYYY");
-          history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-            state: {
-              success: false,
-              receiptData: {
-                ...mockSubmitModalInfo,
-                caseInfo: [
-                  {
-                    key: "Case Name & ID",
-                    value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-                    copyData: false,
-                  },
-                  {
-                    key: "ORDER ID",
-                    value: orderData?.list?.[0]?.orderNumber,
-                    copyData: false,
-                  },
-                  {
-                    key: "Transaction ID",
-                    value: filteredTasks?.[0]?.taskNumber,
-                    copyData: true,
-                  },
-                ],
-                isArrow: false,
-                showTable: true,
-                showCopytext: true,
+              {
+                key: "ORDER ID",
+                value: orderData?.list?.[0]?.orderNumber,
+                copyData: false,
               },
-              caseId: caseDetails?.filingNumber,
-            },
-          });
-        }
-      }
+              {
+                key: "Transaction ID",
+                value: filteredTasks?.[0]?.taskNumber,
+                copyData: true,
+              },
+            ],
+            isArrow: false,
+            showTable: true,
+            showCopytext: true,
+          },
+          fileStoreId: "fileStoreId?.Document?.fileStore",
+        },
+      });
+      //   } else {
+      //     console.log("NAAAYYYYY");
+      //     history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
+      //       state: {
+      //         success: false,
+      //         receiptData: {
+      //           ...mockSubmitModalInfo,
+      //           caseInfo: [
+      //             {
+      //               key: "Case Name & ID",
+      //               value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
+      //               copyData: false,
+      //             },
+      //             {
+      //               key: "ORDER ID",
+      //               value: orderData?.list?.[0]?.orderNumber,
+      //               copyData: false,
+      //             },
+      //             {
+      //               key: "Transaction ID",
+      //               value: filteredTasks?.[0]?.taskNumber,
+      //               copyData: true,
+      //             },
+      //           ],
+      //           isArrow: false,
+      //           showTable: true,
+      //           showCopytext: true,
+      //         },
+      //         caseId: caseDetails?.filingNumber,
+      //       },
+      //     });
+      //   }
+      // }
     } catch (error) {
       console.error(error);
     }
@@ -424,7 +444,7 @@ const PaymentForSummonModal = ({ path }) => {
           action: "Actions",
         },
         { label: "Court Fees", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
-        { label: "Delivery Partner Fee", amount: taskAmount, action: "Pay Online", onClick: onPayOnlineSBI },
+        { label: "Delivery Partner Fee", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
       ],
       "registered-post": [
         {

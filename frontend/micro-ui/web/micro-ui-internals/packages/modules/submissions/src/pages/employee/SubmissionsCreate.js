@@ -671,52 +671,52 @@ const SubmissionsCreate = ({ path }) => {
 
   const handleMakePayment = async (totalAmount) => {
     try {
-      if (billResponse?.Bill?.length === 0) {
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: applicationDetails?.applicationNumber,
-              consumerType: entityType,
-              businessService: entityType,
-              taxPeriodFrom: Date.now().toString(),
-              taxPeriodTo: Date.now().toString(),
-              demandDetails: [
-                {
-                  taxHeadMasterCode: taxHeadMasterCode,
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
+      //   if (billResponse?.Bill?.length === 0) {
+      //     await DRISTIService.createDemand({
+      //       Demands: [
+      //         {
+      //           tenantId,
+      //           consumerCode: applicationDetails?.applicationNumber,
+      //           consumerType: entityType,
+      //           businessService: entityType,
+      //           taxPeriodFrom: Date.now().toString(),
+      //           taxPeriodTo: Date.now().toString(),
+      //           demandDetails: [
+      //             {
+      //               taxHeadMasterCode: taxHeadMasterCode,
+      //               taxAmount: 4,
+      //               collectionAmount: 0,
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     });
+      //   }
+      //   const bill = await fetchBill(applicationDetails?.applicationNumber, tenantId, entityType);
+      //   if (bill?.Bill?.length) {
+      //     const billPaymentStatus = await openPaymentPortal(bill);
+      //     setPaymentStatus(billPaymentStatus);
+      //     await applicationRefetch();
+      //     console.log(billPaymentStatus);
+      //     if (billPaymentStatus === true) {
+      setMakePaymentLabel(false);
+      setShowPaymentModal(false);
+      setShowSuccessModal(true);
+      await updateSubmission(SubmissionWorkflowAction.PAY);
+      applicationType === "PRODUCTION_DOCUMENTS" &&
+        orderNumber &&
+        createPendingTask({
+          refId: `${userInfo?.uuid}_${orderNumber}`,
+          isCompleted: true,
+          status: "Completed",
         });
-      }
-      const bill = await fetchBill(applicationDetails?.applicationNumber, tenantId, entityType);
-      if (bill?.Bill?.length) {
-        const billPaymentStatus = await openPaymentPortal(bill);
-        setPaymentStatus(billPaymentStatus);
-        await applicationRefetch();
-        console.log(billPaymentStatus);
-        if (billPaymentStatus === true) {
-          setMakePaymentLabel(false);
-          setShowPaymentModal(false);
-          setShowSuccessModal(true);
-          await updateSubmission(SubmissionWorkflowAction.PAY);
-          applicationType === "PRODUCTION_DOCUMENTS" &&
-            orderNumber &&
-            createPendingTask({
-              refId: `${userInfo?.uuid}_${orderNumber}`,
-              isCompleted: true,
-              status: "Completed",
-            });
-          createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
-        } else {
-          setMakePaymentLabel(true);
-          setShowPaymentModal(false);
-          setShowSuccessModal(true);
-        }
-      }
+      createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
+      //   } else {
+      //     setMakePaymentLabel(true);
+      //     setShowPaymentModal(false);
+      //     setShowSuccessModal(true);
+      //   }
+      // }
     } catch (error) {
       console.error(error);
     }

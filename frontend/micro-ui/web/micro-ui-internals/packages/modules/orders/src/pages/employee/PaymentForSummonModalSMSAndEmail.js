@@ -13,6 +13,7 @@ import { Urls } from "../../hooks/services/Urls";
 import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { taskService } from "../../hooks/services";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_SUMMON_POST",
@@ -226,119 +227,133 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const referenceId = channelId === "sms" ? "SMS" : channelId === "email" ? "E-mail" : "";
 
   const onPayOnline = async () => {
-    console.log("clikc");
+    // console.log("clikc");
     try {
-      if (billResponse?.Bill?.length === 0) {
-        await DRISTIService.createDemand({
-          Demands: [
-            {
+      // if (billResponse?.Bill?.length === 0) {
+      //   await DRISTIService.createDemand({
+      //     Demands: [
+      //       {
+      //         tenantId,
+      //         consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
+      //         consumerType: paymentType.TASK_SUMMON,
+      //         businessService: paymentType.TASK_SUMMON,
+      //         taxPeriodFrom: Date.now().toString(),
+      //         taxPeriodTo: Date.now().toString(),
+      //         demandDetails: [
+      //           {
+      //             taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
+      //             taxAmount: 4,
+      //             collectionAmount: 0,
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   });
+      // }
+      // const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_${suffix}`, tenantId, paymentType.TASK_SUMMON);
+      // if (bill?.Bill?.length) {
+      //   const billPaymentStatus = await openPaymentPortal(bill);
+      //   console.log(billPaymentStatus);
+      //   if (billPaymentStatus === true) {
+      // console.log("YAAAYYYYY");
+      // const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
+      const updatedTask = {
+        ...filteredTasks?.[0],
+        taskType: "SUMMONS",
+        workflow: {
+          action: "MAKE PAYMENT",
+        },
+      };
+
+      await taskService
+        .updateTask(
+          {
+            task: updatedTask,
+            tenantId: tenantId,
+          },
+          {}
+        )
+        .then(() => {
+          return ordersService.customApiService(Urls.orders.pendingTask, {
+            pendingTask: {
+              name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
+              entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
+              referenceId: `MANUAL_${referenceId}_${orderNumber}`,
+              status: status,
+              assignedTo: [],
+              assignedRole: [],
+              cnrNumber: filteredTasks?.[0]?.cnrNumber,
+              filingNumber: filingNumber,
+              isCompleted: true,
+              stateSla: "",
+              additionalDetails: {},
               tenantId,
-              consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
-              consumerType: paymentType.TASK_SUMMON,
-              businessService: paymentType.TASK_SUMMON,
-              taxPeriodFrom: Date.now().toString(),
-              taxPeriodTo: Date.now().toString(),
-              demandDetails: [
-                {
-                  taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
-      const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_${suffix}`, tenantId, paymentType.TASK_SUMMON);
-      if (bill?.Bill?.length) {
-        const billPaymentStatus = await openPaymentPortal(bill);
-        console.log(billPaymentStatus);
-        if (billPaymentStatus === true) {
-          console.log("YAAAYYYYY");
-          const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
-
-          await Promise.all([
-            ordersService.customApiService(Urls.orders.pendingTask, {
-              pendingTask: {
-                name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
-                entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-                referenceId: `MANUAL_${referenceId}_${orderNumber}`,
-                status: status,
-                assignedTo: [],
-                assignedRole: [],
-                cnrNumber: filteredTasks?.[0]?.cnrNumber,
-                filingNumber: filingNumber,
-                isCompleted: true,
-                stateSla: "",
-                additionalDetails: {},
-                tenantId,
-              },
-            }),
-          ]);
-
-          fileStoreId &&
-            history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-              state: {
-                success: true,
-                receiptData: {
-                  ...mockSubmitModalInfo,
-                  caseInfo: [
-                    {
-                      key: "Case Name & ID",
-                      value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-                      copyData: false,
-                    },
-                    {
-                      key: "ORDER ID",
-                      value: orderData?.list?.[0]?.orderNumber,
-                      copyData: false,
-                    },
-                    {
-                      key: "Transaction ID",
-                      value: filteredTasks?.[0]?.taskNumber,
-                      copyData: true,
-                    },
-                  ],
-                  isArrow: false,
-                  showTable: true,
-                  showCopytext: true,
-                },
-                fileStoreId: fileStoreId?.Document?.fileStore,
-              },
-            });
-        } else {
-          console.log("NAAAYYYYY");
-          history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-            state: {
-              success: false,
-              receiptData: {
-                ...mockSubmitModalInfo,
-                caseInfo: [
-                  {
-                    key: "Case Name & ID",
-                    value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-                    copyData: false,
-                  },
-                  {
-                    key: "ORDER ID",
-                    value: orderData?.list?.[0]?.orderNumber,
-                    copyData: false,
-                  },
-                  {
-                    key: "Transaction ID",
-                    value: filteredTasks?.[0]?.taskNumber,
-                    copyData: true,
-                  },
-                ],
-                isArrow: false,
-                showTable: true,
-                showCopytext: true,
-              },
-              caseId: caseDetails?.filingNumber,
             },
           });
-        }
-      }
+        });
+      // fileStoreId &&
+      history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
+        state: {
+          success: true,
+          receiptData: {
+            ...mockSubmitModalInfo,
+            caseInfo: [
+              {
+                key: "Case Name & ID",
+                value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
+                copyData: false,
+              },
+              {
+                key: "ORDER ID",
+                value: orderData?.list?.[0]?.orderNumber,
+                copyData: false,
+              },
+              {
+                key: "Transaction ID",
+                value: filteredTasks?.[0]?.taskNumber,
+                copyData: true,
+              },
+            ],
+            isArrow: false,
+            showTable: true,
+            showCopytext: true,
+          },
+          fileStoreId: "fileStoreId?.Document?.fileStore",
+        },
+      });
+      //   } else {
+      //     console.log("NAAAYYYYY");
+      //     history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
+      //       state: {
+      //         success: false,
+      //         receiptData: {
+      //           ...mockSubmitModalInfo,
+      //           caseInfo: [
+      //             {
+      //               key: "Case Name & ID",
+      //               value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
+      //               copyData: false,
+      //             },
+      //             {
+      //               key: "ORDER ID",
+      //               value: orderData?.list?.[0]?.orderNumber,
+      //               copyData: false,
+      //             },
+      //             {
+      //               key: "Transaction ID",
+      //               value: filteredTasks?.[0]?.taskNumber,
+      //               copyData: true,
+      //             },
+      //           ],
+      //           isArrow: false,
+      //           showTable: true,
+      //           showCopytext: true,
+      //         },
+      //         caseId: caseDetails?.filingNumber,
+      //       },
+      //     });
+      //   }
+      // }
     } catch (error) {
       console.error(error);
     }
