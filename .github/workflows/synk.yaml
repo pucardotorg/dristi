@@ -32,6 +32,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
+          cd backend/advocate
           snyk test -d --sarif > snyk-results.sarif
 
       - name: Upload SARIF results to the GitHub Security Dashboard
