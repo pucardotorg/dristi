@@ -1466,9 +1466,6 @@ function EFilingCases({ path }) {
       return setOpenConfirmCorrectionModal(true);
     }
 
-    if (selected === "reviewCaseFile") {
-      await refetchCasePDfGeneration();
-    }
     if (selected === "addSignature" && isDraftInProgress) {
       if (courtRooms?.length === 1) {
         onSubmitCase({ court: courtRooms[0] });
