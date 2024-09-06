@@ -99,23 +99,13 @@ jobs:
         with:
           project: 'advocate'
           path: 'backend/advocate'
-          format: 'json'    
+          format: 'SARIF'    
           others: ''
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports
-      - name: Convert Depcheck JSON to SARIF
-        uses: khorwood/sarif-converter@main
-        with:
-          type: depcheck
-          input: ./reports/dependency-check-report.json
-          output: ./reports/dependency-check-report.sarif
-      - name: Upload SARIF results to GitHub
+      - name: Upload SARIF result to GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: ./reports/dependency-check-report.sarif
+          sarif_file: reports/dependency-check-report.sarif
+        if: always()
 #      - name: Login to Azure Container Registry
 #        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 #        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
