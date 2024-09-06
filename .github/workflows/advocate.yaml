@@ -19,27 +19,31 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
-
+        # You may pin to the exact commit or the version.
+  # uses: trufflesecurity/trufflehog@ead9dd57486f43830ba2279f3a3c49d4b9c36633
+      - name: TruffleHog
+        uses: trufflesecurity/trufflehog@v3.76.1
+          
       - name: Build and analyze advocate
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
-      - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
-        env:
-          JAVA_HOME: /opt/jdk
-        id: Depcheck
-        with:
-          project: 'advocate'
-          path: 'backend/advocate'
-          format: 'HTML'    
-          others: ''
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports
+      # - name: Depcheck
+      #   uses: dependency-check/Dependency-Check_Action@main
+      #   env:
+      #     JAVA_HOME: /opt/jdk
+      #   id: Depcheck
+      #   with:
+      #     project: 'advocate'
+      #     path: 'backend/advocate'
+      #     format: 'HTML'    
+      #     others: ''
+      # - name: Upload Test results
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #      name: Depcheck report
+      #      path: ${{github.workspace}}/reports
 #      - name: Login to Azure Container Registry
 #        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 #        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
