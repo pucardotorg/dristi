@@ -25,7 +25,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          cd backend/advocate
+          npm install
           snyk test --sarif > snyk-results.sarif
 
       - name: Upload SARIF results to the GitHub Security Dashboard
