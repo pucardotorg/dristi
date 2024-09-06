@@ -1667,11 +1667,14 @@ const GenerateOrders = () => {
       }
       if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
         const dateObject = new Date(applicationDetails?.additionalDetails?.formdata?.initialHearingDate);
-        const date = dateObject && dateObject?.getTime();
+        let date = dateObject && dateObject?.getTime();
+        if (isNaN(date)) {
+          date = Date.now();
+        }
         const requesterId = "";
-        const rescheduledRequestId = currentOrder?.additionalDetails?.formdata?.refApplicationId;
         const comments = currentOrder?.comments || "";
         const hearingBookingId = currentOrder?.hearingNumber;
+        const rescheduledRequestId = currentOrder?.additionalDetails?.formdata?.refApplicationId || `NO_APPLICATION_ID_${hearingBookingId}`;
         await handleUpdateHearing({
           action: HearingWorkflowAction.RESCHEDULE,
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
