@@ -207,6 +207,12 @@ const PaymentForSummonModal = ({ path }) => {
     return tasksWithPostChannel;
   }, [tasksData, orderData]);
 
+  const consumerCode = useMemo(() => {
+    return filteredTasks?.[0]?.taskNumber ? `${filteredTasks?.[0]?.taskNumber}_POST_COURT` : undefined;
+  }, [filteredTasks]);
+
+  console.log("consumerCode :>> ", consumerCode);
+
   console.log("taskData", filteredTasks);
 
   console.log("hearingsData :>> ", hearingsData);
@@ -215,7 +221,7 @@ const PaymentForSummonModal = ({ path }) => {
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
-    consumerCode: filteredTasks?.[0]?.taskNumber,
+    consumerCode: consumerCode,
     service: paymentType.TASK_SUMMON,
     caseDetails,
     totalAmount: "4",

@@ -188,6 +188,10 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     return tasksWithRequiredChannel;
   }, [tasksData, orderData]);
 
+  const suffix = useMemo(() => {
+    return channelId === "sms" ? "SMS_COURT" : channelId === "email" ? "EMAIL_COURT" : "";
+  }, [filteredTasks]);
+
   console.log("taskData", filteredTasks);
 
   console.log("hearingsData :>> ", hearingsData);
@@ -196,7 +200,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
-    consumerCode: filteredTasks?.[0]?.taskNumber,
+    consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
     service: paymentType.TASK_SUMMON,
     caseDetails,
     totalAmount: "4",
@@ -214,13 +218,12 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
 
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
-    { tenantId, consumerCode: filteredTasks?.[0]?.taskNumber, service: paymentType.TASK_SUMMON },
+    { tenantId, consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`, service: paymentType.TASK_SUMMON },
     "dristi",
     Boolean(filteredTasks?.[0]?.taskNumber)
   );
 
-  const referenceId =
-    channelId === "sms" ? "SMS" : channelId === "email" ? "E-mail" : channelId ? channelId.charAt(0).toUpperCase() + channelId.slice(1) : "";
+  const referenceId = channelId === "sms" ? "SMS" : channelId === "email" ? "E-mail" : "";
 
   const onPayOnline = async () => {
     console.log("clikc");
@@ -230,7 +233,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
           Demands: [
             {
               tenantId,
-              consumerCode: filteredTasks?.[0]?.taskNumber,
+              consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
               consumerType: paymentType.TASK_SUMMON,
               businessService: paymentType.TASK_SUMMON,
               taxPeriodFrom: Date.now().toString(),
@@ -246,7 +249,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
           ],
         });
       }
-      const bill = await fetchBill(filteredTasks?.[0]?.taskNumber, tenantId, paymentType.TASK_SUMMON);
+      const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_${suffix}`, tenantId, paymentType.TASK_SUMMON);
       if (bill?.Bill?.length) {
         const billPaymentStatus = await openPaymentPortal(bill);
         console.log(billPaymentStatus);
