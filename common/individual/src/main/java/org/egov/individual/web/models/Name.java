@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 public class Name {
     @JsonProperty("givenName")
     private @Size(
-            min = 2,
+            min = 1,
             max = 200
     ) String givenName = null;
     @JsonProperty("familyName")
