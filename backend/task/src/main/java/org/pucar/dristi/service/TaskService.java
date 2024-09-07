@@ -173,4 +173,9 @@ public class TaskService {
             throw new CustomException(DOCUMENT_UPLOAD_QUERY_EXCEPTION, "Error occurred while uploading document into task: " + e.getMessage());
         }
     }
+
+    public List<TaskCase> searchCaseTask(TaskCaseSearchRequest request) {
+        return taskRepository.getTaskWithCaseDetails(request);
+
+    }
 }

@@ -86,4 +86,18 @@ public class TaskApiController {
         return new ResponseEntity<>(taskResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/v1/table/search", method = RequestMethod.POST)
+    public ResponseEntity<TaskCaseResponse> taskV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, schema = @Schema()) @Valid @RequestBody TaskCaseSearchRequest request) {
+        List<TaskCase> tasks = taskService.searchCaseTask(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        int totalCount;
+        if (request.getPagination() != null) {
+            totalCount = request.getPagination().getTotalCount().intValue();
+        } else {
+            totalCount = tasks.size();
+        }
+        TaskCaseResponse taskCaseResponse = TaskCaseResponse.builder().list(tasks).totalCount(totalCount).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(taskCaseResponse, HttpStatus.OK);
+    }
+
 }
