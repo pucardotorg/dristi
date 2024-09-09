@@ -1,18 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomChooseDate from "../../../components/CustomChooseDate";
-import {
-  Button,
-  CardLabel,
-  CardText,
-  CustomDropdown,
-  DateRange,
-  EventCalendar,
-  SubmitBar,
-  TextInput,
-  Toast,
-} from "@egovernments/digit-ui-react-components";
+import { Button, CardText, CustomDropdown, SubmitBar, TextInput, Toast, Loader } from "@egovernments/digit-ui-react-components";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
-import { formatDateInMonth } from "../../../Utils";
+import { formatDateInMonth, getMDMSObj } from "../../../Utils";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 
 function ScheduleAdmission({
   config,
@@ -47,6 +38,8 @@ function ScheduleAdmission({
 
   const [nextFiveDates, setNextFiveDates] = useState([]);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const { data: hearingTypeData, isLoading } = useGetStatuteSection("Hearing", [{ name: "HearingType" }]);
+  const hearingTypes = useMemo(() => hearingTypeData?.HearingType || [], [hearingTypeData]);
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -66,83 +59,16 @@ function ScheduleAdmission({
     }
   };
 
-  const hearingTypeOptions = [
-    {
-      id: 1,
-      type: "EVIDENCE",
-      isactive: true,
-      code: "EVIDENCE",
-    },
-    {
-      id: 2,
-      type: "ADMIN",
-      isactive: true,
-      code: "ADMIN",
-    },
-    {
-      id: 3,
-      type: "82_83_HEARING",
-      isactive: true,
-      code: "82_83_HEARING",
-    },
-    {
-      id: 4,
-      type: "NBW_HEARING",
-      isactive: true,
-      code: "NBW_HEARING",
-    },
-    {
-      id: 5,
-      type: "ADMISSION",
-      isactive: true,
-      code: "ADMISSION",
-    },
-    {
-      id: 6,
-      type: "PLEA",
-      isactive: true,
-      code: "PLEA",
-    },
-    {
-      id: 7,
-      type: "ARGUMENTS",
-      isactive: true,
-      code: "ARGUMENTS",
-    },
-    {
-      id: 8,
-      type: "JUDGEMENT",
-      isactive: true,
-      code: "JUDGEMENT",
-    },
-    {
-      id: 9,
-      type: "SENTENCE",
-      isactive: true,
-      code: "SENTENCE",
-    },
-    {
-      id: 10,
-      type: "BAIL",
-      isactive: true,
-      code: "BAIL",
-    },
-    {
-      id: 11,
-      type: "OTHERS",
-      isactive: true,
-      code: "OTHERS",
-    },
-  ];
-
-  const dropdownConfig = {
-    label: "HEARING_TYPE",
-    type: "dropdown",
-    name: "hearingType",
-    optionsKey: "type",
-    isMandatory: true,
-    options: hearingTypeOptions,
-  };
+  const dropdownConfig = useMemo(() => {
+    return {
+      label: "HEARING_TYPE",
+      type: "dropdown",
+      name: "hearingType",
+      optionsKey: "type",
+      isMandatory: true,
+      options: hearingTypes,
+    };
+  }, [hearingTypes]);
 
   function dateToEpoch(date) {
     return Math.floor(new Date(date).getTime());
@@ -189,6 +115,11 @@ function ScheduleAdmission({
     }
   }, [dateResponse]);
 
+  const defaultHearingType = useMemo(() => getMDMSObj(hearingTypes, "type", "EVIDENCE"), [hearingTypes]);
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <div className="schedule-admission-main">
       {selectedChip && <CustomCaseInfoDiv t={t} data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
@@ -207,7 +138,8 @@ function ScheduleAdmission({
       ) : (
         <CustomDropdown
           t={t}
-          defaulValue={hearingTypeOptions[4]}
+          deafultValue={defaultHearingType}
+          defaulValue={defaultHearingType}
           onChange={(e) => {
             setPurposeValue(e, config.name);
             console.log(e);

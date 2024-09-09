@@ -88,3 +88,10 @@ export const formatDate = (date) => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+
+export const getMDMSObj = (mdmsdata = [], codekey, code) => {
+  if (!code || !mdmsdata || mdmsdata?.length == 0) {
+    return {};
+  }
+  return mdmsdata?.find((item) => item[codekey] == code) || {};
+};
