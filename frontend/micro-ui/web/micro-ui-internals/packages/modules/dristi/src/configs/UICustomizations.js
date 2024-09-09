@@ -705,6 +705,7 @@ export const UICustomizations = {
                 order: {
                   createdDate: new Date().getTime(),
                   tenantId: row.tenantId,
+                  hearingNumber: row?.hearingId,
                   filingNumber: row.filingNumber[0],
                   cnrNumber: row.cnrNumbers[0],
                   statuteSection: {

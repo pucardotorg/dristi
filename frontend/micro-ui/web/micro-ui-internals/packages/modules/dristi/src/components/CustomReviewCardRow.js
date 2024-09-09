@@ -174,7 +174,7 @@ const CustomReviewCardRow = ({
                     : t("CS_NOT_AVAILABLE")
                   : textValue && typeof textValue === "object"
                   ? t(textValue?.text) || ""
-                  : t(textValue) || (dependentOnValue && textDependentValue) || t("CS_NOT_AVAILABLE")}
+                  : t(textValue) || (dependentOnValue && t(textDependentValue)) || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div

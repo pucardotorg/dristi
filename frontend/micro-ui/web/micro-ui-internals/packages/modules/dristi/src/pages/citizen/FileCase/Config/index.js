@@ -27,7 +27,6 @@ export const sideMenuConfig = [
           "complainantType",
           "complainantId.complainantId",
           "firstName",
-          "lastName",
           "complainantVerification.otpNumber", // checkThis- make sure to unset otpNumber if otp model is closed or canceled.
         ],
         initialMandatoryFieldCount: 10,
@@ -44,7 +43,7 @@ export const sideMenuConfig = [
           { field: "addressDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "companyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
         ],
-        optionalFields: ["middleName"],
+        optionalFields: ["middleName", "lastName"],
         initialOptionalFieldCount: 1,
         dependentOptionalFields: [{ field: "companyDetailsUpload.document", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" }],
       },
@@ -64,7 +63,7 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: ["respondentType", "respondentFirstName", "respondentLastName"],
+        mandatoryFields: ["respondentType", "respondentFirstName"],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
@@ -78,7 +77,7 @@ export const sideMenuConfig = [
         },
         initialMandatoryFieldCount: 8,
         dependentMandatoryFields: [{ field: "companyName", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" }],
-        optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "inquiryAffidavitFileUpload.document"],
+        optionalFields: ["middleName", "respondentLastName", "phonenumbers.mobileNumber", "emails.emailId", "inquiryAffidavitFileUpload.document"],
         dependentOptionalFields: [{ field: "companyDetailsUpload.document", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" }],
         initialOptionalFieldCount: 4,
       },
@@ -253,7 +252,6 @@ export const sideMenuConfig = [
         ],
         mandatoryFields: [
           "firstName", // whole witness details form is optional.
-          "lastName",
         ],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
@@ -268,7 +266,7 @@ export const sideMenuConfig = [
         },
         initialMandatoryFieldCount: 0,
         dependentMandatoryFields: [],
-        optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
+        optionalFields: ["middleName", "lastName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 4,
       },
@@ -292,12 +290,12 @@ export const sideMenuConfig = [
         anyOneOfTheseMandatoryFields: [
           ["memorandumOfComplaint.text", "memorandumOfComplaint.document"],
           ["prayerForRelief.text", "prayerForRelief.document"],
+          "swornStatement.document",
         ],
         initialMandatoryFieldCount: 3,
         dependentMandatoryFields: [],
         optionalFields: [
           "caseSettlementCondition",
-          "swornStatement.document",
           "additionalDetails.text",
           "additionalActsSections.text",
           "SelectUploadDocWithName.docName",

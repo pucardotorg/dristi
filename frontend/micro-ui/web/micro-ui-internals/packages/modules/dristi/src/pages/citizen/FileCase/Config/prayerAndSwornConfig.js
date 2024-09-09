@@ -155,11 +155,11 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "SelectCustomDragDrop",
+        isMandatory: true,
         populators: {
           inputs: [
             {
-              // isMandatory: true,
-              isOptional: "CS_IS_OPTIONAL",
+              isMandatory: true,
               name: "swornStatement",
               documentSubText: "CS_SWORN_STATEMENT_SUBTEXT",
               documentHeader: "CS_SWORN_STATEMENT_HEADER",

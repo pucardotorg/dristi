@@ -1674,7 +1674,8 @@ const GenerateOrders = () => {
         const requesterId = "";
         const comments = currentOrder?.comments || "";
         const hearingBookingId = currentOrder?.hearingNumber;
-        const rescheduledRequestId = currentOrder?.additionalDetails?.formdata?.refApplicationId || `NO_APPLICATION_ID_${hearingBookingId}`;
+        const rescheduledRequestId =
+          currentOrder?.additionalDetails?.formdata?.refApplicationId || `NO_APPLICATION_ID_${hearingBookingId}_${Date.now()}`;
         await handleUpdateHearing({
           action: HearingWorkflowAction.RESCHEDULE,
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),

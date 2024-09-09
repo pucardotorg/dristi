@@ -59,7 +59,10 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef
       headerBarEnd={<HeaderBarEnd />}
       formId="modal-action"
       headerBarMain={
-        <Heading label={imageInfo?.data?.fileName ? t(imageInfo?.data?.fileName) : selectedDocs[0]?.name} fileName={imageInfo?.data?.documentName} />
+        <Heading
+          label={imageInfo?.data?.fileName ? t(imageInfo?.data?.fileName) : selectedDocs?.[0]?.name}
+          fileName={imageInfo?.data?.documentName}
+        />
       }
       className="view-image-modal"
       hideSubmit

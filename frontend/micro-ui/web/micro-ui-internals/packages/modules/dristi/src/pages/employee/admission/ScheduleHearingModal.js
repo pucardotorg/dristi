@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button, CardText, CustomDropdown, SubmitBar, TextInput, Toast, Modal, Loader, Banner } from "@egovernments/digit-ui-react-components";
 import { formatDateInMonth } from "../../../Utils";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import useSearchCaseService from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useSearchCaseService";
 import { HomeService } from "../../../../../home/src/hooks/services";
 import { Urls } from "../../../hooks";
@@ -195,6 +195,8 @@ function ScheduleHearing({
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [sucessOptOut, setSucessOptOut] = useState(false);
   const [OptOutLimitValue, setOptOutLimitValue] = useState(null);
+  const location = useLocation();
+  const referenceId = location?.state?.state?.params?.referenceId;
 
   const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
   const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
@@ -251,17 +253,16 @@ function ScheduleHearing({
   );
 
   const { data: dateResponse } = Digit.Hooks.home.useSearchReschedule(
-    applicationData
-      ? {
-          SearchCriteria: {
-            tenantId: Digit.ULBService.getCurrentTenantId(),
-            rescheduledRequestId: [applicationData.applicationList[0]?.applicationNumber],
-          },
-        }
-      : null,
-    { limit: 5, offset: 0 },
+    {
+      SearchCriteria: {
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        hearingBookingId: referenceId,
+        status: "ACTIVE",
+      },
+    },
+    { limit: 1, offset: 0 },
     "",
-    !!applicationData
+    !!referenceId
   );
 
   const nextFourDates = status === "OPTOUT" ? getSuggestedDates(dateResponse) : getNextNDates(5);
@@ -325,7 +326,7 @@ function ScheduleHearing({
   };
 
   const handleClose = () => {
-    history.push(`/${window?.contextPath}/${userInfoType}/home/home-pending-task`, { taskType: { code: "case", name: "Case" } });
+    history.goBack();
   };
 
   const handleSubmit = async (data) => {
@@ -449,7 +450,7 @@ function ScheduleHearing({
 
   return (
     <Modal
-      headerBarMain={<Heading label={status === "OPTOUT" ? "Select Opt-out Dates" : t(config.headModal)} />}
+      headerBarMain={<Heading label={status === "OPTOUT" ? t("SELECT_OPT_OUT_DATES") : t(config.headModal)} />}
       headerBarEnd={<CloseBtn onClick={handleClose} />}
       hideSubmit={true}
       popupStyles={{

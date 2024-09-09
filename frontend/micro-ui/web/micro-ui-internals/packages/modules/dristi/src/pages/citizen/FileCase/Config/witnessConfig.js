@@ -14,7 +14,7 @@ const witnessFormConfig = [
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
+            minLength: 1,
             title: "",
             patternType: "Name",
           },
@@ -24,6 +24,7 @@ const witnessFormConfig = [
         type: "text",
         label: "MIDDLE_NAME",
         labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "middleName",
           validation: {
@@ -39,16 +40,15 @@ const witnessFormConfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        isMandatory: true,
+        labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
             title: "",
             patternType: "Name",
           },

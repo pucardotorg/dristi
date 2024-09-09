@@ -848,7 +848,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
         documentType: documentData?.fileType,
       }
     : {};
-  const identifierType = documentData ? data?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
+  const identifierType = documentData ? data?.complainantId?.complainantId?.selectIdTypeType?.type : "AADHAR";
   let Individual = {
     Individual: {
       tenantId: tenantId,
