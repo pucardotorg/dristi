@@ -1661,9 +1661,6 @@ const GenerateOrders = () => {
           startTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
           endTime: Date.parse(currentOrder?.additionalDetails?.formdata?.newHearingDate),
         });
-        if (currentOrder?.additionalDetails?.isReIssueSummons) {
-          await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.newHearingDate, hearingNumber || hearingId);
-        }
       }
       if (orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
         const dateObject = new Date(applicationDetails?.additionalDetails?.formdata?.initialHearingDate);
