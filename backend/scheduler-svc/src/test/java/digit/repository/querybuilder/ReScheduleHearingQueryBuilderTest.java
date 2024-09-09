@@ -38,7 +38,7 @@ public class ReScheduleHearingQueryBuilderTest {
         searchCriteria.setCaseId("case1");
         searchCriteria.setHearingBookingId("booking1");
         searchCriteria.setRequesterId("requester1");
-        searchCriteria.setStatus(1L);
+        searchCriteria.setStatus("RESCHEDULE");
         searchCriteria.setDueDate(2L);
 
         List<Object> preparedStmtList = new ArrayList<>();

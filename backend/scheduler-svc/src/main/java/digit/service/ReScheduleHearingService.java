@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static digit.config.ServiceConstants.OPT_OUT_SELECTION_LIMIT;
+import static digit.config.ServiceConstants.STATUS_RESCHEDULE;
 
 
 /**
@@ -113,7 +114,11 @@ public class ReScheduleHearingService {
                 hearingDetail.setRepresentatives(representativeIds);
                 hearingDetail.setLitigants(litigantIds);
 
-                List<AvailabilityDTO> availability = calendarService.getJudgeAvailability(JudgeAvailabilitySearchRequest.builder().requestInfo(requestInfo).criteria(JudgeAvailabilitySearchCriteria.builder().judgeId(hearingDetail.getJudgeId()).fromDate(hearingDetail.getAvailableAfter()).courtId("0001")  //TODO: need to configure somewhere
+                LocalDate availableAfter = dateUtil.getLocalDateFromEpoch(hearingDetail.getAvailableAfter()).plusDays(1);
+
+                Long optOutAfterDate = dateUtil.getEPochFromLocalDate(availableAfter);
+
+                List<AvailabilityDTO> availability = calendarService.getJudgeAvailability(JudgeAvailabilitySearchRequest.builder().requestInfo(requestInfo).criteria(JudgeAvailabilitySearchCriteria.builder().judgeId(hearingDetail.getJudgeId()).fromDate(optOutAfterDate).courtId("0001")  //TODO: need to configure somewhere
                         .numberOfSuggestedDays(numberOfSuggestedDays).tenantId(tenantId).build()).build());
 
                 // update here all the suggestedDay in reschedule hearing day
@@ -123,13 +128,11 @@ public class ReScheduleHearingService {
 
                 List<ScheduleHearing> hearings = hearingService.search(HearingSearchRequest.builder().requestInfo(requestInfo).criteria(ScheduleHearingSearchCriteria.builder().hearingIds(Collections.singletonList(hearingDetail.getHearingBookingId())).build()).build(), null, null);
                 ScheduleHearing hearing = hearings.get(0);
-                hearing.setStatus("RESCHEDULE");
+                hearing.setStatus(STATUS_RESCHEDULE);
                 hearing.setRescheduleRequestId(hearingDetail.getRescheduledRequestId());
-
 
                 //reschedule hearing to unblock the calendar
                 hearingService.update(ScheduleHearingRequest.builder().requestInfo(requestInfo).hearing(hearings).build());
-
 
                 List<ScheduleHearing> udpateHearingList = new ArrayList<>();
 

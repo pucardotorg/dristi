@@ -7,6 +7,7 @@ import digit.enrichment.ReScheduleRequestEnrichment;
 import digit.kafka.producer.Producer;
 import digit.repository.ReScheduleRequestRepository;
 import digit.util.CaseUtil;
+import digit.util.DateUtil;
 import digit.util.MasterDataUtil;
 import digit.validator.ReScheduleRequestValidator;
 import digit.web.models.*;
@@ -61,6 +62,9 @@ public class ReScheduleHearingServiceTest {
 
     @Mock
     private MasterDataUtil helper;
+
+    @Mock
+    private DateUtil dateUtil;
 
     @Mock
     private Configuration config;
@@ -132,6 +136,7 @@ public class ReScheduleHearingServiceTest {
         hearing.setTenantId("tenant1");
         hearing.setCaseId("case1");
         hearing.setJudgeId("judge1");
+        hearing.setAvailableAfter(1L);
         hearing.setHearingBookingId("booking1");
         hearingList.add(hearing);
         request.setReScheduleHearing(hearingList);
@@ -160,6 +165,9 @@ public class ReScheduleHearingServiceTest {
         availabilityDTO.setDate("2023-10-10");
         availabilityDTOs.add(availabilityDTO);
         when(calendarService.getJudgeAvailability(any())).thenReturn(availabilityDTOs);
+        when(dateUtil.getLocalDateFromEpoch(anyLong())).thenReturn(LocalDate.of(2023, 9, 5));
+
+        when(dateUtil.getEPochFromLocalDate(any())).thenReturn(1693800000000L);
 
         // Mock hearing search
         ScheduleHearing scheduleHearing = new ScheduleHearing();
