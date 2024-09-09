@@ -12,7 +12,9 @@ on:
       - 'backend/transformer/**'
   workflow_dispatch:
   workflow_call:
-
+permissions:
+  security-events: write
+  contents: read
 jobs:
   docker_image-build:
     runs-on: ubuntu-latest
