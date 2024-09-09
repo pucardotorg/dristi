@@ -43,7 +43,16 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
             backgroundColor: "#fff",
             border: "1px solid black",
           }}
-          onClick={() => onSelect(config.key, { sortBy: config.sortBy, order: formData?.[config.key]?.order === "desc" ? "asc" : "desc" })}
+          onClick={() =>
+            onSelect(
+              config.key,
+              config?.paymentInbox
+                ? formData?.[config.key]?.order === "desc"
+                  ? "ASC"
+                  : "DESC"
+                : { sortBy: config.sortBy, order: formData?.[config.key]?.order === "desc" ? "asc" : "desc" }
+            )
+          }
         >
           <span className="custom-sort-name">{config.name} </span>
           {config?.showAdditionalText ? (

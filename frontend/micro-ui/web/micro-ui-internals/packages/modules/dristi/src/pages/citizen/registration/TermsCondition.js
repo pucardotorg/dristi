@@ -8,6 +8,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const setFormError = useRef(null);
 
@@ -17,6 +18,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
   };
 
   const onSubmit = () => {
+    setIsDisabled(true);
     const userType = params?.userType;
     const userTypeSelcted = params?.userType?.clientDetails?.selectUserType?.code;
     const Individual = params?.IndividualPayload ? params?.IndividualPayload : { Individual: params?.Individual?.[0] };
@@ -376,6 +378,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
         onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
           setFormError.current = setError;
         }}
+        isDisabled={isDisabled}
       ></FormComposerV2>
     </div>
   );

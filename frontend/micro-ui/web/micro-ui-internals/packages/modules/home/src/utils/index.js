@@ -73,4 +73,12 @@ export const formatDateYYMMDD = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const getSuffixByBusinessCode = (paymentType = [], businessCode) => {
+  return paymentType?.find((data) => data?.businessService?.some((businessService) => businessService?.businessCode === businessCode))?.suffix || "";
+};
+
+export const getTaxPeriodByBusinessService = (taxPeriod = [], businessService) => {
+  return taxPeriod?.find((data) => data?.service === businessService) || {};
+};
+
 export default {};

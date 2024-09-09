@@ -6,6 +6,8 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
+import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
+import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 
 const paymentOptionConfig = {
   label: "CS_MODE_OF_PAYMENT",
@@ -20,7 +22,8 @@ const paymentOptionConfig = {
     select: "(data) => {return data['case'].OfflinePaymentMode?.map((item) => {return item;});}",
   },
   styles: {
-    width: "50%",
+    width: "100%",
+    maxWidth: "100%",
   },
 };
 
@@ -33,7 +36,29 @@ const ViewPaymentDetails = ({ location, match }) => {
   const [additionDetails, setAdditionalDetails] = useState("");
   const toast = useToast();
   const [isDisabled, setIsDisabled] = useState(false);
-  const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
+  const { caseId, filingNumber, consumerCode, businessService, paymentType } = window?.Digit.Hooks.useQueryParams();
+
+  // const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
+  //   Digit.ULBService.getStateId(),
+  //   "payment",
+  //   [{ name: "paymentType" }],
+  //   {
+  //     select: (data) => {
+  //       return data?.payment?.paymentType || [];
+  //     },
+  //   }
+  // );
+
+  // const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
+  //   Digit.ULBService.getStateId(),
+  //   "BillingService",
+  //   [{ name: "TaxPeriod" }],
+  //   {
+  //     select: (data) => {
+  //       return data?.BillingService?.TaxPeriod || [];
+  //     },
+  //   }
+  // );
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
     {
@@ -63,8 +88,8 @@ const ViewPaymentDetails = ({ location, match }) => {
   const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
     {
       tenantId: tenantId,
-      consumerCode: caseDetails?.filingNumber,
-      businessService: "case-default",
+      consumerCode: consumerCode,
+      businessService: businessService,
     },
     {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
@@ -126,37 +151,38 @@ const ViewPaymentDetails = ({ location, match }) => {
   }, [calculationResponse?.Calculation]);
   const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
-  const { data: demandResponse, isLoading: demandCreateLoading } = Digit.Hooks.dristi.useCreateDemand(
-    {
-      Demands: [
-        {
-          tenantId,
-          consumerCode: caseDetails?.filingNumber,
-          consumerType: "case-default",
-          businessService: "case-default",
-          taxPeriodFrom: Date.now().toString(),
-          taxPeriodTo: Date.now().toString(),
-          demandDetails: [
-            {
-              taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
-              taxAmount: 4,
-              collectionAmount: 0,
-            },
-          ],
-        },
-      ],
-    },
-    {},
-    "dristi",
-    Boolean(paymentDetails?.Bill?.length === 0 && caseDetails?.filingNumber)
-  );
+
+  // const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
+  // const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
+
+  // const { data: demandResponse, isLoading: demandCreateLoading } = Digit.Hooks.dristi.useCreateDemand(
+  //   {
+  //     Demands: [
+  //       {
+  //         tenantId,
+  //         consumerCode: caseDetails?.filingNumber + `_${suffix}`,
+  //         consumerType: "case-default",
+  //         businessService: "case-default",
+  //         taxPeriodFrom: taxPeriod?.fromDate,
+  //         taxPeriodTo: taxPeriod?.toDate,
+  //         demandDetails: [
+  //           {
+  //             taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
+  //             taxAmount: 4,
+  //             collectionAmount: 0,
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  //   {},
+  //   "dristi",
+  //   Boolean(paymentDetails?.Bill?.length === 0 && caseDetails?.filingNumber)
+  // );
 
   const onSubmitCase = async () => {
     setIsDisabled(true);
-    const regenerateBill = await DRISTIService.callFetchBill(
-      {},
-      { consumerCode: caseDetails?.filingNumber, tenantId, businessService: "case-default" }
-    );
+    const regenerateBill = await DRISTIService.callFetchBill({}, { consumerCode: consumerCode, tenantId, businessService: businessService });
     const billFetched = regenerateBill?.Bill ? regenerateBill?.Bill[0] : {};
     if (!Object.keys(bill || regenerateBill || {}).length) {
       toast.error(t("CS_BILL_NOT_AVAILABLE"));
@@ -168,7 +194,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         Payment: {
           paymentDetails: [
             {
-              businessService: "case-default",
+              businessService: businessService,
               billId: billFetched.id,
               totalDue: billFetched.totalAmount,
               totalAmountPaid: billFetched.totalAmount,
@@ -187,7 +213,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       await DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
           name: "Pending Payment",
-          entityType: "case-default",
+          entityType: businessService,
           referenceId: `MANUAL_${caseDetails?.filingNumber}`,
           status: "PAYMENT_PENDING",
           cnrNumber: null,
@@ -236,7 +262,25 @@ const ViewPaymentDetails = ({ location, match }) => {
     }
   };
 
-  if (isCaseSearchLoading || isFetchBillLoading || isPaymentLoading || demandCreateLoading) {
+  const orderModalInfo = useMemo(
+    () => ({
+      caseInfo: [
+        {
+          key: t("CS_CASE_ID"),
+          value: caseDetails?.filingNumber,
+          copyData: false,
+        },
+        {
+          key: t("NYAY_PAYMENT_TYPE"),
+          value: paymentType,
+          copyData: false,
+        },
+      ],
+    }),
+    [caseDetails, t]
+  );
+
+  if (isCaseSearchLoading || isFetchBillLoading || isPaymentLoading) {
     return <Loader />;
   }
   return (
@@ -246,85 +290,96 @@ const ViewPaymentDetails = ({ location, match }) => {
           <div className="header">{t("CS_RECORD_PAYMENT_HEADER_TEXT")}</div>
           <div className="sub-header">{t("CS_RECORD_PAYMENT_SUBHEADER_TEXT")}</div>
         </div>
-        <div className="payment-calculator-wrapper" style={{ maxHeight: "400px" }}>
-          {paymentCalculation.map((item) => (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderTop: item.isTotalFee && "1px solid #BBBBBD",
-                paddingTop: item.isTotalFee && "20px",
-              }}
-            >
-              <span>{item.key}</span>
-              <span>
-                {item.currency} {parseFloat(item.value).toFixed(2)}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 40, marginBottom: "150px" }}>
-          <div className="payment-case-name">{`${t("CS_CASE_ID")}: ${caseDetails?.filingNumber}`}</div>
-          <div className="payment-case-detail-wrapper" style={{ maxHeight: "350px" }}>
-            <LabelFieldPair>
-              <CardLabel>{`${t("CORE_COMMON_PAYER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                style={{ width: "50%" }}
-                type={"text"}
-                isMandatory={false}
-                name="name"
-                disable={true}
-                value={payerName}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  let updatedValue = value
-                    .replace(/[^a-zA-Z\s]/g, "")
-                    .trimStart()
-                    .replace(/ +/g, " ")
-                    .toLowerCase()
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
-                  setPayer(updatedValue);
+        <div style={{ display: "flex", flexDirection: "row-reverse", gap: 40, justifyContent: "space-between", width: "100%" }}>
+          <div className="payment-calculator-wrapper" style={{ width: "33%" }}>
+            {paymentCalculation.map((item) => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderTop: item.isTotalFee && "1px solid #BBBBBD",
+                  paddingTop: item.isTotalFee && "20px",
                 }}
+              >
+                <span>{item.key}</span>
+                <span>
+                  {item.currency} {parseFloat(item.value).toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div style={{ width: "63%" }}>
+            <div>
+              {/* {`${t("CS_CASE_ID")}: ${caseDetails?.filingNumber}`} */}
+              <CustomCopyTextDiv
+                t={t}
+                keyStyle={{ margin: "8px 0px" }}
+                valueStyle={{ margin: "8px 0px", fontWeight: 700 }}
+                data={orderModalInfo?.caseInfo}
               />
-            </LabelFieldPair>
-            <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
-              <CardLabel>{t(paymentOptionConfig.label)}</CardLabel>
-              <CustomDropdown
-                label={paymentOptionConfig.label}
-                t={t}
-                onChange={(e) => {
-                  setModeOfPayment(e);
-                  setAdditionalDetails("");
-                }}
-                value={modeOfPayment}
-                config={paymentOptionConfig}
-              ></CustomDropdown>
-            </LabelFieldPair>
-            {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DD") && (
-              <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
-                <CardLabel>{t(modeOfPayment?.code === "CHEQUE" ? t("Cheque number") : t("Demand Draft number"))}</CardLabel>
+            </div>
+            <div className="payment-case-detail-wrapper" style={{ maxHeight: "350px" }}>
+              <LabelFieldPair>
+                <CardLabel>{`${t("CORE_COMMON_PAYER")}`}</CardLabel>
                 <TextInput
                   t={t}
-                  style={{ width: "50%" }}
+                  style={{ width: "100%" }}
+                  textInputStyle={{ width: "100%", maxWidth: "100%" }}
                   type={"text"}
                   isMandatory={false}
                   name="name"
-                  value={additionDetails}
+                  disable={true}
+                  value={payerName}
                   onChange={(e) => {
                     const { value } = e.target;
-
-                    let updatedValue = value?.replace(/\D/g, "");
-                    if (updatedValue?.length > 6) {
-                      updatedValue = updatedValue?.substring(0, 6);
-                    }
-
-                    setAdditionalDetails(updatedValue);
+                    let updatedValue = value
+                      .replace(/[^a-zA-Z\s]/g, "")
+                      .trimStart()
+                      .replace(/ +/g, " ")
+                      .toLowerCase()
+                      .replace(/\b\w/g, (char) => char.toUpperCase());
+                    setPayer(updatedValue);
                   }}
                 />
               </LabelFieldPair>
-            )}
+              <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
+                <CardLabel>{t(paymentOptionConfig.label)}</CardLabel>
+                <CustomDropdown
+                  label={paymentOptionConfig.label}
+                  t={t}
+                  onChange={(e) => {
+                    setModeOfPayment(e);
+                    setAdditionalDetails("");
+                  }}
+                  value={modeOfPayment}
+                  config={paymentOptionConfig}
+                ></CustomDropdown>
+              </LabelFieldPair>
+              {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DD") && (
+                <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
+                  <CardLabel>{t(modeOfPayment?.code === "CHEQUE" ? t("Cheque number") : t("Demand Draft number"))}</CardLabel>
+                  <TextInput
+                    t={t}
+                    style={{ width: "50%" }}
+                    type={"text"}
+                    isMandatory={false}
+                    name="name"
+                    value={additionDetails}
+                    onChange={(e) => {
+                      const { value } = e.target;
+
+                      let updatedValue = value?.replace(/\D/g, "");
+                      if (updatedValue?.length > 6) {
+                        updatedValue = updatedValue?.substring(0, 6);
+                      }
+
+                      setAdditionalDetails(updatedValue);
+                    }}
+                  />
+                </LabelFieldPair>
+              )}
+            </div>
           </div>
         </div>
         <ActionBar>

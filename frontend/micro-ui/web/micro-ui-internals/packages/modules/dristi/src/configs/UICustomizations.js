@@ -405,34 +405,28 @@ export const UICustomizations = {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
       const tenantId = window?.Digit.ULBService.getStateId();
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          tenantId,
-          ...("sortBy" in additionalDetails && {
-            [additionalDetails.sortBy]: undefined,
-          }),
-          pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
-            ...("sortBy" in additionalDetails && {
-              ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
-            }),
-          },
-        },
-      ];
+      const moduleSearchCriteria = {
+        ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
+        ...requestCriteria?.state?.searchForm,
+        tenantId: tenantId,
+      };
+
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
-          criteria,
-          tenantId,
-        },
-        config: {
-          ...requestCriteria?.config,
-          select: (data) => {
-            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          inbox: {
+            ...requestCriteria?.body?.inbox,
+            moduleSearchCriteria: {
+              ...moduleSearchCriteria,
+            },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: tenantId,
+            },
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offset: requestCriteria?.state?.tableForm?.offset,
+            tenantId: tenantId,
           },
         },
       };
@@ -450,27 +444,32 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const caseId = row?.businessObject?.billDetails?.caseTitleFilingNumber.split(",")[1];
+      const consumerCode = row?.businessObject?.billDetails?.consumerCode;
+      const service = row?.businessObject?.billDetails?.service;
+      const billStatus = row?.businessObject?.billDetails?.billStatus;
+      const paymentType = row?.businessObject?.billDetails?.paymentType;
       switch (key) {
-        case "Case ID":
-          return (
+        case "Case Name & ID":
+          return billStatus === "ACTIVE" ? (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${value}`}>
-                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              <Link
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}&paymentType=${paymentType}`}
+              >
+                {String(value || t("ES_COMMON_NA"))}
               </Link>
             </span>
+          ) : (
+            billStatus === "PAID" && <span>{String(value || t("ES_COMMON_NA"))}</span>
           );
-        case "Case Type":
-          return <span>NIA S138</span>;
-        case "Stage":
-          return <span>E-filing</span>;
         case "Amount Due":
-          return <span>Rs 2000</span>;
+          return <span>{`Rs. ${value}/-`}</span>;
         case "Action":
-          return (
+          return billStatus === "ACTIVE" ? (
             <span className="action-link">
               <Link
                 style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
-                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}&paymentType=${paymentType}`}
               >
                 {" "}
                 <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
@@ -479,6 +478,22 @@ export const UICustomizations = {
                 <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
               </Link>
             </span>
+          ) : (
+            billStatus === "PAID" && (
+              <span
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: "15px",
+                  display: "inline-block",
+                  fontSize: "0.9rem",
+                  textAlign: "center",
+                  backgroundColor: "rgb(228, 242, 228)",
+                  color: "rgb(0, 112, 60)",
+                }}
+              >
+                {String(t("CS_AMOUNT_PAID") || t("ES_COMMON_NA"))}
+              </span>
+            )
           );
         default:
           return t("ES_COMMON_NA");

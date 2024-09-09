@@ -11,6 +11,7 @@ import usePaymentProcess from "../hooks/usePaymentProcess";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
+import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../utils";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -55,6 +56,28 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const path = "";
+
+  const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "payment",
+    [{ name: "paymentType" }],
+    {
+      select: (data) => {
+        return data?.payment?.paymentType || [];
+      },
+    }
+  );
+
+  const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "BillingService",
+    [{ name: "TaxPeriod" }],
+    {
+      select: (data) => {
+        return data?.BillingService?.TaxPeriod || [];
+      },
+    }
+  );
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -152,16 +175,18 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
   });
   const onSubmitCase = async () => {
     try {
+      const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
       if (billResponse?.Bill?.length === 0) {
+        const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
         await DRISTIService.createDemand({
           Demands: [
             {
               tenantId,
-              consumerCode: caseDetails?.filingNumber,
+              consumerCode: caseDetails?.filingNumber + `_${suffix}`,
               consumerType: "case-default",
               businessService: "case-default",
-              taxPeriodFrom: Date.now().toString(),
-              taxPeriodTo: Date.now().toString(),
+              taxPeriodFrom: taxPeriod?.fromDate,
+              taxPeriodTo: taxPeriod?.toDate,
               demandDetails: [
                 {
                   taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
@@ -173,7 +198,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
           ],
         });
       }
-      const bill = await fetchBill(caseDetails?.filingNumber, tenantId, "case-default");
+      const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
       if (bill?.Bill?.length) {
         const paymentStatus = await openPaymentPortal(bill);
         if (paymentStatus) {

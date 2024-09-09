@@ -1,132 +1,281 @@
-export const paymentInboxConfig = {
-  label: "ES_COMMON_INBOX",
-  type: "inbox",
-  apiDetails: {
-    serviceName: "/case/v1/_search",
-    requestParam: {},
-    requestBody: {
-      criteria: [
-        {
-          defaultValues: true,
-          status: ["PAYMENT_PENDING"],
-          filingNumber: "",
-        },
-      ],
-    },
-    minParametersForSearchForm: 1,
-    masterName: "commonUiConfig",
-    moduleName: "paymentInboxConfig",
-    searchFormJsonPath: "requestBody.criteria[0]",
-    tableFormJsonPath: "requestBody.inbox",
-  },
-  sections: {
-    search: {
-      uiConfig: {
-        headerStyle: null,
-        type: "registration-requests-table-search",
-        primaryLabel: "ES_COMMON_SEARCH",
-        secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-        minReqFields: 0,
-        defaultValues: {
-          filingNumber: "",
-          isActive: false,
-          stage: [],
-        },
-        fields: [
-          {
-            type: "component",
-            component: "CustomSortComponent",
-            isMandatory: false,
-            disable: false,
-            name: "Sort by",
-            key: "sortCaseListByDate",
-            sortBy: "createdtime",
-            ascText: "Newest to Oldest",
-            descText: "Oldest to Newest",
-            showAdditionalText: true,
-            showIcon: true,
-            icon: "ArrowDownIcon",
-            populators: {},
-          },
-          {
-            label: "Stage",
-            isMandatory: false,
-            key: "stage",
-            type: "dropdown",
-            disable: false,
-            populators: {
-              name: "substage",
-              options: ["Filing", "Cognizance", "Inquiry", "Appearance", "Framing of charges", "Evidence", "Arguments", "Judgment", "Post-Judgement"],
-              styles: {
-                maxWidth: "300px",
-                minWidth: "200px",
-              },
-              optionsCustomStyle: {
-                overflowX: "hidden",
-              },
+export const paymentTabInboxConfig = {
+  tenantId: "pg",
+  moduleName: "paymentInboxConfig",
+  showTab: true,
+  TabSearchConfig: [
+    {
+      label: "Pending",
+      type: "search",
+      apiDetails: {
+        serviceName: "/inbox/v2/index/_search",
+        requestParam: {},
+        requestBody: {
+          inbox: {
+            processSearchCriteria: {
+              businessService: ["billing"],
+              moduleName: "Billing service",
+            },
+            moduleSearchCriteria: {
+              billStatus: "ACTIVE",
             },
           },
-          {
-            label: "Case ID",
-            type: "text",
-            isMandatory: false,
-            disable: false,
-            populators: {
-              name: "filingNumber",
-              placeholder: "Case ID",
-              error: "BR_PATTERN_ERR_MSG",
-              validation: {
-                pattern: {},
-                minlength: 2,
+        },
+        minParametersForSearchForm: 0,
+        masterName: "commonUiConfig",
+        moduleName: "paymentInboxConfig",
+        searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+        filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+        tableFormJsonPath: "requestBody.inbox",
+      },
+      sections: {
+        search: {
+          uiConfig: {
+            type: "registration-requests-table-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: {
+              caseTitleFilingNumber: "",
+            },
+            fields: [
+              {
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Sort by",
+                key: "sortOrder",
+                paymentInbox: true,
+                ascText: "Newest to Oldest",
+                descText: "Oldest to Newest",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "ArrowDownIcon",
+                populators: {},
               },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["caseType"],
+                  styles: {
+                    maxWidth: "300px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Payment Type",
+                isMandatory: false,
+                key: "paymentType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "paymentType",
+                  options: ["paymentType"],
+                  styles: {
+                    maxWidth: "300px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Case ID and Title",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "caseTitleFilingNumber",
+                  placeholder: "Case ID and Title",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 1,
+                  },
+                },
+              },
+            ],
+          },
+          children: {},
+          show: true,
+        },
+        searchResult: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          label: "",
+          uiConfig: {
+            columns: [
+              {
+                label: "Case Name & ID",
+                jsonPath: "businessObject.billDetails.caseTitleFilingNumber",
+                additionalCustomization: true,
+              },
+              {
+                label: "Amount Due",
+                jsonPath: "businessObject.billDetails.amount",
+                additionalCustomization: true,
+              },
+              {
+                label: "Stage",
+                jsonPath: "businessObject.billDetails.stage",
+              },
+              {
+                label: "Case Type",
+                jsonPath: "businessObject.billDetails.caseType",
+              },
+              {
+                label: "Payment Type",
+                jsonPath: "businessObject.billDetails.paymentType",
+              },
+              {
+                label: "Action",
+                jsonPath: "businessObject.billDetails.id",
+                additionalCustomization: true,
+              },
+            ],
+            enableColumnSort: true,
+            resultsJsonPath: "items",
+          },
+          show: true,
+        },
+      },
+    },
+    {
+      label: "Completed",
+      type: "search",
+      apiDetails: {
+        serviceName: "/inbox/v2/index/_search",
+        requestParam: {},
+        requestBody: {
+          inbox: {
+            processSearchCriteria: {
+              businessService: ["billing"],
+              moduleName: "Billing service",
+            },
+            moduleSearchCriteria: {
+              billStatus: "PAID",
             },
           },
-        ],
+        },
+        minParametersForSearchForm: 0,
+        masterName: "commonUiConfig",
+        moduleName: "paymentInboxConfig",
+        searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+        filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+        tableFormJsonPath: "requestBody.inbox",
       },
-      children: {},
-      show: true,
-    },
-    searchResult: {
-      label: "",
-      uiConfig: {
-        columns: [
-          {
-            label: "Case ID",
-            jsonPath: "filingNumber",
-            additionalCustomization: true,
+      sections: {
+        search: {
+          uiConfig: {
+            type: "registration-requests-table-search",
+            primaryLabel: "ES_COMMON_SEARCH",
+            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+            minReqFields: 0,
+            defaultValues: {
+              caseTitleFilingNumber: "",
+            },
+            fields: [
+              {
+                type: "component",
+                component: "CustomSortComponent",
+                isMandatory: false,
+                disable: false,
+                name: "Sort by",
+                key: "sortOrder",
+                paymentInbox: true,
+                ascText: "Newest to Oldest",
+                descText: "Oldest to Newest",
+                showAdditionalText: true,
+                showIcon: true,
+                icon: "ArrowDownIcon",
+                populators: {},
+              },
+              {
+                label: "Case Type",
+                isMandatory: false,
+                key: "caseType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "caseType",
+                  options: ["caseType"],
+                  styles: {
+                    maxWidth: "300px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Case ID and Title",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "caseTitleFilingNumber",
+                  placeholder: "Case ID and Title",
+                  error: "BR_PATTERN_ERR_MSG",
+                  validation: {
+                    pattern: {},
+                    minlength: 1,
+                  },
+                },
+              },
+            ],
           },
-          {
-            label: "Case Name",
-            jsonPath: "caseTitle",
+          children: {},
+          show: true,
+        },
+        searchResult: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          label: "",
+          uiConfig: {
+            columns: [
+              {
+                label: "Case Name & ID",
+                jsonPath: "businessObject.billDetails.caseTitleFilingNumber",
+                additionalCustomization: true,
+              },
+              {
+                label: "Amount Due",
+                jsonPath: "businessObject.billDetails.amount",
+                additionalCustomization: true,
+              },
+              {
+                label: "Stage",
+                jsonPath: "businessObject.billDetails.stage",
+              },
+              {
+                label: "Case Type",
+                jsonPath: "businessObject.billDetails.caseType",
+              },
+              {
+                label: "Payment Type",
+                jsonPath: "businessObject.billDetails.paymentType",
+              },
+              {
+                label: "Action",
+                jsonPath: "businessObject.billDetails.id",
+                additionalCustomization: true,
+              },
+            ],
+            enableColumnSort: true,
+            resultsJsonPath: "items",
           },
-          {
-            label: "Case Type",
-            jsonPath: "caseType",
-            additionalCustomization: true,
-          },
-          {
-            label: "Stage",
-            jsonPath: "substage",
-          },
-          // {
-          //   label: "Amount Due",
-          //   jsonPath: "amountDue",
-          //   additionalCustomization: true,
-          // },
-          {
-            label: "Action",
-            jsonPath: "id",
-            additionalCustomization: true,
-          },
-        ],
-        enableGlobalSearch: false,
-        enableColumnSort: true,
-        resultsJsonPath: "criteria[0].responseList",
+          show: true,
+        },
       },
-      children: {},
-      show: true,
     },
-  },
-  additionalSections: {},
-  additionalDetails: { filingNumber: "", stage: "", sortBy: "sortCaseListByDate" },
+  ],
 };

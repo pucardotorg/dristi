@@ -69,3 +69,11 @@ export const formatDate = (date) => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+
+export const getSuffixByBusinessCode = (paymentType = [], businessCode) => {
+  return paymentType?.find((data) => data?.businessService?.some((businessService) => businessService?.businessCode === businessCode))?.suffix || "";
+};
+
+export const getTaxPeriodByBusinessService = (taxPeriod = [], businessService) => {
+  return taxPeriod?.find((data) => data?.service === businessService) || {};
+};
