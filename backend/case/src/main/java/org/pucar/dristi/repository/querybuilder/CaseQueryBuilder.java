@@ -190,7 +190,7 @@ public class CaseQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
 //            query.append(FROM_CASES_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            boolean firstCriteria = false; // To check if it's the first criteria
             if (criteria != null) {
 
                 firstCriteria = addCriteria(criteria.getCaseId(), query, firstCriteria, "dc.id = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
@@ -315,7 +315,7 @@ public class CaseQueryBuilder {
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
-            query.append(" AND ");
+            query.append(" WHERE ");
         } else {
             query.append(AND);
         }
