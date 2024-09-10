@@ -35,10 +35,13 @@ jobs:
         run: |
           snyk test --all-projects --sarif --debug > snyk-backend.sarif
         working-directory: backend
-      - name: Upload SARIF results to the GitHub Security Dashboard
+
+      - name: Upload SARIF results for Maven Backend
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: backend/snyk-backend.sarif
+          category: 'maven-backend'
+
       - name: Snyk Test for Maven Common
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -46,18 +49,23 @@ jobs:
         run: |
           snyk test --all-projects --sarif --debug > snyk-common.sarif
         working-directory: common
-      - name: Upload SARIF results to the GitHub Security Dashboard
+
+      - name: Upload SARIF results for Maven Common
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: common/snyk-common.sarif
+          category: 'maven-common'
+
       - name: Snyk Test for Frontend
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
-          snyk test --all-projects --sarif --debug > snyk-common.sarif
+          snyk test --all-projects --sarif --debug > snyk-frontend.sarif
         working-directory: frontend
-      - name: Upload SARIF results to the GitHub Security Dashboard
+
+      - name: Upload SARIF results for Frontend
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: frontend/snyk-frontend.sarif
+          category: 'frontend'
