@@ -44,11 +44,11 @@ const MarkAttendance = ({ handleModal, attendees = [], hearingData = {}, setAddP
     });
     try {
       const hearing = { ...hearingData, attendees: updatedAttendees };
-      hearingService.updateHearingTranscript({ tenantId, hearing, hearingType: "", status: "" }, "");
+      hearingService.updateHearingTranscript({ tenantId, hearing, hearingType: "", status: "" }, "").then(() => refetchHearing());
     } catch (error) {
+      refetchHearing();
       console.error("Error updating hearing:", error);
     }
-    refetchHearing?.();
     handleAttendees();
     setFormError("");
   };
