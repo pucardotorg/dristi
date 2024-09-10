@@ -51,6 +51,8 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+  const CustomCaseInfoDiv = Digit.ComponentRegistryService.getComponent("CustomCaseInfoDiv") || <React.Fragment></React.Fragment>;
+  const CustomChooseDate = Digit.ComponentRegistryService.getComponent("CustomChooseDate") || <React.Fragment></React.Fragment>;
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const [nextFiveDates, setNextFiveDates] = useState([]);
@@ -203,6 +205,23 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
     }
   }, [dateResponse]);
 
+  const shortCaseInfo = useMemo(() => {
+    return [
+      {
+        key: "CASE_NUMBER",
+        value: caseDetails?.filingNumber,
+      },
+      {
+        key: "COURT_NAME",
+        value: courtDetails?.name,
+      },
+      {
+        key: "CASE_TYPE",
+        value: caseDetails?.Case_Type || "NIA S 138",
+      },
+    ];
+  }, [caseDetails]);
+
   return (
     <div>
       <Modal
@@ -217,30 +236,9 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
         popupStyles={{ width: "50%", height: "auto" }}
         isDisabled={selectedDate === null}
       >
-        <Card style={{ marginTop: "20px" }}>
-          <div className="case-card">
-            <div className="case-details">
-              Case Number:
-              <div> {caseDetails?.filingNumber} </div>
-            </div>
-            <div className="case-details">
-              Court Name:
-              <div> {courtDetails?.name} </div>
-            </div>
-            <div className="case-details">
-              Case Type:
-              <div> {caseDetails?.Case_Type || "NIA S 138"} </div>
-            </div>
-          </div>
-        </Card>
-        <div style={{ margin: "10px" }}>Select a Date</div>
-        <Card>
-          <div className="case-card">
-            {nextFiveDates.map((date, index) => (
-              <DateCard key={index} date={date} isSelected={selectedDate === date} onClick={() => setSelectedDate(date)} />
-            ))}
-          </div>
-        </Card>
+        <div style={{ marginTop: "20px" }}>{shortCaseInfo && <CustomCaseInfoDiv t={t} data={shortCaseInfo} style={{ marginTop: "24px" }} />}</div>
+        <div style={{ marginTop: "20px", marginBottom: "10px" }}>Select a Date</div>
+        <CustomChooseDate data={nextFiveDates} selectedChip={selectedDate} handleClick={(date) => setSelectedDate(date)} />
         {isCustomDateSelected ? (
           <div className="footClass">
             {formatDateInMonth(selectedCustomDate)}{" "}
