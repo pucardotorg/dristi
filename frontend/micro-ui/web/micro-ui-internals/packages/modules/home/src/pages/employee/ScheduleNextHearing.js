@@ -243,8 +243,7 @@ function ScheduleNextHearing({
     {
       SearchCriteria: {
         tenantId: Digit.ULBService.getCurrentTenantId(),
-        hearingBookingId: referenceId,
-        status: "ACTIVE",
+        rescheduledRequestId: [referenceId],
       },
     },
     { limit: 1, offset: 0 },
@@ -368,14 +367,30 @@ function ScheduleNextHearing({
             tenantId: tenantId,
             individualId: individualId,
             caseId: filingNumber,
-            rescheduleRequestId: applicationData?.applicationList[0]?.applicationNumber,
+            rescheduleRequestId: referenceId,
             judgeId: "super",
             optOutDates: selectedChip,
           },
         },
         {}
       )
-        .then(() => {
+        .then(async () => {
+          await HomeService.customApiService(Urls.pendingTask, {
+            pendingTask: {
+              name: "Completed",
+              entityType: "order-default",
+              referenceId: `MANUAL_${referenceId}`,
+              status: "DRAFT_IN_PROGRESS",
+              assignedTo: [],
+              assignedRole: [],
+              cnrNumber: cnrNumber,
+              filingNumber: filingNumber,
+              isCompleted: true,
+              stateSla: null,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
           setIsSubmitDisabled(false);
           setSucessOptOut(true);
         })

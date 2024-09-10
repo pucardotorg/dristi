@@ -256,8 +256,7 @@ function ScheduleHearing({
     {
       SearchCriteria: {
         tenantId: Digit.ULBService.getCurrentTenantId(),
-        hearingBookingId: referenceId,
-        status: "ACTIVE",
+        rescheduledRequestId: [referenceId],
       },
     },
     { limit: 1, offset: 0 },
@@ -405,7 +404,7 @@ function ScheduleHearing({
             tenantId: tenantId,
             individualId: individualId?.individualId,
             caseId: filingNumber,
-            rescheduleRequestId: applicationData?.applicationList[0]?.applicationNumber,
+            rescheduleRequestId: referenceId,
             judgeId: "super",
             optOutDates: selectedChip,
           },
@@ -418,7 +417,7 @@ function ScheduleHearing({
             pendingTask: {
               name: "Completed",
               entityType: "order-default",
-              referenceId: `MANUAL_${individualId?.userUuid}_${applicationData?.applicationList[0]?.additionalDetails?.hearingId}`,
+              referenceId: `MANUAL_${individualId?.userUuid}_${referenceId}`,
               status: "DRAFT_IN_PROGRESS",
               assignedTo: [],
               assignedRole: [],
