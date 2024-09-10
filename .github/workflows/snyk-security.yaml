@@ -28,13 +28,36 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
 
-      - name: Snyk Test for Node.js and Maven
+      - name: Snyk Test for Maven Backend
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
-          snyk test --all-projects --sarif --debug > snyk-results.sarif
+          snyk test --all-projects --sarif --debug > snyk-backend.sarif
+        working-directory: backend
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-results.sarif
+          sarif_file: snyk-backend.sarif
+      - name: Snyk Test for Maven Common
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+        run: |
+          snyk test --all-projects --sarif --debug > snyk-common.sarif
+        working-directory: common
+      - name: Upload SARIF results to the GitHub Security Dashboard
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-common.sarif
+      - name: Snyk Test for Frontend
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+        run: |
+          snyk test --all-projects --sarif --debug > snyk-common.sarif
+        working-directory: frontend
+      - name: Upload SARIF results to the GitHub Security Dashboard
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-frontend.sarif
