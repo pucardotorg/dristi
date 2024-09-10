@@ -38,7 +38,7 @@ jobs:
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-backend.sarif
+          sarif_file: backend/snyk-backend.sarif
       - name: Snyk Test for Maven Common
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-common.sarif
+          sarif_file: common/snyk-common.sarif
       - name: Snyk Test for Frontend
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -60,4 +60,4 @@ jobs:
       - name: Upload SARIF results to the GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-frontend.sarif
+          sarif_file: frontend/snyk-frontend.sarif
