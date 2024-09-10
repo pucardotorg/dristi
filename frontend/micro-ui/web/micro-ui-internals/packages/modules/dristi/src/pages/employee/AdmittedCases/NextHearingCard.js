@@ -30,7 +30,8 @@ const NextHearingCard = ({ caseData, width }) => {
     cnr + filingNumber,
     true
   );
-  const scheduledHearing = hearingRes?.HearingList?.filter((hearing) => hearing.status !== "COMPLETED").sort(
+
+  const scheduledHearing = hearingRes?.HearingList?.filter((hearing) => !["COMPLETED", "OPTOUT"].includes(hearing?.status)).sort(
     (hearing1, hearing2) => hearing1.startTime - hearing2.startTime
   )[0];
 
