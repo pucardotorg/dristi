@@ -50,7 +50,7 @@ public class PendingTaskUtilTest {
 
         PendingTask pendingTask = pendingTaskUtil.createPendingTask(reScheduleHearing);
 
-        assertEquals(reScheduleHearing.getRescheduledRequestId(), pendingTask.getReferenceId());
+        assertEquals("MANUAL_"+reScheduleHearing.getRescheduledRequestId(), pendingTask.getReferenceId());
         assertEquals(reScheduleHearing.getCaseId(), pendingTask.getFilingNumber());
     }
 

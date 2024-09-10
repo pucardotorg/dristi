@@ -170,4 +170,7 @@ public class Configuration {
 
     @Value("${drishti.judge.pending.due.days}")
     private Long judgePendingSla;
+
+    @Value("${order.businessservice}")
+    private String orderEntityType;
 }
