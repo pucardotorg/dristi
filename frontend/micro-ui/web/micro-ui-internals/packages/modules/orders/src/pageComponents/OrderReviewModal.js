@@ -7,7 +7,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
-  const filestoreId = "c4fef888-6d43-404f-8d37-63cae7651619";
+  const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
