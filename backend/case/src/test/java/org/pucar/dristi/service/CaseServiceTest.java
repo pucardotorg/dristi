@@ -6,8 +6,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -31,8 +32,11 @@ import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.BillingUtil;
+import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
+import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseServiceTest {
@@ -49,6 +53,8 @@ public class CaseServiceTest {
     private Configuration config;
     @Mock
     private Producer producer;
+    @Mock
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @InjectMocks
     private CaseService caseService;
@@ -63,6 +69,8 @@ public class CaseServiceTest {
     private CaseSearchRequest caseSearchRequest;
 
     private CaseExistsRequest caseExistsRequest;
+
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
@@ -83,6 +91,8 @@ public class CaseServiceTest {
         joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setAdditionalDetails("form-data");
         courtCase = new CourtCase();
+        objectMapper = new ObjectMapper();
+        caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper);
     }
     @Test
     void testCreateCase() {
@@ -90,6 +100,8 @@ public class CaseServiceTest {
         doNothing().when(validator).validateCaseRegistration(any());
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any());
         doNothing().when(workflowService).updateWorkflowStatus(any());
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(caseRequest.getCases());
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),any(),any())).thenReturn(caseRequest.getCases());
         doNothing().when(producer).push(any(), any()); // Stubbing to accept any arguments
 
         // Call the method under test
@@ -143,6 +155,10 @@ public class CaseServiceTest {
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setLitigants(Collections.singletonList(litigant));
+
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getCases(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
@@ -153,6 +169,7 @@ public class CaseServiceTest {
         joinCaseRequest.setLitigant(litigant);
 
         when(validator.canLitigantJoinCase(joinCaseRequest)).thenReturn(true);
+        when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
@@ -183,6 +200,9 @@ public class CaseServiceTest {
         requestInfo.setUserInfo(new User());
         joinCaseRequest.setRequestInfo(requestInfo);
 
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
         CustomException exception = assertThrows(CustomException.class, () -> caseService.verifyJoinCaseRequest(joinCaseRequest));
 
         assertEquals("VALIDATION_EXCEPTION", exception.getCode());
@@ -203,6 +223,9 @@ public class CaseServiceTest {
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setRepresentatives(Collections.singletonList(representative));
 
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getCases(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
@@ -212,6 +235,7 @@ public class CaseServiceTest {
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setRepresentative(representative);
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+        when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
@@ -221,7 +245,7 @@ public class CaseServiceTest {
     }
 
     @Test
-    void testVerifyJoinCaseRequest_DisableExistingRepresenting() {
+    void testVerifyJoinCaseRequest_DisableExistingRepresenting() throws JsonProcessingException {
         // Prepare data for the test
         String filingNumber = "filing-number";
         joinCaseRequest.setCaseFilingNumber(filingNumber);
@@ -248,6 +272,68 @@ public class CaseServiceTest {
         AdvocateMapping advocateMapping2 = AdvocateMapping.builder().advocateId("333").representing(Collections.singletonList(party1)).isActive(true).auditDetails(new AuditDetails()).build();
         joinCaseRequest.setRepresentative(advocateMapping2);
 
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        String additionalDetails1Json = """
+        {
+            "advocateDetails": {
+                "advocateName": "John Doe",
+                "advocateId": "ADV-2024-01"
+            },
+            "respondentDetails": {
+                "formdata": [
+                    {
+                        "data": {
+                            "respondentLastName": "Doe",
+                            "respondentFirstName": "John",
+                            "respondentMiddleName": "M",
+                            "respondentVerification": {
+                                "individualDetails": {
+                                    "individualId": "IND-2024-08-21-002193",
+                                    "document": null
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        """;
+
+        String additionalDetails2Json = """
+        {
+            "caseId": "CASE-2024-01",
+            "advocateDetails": {
+                "advocateName": "Jane Smith",
+                "advocateId": "ADV-2024-02"
+            },
+            "respondentDetails": {
+                "formdata": [
+                    {
+                        "data": {
+                            "respondentVerification": {
+                                "individualDetails": {
+                                    "individualId": "IND-2024-08-21-002193",
+                                    "document": "SomeDocument"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        """;
+        Object additionalDetails1 = objectMapper.readValue(additionalDetails1Json, Object.class);
+        Object additionalDetails2 = objectMapper.readValue(additionalDetails2Json, Object.class);
+        courtCase.setAdditionalDetails(additionalDetails1);
+        joinCaseRequest.setAdditionalDetails(additionalDetails2);
+        when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
+        when(config.getCourtCaseEncrypt()).thenReturn("CourtCase");
+
         // Call the method
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
 
@@ -256,7 +342,7 @@ public class CaseServiceTest {
     }
 
     @Test
-    public void testVerifyJoinCaseRequest_Success() {
+    public void testVerifyJoinCaseRequest_Success() throws JsonProcessingException {
         Party litigant = new Party();
         litigant.setIndividualId("newLitigant");
         AdvocateMapping advocate = new AdvocateMapping();
@@ -272,10 +358,71 @@ public class CaseServiceTest {
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setLitigant(litigant);
         joinCaseRequest.setAdditionalDetails("form-data");
+        String additionalDetails1Json = """
+        {
+            "advocateDetails": {
+                "advocateName": "John Doe",
+                "advocateId": "ADV-2024-01"
+            },
+            "respondentDetails": {
+                "formdata": [
+                    {
+                        "data": {
+                            "respondentLastName": "Doe",
+                            "respondentFirstName": "John",
+                            "respondentMiddleName": "M",
+                            "respondentVerification": {
+                                "individualDetails": {
+                                    "individualId": "IND-2024-08-21-002193",
+                                    "document": null
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        """;
+
+        String additionalDetails2Json = """
+        {
+            "caseId": "CASE-2024-01",
+            "advocateDetails": {
+                "advocateName": "Jane Smith",
+                "advocateId": "ADV-2024-02"
+            },
+            "respondentDetails": {
+                "formdata": [
+                    {
+                        "data": {
+                            "respondentVerification": {
+                                "individualDetails": {
+                                    "individualId": "IND-2024-08-21-002193",
+                                    "document": "SomeDocument"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        """;
+        Object additionalDetails1 = objectMapper.readValue(additionalDetails1Json, Object.class);
+        Object additionalDetails2 = objectMapper.readValue(additionalDetails2Json, Object.class);
+        courtCase.setAdditionalDetails(additionalDetails1);
+        joinCaseRequest.setAdditionalDetails(additionalDetails2);
+        when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
+        when(config.getCourtCaseEncrypt()).thenReturn("CourtCase");
 
         joinCaseRequest.setRepresentative(advocate);
         when(validator.canLitigantJoinCase(joinCaseRequest)).thenReturn(true);
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+
+        when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
         assertEquals("validAccessCode", response.getJoinCaseRequest().getAccessCode());
@@ -389,8 +536,12 @@ public class CaseServiceTest {
         when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(courtCase);
+
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
         when(config.getCaseUpdateTopic()).thenReturn("case-update-topic");
+
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),eq(CourtCase.class),any())).thenReturn(courtCase);
 
         // Execute
         CourtCase results = caseService.updateCase(caseRequest);
@@ -499,8 +650,8 @@ public class CaseServiceTest {
         doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
-
-
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(cases);
+        when(encryptionDecryptionUtil.decryptObject(any(),any(),any(),any())).thenReturn(cases);
         CourtCase result = caseService.createCase(caseRequest);
 
         assertNotNull(result);
@@ -534,9 +685,14 @@ public class CaseServiceTest {
         caseExists.setExists(true);
         List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
 
+        CourtCase caseObj = CourtCase.builder()
+                .filingNumber(addWitnessRequest.getCaseFilingNumber())
+                .additionalDetails(addWitnessRequest.getAdditionalDetails())
+                .build();
+
         when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
         when(config.getAdditionalJoinCaseTopic()).thenReturn("topic");
-
+        when(encryptionDecryptionUtil.encryptObject(any(), any(), any())).thenReturn(caseObj);
         AddWitnessResponse response = caseService.addWitness(addWitnessRequest);
 
         verify(producer, times(1)).push(eq("topic"), eq(addWitnessRequest));
