@@ -1769,7 +1769,7 @@ const GenerateOrders = () => {
   };
 
   const handleReviewOrderClick = () => {
-    if (orderType === "SCHEDULE_OF_HEARING_DATE" && isHearingAlreadyScheduled) {
+    if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType) && isHearingAlreadyScheduled) {
       setShowErrorToast({
         label: t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE"),
         error: true,
