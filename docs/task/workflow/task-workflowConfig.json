@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task",
-      "business": "task-default",
+      "business": "task",
+      "businessService": "task-default",
       "businessServiceSla": null,
       "states": [
         {
