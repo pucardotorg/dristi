@@ -15,7 +15,7 @@ import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import DocViewerWrapper from "../docViewerWrapper";
 import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
-
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
 };
@@ -44,7 +44,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const todayDate = new Date().getTime();
   const [formData, setFormData] = useState({});
   const [showFileIcon, setShowFileIcon] = useState(false);
-
+  const { downloadPdf } = useDownloadCasePdf();
   const setData = (data) => {
     setFormData(data);
   };
@@ -617,7 +617,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       await submitCommentEvidence(newComment);
     }
   };
+
+  const signedSubmission = useMemo(() => {
+    return documentSubmission?.filter((item) => item?.applicationContent?.documentType === "SIGNED")?.[0] || {};
+  }, [documentSubmission]);
+
   const actionSaveOnSubmit = async () => {
+    if (actionSaveLabel === t("DOWNLOAD_SUBMISSION") && signedSubmission?.applicationContent?.fileStoreId) {
+      downloadPdf(tenantId, signedSubmission?.applicationContent?.fileStoreId);
+      return;
+    }
     if (userType === "employee") {
       modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
     } else {

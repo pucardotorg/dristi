@@ -43,15 +43,16 @@ async function summonsIssue(req, res, qrCode) {
             renderError(res, "Court case not found", 404);
         }
         
+        // FIXME: Commenting out HRMS calls is it not impl in solution
         // Search for HRMS details
-        const resHrms = await handleApiCall(
-            () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-            "Failed to query HRMS service"
-        );
-        const employee = resHrms?.data?.Employees[0];
-        if (!employee) {
-            renderError(res, "Employee not found", 404);
-        }
+        // const resHrms = await handleApiCall(
+        //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+        //     "Failed to query HRMS service"
+        // );
+        // const employee = resHrms?.data?.Employees[0];
+        // if (!employee) {
+        //     renderError(res, "Employee not found", 404);
+        // }
 
         // Search for MDMS court room details
         const resMdms = await handleApiCall(
@@ -63,15 +64,16 @@ async function summonsIssue(req, res, qrCode) {
             renderError(res, "Court room MDMS master not found", 404);
         }
 
+        // FIXME: Commenting out MDMS calls is it not impl in solution
         // Search for MDMS court establishment details
-        const resMdms1 = await handleApiCall(
-            () => search_mdms(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo),
-            "Failed to query MDMS service for court establishment"
-        );
-        const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
-        if (!mdmsCourtEstablishment) {
-            renderError(res, "Court establishment MDMS master not found", 404);
-        }
+        // const resMdms1 = await handleApiCall(
+        //     () => search_mdms(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo),
+        //     "Failed to query MDMS service for court establishment"
+        // );
+        // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
+        // if (!mdmsCourtEstablishment) {
+        //     renderError(res, "Court establishment MDMS master not found", 404);
+        // }
         
         // Search for order details
         const resOrder = await handleApiCall(
@@ -91,21 +93,6 @@ async function summonsIssue(req, res, qrCode) {
         const hearing = resHearing?.data?.HearingList[0];
         if (!hearing) {
             renderError(res, "Hearing not found", 404);
-        }
-
-        // Filter litigants to find the respondent.primary
-        const respondentParty = courtCase.litigants.find(party => party.partyType === 'respondent.primary');
-        if (!respondentParty) {
-            return renderError(res, "No party with partyType 'respondent.primary' found", 400);
-        }
-        // Search for individual details
-        const resIndividual = await handleApiCall(
-            () => search_individual(tenantId, respondentParty.individualId, requestInfo),
-            "Failed to query individual service using individualId"
-        );
-        const respondentIndividual = resIndividual?.data?.Individual[0];
-        if (!respondentIndividual) {
-            renderError(res, "Respondent individual not found", 404);
         }
 
         // Handle QR code if enabled
@@ -139,19 +126,19 @@ async function summonsIssue(req, res, qrCode) {
             "Data": [
                 {
                     "courtName": mdmsCourtRoom.name,
-                    "place": mdmsCourtEstablishment.boundaryName,
-                    "state": mdmsCourtEstablishment.rootBoundaryName,
                     "caseNumber": courtCase.cnrNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
-                    "respondentName": `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
+                    "respondentName": order.orderDetails.respondentName,
                     "date": order.createdDate,
                     "hearingDate": hearing.startTime,
                     "additionalComments": order.comments,
                     "judgeSignature": "Judge Signature",
-                    "judgeName": employee.user.name,
                     "courtSeal": "Court Seal",
-                    "qrCodeUrl": base64Url
+                    "qrCodeUrl": base64Url,
+                    "place": "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
+                    "state": "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
+                    "judgeName": "John Watt", // FIXME: employee.user.name,
                 }
             ]
         };
@@ -162,8 +149,10 @@ async function summonsIssue(req, res, qrCode) {
             () => create_pdf(tenantId, pdfKey, data, req.body),
             "Failed to generate PDF of order for Issue of Summons"
         )
+        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/json",
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename=${filename}.pdf`
         });
         pdfResponse.data.pipe(res).on('finish', () => {
             res.end();

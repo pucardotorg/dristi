@@ -7,11 +7,11 @@ const {
   search_hrms,
   search_sunbirdrc_credential_service,
   create_pdf,
+  search_application,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
-const { formatDate } = require("./formatDate");
 
-async function orderGeneric(req, res, qrCode) {
+async function orderRejectCheckout(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
   const entityId = req.query.entityId;
@@ -57,11 +57,11 @@ async function orderGeneric(req, res, qrCode) {
     }
 
     // Search for HRMS details
-    // const resHrms = await handleApiCall(
-    //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-    //     "Failed to query HRMS service"
-    // );
-    // const employee = resHrms?.data?.Employees[0];
+    const resHrms = await handleApiCall(
+      () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+      "Failed to query HRMS service"
+    );
+    const employee = resHrms?.data?.Employees[0];
     // if (!employee) {
     //     renderError(res, "Employee not found", 404);
     // }
@@ -83,20 +83,19 @@ async function orderGeneric(req, res, qrCode) {
     }
 
     // Search for MDMS court establishment details
-
-    // const resMdms1 = await handleApiCall(
-    //   () =>
-    //     search_mdms(
-    //       mdmsCourtRoom.courtEstablishmentId,
-    //       "case.CourtEstablishment",
-    //       tenantId,
-    //       requestInfo
-    //     ),
-    //   "Failed to query MDMS service for court establishment"
-    // );
-    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
+    const resMdms1 = await handleApiCall(
+      () =>
+        search_mdms(
+          mdmsCourtRoom.courtEstablishmentId,
+          "case.CourtEstablishment",
+          tenantId,
+          requestInfo
+        ),
+      "Failed to query MDMS service for court establishment"
+    );
+    const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
     // if (!mdmsCourtEstablishment) {
-    //   renderError(res, "Court establishment MDMS master not found", 404);
+    //     renderError(res, "Court establishment MDMS master not found", 404);
     // }
 
     // Search for order details
@@ -105,9 +104,23 @@ async function orderGeneric(req, res, qrCode) {
       "Failed to query order service"
     );
     const order = resOrder?.data?.list[0];
-    if (!order) {
-      renderError(res, "Order not found", 404);
-    }
+    // if (!order) {
+    //   renderError(res, "Order not found", 404);
+    // }
+    // const resApplication = await handleApiCall(
+    //   () =>
+    //     search_application(
+    //       tenantId,
+    //       order?.additionalDetails?.formdata?.refApplicationId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query application service"
+    // );
+    // const application = resApplication?.data?.applicationList[0];
+    // if (!application) {
+    //   return renderError(res, "Application not found", 404);
+    // }
+    // const partyName = application?.additionalDetails?.onBehalOfName || "";
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -133,21 +146,23 @@ async function orderGeneric(req, res, qrCode) {
       }
       base64Url = imgTag.attr("src");
     }
-
-    const currentDate = new Date();
-    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     // Prepare data for PDF generation
     const data = {
       Data: [
         {
-          courtName: "Keral High Court",
+          courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.cnrNumber,
           orderName: order.orderNumber,
-          date: formattedToday,
-          orderContent: order.comments,
+          submissionType: "Application",
+          submissionDate: "11-11-1111",
+          date: "From the UI",
+          Date: "From the UI",
+          partyName: "",
+          content: order?.comments || "",
+          additionalDetails: order?.comments || "",
           judgeSignature: "Judge Signature",
-          judgeName: "Suresh Soren",
+          judgeName: "John Doe",
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,
         },
@@ -157,11 +172,11 @@ async function orderGeneric(req, res, qrCode) {
     // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_generic_qr
-        : config.pdf.order_generic;
+        ? config.pdf.order_reject_checkout_qr
+        : config.pdf.order_reject_checkout;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of generic order"
+      "Failed to generate PDF of acceptance of checkout request"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;
@@ -180,11 +195,11 @@ async function orderGeneric(req, res, qrCode) {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of generic order",
+      "Failed to query details of Acceptance of Checkout Request",
       500,
       ex
     );
   }
 }
 
-module.exports = orderGeneric;
+module.exports = orderRejectCheckout;

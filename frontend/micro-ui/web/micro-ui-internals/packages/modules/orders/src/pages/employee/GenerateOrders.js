@@ -145,12 +145,14 @@ const GenerateOrders = () => {
   const [signedDoucumentUploadedID, setSignedDocumentUploadID] = useState("");
   const [newHearingNumber, setNewHearingNumber] = useState(null);
   const [createdSummon, setCreatedSummon] = useState(null);
+  const [orderPdfFileStoreID, setOrderPdfFileStoreID] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
   const setFormErrors = useRef(null);
   const [currentFormData, setCurrentFormData] = useState(null);
   const roles = Digit.UserService.getUser()?.info?.roles;
   const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
+  const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -762,17 +764,17 @@ const GenerateOrders = () => {
               ...item,
               data: {
                 ...item.data,
-                firstName: item.data.respondentFirstName,
-                lastName: item.data.respondentLastName,
-                address: item.data.addressDetails.map((address) => ({
-                  locality: address.addressDetails.locality,
+                firstName: item?.data?.respondentFirstName,
+                lastName: item?.data?.respondentLastName,
+                address: item?.data?.addressDetails.map((address) => ({
+                  locality: address?.addressDetails?.locality,
                   city: address.addressDetails.city,
-                  district: address.addressDetails.district,
-                  pincode: address.addressDetails.pincode,
+                  district: address?.addressDetails?.district,
+                  pincode: address?.addressDetails?.pincode,
                 })),
                 partyType: "Respondent",
-                phone_numbers: item.data.phonenumbers?.mobileNumber || [],
-                email: item.data.emails?.emailId,
+                phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
+                email: item?.data?.emails?.emailId,
               },
             }))?.[0],
           selectedChannels: currentOrder?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels,
@@ -935,9 +937,12 @@ const GenerateOrders = () => {
               fileStore: signedDoucumentUploadedID || localStorageID,
             }
           : null;
-
-      localStorage.removeItem("fileStoreId");
-      const orderSchema = {};
+      let orderSchema = {};
+      try {
+        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      } catch (error) {
+        console.log(error);
+      }
 
       return await ordersService.updateOrder(
         {
@@ -957,8 +962,12 @@ const GenerateOrders = () => {
 
   const createOrder = async (order) => {
     try {
-      // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
-      const orderSchema = {};
+      let orderSchema = {};
+      try {
+        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+      } catch (error) {
+        console.log(error);
+      }
       // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
 
       return await ordersService.createOrder(
@@ -970,7 +979,9 @@ const GenerateOrders = () => {
         },
         { tenantId }
       );
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleAddOrder = () => {
@@ -1716,7 +1727,7 @@ const GenerateOrders = () => {
       setLoader(false);
       setShowSuccessModal(true);
     } catch (error) {
-      showErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
+      setShowErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
       setLoader(false);
     }
   };
@@ -1759,6 +1770,8 @@ const GenerateOrders = () => {
     setSelectedOrder(index);
   };
   const handleDownloadOrders = () => {
+    const fileStoreId = localStorage.getItem("fileStoreId");
+    downloadPdf(tenantId, signedDoucumentUploadedID || fileStoreId);
     // setShowSuccessModal(false);
     // history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
     //   from: "orderSuccessModal",
@@ -1821,6 +1834,7 @@ const GenerateOrders = () => {
       history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
         from: "orderSuccessModal",
       });
+      localStorage.removeItem("fileStoreId");
       setShowSuccessModal(false);
       return;
     }
@@ -1915,6 +1929,7 @@ const GenerateOrders = () => {
           order={currentOrder}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
+          setOrderPdfFileStoreID={setOrderPdfFileStoreID}
           showActions={canESign}
         />
       )}
@@ -1925,6 +1940,7 @@ const GenerateOrders = () => {
           handleIssueOrder={handleIssueOrder}
           handleGoBackSignatureModal={handleGoBackSignatureModal}
           setSignedDocumentUploadID={setSignedDocumentUploadID}
+          orderPdfFileStoreID={orderPdfFileStoreID}
           saveOnsubmitLabel={"ISSUE_ORDER"}
         />
       )}

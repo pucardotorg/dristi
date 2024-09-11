@@ -22,7 +22,6 @@ async function acceptReschedulingRequest(req, res, qrCode) {
     const cnrNumber = req.query.cnrNumber;
     const orderId = req.query.orderId;
     const tenantId = req.query.tenantId;
-    const orderDate = req.query.date;
     const entityId = req.query.entityId;
     const code = req.query.code;
     const requestInfo = req.body.RequestInfo;
@@ -31,7 +30,6 @@ async function acceptReschedulingRequest(req, res, qrCode) {
     if (!cnrNumber) missingFields.push("cnrNumber");
     if (!orderId) missingFields.push("orderId");
     if (!tenantId) missingFields.push("tenantId");
-    if (!orderDate) missingFields.push("date")
     if (requestInfo === undefined) missingFields.push("requestInfo");
     if (qrCode === 'true' && (!entityId || !code)) missingFields.push("entityId and code");
 
@@ -60,15 +58,16 @@ async function acceptReschedulingRequest(req, res, qrCode) {
             renderError(res, "Court case not found", 404);
         }
 
+        // FIXME: Commenting out HRMS calls is it not impl in solution
         // Search for HRMS details
-        const resHrms = await handleApiCall(
-            () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-            "Failed to query HRMS service"
-        );
-        const employee = resHrms?.data?.Employees[0];
-        if (!employee) {
-            renderError(res, "Employee not found", 404);
-        }
+        // const resHrms = await handleApiCall(
+        //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+        //     "Failed to query HRMS service"
+        // );
+        // const employee = resHrms?.data?.Employees[0];
+        // if (!employee) {
+        //     renderError(res, "Employee not found", 404);
+        // }
 
         // Search for MDMS court room details
         const resMdms = await handleApiCall(
@@ -101,14 +100,14 @@ async function acceptReschedulingRequest(req, res, qrCode) {
         }
 
         // Search for individual details
-        const resIndividual = await handleApiCall(
-            () => search_individual_uuid(tenantId, application.onBehalfOf[0], requestInfo),
-            "Failed to query individual service using id"
-        );
-        const individual = resIndividual?.data?.Individual[0];
-        if (!individual) {
-            renderError(res, "Individual not found", 404);
-        }
+        // const resIndividual = await handleApiCall(
+        //     () => search_individual_uuid(tenantId, application.onBehalfOf[0], requestInfo),
+        //     "Failed to query individual service using id"
+        // );
+        // const individual = resIndividual?.data?.Individual[0];
+        // if (!individual) {
+        //     renderError(res, "Individual not found", 404);
+        // }
 
         // Handle QR code if enabled
         let base64Url = "";
@@ -139,15 +138,17 @@ async function acceptReschedulingRequest(req, res, qrCode) {
                     "caseName": courtCase.caseTitle,
                     "caseNumber": courtCase.cnrNumber,
                     "date": stringDate,
-                    "partyNames": `${individual.name.givenName} ${individual.name.familyName}`,
-                    "applicationId": order.applicationNumber[0],
-                    "reasonForRescheduling": application.applicationType,
-                    "originalHearingDate": orderDate,
+                    "partyNames": application.additionalDetails.onBehalOfName,
+                    "applicationId": order.orderDetails?.refApplicationId || "N/A",
+                    "reasonForRescheduling": application?.additionalDetails?.formdata?.reschedulingReason?.name || "N/A",
+                    "originalHearingDate": order.orderDetails?.originalHearingDate ? formatDate(order.orderDetails?.originalHearingDate) : "",
                     "additionalComments": order.comments,
                     "judgeSignature": "Judge Signature",
-                    "judgeName": employee.user.name,
                     "courtSeal": "Court Seal",
-                    "qrCodeUrl": base64Url
+                    "qrCodeUrl": base64Url,
+                    "place": "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
+                    "state": "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
+                    "judgeName": "John Watt", // FIXME: employee.user.name,
                 }
 
             ]
@@ -159,8 +160,10 @@ async function acceptReschedulingRequest(req, res, qrCode) {
             () => create_pdf(tenantId, pdfKey, data, req.body),
             "Failed to generate PDF of order to Accept Rescheduling Request (No New Date)"
         )
+        const filename = `${pdfKey}_${new Date().getTime()}`;
         res.writeHead(200, {
-            "Content-Type": "application/json",
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename=${filename}.pdf`
         });
         pdfResponse.data.pipe(res).on('finish', () => {
             res.end();

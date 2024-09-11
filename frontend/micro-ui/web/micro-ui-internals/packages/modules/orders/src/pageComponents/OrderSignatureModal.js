@@ -6,7 +6,6 @@ import { FileUploadIcon } from "../../../dristi/src/icons/svgIndex";
 import useESign from "../hooks/orders/useESign";
 import { Urls } from "../hooks/services/Urls";
 import useDocumentUpload from "../hooks/orders/useDocumentUpload";
-import { getFilestoreId } from "@egovernments/digit-ui-module-dristi/src/Utils/fileStoreUtil";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -20,17 +19,23 @@ const CloseBtn = (props) => {
   );
 };
 
-function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignatureModal, saveOnsubmitLabel, setSignedDocumentUploadID }) {
+function OrderSignatureModal({
+  t,
+  order,
+  handleIssueOrder,
+  handleGoBackSignatureModal,
+  saveOnsubmitLabel,
+  setSignedDocumentUploadID,
+  orderPdfFileStoreID,
+}) {
   const [isSigned, setIsSigned] = useState(false);
   const { handleEsign, checkSignStatus } = useESign();
-  const fileStoreIdESign = getFilestoreId();
   const [formData, setFormData] = useState({}); // storing the file upload data
   const [openUploadSignatureModal, setOpenUploadSignatureModal] = useState(false);
   const UploadSignatureModal = window?.Digit?.ComponentRegistryService?.getComponent("UploadSignatureModal");
-  const [fileStoreId, setFileStoreId] = useState("c162c182-103f-463e-99b6-18654ed7a5b1"); // have to set the uploaded fileStoreID
   const [pageModule, setPageModule] = useState("en");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${orderPdfFileStoreID}`;
   const { uploadDocuments } = useDocumentUpload();
   const name = "Signature";
   const uploadModalConfig = useMemo(() => {
@@ -45,7 +50,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
             maxFileErrorMessage: "CS_FILE_LIMIT_5_MB",
-            fileTypes: ["JPG", "PNG", "JPEG"],
+            fileTypes: ["JPG", "PNG", "JPEG", "PDF"],
             isMultipleUpload: false,
           },
         ],
@@ -118,7 +123,7 @@ function OrderSignatureModal({ t, order, handleIssueOrder, handleGoBackSignature
                 onButtonClick={() => {
                   // setOpenAadharModal(true);
                   // setIsSigned(true);
-                  handleEsign(name, pageModule, fileStoreIdESign);
+                  handleEsign(name, pageModule, orderPdfFileStoreID);
                 }}
                 className={"aadhar-sign-in"}
                 labelClassName={"aadhar-sign-in"}

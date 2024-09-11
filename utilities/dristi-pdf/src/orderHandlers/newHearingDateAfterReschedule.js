@@ -60,15 +60,16 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
             renderError(res, "Court case not found", 404);
         }
 
+        // FIXME: Commenting out HRMS calls is it not impl in solution
         // Search for HRMS details
-        const resHrms = await handleApiCall(
-            () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-            "Failed to query HRMS service"
-        );
-        const employee = resHrms?.data?.Employees[0];
-        if (!employee) {
-            renderError(res, "Employee not found", 404);
-        }
+        // const resHrms = await handleApiCall(
+        //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+        //     "Failed to query HRMS service"
+        // );
+        // const employee = resHrms?.data?.Employees[0];
+        // if (!employee) {
+        //     renderError(res, "Employee not found", 404);
+        // }
 
         // Search for MDMS court room details
         const resMdms = await handleApiCall(
@@ -122,7 +123,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
                     "newHearingDate": orderDate,
                     "additionalComments": order.comments,
                     "judgeSignature": "Judge Signature",
-                    "judgeName": employee.user.name,
+                    "judgeName": "JUDGE_NAME", // FIXME: employee.user.name,
                     "courtSeal": "Court Seal",
                     "qrCodeUrl": base64Url
                 }

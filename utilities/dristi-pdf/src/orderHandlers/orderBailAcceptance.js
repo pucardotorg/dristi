@@ -2,30 +2,44 @@ const cheerio = require("cheerio");
 const config = require("../config");
 const {
   search_case,
-  search_order,
   search_mdms,
   search_hrms,
   search_sunbirdrc_credential_service,
+  search_application,
   create_pdf,
+  search_order,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
-const { formatDate } = require("./formatDate");
 
-async function orderGeneric(req, res, qrCode) {
+function getOrdinalSuffix(day) {
+  if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
+  switch (day % 10) {
+    case 1:
+      return "st"; // 1st, 21st, 31st
+    case 2:
+      return "nd"; // 2nd, 22nd
+    case 3:
+      return "rd"; // 3rd, 23rd
+    default:
+      return "th"; // 4th, 5th, 6th, etc.
+  }
+}
+
+const orderBailAcceptance = async (req, res, qrCode) => {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
+  const tenantId = req.query.tenantId;
   const entityId = req.query.entityId;
   const code = req.query.code;
-  const tenantId = req.query.tenantId;
   const requestInfo = req.body.RequestInfo;
 
   const missingFields = [];
   if (!cnrNumber) missingFields.push("cnrNumber");
   if (!orderId) missingFields.push("orderId");
   if (!tenantId) missingFields.push("tenantId");
+  if (requestInfo === undefined) missingFields.push("requestInfo");
   if (qrCode === "true" && (!entityId || !code))
     missingFields.push("entityId and code");
-  if (requestInfo === undefined) missingFields.push("requestInfo");
 
   if (missingFields.length > 0) {
     return renderError(
@@ -44,27 +58,16 @@ async function orderGeneric(req, res, qrCode) {
       throw ex; // Ensure the function stops on error
     }
   };
-
+  // Search for case details
   try {
-    // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
     );
     const courtCase = resCase?.data?.criteria[0]?.responseList[0];
     if (!courtCase) {
-      renderError(res, "Court case not found", 404);
+      return renderError(res, "Court case not found", 404);
     }
-
-    // Search for HRMS details
-    // const resHrms = await handleApiCall(
-    //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-    //     "Failed to query HRMS service"
-    // );
-    // const employee = resHrms?.data?.Employees[0];
-    // if (!employee) {
-    //     renderError(res, "Employee not found", 404);
-    // }
 
     // Search for MDMS court room details
     const resMdms = await handleApiCall(
@@ -79,27 +82,8 @@ async function orderGeneric(req, res, qrCode) {
     );
     const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
     if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
+      return renderError(res, "Court room MDMS master not found", 404);
     }
-
-    // Search for MDMS court establishment details
-
-    // const resMdms1 = await handleApiCall(
-    //   () =>
-    //     search_mdms(
-    //       mdmsCourtRoom.courtEstablishmentId,
-    //       "case.CourtEstablishment",
-    //       tenantId,
-    //       requestInfo
-    //     ),
-    //   "Failed to query MDMS service for court establishment"
-    // );
-    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
-    // if (!mdmsCourtEstablishment) {
-    //   renderError(res, "Court establishment MDMS master not found", 404);
-    // }
-
-    // Search for order details
     const resOrder = await handleApiCall(
       () => search_order(tenantId, orderId, requestInfo),
       "Failed to query order service"
@@ -134,34 +118,71 @@ async function orderGeneric(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
+    let caseYear;
+    if (typeof courtCase.filingDate === "string") {
+      caseYear = courtCase.filingDate.slice(-4);
+    } else if (courtCase.filingDate instanceof Date) {
+      caseYear = courtCase.filingDate.getFullYear();
+    } else if (typeof courtCase.filingDate === "number") {
+      // Assuming the number is in milliseconds (epoch time)
+      caseYear = new Date(courtCase.filingDate).getFullYear();
+    } else {
+      return renderError(res, "Invalid filingDate format", 500);
+    }
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
     const currentDate = new Date();
-    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    // Prepare data for PDF generation
+
+    const day = currentDate.getDate();
+    const month = months[currentDate.getMonth()];
+    const year = currentDate.getFullYear();
+
+    const ordinalSuffix = getOrdinalSuffix(day);
+
     const data = {
       Data: [
         {
-          courtName: "Keral High Court",
-          caseName: courtCase.caseTitle,
-          caseNumber: courtCase.cnrNumber,
-          orderName: order.orderNumber,
-          date: formattedToday,
-          orderContent: order.comments,
+          courtName: "Kerala High court",
+          courtPlace: "Kochi",
+          state: "Kerala",
+          caseNumber: "4789584",
+          caseYear: caseYear,
+          applicantName: "Tushar Katiyaar",
+          dateOfApplication: "01-01-2024",
+          briefSummaryOfBail:
+            "The court was not able to find sufficient evidence to not give bail.",
+          date: "14-05-2024",
+          documentNameList: ["Addhar Card", "Pan Card", "Passport"],
+          bailType: "Non problematic",
+          conditionOfBail:
+            "Don't go outside of the city without informing the court",
           judgeSignature: "Judge Signature",
           judgeName: "Suresh Soren",
           courtSeal: "Court Seal",
-          qrCodeUrl: base64Url,
         },
       ],
     };
-
-    // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_generic_qr
-        : config.pdf.order_generic;
+        ? config.pdf.order_bail_acceptance_qr
+        : config.pdf.order_bail_acceptance;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of generic order"
+      "Failed to generate PDF of Order for acceptance of Bail"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;
@@ -180,11 +201,11 @@ async function orderGeneric(req, res, qrCode) {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of generic order",
+      "Failed to query details of APPLICATION FOR EXTENSION OF SUBMISSION DEADLINE",
       500,
       ex
     );
   }
-}
+};
 
-module.exports = orderGeneric;
+module.exports = orderBailAcceptance;

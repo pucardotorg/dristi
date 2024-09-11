@@ -9,6 +9,7 @@ export const Urls = {
     createHearings: "/hearing/v1/create",
     updateHearings: "/hearing/v1/update",
     getPendingTaskFields: "/inbox/v2/_getFields",
+    orderPreviewPdf: "/egov-pdf/order",
     searchTasks: "/task/v1/search",
   },
   FileFetchById: "/filestore/v1/files/id",

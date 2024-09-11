@@ -2,7 +2,7 @@ var config = require("./config");
 var axios = require("axios").default;
 var url = require("url");
 const { logger } = require("./logger");
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -20,13 +20,13 @@ async function search_case(cnrNumber, tenantId, requestinfo) {
       method: "post",
       url: url.resolve(config.host.case, config.paths.case_search),
       data: {
-        "RequestInfo": requestinfo,
-        "tenantId": tenantId,
-        "criteria": [
+        RequestInfo: requestinfo,
+        tenantId: tenantId,
+        criteria: [
           {
-            "cnrNumber": cnrNumber,
-          }
-        ]
+            cnrNumber: cnrNumber,
+          },
+        ],
       },
     });
   } catch (error) {
@@ -41,12 +41,12 @@ async function search_order(tenantId, orderId, requestinfo) {
       method: "post",
       url: url.resolve(config.host.order, config.paths.order_search),
       data: {
-        "RequestInfo": requestinfo,
-        "tenantId": tenantId,
-        "criteria": {
-          "tenantId": tenantId,
-          "id": orderId
-        }
+        RequestInfo: requestinfo,
+        tenantId: tenantId,
+        criteria: {
+          tenantId: tenantId,
+          id: orderId,
+        },
       },
     });
   } catch (error) {
@@ -61,17 +61,17 @@ async function search_hearing(tenantId, cnrNumber, requestinfo) {
       method: "post",
       url: url.resolve(config.host.hearing, config.paths.hearing_search),
       data: {
-        "RequestInfo": requestinfo,
-        "criteria": {
-          "tenantId": tenantId,
-          "cnrNumber": cnrNumber
+        RequestInfo: requestinfo,
+        criteria: {
+          tenantId: tenantId,
+          cnrNumber: cnrNumber,
         },
-        "pagination": {
-          "limit": 10,
-          "offset": 0,
-          "sortBy": "createdTime",
-          "order": "desc"
-        }
+        pagination: {
+          limit: 10,
+          offset: 0,
+          sortBy: "createdTime",
+          order: "desc",
+        },
       },
     });
   } catch (error) {
@@ -80,7 +80,12 @@ async function search_hearing(tenantId, cnrNumber, requestinfo) {
   }
 }
 
-async function search_mdms(uniqueIdentifier, schemaCode, tenantID, requestInfo) {
+async function search_mdms(
+  uniqueIdentifier,
+  schemaCode,
+  tenantID,
+  requestInfo
+) {
   try {
     return await axios({
       method: "post",
@@ -90,8 +95,8 @@ async function search_mdms(uniqueIdentifier, schemaCode, tenantID, requestInfo) 
         MdmsCriteria: {
           tenantId: tenantID,
           schemaCode: schemaCode,
-          uniqueIdentifiers: [uniqueIdentifier]
-        }
+          uniqueIdentifiers: [uniqueIdentifier],
+        },
       },
     });
   } catch (error) {
@@ -113,7 +118,7 @@ async function search_hrms(tenantId, employeeTypes, courtRooms, requestinfo) {
       method: "post",
       url: url.resolve(config.host.hrms, config.paths.hrms_search),
       data: {
-        RequestInfo: requestinfo
+        RequestInfo: requestinfo,
       },
       params,
     });
@@ -136,13 +141,41 @@ async function search_individual(tenantId, individualId, requestinfo) {
       data: {
         RequestInfo: requestinfo,
         Individual: {
-          individualId: individualId
-        }
+          individualId: individualId,
+        },
       },
       params,
     });
   } catch (error) {
-    logger.error(`Error in ${config.paths.individual_search}: ${error.message}`);
+    logger.error(
+      `Error in ${config.paths.individual_search}: ${error.message}`
+    );
+    throw error;
+  }
+}
+
+async function search_advocate(tenantId, individualId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    limit: 10,
+    offset: 0,
+  };
+  try {
+    return await axios({
+      method: "post",
+      url: url.resolve(config.host.advocate, config.paths.advocate_search),
+      data: {
+        RequestInfo: requestinfo,
+        criteria: [
+          {
+            individualId: individualId,
+          },
+        ],
+      },
+      params,
+    });
+  } catch (error) {
+    logger.error(`Error in ${config.paths.advocate_search}: ${error.message}`);
     throw error;
   }
 }
@@ -160,13 +193,15 @@ async function search_individual_uuid(tenantId, individualId, requestinfo) {
       data: {
         RequestInfo: requestinfo,
         Individual: {
-          id: [individualId]
-        }
+          id: [individualId],
+        },
       },
       params,
     });
   } catch (error) {
-    logger.error(`Error in ${config.paths.individual_search}: ${error.message}`);
+    logger.error(
+      `Error in ${config.paths.individual_search}: ${error.message}`
+    );
     throw error;
   }
 }
@@ -175,36 +210,51 @@ async function search_application(tenantId, applicationId, requestinfo) {
   try {
     return await axios({
       method: "post",
-      url: url.resolve(config.host.application, config.paths.application_search),
+      url: url.resolve(
+        config.host.application,
+        config.paths.application_search
+      ),
       data: {
-        "RequestInfo": requestinfo,
-        "tenantId": tenantId,
-        "criteria": {
-          "tenantId": tenantId,
-          "applicationNumber": applicationId
-        }
+        RequestInfo: requestinfo,
+        tenantId: tenantId,
+        criteria: {
+          tenantId: tenantId,
+          applicationNumber: applicationId,
+        },
       },
     });
   } catch (error) {
-    logger.error(`Error in ${config.paths.application_search}: ${error.message}`);
+    logger.error(
+      `Error in ${config.paths.application_search}: ${error.message}`
+    );
     throw error;
   }
 }
 
-async function search_sunbirdrc_credential_service(tenantId, code, uuid, requestinfo) {
+async function search_sunbirdrc_credential_service(
+  tenantId,
+  code,
+  uuid,
+  requestinfo
+) {
   try {
     return await axios({
       method: "post",
-      url: url.resolve(config.host.sunbirdrc_credential_service, config.paths.sunbirdrc_credential_service_search),
+      url: url.resolve(
+        config.host.sunbirdrc_credential_service,
+        config.paths.sunbirdrc_credential_service_search
+      ),
       data: {
         RequestInfo: requestinfo,
         tenantId: tenantId,
         code: code,
-        uuid: uuid
+        uuid: uuid,
       },
     });
   } catch (error) {
-    logger.error(`Error in ${config.paths.sunbirdrc_credential_service_search}: ${error.message}`);
+    logger.error(
+      `Error in ${config.paths.sunbirdrc_credential_service_search}: ${error.message}`
+    );
     throw error;
   }
 }
@@ -238,5 +288,6 @@ module.exports = {
   search_hearing,
   search_sunbirdrc_credential_service,
   search_individual_uuid,
-  search_application
+  search_application,
+  search_advocate,
 };

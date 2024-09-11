@@ -2,29 +2,43 @@ const cheerio = require("cheerio");
 const config = require("../config");
 const {
   search_case,
-  search_order,
   search_mdms,
   search_hrms,
   search_sunbirdrc_credential_service,
+  search_application,
   create_pdf,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 
-async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
+function getOrdinalSuffix(day) {
+  if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
+  switch (day % 10) {
+    case 1:
+      return "st"; // 1st, 21st, 31st
+    case 2:
+      return "nd"; // 2nd, 22nd
+    case 3:
+      return "rd"; // 3rd, 23rd
+    default:
+      return "th"; // 4th, 5th, 6th, etc.
+  }
+}
+
+const applicationCaseTransfer = async (req, res, qrCode) => {
   const cnrNumber = req.query.cnrNumber;
-  const orderId = req.query.orderId;
+  const applicationNumber = req.query.applicationNumber;
+  const tenantId = req.query.tenantId;
   const entityId = req.query.entityId;
   const code = req.query.code;
-  const tenantId = req.query.tenantId;
   const requestInfo = req.body.RequestInfo;
 
   const missingFields = [];
   if (!cnrNumber) missingFields.push("cnrNumber");
-  if (!orderId) missingFields.push("orderId");
+  if (!applicationNumber) missingFields.push("applicationNumber");
   if (!tenantId) missingFields.push("tenantId");
+  if (requestInfo === undefined) missingFields.push("requestInfo");
   if (qrCode === "true" && (!entityId || !code))
     missingFields.push("entityId and code");
-  if (requestInfo === undefined) missingFields.push("requestInfo");
 
   if (missingFields.length > 0) {
     return renderError(
@@ -43,28 +57,16 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       throw ex; // Ensure the function stops on error
     }
   };
-
+  // Search for case details
   try {
-    // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
     );
     const courtCase = resCase?.data?.criteria[0]?.responseList[0];
     if (!courtCase) {
-      renderError(res, "Court case not found", 404);
+      return renderError(res, "Court case not found", 404);
     }
-
-    // FIXME: Commenting out HRMS calls is it not impl in solution
-    // Search for HRMS details
-    // const resHrms = await handleApiCall(
-    //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-    //     "Failed to query HRMS service"
-    // );
-    // const employee = resHrms?.data?.Employees[0];
-    // if (!employee) {
-    //     renderError(res, "Employee not found", 404);
-    // }
 
     // Search for MDMS court room details
     const resMdms = await handleApiCall(
@@ -79,30 +81,19 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     );
     const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
     if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
+      return renderError(res, "Court room MDMS master not found", 404);
     }
 
-    // FIXME: Commenting out MDMS court establishment calls is it not impl in solution
-    // Search for MDMS court establishment details
-    // const resMdms1 = await handleApiCall(
-    //     () => search_mdms(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo),
-    //     "Failed to query MDMS service for court establishment"
-    // );
-    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
-    // if (!mdmsCourtEstablishment) {
-    //     renderError(res, "Court establishment MDMS master not found", 404);
-    // }
-
-    // Search for order details
-    const resOrder = await handleApiCall(
-      () => search_order(tenantId, orderId, requestInfo),
-      "Failed to query order service"
+    // Search for application details
+    const resApplication = await handleApiCall(
+      () => search_application(tenantId, applicationNumber, requestInfo),
+      "Failed to query application service"
     );
-    const order = resOrder?.data?.list[0];
-    if (!order) {
-      renderError(res, "Order not found", 404);
+    const application = resApplication?.data?.applicationList[0];
+    if (!application) {
+      return renderError(res, "Application not found", 404);
     }
-
+    const partyName = application?.additionalDetails?.onBehalOfName || "";
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {
@@ -128,54 +119,79 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
-    let year;
+    let caseYear;
     if (typeof courtCase.filingDate === "string") {
-      year = courtCase.filingDate.slice(-4);
+      caseYear = courtCase.filingDate.slice(-4);
     } else if (courtCase.filingDate instanceof Date) {
-      year = courtCase.filingDate.getFullYear();
+      caseYear = courtCase.filingDate.getFullYear();
     } else if (typeof courtCase.filingDate === "number") {
       // Assuming the number is in milliseconds (epoch time)
-      year = new Date(courtCase.filingDate).getFullYear();
+      caseYear = new Date(courtCase.filingDate).getFullYear();
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }
 
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const currentDate = new Date();
+
+    const day = currentDate.getDate();
+    const month = months[currentDate.getMonth()];
+    const year = currentDate.getFullYear();
+
+    const ordinalSuffix = getOrdinalSuffix(day);
+
     const data = {
       Data: [
         {
-          courtName: mdmsCourtRoom.name,
+          courtComplex: mdmsCourtRoom.name,
+          caseType: "Negotiable Instruments Act 138 A",
           caseNumber: courtCase.cnrNumber,
-          year: year,
+          caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          parties: "Parties from UI",
-          documentList: "List of documents from UI",
-          evidenceSubmissionDeadline: "Evidence submission deadline from UI",
-          ifResponse: "If response from UI ",
-          responseSubmissionDeadline: "Response submission deadline from UI",
-          additionalComments: order?.comments || "",
-          Date: "Date from UI",
-          Month: "Month from UI",
-          Year: "Year from UI",
-          judgeSignature: "Judge Signature",
-          designation: "Judge designation",
-          courtSeal: "Court Seal",
+          caseNo: "87465464",
+          originalCourt: "Suprem court of India",
+          newCourt: "High Court of Kerala",
+          judgeName: "John Doe", // FIXME: employee.user.name
+          courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
+          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
+          date: currentDate,
+          partyName: partyName,
+          additionalComments: "Additional Comments",
+          grounds: "grounds",
+          reliefSought: "reliefSought",
+          day: day + ordinalSuffix,
+          month: month,
+          year: year,
+          advocateSignature: "Advocate Signature",
+          advocateName: "Vaibhav Takale", //FIXME: REMOVE it from both pdf configs and here,
+          barRegistrationNumber: "BCCC89885454",
           qrCodeUrl: base64Url,
-          place: "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
-          state: "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
-          judgeName: "John Watt", // FIXME: employee.user.name,
         },
       ],
     };
-
-    // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.mandatory_async_submissions_responses_qr
-        : config.pdf.mandatory_async_submissions_responses;
+        ? config.pdf.application_case_transfer_qr
+        : config.pdf.application_case_transfer;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of order for Mandatory Async Submissions and Responses"
+      "Failed to generate PDF of Application for Case Transfer"
     );
+
     const filename = `${pdfKey}_${new Date().getTime()}`;
     res.writeHead(200, {
       "Content-Type": "application/pdf",
@@ -190,14 +206,13 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
         return renderError(res, "Failed to send PDF response", 500, err);
       });
   } catch (ex) {
-    console.log(ex);
     return renderError(
       res,
-      "Failed to query details of order for Mandatory Async Submissions and Responses",
+      "Failed to query details of APPLICATION FOR EXTENSION OF SUBMISSION DEADLINE",
       500,
       ex
     );
   }
-}
+};
 
-module.exports = mandatoryAsyncSubmissionsResponses;
+module.exports = applicationCaseTransfer;

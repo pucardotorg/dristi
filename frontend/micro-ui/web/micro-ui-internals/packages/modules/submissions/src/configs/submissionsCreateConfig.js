@@ -157,6 +157,8 @@ export const configsRescheduleRequest = [
         disable: true,
         isMandatory: true,
         key: "initialHearingDate",
+        schemaKeyPath: "applicationDetails.initialHearingDate",
+        transformer: "date",
         type: "date",
         populators: {
           name: "initialHearingDate",
@@ -188,6 +190,8 @@ export const configsRescheduleRequest = [
         label: "PROPOSED_DATE",
         isMandatory: true,
         key: "changedHearingDate",
+        schemaKeyPath: "applicationDetails.newHearingScheduledDate",
+        transformer: "date",
         type: "date",
         populators: {
           name: "changedHearingDate",
@@ -209,6 +213,8 @@ export const configsRescheduleRequest = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         isMandatory: false,
         populators: {
           inputs: [
@@ -523,6 +529,8 @@ export const configsExtensionSubmissionDeadline = [
         isMandatory: true,
         disable: true,
         key: "initialSubmissionDate",
+        schemaKeyPath: "applicationDetails.originalSubmissionDate",
+        transformer: "date",
         type: "date",
         populators: {
           name: "initialSubmissionDate",
@@ -533,6 +541,8 @@ export const configsExtensionSubmissionDeadline = [
         label: "REQUESTED_DATE",
         isMandatory: true,
         key: "changedSubmissionDate",
+        schemaKeyPath: "applicationDetails.requestedExtensionDate",
+        transformer: "date",
         type: "date",
         populators: {
           name: "changedSubmissionDate",
@@ -543,6 +553,8 @@ export const configsExtensionSubmissionDeadline = [
         label: "EXTENSION_REASON",
         isMandatory: true,
         key: "extensionReason",
+        schemaKeyPath: "applicationDetails.benefitOfExtension",
+        transformer: "mdmsDropdown",
         type: "dropdown",
         populators: {
           name: "extensionReason",
@@ -567,6 +579,8 @@ export const configsExtensionSubmissionDeadline = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "extensionBenefit",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "customTextArea",
         isMandatory: true,
         populators: {
           inputs: [
@@ -812,64 +826,87 @@ export const configsProductionOfDocuments = [
         type: "text",
         populators: { name: "representedBy", hideInForm: true },
       },
-    ],
-  },
-  {
-    body: [
       {
         type: "component",
-        component: "SelectCustomDragDrop",
-        key: "listOfProducedDocuments",
-        isMandatory: true,
+        component: "AddSubmissionDocument",
+        key: "submissionDocuments",
+        schemaKeyPath: "applicationDetails.applicationDocuments",
+        transformer: "applicationDocuments",
+        inline: false,
         populators: {
           inputs: [
             {
-              // isMandatory: true,
-              // isOptional: "CS_IS_OPTIONAL",
               isMandatory: true,
-              name: "documents",
-              // documentSubText: "PRODUCED_DOCUMENTS",
-              documentHeader: "PRODUCED_DOCUMENTS",
-              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
-              headerClassName: "dristi-font-bold",
+              key: "documentType",
+              type: "dropdown",
+              label: "DOCUMENT_TYPE",
+              name: "documentType",
+              disable: false,
+              populators: {
+                name: "documentType",
+                optionsKey: "name",
+                required: true,
+                options: [
+                  {
+                    code: "taxRecords",
+                    name: "Tax Records",
+                  },
+                  {
+                    code: "salaryReciepts",
+                    name: "Salary Reciepts",
+                  },
+                ],
+              },
+            },
+            {
+              label: "DOCUMENT_TITLE",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: true,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+              isMandatory: true,
+            },
+            {
+              label: "DOCUMENT_ATTACHMENT",
+              type: "documentUpload",
+              name: "document",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
             },
           ],
         },
       },
-    ],
-  },
-  {
-    body: [
       {
+        inline: true,
         type: "component",
-        component: "SelectCustomDragDrop",
-        key: "reasonForDocumentsSubmission",
+        component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "customTextArea",
+        key: "reasonForApplication",
         isMandatory: true,
         populators: {
           inputs: [
             {
-              // isMandatory: true,
-              // isOptional: "CS_IS_OPTIONAL",
-              isMandatory: true,
-              name: "documents",
-              // documentSubText: "PRODUCED_DOCUMENTS",
-              documentHeader: "REASON_FOR_DOCUMENT_SUBMISSION",
-              documentHeaderStyle: { fontSize: "19px", fontWeight: 700 },
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["PDF", "JPEG"],
-              isMultipleUpload: true,
-              uploadGuidelines: "UPLOAD_PDF_JPEG_50",
-              headerClassName: "dristi-font-bold",
+              name: "text",
+              textAreaSubHeader: "REASON_FOR_APPLICATION",
+              subHeaderClassName: "dristi-font-big-bold",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: false,
+              type: "TextAreaComponent",
             },
           ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
         },
       },
     ],
@@ -880,6 +917,8 @@ export const configsProductionOfDocuments = [
         inline: true,
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         key: "comments",
         isMandatory: false,
         populators: {
@@ -1003,6 +1042,8 @@ export const configsCaseWithdrawal = [
         isMandatory: true,
         type: "dropdown",
         key: "reasonForWithdrawal",
+        schemaKeyPath: "applicationDetails.benefitOfExtension",
+        transformer: "mdmsDropdown",
         populators: {
           name: "reasonForWithdrawal",
           optionsKey: "name",
@@ -1025,6 +1066,8 @@ export const configsCaseWithdrawal = [
         inline: true,
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         key: "comments",
         isMandatory: false,
         populators: {
@@ -1145,6 +1188,7 @@ export const configsCaseTransfer = [
       {
         inline: true,
         label: "REQUESTED_COURT",
+        schemaKeyPath: "applicationDetails.selectRequestedCourt",
         isMandatory: true,
         disable: true,
         key: "requestedCourt",
@@ -1157,6 +1201,7 @@ export const configsCaseTransfer = [
         isMandatory: true,
         key: "groundsForTransfer",
         type: "text",
+        schemaKeyPath: "applicationDetails.groundsForSeekingTransfer",
         populators: {
           name: "groundsForTransfer",
           error: "CS_ALPHANUMERIC_ALLOWED",
@@ -1177,6 +1222,8 @@ export const configsCaseTransfer = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "comments",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         isMandatory: false,
         populators: {
           inputs: [
@@ -1301,6 +1348,8 @@ export const configsSettlement = [
         inline: true,
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         key: "comments",
         isMandatory: false,
         populators: {
@@ -1346,6 +1395,8 @@ export const configsSurety = [
         isMandatory: true,
         inline: false,
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "customTextArea",
         populators: {
           inputs: [
             {
@@ -1399,6 +1450,8 @@ export const configsSurety = [
         type: "component",
         component: "AddSubmissionDocument",
         key: "submissionDocuments",
+        schemaKeyPath: "applicationDetails.applicationDocuments",
+        transformer: "applicationDocuments",
         inline: false,
         populators: {
           inputs: [
@@ -1473,6 +1526,8 @@ export const configsBailBond = [
         isMandatory: true,
         inline: false,
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "customTextArea",
         populators: {
           inputs: [
             {
@@ -1512,6 +1567,8 @@ export const configsBailBond = [
         type: "component",
         component: "AddSubmissionDocument",
         key: "submissionDocuments",
+        schemaKeyPath: "applicationDetails.applicationDocuments",
+        transformer: "applicationDocuments",
         inline: false,
         populators: {
           inputs: [
@@ -1573,6 +1630,7 @@ export const configsOthers = [
         label: "APPLICATION_TITLE",
         isMandatory: true,
         key: "applicationTitle",
+        schemaKeyPath: "applicationDetails.applicationTitle",
         type: "text",
         populators: {
           name: "applicationTitle",
@@ -1614,6 +1672,8 @@ export const configsOthers = [
       {
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "customTextArea",
         key: "applicationDetails",
         isMandatory: true,
         populators: {

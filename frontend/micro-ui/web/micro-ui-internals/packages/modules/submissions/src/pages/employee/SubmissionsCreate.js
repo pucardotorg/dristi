@@ -56,8 +56,12 @@ const SubmissionsCreate = ({ path }) => {
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const isCitizen = useMemo(() => userInfo?.type === "CITIZEN", [userInfo]);
   const [signedDoucumentUploadedID, setSignedDocumentUploadID] = useState("");
+  const [applicationPdfFileStoreId, setApplicationPdfFileStoreId] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState();
   const scenario = "applicationSubmission";
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
   const hasSubmissionRole = useMemo(
     () =>
       ["SUBMISSION_CREATOR", "SUBMISSION_RESPONDER"].reduce((result, current) => {
@@ -80,6 +84,9 @@ const SubmissionsCreate = ({ path }) => {
     userInfo?.uuid
   );
   const individualId = useMemo(() => individualData?.Individual?.[0]?.individualId, [individualData]);
+  const userTypeCitizen = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData?.Individual,
+  ]);
 
   const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
@@ -465,8 +472,8 @@ const SubmissionsCreate = ({ path }) => {
       if (formdata?.submissionDocuments?.documents?.length > 0) {
         documentsList = [...documentsList, ...formdata?.submissionDocuments?.documents];
       }
-      const bailDocuments =
-        formdata?.additionalDetails?.submissionDocuments?.submissionDocuments?.map((item) => ({
+      const applicationDocuments =
+        formdata?.submissionDocuments?.submissionDocuments?.map((item) => ({
           fileType: item?.document?.documentType,
           fileStore: item?.document?.fileStore,
           additionalDetails: item?.document?.additionalDetails,
@@ -475,12 +482,12 @@ const SubmissionsCreate = ({ path }) => {
       let documents = [];
       let file = null;
       let evidenceReqBody = {};
-      const uploadedDocumentList = [...(documentres || []), ...bailDocuments];
+      const uploadedDocumentList = [...(documentres || []), ...applicationDocuments];
       uploadedDocumentList.forEach((res) => {
         file = {
           documentType: res?.fileType,
-          fileStore: res?.file?.files?.[0]?.fileStoreId,
-          additionalDetails: { name: res?.filename },
+          fileStore: res?.fileStore || res?.file?.files?.[0]?.fileStoreId,
+          additionalDetails: { name: res?.filename || res?.additionalDetails?.name },
         };
         documents.push(file);
         evidenceReqBody = {
@@ -501,9 +508,20 @@ const SubmissionsCreate = ({ path }) => {
         DRISTIService.createEvidence(evidenceReqBody);
       });
 
+      let applicationSchema = {};
+      try {
+        applicationSchema = Digit.Customizations.dristiOrders.ApplicationFormSchemaUtils.formToSchema(formdata, modifiedFormConfig);
+      } catch (error) {
+        console.log(error);
+      }
+      if (userTypeCitizen === "ADVOCATE") {
+        applicationSchema["advocateIndividualId"] = individualId;
+      }
+
       const applicationReqBody = {
         tenantId,
         application: {
+          ...applicationSchema,
           tenantId,
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
@@ -748,6 +766,7 @@ const SubmissionsCreate = ({ path }) => {
   };
 
   const handleDownloadSubmission = () => {
+    downloadPdf(tenantId, applicationDetails?.documents?.filter((doc) => doc?.documentType === "SIGNED")?.[0]?.fileStore);
     // history.push(`/digit-ui/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${filingNumber}&tab=Submissions`);
   };
   if (!filingNumber) {
@@ -779,12 +798,14 @@ const SubmissionsCreate = ({ path }) => {
         <ReviewSubmissionModal
           t={t}
           applicationType={applicationDetails?.applicationType}
+          application={applicationDetails}
           submissionDate={applicationDetails?.createdDate}
           sender={caseDetails?.additionalDetails?.payerName}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
           documents={applicationDetails?.documents || []}
+          setApplicationPdfFileStoreId={setApplicationPdfFileStoreId}
         />
       )}
       {showsignatureModal && (
@@ -793,6 +814,7 @@ const SubmissionsCreate = ({ path }) => {
           handleProceed={handleAddSignature}
           handleCloseSignaturePopup={handleCloseSignaturePopup}
           setSignedDocumentUploadID={setSignedDocumentUploadID}
+          applicationPdfFileStoreId={applicationPdfFileStoreId}
         />
       )}
       {showPaymentModal && (
