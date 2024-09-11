@@ -24,7 +24,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PENDING_PAYMENT",
+                            "nextState": "PENDING_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -217,7 +217,7 @@
                             "action": "ISSUE_ORDER",
                             "nextState": "PENDING_RESPONSE",
                             "roles": [
-                                "CASE_RESPONDER"
+                                "CASE_APPROVER"
                             ]
                         },
                         {
