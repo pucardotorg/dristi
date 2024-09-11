@@ -63,9 +63,27 @@ export const formatDateDifference = (previousDate) => {
 };
 
 export const formatDate = (date) => {
-  console.log(date, "lll");
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
+};
+
+export const convertToDateInputFormat = (dateInput) => {
+  let date;
+
+  if (typeof dateInput === "number") {
+    date = new Date(dateInput);
+  } else if (typeof dateInput === "string" && dateInput.includes("-")) {
+    const [day, month, year] = dateInput.split("-");
+    if (!isNaN(day) && !isNaN(month) && !isNaN(year) && day.length === 2 && month.length === 2 && year.length === 4) {
+      date = new Date(`${year}-${month}-${day}`);
+    } else {
+      console.error("Invalid date format");
+    }
+  } else {
+    console.error("Invalid input type or format");
+  }
+
+  return formatDate(date);
 };
