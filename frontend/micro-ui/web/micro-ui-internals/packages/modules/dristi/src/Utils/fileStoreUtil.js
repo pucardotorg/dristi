@@ -7,7 +7,7 @@ export const getFilestoreId = () => {
   } else if (origin.includes("kerala-hc")) {
     return "35558d0c-e494-47b9-8920-01a1a67eccdd";
   } else if (origin.includes("kerala-uat")) {
-    return "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
+    return "972ee748-181a-4ecd-afdb-25c51c9af5c9";
   } else {
     return "35558d0c-e494-47b9-8920-01a1a67eccdd";
   }
