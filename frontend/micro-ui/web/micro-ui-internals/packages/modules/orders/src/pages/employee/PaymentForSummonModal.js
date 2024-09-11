@@ -444,7 +444,7 @@ const PaymentForSummonModal = ({ path }) => {
           action: "Actions",
         },
         { label: "Court Fees", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
-        { label: "Delivery Partner Fee", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
+        { label: "Delivery Partner Fee", amount: taskAmount, action: "Pay Online", onClick: onPayOnlineSBI },
       ],
       "registered-post": [
         {

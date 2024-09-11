@@ -19,7 +19,7 @@ const modeOptions = [
 const SBIEpostPayment = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const [selectedOption, setSelectedOption] = useState();
+  const [selectedOption, setSelectedOption] = useState({});
   const [optionLoader, setOptionLoader] = useState(true);
   const [paymentLoader, setPaymentLoader] = useState(false);
   const bill = location.state.state.billData;
@@ -43,7 +43,7 @@ const SBIEpostPayment = () => {
             MerchantCurrency: "INR",
             PostingAmount: 4.0,
             OtherDetails: "NA",
-            Paymode: selectedOption,
+            Paymode: selectedOption?.value,
             tenantId: tenantId,
             billId: bill?.Bill?.[0]?.billDetails?.[0]?.billId,
             totalDue: 35.0,
@@ -169,37 +169,27 @@ const SBIEpostPayment = () => {
 
   const handleButtonClick = (transactionalUrl, encryptedString, merchantId) => {
     return new Promise((resolve) => {
-      const popup = window.open("", "popupWindow", "width=1000,height=1000,scrollbars=yes");
-      if (popup) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = transactionalUrl;
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = transactionalUrl;
 
-        const inputDataField = document.createElement("input");
-        inputDataField.type = "hidden";
-        inputDataField.name = "EncryptTrans";
-        inputDataField.value = { encryptedString };
-        form.appendChild(inputDataField);
+      const inputDataField = document.createElement("input");
+      inputDataField.type = "hidden";
+      inputDataField.name = "EncryptTrans";
+      inputDataField.value = { encryptedString };
+      form.appendChild(inputDataField);
 
-        const inputHeadersField = document.createElement("input");
-        inputHeadersField.type = "hidden";
-        inputHeadersField.name = "merchIdVal";
-        inputHeadersField.value = merchantId;
-        form.appendChild(inputHeadersField);
+      const inputHeadersField = document.createElement("input");
+      inputHeadersField.type = "hidden";
+      inputHeadersField.name = "merchIdVal";
+      inputHeadersField.value = merchantId;
+      form.appendChild(inputHeadersField);
 
-        popup.document.body.appendChild(form);
-        form.submit();
-        setPaymentLoader(true);
-        popup.document.body.removeChild(form);
-      }
-      const checkPopupClosed = setInterval(async () => {
-        if (popup.closed) {
-          setPaymentLoader(false);
-          const billAfterPayment = await DRISTIService.callSearchBill({}, { tenantId, consumerCode, service });
-          clearInterval(checkPopupClosed);
-          resolve(billAfterPayment?.Bill?.[0]?.status === "PAID");
-        }
-      }, 1000);
+      window.document.body.appendChild(form);
+      form.submit();
+
+      setPaymentLoader(true);
+      popup.document.body.removeChild(form);
     });
   };
   return (
@@ -218,7 +208,7 @@ const SBIEpostPayment = () => {
               options={modeOptions}
               optionsKey={"label"}
               onSelect={(value) => {
-                setSelectedOption(value.value); // Set selected option's value
+                setSelectedOption(value); // Set selected option's value
                 console.log(value);
               }}
               selectedOption={selectedOption} // Bind currently selected option to state
