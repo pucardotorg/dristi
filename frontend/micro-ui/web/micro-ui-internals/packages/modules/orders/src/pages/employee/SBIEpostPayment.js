@@ -176,7 +176,7 @@ const SBIEpostPayment = () => {
       const inputDataField = document.createElement("input");
       inputDataField.type = "hidden";
       inputDataField.name = "EncryptTrans";
-      inputDataField.value = { encryptedString };
+      inputDataField.value = encryptedString;
       form.appendChild(inputDataField);
 
       const inputHeadersField = document.createElement("input");
@@ -189,7 +189,6 @@ const SBIEpostPayment = () => {
       form.submit();
 
       setPaymentLoader(true);
-      popup.document.body.removeChild(form);
     });
   };
   return (
