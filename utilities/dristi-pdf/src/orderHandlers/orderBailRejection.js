@@ -10,6 +10,8 @@ const {
   search_order,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { getAdvocates } = require("../applicationHandlers/getAdvocates");
+const { formatDate } = require("./formatDate");
 
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
@@ -76,6 +78,36 @@ const orderBailRejection = async (req, res, qrCode) => {
     if (!order) {
       renderError(res, "Order not found", 404);
     }
+
+    const resApplication = await handleApiCall(
+      () =>
+        search_application(
+          tenantId,
+          order?.additionalDetails?.formdata?.refApplicationId,
+          requestInfo
+        ),
+      "Failed to query application service"
+    );
+    const application = resApplication?.data?.applicationList[0];
+    if (!application) {
+      return renderError(res, "Application not found", 404);
+    }
+
+    const documentList = application?.applicationDetails
+      ?.applicationDocuments || [{ documentType: "" }];
+    const allAdvocates = getAdvocates(courtCase);
+    const onBehalfOfuuid = application?.onBehalfOf?.[0];
+    const advocate = allAdvocates?.[onBehalfOfuuid]?.[0]?.additionalDetails
+      ?.advocateName
+      ? allAdvocates[onBehalfOfuuid]?.[0]
+      : {};
+    const advocateName = advocate?.additionalDetails?.advocateName || "";
+    const partyName = application?.additionalDetails?.onBehalOfName || "";
+    const applicationDate = formatDate(
+      new Date(application?.createdDate),
+      "DD-MM-YYYY"
+    );
+
     // Search for MDMS court room details
     const resMdms = await handleApiCall(
       () =>
@@ -151,22 +183,31 @@ const orderBailRejection = async (req, res, qrCode) => {
     const year = currentDate.getFullYear();
 
     const ordinalSuffix = getOrdinalSuffix(day);
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    let bailType = "Cash";
+    if (application?.applicationType === "SURETY") {
+      bailType = "In Person Surety";
+    }
+    if (application?.applicationType === "BAIL_BOND") {
+      bailType = "Bail Bond";
+    }
 
     const data = {
       Data: [
         {
-          courtName: "Kerala High court",
+          courtName: mdmsCourtRoom.name,
           courtPlace: "Kochi",
           state: "Kerala",
-          caseNumber: "4789584",
+          caseNumber: courtCase?.caseNumber,
           caseYear: caseYear,
-          applicantName: "Tushar Katiyaar",
-          dateOfApplication: "01-01-2024",
-          briefSummaryOfBail:
-            "The court was not able to find sufficient evidence to not give bail.",
-          date: "14-05-2024",
+          applicantName: advocateName || partyName,
+          partyName,
+          dateOfApplication: applicationDate,
+          briefSummaryOfBail: order?.comments || "",
+          date: formattedToday,
           documentNameList: ["Addhar Card", "Pan Card", "Passport"],
-          bailType: "Non problematic",
+          documentList,
+          bailType,
           conditionOfBail:
             "Don't go outside of the city without informing the court",
           judgeSignature: "Judge Signature",
@@ -200,7 +241,7 @@ const orderBailRejection = async (req, res, qrCode) => {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of APPLICATION FOR EXTENSION OF SUBMISSION DEADLINE",
+      "Failed to create PDF of Rejection of Bail",
       500,
       ex
     );

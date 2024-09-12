@@ -146,14 +146,14 @@ async function orderRejectVoluntary(req, res, qrCode) {
       }
       base64Url = imgTag.attr("src");
     }
-    console.debug(order);
+    
     // Prepare data for PDF generation
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumbercaseNumber,
           orderName: order.orderNumber,
           submissionType: "Application",
           submissionDate: new Date(application?.createdDate),

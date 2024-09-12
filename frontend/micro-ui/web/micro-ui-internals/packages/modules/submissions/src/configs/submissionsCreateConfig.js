@@ -170,6 +170,8 @@ export const configsRescheduleRequest = [
         label: "RESCHEDULING_REASON",
         isMandatory: true,
         key: "reschedulingReason",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "mdmsDropdown",
         type: "dropdown",
         populators: {
           name: "reschedulingReason",

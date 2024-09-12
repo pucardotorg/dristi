@@ -515,7 +515,10 @@ const SubmissionsCreate = ({ path }) => {
         console.log(error);
       }
       if (userTypeCitizen === "ADVOCATE") {
-        applicationSchema["advocateIndividualId"] = individualId;
+        applicationSchema = {
+          ...applicationSchema,
+          applicationDetails: { ...applicationSchema?.applicationDetails, advocateIndividualId: individualId },
+        };
       }
 
       const applicationReqBody = {

@@ -159,7 +159,7 @@ const applicationBailBond = async (req, res, qrCode) => {
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name

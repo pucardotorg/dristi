@@ -1240,6 +1240,8 @@ export const configsScheduleNextHearingDate = [
       {
         label: "NAMES_OF_PARTIES_REQUIRED",
         isMandatory: true,
+        schemaKeyPath: "orderDetails.partyName",
+        transformer: "customDropdown",
         key: "namesOfPartiesRequired",
         type: "dropdown",
         populators: {

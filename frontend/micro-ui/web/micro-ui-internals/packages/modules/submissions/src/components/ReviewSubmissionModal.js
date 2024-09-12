@@ -122,7 +122,7 @@ function ReviewSubmissionModal({
       actionSaveLabel={t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
         const pdfFile = new File([applicationPreviewPdf], applicationPreviewFileName, { type: "application/pdf" });
-        console.debug(pdfFile, applicationPreviewFileName);
+        
         onDocumentUpload(pdfFile, pdfFile.name)
           .then((document) => {
             const fileStoreId = document.file?.files?.[0]?.fileStoreId;

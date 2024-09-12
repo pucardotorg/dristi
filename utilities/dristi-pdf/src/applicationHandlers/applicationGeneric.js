@@ -72,7 +72,7 @@ async function applicationGeneric(req, res, qrCode) {
       return renderError(res, "Court case not found", 404);
     }
     const allAdvocates = getAdvocates(courtCase);
-    // console.debug(allAdvocates);
+    
     // Search for HRMS details
     // const resHrms = await handleApiCall(
     //   () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
@@ -242,7 +242,7 @@ async function applicationGeneric(req, res, qrCode) {
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name

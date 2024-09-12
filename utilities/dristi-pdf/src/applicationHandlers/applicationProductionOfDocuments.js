@@ -7,6 +7,7 @@ const {
   search_sunbirdrc_credential_service,
   search_application,
   create_pdf,
+  search_advocate,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { getAdvocates } = require("./getAdvocates");
@@ -123,6 +124,21 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
       return renderError(res, "Application not found", 404);
     }
 
+    let barRegistrationNumber = "";
+    const advocateIndividualId =
+      application?.applicationDetails?.advocateIndividualId;
+    if (advocateIndividualId) {
+      const resAdvocate = await handleApiCall(
+        () => search_advocate(tenantId, advocateIndividualId, requestInfo),
+        "Failed to query Advocate Details"
+      );
+      const advocateData = resAdvocate?.data?.advocates?.[0];
+      const advocateDetails = advocateData?.responseList?.find(
+        (item) => item.isActive === true
+      );
+      barRegistrationNumber = advocateDetails?.barRegistrationNumber || "";
+    }
+
     const onBehalfOfuuid = application?.onBehalfOf?.[0];
     const advocate = allAdvocates[onBehalfOfuuid]?.[0]?.additionalDetails
       ?.advocateName
@@ -181,7 +197,8 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
       "November",
       "December",
     ];
-
+    const documentList = application?.applicationDetails
+      ?.applicationDocuments || [{ documentType: "" }];
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const day = currentDate.getDate();
@@ -198,7 +215,7 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name
@@ -213,7 +230,8 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
           advocateSignature: "Advocate_Signature", //FIXME: It should also come from the application
           advocateName: advocateName,
           nameOfDocument: "Aadhar card", //FIXME: It should come from the application, currently there is not field present inside of it
-          barRegistrationNumber: "Bar Registration Number",
+          documentList,
+          barRegistrationNumber,
           day: day + ordinalSuffix,
           month: month,
           year: year,

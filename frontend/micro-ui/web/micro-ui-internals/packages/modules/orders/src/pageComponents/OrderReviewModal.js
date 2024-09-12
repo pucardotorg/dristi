@@ -14,7 +14,7 @@ const OrderPreviewOrderTypeMap = {
   OTHERS: "order-generic",
   REFERRAL_CASE_TO_ADR: "order-generic",
   EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: "order-generic",
-  SCHEDULING_NEXT_HEARING: "reschedule-request-judge",
+  SCHEDULING_NEXT_HEARING: "schedule-hearing-date",
   RESCHEDULE_OF_HEARING_DATE: "new-hearing-date-after-rescheduling",
   REJECTION_RESCHEDULE_REQUEST: "order-for-rejection-rescheduling-request",
   ASSIGNING_NEW_HEARING_DATE: "order-generic",
@@ -48,9 +48,9 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
 
   let orderPreviewKey = order?.orderType;
-  if (order?.additionalDetails?.applicationStatus === "APPROVED") {
+  if (order?.additionalDetails?.applicationStatus === "APPROVED" && order?.orderType === "BAIL") {
     orderPreviewKey = "BAIL_APPROVED";
-  } else if (order?.additionalDetails?.applicationStatus === "Rejected") {
+  } else if (order?.additionalDetails?.applicationStatus === "Rejected" && order?.orderType === "BAIL") {
     orderPreviewKey = "BAIL_REJECT";
   }
   orderPreviewKey = OrderPreviewOrderTypeMap[orderPreviewKey] || OrderPreviewOrderTypeMap[order?.orderType];
@@ -158,7 +158,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
       actionSaveOnSubmit={() => {
         if (showActions) {
           const pdfFile = new File([orderPreviewPdf], orderPreviewFileName, { type: "application/pdf" });
-          console.debug(pdfFile, orderPreviewFileName);
+          
           onDocumentUpload(pdfFile, pdfFile.name)
             .then((document) => {
               const fileStoreId = document.file?.files?.[0]?.fileStoreId;

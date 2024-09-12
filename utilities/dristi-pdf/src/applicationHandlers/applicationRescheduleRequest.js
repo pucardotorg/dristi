@@ -7,6 +7,7 @@ const {
   search_sunbirdrc_credential_service,
   search_application,
   create_pdf,
+  search_advocate,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { getAdvocates } = require("./getAdvocates");
@@ -138,6 +139,21 @@ async function applicationRescheduleRequest(req, res, qrCode) {
       return renderError(res, "Application not found", 404);
     }
 
+    let barRegistrationNumber = "";
+    const advocateIndividualId =
+      application?.applicationDetails?.advocateIndividualId;
+    if (advocateIndividualId) {
+      const resAdvocate = await handleApiCall(
+        () => search_advocate(tenantId, advocateIndividualId, requestInfo),
+        "Failed to query Advocate Details"
+      );
+      const advocateData = resAdvocate?.data?.advocates?.[0];
+      const advocateDetails = advocateData?.responseList?.find(
+        (item) => item.isActive === true
+      );
+      barRegistrationNumber = advocateDetails?.barRegistrationNumber || "";
+    }
+
     const onBehalfOfuuid = application?.onBehalfOf?.[0];
     const advocate = allAdvocates[onBehalfOfuuid]?.[0]?.additionalDetails
       ?.advocateName
@@ -229,7 +245,7 @@ async function applicationRescheduleRequest(req, res, qrCode) {
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name
@@ -244,7 +260,7 @@ async function applicationRescheduleRequest(req, res, qrCode) {
           additionalComments,
           advocateSignature: "Advocate Signature",
           advocateName: advocateName,
-          barRegistrationNumber: "bar registration Number",
+          barRegistrationNumber,
           day: day + ordinalSuffix,
           month: month,
           year: year,
@@ -252,7 +268,7 @@ async function applicationRescheduleRequest(req, res, qrCode) {
         },
       ],
     };
-    console.debug(data);
+
     // Generate the PDF
     const pdfKey =
       qrCode === "true"

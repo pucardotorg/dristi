@@ -144,7 +144,7 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
           parties: "Parties from UI",

@@ -136,7 +136,7 @@ async function rejectReschedulingRequest(req, res, qrCode) {
                 {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "date": stringDate,
                     "partyNames": `${individual.name.givenName} ${individual.name.familyName}`,
                     "applicationId": order.applicationNumber[0],

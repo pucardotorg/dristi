@@ -908,7 +908,12 @@ const GenerateOrders = () => {
             : {
                 ...item,
                 comments:
-                  formData?.comments?.text || formData?.additionalComments?.text || formData?.otherDetails?.text || formData?.sentence?.text || "",
+                  formData?.comments?.text ||
+                  formData?.additionalComments?.text ||
+                  formData?.otherDetails?.text ||
+                  formData?.sentence?.text ||
+                  formData?.briefSummary ||
+                  "",
                 orderType: formData?.orderType?.code,
                 additionalDetails: { ...item?.additionalDetails, formdata: updatedFormData },
               };

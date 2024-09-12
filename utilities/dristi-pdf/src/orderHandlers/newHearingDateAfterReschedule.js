@@ -118,7 +118,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
                 {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "date": stringDate,
                     "newHearingDate": orderDate,
                     "additionalComments": order.comments,

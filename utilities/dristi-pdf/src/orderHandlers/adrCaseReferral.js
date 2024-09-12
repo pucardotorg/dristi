@@ -116,7 +116,7 @@ async function adrCaseReferral(req, res, qrCode) {
                     "courtName": mdmsCourtRoom.name,
                     "place": mdmsCourtEstablishment.boundaryName,
                     "state": mdmsCourtEstablishment.rootBoundaryName,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
                     "date": order.createdDate,

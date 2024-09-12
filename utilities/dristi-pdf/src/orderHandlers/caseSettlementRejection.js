@@ -124,7 +124,7 @@ async function caseSettlementRejection(req, res, qrCode) {
                 {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "partyName": `${complaintIndividual.name.givenName} ${complaintIndividual.name.familyName}`,
                     "otherPartyName": `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
                     "date": order.createdDate,

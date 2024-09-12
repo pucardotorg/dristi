@@ -136,7 +136,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
                 {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "date": stringDate,
                     "partyNames": application.additionalDetails.onBehalOfName,
                     "applicationId": order.orderDetails?.refApplicationId || "N/A",

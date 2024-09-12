@@ -126,7 +126,7 @@ async function summonsIssue(req, res, qrCode) {
             "Data": [
                 {
                     "courtName": mdmsCourtRoom.name,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": courtCase.caseNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
                     "respondentName": order.orderDetails.respondentName,

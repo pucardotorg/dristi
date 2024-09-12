@@ -142,7 +142,7 @@ async function orderGeneric(req, res, qrCode) {
         {
           courtName: "Keral High Court",
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.cnrNumber,
+          caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
           date: formattedToday,
           orderContent: order.comments,
