@@ -11,6 +11,7 @@ import UpdateDeliveryStatusComponent from "../../components/UpdateDeliveryStatus
 import { formatDate } from "../../utils";
 import { ordersService, taskService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
+import { convertToDateInputFormat } from "../../utils/index";
 
 const defaultSearchValues = {
   eprocess: "",
@@ -254,7 +255,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
       const caseDetails = handleTaskDetails(rowData?.taskDetails);
       return [
         { key: "Issued to", value: caseDetails?.respondentDetails?.name },
-        { key: "Issued Date", value: rowData?.createdDate },
+        { key: "Issued Date", value: convertToDateInputFormat(rowData?.createdDate) },
         // { key: "Next Hearing Date", value: nextHearingDate?.startTime ? formatDate(nextHearingDate?.startTime) : "N/A" },
         { key: "Amount Paid", value: `Rs. ${caseDetails?.deliveryChannels?.fees || 100}` },
         { key: "Channel Details", value: caseDetails?.deliveryChannels?.channelName },

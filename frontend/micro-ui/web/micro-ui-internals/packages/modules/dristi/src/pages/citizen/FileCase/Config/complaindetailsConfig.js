@@ -135,7 +135,7 @@ const complainantDetailsFormConfig = [
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
+            minLength: 1,
             // maxLength: 100,
             title: "",
             patternType: "Name",
@@ -146,6 +146,7 @@ const complainantDetailsFormConfig = [
         type: "text",
         label: "MIDDLE_NAME",
         labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "middleName",
           validation: {
@@ -161,16 +162,15 @@ const complainantDetailsFormConfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        // isMandatory: false,
+        labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
             // maxLength: 100,
             title: "",
             patternType: "Name",

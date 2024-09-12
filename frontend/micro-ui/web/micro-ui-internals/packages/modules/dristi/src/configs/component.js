@@ -12,23 +12,18 @@ export const idProofVerificationConfig = [
               label: "CS_ID_TYPE",
               type: "dropdown",
               name: "selectIdTypeType",
-              optionsKey: "name",
+              optionsKey: "type",
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               isMandatory: true,
               disableFormValidation: false,
               clearFields: { ID_Proof: [] },
               clearFieldsType: { ID_Proof: "documentUpload" },
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "AADHAR",
-                },
-                {
-                  code: "PAN",
-                  name: "PAN",
-                },
-              ],
+              mdmsConfig: {
+                masterName: "IdentifierType",
+                moduleName: "User Registration",
+                select: "(data) => {return data['User Registration'].IdentifierType?.map((item) => {return item;});}",
+              },
               optionsCustomStyle: {
                 top: "40px",
               },

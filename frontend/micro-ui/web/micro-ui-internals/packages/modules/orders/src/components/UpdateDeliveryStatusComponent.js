@@ -1,11 +1,7 @@
 import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import ApplicationInfoComponent from "./ApplicationInfoComponent";
-
-const convertToDateInputFormat = (dateStr) => {
-  const [day, month, year] = dateStr.split("-");
-  return `${year}-${month}-${day}`;
-};
+import { convertToDateInputFormat } from "../utils/index";
 
 const convertToDisplayFormat = (dateStr) => {
   const [year, month, day] = dateStr.split("-");
@@ -45,7 +41,7 @@ const UpdateDeliveryStatusComponent = ({ t, infos, links, handleSubmitButtonDisa
         <LabelFieldPair className="case-label-field-pair">
           <CardLabel className="case-input-label">{`${t("Update Delivery Date")}`}</CardLabel>
           <TextInput
-            value={date}
+            value={date.replace(/(\d{2})-(\d{2})-(\d{4})/, "$3-$2-$1")}
             type={"date"}
             name={"delivery-date"}
             onChange={(e) => {

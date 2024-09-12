@@ -4,12 +4,12 @@ on:
     branches:
       - develop
     paths:
-      - 'frontend/micro-ui/**'
+      - "frontend/micro-ui/**"
   pull_request:
     branches:
       - develop
     paths:
-      - 'frontend/micro-ui/**'
+      - "frontend/micro-ui/**"
   workflow_dispatch:
   workflow_call:
 
