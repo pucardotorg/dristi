@@ -47,6 +47,7 @@ import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
+import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -1615,7 +1616,84 @@ function EFilingCases({ path }) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
+  const chequeDetails = useMemo(() => {
+    const debtLiability = caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.[0]?.data;
+    if (debtLiability?.liabilityType?.code === "PARTIAL_LIABILITY") {
+      return {
+        totalAmount: debtLiability?.totalAmount,
+      };
+    } else {
+      const chequeData = caseDetails?.caseDetails?.chequeDetails?.formdata || [];
+      const totalAmount = chequeData.reduce((sum, item) => {
+        return sum + parseFloat(item.data.chequeAmount);
+      }, 0);
+      return {
+        totalAmount: totalAmount.toString(),
+      };
+    }
+  }, [caseDetails]);
+  const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "payment",
+    [{ name: "paymentType" }],
+    {
+      select: (data) => {
+        return data?.payment?.paymentType || [];
+      },
+    }
+  );
 
+  const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "BillingService",
+    [{ name: "TaxPeriod" }],
+    {
+      select: (data) => {
+        return data?.BillingService?.TaxPeriod || [];
+      },
+    }
+  );
+  const callCreateDemandAndCalculation = async (caseDetails, tenantId, caseId) => {
+    const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
+    const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
+    const calculationResponse = await DRISTIService.getPaymentBreakup(
+      {
+        EFillingCalculationCriteria: [
+          {
+            checkAmount: chequeDetails?.totalAmount,
+            numberOfApplication: 1,
+            tenantId: tenantId,
+            caseId: caseId,
+          },
+        ],
+      },
+      {},
+      "dristi",
+      Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0")
+    );
+
+    await DRISTIService.createDemand({
+      Demands: [
+        {
+          tenantId,
+          consumerCode: caseDetails?.filingNumber + `_${suffix}`,
+          consumerType: "case-default",
+          businessService: "case-default",
+          taxPeriodFrom: taxPeriod?.fromDate,
+          taxPeriodTo: taxPeriod?.toDate,
+          demandDetails: [
+            {
+              taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
+              taxAmount: 4, // amount to be replaced with calculationResponse
+              collectionAmount: 0,
+            },
+          ],
+        },
+      ],
+    });
+
+    return calculationResponse;
+  };
   const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
     const assignees = getAllAssignees(caseDetails);
@@ -1647,8 +1725,8 @@ function EFilingCases({ path }) {
         tenantId,
       },
       tenantId
-    ).then(() => {
-      DRISTIService.customApiService(Urls.dristi.pendingTask, {
+    ).then(async () => {
+      await DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
           name: "Pending Payment",
           entityType: "case-default",
@@ -1665,8 +1743,11 @@ function EFilingCases({ path }) {
         },
       });
     });
+
+    const calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
+
     setPrevSelected(selected);
-    history.push(`${path}/e-filing-payment?caseId=${caseId}`);
+    history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
   };
 
   const getFormClassName = useCallback(() => {

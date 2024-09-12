@@ -2,15 +2,14 @@ import { Banner, CardLabel, CloseSvg, Loader, Modal } from "@egovernments/digit-
 import React, { useMemo, useState, useEffect } from "react";
 import Button from "../../../components/Button";
 import { InfoCard } from "@egovernments/digit-ui-components";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import usePaymentProcess from "../../../../../home/src/hooks/usePaymentProcess";
-import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
+import { getSuffixByBusinessCode } from "../../../Utils";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -37,7 +36,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000, path }) {
+function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
   const history = useHistory();
   const onCancel = () => {
     setShowPaymentModal(false);
@@ -47,7 +46,8 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
   const toast = useToast();
   const scenario = "EfillingCase";
   const fileStoreId = localStorage.getItem("fileStoreId");
-
+  const location = useLocation();
+  const calculationResponse = location.state.state.calculationResponse;
   const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     "payment",
@@ -58,18 +58,6 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
       },
     }
   );
-
-  const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
-    Digit.ULBService.getStateId(),
-    "BillingService",
-    [{ name: "TaxPeriod" }],
-    {
-      select: (data) => {
-        return data?.BillingService?.TaxPeriod || [];
-      },
-    }
-  );
-
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -109,28 +97,6 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
       };
     }
   }, [caseDetails]);
-
-  const { data: calculationResponse, isLoading: isPaymentLoading } = Digit.Hooks.dristi.usePaymentCalculator(
-    {
-      EFillingCalculationCriteria: [
-        {
-          checkAmount: chequeDetails?.totalAmount,
-          numberOfApplication: 1,
-          tenantId: tenantId,
-          caseId: caseId,
-        },
-      ],
-    },
-    {},
-    "dristi",
-    Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0")
-  );
-  const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
-    {},
-    { tenantId, consumerCode: caseDetails?.filingNumber, service: "case-default" },
-    "dristi",
-    Boolean(caseDetails?.filingNumber)
-  );
 
   const totalAmount = useMemo(() => {
     const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || 0;
@@ -179,42 +145,9 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
     mockSubmitModalInfo,
     scenario,
   });
-  // const handleDownload = async () => {
-  //   const blob = new Blob([casePdf.data], { type: "application/pdf" });
-  //   const url = window.URL.createObjectURL(blob);
-  //   const link = document.createElement("a");
-  //   link.href = url;
-  //   link.setAttribute("download", "case_pdf.pdf"); // Name of the downloaded file
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   link.parentNode.removeChild(link);
-  //   window.URL.revokeObjectURL(url);
-  // };
   const onSubmitCase = async () => {
     try {
       const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
-      if (billResponse?.Bill?.length === 0) {
-        const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: caseDetails?.filingNumber + `_${suffix}`,
-              consumerType: "case-default",
-              businessService: "case-default",
-              taxPeriodFrom: taxPeriod?.fromDate,
-              taxPeriodTo: taxPeriod?.toDate,
-              demandDetails: [
-                {
-                  taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
       if (bill?.Bill?.length) {
         const paymentStatus = await openPaymentPortal(bill);
@@ -302,7 +235,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
     }
   };
 
-  if (isLoading || isPaymentLoading || paymentLoader || isBillLoading) {
+  if (isLoading || paymentLoader || isPaymentTypeLoading) {
     return <Loader />;
   }
 
