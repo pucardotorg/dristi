@@ -33,6 +33,7 @@ const EmployeeSideBar = () => {
 
   function mergeObjects(obj1, obj2) {
     for (const key in obj2) {
+      if (key === "__proto__" || key === "constructor") continue;
       if (obj2.hasOwnProperty(key)) {
         if (typeof obj2[key] === "object" && !Array.isArray(obj2[key])) {
           if (!obj1[key]) {
