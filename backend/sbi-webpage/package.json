@@ -1,0 +1,19 @@
+{
+  "name": "sbi-webpage",
+  "version": "1.0.0",
+  "description": "For Sbi Payment Integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "path": "^0.12.7",
+    "qs": "^6.13.0"
+  }
+}
