@@ -1,13 +1,11 @@
 package org.pucar.dristi.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.Mdms;
-import org.pucar.dristi.web.models.MdmsCriteriaReqV2;
-import org.pucar.dristi.web.models.MdmsCriteriaV2;
-import org.pucar.dristi.web.models.MdmsResponseV2;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,14 +27,16 @@ public class MdmsV2Util {
 
 	private final Configuration configs;
 
+	private final ObjectMapper objectMapper;
+
 	@Autowired
 	public MdmsV2Util(RestTemplate restTemplate,
 					  ObjectMapper mapper,
-					  Configuration configs) {
+					  Configuration configs, ObjectMapper objectMapper) {
 		this.restTemplate = restTemplate;
 		this.mapper = mapper;
 		this.configs = configs;
-
+		this.objectMapper = objectMapper;
 	}
 
 
@@ -54,6 +54,33 @@ public class MdmsV2Util {
 		}
 
 		return mdmsResponseV2.getMdms();
+	}
+
+	public JsonNode fetchMdmsV2Schema(RequestInfo requestInfo, String tenantId, Set<String> ids, Set<String> uniqueIdentifiers, String schemaCode, Boolean isActive) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(configs.getMdmsHost()).append(configs.getMdmsSchemaEndPoint());
+		SchemaDefCriteria schemaDefinitionSearch= SchemaDefCriteria.builder().
+				tenantId(tenantId)
+				.codes(uniqueIdentifiers)
+				.build();
+
+		MdmsSearch mdmsSearchObject= MdmsSearch.builder()
+				.requestInfo(requestInfo)
+				.schemaDefCriteria(schemaDefinitionSearch)
+				.build();
+		Object response = new HashMap<>();
+		JsonNode jsonNode = null;
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsSearchObject, Map.class);
+			String jsonString = objectMapper.writeValueAsString(response);
+
+			JsonNode rootNode = objectMapper.readTree(jsonString);
+			jsonNode = rootNode.path("SchemaDefinitions");
+		} catch (Exception e) {
+			log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
+		}
+
+		return jsonNode;
 	}
 
 	public MdmsCriteriaReqV2 getMdmsV2Request(RequestInfo requestInfo, String tenantId, Set<String> ids, Set<String> uniqueIdentifiers, String schemaCode, Boolean isActive) {
