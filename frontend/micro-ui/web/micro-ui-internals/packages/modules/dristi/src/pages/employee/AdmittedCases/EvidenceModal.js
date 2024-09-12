@@ -734,7 +734,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           <div className="evidence-modal-main">
             <div className={"application-details"}>
               <div>
-                <div className="application-info">
+                <div className="application-info" style={{ flexWrap: "wrap" }}>
                   <div className="info-row">
                     <div className="info-key">
                       <h3>{t("APPLICATION_TYPE")}</h3>

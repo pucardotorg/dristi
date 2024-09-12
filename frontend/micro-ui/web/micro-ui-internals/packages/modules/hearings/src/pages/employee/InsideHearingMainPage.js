@@ -302,6 +302,7 @@ const InsideHearingMainPage = () => {
             <LabelFieldPair className="case-label-field-pair">
               <CardLabel className="case-input-label">{`Select Witness`}</CardLabel>
               <Dropdown
+                t={t}
                 option={options}
                 optionKey={"label"}
                 select={handleDropdownChange}
