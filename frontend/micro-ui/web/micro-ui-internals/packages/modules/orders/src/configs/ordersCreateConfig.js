@@ -3505,6 +3505,23 @@ export const configsJudgement = [
         populators: { name: "nameofComplainant" },
       },
       {
+        label: "DESCRIPTION_OF_COMPLAINANT",
+        isMandatory: false,
+        disable: false,
+        key: "descriptionOfComplainant",
+        type: "text",
+        populators: {
+          name: "descriptionOfComplainant",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
+      },
+      {
         label: "NAME_COMPLAINANT_ADVOCATE",
         isMandatory: false,
         key: "nameofComplainantAdvocate",
@@ -3588,17 +3605,19 @@ export const configsJudgement = [
     body: [
       {
         type: "component",
-        component: "SelectTranscriptTextArea",
+        component: "SelectCustomTextArea",
         key: "sentence",
         schemaKeyPath: "caseDetails.sentence",
         isMandatory: true,
         populators: {
-          input: {
-            name: "text",
-            textAreaSubHeader: "SENTENCE",
-            placeholder: "TYPE_HERE_PLACEHOLDER",
-            type: "TranscriptionTextAreaComponent",
-          },
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "SENTENCE",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+            },
+          ],
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
@@ -3613,19 +3632,17 @@ export const configsJudgement = [
     body: [
       {
         type: "component",
-        component: "SelectCustomTextArea",
+        component: "SelectTranscriptTextArea",
         key: "content",
         schemaKeyPath: "caseDetails.content",
         isMandatory: true,
         populators: {
-          inputs: [
-            {
-              name: "text",
-              textAreaSubHeader: "CONTENT",
-              placeholder: "TYPE_HERE_PLACEHOLDER",
-              type: "TextAreaComponent",
-            },
-          ],
+          input: {
+            name: "text",
+            textAreaSubHeader: "CONTENT",
+            placeholder: "TYPE_HERE_PLACEHOLDER",
+            type: "TranscriptionTextAreaComponent",
+          },
           validation: {
             customValidationFn: {
               moduleName: "dristiOrders",
