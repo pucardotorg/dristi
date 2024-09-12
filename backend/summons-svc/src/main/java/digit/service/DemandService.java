@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static digit.config.ServiceConstants.*;
 
@@ -60,8 +61,8 @@ public class DemandService {
         String channelName = taskRequest.getTask().getTaskDetails().getDeliveryChannel().getChannelName();
         if(channelName.equalsIgnoreCase("POST")) {
             List<Calculation> calculationList = generatePaymentDetails(taskRequest.getRequestInfo(), task);
-            generateDemands(taskRequest.getRequestInfo(), calculationList, task);
-            return getBill(taskRequest.getRequestInfo(), task);
+            Set<String> consumerCodeList = generateDemands(taskRequest.getRequestInfo(), calculationList, task);
+            return getBillWithMultipleConsumerCode(taskRequest.getRequestInfo(), consumerCodeList, task);
         }
         else {
             updateTaskStatus(taskRequest);
@@ -89,8 +90,7 @@ public class DemandService {
         return calculationResponse.getCalculation();
     }
 
-    public void generateDemands(RequestInfo requestInfo, List<Calculation> calculations, Task task) {
-        List<Demand> demands = new ArrayList<>();
+    public Set<String> generateDemands(RequestInfo requestInfo, List<Calculation> calculations, Task task) {        List<Demand> demands = new ArrayList<>();
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo,
                 config.getEgovStateTenantId(), config.getPaymentBusinessServiceName(), createMasterDetails()
         );
@@ -98,7 +98,7 @@ public class DemandService {
             List<DemandDetail> demandDetailList = createDemandDetails(calculation, task, mdmsData);
             demands.addAll(createDemandList(task, demandDetailList, calculation.getTenantId(), mdmsData));
         }
-        callBillServiceAndCreateDemand(requestInfo, demands);
+        return callBillServiceAndCreateDemand(requestInfo, demands, task);
     }
 
     private List<DemandDetail> createDemandDetails(Calculation calculation, Task task, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -155,11 +155,16 @@ public class DemandService {
                 .build();
     }
 
-    private void callBillServiceAndCreateDemand(RequestInfo requestInfo, List<Demand> demands) {
+    private Set<String> callBillServiceAndCreateDemand(RequestInfo requestInfo, List<Demand> demands, Task task) {
         StringBuilder url = new StringBuilder().append(config.getBillingServiceHost())
                 .append(config.getDemandCreateEndpoint());
         DemandRequest demandRequest = DemandRequest.builder().requestInfo(requestInfo).demands(demands).build();
         repository.fetchResult(url, demandRequest);
+        Set<String> consumerCode = new HashSet<>();
+        for(Demand demand : demands){
+            consumerCode.add(demand.getConsumerCode());
+        }
+        return consumerCode;
     }
 
     private List<Demand> createDemandList(Task task, List<DemandDetail> demandDetailList, String tenantId, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -204,6 +209,7 @@ public class DemandService {
         }
         return Collections.emptyMap();
     }
+
     private Map<String, String> getPaymentType(Map<String, Map<String, JSONArray>> mdmsData, String channelName) {
         if (mdmsData != null && mdmsData.containsKey("payment") && mdmsData.get(config.getPaymentBusinessServiceName()).containsKey(PAYMENTTYPE)) {
             JSONArray masterCode = mdmsData.get(config.getPaymentBusinessServiceName()).get(PAYMENTTYPE);
@@ -232,30 +238,40 @@ public class DemandService {
     }
 
     public BillResponse getBill(RequestInfo requestInfo, Task task) {
-        String uri = buildFetchBillURI(task.getTenantId(), task.getTaskNumber(), config.getTaskBusinessService());
+        String uri = buildFetchBillURI(task.getTenantId(), Collections.singleton(task.getTaskNumber()), config.getTaskBusinessService());
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-
         Object response = repository.fetchResult(new StringBuilder(uri), requestInfoWrapper);
 
         return mapper.convertValue(response, BillResponse.class);
     }
 
-    private String buildFetchBillURI(String tenantId, String applicationNumber, String businessService) {
+    public BillResponse getBillWithMultipleConsumerCode(RequestInfo requestInfo, Set<String> consumerCodes, Task task) {
+        String uri = buildFetchBillURI(task.getTenantId(), consumerCodes, config.getTaskBusinessService());
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        Object response = repository.fetchResult(new StringBuilder(uri), requestInfoWrapper);
+
+        return mapper.convertValue(response, BillResponse.class);
+    }
+
+    private String buildFetchBillURI(String tenantId, Set<String> applicationNumbers, String businessService) {
         try {
             String encodedTenantId = URLEncoder.encode(tenantId, StandardCharsets.UTF_8);
-            String encodedApplicationNumber = URLEncoder.encode(applicationNumber, StandardCharsets.UTF_8);
             String encodedBusinessService = URLEncoder.encode(businessService, StandardCharsets.UTF_8);
+            String applicationNumbersParam = applicationNumbers.stream()
+                    .map(num -> URLEncoder.encode(num, StandardCharsets.UTF_8))
+                    .collect(Collectors.joining(","));
 
             return URI.create(String.format("%s%s?tenantId=%s&consumerCode=%s&businessService=%s",
                     config.getBillingServiceHost(),
                     config.getFetchBillEndpoint(),
                     encodedTenantId,
-                    encodedApplicationNumber,
+                    applicationNumbersParam,
                     encodedBusinessService)).toString();
         } catch (Exception e) {
-            log.error("Error occurred when creating bill uri with search params", e);
-            throw new CustomException("GENERATE_BILL_ERROR", "Error Occurred when  generating bill");
+            log.error("Error occurred when creating bill URI with search params", e);
+            throw new CustomException("GENERATE_BILL_ERROR", "Error occurred when generating bill");
         }
     }
 
