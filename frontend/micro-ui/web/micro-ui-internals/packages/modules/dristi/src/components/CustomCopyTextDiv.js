@@ -21,7 +21,7 @@ const CustomCopyTextDiv = ({ data, t, keyStyle, valueStyle }) => {
         <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
           <div style={{ flex: 1 }}>
             <CardText className={"copy-key-text"} style={keyStyle}>
-              {key}
+              {t(key)}
             </CardText>
           </div>
           <div style={{ display: "flex", alignItems: "center", paddingLeft: "10px" }}>

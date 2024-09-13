@@ -302,6 +302,7 @@ const InsideHearingMainPage = () => {
             <LabelFieldPair className="case-label-field-pair">
               <CardLabel className="case-input-label">{`Select Witness`}</CardLabel>
               <Dropdown
+                t={t}
                 option={options}
                 optionKey={"label"}
                 select={handleDropdownChange}
@@ -444,7 +445,7 @@ const InsideHearingMainPage = () => {
             }}
           >
             <Button
-              label={"ATTENDANCE_CHIP"}
+              label={t("ATTENDANCE_CHIP")}
               style={{ boxShadow: "none", backgroundColor: "#ECF3FD", borderRadius: "4px", border: "none", padding: "10px" }}
               textStyles={{
                 fontFamily: "Roboto",

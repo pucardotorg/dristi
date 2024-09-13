@@ -134,11 +134,14 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
     "dristi",
     Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0")
   );
+
+  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, "case-default"), [paymentTypeData]);
+
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
-    { tenantId, consumerCode: caseDetails?.filingNumber, service: "case-default" },
-    "dristi",
-    Boolean(caseDetails?.filingNumber)
+    { tenantId, consumerCode: caseDetails?.filingNumber + `_${suffix}`, service: "case-default" },
+    `dristi_${suffix}`,
+    Boolean(caseDetails?.filingNumber && suffix)
   );
 
   const totalAmount = useMemo(() => {
@@ -175,7 +178,6 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
   });
   const onSubmitCase = async () => {
     try {
-      const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
       if (billResponse?.Bill?.length === 0) {
         const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
         await DRISTIService.createDemand({
