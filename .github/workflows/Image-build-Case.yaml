@@ -12,7 +12,9 @@ on:
       - 'backend/case/**'
   workflow_dispatch:
   workflow_call:
-
+permissions:
+  security-events: write
+  contents: read
 jobs:
   docker_image-build:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'

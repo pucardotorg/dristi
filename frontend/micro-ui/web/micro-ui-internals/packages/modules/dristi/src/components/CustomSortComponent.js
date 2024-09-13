@@ -47,7 +47,7 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
             onSelect(
               config.key,
               config?.paymentInbox
-                ? formData?.[config.key]?.order === "desc"
+                ? formData?.[config.key] === "DESC"
                   ? "ASC"
                   : "DESC"
                 : { sortBy: config.sortBy, order: formData?.[config.key]?.order === "desc" ? "asc" : "desc" }
@@ -58,7 +58,7 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
           {config?.showAdditionalText ? (
             <span className="custom-sort-text">
               &nbsp;
-              {formData?.[config.key]?.order === "desc" ? config?.descText : config?.ascText}
+              {formData?.[config.key]?.order === "desc" || formData?.[config.key] === "DESC" ? config?.descText : config?.ascText}
             </span>
           ) : (
             ""
@@ -68,7 +68,7 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
               className="custom-sort-icon"
               style={{
                 marginLeft: 16,
-                transform: formData?.[config.key]?.order === "desc" ? "rotate(0deg)" : "rotate(180deg)",
+                transform: formData?.[config.key]?.order === "desc" || formData?.[config.key] === "DESC" ? "rotate(0deg)" : "rotate(180deg)",
                 transition: "transform 0.3s",
               }}
             >

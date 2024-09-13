@@ -37,28 +37,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const toast = useToast();
   const [isDisabled, setIsDisabled] = useState(false);
   const { caseId, filingNumber, consumerCode, businessService, paymentType } = window?.Digit.Hooks.useQueryParams();
-
-  // const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
-  //   Digit.ULBService.getStateId(),
-  //   "payment",
-  //   [{ name: "paymentType" }],
-  //   {
-  //     select: (data) => {
-  //       return data?.payment?.paymentType || [];
-  //     },
-  //   }
-  // );
-
-  // const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
-  //   Digit.ULBService.getStateId(),
-  //   "BillingService",
-  //   [{ name: "TaxPeriod" }],
-  //   {
-  //     select: (data) => {
-  //       return data?.BillingService?.TaxPeriod || [];
-  //     },
-  //   }
-  // );
+  const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
     {
@@ -152,35 +131,30 @@ const ViewPaymentDetails = ({ location, match }) => {
   const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
-  // const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
-  // const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
-
-  // const { data: demandResponse, isLoading: demandCreateLoading } = Digit.Hooks.dristi.useCreateDemand(
-  //   {
-  //     Demands: [
-  //       {
-  //         tenantId,
-  //         consumerCode: caseDetails?.filingNumber + `_${suffix}`,
-  //         consumerType: "case-default",
-  //         businessService: "case-default",
-  //         taxPeriodFrom: taxPeriod?.fromDate,
-  //         taxPeriodTo: taxPeriod?.toDate,
-  //         demandDetails: [
-  //           {
-  //             taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
-  //             taxAmount: 4,
-  //             collectionAmount: 0,
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  //   {},
-  //   "dristi",
-  //   Boolean(paymentDetails?.Bill?.length === 0 && caseDetails?.filingNumber)
-  // );
-
   const onSubmitCase = async () => {
+    const consumerCodeWithoutSuffix = consumerCode.split("_")[0];
+    let referenceId;
+    if (consumerCodeWithoutSuffix.includes("TASK")) {
+      const {
+        list: [tasksData],
+      } = await Digit.HearingService.searchTaskList({
+        criteria: {
+          tenantId: tenantId,
+          taskNumber: consumerCodeWithoutSuffix,
+        },
+      });
+      const {
+        list: [{ orderNumber }],
+      } = await ordersService.searchOrder({
+        criteria: {
+          tenantId: tenantId,
+          id: tasksData?.orderId,
+        },
+      });
+      referenceId = tasksData?.taskDetails?.deliveryChannels?.channelName + `_${orderNumber}`;
+    } else {
+      referenceId = consumerCodeWithoutSuffix;
+    }
     setIsDisabled(true);
     const regenerateBill = await DRISTIService.callFetchBill({}, { consumerCode: consumerCode, tenantId, businessService: businessService });
     const billFetched = regenerateBill?.Bill ? regenerateBill?.Bill[0] : {};
@@ -214,7 +188,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         pendingTask: {
           name: "Pending Payment",
           entityType: businessService,
-          referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+          referenceId: `MANUAL_${referenceId}`,
           status: "PAYMENT_PENDING",
           cnrNumber: null,
           filingNumber: caseDetails?.filingNumber,
