@@ -1678,6 +1678,8 @@ export const configsAssignDateToRescheduledHearing = [
         isMandatory: true,
         key: "newHearingDate",
         type: "date",
+        schemaKeyPath: "orderDetails.newHearingDate",
+        transformer: "date",
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
@@ -1775,6 +1777,8 @@ export const configsAssignNewHearingDate = [
         isMandatory: true,
         key: "newHearingDate",
         type: "date",
+        schemaKeyPath: "orderDetails.newHearingDate",
+        transformer: "date",
         disable: true,
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",

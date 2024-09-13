@@ -10,6 +10,7 @@ const {
   search_application,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { formatDate } = require("./formatDate");
 
 async function orderAcceptVoluntary(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
@@ -146,7 +147,10 @@ async function orderAcceptVoluntary(req, res, qrCode) {
       }
       base64Url = imgTag.attr("src");
     }
-    // Prepare data for PDF generation
+
+    const currentDate = new Date();
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    const submissionDate = formatDate(new Date(application?.createdDate));
     const data = {
       Data: [
         {
@@ -155,11 +159,12 @@ async function orderAcceptVoluntary(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
           submissionType: "Application",
-          submissionDate: new Date(application?.createdDate),
-          date: "From the UI",
-          Date: "From the UI",
+          submissionDate,
+          date: formattedToday,
+          Date: formattedToday,
           partyName: partyName,
           content: order?.comments || "",
+          applicationNumber: application?.applicationNumber,
           additionalDetails: order?.comments || "",
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
