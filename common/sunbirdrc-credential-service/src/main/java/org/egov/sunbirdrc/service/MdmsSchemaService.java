@@ -72,10 +72,14 @@ public class MdmsSchemaService {
         HttpEntity<String> entity = new HttpEntity<>(mdmsSearchObjectString, headers);
         StringBuilder getSchemaUrl= new StringBuilder();
         getSchemaUrl.append(mdmsHost).append(mdmsSearchUrl);
+        log.info("Request URL: {}", getSchemaUrl);
+        log.info("Request Headers: {}", entity.getHeaders());
+        log.info("Request Body: {}", entity.getBody());
         //getSchemaUrl.append("http://localhost:9002/mdms-v2/schema/v1/_search");
         String mdmsSearchResponse=null;
         try{
             mdmsSearchResponse = restTemplate.postForObject(getSchemaUrl.toString(), entity, String.class);
+            log.info("Response: {}", mdmsSearchResponse);
 
         }
         catch(Exception e){
@@ -95,6 +99,7 @@ public class MdmsSchemaService {
         loadSchemaFromMdms();
         try {
             String response = stringRedisTemplate.opsForValue().get("vc-mdms");
+            log.info("Response from Redis: {}", response);
             if (response != null) {
                 JsonNode rootNode = objectMapper.readTree(response);
                 JsonNode schemaDefinitions = rootNode.path("SchemaDefinitions");
