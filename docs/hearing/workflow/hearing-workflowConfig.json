@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "SCHEDULED",
               "roles": [
-                "HEARING_SCHEDULER"
+                "HEARING_CREATOR"
               ]
             }
           ]
@@ -37,21 +37,22 @@
               "action": "RESCHEDULE",
               "nextState": "OPT_OUT",
               "roles": [
-                "HEARING_DATE_REQUESTOR"
+                "HEARING_EDITOR"
               ]
             },
             {
               "action": "START",
               "nextState": "IN_PROGRESS",
               "roles": [
-                "HEARING_START"
+                "HEARING_EDITOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -69,7 +70,9 @@
               "action": "SET_DATE",
               "nextState": "SCHEDULED",
               "roles": [
-                "HEARING_APPROVER",
+                "HEARING_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN",
                 "AUTO_ESCALATE"
               ]
             },
@@ -77,7 +80,8 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -93,23 +97,40 @@
           "actions": [
             {
               "action": "CLOSE",
-              "nextState": "COMPLETED",
+              "nextState": "HEARD",
               "roles": [
-                "HEARING_CLOSER"
+                "HEARING_EDITOR"
+              ]
+            },
+            {
+              "action": "ADJOURN",
+              "nextState": "ADJOURNED",
+              "roles": [
+                "HEARING_EDITOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
         },
         {
           "sla": null,
-          "state": "COMPLETED",
+          "state": "HEARD",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "ADJOURNED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

@@ -37,14 +37,18 @@
               "action": "DELIVERED",
               "nextState": "EXECUTED",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "NOT_DELIVERED",
               "nextState": "NOT_EXECUTED",
               "roles": [
-                "TASK_UPDATOR",
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN",
                 "AUTO_ESCALATE"
               ]
             },
@@ -52,7 +56,8 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -68,7 +73,7 @@
         },
         {
           "sla": null,
-          "state": "NOTEXECUTED",
+          "state": "NOT_EXECUTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

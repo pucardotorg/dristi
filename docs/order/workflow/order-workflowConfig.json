@@ -34,31 +34,28 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "SAVE_DRAFT",
-              "nextState": "DRAFT_IN_PROGRESS",
-              "roles": [
-                "ORDER_CREATOR"
-              ]
-            },
-            {
               "action": "E-SIGN",
               "nextState": "PUBLISHED",
               "roles": [
-                "ORDER_APPROVER"
+                "ORDER_APPROVER",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "DELETE",
               "nextState": "DELETED",
               "roles": [
-                "ORDER_DELETE"
+                "ORDER_CREATOR",
+                "ORDER_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]

@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "application",
-      "businessService": "application-voluntary-submission",
+      "business": "submission",
+      "businessService": "submission-voluntary-submission",
       "businessServiceSla": 432000000,
       "states": [
         {
@@ -37,14 +37,16 @@
               "action": "E-SIGN",
               "nextState": "PENDING_PAYMENT",
               "roles": [
-                "SUBMISSION_RESPONDER"
+                "SUBMISSION_CREATOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "DELETE",
               "nextState": "DELETED",
               "roles": [
-                "SUBMISSION_DELETE"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
@@ -62,6 +64,8 @@
               "action": "MAKE_PAYMENT",
               "nextState": "PENDING_APPROVAL",
               "roles": [
+                "SUBMISSION_CREATOR",
+                "SYSTEM",
                 "SYSTEM_ADMIN"
               ]
             },
@@ -69,7 +73,7 @@
               "action": "DELETE",
               "nextState": "DELETED",
               "roles": [
-                "SUBMISSION_DELETE"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
@@ -94,7 +98,7 @@
               "action": "DELETE",
               "nextState": "DELETED",
               "roles": [
-                "SUBMISSION_DELETE"
+                "SUBMISSION_CREATOR"
               ]
             },
             {
@@ -108,7 +112,8 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]

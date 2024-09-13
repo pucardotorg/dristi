@@ -2,31 +2,57 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "business": "submission",
-      "businessService": "submission-order-submission-feedback",
-      "businessServiceSla": 345600000,
+      "business": "evidence",
+      "businessService": "evidence-default",
+      "businessServiceSla": 518400000,
       "states": [
         {
-          "sla": null,
+          "sla": 172800000,
           "state": null,
           "applicationStatus": null,
-          "docUploadRequired": false,
+          "docUploadRequired": true,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "CREATE",
-              "nextState": "PENDING_E-SIGN",
+              "action": "SUBMIT_EVIDENCE",
+              "nextState": "PENDING_SIGNATURE",
               "roles": [
-                "SUBMISSION_CREATOR"
+                "EVIDENCE_CREATOR"
               ]
             }
           ]
         },
         {
-          "sla": 86400000,
-          "state": "PENDING_E-SIGN",
+          "sla": 172800000,
+          "state": "PENDING_SIGNATURE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "E-SIGN",
+              "nextState": "PENDING_APPROVAL",
+              "roles": [
+                "EVIDENCE_CREATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_APPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -35,54 +61,9 @@
           "actions": [
             {
               "action": "E-SIGN",
-              "nextState": "PENDING_RESPONSE",
+              "nextState": "PUBLISHED",
               "roles": [
-                "SUBMISSION_CREATOR",
-                "SYSTEM",
-                "SYSTEM_ADMIN"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "SUBMISSION_CREATOR"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "SYSTEM",
-                "SYSTEM_ADMIN"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 259200000,
-          "state": "PENDING_RESPONSE",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "RESPOND",
-              "nextState": "COMPLETED",
-              "roles": [
-                "SUBMISSION_EDITOR",
-                "SYSTEM",
-                "SYSTEM_ADMIN",
-                "AUTO_ESCALATE"
-              ]
-            },
-            {
-              "action": "DELETE",
-              "nextState": "DELETED",
-              "roles": [
-                "SUBMISSION_CREATOR"
+                "EVIDENCE_APPROVER"
               ]
             },
             {
@@ -97,17 +78,8 @@
         },
         {
           "sla": null,
-          "state": "COMPLETED",
+          "state": "PUBLISHED",
           "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": null,
-          "state": "DELETED",
-          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

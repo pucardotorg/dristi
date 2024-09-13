@@ -2,8 +2,8 @@
     "BusinessServices": [
         {
             "tenantId": "kl",
-            "businessService": "case-default",
             "business": "case",
+            "businessService": "case-default",
             "businessServiceSla": null,
             "states": [
                 {
@@ -24,7 +24,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PENDING_PAYMENT",
+                            "nextState": "PENDING_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -40,13 +40,6 @@
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
-                        {
-                            "action": "SAVE_DRAFT",
-                            "nextState": "DRAFT_IN_PROGRESS",
-                            "roles": [
-                                "CASE_CREATOR"
-                            ]
-                        },
                         {
                             "action": "SUBMIT_CASE",
                             "nextState": "PENDING_E-SIGN",
@@ -76,7 +69,9 @@
                             "action": "E-SIGN",
                             "nextState": "PENDING_PAYMENT",
                             "roles": [
-                                "CASE_CREATOR"
+                                "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
                             ]
                         }
                     ]
@@ -94,6 +89,7 @@
                             "action": "MAKE_PAYMENT",
                             "nextState": "UNDER_SCRUTINY",
                             "roles": [
+                                "SYSTEM",
                                 "SYSTEM_ADMIN",
                                 "CASE_CREATOR"
                             ]
@@ -161,8 +157,28 @@
                     "actions": [
                         {
                             "action": "EDIT_CASE",
+                            "nextState": "PENDING_RE_E-SIGN",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_RE_E-SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
                             "nextState": "UNDER_SCRUTINY",
                             "roles": [
+                                "SYSTEM",
+                                "SYSTEM_ADMIN",
                                 "CASE_CREATOR"
                             ]
                         }
@@ -217,7 +233,7 @@
                             "action": "ISSUE_ORDER",
                             "nextState": "PENDING_RESPONSE",
                             "roles": [
-                                "CASE_RESPONDER"
+                                "CASE_APPROVER"
                             ]
                         },
                         {
@@ -242,7 +258,8 @@
                             "action": "RESPOND",
                             "nextState": "PENDING_ADMISSION",
                             "roles": [
-                                "CASE_RESPONDER"
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
                             ]
                         },
                         {

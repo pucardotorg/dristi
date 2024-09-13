@@ -37,14 +37,17 @@
               "action": "MAKE_PAYMENT",
               "nextState": "BAIL_DOCUMENT_UPLOAD",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_CREATOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -62,14 +65,15 @@
               "action": "UPLOAD",
               "nextState": "PENDING_REVIEW",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_CREATOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -87,21 +91,22 @@
               "action": "APPROVE",
               "nextState": "BAIL_GRANTED",
               "roles": [
-                "TASK_APPROVER"
+                "TASK_EDITOR"
               ]
             },
             {
               "action": "SEND_BACK",
               "nextState": "BAIL_DOCUMENT_UPLOAD",
               "roles": [
-                "TASK_APPROVER"
+                "TASK_EDITOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]

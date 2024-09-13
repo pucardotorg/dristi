@@ -340,7 +340,10 @@ components:
         status:
           type: string
           description: workflow state being set as hearing status
-          example: scheduled, in progress, in transcription, closed
+          example: scheduled, in progress, in transcription, closed, adjourned
+        adjournmentReason:
+          type: string
+          description: master data for reasons for adjournment
         startTime:
           type: integer
           format: int64

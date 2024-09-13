@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task",
-      "business": "task-notice",
+      "business": "task",
+      "businessService": "task-notice",
       "businessServiceSla": 4320000000,
       "states": [
         {
@@ -37,14 +37,17 @@
               "action": "MAKE_PAYMENT",
               "nextState": "ISSUE_NOTICE",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_CREATOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -62,14 +65,18 @@
               "action": "SERVED",
               "nextState": "DELIVERED",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "NOT_SERVED",
               "nextState": "RE_ISSUE",
               "roles": [
-                "TASK_UPDATOR",
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN",
                 "AUTO_ESCALATE"
               ]
             },
@@ -77,7 +84,8 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -95,7 +103,10 @@
               "action": "NEW_NOTICE",
               "nextState": "UNDELIVERED",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_CREATOR",
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
