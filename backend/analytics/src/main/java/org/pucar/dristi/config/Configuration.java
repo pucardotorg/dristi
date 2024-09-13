@@ -23,11 +23,20 @@ public class Configuration {
 	@Value("${egov.infra.indexer.host}")
 	private String esHostUrl;
 
+	@Value("${egov.demand.host}")
+	private String demandHost;
+
+	@Value("${egov.demand.end.point}")
+	private String demandEndPoint;
+
 	@Value("${elasticsearch.poll.interval.seconds}")
 	private String pollInterval;
 
 	@Value("${egov.bulk.index}")
 	private String index;
+
+	@Value("${billing.index}")
+	private String billingIndex;
 
 	@Value("${egov.case.overall.status.topic}")
 	private String caseOverallStatusTopic;
@@ -48,7 +57,7 @@ public class Configuration {
 	private String timezone;
 
 	@Value("${egov.statelevel.tenantId}")
-	private String stateLevelTenantId;
+	private  String stateLevelTenantId;
 
 	//Hearing Config
 	@Value("${egov.hearing.host}")
@@ -120,6 +129,13 @@ public class Configuration {
 	@Value("${egov.mdms.case.outcome.master.name}")
 	private String mdmsCaseOutcomeMasterName;
 
+	@Value("${create.demand.topic.name}")
+	private String demandGenerateTopic;
+
+
+	@Value("${create.payment.collection.topic.name}")
+	private String paymentCollectTopic;
+
 	@Value("${egov.hearing.business.services}")
 	private String hearingBusinessServices;
 	private List<String> hearingBusinessServiceList;
@@ -153,4 +169,6 @@ public class Configuration {
 		applicationBusinessServiceList = Arrays.asList(applicationBusinessServices.split(","));
 		orderBusinessServiceList = Arrays.asList(orderBusinessServices.split(","));
 	}
+
+
 }

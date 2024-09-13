@@ -66,7 +66,7 @@ public class AdvocateClerkService {
             if(offset == null)
                 offset = 0;
             // Fetch applications from database according to the given search criteria
-            advocateClerkRepository.getApplications(advocateClerkSearchCriteria, tenantId, limit, offset);
+            advocateClerkRepository.getClerks(advocateClerkSearchCriteria, tenantId, limit, offset);
 
             for (AdvocateClerkSearchCriteria searchCriteria : advocateClerkSearchCriteria){
                 searchCriteria.getResponseList().forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));

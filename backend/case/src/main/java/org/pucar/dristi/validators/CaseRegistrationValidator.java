@@ -99,7 +99,7 @@ public class CaseRegistrationValidator {
 				throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
 		}
 
-		List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria
+		List<CaseCriteria> existingApplications = repository.getCases(Collections.singletonList(CaseCriteria
 				.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
 				.cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build()),
 				requestInfo);

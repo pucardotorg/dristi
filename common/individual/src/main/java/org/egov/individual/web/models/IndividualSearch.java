@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import org.egov.common.data.query.annotations.Exclude;
 import org.egov.common.models.individual.Gender;
 import org.egov.common.models.individual.Identifier;
-import org.egov.common.models.individual.Name;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

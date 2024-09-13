@@ -155,7 +155,7 @@ const TopBar = ({
           id="topbar-logo"
           style={{ display: "flex", alignItems: "center", height: "40px", minWidth: "20px" }}
           src={
-            "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/17bba4d1a5b09a0840e516227bbe9364.png" ||
+            "https://pucarfilestore.blob.core.windows.net/pucar-filestore/pg/pucar-assets/17bba4d1a5b09a0840e516227bbe9364.png" ||
             "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
           }
           alt="mSeva"

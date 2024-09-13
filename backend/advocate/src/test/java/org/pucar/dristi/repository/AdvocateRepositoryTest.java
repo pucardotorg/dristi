@@ -78,7 +78,7 @@ import static org.mockito.Mockito.*;
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
-        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, tenantId, limit, offset);
+        List<AdvocateSearchCriteria> result = advocateRepository.getAdvocates(searchCriteria, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -103,7 +103,7 @@ import static org.mockito.Mockito.*;
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
 
         // Assert
-        assertThrows(Exception.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
+        assertThrows(Exception.class, () -> advocateRepository.getAdvocates(searchCriteria, tenantId, limit, offset));
     }
 
     @Test
@@ -124,7 +124,7 @@ import static org.mockito.Mockito.*;
         when(jdbcTemplate.query(anyString(), any(Object[].class),any(), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
 
         // Assert
-        assertThrows(CustomException.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
+        assertThrows(CustomException.class, () -> advocateRepository.getAdvocates(searchCriteria, tenantId, limit, offset));
     }
 
     @Test

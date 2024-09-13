@@ -1,0 +1,68 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+title "Judge marks/unmarks Submission as Evidence"
+
+actor Judge as J
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant DocumentsUI as DU
+
+
+box DRISTI Services
+participant ArtifactSvc as ARS #gold
+participant AnalyticsSvc as AAS #gold
+end box
+
+box DIGIT Services
+participant Workflow as W #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+Database ESIndexer as DBES #gray
+end box
+
+J->HU: login
+J->HU: select a case to view 
+HU->VU: redirects to View Case screen (filing or CNR number)
+J->VU: Click "Documents" tab 
+VU->DU: redirect to Documentsscreen 
+DU->ARS++: search artifacts (CNR)
+return list of artifacts
+
+== Mark As Evidence Flow ==
+
+J->DU: select "Mark as Evidence" from context menu for an Artifact
+return confirmation popup
+alt confirm
+J->DU: clicks "Mark Submission as Evidence
+DU->ARS++: updateArtifact(evidence true)
+ARS->ARS: enrich (evidenceNumber = artifactNumber)
+ARS->K: Push Artifact update payload to topic
+return 200 (artifact updated)
+P-> K: Read payload
+P-> DB: update record in DB
+
+else cancel
+J->DU: clicks "Cancel"
+end
+
+
+== Unmark as Evidence Flow == 
+
+J->DU: select "UnMark as Evidence" from context menu for an Artifact
+return confirmation popup
+alt confirm
+J->DU: clicks "UnMark Submission as Evidence
+DU->ARS++: updateArtifact(evidence false)
+ARS->ARS: set (isEvidence = false) & (evidenceNumber = null)
+ARS->K: Push Artifact update payload to topic
+return 200 (artifact updated)
+P-> K: Read payload
+P-> DB: update record in DB
+
+else cancel
+J->DU: clicks "Cancel"
+end
+
+@enduml

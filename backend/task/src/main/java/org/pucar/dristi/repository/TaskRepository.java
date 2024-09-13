@@ -41,7 +41,7 @@ public class TaskRepository {
     }
     
 
-    public List<Task> getApplications(TaskCriteria criteria, Pagination pagination) {
+    public List<Task> getTasks(TaskCriteria criteria, Pagination pagination) {
         try {
             List<Task> taskList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();

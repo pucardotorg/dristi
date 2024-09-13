@@ -62,6 +62,8 @@ const selectCompMultiConfig = {
         name: "city",
         validation: {
           isRequired: true,
+          patternType: "Name",
+          errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
         },
         isMandatory: true,
       },
@@ -71,7 +73,10 @@ const selectCompMultiConfig = {
         name: "locality",
         validation: {
           isRequired: true,
-          maxlength: 300,
+          minlength: 2,
+          maxlength: 256,
+          pattern: /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i,
+          errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
         },
         isMandatory: true,
       },

@@ -115,7 +115,7 @@ class IndividualApiControllerTest {
         String responseStr = result.getResponse().getContentAsString();
         ErrorRes response = objectMapper.readValue(responseStr,
                 ErrorRes.class);
-        assertEquals(2, response.getErrors().size());
+        assertEquals(1, response.getErrors().size());
     }
 
     @Test
@@ -264,7 +264,7 @@ class IndividualApiControllerTest {
                 .andReturn();
         String responseaStr = result.getResponse().getContentAsString();
         ErrorRes response = objectMapper.readValue(responseaStr, ErrorRes.class);
-        assertEquals(2, response.getErrors().size());
+        assertEquals(1, response.getErrors().size());
 //        assertEquals("NotNull",response.getErrors().get(0).getCode().);
 
     }

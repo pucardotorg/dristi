@@ -603,6 +603,7 @@ export const TabBenchSearchConfig = {
               {
                 label: "Outcome",
                 jsonPath: "outcome",
+                additionalCustomization: true,
               },
               {
                 label: "Case ID",

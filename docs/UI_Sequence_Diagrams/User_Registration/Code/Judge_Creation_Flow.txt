@@ -1,0 +1,45 @@
+@startuml
+autonumber
+title "Judge/Court Employee Creation Flow"
+actor Admin as L #lightGreen
+participant LoginUI as LUI order 1
+participant HomeScreen as H order 2
+participant HRMSUI as HMS order 3
+participant UserSvc as U order 3
+participant HRMSSvc as HrmsSvc order 4
+participant IndividualSvc as Ind order 5
+participant OtpSvc as OTP order 6
+participant NotificationSvc as Notification order 7
+Queue Kafka order 8
+participant Persister as P order 9
+Database Postgres order 10
+L->LUI: Navigate to the employee portal URL
+L -> LUI: Enter username, password and court. Click on "Sign In"
+LUI -> H: Go to home screen
+L -> H: Click on HRMS card in the UI
+H -> HMS: Navigate to HRMS screen
+HMS -> MDMS++: Fetch Designation, Court, CourtEstablishment, DeactivationReason masters
+return master data
+L -> HMS: Enter judge employee details
+L -> HMS: Select court establishment
+L -> HMS: Select court
+L -> HMS: Assign roles to the judge/court employee
+L -> HMS: Click on "Create Employee"
+HMS -> HrmsSvc++: Create employee
+HrmsSvc -> Ind++: Search if individual exists in the system
+return "Individual List"
+alt "Individual exists"
+HrmsSvc -> HrmsSvc: Link to individual ID
+else "Individual doesn't exist"
+HrmsSvc -> Ind++: Create individual
+Ind -> U++: Create user
+return "User uuid"
+Ind -> Ind: Store user uuid
+Ind -> HrmsSvc: 200 OK. Individual created.
+HrmsSvc -> HrmsSvc: Link to individual ID
+HrmsSvc -> Notification: Send password via SMS
+HrmsSvc -> Kafka: Post to save-employee topic
+Persister -> Kafka: Read save-employee topic
+Persister -> Postgres: Persist employee data
+end
+@enduml

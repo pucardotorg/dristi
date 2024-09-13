@@ -1,0 +1,29 @@
+@startuml
+autonumber
+title "Litigant Signin"
+actor Litigant as L #lightGreen
+participant LangUI as LangUI
+participant LoginUI as LUI 
+participant HomeScreen as H
+participant LocalisationSvc as LS
+participant UserSvc as U
+participant OtpSvc as OTP
+boundary IdentityVerifierSvc as IVS #blue
+L -> LangUI: Navigate to the litigant portal
+L -> LangUI: Select language
+LangUI -> LS++: Fetch localisation for selected language by passing module names
+return "Localisation strings"
+LangUI -> LUI: Transition to the login page
+L -> LUI: Enter mobile number
+LUI -> OTP: Generate OTP
+OTP -> L: OTP sent to Litigant's phone
+L -> LUI: Enter OTP received
+LUI -> U++: Send mobile number as username and OTP as password
+alt "Auth Succeeded"
+return "200 OK with Access Token"
+LUI -> H: Transition to home screen
+else "Auth Failed"
+U -> LUI: "401 Unauthorized"
+end
+
+@enduml

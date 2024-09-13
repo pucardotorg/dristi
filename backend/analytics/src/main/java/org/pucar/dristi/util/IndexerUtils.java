@@ -199,7 +199,7 @@ public class IndexerUtils {
 
 
 
-	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
+	public Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
 		Map<String, String> caseDetails = new HashMap<>();
 		String name = null;
 		boolean isCompleted = true;
@@ -233,7 +233,7 @@ public class IndexerUtils {
 		return caseDetails;
 	}
 
-	private Map<String, String> processEntityByType(String entityType, JSONObject request, String referenceId, Object object) {
+	public Map<String, String> processEntityByType(String entityType, JSONObject request, String referenceId, Object object) {
 		try {
 			if(config.getHearingBusinessServiceList().contains(entityType))
 				return processHearingEntity(request, object);

@@ -1,0 +1,73 @@
+@startuml
+autonumber
+Title "Summons Order Creation"
+actor Judge as J order -2
+participant LoginScreen as L order -1
+participant HomeScreen as H order 0
+participant ViewCaseUI as V order 1
+participant OrderUI as O order 2
+participant OrderPreviewUI as OP order 3
+participant OrderSuccessModal as OM order 4
+participant PDFSvc order 4
+participant CaseSvc order 4
+participant OrderSvc order 5
+participant TaskSvc order 6
+participant MDMSSvc as M order 7
+Queue Kafka order 8
+Database ElasticSerch order 9
+boundary EsignProvider order 14
+boundary ExternalDeliveryPartner order 15
+J -> LoginScreen : Log in to system with credentials
+L -> H: Transition to home screen after authentication is successful
+H -> CaseSvc++: Case search API to fetch all cases assigned to the judge
+return case list
+H -> H: Display cases
+J -> H: Click on a case
+H -> CaseSvc++: Search with filing number
+return case
+H -> V: Transition to view case screen
+J -> V: Click on "Take Action" and select "Generate Order"
+V -> O: Transition to view order screen
+O -> M++: Fetch order types 
+return order types
+J -> O: Select "Summons" order type
+O -> M++: Fetch schema/fields list for summons
+return order type details
+O -> O: Render UI based on schema
+J -> O: Make other selections in UI depending on order type
+rnote over O
+"Judge selects hearing date, parties to summon and delivery channels per party"
+end rnote
+J -> O: Judge clicks on "Review Order"
+O -> OP: Transition to order preview screen
+OP -> PDFSvc++: Fetch PDF for order
+return pdf
+OP -> OP: Display PDF
+J -> OP: Judge clicks on "Add Signature"
+OP -> EsignUI: Transition to e-sign screen
+EsignUI -> EsignProvider: Add signature
+... Go through e-sign flow ...
+J -> EsignUI: Click on "Issue order"
+EsignUI -> FilestoreSvc++: Upload signed order PDF
+return fileStoreId
+EsignUI -> OrderSvc++: Create order with signed PDF in docs
+return "Order created successfully"
+EsignUI -> TaskSvc++: Create separate tasks per party per delivery channel\n with order ID and relevant payload. Attach appropriate workflows.
+return taskIDs
+TaskSvc -> WorkflowSvc++: Transition to "Pending payment" status
+return status
+WorkflowSvc -> Kafka: Post to workflow transition topic
+AnalyticsSvc -> Kafka: Read workflow transition topic
+AnalyticsSvc -> Analytics: Create payload for pending tasks
+AnalyticsSvc -> ElasticSearch: Update pending tasks index
+rnote over ElasticSearch
+This will be shown in user pending tasks
+end rnote
+EsignUI -> OM: Show order success modal
+J -> OM: Click on "Download Order"
+OM -> OrderSvc++: Search for order by ID
+return order details
+OM -> OM: Extract signed order PDF doc ID
+OM -> FileStoreSvc++: Download signed PDF 
+return binary PDF
+@enduml

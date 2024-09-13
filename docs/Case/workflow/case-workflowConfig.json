@@ -24,7 +24,7 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "nextState": "PENDING_PAYMENT",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
@@ -140,6 +140,13 @@
                             "roles": [
                                 "CASE_APPROVER"
                             ]
+                        },
+                        {
+                            "action": "SEND_BACK",
+                            "nextState": "CASE_REASSIGNED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
                         }
                     ]
                 },
@@ -173,13 +180,6 @@
                         {
                             "action": "SCHEDULE_ADMISSION_HEARING",
                             "nextState": "ADMISSION_HEARING_SCHEDULED",
-                            "roles": [
-                                "CASE_APPROVER"
-                            ]
-                        },
-                        {
-                            "action": "SEND_BACK",
-                            "nextState": "CASE_RE_ASSIGNED",
                             "roles": [
                                 "CASE_APPROVER"
                             ]

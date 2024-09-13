@@ -8,6 +8,7 @@ import org.egov.common.models.user.UserType;
 import org.egov.individual.config.IndividualProperties;
 import org.egov.individual.web.models.Address;
 import org.egov.individual.web.models.Individual;
+import org.egov.individual.web.models.Name;
 
 import java.util.Random;
 import java.util.UUID;
@@ -31,8 +32,7 @@ public class IndividualMapper {
                 .id(id)
                 .uuid(individual.getUserUuid())
                 .tenantId(individual.getTenantId())
-                .name(individual.getName().getFamilyName() != null ? String.join(" ", individual.getName().getGivenName(),
-                        individual.getName().getFamilyName()) : individual.getName().getGivenName())
+                .name(getValidateName(individual.getName()))
                 .correspondenceAddress(addressLine1)
                 .emailId(individual.getEmail())
                 .mobileNumber(generateDummyMobileNumber(individual.getMobileNumber()))
@@ -65,6 +65,14 @@ public class IndividualMapper {
             return "1" + number; // prepend 1 to avoid starting with 0
         } else {
             return mobileNumber;
+        }
+    }
+
+    private static String getValidateName(Name name){
+        if(name == null){
+            return "";
+        } else {
+            return name.getGivenName() + " " + name.getFamilyName();
         }
     }
 }

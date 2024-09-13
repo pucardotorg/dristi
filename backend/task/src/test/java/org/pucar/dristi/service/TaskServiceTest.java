@@ -110,24 +110,24 @@ public class TaskServiceTest {
 
     @Test
     void testSearchTaskSuccess() {
-        when(taskRepository.getApplications(any(),any())).thenReturn(Collections.singletonList(task));
+        when(taskRepository.getTasks(any(),any())).thenReturn(Collections.singletonList(task));
 
         List<Task> result = taskService.searchTask(new TaskSearchRequest());
 
         assertEquals(1, result.size());
-        verify(taskRepository, times(1)).getApplications(any(),any());
+        verify(taskRepository, times(1)).getTasks(any(),any());
     }
 
     @Test
     void testSearchTaskThrowsException() {
-        doThrow(new RuntimeException("Unexpected error")).when(taskRepository).getApplications(any(TaskCriteria.class),any());
+        doThrow(new RuntimeException("Unexpected error")).when(taskRepository).getTasks(any(TaskCriteria.class),any());
         assertThrows(CustomException.class, this::invokeSearchTask);
     }
 
 
     @Test
     void testSearchTaskThrows_CustomException() {
-        when(taskRepository.getApplications(any(),any())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
+        when(taskRepository.getTasks(any(),any())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
 
         CustomException exception = assertThrows(CustomException.class, this::invokeSearchTask);
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/others.json",
+  "$comment": "definition of the schema for generic application",
+  "$version": "0.1.0",
+  "applicationDetails":
+  {
+    "applicationTitle": {
+      "type": "string",
+      "description": "title of application"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
+    }
+  }
+}

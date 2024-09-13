@@ -204,6 +204,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                 optionKey="label"
                 selected={selectedParty}
                 select={handleDropdownChange}
+                style={{ maxWidth: "100%" }}
               />
               {
                 <Button

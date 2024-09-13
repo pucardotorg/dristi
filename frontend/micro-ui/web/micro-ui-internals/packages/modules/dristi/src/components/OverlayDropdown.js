@@ -50,7 +50,7 @@ const OverlayDropdown = ({ column, row, master, module }) => {
                 style={{ padding: "10px", cursor: "pointer", color: item.disabled ? "grey" : "black" }}
                 onClick={() => {
                   setIsDropdownOpen(false);
-                  return !item.disabled && item.action(history);
+                  return !item.disabled && item.action(history, column, row);
                 }}
               >
                 {item.label}

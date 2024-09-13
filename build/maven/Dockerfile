@@ -1,4 +1,4 @@
-FROM egovio/amazoncorretto:17-alpine3.19 AS build
+FROM maven:3.8.4-openjdk-17-slim AS build
 ARG WORK_DIR
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN mvn -B -f /app/pom.xml package
 
 
 # Create runtime image
-FROM egovio/amazoncorretto:17-alpine3.19
+FROM openjdk:17-jdk-alpine
 
 WORKDIR /opt/egov
 

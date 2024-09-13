@@ -68,6 +68,7 @@ import org.egov.demand.model.DemandCriteria;
 import org.egov.demand.model.DemandDetail;
 import org.egov.demand.model.PaymentBackUpdateAudit;
 import org.egov.demand.model.UpdateBillCriteria;
+import org.egov.demand.producer.Producer;
 import org.egov.demand.repository.AmendmentRepository;
 import org.egov.demand.repository.BillRepositoryV2;
 import org.egov.demand.repository.DemandRepository;
@@ -83,6 +84,7 @@ import org.egov.demand.web.contract.factory.ResponseFactory;
 import org.egov.demand.web.validator.DemandValidatorV1;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -100,6 +102,9 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+
+	@Autowired
+	private Producer producer;
 
 	@Autowired
 	private ApplicationProperties applicationProperties;
@@ -127,6 +132,10 @@ public class DemandService {
 
 	@Autowired
 	private DemandValidatorV1 demandValidatorV1;
+
+
+	@Value("${kafka.topics.demand}")
+	private String demandTopic;
 	
 	/**
 	 * Method to create new demand 
@@ -180,6 +189,8 @@ public class DemandService {
 				.tenantId(demands.get(0).getTenantId())
 				.build()
 				);
+		demandRequest.setDemands(demands);
+		producer.push(demands.get(0).getTenantId(),demandTopic,demandRequest);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
 

@@ -82,7 +82,7 @@ public class AdvocateService {
                 offset = 0;
 
             // Fetch applications from database according to the given search criteria
-            advocateRepository.getApplications(advocateSearchCriteria, tenantId, limit, offset);
+            advocateRepository.getAdvocates(advocateSearchCriteria, tenantId, limit, offset);
 
             // If no applications are found matching the given criteria, return an empty list
 
