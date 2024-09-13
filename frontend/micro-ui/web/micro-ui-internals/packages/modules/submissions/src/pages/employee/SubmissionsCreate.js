@@ -665,6 +665,7 @@ const SubmissionsCreate = ({ path }) => {
   const handleAddSignature = () => {
     setLoader(true);
     updateSubmission(SubmissionWorkflowAction.ESIGN);
+    createDemand();
   };
 
   const handleCloseSignaturePopup = () => {
@@ -716,30 +717,33 @@ const SubmissionsCreate = ({ path }) => {
     Boolean(applicationDetails?.applicationNumber && suffix)
   );
 
+  const createDemand = async () => {
+    if (billResponse?.Bill?.length === 0) {
+      const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, entityType);
+      await DRISTIService.createDemand({
+        Demands: [
+          {
+            tenantId,
+            consumerCode: applicationDetails?.applicationNumber + `_${suffix}`,
+            consumerType: entityType,
+            businessService: entityType,
+            taxPeriodFrom: taxPeriod?.fromDate,
+            taxPeriodTo: taxPeriod?.toDate,
+            demandDetails: [
+              {
+                taxHeadMasterCode: taxHeadMasterCode,
+                taxAmount: 4,
+                collectionAmount: 0,
+              },
+            ],
+          },
+        ],
+      });
+    }
+  };
+
   const handleMakePayment = async (totalAmount) => {
     try {
-      if (billResponse?.Bill?.length === 0) {
-        const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, entityType);
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: applicationDetails?.applicationNumber + `_${suffix}`,
-              consumerType: entityType,
-              businessService: entityType,
-              taxPeriodFrom: taxPeriod?.fromDate,
-              taxPeriodTo: taxPeriod?.toDate,
-              demandDetails: [
-                {
-                  taxHeadMasterCode: taxHeadMasterCode,
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
       const bill = await fetchBill(applicationDetails?.applicationNumber + `_${suffix}`, tenantId, entityType);
       if (bill?.Bill?.length) {
         const billPaymentStatus = await openPaymentPortal(bill);
