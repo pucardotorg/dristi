@@ -140,14 +140,14 @@ const InsideHearingMainPage = () => {
       setAdditionalDetails(responseList?.additionalDetails);
       setOptions(
         responseList?.additionalDetails?.witnessDetails?.formdata?.map((witness) => ({
-          label: `${witness.data.firstName} ${witness.data.lastName}`,
+          label: [witness?.data?.firstName, witness?.data?.lastName].filter(Boolean).join(" "),
           value: witness.data.uuid,
         }))
       );
       const selectedWitnessDefault = responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {};
       setSelectedWitness(selectedWitnessDefault);
       setWitnessDepositionText(
-        hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitnessDefault.uuid)?.deposition
+        hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitnessDefault?.uuid)?.deposition
       );
     }
   }, [caseDataResponse]);
@@ -311,8 +311,8 @@ const InsideHearingMainPage = () => {
                 selected={
                   IsSelectedWitness
                     ? {
-                        label: `${selectedWitness.firstName} ${selectedWitness.lastName}`,
-                        value: selectedWitness.uuid,
+                        label: [selectedWitness?.firstName, selectedWitness?.lastName].filter(Boolean).join(" "),
+                        value: selectedWitness?.uuid,
                       }
                     : {}
                 }
@@ -445,7 +445,7 @@ const InsideHearingMainPage = () => {
             }}
           >
             <Button
-              label={"ATTENDANCE_CHIP"}
+              label={t("ATTENDANCE_CHIP")}
               style={{ boxShadow: "none", backgroundColor: "#ECF3FD", borderRadius: "4px", border: "none", padding: "10px" }}
               textStyles={{
                 fontFamily: "Roboto",

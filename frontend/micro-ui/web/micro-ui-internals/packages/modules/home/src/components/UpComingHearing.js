@@ -307,12 +307,15 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   if (isLoading || isLoadingMonthly || isAdvocateLoading || isCaseLoading) {
     return <Loader />;
   }
-
+  const name = userName?.info?.name
+    .split(" ")
+    .filter((part) => part && part.toLowerCase() !== "null")
+    .join(" ");
   if (!earliestHearingSlot) {
     return (
       <div className="upcoming-hearing-container">
         <div className="header">
-          {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
+          {curHr < 12 ? t("GOOD_MORNING") : curHr < 18 ? t("GOOD_AFTERNOON") : t("GOOD_EVENING")}, <span className="userName">{name}</span>
         </div>
         <div className="hearingCard">
           <div className="no-hearing">
@@ -335,7 +338,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   return (
     <div className="upcoming-hearing-container">
       <div className="header">
-        {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
+        {curHr < 12 ? t("GOOD_MORNING") : curHr < 18 ? t("GOOD_AFTERNOON") : t("GOOD_EVENING")}, <span className="userName">{name}</span>
       </div>
       {!isFSO && (
         <div className="hearing-card-wrapper">
