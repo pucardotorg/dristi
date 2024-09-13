@@ -12,6 +12,10 @@
     "issueDate": {
       "type" : "string",
       "format": "date"
+    },
+    "noticeType": {
+      "type": "string",
+      "description": "master data ID for notice type"
     }
   },
   "respondentDetails":
