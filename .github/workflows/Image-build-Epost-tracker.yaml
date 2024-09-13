@@ -30,11 +30,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build and analyze for Epost Tracker
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -f backend/epost-tracker/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_epost_tracker -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
       - name: Dependency check
         uses: dependency-check/Dependency-Check_Action@main
         env:
@@ -44,12 +39,17 @@ jobs:
           project: 'epost-tracker'
           path: 'backend/epost-tracker'
           format: 'SARIF'
-          others: ''
       - name: Upload SARIF result to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/dependency-check-report.sarif
         if: always()
+      - name: Build and analyze for Epost Tracker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B -f backend/epost-tracker/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_epost_tracker -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
+
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'

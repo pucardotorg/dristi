@@ -23,6 +23,20 @@ jobs:
 
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
+      - name: Dependency check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        id: Depcheck
+        with:
+          project: 'egov-user'
+          path: 'common/egov-user'
+          format: 'SARIF'
+      - name: Upload SARIF result to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check-report.sarif
+        if: always()
 
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
