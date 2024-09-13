@@ -706,16 +706,18 @@ const SubmissionsCreate = ({ path }) => {
     totalAmount: "4",
     scenario,
   });
+
+  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType), [entityType, paymentTypeData]);
+
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
-    { tenantId, consumerCode: applicationDetails?.applicationNumber, service: entityType },
-    "dristi",
-    Boolean(applicationDetails?.applicationNumber)
+    { tenantId, consumerCode: applicationDetails?.applicationNumber + `_${suffix}`, service: entityType },
+    `dristi_${suffix}`,
+    Boolean(applicationDetails?.applicationNumber && suffix)
   );
 
   const handleMakePayment = async (totalAmount) => {
     try {
-      const suffix = getSuffixByBusinessCode(paymentTypeData, entityType);
       if (billResponse?.Bill?.length === 0) {
         const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, entityType);
         await DRISTIService.createDemand({
@@ -836,6 +838,7 @@ const SubmissionsCreate = ({ path }) => {
         <SuccessModal
           t={t}
           isPaymentDone={applicationDetails?.status === SubmissionWorkflowState.PENDINGPAYMENT}
+          headerBarEndClose={handleBack}
           handleCloseSuccessModal={makePaymentLabel ? handleMakePayment : handleBack}
           actionCancelLabel={"DOWNLOAD_SUBMISSION"}
           actionCancelOnSubmit={handleDownloadSubmission}

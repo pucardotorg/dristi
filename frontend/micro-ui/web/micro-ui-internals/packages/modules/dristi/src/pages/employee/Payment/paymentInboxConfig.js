@@ -36,6 +36,7 @@ export const paymentTabInboxConfig = {
             minReqFields: 0,
             defaultValues: {
               caseTitleFilingNumber: "",
+              sortOrder: "DESC",
             },
             fields: [
               {
@@ -46,11 +47,11 @@ export const paymentTabInboxConfig = {
                 name: "Sort by",
                 key: "sortOrder",
                 paymentInbox: true,
-                ascText: "Newest to Oldest",
-                descText: "Oldest to Newest",
+                ascText: "Oldest to Newest",
+                descText: "Newest to Oldest",
                 showAdditionalText: true,
                 showIcon: true,
-                icon: "ArrowDownIcon",
+                icon: "UpDownArrowIcon",
                 populators: {},
               },
               {
@@ -61,7 +62,7 @@ export const paymentTabInboxConfig = {
                 disable: false,
                 populators: {
                   name: "caseType",
-                  options: ["caseType"],
+                  options: ["Negotiable Instruments Act 1881"],
                   styles: {
                     maxWidth: "300px",
                     minWidth: "200px",
@@ -79,7 +80,11 @@ export const paymentTabInboxConfig = {
                 disable: false,
                 populators: {
                   name: "paymentType",
-                  options: ["paymentType"],
+                  mdmsConfig: {
+                    masterName: "paymentType",
+                    moduleName: "payment",
+                    select: "(data) => {return data['payment'].paymentType?.map((item) => {return item?.paymentType;});}",
+                  },
                   styles: {
                     maxWidth: "300px",
                     minWidth: "200px",
@@ -182,6 +187,7 @@ export const paymentTabInboxConfig = {
             minReqFields: 0,
             defaultValues: {
               caseTitleFilingNumber: "",
+              sortOrder: "DESC",
             },
             fields: [
               {
@@ -192,11 +198,11 @@ export const paymentTabInboxConfig = {
                 name: "Sort by",
                 key: "sortOrder",
                 paymentInbox: true,
-                ascText: "Newest to Oldest",
-                descText: "Oldest to Newest",
+                ascText: "Oldest to Newest",
+                descText: "Newest to Oldest",
                 showAdditionalText: true,
                 showIcon: true,
-                icon: "ArrowDownIcon",
+                icon: "UpDownArrowIcon",
                 populators: {},
               },
               {
@@ -207,7 +213,29 @@ export const paymentTabInboxConfig = {
                 disable: false,
                 populators: {
                   name: "caseType",
-                  options: ["caseType"],
+                  options: ["Negotiable Instruments Act 1881"],
+                  styles: {
+                    maxWidth: "300px",
+                    minWidth: "200px",
+                  },
+                  optionsCustomStyle: {
+                    overflowX: "hidden",
+                  },
+                },
+              },
+              {
+                label: "Payment Type",
+                isMandatory: false,
+                key: "paymentType",
+                type: "dropdown",
+                disable: false,
+                populators: {
+                  name: "paymentType",
+                  mdmsConfig: {
+                    masterName: "paymentType",
+                    moduleName: "payment",
+                    select: "(data) => {return data['payment'].paymentType?.map((item) => {return item?.paymentType;});}",
+                  },
                   styles: {
                     maxWidth: "300px",
                     minWidth: "200px",

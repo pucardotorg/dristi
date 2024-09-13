@@ -363,6 +363,10 @@ function ViewCaseFile({ t, inViewCase = false }) {
     );
   };
 
+  if (caseDetails?.status !== "UNDER_SCRUTINY" && isScrutiny) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
+
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };

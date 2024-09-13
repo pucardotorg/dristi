@@ -29,6 +29,15 @@ export const hearingService = {
       params,
     });
   },
+  searchTaskList: (data, params) => {
+    return Request({
+      url: Urls.hearing.searchTasks,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
   startHearing: ({ hearing }, params) => {
     return Request({
       url: Urls.hearing.updateHearings,

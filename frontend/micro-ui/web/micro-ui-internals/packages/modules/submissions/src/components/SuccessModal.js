@@ -22,12 +22,23 @@ const paymentFailedNoteConfig = {
   populators: {
     inputs: [
       {
-        infoHeader: "PLEASE NOTE",
+        infoHeader: "PLEASE_NOTE",
         infoText: "PAYMENT_FAILED",
         showTooltip: true,
       },
     ],
   },
+};
+
+const CloseBtn = (props) => {
+  return (
+    <div
+      onClick={props?.onClick}
+      style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-end", paddingTop: "10px", cursor: "pointer" }}
+    >
+      <CloseSvg />
+    </div>
+  );
 };
 
 function SuccessModal({
@@ -40,6 +51,7 @@ function SuccessModal({
   createdDate,
   makePayment,
   paymentStatus,
+  headerBarEndClose,
 }) {
   const submissionData = [
     { key: "SUBMISSION_DATE", value: createdDate, copyData: false },
@@ -53,13 +65,14 @@ function SuccessModal({
       actionSaveOnSubmit={handleCloseSuccessModal}
       className={"submission-success-modal"}
     >
+      {headerBarEndClose && <CloseBtn onClick={headerBarEndClose}></CloseBtn>}
       <div className="submission-success-modal-body-main">
         <Banner
           whichSvg={"tick"}
           successful={true}
           message={t("SUBMISSION_SUCCESSFUL")}
           headerStyles={{ fontSize: "32px" }}
-          style={{ minWidth: "100%", marginTop: "10px" }}
+          style={{ minWidth: "100%", ...(!headerBarEndClose && { marginTop: "10px" }) }}
         ></Banner>
         {isPaymentDone && <SelectCustomNote t={t} config={customNoteConfig} />}
         {paymentStatus === false && <SelectCustomNote t={t} config={paymentFailedNoteConfig} />}
