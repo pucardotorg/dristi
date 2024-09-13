@@ -9,6 +9,7 @@ const {
   create_pdf,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { formatDate } = require("./formatDate");
 
 async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
@@ -139,7 +140,35 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }
-
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = months[currentDate.getMonth()];
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    console.debug(order);
+    const ifResponse = order?.orderDetails?.isResponseRequired ? "Yes" : "No";
+    const documentList = order?.orderDetails?.documentType?.value || "";
+    const partiesToRespond =
+      order?.orderDetails?.partyDetails?.partiesToRespond || [];
+    const partyToMakeSubmission =
+      order?.orderDetails?.partyDetails?.partyToMakeSubmission || [];
+    const evidenceSubmissionDeadline =
+      order?.orderDetails?.dates?.submissionDeadlineDate || null;
+    const responseSubmissionDeadline =
+      order?.orderDetails?.dates?.responseDeadlineDate || null;
     const data = {
       Data: [
         {
@@ -147,15 +176,19 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
-          parties: "Parties from UI",
-          documentList: "List of documents from UI",
-          evidenceSubmissionDeadline: "Evidence submission deadline from UI",
-          ifResponse: "If response from UI ",
-          responseSubmissionDeadline: "Response submission deadline from UI",
+          parties: partyToMakeSubmission?.join(", "),
+          documentList: documentList,
+          evidenceSubmissionDeadline: evidenceSubmissionDeadline
+            ? formatDate(new Date(evidenceSubmissionDeadline), "DD-MM-YYYY")
+            : "",
+          ifResponse,
+          responseSubmissionDeadline: responseSubmissionDeadline
+            ? formatDate(new Date(responseSubmissionDeadline), "DD-MM-YYYY")
+            : "",
           additionalComments: order?.comments || "",
-          Date: "Date from UI",
-          Month: "Month from UI",
-          Year: "Year from UI",
+          Date: formattedToday,
+          Month: month,
+          Year: year,
           judgeSignature: "Judge Signature",
           designation: "Judge designation",
           courtSeal: "Court Seal",
@@ -193,7 +226,7 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     console.log(ex);
     return renderError(
       res,
-      "Failed to query details of order for Mandatory Async Submissions and Responses",
+      "Failed to generate PDF for order for mandatory async submission",
       500,
       ex
     );
