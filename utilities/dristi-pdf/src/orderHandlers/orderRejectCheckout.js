@@ -10,6 +10,7 @@ const {
   search_application,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { formatDate } = require("./formatDate");
 
 async function orderRejectCheckout(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
@@ -107,20 +108,20 @@ async function orderRejectCheckout(req, res, qrCode) {
     // if (!order) {
     //   renderError(res, "Order not found", 404);
     // }
-    // const resApplication = await handleApiCall(
-    //   () =>
-    //     search_application(
-    //       tenantId,
-    //       order?.additionalDetails?.formdata?.refApplicationId,
-    //       requestInfo
-    //     ),
-    //   "Failed to query application service"
-    // );
-    // const application = resApplication?.data?.applicationList[0];
-    // if (!application) {
-    //   return renderError(res, "Application not found", 404);
-    // }
-    // const partyName = application?.additionalDetails?.onBehalOfName || "";
+    const resApplication = await handleApiCall(
+      () =>
+        search_application(
+          tenantId,
+          order?.additionalDetails?.formdata?.refApplicationId,
+          requestInfo
+        ),
+      "Failed to query application service"
+    );
+    const application = resApplication?.data?.applicationList[0];
+    if (!application) {
+      return renderError(res, "Application not found", 404);
+    }
+    const partyName = application?.additionalDetails?.onBehalOfName || "";
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -146,7 +147,22 @@ async function orderRejectCheckout(req, res, qrCode) {
       }
       base64Url = imgTag.attr("src");
     }
-    // Prepare data for PDF generation
+
+    const currentDate = new Date();
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    const submissionDate = formatDate(
+      new Date(application?.createdDate),
+      "DD-MM-YYYY"
+    );
+    const reasonForRescheduling =
+      application?.applicationDetails?.reasonForApplication;
+    const originalHearingDate = order.orderDetails?.originalHearingDate
+      ? formatDate(
+          new Date(order.orderDetails?.originalHearingDate),
+          "DD-MM-YYYY"
+        )
+      : "";
+
     const data = {
       Data: [
         {
@@ -155,10 +171,13 @@ async function orderRejectCheckout(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
           submissionType: "Application",
-          submissionDate: "11-11-1111",
-          date: "From the UI",
-          Date: "From the UI",
-          partyName: "",
+          submissionDate,
+          date: formattedToday,
+          Date: formattedToday,
+          partyName,
+          reasonForRescheduling,
+          originalHearingDate,
+          applicationId: application?.applicationNumber,
           content: order?.comments || "",
           additionalDetails: order?.comments || "",
           judgeSignature: "Judge Signature",
@@ -195,7 +214,7 @@ async function orderRejectCheckout(req, res, qrCode) {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of Acceptance of Checkout Request",
+      "Failed to generated PDF of Rejection of Checkout Request",
       500,
       ex
     );

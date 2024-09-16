@@ -336,6 +336,8 @@ export const configsCheckoutRequest = [
         label: "INITIAL_HEARING_DATE",
         disable: true,
         isMandatory: true,
+        schemaKeyPath: "applicationDetails.initialHearingDate",
+        transformer: "date",
         key: "initialHearingDate",
         type: "date",
         populators: {
@@ -347,6 +349,8 @@ export const configsCheckoutRequest = [
         inline: true,
         label: "RESCHEDULING_REASON",
         isMandatory: true,
+        schemaKeyPath: "applicationDetails.reasonForApplication",
+        transformer: "mdmsDropdown",
         key: "reschedulingReason",
         type: "dropdown",
         populators: {
@@ -367,6 +371,8 @@ export const configsCheckoutRequest = [
         inline: true,
         label: "PROPOSED_DATE",
         isMandatory: true,
+        schemaKeyPath: "applicationDetails.newHearingScheduledDate",
+        transformer: "date",
         key: "changedHearingDate",
         type: "date",
         populators: {
@@ -387,6 +393,8 @@ export const configsCheckoutRequest = [
       {
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         key: "comments",
         isMandatory: false,
         populators: {

@@ -28,6 +28,8 @@ const OrderPreviewOrderTypeMap = {
   REJECT_VOLUNTARY_SUBMISSIONS: "order-reject-voluntary",
   JUDGEMENT: "order-generic",
   SECTION_202_CRPC: "order-generic",
+  CHECKOUT_ACCEPTANCE: "order-accept-checkout-request",
+  CHECKOUT_REJECT: "order-reject-checkout-request",
 };
 
 const onDocumentUpload = async (fileData, filename) => {

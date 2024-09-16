@@ -27,7 +27,7 @@ const SubmissionPreviewSubmissionTypeMap = {
   SURETY: "application-bail-bond",
   OTHERS: "application-generic",
   SETTLEMENT: "application-generic",
-  CHECKOUT_REQUEST: "application-generic",
+  CHECKOUT_REQUEST: "application-for-checkout-request",
 };
 
 const onDocumentUpload = async (fileData, filename) => {

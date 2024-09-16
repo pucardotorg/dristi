@@ -306,9 +306,9 @@ const SubmissionsCreate = ({ path }) => {
           name: "APPLICATION",
         },
         applicationType: {
-          type: "RE_SCHEDULE",
+          type: applicationTypeUrl,
           isactive: true,
-          name: "APPLICATION_TYPE_RE_SCHEDULE",
+          name: `APPLICATION_TYPE_${applicationTypeUrl}`,
         },
         applicationDate: formatDate(new Date()),
       };

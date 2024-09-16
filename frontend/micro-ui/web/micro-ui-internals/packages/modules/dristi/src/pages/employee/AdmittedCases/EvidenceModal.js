@@ -485,6 +485,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return "BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "CHECKOUT_REJECT" : "CHECKOUT_ACCEPTANCE";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
@@ -506,6 +508,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_EXTENSION_SUBMISSION_DEADLINE";
+      case "CHECKOUT_REQUEST":
+        return type === "reject" ? "REJECT_CHECKOUT_REQUEST" : "ACCEPT_CHECKOUT_REQUEST";
       default:
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
@@ -513,7 +517,16 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const isMandatoryOrderCreation = useMemo(() => {
     const applicationType = documentSubmission?.[0]?.applicationList?.applicationType;
     const type = showConfirmationModal?.type;
-    const acceptedApplicationTypes = ["RE_SCHEDULE", "WITHDRAWAL", "TRANSFER", "SETTLEMENT", "BAIL_BOND", "SURETY", "EXTENSION_SUBMISSION_DEADLINE"];
+    const acceptedApplicationTypes = [
+      "RE_SCHEDULE",
+      "WITHDRAWAL",
+      "TRANSFER",
+      "SETTLEMENT",
+      "BAIL_BOND",
+      "SURETY",
+      "EXTENSION_SUBMISSION_DEADLINE",
+      "CHECKOUT_REQUEST",
+    ];
     if (type === "reject") {
       return false;
     } else {
@@ -583,7 +596,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               formdata,
               applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
             },
-            ...(orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE" && {
+            ...(["INITIATING_RESCHEDULING_OF_HEARING_DATE", "CHECKOUT_ACCEPTANCE"].includes(orderType) && {
               hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
             }),
             ...(linkedOrderNumber && { linkedOrderNumber }),

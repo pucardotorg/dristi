@@ -68,9 +68,9 @@ router.post(
         case "application-case-withdrawal":
           await applicationCaseWithdrawal(req, res, qrCode);
           break;
-        // case "application-for-checkout-request":
-        //   await applicationCheckout(req, res, qrCode);
-        //   break;
+        case "application-for-checkout-request":
+          await applicationCheckout(req, res, qrCode);
+          break;
         default:
           await applicationGeneric(req, res, qrCode);
           break;
