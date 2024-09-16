@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/Modal";
 import { Button, SubmitBar } from "@egovernments/digit-ui-react-components";
 
-function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, handleSubmitDocument, showSubmissionButtons, handleOrdersTab }) {
+function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, handleSubmitDocument, showSubmissionButtons = false, handleOrdersTab }) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -21,7 +21,7 @@ function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, han
     );
   };
 
-  const signedOrder = useMemo(() => order?.documents?.filter((item) => item?.documentType == "SIGNED")[0], [order]);
+  const signedOrder = useMemo(() => order?.documents?.filter((item) => item?.documentType === "SIGNED")[0], [order]);
 
   useEffect(() => {
     const onDocumentUpload = async (fileData, filename) => {
