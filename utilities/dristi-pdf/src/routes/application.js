@@ -47,9 +47,9 @@ router.post(
 
     try {
       switch (applicationType.toLowerCase()) {
-        // case "application-submission-extension":
-        //   await applicationSubmissionExtension(req, res, qrCode);
-        //   break;
+        case "application-submission-extension":
+          await applicationSubmissionExtension(req, res, qrCode);
+          break;
         case "application-generic":
           await applicationGeneric(req, res, qrCode);
           break;

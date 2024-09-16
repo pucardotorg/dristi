@@ -11,21 +11,21 @@ const {
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
 
-async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
+async function orderNotice(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
-  const entityId = req.query.entityId;
-  const code = req.query.code;
   const tenantId = req.query.tenantId;
   const requestInfo = req.body.RequestInfo;
+  const entityId = req.query.entityId;
+  const code = req.query.code;
 
   const missingFields = [];
   if (!cnrNumber) missingFields.push("cnrNumber");
   if (!orderId) missingFields.push("orderId");
   if (!tenantId) missingFields.push("tenantId");
+  if (requestInfo === undefined) missingFields.push("requestInfo");
   if (qrCode === "true" && (!entityId || !code))
     missingFields.push("entityId and code");
-  if (requestInfo === undefined) missingFields.push("requestInfo");
 
   if (missingFields.length > 0) {
     return renderError(
@@ -83,17 +83,6 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       renderError(res, "Court room MDMS master not found", 404);
     }
 
-    // FIXME: Commenting out MDMS court establishment calls is it not impl in solution
-    // Search for MDMS court establishment details
-    // const resMdms1 = await handleApiCall(
-    //     () => search_mdms(mdmsCourtRoom.courtEstablishmentId, "case.CourtEstablishment", tenantId, requestInfo),
-    //     "Failed to query MDMS service for court establishment"
-    // );
-    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
-    // if (!mdmsCourtEstablishment) {
-    //     renderError(res, "Court establishment MDMS master not found", 404);
-    // }
-
     // Search for order details
     const resOrder = await handleApiCall(
       () => search_order(tenantId, orderId, requestInfo),
@@ -129,6 +118,9 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
+    const currentDate = new Date();
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+
     let year;
     if (typeof courtCase.filingDate === "string") {
       year = courtCase.filingDate.slice(-4);
@@ -140,73 +132,34 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    const currentDate = new Date();
-    const day = currentDate.getDate();
-    const month = months[currentDate.getMonth()];
-    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    const ifResponse = order?.orderDetails?.isResponseRequired ? "Yes" : "No";
-    const documentList = order?.orderDetails?.documentType?.value || "";
-    const partiesToRespond =
-      order?.orderDetails?.partyDetails?.partiesToRespond || [];
-    const partyToMakeSubmission =
-      order?.orderDetails?.partyDetails?.partyToMakeSubmission || [];
-    const evidenceSubmissionDeadline =
-      order?.orderDetails?.dates?.submissionDeadlineDate || null;
-    const responseSubmissionDeadline =
-      order?.orderDetails?.dates?.responseDeadlineDate || null;
+
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          caseNumber: courtCase.caseNumber,
-          year: year,
           caseName: courtCase.caseTitle,
-          parties: partyToMakeSubmission?.join(", "),
-          documentList: documentList,
-          evidenceSubmissionDeadline: evidenceSubmissionDeadline
-            ? formatDate(new Date(evidenceSubmissionDeadline), "DD-MM-YYYY")
-            : "",
-          ifResponse,
-          responseSubmissionDeadline: responseSubmissionDeadline
-            ? formatDate(new Date(responseSubmissionDeadline), "DD-MM-YYYY")
-            : "",
-          additionalComments: order?.comments || "",
-          Date: formattedToday,
-          Month: month,
-          Year: year,
+          caseNumber: courtCase.caseNumber,
+          place: "Kochi",
+          state: "Kerala",
+          partyName: "From Order Infor",
+          typeOfNotice: "From Order Info",
+          hearingDate: "From Order Info",
+          date: formattedToday,
+          additionalComments: order.comments,
           judgeSignature: "Judge Signature",
-          designation: "Judge designation",
+          judgeName: "JUDGE_NAME", // FIXME: employee.user.name,
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,
-          place: "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
-          state: "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
-          judgeName: "John Watt", // FIXME: employee.user.name,
         },
       ],
     };
 
     // Generate the PDF
     const pdfKey =
-      qrCode === "true"
-        ? config.pdf.mandatory_async_submissions_responses_qr
-        : config.pdf.mandatory_async_submissions_responses;
+      qrCode === "true" ? config.pdf.order_notice_qr : config.pdf.order_notice;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of order for Mandatory Async Submissions and Responses"
+      "Failed to generate PDF of order to Assign New Hearing Date after Rescheduling"
     );
     const filename = `${pdfKey}_${new Date().getTime()}`;
     res.writeHead(200, {
@@ -222,14 +175,13 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
         return renderError(res, "Failed to send PDF response", 500, err);
       });
   } catch (ex) {
-    console.log(ex);
     return renderError(
       res,
-      "Failed to generate PDF for order for mandatory async submission",
+      "Failed to create PDF for Order for Notice",
       500,
       ex
     );
   }
 }
 
-module.exports = mandatoryAsyncSubmissionsResponses;
+module.exports = orderNotice;

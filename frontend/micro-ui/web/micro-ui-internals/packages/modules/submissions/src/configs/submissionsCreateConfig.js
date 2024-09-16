@@ -563,7 +563,7 @@ export const configsExtensionSubmissionDeadline = [
         label: "EXTENSION_REASON",
         isMandatory: true,
         key: "extensionReason",
-        schemaKeyPath: "applicationDetails.benefitOfExtension",
+        schemaKeyPath: "applicationDetails.reasonForApplication",
         transformer: "mdmsDropdown",
         type: "dropdown",
         populators: {
@@ -589,7 +589,7 @@ export const configsExtensionSubmissionDeadline = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "extensionBenefit",
-        schemaKeyPath: "applicationDetails.reasonForApplication",
+        schemaKeyPath: "applicationDetails.benefitOfExtension",
         transformer: "customTextArea",
         isMandatory: true,
         populators: {

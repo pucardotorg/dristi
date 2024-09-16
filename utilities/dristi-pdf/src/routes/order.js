@@ -29,6 +29,7 @@ const orderAcceptVoluntary = require("../orderHandlers/orderAcceptVoluntary");
 const orderRejectVoluntary = require("../orderHandlers/orderRejectVoluntary");
 const orderAcceptCheckout = require("../orderHandlers/orderAcceptCheckout");
 const orderRejectCheckout = require("../orderHandlers/orderRejectCheckout");
+const orderNotice = require("../orderHandlers/orderNotice");
 
 function renderError(res, errorMessage, errorCode, errorObject) {
   if (errorCode == undefined) errorCode = 500;
@@ -130,6 +131,9 @@ router.post(
           break;
         case "order-reject-checkout-request":
           await orderRejectCheckout(req, res, qrCode);
+          break;
+        case "order-notice":
+          await orderNotice(req, res, qrCode);
           break;
         default:
           await orderGeneric(req, res, qrCode);

@@ -106,7 +106,6 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
     if (!order) {
       renderError(res, "Order not found", 404);
     }
-    console.debug(order);
 
     // Handle QR code if enabled
     let base64Url = "";

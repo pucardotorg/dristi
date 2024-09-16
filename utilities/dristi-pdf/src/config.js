@@ -107,6 +107,9 @@ module.exports = {
     application_submission_extension:
       process.env.APPLICATION_SUBMISSION_EXTENSION ||
       "application-submission-extension",
+    application_submission_extension_qr:
+      process.env.APPLICATION_SUBMISSION_EXTENSION_QR ||
+      "application-submission-extension-qr",
     application_generic:
       process.env.APPLICATION_GENERIC || "application-generic",
     application_generic_qr:
@@ -186,6 +189,8 @@ module.exports = {
       "order-initiate-reschedule-qr",
     order_initiate_reschedule:
       process.env.ORDER_INITIATE_RESCHEDULE || "order-initiate-reschedule",
+    order_notice: process.env.ORDER_NOTICE || "order-notice",
+    order_notice_qr: process.env.ORDER_NOTICE_QR || "order-notice-qr",
   },
 
   app: {
