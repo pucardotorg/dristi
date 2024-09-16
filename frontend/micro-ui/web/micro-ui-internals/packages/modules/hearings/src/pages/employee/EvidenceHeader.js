@@ -137,7 +137,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           border: "1px solid #0000001A",
           backgroundColor: "#FFF8FD",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
         }}
       >
         <div
@@ -148,7 +148,6 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           }}
         >
           <VideoIcon></VideoIcon>
-          <span>{t("YOU_CAN_JOIN_HEARING_ONLINE_NOTE")}</span>
         </div>
         <Button
           variation={"tertiary"}

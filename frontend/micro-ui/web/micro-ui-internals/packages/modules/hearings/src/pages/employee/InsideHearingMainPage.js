@@ -163,7 +163,7 @@ const InsideHearingMainPage = () => {
     } else {
       setTranscriptText(newText);
 
-      if (Object.keys(hearing).length === 0) {
+      if (Object.keys(hearing)?.length === 0) {
         console.warn("Hearing object is empty");
         return hearing;
       }
@@ -207,7 +207,7 @@ const InsideHearingMainPage = () => {
   }, [transcriptText, setTranscriptText]);
 
   const isDepositionSaved = useMemo(() => {
-    return hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition.length;
+    return hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition?.length;
   }, [selectedWitness, hearing]);
 
   const saveWitnessDeposition = () => {
@@ -277,7 +277,7 @@ const InsideHearingMainPage = () => {
     }
   };
 
-  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
+  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent)?.length || 0, [hearing]);
   const [isRecording, setIsRecording] = useState(false);
   const IsSelectedWitness = useMemo(() => {
     return !isEmpty(selectedWitness);
