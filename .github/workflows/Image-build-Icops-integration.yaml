@@ -1,0 +1,75 @@
+name: Icops-integratioin Image Build workflow
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'backend/icops_integration-kerala/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'backend/icops_integration-kerala/**'
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  docker_image-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Dependency check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        id: Depcheck
+        with:
+          project: 'icops_integration-kerala'
+          path: 'backend/icops_integration-kerala'
+          format: 'SARIF'
+      - name: Upload SARIF result to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check-report.sarif
+        if: always()
+      - name: Build and analyze for Kerala Cops
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B backend/icops_integration-kerala/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_kerala_cops -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/
+
+      # Login to Azure Container Registry
+      - name: Login to Azure Container Registry
+        run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
+
+      - name: Build and Push Docker image for integration
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          docker build --build-arg WORK_DIR="backend/icops_integration-kerala" -t pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ github.sha }}
+
+      - name: Build and Push Docker image for integration_DB
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          docker build -t pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ github.sha }}  .
+          docker push pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/icops_integration-kerala/src/main/resources/db
+
+      - name: Trigger Deployment Pipeline for Icops-image
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/solutions-dev.yaml/dispatches \
+          -d '{"ref":"Solutions-Pipeline"}'

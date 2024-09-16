@@ -7,6 +7,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.2</version>
 	</parent>
+
 	<groupId>com.egov</groupId>
 	<artifactId>icops_integration-kerala</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
