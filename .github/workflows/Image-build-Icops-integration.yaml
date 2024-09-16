@@ -48,7 +48,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B backend/icops_integration-kerala/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_kerala_cops -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/
+        run: mvn -B -f backend/icops_integration-kerala/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_kerala_cops -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/
 
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
