@@ -1,4 +1,4 @@
-name: SBI Svc Image Build workflow
+name: SBI Ui Image Build workflow
 on:
   push:
     branches:
