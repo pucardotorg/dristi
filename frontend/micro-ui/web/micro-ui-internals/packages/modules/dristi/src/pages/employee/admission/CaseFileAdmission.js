@@ -484,6 +484,10 @@ function CaseFileAdmission({ t, path }) {
   if (isLoading) {
     return <Loader />;
   }
+  const scrollToHeading = (heading) => {
+    const scroller = Array.from(document.querySelectorAll(".label-field-pair .accordion-title")).find((el) => el.textContent === heading);
+    scroller.scrollIntoView({ block: "center", behavior: "smooth" });
+  };
   return (
     <div className={"case-and-admission"}>
       <div className="view-case-file">
@@ -492,7 +496,7 @@ function CaseFileAdmission({ t, path }) {
             <div className="file-case-select-form-section">
               {sidebar?.map((key, index) => (
                 <div className="accordion-wrapper">
-                  <div key={index} className="accordion-title">
+                  <div key={index} className="accordion-title" onClick={() => scrollToHeading(`${index + 1}. ${t(labels[key])}`)}>
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>
                   </div>
                 </div>
