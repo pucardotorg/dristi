@@ -59,15 +59,15 @@ router.post(
         case "application-reschedule-request":
           await applicationRescheduleRequest(req, res, qrCode);
           break;
-        // case "application-bail-bond":
-        //   await applicationBailBond(req, res, qrCode);
-        //   break;
-        // case "application-case-transfer":
-        //   await applicationCaseTransfer(req, res, qrCode);
-        //   break;
-        // case "application-case-withdrawal":
-        //   await applicationCaseWithdrawal(req, res, qrCode);
-        //   break;
+        case "application-bail-bond":
+          await applicationBailBond(req, res, qrCode);
+          break;
+        case "application-case-transfer":
+          await applicationCaseTransfer(req, res, qrCode);
+          break;
+        case "application-case-withdrawal":
+          await applicationCaseWithdrawal(req, res, qrCode);
+          break;
         // case "application-for-checkout-request":
         //   await applicationCheckout(req, res, qrCode);
         //   break;

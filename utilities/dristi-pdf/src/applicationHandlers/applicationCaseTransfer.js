@@ -7,8 +7,11 @@ const {
   search_sunbirdrc_credential_service,
   search_application,
   create_pdf,
+  search_advocate,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { getAdvocates } = require("./getAdvocates");
+const { formatDate } = require("./formatDate");
 
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
@@ -93,8 +96,35 @@ const applicationCaseTransfer = async (req, res, qrCode) => {
     if (!application) {
       return renderError(res, "Application not found", 404);
     }
+    let barRegistrationNumber = "";
+    const advocateIndividualId =
+      application?.applicationDetails?.advocateIndividualId;
+    if (advocateIndividualId) {
+      const resAdvocate = await handleApiCall(
+        () => search_advocate(tenantId, advocateIndividualId, requestInfo),
+        "Failed to query Advocate Details"
+      );
+      const advocateData = resAdvocate?.data?.advocates?.[0];
+      const advocateDetails = advocateData?.responseList?.find(
+        (item) => item.isActive === true
+      );
+      barRegistrationNumber = advocateDetails?.barRegistrationNumber || "";
+    }
+
+    const onBehalfOfuuid = application?.onBehalfOf?.[0];
+    const allAdvocates = getAdvocates(courtCase);
+    const advocate = allAdvocates[onBehalfOfuuid]?.[0]?.additionalDetails
+      ?.advocateName
+      ? allAdvocates[onBehalfOfuuid]?.[0]
+      : {};
+    const advocateName = advocate?.additionalDetails?.advocateName || "";
     const partyName = application?.additionalDetails?.onBehalOfName || "";
-    // Handle QR code if enabled
+    const additionalComments =
+      application?.applicationDetails?.additionalComments || "";
+    const grounds =
+      application?.applicationDetails?.groundsForSeekingTransfer || "";
+    const selectRequestedCourt =
+      application?.applicationDetails?.selectRequestedCourt || "";
     let base64Url = "";
     if (qrCode === "true") {
       const resCredential = await handleApiCall(
@@ -147,7 +177,7 @@ const applicationCaseTransfer = async (req, res, qrCode) => {
     ];
 
     const currentDate = new Date();
-
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const day = currentDate.getDate();
     const month = months[currentDate.getMonth()];
     const year = currentDate.getFullYear();
@@ -163,22 +193,22 @@ const applicationCaseTransfer = async (req, res, qrCode) => {
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           caseNo: "87465464",
-          originalCourt: "Suprem court of India",
-          newCourt: "High Court of Kerala",
+          originalCourt: "Suprem court of India", // FIXME:Take current court
+          newCourt: selectRequestedCourt,
           judgeName: "John Doe", // FIXME: employee.user.name
           courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
-          date: currentDate,
+          date: formattedToday,
           partyName: partyName,
-          additionalComments: "Additional Comments",
-          grounds: "grounds",
-          reliefSought: "reliefSought",
+          additionalComments,
+          grounds,
+          reliefSought: "",
           day: day + ordinalSuffix,
           month: month,
           year: year,
           advocateSignature: "Advocate Signature",
-          advocateName: "Vaibhav Takale", //FIXME: REMOVE it from both pdf configs and here,
-          barRegistrationNumber: "BCCC89885454",
+          advocateName,
+          barRegistrationNumber,
           qrCodeUrl: base64Url,
         },
       ],

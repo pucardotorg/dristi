@@ -556,7 +556,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
 
           {actionModal === "caseRegisterSuccess" && (
             <SuccessModal
-              header={"Vaibhav"}
+              header={t("SUCCESS")}
               t={t}
               actionCancelLabel={"CS_COMMON_CLOSE"}
               actionSaveLabel={"CS_ALLOCATE_JUDGE"}
@@ -574,7 +574,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
         </div>
         {actionModal === "caseSendBackSuccess" && (
           <SuccessModal
-            header={"Vaibhav"}
+            header={t("SUCCESS")}
             t={t}
             actionCancelLabel={"BACK_TO_HOME"}
             actionSaveLabel={"NEXT_CASE"}
