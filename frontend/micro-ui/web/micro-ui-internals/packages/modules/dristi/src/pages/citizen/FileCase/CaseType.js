@@ -280,8 +280,8 @@ function CaseType({ t }) {
                                   city: city,
                                   state: addressLine1,
                                   coordinates: {
-                                    longitude: latitude,
-                                    latitude: longitude,
+                                    longitude: longitude,
+                                    latitude: latitude,
                                   },
                                   locality: address,
                                 },
