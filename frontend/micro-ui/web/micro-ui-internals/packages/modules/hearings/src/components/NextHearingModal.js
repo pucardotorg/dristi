@@ -220,7 +220,7 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
         value: caseDetails?.Case_Type || "NIA S 138",
       },
     ];
-  }, [caseDetails]);
+  }, [caseDetails, courtDetails]);
 
   return (
     <div>
