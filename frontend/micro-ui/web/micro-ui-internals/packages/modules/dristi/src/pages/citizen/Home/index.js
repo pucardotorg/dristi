@@ -7,6 +7,7 @@ import { userTypeOptions } from "../registration/config";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CaseInProgressIcon, ClosedCasesIcon, FileCaseIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "../../../icons/svgIndex";
 import Home from "./litigantHome";
+import { useGetAccessToken } from "../../../hooks/useGetAccessToken";
 
 function CitizenHome({ tenantId, setHideBack }) {
   const Digit = window?.Digit || {};
@@ -102,6 +103,8 @@ function CitizenHome({ tenantId, setHideBack }) {
       setHideBack(false);
     };
   }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending, setHideBack]);
+
+  useGetAccessToken("citizen.refresh-token", individualId && !isApprovalPending && !isRejected);
 
   if (isLoading || isSearchLoading || isFetching || isFetchingAdvoacte) {
     return <Loader />;

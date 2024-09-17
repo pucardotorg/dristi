@@ -15,7 +15,7 @@ const Response = ({ refetch, setHideBack }) => {
   // const handleLogout = () => {
   //   Digit.UserService.logout();
   // };
-  useGetAccessToken("citizen.refresh-token");
+  useGetAccessToken("citizen.refresh-token", true);
 
   useEffect(() => {
     setHideBack(true);
