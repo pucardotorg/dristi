@@ -67,6 +67,7 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
         newobj[key] && !isEqual(formData[key], newobj[key]) && setValue(key, newobj[key], Object.keys(newobj[key]));
       });
       localStorage.removeItem("signStatus");
+      localStorage.removeItem("esignProcess");
       localStorage.removeItem("isSignSuccess");
       localStorage.removeItem("formdata");
     }

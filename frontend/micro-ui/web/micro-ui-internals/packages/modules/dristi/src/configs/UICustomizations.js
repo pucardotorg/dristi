@@ -283,7 +283,7 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
+      const usertype = row?.ProcessInstance?.businessService.includes("clerk") ? "clerk" : "advocate";
       const individualId = row?.businessObject?.individual?.individualId;
       const applicationNumber =
         row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;

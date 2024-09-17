@@ -120,9 +120,10 @@ function ReviewSubmissionModal({
       actionCancelLabel={t("CS_COMMON_BACK")}
       actionCancelOnSubmit={handleBack}
       actionSaveLabel={t("ADD_SIGNATURE")}
+      isDisabled={isLoading}
       actionSaveOnSubmit={() => {
         const pdfFile = new File([applicationPreviewPdf], applicationPreviewFileName, { type: "application/pdf" });
-        
+
         onDocumentUpload(pdfFile, pdfFile.name)
           .then((document) => {
             const fileStoreId = document.file?.files?.[0]?.fileStoreId;

@@ -157,10 +157,11 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
       actionSaveLabel={showActions && t("ADD_SIGNATURE")}
+      isDisabled={isLoading}
       actionSaveOnSubmit={() => {
         if (showActions) {
           const pdfFile = new File([orderPreviewPdf], orderPreviewFileName, { type: "application/pdf" });
-          
+
           onDocumentUpload(pdfFile, pdfFile.name)
             .then((document) => {
               const fileStoreId = document.file?.files?.[0]?.fileStoreId;
