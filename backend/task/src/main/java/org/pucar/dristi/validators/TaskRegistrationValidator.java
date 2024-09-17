@@ -7,14 +7,17 @@ import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
-import static org.pucar.dristi.config.ServiceConstants.UPDATE_TASK_ERR;
+import java.util.List;
+import java.util.Optional;
+
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class TaskRegistrationValidator {
@@ -53,5 +56,30 @@ public class TaskRegistrationValidator {
 
         return repository.checkTaskExists(taskExists).getExists();
     }
+    public Task validateApplicationUploadDocumentExistence(Task task, RequestInfo requestInfo) {
 
+        if (ObjectUtils.isEmpty(requestInfo.getUserInfo())) {
+            throw new CustomException(UPLOAD_TASK_DOCUMENT_ERROR, "user info is mandatory for creating task");
+        }
+
+        TaskCriteria taskCriteria = TaskCriteria.builder()
+                .id(String.valueOf(task.getId()))
+                .cnrNumber(task.getCnrNumber())
+                .tenantId(task.getTenantId())
+                .taskNumber(task.getTaskNumber()).build();
+
+        List<Task> tasks = repository.getTasks(taskCriteria, null);
+        if (tasks == null) {
+            throw new CustomException(UPLOAD_TASK_DOCUMENT_ERROR, "Tasks list is null");
+        }
+
+        return tasks.stream()
+                .findFirst()
+                .map(existingTask -> {
+                    existingTask.setDocuments(task.getDocuments());
+                    return existingTask;
+                })
+                .orElseThrow(() -> new CustomException(UPLOAD_TASK_DOCUMENT_ERROR, "No task found for the given criteria"));
+
+    }
 }

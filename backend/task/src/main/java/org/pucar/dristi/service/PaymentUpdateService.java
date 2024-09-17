@@ -66,7 +66,7 @@ public class PaymentUpdateService {
             String tenantId = paymentRequest.getPayment().getTenantId();
 
             for (PaymentDetail paymentDetail : paymentDetails) {
-                if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskSummonBusinessServiceName())) {
+                if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskSummonBusinessServiceName()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskNoticeBusinessServiceName())) {
                     updateWorkflowForCasePayment(requestInfo, tenantId, paymentDetail);
                 }
             }
@@ -164,6 +164,17 @@ public class PaymentUpdateService {
                 if (ISSUESUMMON.equalsIgnoreCase(status))
                     producer.push(config.getTaskIssueSummonTopic(), taskRequest);
 
+                producer.push(config.getTaskUpdateTopic(), taskRequest);
+            }
+            else if (task.getTaskType().equals(NOTICE)) {
+                Workflow workflow = new Workflow();
+                workflow.setAction("MAKE_PAYMENT");
+                task.setWorkflow(workflow);
+                String status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, task.getTaskNumber(),
+                        config.getTaskNoticeBusinessServiceName(), workflow, config.getTaskNoticeBusinessName());
+                task.setStatus(status);
+
+                TaskRequest taskRequest = TaskRequest.builder().requestInfo(requestInfo).task(task).build();
                 producer.push(config.getTaskUpdateTopic(), taskRequest);
             }
         }

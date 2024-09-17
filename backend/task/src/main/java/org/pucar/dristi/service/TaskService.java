@@ -154,12 +154,11 @@ public class TaskService {
 
     public Task uploadDocument(TaskRequest body) {
         try {
-            // Validate whether the application that is being requested for update indeed exists
-            if (!validator.validateApplicationExistence(body.getTask(), body.getRequestInfo()))
-                throw new CustomException(VALIDATION_ERR, "Task Application does not exist");
+            Task task = validator.validateApplicationUploadDocumentExistence(body.getTask(), body.getRequestInfo());
 
             // Enrich application upon update
-            enrichmentUtil.enrichCaseApplicationUponUpdate(body);
+           TaskRequest taskRequest = TaskRequest.builder().requestInfo(body.getRequestInfo()).task(task).build();
+            enrichmentUtil.enrichCaseApplicationUponUpdate(taskRequest);
 
             producer.push(config.getTaskUpdateTopic(), body);
 

@@ -61,6 +61,8 @@ public class ServiceConstants {
     public static final String SEARCH_TASK_ERR = "Error while searching task";
     public static final String BAIL = "BAIL";
     public static final String SUMMON = "SUMMONS";
+
+    public static final String NOTICE = "NOTICE";
     public static final String WARRANT = "WARRANT";
     public static final String ISSUESUMMON = "ISSUESUMMON";
 
@@ -73,6 +75,8 @@ public class ServiceConstants {
     public static final String FILTER_PAYMENT_TYPE = "$.[?(@.suffix == '%s' && @.businessService[?(@.businessCode == '%s')])]";
 
     public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+
+    public static final String UPLOAD_TASK_DOCUMENT_ERROR = "UPLOAD_TASK_DOCUMENT_ERROR";
 
 
 }
