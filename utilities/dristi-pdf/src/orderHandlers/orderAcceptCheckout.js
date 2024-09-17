@@ -156,7 +156,10 @@ async function orderAcceptCheckout(req, res, qrCode) {
     const reasonForRescheduling =
       application?.applicationDetails?.reasonForApplication;
     const originalHearingDate = order.orderDetails?.originalHearingDate
-      ? formatDate(new Date(order.orderDetails?.originalHearingDate),"DD-MM-YYYY")
+      ? formatDate(
+          new Date(order.orderDetails?.originalHearingDate),
+          "DD-MM-YYYY"
+        )
       : "";
     const data = {
       Data: [
@@ -175,6 +178,7 @@ async function orderAcceptCheckout(req, res, qrCode) {
           applicationId: application?.applicationNumber,
           content: order?.comments || "",
           additionalDetails: order?.comments || "",
+          additionalComments: order?.comments || "",
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
           courtSeal: "Court Seal",

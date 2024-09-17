@@ -180,6 +180,7 @@ async function orderRejectCheckout(req, res, qrCode) {
           applicationId: application?.applicationNumber,
           content: order?.comments || "",
           additionalDetails: order?.comments || "",
+          additionalComments: order?.comments || "",
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
           courtSeal: "Court Seal",

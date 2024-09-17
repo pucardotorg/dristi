@@ -35,7 +35,12 @@ async function search_case(cnrNumber, tenantId, requestinfo) {
   }
 }
 
-async function search_order(tenantId, orderId, requestinfo) {
+async function search_order(
+  tenantId,
+  orderId,
+  requestinfo,
+  isOrderNumber = false
+) {
   try {
     return await axios({
       method: "post",
@@ -45,7 +50,7 @@ async function search_order(tenantId, orderId, requestinfo) {
         tenantId: tenantId,
         criteria: {
           tenantId: tenantId,
-          id: orderId,
+          ...(isOrderNumber ? { orderNumber: orderId } : { id: orderId }),
         },
       },
     });

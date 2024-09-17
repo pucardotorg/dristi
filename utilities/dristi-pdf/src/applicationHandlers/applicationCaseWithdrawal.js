@@ -124,6 +124,14 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
       application?.applicationDetails?.additionalComments || "";
     const reasonForWithdrawal =
       application?.applicationDetails?.benefitOfExtension || "";
+
+    let partyType = "COURT";
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant")) {
+      partyType = "COMPLAINANT";
+    }
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("respondent")) {
+      partyType = "ACCUSED";
+    }
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {
@@ -177,6 +185,7 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           partyName: partyName,
+          partyType,
           additionalComments,
           advocateSignature: "Advocate Signature",
           reasonForWithdrawal,

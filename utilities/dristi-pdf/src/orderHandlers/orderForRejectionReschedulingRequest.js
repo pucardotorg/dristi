@@ -10,6 +10,7 @@ const {
   search_order,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
+const { formatDate } = require("./formatDate");
 
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
@@ -107,6 +108,16 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
       return renderError(res, "Application not found", 404);
     }
     const partyName = application?.additionalDetails?.onBehalOfName || "";
+    const reasonForRescheduling =
+      application?.applicationDetails?.reasonForApplication || "";
+    const originalHearingDate = application?.applicationDetails
+      ?.initialHearingDate
+      ? formatDate(
+          new Date(application?.applicationDetails?.initialHearingDate),
+          "DD-MM-YYYY"
+        )
+      : "";
+
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {
@@ -160,6 +171,7 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
     ];
 
     const currentDate = new Date();
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
 
     const day = currentDate.getDate();
     const month = months[currentDate.getMonth()];
@@ -174,19 +186,12 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
           caseNumber: courtCase.caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
-          parties: "Parties from UI",
-          documentList: "List of documents from UI",
-          evidenceSubmissionDeadline: "Evidence submission deadline from UI",
-          responseSubmissionDeadline: "Response submission deadline from UI",
-          additionalComments: order.comments,
           partyName: partyName,
           applicationId: order?.additionalDetails?.formdata?.refApplicationId,
-          reasonForRescheduling: "",
-          originalHearingDate: "",
-          additionalComments: "",
-          Date: "Date from UI",
-          Month: "Month from UI",
-          Year: "Year from UI",
+          reasonForRescheduling,
+          originalHearingDate,
+          date: formattedToday,
+          additionalComments: order.comments,
           judgeSignature: "Judge Signature",
           designation: "Judge designation",
           courtSeal: "Court Seal",
@@ -222,7 +227,7 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of Order for Rejcetion of Reschedule Request",
+      "Failed to create PDF of Order for Rejcetion of Reschedule Request",
       500,
       ex
     );

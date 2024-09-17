@@ -126,6 +126,20 @@ async function applicationSubmissionExtension(req, res, qrCode) {
       renderError(res, "Application not found", 404);
     }
 
+    const refOrderNumber = application?.additionalDetails?.formdata?.refOrderId;
+    const resOrder = await handleApiCall(
+      () => search_order(tenantId, refOrderNumber, requestInfo, true),
+      "Failed to query order service"
+    );
+
+    const order = resOrder?.data?.list[0];
+    if (!order) {
+      renderError(res, "Order not found", 404);
+    }
+
+    const documentSubmissionName = order?.orderDetails?.documentName || "";
+    const documentId = order?.orderDetails?.documentType?.value | "";
+
     let barRegistrationNumber = "";
     const advocateIndividualId =
       application?.applicationDetails?.advocateIndividualId;
@@ -243,8 +257,8 @@ async function applicationSubmissionExtension(req, res, qrCode) {
           date: currentDate,
           partyName: partyName,
           advocateName: advocateName,
-          documentSubmissionName: "documents",
-          documentId: "documents",
+          documentSubmissionName,
+          documentId,
           originalSubmissionDate: originalSubmissionDate,
           requestedSubmissionDate: requestedExtensionDate,
           extensionReason: reasonForApplication,

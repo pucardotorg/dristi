@@ -151,6 +151,17 @@ async function orderAcceptVoluntary(req, res, qrCode) {
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const submissionDate = formatDate(new Date(application?.createdDate));
+    let caseYear;
+    if (typeof courtCase.filingDate === "string") {
+      caseYear = courtCase.filingDate.slice(-4);
+    } else if (courtCase.filingDate instanceof Date) {
+      caseYear = courtCase.filingDate.getFullYear();
+    } else if (typeof courtCase.filingDate === "number") {
+      // Assuming the number is in milliseconds (epoch time)
+      caseYear = new Date(courtCase.filingDate).getFullYear();
+    } else {
+      return renderError(res, "Invalid filingDate format", 500);
+    }
     const data = {
       Data: [
         {
@@ -162,6 +173,7 @@ async function orderAcceptVoluntary(req, res, qrCode) {
           submissionDate,
           date: formattedToday,
           Date: formattedToday,
+          caseYear,
           partyName: partyName,
           content: order?.comments || "",
           applicationNumber: application?.applicationNumber,
