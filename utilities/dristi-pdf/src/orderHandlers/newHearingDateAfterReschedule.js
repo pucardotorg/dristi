@@ -142,12 +142,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
-    var stringDate;
-    try {
-      stringDate = formatDate(order.createdDate);
-    } catch (error) {
-      return renderError(res, "Cannot convert epoch time to date", 500, error);
-    }
+    const formattedToday = formatDate(Date.now());
     const newHearingDate = order?.orderDetails?.newHearingDate
       ? formatDate(order?.orderDetails?.newHearingDate)
       : "";
@@ -159,7 +154,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           originalHearingDate,
-          date: stringDate,
+          date: formattedToday,
           newHearingDate,
           additionalComments: order.comments,
           judgeSignature: "Judge Signature",

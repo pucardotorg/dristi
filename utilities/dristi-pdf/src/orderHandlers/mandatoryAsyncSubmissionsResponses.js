@@ -158,7 +158,9 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
     const day = currentDate.getDate();
     const month = months[currentDate.getMonth()];
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    const ifResponse = order?.orderDetails?.isResponseRequired ? "Yes" : "No";
+    const ifResponse = order?.orderDetails?.isResponseRequired?.code
+      ? "Yes"
+      : "No";
     const documentList = order?.orderDetails?.documentType?.value || "";
     const partiesToRespond =
       order?.orderDetails?.partyDetails?.partiesToRespond || [];

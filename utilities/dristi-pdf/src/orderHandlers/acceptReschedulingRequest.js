@@ -168,12 +168,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
-    var stringDate;
-    try {
-      stringDate = formatDate(order.createdDate);
-    } catch (error) {
-      return renderError(res, "Cannot convert epoch time to date", 500, error);
-    }
+    const formattedToday = formatDate(Date.now());
 
     const data = {
       Data: [
@@ -181,7 +176,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
           courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
-          date: stringDate,
+          date: formattedToday,
           partyNames: partyName,
           applicationId: order.orderDetails?.refApplicationId || "",
           reasonForRescheduling,
