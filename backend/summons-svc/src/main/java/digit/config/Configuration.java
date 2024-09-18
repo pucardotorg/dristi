@@ -163,4 +163,27 @@ public class Configuration {
 
     @Value("${egov.is.test}")
     private boolean isTest;
+
+    // Bff Service
+
+    @Value("${bff.service.host}")
+    private String bffServiceHost;
+
+    @Value("${bff.service.vc.endpoint}")
+    private String bffServiceVCEndpoint;
+
+    @Value("${bff.service.pdf.endpoint}")
+    private String bffServicePdfEndpoint;
+
+    @Value(("${bff.service.summons.module}"))
+    private String bffServiceSummonsModule;
+
+
+
+    @Value("${dristi.dev.order.search.host}")
+    private String orderSearchHost;
+
+    @Value("${dristi.dev.order.search.url}")
+    private String orderSearchPath;
+
 }

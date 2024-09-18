@@ -44,15 +44,6 @@ public class SummonsConsumer {
             String taskType = taskRequest.getTask().getTaskType();
             String status = taskRequest.getTask().getStatus();
 
-            // Process for generating summons document
-            if (taskType.equalsIgnoreCase(SUMMON) || taskType.equalsIgnoreCase(WARRANT)) {
-                try {
-                    log.info("Received message for uploading document {}", taskRequest.getTask());
-                    summonsService.generateSummonsDocument(taskRequest);
-                } catch (Exception e) {
-                    log.error("Error while generating summons document: {}", taskRequest.getTask(), e);
-                }
-            }
             // Process for generating summons bill
             if (taskType.equalsIgnoreCase(SUMMON) && "PAYMENT_PENDING".equalsIgnoreCase(status)) {
                 try {
@@ -60,6 +51,16 @@ public class SummonsConsumer {
                     demandService.fetchPaymentDetailsAndGenerateDemandAndBill(taskRequest);
                 } catch (Exception e) {
                     log.error("Error while creating bill: {}", taskRequest.getTask(), e);
+                }
+            }
+
+            // Process for generating summons document
+            if (taskType.equalsIgnoreCase(SUMMON) || taskType.equalsIgnoreCase(WARRANT)) {
+                try {
+                    log.info("Received message for uploading document {}", taskRequest.getTask());
+                    summonsService.generateSummonsDocument(taskRequest);
+                } catch (Exception e) {
+                    log.error("Error while generating summons document: {}", taskRequest.getTask(), e);
                 }
             }
         } catch (final Exception e) {

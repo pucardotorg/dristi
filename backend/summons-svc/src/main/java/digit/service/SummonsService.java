@@ -4,10 +4,7 @@ import digit.config.Configuration;
 import digit.enrichment.SummonsDeliveryEnrichment;
 import digit.kafka.Producer;
 import digit.repository.SummonsRepository;
-import digit.util.ExternalChannelUtil;
-import digit.util.FileStorageUtil;
-import digit.util.PdfServiceUtil;
-import digit.util.TaskUtil;
+import digit.util.*;
 import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
@@ -15,7 +12,6 @@ import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -46,11 +42,13 @@ public class SummonsService {
 
     private final TaskUtil taskUtil;
 
+    private final CaseManagementUtil caseManagementUtil;
+
     @Autowired
     public SummonsService(PdfServiceUtil pdfServiceUtil, Configuration config, Producer producer,
                           FileStorageUtil fileStorageUtil, SummonsRepository summonsRepository,
                           SummonsDeliveryEnrichment summonsDeliveryEnrichment, ExternalChannelUtil externalChannelUtil,
-                          TaskUtil taskUtil) {
+                          TaskUtil taskUtil, CaseManagementUtil caseManagementUtil) {
         this.pdfServiceUtil = pdfServiceUtil;
         this.config = config;
         this.producer = producer;
@@ -59,14 +57,18 @@ public class SummonsService {
         this.summonsDeliveryEnrichment = summonsDeliveryEnrichment;
         this.externalChannelUtil = externalChannelUtil;
         this.taskUtil = taskUtil;
+        this.caseManagementUtil = caseManagementUtil;
     }
 
     public TaskResponse generateSummonsDocument(TaskRequest taskRequest) {
         String taskType = taskRequest.getTask().getTaskType();
         String pdfTemplateKey = getPdfTemplateKey(taskType);
+        String moduleName = config.getBffServiceSummonsModule();
 
-        ByteArrayResource byteArrayResource = pdfServiceUtil.generatePdfFromPdfService(taskRequest, config.getEgovStateTenantId(), pdfTemplateKey);
-        String fileStoreId = fileStorageUtil.saveDocumentToFileStore(byteArrayResource);
+        // generate credentials
+        caseManagementUtil.generateVcForTask(taskRequest, moduleName);
+
+        String fileStoreId = caseManagementUtil.getFileStoreIdFromBffService(taskRequest, pdfTemplateKey, moduleName);
 
         Document document = createDocument(fileStoreId);
         taskRequest.getTask().addDocumentsItem(document);
