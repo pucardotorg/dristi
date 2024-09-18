@@ -618,6 +618,8 @@ export const configsExtensionSubmissionDeadline = [
         inline: true,
         type: "component",
         component: "SelectCustomTextArea",
+        schemaKeyPath: "applicationDetails.additionalComments",
+        transformer: "customTextArea",
         key: "comments",
         isMandatory: false,
         populators: {

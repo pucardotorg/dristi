@@ -5,6 +5,7 @@ const {
   search_order,
   search_mdms,
   search_hrms,
+  search_hearing,
   search_sunbirdrc_credential_service,
   create_pdf,
 } = require("../api");
@@ -69,6 +70,15 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
     if (!courtCase) {
       renderError(res, "Court case not found", 404);
     }
+
+    const resHearing = await handleApiCall(
+      () => search_hearing(tenantId, cnrNumber, requestInfo),
+      "Failed to query hearing service"
+    );
+    const hearing = resHearing?.data?.HearingList?.find(
+      (item) => item.status == "OPTOUT"
+    );
+    const originalHearingDate = formatDate(hearing?.startTime);
 
     // FIXME: Commenting out HRMS calls is it not impl in solution
     // Search for HRMS details
@@ -148,6 +158,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
           courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
+          originalHearingDate,
           date: stringDate,
           newHearingDate,
           additionalComments: order.comments,

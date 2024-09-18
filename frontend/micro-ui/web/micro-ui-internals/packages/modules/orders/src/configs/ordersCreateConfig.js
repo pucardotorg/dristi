@@ -1190,6 +1190,8 @@ export const configsScheduleNextHearingDate = [
         label: "HEARING_PURPOSE",
         isMandatory: true,
         key: "hearingPurpose",
+        schemaKeyPath: "orderDetails.purposeOfHearing",
+        transformer: "mdmsDropdown",
         type: "dropdown",
         populators: {
           name: "hearingPurpose",
@@ -1209,6 +1211,8 @@ export const configsScheduleNextHearingDate = [
         label: "HEARING_DATE",
         isMandatory: true,
         key: "hearingDate",
+        schemaKeyPath: "orderDetails.hearingDate",
+        transformer: "date",
         type: "date",
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
@@ -1352,6 +1356,8 @@ export const configsRejectRescheduleHeadingDate = [
         label: "ORIGINAL_HEARING_DATE",
         isMandatory: true,
         key: "originalHearingDate",
+        schemaKeyPath: "orderDetails.originalHearingDate",
+        transformer: "date",
         disable: true,
         type: "date",
         populators: {
@@ -1404,6 +1410,8 @@ export const configsRejectCheckout = [
         label: "ORIGINAL_HEARING_DATE",
         isMandatory: true,
         key: "originalHearingDate",
+        schemaKeyPath: "orderDetails.originalHearingDate",
+        transformer: "date",
         disable: true,
         type: "date",
         populators: {
