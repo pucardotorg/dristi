@@ -140,14 +140,14 @@ const InsideHearingMainPage = () => {
       setAdditionalDetails(responseList?.additionalDetails);
       setOptions(
         responseList?.additionalDetails?.witnessDetails?.formdata?.map((witness) => ({
-          label: `${witness.data.firstName} ${witness.data.lastName}`,
+          label: [witness?.data?.firstName, witness?.data?.lastName].filter(Boolean).join(" "),
           value: witness.data.uuid,
         }))
       );
       const selectedWitnessDefault = responseList?.additionalDetails?.witnessDetails?.formdata?.[0]?.data || {};
       setSelectedWitness(selectedWitnessDefault);
       setWitnessDepositionText(
-        hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitnessDefault.uuid)?.deposition
+        hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitnessDefault?.uuid)?.deposition
       );
     }
   }, [caseDataResponse]);
@@ -280,7 +280,7 @@ const InsideHearingMainPage = () => {
     }
   };
 
-  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent).length || 0, [hearing]);
+  const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent)?.length || 0, [hearing]);
   const [isRecording, setIsRecording] = useState(false);
   const IsSelectedWitness = useMemo(() => {
     return !isEmpty(selectedWitness);
@@ -314,8 +314,8 @@ const InsideHearingMainPage = () => {
                 selected={
                   IsSelectedWitness
                     ? {
-                        label: `${selectedWitness.firstName} ${selectedWitness.lastName}`,
-                        value: selectedWitness.uuid,
+                        label: [selectedWitness?.firstName, selectedWitness?.lastName].filter(Boolean).join(" "),
+                        value: selectedWitness?.uuid,
                       }
                     : {}
                 }

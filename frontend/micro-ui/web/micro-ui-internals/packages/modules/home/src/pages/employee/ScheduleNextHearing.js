@@ -338,7 +338,7 @@ function ScheduleNextHearing({
             pendingTask: {
               name: "Create Order for rescheduling the hearing",
               entityType: "order-default",
-              referenceId: hearingId,
+              referenceId: `MANUAL_${referenceId}`,
               status: "RESCHEDULE_HEARING",
               assignedTo: [],
               assignedRole: [],

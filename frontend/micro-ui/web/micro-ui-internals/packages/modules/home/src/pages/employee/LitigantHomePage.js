@@ -454,13 +454,17 @@ const LitigantHomePage = ({ isApprovalPending }) => {
     SetCallRefetch(true);
     history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
   };
+  const name = userName?.info?.name
+    .split(" ")
+    .filter((part) => part && part.toLowerCase() !== "null")
+    .join(" ");
   if (isApprovalPending) {
     history.push(`/${window?.contextPath}/${userType}/dristi/home`);
   }
   return (
     <div className="upcoming-hearing-container" style={{ width: "100%", padding: 40 }}>
       <div className="header" style={{ fontSize: "30px" }}>
-        {curHr < 12 ? "Good Morning" : curHr < 18 ? "Good Afternoon" : "Good Evening"}, <span className="userName">{userName?.info?.name}</span>
+        {curHr < 12 ? t("GOOD_MORNING") : curHr < 18 ? t("GOOD_AFTERNOON") : t("GOOD_EVENING")}, <span className="userName">{name}</span>
       </div>
       <div className="header sub-text" style={{ marginTop: "40px", fontSize: "30px" }}>
         {t("What are you planning to do today?")}

@@ -300,7 +300,20 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
         isDisabled={paymentLoader}
         headerBarMain={<Heading label={t("CS_PAY_TO_FILE_CASE")} />}
       >
-        <div className="payment-due-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+        <div className="payment-due-wrapper" style={{ maxHeight: "550px", display: "flex", flexDirection: "column", margin: "13px 0px" }}>
+          <InfoCard
+            variant={"default"}
+            label={t("CS_COMMON_NOTE")}
+            style={{ backgroundColor: "#ECF3FD", marginBottom: "8px" }}
+            additionalElements={[
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span>{t("PLEASE_ALLOW_POPUP_PAYMENT")}</span>
+              </div>,
+            ]}
+            inline
+            textStyle={{}}
+            className={"adhaar-verification-info-card"}
+          />
           <div className="payment-due-text" style={{ fontSize: "18px" }}>
             {`${t("CS_DUE_PAYMENT")} `}
             <span style={{ fontWeight: 700 }}>Rs {totalAmount}/-.</span>

@@ -1342,16 +1342,24 @@ const JoinCaseHome = ({ refreshInbox }) => {
     const shorthand = firstChars.join("");
     return shorthand;
   };
+  const getUserFullName = (individual, formDataNames = {}) => {
+    if (individual) {
+      const { givenName, otherNames, familyName } = individual?.name || {};
+      return [givenName, otherNames, familyName].filter(Boolean).join(" ");
+    } else {
+      const { respondentFirstName, respondentMiddleName, respondentLastName } = formDataNames || {};
+      return [respondentFirstName, respondentMiddleName, respondentLastName].filter(Boolean).join(" ");
+    }
+  };
 
   const getComplainantList = async (formdata) => {
     const complainantList = await Promise.all(
       formdata?.map(async (data, index) => {
         try {
           const response = await getUserUUID(data?.data?.complainantVerification?.individualDetails?.individualId);
-          console.log("response :>> ", response);
-          const fullName = `${response?.Individual?.[0]?.name?.givenName} ${
-            response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
-          }${response?.Individual?.[0]?.name?.familyName}`;
+
+          const fullName = getUserFullName(response?.Individual?.[0]);
+
           return {
             ...data?.data,
             label: `${fullName} ${t(JoinHomeLocalisation.COMPLAINANT_BRACK)}`,
@@ -1369,7 +1377,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   };
 
   const getRespondentList = async (formdata) => {
-    const complainantList = await Promise.all(
+    const respondentList = await Promise.all(
       formdata?.map(async (data, index) => {
         try {
           let response = undefined;
@@ -1378,13 +1386,10 @@ const JoinCaseHome = ({ refreshInbox }) => {
             response = await getUserUUID(data?.data?.respondentVerification?.individualDetails?.individualId);
           }
           if (response) {
-            fullName = `${response?.Individual?.[0]?.name?.givenName} ${
-              response?.Individual?.[0]?.name?.otherNames ? response?.Individual?.[0]?.name?.otherNames + " " : ""
-            }${response?.Individual?.[0]?.name?.familyName}`;
+            fullName = getUserFullName(response?.Individual?.[0]);
           } else {
-            fullName = `${data?.data?.respondentFirstName}${data?.data?.respondentMiddleName ? " " + data?.data?.respondentMiddleName : ""} ${
-              data?.data?.respondentLastName
-            }`;
+            const { respondentFirstName, respondentMiddleName, respondentLastName } = data?.data || {};
+            fullName = getUserFullName(null, { respondentFirstName, respondentMiddleName, respondentLastName });
           }
           return {
             ...data?.data,
@@ -1401,8 +1406,8 @@ const JoinCaseHome = ({ refreshInbox }) => {
       })
     );
     userType === "Advocate"
-      ? setRespondentList(complainantList?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)?.map((data) => data))
-      : setRespondentList(complainantList?.map((data) => data));
+      ? setRespondentList(respondentList?.filter((data) => data?.respondentVerification?.individualDetails?.individualId)?.map((data) => data))
+      : setRespondentList(respondentList?.map((data) => data));
   };
 
   useEffect(() => {
