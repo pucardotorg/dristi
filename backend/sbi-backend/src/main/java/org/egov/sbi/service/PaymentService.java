@@ -9,6 +9,7 @@ import org.egov.sbi.model.*;
 import org.egov.sbi.repository.TransactionDetailsRepository;
 import org.egov.sbi.util.AES256Util;
 import org.egov.sbi.util.CollectionsUtil;
+import org.egov.sbi.util.PaymentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,10 @@ public class PaymentService {
 
     private final CollectionsUtil collectionsUtil;
 
+    private final PaymentUtil paymentUtil;
+
     @Autowired
-    public PaymentService(PaymentEnrichment paymentEnrichment, Producer producer, AES256Util aes256Util, PaymentConfiguration config, TransactionDetailsRepository repository, PaymentConfiguration paymentConfiguration, CollectionsUtil collectionsUtil) {
+    public PaymentService(PaymentEnrichment paymentEnrichment, Producer producer, AES256Util aes256Util, PaymentConfiguration config, TransactionDetailsRepository repository, PaymentConfiguration paymentConfiguration, CollectionsUtil collectionsUtil, PaymentUtil paymentUtil) {
         this.paymentEnrichment = paymentEnrichment;
         this.producer = producer;
         this.aes256Util = aes256Util;
@@ -46,6 +49,7 @@ public class PaymentService {
         this.repository = repository;
         this.paymentConfiguration = paymentConfiguration;
         this.collectionsUtil = collectionsUtil;
+        this.paymentUtil = paymentUtil;
     }
 
 
@@ -61,6 +65,9 @@ public class PaymentService {
         transactionMap.put("merchantId", config.getSbiMerchantId());
 
         producer.push(paymentConfiguration.getCreateTransactionDetails(), request);
+
+        paymentUtil.callSbiGateway(transactionMap);
+
         return transactionMap;
     }
 
