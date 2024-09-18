@@ -1082,6 +1082,7 @@ export const updateCaseDetails = async ({
   setFormDataValue,
   action = "SAVE_DRAFT",
   fileStoreId,
+  isCaseReAssigned = false,
   setErrorCaseDetails = () => {},
 }) => {
   const data = {};
@@ -2030,6 +2031,10 @@ export const updateCaseDetails = async ({
   });
 
   const assignees = getAllAssignees(caseDetails);
+
+  if (isCaseReAssigned && action === "SAVE_DRAFT") {
+    return null;
+  }
 
   return DRISTIService.caseUpdateService(
     {

@@ -1500,6 +1500,7 @@ function EFilingCases({ path }) {
         setFormDataValue: setFormDataValue.current,
         action,
         setErrorCaseDetails,
+        isCaseReAssigned,
         ...(res && { fileStoreId: res?.data?.cases?.[0]?.documents?.[0]?.fileStore }),
       })
         .then(() => {
@@ -1610,6 +1611,7 @@ function EFilingCases({ path }) {
       setIsDisabled,
       tenantId,
       setErrorCaseDetails,
+      isCaseReAssigned,
     })
       .then(() => {
         if (!isCaseReAssigned) {
@@ -1621,6 +1623,8 @@ function EFilingCases({ path }) {
             setFormdata(caseData);
             setIsDisabled(false);
           });
+        } else {
+          setIsDisabled(false);
         }
       })
       .catch(() => {
