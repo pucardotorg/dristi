@@ -5,14 +5,15 @@ const {
   search_order,
   search_mdms,
   search_hrms,
-  search_individual,
   search_sunbirdrc_credential_service,
   create_pdf,
+  search_individual_uuid,
+  search_application,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
 
-async function caseTransfer(req, res, qrCode) {
+async function orderWithdrawalReject(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
   const entityId = req.query.entityId;
@@ -58,13 +59,13 @@ async function caseTransfer(req, res, qrCode) {
     }
 
     // Search for HRMS details
-    // const resHrms = await handleApiCall(
-    //   () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-    //   "Failed to query HRMS service"
-    // );
-    // const employee = resHrms?.data?.Employees[0];
+    const resHrms = await handleApiCall(
+      () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+      "Failed to query HRMS service"
+    );
+    const employee = resHrms?.data?.Employees[0];
     // if (!employee) {
-    //   renderError(res, "Employee not found", 404);
+    //     renderError(res, "Employee not found", 404);
     // }
 
     // Search for MDMS court room details
@@ -83,22 +84,6 @@ async function caseTransfer(req, res, qrCode) {
       renderError(res, "Court room MDMS master not found", 404);
     }
 
-    // Search for MDMS court establishment details
-    // const resMdms1 = await handleApiCall(
-    //   () =>
-    //     search_mdms(
-    //       mdmsCourtRoom.courtEstablishmentId,
-    //       "case.CourtEstablishment",
-    //       tenantId,
-    //       requestInfo
-    //     ),
-    //   "Failed to query MDMS service for court establishment"
-    // );
-    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
-    // if (!mdmsCourtEstablishment) {
-    //   renderError(res, "Court establishment MDMS master not found", 404);
-    // }
-
     // Search for order details
     const resOrder = await handleApiCall(
       () => search_order(tenantId, orderId, requestInfo),
@@ -108,6 +93,21 @@ async function caseTransfer(req, res, qrCode) {
     if (!order) {
       renderError(res, "Order not found", 404);
     }
+
+    const resApplication = await handleApiCall(
+      () =>
+        search_application(
+          tenantId,
+          order?.additionalDetails?.formdata?.refApplicationId,
+          requestInfo
+        ),
+      "Failed to query application service"
+    );
+    const application = resApplication?.data?.applicationList[0];
+    if (!application) {
+      return renderError(res, "Application not found", 404);
+    }
+
     // Filter litigants to find the respondent.primary
     const respondentParty = courtCase.litigants.find(
       (party) => party.partyType === "respondent.primary"
@@ -119,16 +119,21 @@ async function caseTransfer(req, res, qrCode) {
         400
       );
     }
-    // Search for individual details
-    const resIndividual = await handleApiCall(
+
+    const behalfOfIndividual = await handleApiCall(
       () =>
-        search_individual(tenantId, respondentParty.individualId, requestInfo),
-      "Failed to query individual service using individualId"
+        search_individual_uuid(
+          tenantId,
+          application.onBehalfOf[0],
+          requestInfo
+        ),
+      "Failed to query individual service using id"
     );
-    const respondentIndividual = resIndividual?.data?.Individual[0];
-    if (!respondentIndividual) {
-      renderError(res, "Respondent individual not found", 404);
+    const onbehalfOfIndividual = behalfOfIndividual?.data?.Individual[0];
+    if (!onbehalfOfIndividual) {
+      renderError(res, "Individual not found", 404);
     }
+    // Search for individual details
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -155,50 +160,30 @@ async function caseTransfer(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
-    let caseYear;
-    if (typeof courtCase.filingDate === "string") {
-      year = courtCase.filingDate.slice(-4);
-    } else if (courtCase.filingDate instanceof Date) {
-      year = courtCase.filingDate.getFullYear();
-    } else if (typeof courtCase.filingDate === "number") {
-      // Assuming the number is in milliseconds (epoch time)
-      year = new Date(courtCase.filingDate).getFullYear();
-    } else {
-      return renderError(res, "Invalid filingDate format", 500);
-    }
-
+    const partyName = [
+      onbehalfOfIndividual.name.givenName,
+      onbehalfOfIndividual.name.otherNames,
+      onbehalfOfIndividual.name.familyName,
+    ]
+      .filter(Boolean)
+      .join(" ");
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    const additionalComments = order?.comments || "";
-    const specifyCourtOrJurisdiction =
-      order?.additionalDetails?.formdata?.caseTransferredTo || "";
-    const groundsForTransfer = order?.orderDetails?.grounds || "";
-    const grantStatus =
-      order?.additionalDetails?.applicationStatus === "Rejected"
-        ? "REJECTED"
-        : "GRANTED";
-    const reasonForRejection =
-      order?.additionalDetails?.applicationStatus === "Rejected"
-        ? additionalComments
-        : "";
 
+    const additionalComments = order?.comments || "";
+    const summaryReasonForWithdrawal =
+      application?.applicationDetails?.reasonForWithdrawal || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          place: "Kollam",
-          state: "Kerala",
-          caseNumber: courtCase.caseNumber,
-          caseYear: caseYear,
           caseName: courtCase.caseTitle,
+          caseNumber: courtCase.caseNumber,
+          partyName: partyName,
           date: formattedToday,
-          applicationId: order?.additionalDetails?.formdata?.refApplicationId,
-          partyName: `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
-          specifyCourtOrJurisdiction: specifyCourtOrJurisdiction,
-          groundsForTransfer: groundsForTransfer,
-          grantStatus: grantStatus, //todo
-          reasonForRejection: reasonForRejection, // missing in order Object
+          dateOfMotion: formattedToday,
           additionalComments: additionalComments,
+          summaryReasonForWithdrawal: summaryReasonForWithdrawal,
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
           courtSeal: "Court Seal",
@@ -210,11 +195,11 @@ async function caseTransfer(req, res, qrCode) {
     // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.case_transfer_qr
-        : config.pdf.case_transfer;
+        ? config.pdf.order_case_withdrawal_rejected_qr
+        : config.pdf.order_case_withdrawal_rejected;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of order for Transfer of Case - Acceptance/Rejection"
+      "Failed to generate PDF of order to Settle a Case - Acceptance"
     );
     const filename = `${pdfKey}_${new Date().getTime()}`;
     res.writeHead(200, {
@@ -232,11 +217,11 @@ async function caseTransfer(req, res, qrCode) {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of order for Transfer of Case - Acceptance/Rejection",
+      "Failed to query details of order to Settle a Case - Acceptance",
       500,
       ex
     );
   }
 }
 
-module.exports = caseTransfer;
+module.exports = orderWithdrawalReject;

@@ -26,7 +26,7 @@ const SubmissionPreviewSubmissionTypeMap = {
   BAIL_BOND: "application-bail-bond",
   SURETY: "application-bail-bond",
   OTHERS: "application-generic",
-  SETTLEMENT: "application-generic",
+  SETTLEMENT: "application-case-settlement",
   CHECKOUT_REQUEST: "application-for-checkout-request",
 };
 

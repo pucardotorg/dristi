@@ -1049,7 +1049,7 @@ export const configsCaseWithdrawal = [
         isMandatory: true,
         type: "dropdown",
         key: "reasonForWithdrawal",
-        schemaKeyPath: "applicationDetails.benefitOfExtension",
+        schemaKeyPath: "applicationDetails.reasonForWithdrawal",
         transformer: "mdmsDropdown",
         populators: {
           name: "reasonForWithdrawal",

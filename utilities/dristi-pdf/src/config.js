@@ -51,21 +51,23 @@ module.exports = {
     order_reject_checkout_qr:
       process.env.ORDER_REJECT_CHECKOUT_QR ||
       "order-reject-checkout-request-qr",
-    case_transfer: process.env.CASE_TRANSFER || "case-transfer",
-    case_transfer_qr: process.env.CASE_TRANSFER_QR || "case-transfer-qr",
+    case_transfer: process.env.CASE_TRANSFER || "order-case-transfer",
+    case_transfer_qr: process.env.CASE_TRANSFER_QR || "order-case-transfer-qr",
     case_settlement_acceptance:
-      process.env.CASE_SETTLEMENT_ACCEPTANCE || "case-settlement-acceptance",
+      process.env.CASE_SETTLEMENT_ACCEPTANCE ||
+      "order-case-settlement-acceptance",
     case_settlement_acceptance_qr:
       process.env.CASE_SETTLEMENT_ACCEPTANCE_QR ||
-      "case-settlement-acceptance-qr",
+      "order-case-settlement-acceptance-qr",
     case_settlement_rejection:
-      process.env.CASE_SETTLEMENT_REJECTION || "case-settlement-rejection",
+      process.env.CASE_SETTLEMENT_REJECTION || "order-case-settlement-rejected",
     case_settlement_rejection_qr:
       process.env.CASE_SETTLEMENT_REJECTION_QR ||
-      "case-settlement-rejection-qr",
-    adr_case_referral: process.env.ADR_CASE_REFERRAL || "adr-case-referral",
+      "order-case-settlement-rejected-qr",
+    adr_case_referral:
+      process.env.ADR_CASE_REFERRAL || "order-referral-case-adr",
     adr_case_referral_qr:
-      process.env.ADR_CASE_REFERRAL_QR || "adr-case-referral-qr",
+      process.env.ADR_CASE_REFERRAL_QR || "order-referral-case-adr-qr",
     mandatory_async_submissions_responses:
       process.env.MANDATORY_ASYNC_SUBMISSIONS_RESPONSES ||
       "mandatory-async-submissions-responses",
@@ -191,6 +193,27 @@ module.exports = {
       process.env.ORDER_INITIATE_RESCHEDULE || "order-initiate-reschedule",
     order_notice: process.env.ORDER_NOTICE || "order-notice",
     order_notice_qr: process.env.ORDER_NOTICE_QR || "order-notice-qr",
+    order_issue_warrant_qr:
+      process.env.ORDER_ISSUE_WARRANT_QR || "order-issue-warrant-qr",
+    order_issue_warrant:
+      process.env.ORDER_ISSUE_WARRANT || "order-issue-warrant",
+    order_case_withdrawal_acceptance_qr:
+      process.env.ORDER_CASE_WITHDRAWAL_ACCEPTANCE_QR ||
+      "order-case-withdrawal-acceptance-qr",
+    order_case_withdrawal_acceptance:
+      process.env.ORDER_CASE_WITHDRAWAL_ACCEPTANCE ||
+      "order-case-withdrawal-acceptance",
+    order_case_withdrawal_rejected:
+      process.env.ORDER_CASE_WITHDRAWAL_REJECT ||
+      "order-case-withdrawal-rejected",
+    order_case_withdrawal_rejected_qr:
+      process.env.ORDER_CASE_WITHDRAWAL_REJECT ||
+      "order-case-withdrawal-rejected-qr",
+    case_settlement_application:
+      process.env.CASE_SETTLEMENT_APPLICATION || "application-case-settlement",
+    case_settlement_application_qr:
+      process.env.CASE_SETTLEMENT_APPLICATION_QR ||
+      "application-case-settlement-qr",
   },
 
   app: {

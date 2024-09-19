@@ -474,11 +474,11 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "RE_SCHEDULE":
         return type === "reject" ? "REJECTION_RESCHEDULE_REQUEST" : "INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "WITHDRAWAL";
+        return "WITHDRAWAL";
       case "TRANSFER":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "CASE_TRANSFER";
+        return "CASE_TRANSFER";
       case "SETTLEMENT":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "SETTLEMENT";
+        return "SETTLEMENT";
       case "BAIL_BOND":
         return "BAIL";
       case "SURETY":

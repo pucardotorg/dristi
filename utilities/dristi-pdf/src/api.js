@@ -185,7 +185,7 @@ async function search_advocate(tenantId, individualId, requestinfo) {
   }
 }
 
-async function search_individual_uuid(tenantId, individualId, requestinfo) {
+async function search_individual_uuid(tenantId, userUuid, requestinfo) {
   var params = {
     tenantId: tenantId,
     limit: 10,
@@ -198,7 +198,7 @@ async function search_individual_uuid(tenantId, individualId, requestinfo) {
       data: {
         RequestInfo: requestinfo,
         Individual: {
-          id: [individualId],
+          userUuid: [userUuid],
         },
       },
       params,

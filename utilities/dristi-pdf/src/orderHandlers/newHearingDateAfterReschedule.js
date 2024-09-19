@@ -158,7 +158,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
           newHearingDate,
           additionalComments: order.comments,
           judgeSignature: "Judge Signature",
-          judgeName: "JUDGE_NAME", // FIXME: employee.user.name,
+          judgeName: "John Doe", // FIXME: employee.user.name,
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,
         },

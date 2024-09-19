@@ -132,7 +132,12 @@ async function orderNotice(req, res, qrCode) {
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }
-
+    const additionalComments = order?.comments || "";
+    const typeOfNotice = order?.orderDetails?.noticeType || "";
+    const hearingDate = order?.orderDetails?.hearingDate
+      ? formatDate(new Date(order?.orderDetails?.hearingDate), "DD-MM-YYYY")
+      : "";
+    const partyName = order?.orderDetails?.respondentName || "";
     const data = {
       Data: [
         {
@@ -141,13 +146,13 @@ async function orderNotice(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           place: "Kollam",
           state: "Kerala",
-          partyName: "From Order Infor",
-          typeOfNotice: "From Order Info",
-          hearingDate: "From Order Info",
+          partyName: partyName,
+          typeOfNotice: typeOfNotice,
+          hearingDate: hearingDate,
           date: formattedToday,
-          additionalComments: order.comments,
+          additionalComments: additionalComments,
           judgeSignature: "Judge Signature",
-          judgeName: "JUDGE_NAME", // FIXME: employee.user.name,
+          judgeName: "John Doe", // FIXME: employee.user.name,
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,
         },

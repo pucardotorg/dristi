@@ -27,7 +27,19 @@ function getOrdinalSuffix(day) {
   }
 }
 
-const applicationCaseWithdrawal = async (req, res, qrCode) => {
+function extractYear(date) {
+  if (typeof date === "string") {
+    return date.slice(-4); // Extract the year from the string
+  } else if (date instanceof Date) {
+    return date.getFullYear(); // Extract the year from a Date object
+  } else if (typeof date === "number") {
+    return new Date(date).getFullYear(); // Convert epoch time to Date and extract the year
+  } else {
+    return null; // Invalid date format
+  }
+}
+
+async function caseSettlementApplication(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const applicationNumber = req.query.applicationNumber;
   const tenantId = req.query.tenantId;
@@ -60,8 +72,9 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
       throw ex; // Ensure the function stops on error
     }
   };
-  // Search for case details
+
   try {
+    // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
@@ -70,6 +83,17 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
     if (!courtCase) {
       return renderError(res, "Court case not found", 404);
     }
+    const allAdvocates = getAdvocates(courtCase);
+
+    // Search for HRMS details
+    // const resHrms = await handleApiCall(
+    //   () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+    //   "Failed to query HRMS service"
+    // );
+    // const employee = resHrms?.data?.Employees[0];
+    // if (!employee) {
+    //   renderError(res, "Employee not found", 404);
+    // }
 
     // Search for MDMS court room details
     const resMdms = await handleApiCall(
@@ -86,6 +110,22 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
     if (!mdmsCourtRoom) {
       return renderError(res, "Court room MDMS master not found", 404);
     }
+
+    // Search for MDMS designation details
+    // const resMdms1 = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       employee.assignments[0].designation,
+    //       "common-masters.Designation",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsDesignation = resMdms1?.data?.mdms[0]?.data;
+    // if (!mdmsDesignation) {
+    //   renderError(res, "Court room MDMS master not found", 404);
+    // }
 
     // Search for application details
     const resApplication = await handleApiCall(
@@ -113,18 +153,12 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
     }
 
     const onBehalfOfuuid = application?.onBehalfOf?.[0];
-    const allAdvocates = getAdvocates(courtCase);
-    const advocate = allAdvocates[onBehalfOfuuid]?.[0]?.additionalDetails
+    const advocate = allAdvocates?.[onBehalfOfuuid]?.[0]?.additionalDetails
       ?.advocateName
       ? allAdvocates[onBehalfOfuuid]?.[0]
       : {};
     const advocateName = advocate?.additionalDetails?.advocateName || "";
     const partyName = application?.additionalDetails?.onBehalOfName || "";
-    const additionalComments =
-      application?.applicationDetails?.additionalComments || "";
-    const reasonForWithdrawal =
-      application?.applicationDetails?.benefitOfExtension || "";
-
     const onBehalfOfLitigent = courtCase?.litigants?.find(
       (item) => item.additionalDetails.uuid === onBehalfOfuuid
     );
@@ -160,53 +194,92 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
       base64Url = imgTag.attr("src");
     }
 
-    let caseYear;
-    if (typeof courtCase.filingDate === "string") {
-      caseYear = courtCase.filingDate.slice(-4);
-    } else if (courtCase.filingDate instanceof Date) {
-      caseYear = courtCase.filingDate.getFullYear();
-    } else if (typeof courtCase.filingDate === "number") {
-      // Assuming the number is in milliseconds (epoch time)
-      caseYear = new Date(courtCase.filingDate).getFullYear();
-    } else {
+    let caseYear = extractYear(courtCase.filingDate);
+    if (!caseYear) {
       return renderError(res, "Invalid filingDate format", 500);
     }
 
+    let applicationYear = extractYear(application?.createdDate);
+    if (!applicationYear) {
+      return renderError(res, "Invalid applicationDate format", 500);
+    }
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const applicationNameMap = {
+      BAIL_BOND: "Bail Application - Personal Bail Bond",
+      SURETY: "Bail Application - In Person Surety",
+      CHECKOUT_REQUEST: "Checkout Application",
+      SETTLEMENT: "Case Settlement Application",
+      TRANSFER: "Case Transfer Application",
+      WITHDRAWAL: "Case Withdrawal",
+      PRODUCTION_DOCUMENTS:
+        "Application for production of documents or evidence",
+      EXTENSION_SUBMISSION_DEADLINE: "Application for Extension of Submission",
+      "": "General Application",
+      undefined: "General Application",
+    };
+
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    const day = currentDate.getDate();
+    const month = months[currentDate.getMonth()];
+    const year = currentDate.getFullYear();
+
+    const ordinalSuffix = getOrdinalSuffix(day);
+    const additionalComments =
+      application?.applicationDetails?.additionalComments || "";
+
     const data = {
       Data: [
         {
-          courtComplex: mdmsCourtRoom.name,
+          courtName: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
           caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          caseNo: courtCase.caseNumber,
-          judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
-          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
-          date: formattedToday,
+          applicationNumber: applicationNumber,
+          applicationYear: applicationYear,
           partyName: partyName,
-          partyType,
-          additionalComments,
+          partyType: partyType,
+          dateOfSettlementAggrement: applicationYear, // missing from the form
+          specifyMechanism: "", // nmissing from the form
+          settlementStatus: "", // missing from the form
+          additionalComments: additionalComments,
+          location: "Kerala",
+          day: day + ordinalSuffix,
+          month: month,
+          year: year,
           advocateSignature: "Advocate Signature",
-          reasonForWithdrawal,
-          advocateName,
-          barRegistrationNumber,
+          advocateName: advocateName,
+          barRegistrationNumber: barRegistrationNumber,
+
           qrCodeUrl: base64Url,
         },
       ],
     };
+
+    // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.application_case_withdrawal_qr
-        : config.pdf.application_case_withdrawal;
+        ? config.pdf.case_settlement_application_qr
+        : config.pdf.case_settlement_application;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Application for Case Withdrawal"
+      "Failed to generate PDF of case Settlement Application"
     );
-
     const filename = `${pdfKey}_${new Date().getTime()}`;
     res.writeHead(200, {
       "Content-Type": "application/pdf",
@@ -223,11 +296,11 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to query details of APPLICATION FOR EXTENSION OF SUBMISSION DEADLINE",
+      "Failed to query details of case Settlement Application",
       500,
       ex
     );
   }
-};
+}
 
-module.exports = applicationCaseWithdrawal;
+module.exports = caseSettlementApplication;

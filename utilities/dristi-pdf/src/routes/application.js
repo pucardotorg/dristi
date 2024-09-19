@@ -14,6 +14,7 @@ const applicationCaseTransfer = require("../applicationHandlers/applicationCaseT
 const applicationCaseWithdrawal = require("../applicationHandlers/applicationCaseWithdrawal");
 const applicationRescheduleRequest = require("../applicationHandlers/applicationRescheduleRequest");
 const applicationCheckout = require("../applicationHandlers/applicationCheckout");
+const caseSettlementApplication = require("../applicationHandlers/caseSettlementApplication");
 
 function renderError(res, errorMessage, errorCode, errorObject) {
   if (errorCode == undefined) errorCode = 500;
@@ -70,6 +71,9 @@ router.post(
           break;
         case "application-for-checkout-request":
           await applicationCheckout(req, res, qrCode);
+          break;
+        case "application-case-settlement":
+          await caseSettlementApplication(req, res, qrCode);
           break;
         default:
           await applicationGeneric(req, res, qrCode);

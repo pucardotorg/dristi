@@ -2294,6 +2294,14 @@ export const configsCaseTransfer = [
         populators: { name: "complainantAddress", hideInForm: true },
       },
       {
+        label: "APPLICATION_STATUS",
+        isMandatory: true,
+        key: "applicationStatus",
+        type: "text",
+        disable: true,
+        populators: { name: "applicationStatus" },
+      },
+      {
         label: "TRANSFER_SEEKED_TO",
         isMandatory: true,
         key: "transferSeekedTo",
@@ -2317,6 +2325,8 @@ export const configsCaseTransfer = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "grounds",
+        schemaKeyPath: "orderDetails.grounds",
+        transformer: "customTextArea",
         isMandatory: true,
         populators: {
           inputs: [
@@ -2461,6 +2471,14 @@ export const configsCaseSettlement = [
           },
           hideInForm: true,
         },
+      },
+      {
+        label: "APPLICATION_STATUS",
+        isMandatory: true,
+        key: "applicationStatus",
+        type: "text",
+        disable: true,
+        populators: { name: "applicationStatus" },
       },
       {
         label: "SETTLEMENT_AGREEMENT_DATE",
@@ -2834,6 +2852,15 @@ export const configsCaseWithdrawal = [
         populators: { name: "refApplicationId" },
       },
       {
+        label: "APPLICATION_STATUS",
+        isMandatory: false,
+        key: "applicationStatus",
+        schemaKeyPath: "orderDetails.applicationStatus",
+        disable: true,
+        type: "text",
+        populators: { name: "applicationStatus" },
+      },
+      {
         label: "COURT_NAME",
         isMandatory: true,
         key: "courtName",
@@ -2886,15 +2913,6 @@ export const configsCaseWithdrawal = [
         disable: true,
         type: "text",
         populators: { name: "reasonForWithdrawal" },
-      },
-      {
-        label: "APPLICATION_STATUS",
-        isMandatory: false,
-        key: "applicationStatus",
-        schemaKeyPath: "orderDetails.applicationStatus",
-        disable: true,
-        type: "text",
-        populators: { name: "applicationStatus" },
       },
     ],
   },
@@ -3237,6 +3255,8 @@ export const configsCreateOrderWarrant = [
         label: "DATE_OF_HEARING",
         isMandatory: true,
         key: "dateOfHearing",
+        schemaKeyPath: "orderDetails.hearingDate",
+        transformer: "date",
         type: "date",
         disable: true,
         populators: {
@@ -3249,6 +3269,7 @@ export const configsCreateOrderWarrant = [
         key: "warrantFor",
         type: "dropdown",
         label: "WARRANT_FOR_PARTY",
+        schemaKeyPath: "orderDetails.respondentName",
         disable: true,
         populators: {
           name: "warrantFor",
@@ -3260,6 +3281,8 @@ export const configsCreateOrderWarrant = [
         isMandatory: true,
         key: "warrantType",
         type: "dropdown",
+        schemaKeyPath: "orderDetails.warrantType",
+        transformer: "mdmsDropdown",
         label: "WARRANT_TYPE",
         disable: false,
         populators: {

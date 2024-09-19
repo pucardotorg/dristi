@@ -12,18 +12,21 @@ const OrderPreviewOrderTypeMap = {
   SUMMONS: "summons-issue",
   INITIATING_RESCHEDULING_OF_HEARING_DATE: "accept-reschedule-request",
   OTHERS: "order-generic",
-  REFERRAL_CASE_TO_ADR: "order-generic",
+  REFERRAL_CASE_TO_ADR: "order-referral-case-adr",
   EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: "order-generic",
   SCHEDULING_NEXT_HEARING: "schedule-hearing-date",
   RESCHEDULE_OF_HEARING_DATE: "new-hearing-date-after-rescheduling",
   REJECTION_RESCHEDULE_REQUEST: "order-for-rejection-rescheduling-request",
   ASSIGNING_NEW_HEARING_DATE: "order-generic",
-  CASE_TRANSFER: "case-transfer",
-  SETTLEMENT: "case-settlement-acceptance",
+  CASE_TRANSFER: "order-case-transfer",
+  SETTLEMENT: "order-case-settlement-acceptance",
+  SETTLEMENT_REJECT: "order-case-settlement-rejected",
+  SETTLEMENT_ACCEPT: "order-case-settlement-acceptance",
   BAIL_APPROVED: "order-bail-acceptance",
   BAIL_REJECT: "order-bail-rejection",
-  WARRANT: "order-generic",
-  WITHDRAWAL: "order-generic",
+  WARRANT: "order-warrant",
+  WITHDRAWAL_ACCEPT: "order-case-withdrawal-acceptance",
+  WITHDRAWAL_REJECT: "order-case-withdrawal-rejected",
   APPROVE_VOLUNTARY_SUBMISSIONS: "order-accept-voluntary",
   REJECT_VOLUNTARY_SUBMISSIONS: "order-reject-voluntary",
   JUDGEMENT: "order-generic",
@@ -50,10 +53,20 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
 
   let orderPreviewKey = order?.orderType;
-  if (order?.additionalDetails?.applicationStatus === "APPROVED" && order?.orderType === "BAIL") {
+  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "BAIL") {
     orderPreviewKey = "BAIL_APPROVED";
-  } else if (order?.additionalDetails?.applicationStatus === "Rejected" && order?.orderType === "BAIL") {
+  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "BAIL") {
     orderPreviewKey = "BAIL_REJECT";
+  }
+  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "SETTLEMENT") {
+    orderPreviewKey = "SETTLEMENT_ACCEPT";
+  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "SETTLEMENT") {
+    orderPreviewKey = "SETTLEMENT_REJECT";
+  }
+  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "WITHDRAWAL") {
+    orderPreviewKey = "WITHDRAWAL_ACCEPT";
+  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "WITHDRAWAL") {
+    orderPreviewKey = "WITHDRAWAL_REJECT";
   }
   orderPreviewKey = OrderPreviewOrderTypeMap[orderPreviewKey] || OrderPreviewOrderTypeMap[order?.orderType];
 

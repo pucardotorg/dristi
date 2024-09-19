@@ -211,7 +211,7 @@ const orderBailRejection = async (req, res, qrCode) => {
           conditionOfBail:
             "Don't go outside of the city without informing the court",
           judgeSignature: "Judge Signature",
-          judgeName: "Suresh Soren",
+          judgeName: "John Doe",
           courtSeal: "Court Seal",
         },
       ],

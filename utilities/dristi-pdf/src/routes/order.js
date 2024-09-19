@@ -30,6 +30,9 @@ const orderRejectVoluntary = require("../orderHandlers/orderRejectVoluntary");
 const orderAcceptCheckout = require("../orderHandlers/orderAcceptCheckout");
 const orderRejectCheckout = require("../orderHandlers/orderRejectCheckout");
 const orderNotice = require("../orderHandlers/orderNotice");
+const orderWarrant = require("../orderHandlers/orderWarrant");
+const orderWithdrawalAccept = require("../orderHandlers/orderWithdrawalAccept");
+const orderWithdrawalReject = require("../orderHandlers/orderWithdrawalReject");
 
 function renderError(res, errorMessage, errorCode, errorObject) {
   if (errorCode == undefined) errorCode = 500;
@@ -81,7 +84,7 @@ router.post(
         case "mandatory-async-submissions-responses":
           await mandatoryAsyncSubmissionsResponses(req, res, qrCode);
           break;
-        case "adr-case-referral":
+        case "order-referral-case-adr":
           await adrCaseReferral(req, res, qrCode);
           break;
         case "accept-adr-application":
@@ -90,13 +93,13 @@ router.post(
         case "reject-adr-application":
           await rejectAdrApplication(req, res, qrCode);
           break;
-        case "case-settlement-rejection":
+        case "order-case-settlement-rejected":
           await caseSettlementRejection(req, res, qrCode);
           break;
-        case "case-settlement-acceptance":
+        case "order-case-settlement-acceptance":
           await caseSettlementAcceptance(req, res, qrCode);
           break;
-        case "case-transfer":
+        case "order-case-transfer":
           await caseTransfer(req, res, qrCode);
           break;
         case "summons-issue":
@@ -134,6 +137,15 @@ router.post(
           break;
         case "order-notice":
           await orderNotice(req, res, qrCode);
+          break;
+        case "order-warrant":
+          await orderWarrant(req, res, qrCode);
+          break;
+        case "order-case-withdrawal-acceptance":
+          await orderWithdrawalAccept(req, res, qrCode);
+          break;
+        case "order-case-withdrawal-rejected":
+          await orderWithdrawalReject(req, res, qrCode);
           break;
         default:
           await orderGeneric(req, res, qrCode);

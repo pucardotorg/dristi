@@ -5,14 +5,13 @@ const {
   search_order,
   search_mdms,
   search_hrms,
-  search_individual,
   search_sunbirdrc_credential_service,
   create_pdf,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
 
-async function caseTransfer(req, res, qrCode) {
+async function orderWarrant(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
   const entityId = req.query.entityId;
@@ -59,12 +58,12 @@ async function caseTransfer(req, res, qrCode) {
 
     // Search for HRMS details
     // const resHrms = await handleApiCall(
-    //   () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
-    //   "Failed to query HRMS service"
+    //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+    //     "Failed to query HRMS service"
     // );
     // const employee = resHrms?.data?.Employees[0];
     // if (!employee) {
-    //   renderError(res, "Employee not found", 404);
+    //     renderError(res, "Employee not found", 404);
     // }
 
     // Search for MDMS court room details
@@ -84,6 +83,7 @@ async function caseTransfer(req, res, qrCode) {
     }
 
     // Search for MDMS court establishment details
+
     // const resMdms1 = await handleApiCall(
     //   () =>
     //     search_mdms(
@@ -108,28 +108,15 @@ async function caseTransfer(req, res, qrCode) {
     if (!order) {
       renderError(res, "Order not found", 404);
     }
-    // Filter litigants to find the respondent.primary
-    const respondentParty = courtCase.litigants.find(
-      (party) => party.partyType === "respondent.primary"
-    );
-    if (!respondentParty) {
-      return renderError(
-        res,
-        "No party with partyType 'respondent.primary' found",
-        400
-      );
-    }
-    // Search for individual details
-    const resIndividual = await handleApiCall(
-      () =>
-        search_individual(tenantId, respondentParty.individualId, requestInfo),
-      "Failed to query individual service using individualId"
-    );
-    const respondentIndividual = resIndividual?.data?.Individual[0];
-    if (!respondentIndividual) {
-      renderError(res, "Respondent individual not found", 404);
-    }
+    console.debug(order);
 
+    const reasonForWarrant = "";
+    const personName = order?.orderDetails?.respondentName;
+    const additionalComments = order.comments || "";
+    const hearingDate = formatDate(
+      new Date(order?.orderDetails?.hearingDate),
+      "DD-MM-YYYY"
+    );
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {
@@ -155,49 +142,19 @@ async function caseTransfer(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
-    let caseYear;
-    if (typeof courtCase.filingDate === "string") {
-      year = courtCase.filingDate.slice(-4);
-    } else if (courtCase.filingDate instanceof Date) {
-      year = courtCase.filingDate.getFullYear();
-    } else if (typeof courtCase.filingDate === "number") {
-      // Assuming the number is in milliseconds (epoch time)
-      year = new Date(courtCase.filingDate).getFullYear();
-    } else {
-      return renderError(res, "Invalid filingDate format", 500);
-    }
-
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    const additionalComments = order?.comments || "";
-    const specifyCourtOrJurisdiction =
-      order?.additionalDetails?.formdata?.caseTransferredTo || "";
-    const groundsForTransfer = order?.orderDetails?.grounds || "";
-    const grantStatus =
-      order?.additionalDetails?.applicationStatus === "Rejected"
-        ? "REJECTED"
-        : "GRANTED";
-    const reasonForRejection =
-      order?.additionalDetails?.applicationStatus === "Rejected"
-        ? additionalComments
-        : "";
-
+    // Prepare data for PDF generation
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          place: "Kollam",
-          state: "Kerala",
-          caseNumber: courtCase.caseNumber,
-          caseYear: caseYear,
           caseName: courtCase.caseTitle,
+          caseNumber: courtCase.caseNumber,
+          orderName: order.orderNumber,
           date: formattedToday,
-          applicationId: order?.additionalDetails?.formdata?.refApplicationId,
-          partyName: `${respondentIndividual.name.givenName} ${respondentIndividual.name.familyName}`,
-          specifyCourtOrJurisdiction: specifyCourtOrJurisdiction,
-          groundsForTransfer: groundsForTransfer,
-          grantStatus: grantStatus, //todo
-          reasonForRejection: reasonForRejection, // missing in order Object
+          reasonForWarrant: reasonForWarrant,
+          personName: personName,
           additionalComments: additionalComments,
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
@@ -210,12 +167,13 @@ async function caseTransfer(req, res, qrCode) {
     // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.case_transfer_qr
-        : config.pdf.case_transfer;
+        ? config.pdf.order_issue_warrant_qr
+        : config.pdf.order_issue_warrant;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of order for Transfer of Case - Acceptance/Rejection"
+      "Failed to generate PDF of warrant order"
     );
+
     const filename = `${pdfKey}_${new Date().getTime()}`;
     res.writeHead(200, {
       "Content-Type": "application/pdf",
@@ -230,13 +188,8 @@ async function caseTransfer(req, res, qrCode) {
         return renderError(res, "Failed to send PDF response", 500, err);
       });
   } catch (ex) {
-    return renderError(
-      res,
-      "Failed to query details of order for Transfer of Case - Acceptance/Rejection",
-      500,
-      ex
-    );
+    return renderError(res, "Failed to create PDF for warrant order", 500, ex);
   }
 }
 
-module.exports = caseTransfer;
+module.exports = orderWarrant;
