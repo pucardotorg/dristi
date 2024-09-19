@@ -1,7 +1,6 @@
 package org.egov.transformer.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-//import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +11,10 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,159 +31,238 @@ import java.util.UUID;
 @Builder
 public class CourtCase {
 
-	@JsonProperty("id")
-	@Valid
-	private UUID id = null;
+    @JsonProperty("id")
+    @Valid
+    private UUID id = null;
 
-	@JsonProperty("tenantId")
-	//@NotNull
-	//@Size(min = 2, max = 64)
-	private String tenantId = null;
+    @JsonProperty("tenantId")
+    //@NotNull
+    //@Size(min = 2, max = 64)
+    private String tenantId = null;
 
-	@JsonProperty("resolutionMechanism")
-	//@Size(min = 2, max = 128)
-	private String resolutionMechanism = null;
+    @JsonProperty("resolutionMechanism")
+    //@Size(min = 2, max = 128)
+    private String resolutionMechanism = null;
 
-	@JsonProperty("caseTitle")
-	//@Size(min = 2, max = 512)
-	private String caseTitle = null;
+    @JsonProperty("caseTitle")
+    //@Size(min = 2, max = 512)
+    private String caseTitle = null;
 
-	@JsonProperty("isActive")
-	private Boolean isActive = true;
+    @JsonProperty("isActive")
+    private Boolean isActive = true;
 
-	@JsonProperty("caseDescription")
-	//@Size(min = 2, max = 10000)
-	private String caseDescription = null;
+    @JsonProperty("caseDescription")
+    //@Size(min = 2, max = 10000)
+    private String caseDescription = null;
 
-	@JsonProperty("filingNumber")
-	//@Size(min = 2, max = 64)
-	private String filingNumber = null;
+    @JsonProperty("filingNumber")
+    //@Size(min = 2, max = 64)
+    private String filingNumber = null;
 
-	@JsonProperty("courtCaseNumber")
-	//@Size(min=10,max=24)
-	private String courtCaseNumber = null;
+    @JsonProperty("courtCaseNumber")
+    //@Size(min=10,max=24)
+    private String courtCaseNumber = null;
 
-	@JsonProperty("caseNumber")
+    @JsonProperty("caseNumber")
 
-	//@Size(min = 2, max = 32)
-	private String caseNumber = null;
+    //@Size(min = 2, max = 32)
+    private String caseNumber = null;
 
-	@JsonProperty("cnrNumber")
-	//@Size(min = 2, max = 32)
-	private String cnrNumber = null;
+    @JsonProperty("cnrNumber")
+    //@Size(min = 2, max = 32)
+    private String cnrNumber = null;
 
-	@JsonProperty("accessCode")
-	private String accessCode = null;
+    @JsonProperty("accessCode")
+    private String accessCode = null;
 
-	@JsonProperty("courtId")
-	//@Size(min = 2, max = 64)
-	private String courtId = null;
+    @JsonProperty("courtId")
+    //@Size(min = 2, max = 64)
+    private String courtId = null;
 
-	@JsonProperty("benchId")
-	//@Size(min = 2, max = 64)
-	private String benchId = null;
+    @JsonProperty("benchId")
+    //@Size(min = 2, max = 64)
+    private String benchId = null;
 
-	@JsonProperty("linkedCases")
-	@Valid
-	private List<LinkedCase> linkedCases = new ArrayList<>();
+    @JsonProperty("linkedCases")
+    @Valid
+    private List<LinkedCase> linkedCases = new ArrayList<>();
 
-	@JsonProperty("filingDate")
-	//@NotNull
-	@Valid
-	private Long filingDate = null;
+    @JsonProperty("filingDate")
+    //@NotNull
+    @Valid
+    private Long filingDate = null;
 
-	@JsonProperty("registrationDate")
-	private Long registrationDate = null;
+    @JsonProperty("registrationDate")
+    private Long registrationDate = null;
 
-	@JsonProperty("judgementDate")
-	private Long judgementDate = null;
+    @JsonProperty("judgementDate")
+    private Long judgementDate = null;
 
-	@JsonProperty("caseDetails")
-	private CourtCase caseDetails = null;
+    private Dates dates;
 
-	@JsonProperty("caseCategory")
-	//@NotNull
-	//@Size(min = 2, max = 64)
-	private String caseCategory = null;
+    @JsonProperty("caseDetails")
+    private CourtCase caseDetails = null;
 
-	@JsonProperty("judgeId")
-	private String judgeId = null;
+    @JsonProperty("caseCategory")
+    //@NotNull
+    //@Size(min = 2, max = 64)
+    private String caseCategory = null;
 
-	@JsonProperty("stage")
-	private String stage = null;
+    @JsonProperty("judgeId")
+    private String judgeId = null;
 
-	@JsonProperty("substage")
-	private String substage = null;
+    @JsonProperty("stage")
+    private String stage = null;
 
-	@JsonProperty("natureOfPleading")
-	//@Size(min = 2, max = 64)
-	private String natureOfPleading = null;
+    @JsonProperty("substage")
+    private String substage = null;
 
-	@JsonProperty("statutesAndSections")
-	//@NotNull
-	@Valid
-	private List<StatuteSection> statutesAndSections = new ArrayList<>();
+    @JsonProperty("natureOfPleading")
+    //@Size(min = 2, max = 64)
+    private String natureOfPleading = null;
 
-	@JsonProperty("litigants")
-	//@NotNull
-	@Valid
-	//@Size(min = 2) //FIX
-	private List<Party> litigants = new ArrayList<>();
+    @JsonProperty("statutesAndSections")
+    //@NotNull
+    @Valid
+    private List<StatuteSection> statutesAndSections = new ArrayList<>();
 
-	@JsonProperty("representatives")
-	@Valid
-	private List<AdvocateMapping> representatives = new ArrayList<>();
+    @JsonProperty("litigants")
+    //@NotNull
+    @Valid
+    //@Size(min = 2) //FIX
+    private List<Party> litigants = new ArrayList<>();
 
-	@JsonProperty("status")
-	private String status = null;
+    @JsonProperty("representatives")
+    @Valid
+    private List<AdvocateMapping> representatives = new ArrayList<>();
 
-	@JsonProperty("documents")
-	@Valid
-	private List<Document> documents = new ArrayList<>();
+    @JsonProperty("status")
+    private String status = null;
 
-	@JsonProperty("remarks")
-	private String remarks = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = new ArrayList<>();
 
-	@JsonProperty("workflow")
-	@Valid
-	private Workflow workflow = null;
+    @JsonProperty("remarks")
+    private String remarks = null;
 
-	@JsonProperty("additionalDetails")
-	private Object additionalDetails = null;
+    @JsonProperty("workflow")
+    @Valid
+    private Workflow workflow = null;
 
-	@JsonProperty("bailOrderDetails")
-	private Order bailOrderDetails;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
-	@JsonProperty("judgementOrderDetails")
-	private Order judgementOrderDetails;
+    @JsonProperty("bailOrderDetails")
+    private Order bailOrderDetails = null;
 
-	@JsonProperty("auditDetails")
-	@Valid
-	private AuditDetails auditdetails = null;
+    @JsonProperty("judgementOrderDetails")
+    private Order judgementOrderDetails = null;
 
-	public CourtCase addLinkedCasesItem(LinkedCase linkedCasesItem) {
-		this.linkedCases.add(linkedCasesItem);
-		return this;
-	}
+    @JsonProperty("auditDetails")
+    @Valid
+    private AuditDetails auditdetails = null;
 
-	public CourtCase addStatutesAndSectionsItem(StatuteSection statutesAndSectionsItem) {
-		this.statutesAndSections.add(statutesAndSectionsItem);
-		return this;
-	}
+    @JsonProperty("createdBy")
+    private String createdBy = null;
+    @JsonProperty("lastModifiedBy")
+    private String lastModifiedBy = null;
+    @JsonProperty("createdTime")
+    private Long createdTime = null;
+    @JsonProperty("lastModifiedTime")
+    private Long lastModifiedTime = null;
 
-	public CourtCase addLitigantsItem(Party litigantsItem) {
-		this.litigants.add(litigantsItem);
-		return this;
-	}
+    public CourtCase addLinkedCasesItem(LinkedCase linkedCasesItem) {
+        this.linkedCases.add(linkedCasesItem);
+        return this;
+    }
 
-	public CourtCase addRepresentativesItem(AdvocateMapping representativesItem) {
-		this.representatives.add(representativesItem);
-		return this;
-	}
+    public CourtCase addStatutesAndSectionsItem(StatuteSection statutesAndSectionsItem) {
+        this.statutesAndSections.add(statutesAndSectionsItem);
+        return this;
+    }
 
-	public CourtCase addDocumentsItem(Document documentsItem) {
-		this.documents.add(documentsItem);
-		return this;
-	}
+    public CourtCase addLitigantsItem(Party litigantsItem) {
+        this.litigants.add(litigantsItem);
+        return this;
+    }
 
+    public CourtCase addRepresentativesItem(AdvocateMapping representativesItem) {
+        this.representatives.add(representativesItem);
+        return this;
+    }
+
+    public CourtCase addDocumentsItem(Document documentsItem) {
+        this.documents.add(documentsItem);
+        return this;
+    }
+
+    public void setAuditDetails() {
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(this.createdBy);
+        auditDetails.setCreatedTime(this.createdTime);
+        auditDetails.setLastModifiedBy(this.lastModifiedBy);
+        auditDetails.setLastModifiedTime(this.lastModifiedTime);
+        this.setAuditdetails(auditDetails);
+    }
+
+    public String parseDate(Long date) {
+        String formattedDate = null;
+        if (null != date) {
+            if (date > 0) {
+                formattedDate = Instant.ofEpochMilli(date)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            }
+        }
+        return formattedDate;
+    }
+
+    public void setDates() {
+        Dates transformedDates = new Dates();
+        if (this.getFilingDate() != null) {
+            transformedDates.setFilingDate(parseDate(this.getFilingDate()));
+        }
+        if (this.getRegistrationDate() != null) {
+            transformedDates.setRegistrationDate(parseDate(this.getRegistrationDate()));
+        }
+        if (this.getJudgementDate() != null) {
+            transformedDates.setJudgementDate(parseDate(this.getJudgementDate()));
+        }
+        this.setDates(transformedDates);
+    }
+
+    @JsonProperty("filingDate")
+    public void setFilingDate(String date) throws ParseException {
+        if (null != date) {
+            try {
+                this.filingDate = Long.parseLong(date);
+            } catch (NumberFormatException e) {
+                this.filingDate = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(date).getTime();
+            }
+        }
+    }
+
+    @JsonProperty("registrationDate")
+    public void setRegistrationDate(String date) throws ParseException {
+        if (null != date) {
+            try {
+                this.registrationDate = Long.parseLong(date);
+            } catch (NumberFormatException e) {
+                this.registrationDate = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(date).getTime();
+            }
+        }
+    }
+
+    @JsonProperty("judgementDate")
+    public void setJudgementDate(String date) throws ParseException {
+        if (null != date) {
+            try {
+                this.judgementDate = Long.parseLong(date);
+            } catch (NumberFormatException e) {
+                this.judgementDate = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(date).getTime();
+            }
+        }
+    }
 }

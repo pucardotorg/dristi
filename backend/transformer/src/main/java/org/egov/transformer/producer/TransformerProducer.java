@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class OrderProducer {
+public class TransformerProducer {
     private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
-    public OrderProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+    public TransformerProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
