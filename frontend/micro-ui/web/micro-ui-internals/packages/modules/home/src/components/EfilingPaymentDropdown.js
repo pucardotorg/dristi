@@ -100,7 +100,14 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
     }),
     [caseData]
   );
-
+  const delayCondonation = useMemo(() => {
+    const today = new Date();
+    if (!caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata) {
+      return null;
+    }
+    const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
+    return today?.getTime() - dateOfAccrual?.getTime();
+  }, [caseDetails]);
   // check for partial Liability
   const chequeDetails = useMemo(() => {
     const debtLiability = caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.[0]?.data;
@@ -127,6 +134,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
           numberOfApplication: 1,
           tenantId: tenantId,
           caseId: caseId,
+          delayCondonation: delayCondonation,
         },
       ],
     },

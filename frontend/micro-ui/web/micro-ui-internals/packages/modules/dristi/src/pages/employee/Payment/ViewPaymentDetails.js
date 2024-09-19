@@ -74,7 +74,14 @@ const ViewPaymentDetails = ({ location, match }) => {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
     }
   );
-
+  const delayCondonation = useMemo(() => {
+    const today = new Date();
+    if (!caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata) {
+      return null;
+    }
+    const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
+    return today?.getTime() - dateOfAccrual?.getTime();
+  }, [caseDetails]);
   const chequeDetails = useMemo(() => {
     const debtLiability = caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.[0]?.data;
     if (debtLiability?.liabilityType?.code === "PARTIAL_LIABILITY") {
@@ -100,6 +107,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           numberOfApplication: 1,
           tenantId: tenantId,
           caseId: caseId,
+          delayCondonation: delayCondonation,
         },
       ],
     },
