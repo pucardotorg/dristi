@@ -3,11 +3,15 @@ on:
   push:
     branches:
       - develop
+      - uat-backend
+      - dpg-qa-deployment
     paths:
       - 'backend/icops_integration-kerala/**'
   pull_request:
     branches:
       - develop
+      - uat-backend
+      - dpg-qa-deployment
     paths:
       - 'backend/icops_integration-kerala/**'
   workflow_dispatch:
@@ -49,29 +53,48 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B -f backend/icops_integration-kerala/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_kerala_cops -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/
+      - name: Git commit_hash for service
+        run: |
+          commit_hash=$(git log -1 --pretty=format:%H -- backend/icops_integration-kerala)
+          echo "commit_hash=$commit_hash" >> $GITHUB_ENV
 
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
 
       - name: Build and Push Docker image for integration
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
         run: |
-          docker build --build-arg WORK_DIR="backend/icops_integration-kerala" -t pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ github.sha }}
+          docker build --build-arg WORK_DIR="backend/icops_integration-kerala" -t pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for integration_DB
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
         run: |
-          docker build -t pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ github.sha }}  .
-          docker push pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ github.sha }}
+          docker build -t pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ env.commit_hash }}  .
+          docker push pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ env.commit_hash }}
         working-directory: backend/icops_integration-kerala/src/main/resources/db
 
-      - name: Trigger Deployment Pipeline for Icops-image
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+  Workflow_Trigger:
+    if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: docker_image-build
+    steps:
+      - name: Set Workflow File Based on Branch
+        id: set_workflow
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "WORKFLOW_FILE=solutions-dev.yaml" >> $GITHUB_ENV
+          elif [ "${{ github.ref }}" == "refs/heads/uat-backend" ]; then
+            echo "WORKFLOW_FILE=solutions-uat.yaml" >> $GITHUB_ENV
+          elif [ "${{ github.ref }}" == "refs/heads/dpg-qa-deployment" ]; then
+            echo "WORKFLOW_FILE=solutions-dpg-qa.yaml" >> $GITHUB_ENV
+          fi
+
+      - name: Trigger Deployment Pipeline
         run: |
           curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
-          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/solutions-dev.yaml/dispatches \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/${{ env.WORKFLOW_FILE }}/dispatches \
           -d '{"ref":"Solutions-Pipeline"}'
