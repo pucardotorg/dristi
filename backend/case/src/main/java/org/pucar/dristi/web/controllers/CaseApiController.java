@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CasePdfService;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
@@ -32,12 +33,15 @@ public class CaseApiController {
 
     private ResponseInfoFactory responseInfoFactory;
 
+    private CasePdfService casePdfService;
+
 
     @Autowired
-    public CaseApiController(CaseService caseService, WitnessService witnessService, ResponseInfoFactory responseInfoFactory) {
+    public CaseApiController(CaseService caseService, WitnessService witnessService, ResponseInfoFactory responseInfoFactory, CasePdfService casePdfService) {
         this.caseService = caseService;
         this.witnessService = witnessService;
         this.responseInfoFactory = responseInfoFactory;
+        this.casePdfService = casePdfService;
     }
 
     @PostMapping(value = "/v1/_create")
@@ -128,6 +132,14 @@ public class CaseApiController {
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/v1/_generatePdf")
+    public ResponseEntity<?> caseV1GeneratePdf (
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
+
+        CourtCase courtCase = casePdfService.generatePdf(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(courtCase)).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
     }
 
-
+}

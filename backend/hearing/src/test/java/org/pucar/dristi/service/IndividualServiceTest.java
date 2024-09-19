@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import org.egov.common.contract.request.User;
+import org.egov.common.models.individual.Individual;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,8 +14,7 @@ import org.pucar.dristi.web.models.IndividualSearchRequest;
 
 import org.egov.common.contract.request.RequestInfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -81,5 +81,63 @@ public class IndividualServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> individualService.searchIndividual(requestInfo, individualId, individualUserUUID));
+    }
+
+    @Test
+    void testGetIndividuals_Success() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        requestInfo.setUserInfo(user);
+        requestInfo.getUserInfo().setTenantId("tenantId");
+        List<String> uuids = new ArrayList<>();
+        uuids.add("uuid1");
+        IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
+        IndividualSearch individualSearch = new IndividualSearch();
+        individualSearch.setUserUuid(uuids);
+        individualSearchRequest.setRequestInfo(requestInfo);
+        individualSearchRequest.setIndividual(individualSearch);
+
+        when(config.getIndividualHost()).thenReturn("individualHost");
+        when(config.getIndividualSearchEndpoint()).thenReturn("searchEndpoint");
+        when(individualUtil.getIndividualByIndividualId(any(), any()))
+                .thenReturn(Collections.singletonList(new Individual()));
+
+        // Act
+        List<Individual> result = individualService.getIndividuals(requestInfo, uuids);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(individualUtil).getIndividualByIndividualId(any(), any());
+    }
+
+    @Test
+    void testGetIndividuals_Exception() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        requestInfo.setUserInfo(user);
+        requestInfo.getUserInfo().setTenantId("tenantId");
+        List<String> uuids = new ArrayList<>();
+        uuids.add("uuid1");
+        IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
+        IndividualSearch individualSearch = new IndividualSearch();
+        individualSearch.setUserUuid(uuids);
+        individualSearchRequest.setRequestInfo(requestInfo);
+        individualSearchRequest.setIndividual(individualSearch);
+
+        when(config.getIndividualHost()).thenReturn("individualHost");
+        when(config.getIndividualSearchEndpoint()).thenReturn("searchEndpoint");
+        when(individualUtil.getIndividualByIndividualId(any(), any()))
+                .thenReturn(null);
+
+        // Act
+        List<Individual> result = individualService.getIndividuals(requestInfo, uuids);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(0, result.size());
+        verify(individualUtil).getIndividualByIndividualId(any(), any());
     }
 }

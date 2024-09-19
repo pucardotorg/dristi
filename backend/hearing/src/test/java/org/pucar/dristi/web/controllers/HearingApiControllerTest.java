@@ -12,13 +12,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.HearingService;
+import org.pucar.dristi.service.WitnessDepositionPdfService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +29,9 @@ public class HearingApiControllerTest {
 
     @Mock
     private HearingService hearingService;
+
+    @Mock
+    private WitnessDepositionPdfService witnessDepositionPdfService;
 
     @Mock
     private ResponseInfoFactory responseInfoFactory;
@@ -97,6 +99,44 @@ public class HearingApiControllerTest {
         List<Hearing> hearingList = List.of(new Hearing());
         int totalCount = hearingList.size();
 
+
+        when(hearingService.searchHearing(any())).thenReturn(hearingList);
+
+        ResponseEntity<HearingListResponse> response = hearingApiController.hearingV1SearchPost(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(hearingList, response.getBody().getHearingList());
+        assertEquals(totalCount, response.getBody().getTotalCount());
+    }
+
+    @Test
+    public void hearingV1SearchPost_withPagination_Success() {
+        HearingCriteria criteria = HearingCriteria.builder()
+                .hearingId("hearingId")
+                .applicationNumber("applicationNumber")
+                .cnrNumber("cnrNumber")
+                .filingNumber("filingNumber")
+                .tenantId("tenantId")
+                .fromDate(System.currentTimeMillis())
+                .toDate(System.currentTimeMillis())
+                .build();
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        Pagination pagination = Pagination.builder()
+                .offSet(0D)
+                .limit(10D)
+                .totalCount(10D)
+                .build();
+        HearingSearchRequest request = HearingSearchRequest.builder()
+                .requestInfo(requestInfo)
+                .criteria(criteria)
+                .pagination(pagination)
+                .build();
+        List<Hearing> hearingList = List.of(new Hearing());
+        int totalCount = 10;
 
         when(hearingService.searchHearing(any())).thenReturn(hearingList);
 
@@ -178,5 +218,30 @@ public class HearingApiControllerTest {
         });
 
         assertEquals("Invalid request", exception.getMessage());
+    }
+
+    @Test
+    void witnessDepositionV1DownloadPdf_Success() {
+        HearingSearchRequest searchRequest = mock(HearingSearchRequest.class);
+        ResponseEntity<Object> response = hearingApiController.witnessDepositionV1DownloadPdf(searchRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void witnessDepositionV1UploadPdf_Success() {
+        HearingRequest hearingRequest = new HearingRequest();
+        Hearing hearing = new Hearing();
+        ResponseInfo responseInfo = new ResponseInfo();
+
+        when(hearingService.uploadWitnessDeposition(any(HearingRequest.class))).thenReturn(hearing);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(responseInfo);
+
+        ResponseEntity<HearingResponse> response = hearingApiController.witnessDepositionV1UploadPdf(hearingRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(hearing, response.getBody().getHearing());
+        assertEquals(responseInfo, response.getBody().getResponseInfo());
     }
 }

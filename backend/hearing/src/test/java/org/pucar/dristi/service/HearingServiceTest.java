@@ -366,4 +366,44 @@ public class HearingServiceTest {
 
         verify(producer, never()).push(anyString(), any());
     }
+
+    @Test
+    void uploadWitnessDeposition_Success() {
+        // Arrange
+        HearingRequest hearingRequest = new HearingRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("test-user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        hearingRequest.setRequestInfo(requestInfo);
+        hearingRequest.setHearing(new Hearing());
+
+        when(validator.validateHearingExistence(requestInfo, hearingRequest.getHearing())).thenReturn(hearingRequest.getHearing());
+
+        // Act
+        Hearing result = hearingService.uploadWitnessDeposition(hearingRequest);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test
+    void uploadWitnessDeposition_CustomException() {
+        // Arrange
+        HearingRequest hearingRequest = new HearingRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("test-user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        hearingRequest.setRequestInfo(requestInfo);
+        hearingRequest.setHearing(new Hearing());
+
+        when(validator.validateHearingExistence(requestInfo, hearingRequest.getHearing()))
+                .thenThrow(new CustomException("Hearing not found", "throw custom exception"));
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.uploadWitnessDeposition(hearingRequest));
+        assertEquals("Hearing not found", exception.getCode());
+        assertTrue(exception.getMessage().contains("custom exception"));
+    }
 }

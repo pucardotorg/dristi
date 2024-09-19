@@ -7,10 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.HearingService;
+import org.pucar.dristi.service.WitnessDepositionPdfService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +28,13 @@ public class HearingApiController {
 
     private HearingService hearingService;
     private ResponseInfoFactory responseInfoFactory;
+    private WitnessDepositionPdfService witnessDepositionPdfService;
 
     @Autowired
-    public HearingApiController(HearingService hearingService, ResponseInfoFactory responseInfoFactory) {
+    public HearingApiController(HearingService hearingService, ResponseInfoFactory responseInfoFactory, WitnessDepositionPdfService witnessDepositionPdfService) {
         this.hearingService = hearingService;
         this.responseInfoFactory = responseInfoFactory;
+        this.witnessDepositionPdfService = witnessDepositionPdfService;
     }
 
     @RequestMapping(value = "/v1/create", method = RequestMethod.POST)
@@ -93,6 +99,24 @@ public class HearingApiController {
         UpdateTimeResponse hearingResponse = UpdateTimeResponse.builder().hearings(body.getHearings()).responseInfo(responseInfo).build();
         return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/witnessDeposition/v1/downloadPdf")
+    public ResponseEntity<Object> witnessDepositionV1DownloadPdf(@Valid @RequestBody HearingSearchRequest searchRequest) {
+        ByteArrayResource pdfResponse = witnessDepositionPdfService.getWitnessDepositionPdf(searchRequest);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"witness_deposition_pdf.pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfResponse);
+    }
+
+    @RequestMapping(value = "/witnessDeposition/v1/uploadPdf", method = RequestMethod.POST)
+    public ResponseEntity<HearingResponse> witnessDepositionV1UploadPdf(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
+
+        Hearing hearing = hearingService.uploadWitnessDeposition(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
     }
 
 }

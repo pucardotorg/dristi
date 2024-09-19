@@ -47,38 +47,22 @@ public class OptOutProcessor {
         try {
             log.info("operation = checkAndScheduleHearingForOptOut, result = IN_PROGRESS, record = {}", record);
             OptOut optOut = mapper.convertValue(record, OptOut.class);
-//            RequestInfo requestInfo = optOutRequest.getRequestInfo();
-
-//            OptOut optOut = optOutRequest.getOptOut();
-            List<Long> optoutDates = optOut.getOptoutDates();
 
             String rescheduleRequestId = optOut.getRescheduleRequestId();
 
-            OptOutSearchRequest searchRequest = OptOutSearchRequest.builder()
-                    .requestInfo(new RequestInfo())
-                    .criteria(OptOutSearchCriteria.builder()
-                            .rescheduleRequestId(rescheduleRequestId)
-                            .build()).build();
-
-            List<OptOut> optOuts = optOutService.search(searchRequest, null, null);
-            int optOutAlreadyMade = optOuts.size();
             List<ReScheduleHearing> reScheduleRequest = repository.getReScheduleRequest(ReScheduleHearingReqSearchCriteria.builder()
                     .rescheduledRequestId(Collections.singletonList(rescheduleRequestId)).build(), null, null);
 
             ReScheduleHearing reScheduleHearing = reScheduleRequest.get(0);
-            int totalOptOutCanBeMade = reScheduleHearing.getLitigants().size() + reScheduleHearing.getRepresentatives().size();
 
-            List<Long> suggestedDates = reScheduleHearing.getSuggestedDates();
-            List<Long> availableDates = reScheduleHearing.getAvailableDates()==null?new ArrayList<>():reScheduleHearing.getAvailableDates();
-            Set<Long> suggestedDatesSet = availableDates.isEmpty() ? new HashSet<>(suggestedDates) : new HashSet<>(availableDates);
+            log.info("RescheduleHearingId for which opt out is made: {}", reScheduleHearing.getRescheduledRequestId());
+            log.info("HearingBookingId for which opt out is made: {}", reScheduleHearing.getHearingBookingId());
 
-            optoutDates.forEach(suggestedDatesSet::remove);
-
+            boolean isLastOptOut = isLastOptOut(optOut,reScheduleHearing);
             // todo: audit details part
-            reScheduleHearing.setAvailableDates(new ArrayList<>(suggestedDatesSet));
-            if (totalOptOutCanBeMade - optOutAlreadyMade == 1 || totalOptOutCanBeMade - optOutAlreadyMade == 0) { // second condition is for lag if this data is already persisted into the db,it should be second only
-
+            if (isLastOptOut) {  // second condition is for lag if this data is already persisted into the db,it should be second only
                 // this is last opt out, need to close the request. open the pending task for judge
+                log.info("this is the last opt out, need to close the request. open the pending task for judge");
                 PendingTask pendingTask = pendingTaskUtil.createPendingTask(reScheduleHearing);
                 PendingTaskRequest request = PendingTaskRequest.builder()
                         .pendingTask(pendingTask)
@@ -102,6 +86,30 @@ public class OptOutProcessor {
             log.info("operation = checkAndScheduleHearingForOptOut, result = FAILURE, message = {}", e.getMessage());
 
         }
+    }
+
+    private boolean isLastOptOut(OptOut optOut,ReScheduleHearing reScheduleHearing) {
+        String rescheduleRequestId = optOut.getRescheduleRequestId();
+        List<Long> optoutDates = optOut.getOptoutDates();
+        OptOutSearchRequest searchRequest = OptOutSearchRequest.builder()
+                .requestInfo(new RequestInfo())
+                .criteria(OptOutSearchCriteria.builder()
+                        .rescheduleRequestId(rescheduleRequestId)
+                        .build()).build();
+
+        int totalOptOutCanBeMade = reScheduleHearing.getLitigants().size() + reScheduleHearing.getRepresentatives().size();
+        List<Long> suggestedDates = reScheduleHearing.getSuggestedDates();
+        List<Long> availableDates = reScheduleHearing.getAvailableDates()==null?new ArrayList<>():reScheduleHearing.getAvailableDates();
+        Set<Long> suggestedDatesSet = availableDates.isEmpty() ? new HashSet<>(suggestedDates) : new HashSet<>(availableDates);
+
+        List<OptOut> optOuts = optOutService.search(searchRequest, null, null);
+        int optOutAlreadyMade = optOuts.size();
+        optoutDates.forEach(suggestedDatesSet::remove);
+        reScheduleHearing.setAvailableDates(new ArrayList<>(suggestedDatesSet));
+
+        boolean isOptOutSaved = optOuts.stream().anyMatch(optOut1 -> optOut1.getIndividualId().equals(optOut.getIndividualId()));
+
+        return (totalOptOutCanBeMade - optOutAlreadyMade == 0 && isOptOutSaved) || (totalOptOutCanBeMade - optOutAlreadyMade == 1 && !isOptOutSaved);
     }
 
     public void unblockJudgeCalendarForSuggestedDays(ReScheduleHearing reScheduleHearing ) {

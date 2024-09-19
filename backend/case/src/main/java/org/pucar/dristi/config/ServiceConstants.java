@@ -67,6 +67,7 @@ public class ServiceConstants {
 	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
 	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
 	public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
+	public static final String CASE_PDF_SERVICE_EXCEPTION = "CASE_PDF_SERVICE_EXCEPTION";
 	public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
 
 	public static final String WITNESS_SEARCH_QUERY_EXCEPTION = "WITNESS_SEARCH_QUERY_EXCEPTION";
@@ -88,13 +89,14 @@ public class ServiceConstants {
     public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
 
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+	public static final String CASE_PDF_UTILITY_EXCEPTION = "CASE_PDF_UTILITY_EXCEPTION";
+	public static final String FILE_STORE_UTILITY_EXCEPTION = "FILE_STORE_UTILITY_EXCEPTION";
 
 	public static final String SAVE_DRAFT_CASE_WORKFLOW_ACTION = "SAVE_DRAFT";
 	public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
 	public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
 	public static final Long TAX_PERIOD_FROM = 1680287400000l;
 	public static final Long TAX_PERIOD_TO = 1711909799000l;
-	public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
 	public static final String TAX_HEADMASTER_CODE = "CASE_ADVANCE_CARRYFORWARD";
 	public static final String CREATE_DEMAND_STATUS = "PAYMENT_PENDING";
 	public static final String CASE_ADMIT_STATUS = "CASE_ADMITTED";
@@ -111,4 +113,27 @@ public class ServiceConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 
+
+	public static final String CASE_SUBMISSION = "CASE_SUBMISSION";
+	public static final String CASE_FILED = "CASE_FILED";
+	public static final String SCRUTINY_COMPLETE_CASE_REGISTERED = "SCRUTINY_COMPLETE_CASE_REGISTERED";
+	public static final String EFILING_ERRORS = "EFILING_ERRORS";
+	public static final String ERRORS_IDENTIFIED_CASE_FILE = "ERRORS_IDENTIFIED_CASE_FILE";
+	public static final String ADMISSION_HEARING_SCHEDULED = "ADMISSION_HEARING_SCHEDULED";
+	public static final String CASE_ADMITTED = "CASE_ADMITTED";
+	public static final String HEARING_REJECTED = "HEARING_REJECTED";
+
+	public static final String HIGH_COURT_LOCALIZATION_CODE = "HIGH_COURT_KERALA";
+	public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+	public static final String NOTIFICATION_MODULE_CODE = "notification";
+	public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+
+	public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+	public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(4.00);
+
+	public static final String ESIGN_PENDING= "ESIGN_PENDING";
+
+	public static final String ADVOCATE_ESIGN_PENDING= "ADVOCATE_ESIGN_PENDING";
+
+	public static final String PAYMENT_PENDING= "PAYMENT_PENDING";
 }

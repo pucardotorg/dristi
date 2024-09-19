@@ -64,11 +64,6 @@ public class OptOutProcessorTest {
         when(repository.getReScheduleRequest(any(ReScheduleHearingReqSearchCriteria.class), any(), any()))
                 .thenReturn(Collections.singletonList(reScheduleHearing));
 
-        PendingTask pendingTask = createPendingTask();
-        when(pendingTaskUtil.createPendingTask(reScheduleHearing)).thenReturn(pendingTask);
-
-        doNothing().when(pendingTaskUtil).callAnalytics(any(PendingTaskRequest.class));
-
         String updateTopic = "updateRescheduleRequestTopic";
         when(configuration.getUpdateRescheduleRequestTopic()).thenReturn(updateTopic);
 
@@ -76,7 +71,7 @@ public class OptOutProcessorTest {
         optOutProcessor.checkAndScheduleHearingForOptOut(record);
 
         // Assert
-        assertEquals(INACTIVE, reScheduleHearing.getStatus());
+        assertEquals(ACTIVE, reScheduleHearing.getStatus());
         verify(producer).push(eq(updateTopic), anyList());
     }
 
@@ -150,6 +145,7 @@ public class OptOutProcessorTest {
         return OptOut.builder()
                 .optoutDates(Collections.singletonList(1625126400000L))
                 .rescheduleRequestId("test-reschedule-id")
+                .individualId("test-individual-id")
                 .build();
     }
 

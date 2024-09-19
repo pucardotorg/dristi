@@ -171,4 +171,59 @@ public class Configuration {
 	@Value("${mdms.case.module.name}")
 	private String caseModule;
 
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+
+	//Dristi Case Pdf Service
+	@Value("${egov.dristi.case.pdf.host}")
+	private String dristiCasePdfHost;
+
+	@Value("${egov.dristi.case.pdf.path}")
+	private String dristiCasePdfPath;
+
+	@Value("${egov.file.store.save.endpoint}")
+	private String fileStoreSaveEndPoint;
+
+	@Value("${egov.filestore.case.module}")
+	private String fileStoreCaseModule;
+
+
+	@Value("${egov.sms.notification.template.id}")
+	private String smsNotificationTemplateId;
+
+	@Value("${egov.sms.notification.payment.pending.template.id}")
+	private String smsNotificationPaymentPendingTemplateId;
+
+	@Value("${egov.sms.notification.esign.pending.template.id}")
+	private String smsNotificationEsignPendingTemplateId;
+
+	@Value("${egov.sms.notification.advocate.esign.pending.template.id}")
+	private String smsNotificationAdvocateEsignPendingTemplateId;
+
+	@Value("${notification.sms.enabled}")
+	private Boolean isSMSEnabled;
+
+	//Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	// Default User
+	@Value("${egov.default.user.username}")
+	private String defaultUserUserName;
+
+	@Value("${egov.default.user.password}")
+	private String defaultUserPassword;
+
+	@Value("${egov.user.notification.period}")
+	private String userNotificationPeriod;
+
+	@Value("${user.oauth.url}")
+	private String userOauthUrl;
+
 }

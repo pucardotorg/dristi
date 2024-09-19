@@ -68,4 +68,9 @@ public class ServiceConstants {
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
+
+    public static final String JSON_PARSING_ERR = "JSON_PARSING_ERR";
+
+    public static final String PDF_UTILITY_EXCEPTION = "PDF_UTILITY_EXCEPTION";
+    public static final String WITNESS_DEPOSITION_UPDATE_EXCEPTION = "Exception while uploading witness deposition pdf";
 }
