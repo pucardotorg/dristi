@@ -9,28 +9,42 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+import static drishti.payment.calculator.config.ServiceConstants.*;
+
 @Component
 public class PostalHubValidator {
 
-    public void validatePostalHubRequest(PostalHubRequest request) {
-        request.getPostalHubs().forEach(hub -> {
-            if (ObjectUtils.isEmpty(hub.getTenantId()))
-                throw new CustomException("DK_PC_TENANT_ERR", "tenantId is mandatory for creating postal hub");
+    private final PostalHubRepository hubRepository;
 
-            if (ObjectUtils.isEmpty(hub.getName()))
-                throw new CustomException("DK_PC_NAME_ERR", "name is mandatory for creating postal hub");
-
-            if (ObjectUtils.isEmpty(hub.getPincode()))
-                throw new CustomException("DK_PC_PINCODE_ERR", "pincode is mandatory for creating postal hub");
-
-        });
-
+    @Autowired
+    public PostalHubValidator(PostalHubRepository hubRepository) {
+        this.hubRepository = hubRepository;
     }
+
 
     public void validateExistingPostalHubRequest(PostalHubRequest request) {
         request.getPostalHubs().forEach(hub -> {
-            if(ObjectUtils.isEmpty(hub.getHubId()))
-                throw new CustomException("DK_PC_ID_ERR", "id is mandatory for updating postal hub");
+            if (ObjectUtils.isEmpty(hub.getHubId()))
+                throw new CustomException(DK_PC_ID_ERR, DK_PC_ID_ERR_MSG);
         });
     }
+
+    public void validateCreateHubRequest(PostalHubRequest request) {
+
+        List<String> pincodes = request.getPostalHubs()
+                .stream()
+                .map(PostalHub::getPincode)
+                .toList();
+
+        HubSearchCriteria hubSearchCriteria = HubSearchCriteria.builder().pincode(pincodes).build();
+        List<PostalHub> postalHub = hubRepository.getPostalHub(hubSearchCriteria);
+
+        if (!postalHub.isEmpty()) {
+            throw new CustomException(HUB_ALREADY_EXIST, HUB_ALREADY_EXIST_MSG);
+        }
+    }
+
+
 }

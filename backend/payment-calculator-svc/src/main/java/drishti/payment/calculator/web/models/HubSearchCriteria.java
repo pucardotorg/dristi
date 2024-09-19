@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * the fields specified will be used in a logical AND condition
  */
@@ -21,12 +23,12 @@ import org.springframework.validation.annotation.Validated;
 public class HubSearchCriteria {
 
     @JsonProperty("hubId")
-    private String hubId;
+    private List<String> hubId;
 
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("pincode")
-    private String pincode;
+    private List<String> pincode;
 
 }

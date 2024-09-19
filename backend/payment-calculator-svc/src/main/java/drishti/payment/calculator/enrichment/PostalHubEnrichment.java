@@ -13,13 +13,10 @@ public class PostalHubEnrichment {
     public void enrichPostalHubRequest(PostalHubRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
-        AuditDetails auditData = getAuditDetailsFromRqstInfo(requestInfo);
+        AuditDetails auditData = getAuditDetailsFromRequestInfo(requestInfo);
         request.getPostalHubs().forEach(hub -> {
             hub.setHubId(UUID.randomUUID().toString());
             hub.setRowVersion(1);
-
-            hub.getAddress().setId(UUID.randomUUID().toString());
-
             hub.setAuditDetails(auditData);
 
         });
@@ -39,7 +36,7 @@ public class PostalHubEnrichment {
 
     }
 
-    private AuditDetails getAuditDetailsFromRqstInfo(RequestInfo requestInfo) {
+    private AuditDetails getAuditDetailsFromRequestInfo(RequestInfo requestInfo) {
 
         return AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 

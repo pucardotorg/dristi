@@ -2,6 +2,7 @@ package drishti.payment.calculator.web.models;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class EFillingCalculationCriteria {
 
     @JsonProperty("checkAmount")
+    @NotNull (message = "Check amount cannot be null")
     private Double checkAmount;
 
     @JsonProperty("numberOfApplication")
@@ -24,4 +26,8 @@ public class EFillingCalculationCriteria {
 
     @JsonProperty("caseId")
     private String caseId;
+
+    @JsonProperty("delayCondonation")
+    @NotNull (message = "Delay Condonation cannot be done")
+    private Long delayCondonation;
 }

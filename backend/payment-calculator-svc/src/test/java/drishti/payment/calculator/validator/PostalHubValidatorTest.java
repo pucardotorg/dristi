@@ -1,19 +1,22 @@
 package drishti.payment.calculator.validator;
 
+import drishti.payment.calculator.repository.PostalHubRepository;
 import drishti.payment.calculator.web.models.PostalHub;
 import drishti.payment.calculator.web.models.PostalHubRequest;
 import org.egov.tracer.model.CustomException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PostalHubValidatorTest {
@@ -21,86 +24,56 @@ public class PostalHubValidatorTest {
     @InjectMocks
     private PostalHubValidator postalHubValidator;
 
-    private PostalHubRequest postalHubRequest;
-    private List<PostalHub> postalHubs;
-    @BeforeEach
-    public void setUp() {
-        postalHubRequest = new PostalHubRequest();
-        postalHubs = new ArrayList<>();
+    @Mock
+    private PostalHubRepository hubRepository;
+
+
+    @Test
+    @DisplayName("do validate create hub request")
+    public void doValidateCreateHubRequest() {
+        PostalHub postalHub = PostalHub.builder().tenantId("pb")
+                .name("HubName")
+                .pincode("693201").build();
+
+        PostalHubRequest request = PostalHubRequest.builder().postalHubs(Collections.singletonList(postalHub)).build();
+        when(hubRepository.getPostalHub(any())).thenReturn(new ArrayList<>());
+        assertDoesNotThrow(() -> postalHubValidator.validateCreateHubRequest(request));
     }
 
     @Test
-    public void testValidatePostalHubRequest_Success() {
-        PostalHub postalHub = new PostalHub();
-        postalHub.setTenantId("tenantId");
-        postalHub.setName("name");
-        postalHub.setPincode("123456");
+    @DisplayName("do validate create hub request hub already exist")
+    public void doValidateCreateHubRequestAlreadyExistHub() {
+        PostalHub postalHub = PostalHub.builder().tenantId("pb")
+                .name("HubName")
+                .pincode("693201").build();
 
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
+        PostalHubRequest request = PostalHubRequest.builder().postalHubs(Collections.singletonList(postalHub)).build();
+        when(hubRepository.getPostalHub(any())).thenReturn(Collections.singletonList(postalHub));
 
-        assertDoesNotThrow(() -> postalHubValidator.validatePostalHubRequest(request));
+        CustomException exception = assertThrows(CustomException.class, () -> postalHubValidator.validateCreateHubRequest(request));
+        assertEquals("HUB_ALREADY_EXIST", exception.getCode());
+        assertEquals("Hub already exist in DB", exception.getMessage());
     }
 
-    @Test
-    public void testValidatePostalHubRequest_MissingTenantId() {
-        PostalHub postalHub = new PostalHub();
-        postalHub.setName("name");
-        postalHub.setPincode("123456");
-
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
-
-        CustomException exception = assertThrows(CustomException.class, () -> postalHubValidator.validatePostalHubRequest(request));
-        assertEquals("DK_PC_TENANT_ERR", exception.getCode());
-        assertEquals("tenantId is mandatory for creating postal hub", exception.getMessage());
-    }
 
     @Test
-    public void testValidatePostalHubRequest_MissingName() {
-        PostalHub postalHub = new PostalHub();
-        postalHub.setTenantId("tenantId");
-        postalHub.setPincode("123465");
-
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
-
-        CustomException exception = assertThrows(CustomException.class, () -> postalHubValidator.validatePostalHubRequest(request));
-        assertEquals("DK_PC_NAME_ERR", exception.getCode());
-        assertEquals("name is mandatory for creating postal hub", exception.getMessage());
-    }
-
-    @Test
-    public void testValidatePostalHubRequest_MissingPincode() {
-        PostalHub postalHub = new PostalHub();
-        postalHub.setTenantId("tenantId");
-        postalHub.setName("name");
-
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
-
-        CustomException exception = assertThrows(CustomException.class, () -> postalHubValidator.validatePostalHubRequest(request));
-        assertEquals("DK_PC_PINCODE_ERR", exception.getCode());
-        assertEquals("pincode is mandatory for creating postal hub", exception.getMessage());
-    }
-
-    @Test
-    public void testValidateExistingPostalHubRequest_Success() {
-        PostalHub postalHub = new PostalHub();
-        postalHub.setHubId("hubId");
-
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
+    @DisplayName("do validate existing postal hub request")
+    public void doValidateExistingPostalHubRequest() {
+        PostalHub postalHub = PostalHub.builder().hubId("hubId").tenantId("pb")
+                .name("HubName")
+                .pincode("693201").build();
+        PostalHubRequest request = PostalHubRequest.builder().postalHubs(Collections.singletonList(postalHub)).build();
 
         assertDoesNotThrow(() -> postalHubValidator.validateExistingPostalHubRequest(request));
     }
 
     @Test
-    public void testValidateExistingPostalHubRequest_MissingHubId() {
-        PostalHub postalHub = new PostalHub();
-
-        PostalHubRequest request = new PostalHubRequest();
-        request.setPostalHubs(Collections.singletonList(postalHub));
+    @DisplayName("do validate existing postal hub request with missing hub id")
+    public void doValidateExistingPostalHubRequestMissingHubId() {
+        PostalHub postalHub = PostalHub.builder().tenantId("pb")
+                .name("HubName")
+                .pincode("693201").build();
+        PostalHubRequest request = PostalHubRequest.builder().postalHubs(Collections.singletonList(postalHub)).build();
 
         CustomException exception = assertThrows(CustomException.class, () -> postalHubValidator.validateExistingPostalHubRequest(request));
         assertEquals("DK_PC_ID_ERR", exception.getCode());

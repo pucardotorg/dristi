@@ -3,6 +3,7 @@ package drishti.payment.calculator.repository.rowmapper;
 import digit.models.coremodels.AuditDetails;
 import drishti.payment.calculator.web.models.Address;
 import drishti.payment.calculator.web.models.PostalHub;
+import drishti.payment.calculator.web.models.enums.Classification;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +18,7 @@ public class PostalHubRowMapper implements RowMapper<PostalHub> {
                 .hubId(rs.getString("hub_id"))
                 .name(rs.getString("name"))
                 .pincode(rs.getString("pincode"))
-                .address(Address.builder()
-                        .id(rs.getString("addressid"))
-                        .tenantId(rs.getString("tenantid"))
-                        .doorNo(rs.getString("doorno"))
-                        .latitude(rs.getDouble("latitude"))
-                        .longitude(rs.getDouble("longitude"))
-                        .locationAccuracy(rs.getDouble("locationaccuracy"))
-                        .type((rs.getString("type")))
-                        .addressLine1(rs.getString("addressline1"))
-                        .addressLine2(rs.getString("addressline2"))
-                        .landmark(rs.getString("landmark"))
-                        .city(rs.getString("city"))
-                        .pincode(rs.getString("pincode"))
-                        .buildingName(rs.getString("buildingname"))
-                        .street(rs.getString("street"))
-                        .build())
+                .classification(Classification.fromValue(rs.getString("classification")))
                 .tenantId(rs.getString("tenant_id"))
                 .auditDetails(AuditDetails.builder()
                         .createdBy(rs.getString("created_by"))

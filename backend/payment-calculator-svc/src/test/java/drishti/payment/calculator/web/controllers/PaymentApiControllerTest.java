@@ -3,7 +3,7 @@ package drishti.payment.calculator.web.controllers;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
-import drishti.payment.calculator.service.CaseFeesCalculationService;
+import drishti.payment.calculator.service.CaseFeeCalculationService;
 import drishti.payment.calculator.service.SummonCalculationService;
 import drishti.payment.calculator.web.models.Calculation;
 import drishti.payment.calculator.web.models.CalculationRes;
@@ -30,7 +30,7 @@ public class PaymentApiControllerTest {
     private SummonCalculationService summonCalculationService;
 
     @Mock
-    private CaseFeesCalculationService calculationService;
+    private CaseFeeCalculationService calculationService;
 
     @InjectMocks
     private PaymentApiController paymentApiController;

@@ -1,6 +1,6 @@
 package drishti.payment.calculator.web.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PostalServiceSearchCriteria {
+public class Range {
 
-    @JsonProperty("id")
-    private String id;
-
-    @JsonProperty("pincode")
-    private String pincode;
+    private Double min;
+    private Double max;
+    private String Unit;
+    private String classificationCode;
+    private Double fee;
 }

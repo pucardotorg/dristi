@@ -16,5 +16,5 @@ public class WeightRange {
     private int minWeight;
     private int maxWeight;
     private String weightUnit;
-    private Map<String, DistanceRange> distanceRanges;
+    private Map<String, Range> distanceRanges;
 }

@@ -1,7 +1,7 @@
 package drishti.payment.calculator.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import drishti.payment.calculator.web.models.IPostConfigParams;
+import drishti.payment.calculator.web.models.EPostConfigParams;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.egov.common.contract.request.RequestInfo;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IPostUtilTest {
+public class EPostUtilTest {
 
     @Mock
     private MdmsUtil mdmsUtil;
@@ -31,11 +30,11 @@ public class IPostUtilTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    private IPostUtil iPostUtil;
+    private SummonUtil ePostUtil;
 
     @BeforeEach
     void setUp() {
-        iPostUtil = new IPostUtil(mdmsUtil, objectMapper);
+        ePostUtil = new SummonUtil(mdmsUtil, objectMapper);
     }
 
     @Test
@@ -55,15 +54,15 @@ public class IPostUtilTest {
 
         when(mdmsUtil.fetchMdmsData(requestInfo, tenantId, SUMMON_MODULE, Collections.singletonList(I_POST_MASTER))).thenReturn(response);
 
-        IPostConfigParams iPostConfigParams = new IPostConfigParams();
-        when(objectMapper.convertValue(jsonObject, IPostConfigParams.class)).thenReturn(iPostConfigParams);
+        EPostConfigParams ePostConfigParams = new EPostConfigParams();
+        when(objectMapper.convertValue(jsonObject, EPostConfigParams.class)).thenReturn(ePostConfigParams);
 
-        IPostConfigParams result = iPostUtil.getIPostFeesDefaultData(requestInfo, tenantId);
+        EPostConfigParams result = ePostUtil.getIPostFeesDefaultData(requestInfo, tenantId);
 
         assertNotNull(result);
-        assertEquals(iPostConfigParams, result);
+        assertEquals(ePostConfigParams, result);
 
         verify(mdmsUtil, times(1)).fetchMdmsData(requestInfo, tenantId, SUMMON_MODULE, Collections.singletonList(I_POST_MASTER));
-        verify(objectMapper, times(1)).convertValue(jsonObject, IPostConfigParams.class);
+        verify(objectMapper, times(1)).convertValue(jsonObject, EPostConfigParams.class);
     }
 }

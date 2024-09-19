@@ -36,7 +36,8 @@ public class PostalHubService {
 
     public List<PostalHub> create(PostalHubRequest request) {
         log.info("operation = create, result= IN_PROGRESS, hubs={}", request.getPostalHubs());
-        validator.validatePostalHubRequest(request);
+
+        validator.validateCreateHubRequest(request);
 
         enrichment.enrichPostalHubRequest(request);
 
@@ -47,7 +48,7 @@ public class PostalHubService {
     }
 
     public List<PostalHub> search(HubSearchRequest searchRequest) {
-       return repository.getPostalHub(searchRequest.getCriteria());
+        return repository.getPostalHub(searchRequest.getCriteria());
     }
 
     public List<PostalHub> update(PostalHubRequest request) {

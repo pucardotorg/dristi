@@ -22,8 +22,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PostalHubRequest {
-    @JsonProperty("RequestInfo")
 
+    @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 

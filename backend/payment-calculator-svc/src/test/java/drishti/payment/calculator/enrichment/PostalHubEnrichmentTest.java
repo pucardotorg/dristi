@@ -33,7 +33,6 @@ public class PostalHubEnrichmentTest {
         requestInfo = RequestInfo.builder().userInfo(user).build();
 
         postalHub = new PostalHub();
-        postalHub.setAddress(new Address());
 
         request = new PostalHubRequest();
         request.setRequestInfo(requestInfo);
@@ -46,7 +45,6 @@ public class PostalHubEnrichmentTest {
 
         assertNotNull(postalHub.getHubId());
         assertEquals(1, postalHub.getRowVersion());
-        assertNotNull(postalHub.getAddress().getId());
 
         AuditDetails auditDetails = postalHub.getAuditDetails();
         assertNotNull(auditDetails);

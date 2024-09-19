@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +18,6 @@ public class EFilingParam {
     @JsonProperty("applicationFee")
     private Double applicationFee;
 
-    @JsonProperty("courtFee")
-    private Double courtFee;
-
     @JsonProperty("vakalathnamaFee")
     private Double vakalathnamaFee;
 
@@ -27,9 +27,13 @@ public class EFilingParam {
     @JsonProperty("advocateClerkWelfareFund")
     private Double advocateClerkWelfareFund;
 
-    @JsonProperty("petitionFeePercentage")
-    private Double petitionFeePercentage;
+    @JsonProperty("delayCondonationPeriod")
+    private Long delayCondonationPeriod;
 
-    @JsonProperty("defaultPetitionFee")
-    private Double defaultPetitionFee;
+    @JsonProperty("delayCondonationFee")
+    private Double delayCondonationFee;
+
+    @JsonProperty("petitionFee")
+    private Map<String, Range> petitionFee;
+
 }
