@@ -125,6 +125,9 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
     const reasonForWithdrawal =
       application?.applicationDetails?.benefitOfExtension || "";
 
+    const onBehalfOfLitigent = courtCase?.litigants?.find(
+      (item) => item.additionalDetails.uuid === onBehalfOfuuid
+    );
     let partyType = "COURT";
     if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant")) {
       partyType = "COMPLAINANT";
