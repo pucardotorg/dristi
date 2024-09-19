@@ -45,7 +45,7 @@ public class SummonsConsumer {
             String status = taskRequest.getTask().getStatus();
 
             // Process for generating summons bill
-            if (taskType.equalsIgnoreCase(SUMMON) && "PAYMENT_PENDING".equalsIgnoreCase(status)) {
+            if ((taskType.equalsIgnoreCase(SUMMON) || taskType.equalsIgnoreCase(NOTICE)) && PAYMENT_PENDING.equalsIgnoreCase(status)) {
                 try {
                     log.info("Received message for bill creation {}", taskRequest.getTask());
                     demandService.fetchPaymentDetailsAndGenerateDemandAndBill(taskRequest);
@@ -55,7 +55,7 @@ public class SummonsConsumer {
             }
 
             // Process for generating summons document
-            if (taskType.equalsIgnoreCase(SUMMON) || taskType.equalsIgnoreCase(WARRANT)) {
+            if (taskType.equalsIgnoreCase(SUMMON) || taskType.equalsIgnoreCase(WARRANT) || taskType.equalsIgnoreCase(NOTICE)) {
                 try {
                     log.info("Received message for uploading document {}", taskRequest.getTask());
                     summonsService.generateSummonsDocument(taskRequest);

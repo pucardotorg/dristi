@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static digit.config.ServiceConstants.SUMMON;
-import static digit.config.ServiceConstants.WARRANT;
+import static digit.config.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -148,6 +147,7 @@ public class SummonsService {
         return switch (taskType) {
             case SUMMON -> config.getSummonsPdfTemplateKey();
             case WARRANT -> config.getNonBailableWarrantPdfTemplateKey();
+            case NOTICE -> config.getTaskNoticePdfTemplateKey();
             default -> throw new CustomException("INVALID_TASK_TYPE", "Task Type must be valid. Provided: " + taskType);
         };
     }

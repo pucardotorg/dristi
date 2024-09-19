@@ -49,13 +49,17 @@ public class ServiceConstants {
     public static final String BAIL = "BAIL";
     public static final String SUMMON = "SUMMONS";
     public static final String WARRANT = "WARRANT";
+    public static final String NOTICE = "NOTICE";
     public static final String ISSUESUMMON = "ISSUESUMMON";
 
     public static final String PAYMENTMASTERCODE = "PaymentMasterCode";
 
     public static final String PAYMENTTYPE = "paymentType";
 
-    public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+    public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s')]";
 
+    public static final String PAYMENT_CALCULATOR_ERROR = "PAYMENT_CALCULATOR_ERROR";
+
+    public static final String PAYMENT_PENDING = "PAYMENT_PENDING";
 
 }

@@ -28,7 +28,7 @@ public class ChannelFactory {
 
     public ExternalChannel getDeliveryChannel(ChannelName channelName) {
         return switch (channelName) {
-            case POST -> ePostChannel;
+            case EPOST -> ePostChannel;
             case POLICE -> iCopsChannel;
             case SMS -> smsChannel;
             case EMAIL -> emailChannel;
