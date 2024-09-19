@@ -140,14 +140,14 @@ async function orderGeneric(req, res, qrCode) {
     const data = {
       Data: [
         {
-          courtName: "Keral High Court",
+          courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
           date: formattedToday,
           orderContent: order.comments,
           judgeSignature: "Judge Signature",
-          judgeName: "Suresh Soren",
+          judgeName: "John Doe",
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,
         },

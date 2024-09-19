@@ -53,9 +53,9 @@ const DRISTICard = () => {
                     }}
                   />
                   <CustomCard
-                    label={t("CS_VIEW_PENDING_PAYMENTS")}
-                    subLabel={t("CS_VIEW_PENDING_PAYMENTS_SUB_TEXT")}
-                    buttonLabel={t("CS_VIEW_PENDING_PAYMENTS")}
+                    label={isNyayMitra ? t("CS_VIEW_PENDING_PAYMENTS") : t("CS_VIEW_CASES")}
+                    subLabel={isNyayMitra ? t("CS_VIEW_PENDING_PAYMENTS_SUB_TEXT") : t("CS_VIEW_CASES_SUB_TEXT")}
+                    buttonLabel={isNyayMitra ? t("CS_VIEW_PENDING_PAYMENTS") : t("CS_VIEW_CASES")}
                     className="custom-card-style"
                     onClick={() => {
                       isNyayMitra ? history.push("/digit-ui/employee/dristi/pending-payment-inbox") : history.push("/digit-ui/employee/dristi/cases");

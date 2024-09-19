@@ -310,7 +310,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal" },
       {
         header: "Status / Act",
-        subtext: "Negotiable Instrument Act",
+        subtext: "Negotiable Instruments Act",
       },
       { header: "Section", subtext: "138" },
     ];
@@ -323,7 +323,7 @@ function CaseType({ t }) {
       },
       {
         header: "Bounced Cheque",
-        subtext: "A copy of the bounced chequeon the  basis which this case is being filed",
+        subtext: "A copy of the bounced cheque on the basis which this case is being filed",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "02.",
       },
@@ -334,24 +334,32 @@ function CaseType({ t }) {
         serialNumber: "03.",
       },
       {
-        header: "Proof of Debt/ Liability",
-        subtext: "Anything to prove some sort of agreement between you and the respondent",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
-        serialNumber: "04.",
-      },
-      {
         header: "Legal Demand Notice",
         subtext:
           "Any intimation you provided to the respondent to informing them that their cheque had bounced and they still owed you the cheque amount",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "04",
+      },
+      {
+        header: "Postal acknowledgement (Issue of legal demand notice)",
+        subtext:
+          "The acknowledgement provided by the postal department when sending the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) to the accused.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "05",
       },
       {
-        header: "Notarised Affidavit",
+        header: "Postal acknowledgement (Delivery of legal demand notice)",
         subtext:
-          "This is a replacement for your sworn statement which reduces the chances that an admission hearing is needed for the court to take cognisance of your case.",
+          "The acknowledgement provided by the postal department when the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) is received by the accused",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "06",
+      },
+      {
+        header: "Any other document you deem necessary.",
+        subtext:
+          "Please include any additional documents you believe will strengthen your case and that will be crucial in substantiating your claims when filing the complaint.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "07",
       },
     ];
     return page === 0 ? caseTypeDetails : listDocumentDetails;

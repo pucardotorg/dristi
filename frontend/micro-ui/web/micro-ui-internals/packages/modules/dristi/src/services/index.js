@@ -203,14 +203,6 @@ export const DRISTIService = {
       params,
     });
   },
-  createDemand: (data, params) =>
-    Request({
-      url: Urls.dristi.demandCreate,
-      useCache: false,
-      userService: true,
-      data,
-      params,
-    }),
   getPaymentBreakup: (data, params) =>
     Request({
       url: Urls.dristi.paymentCalculator,

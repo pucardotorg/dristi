@@ -139,7 +139,7 @@ async function orderNotice(req, res, qrCode) {
           courtName: mdmsCourtRoom.name,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
-          place: "Kochi",
+          place: "Kollam",
           state: "Kerala",
           partyName: "From Order Infor",
           typeOfNotice: "From Order Info",

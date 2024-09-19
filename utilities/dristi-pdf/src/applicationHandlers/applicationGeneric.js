@@ -246,7 +246,7 @@ async function applicationGeneric(req, res, qrCode) {
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
+          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           applicationName,

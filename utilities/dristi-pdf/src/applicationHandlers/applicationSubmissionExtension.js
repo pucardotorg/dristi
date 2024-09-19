@@ -253,7 +253,7 @@ async function applicationSubmissionExtension(req, res, qrCode) {
           caseName: courtCase.caseTitle,
           judgeName: "John Doe",
           courtDesignation: "High Court",
-          addressOfTheCourt: mdmsCourtRoom.address,
+          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address
           date: currentDate,
           partyName: partyName,
           advocateName: advocateName,

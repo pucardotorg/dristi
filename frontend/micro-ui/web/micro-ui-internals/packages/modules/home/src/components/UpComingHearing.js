@@ -84,7 +84,8 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const [isAdvocate, setIsAdvocate] = useState(false);
 
   // Get the current date
-  const today = useMemo(() => new Date(), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const today = new Date();
 
   // Format the date
   const dateOptions = { month: "short", day: "numeric" };

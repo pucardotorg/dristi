@@ -187,7 +187,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
           qrCodeUrl: base64Url,
           place: "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
           state: "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
-          judgeName: "John Watt", // FIXME: employee.user.name,
+          judgeName: "John Doe", // FIXME: employee.user.name,
         },
       ],
     };

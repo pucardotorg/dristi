@@ -3066,16 +3066,11 @@ export const configsBail = [
                 name: "documentType",
                 optionsKey: "name",
                 required: true,
-                options: [
-                  {
-                    code: "TAX_RECORDS",
-                    name: "TAX_RECORDS",
-                  },
-                  {
-                    code: "SALARY_RECIEPTS",
-                    name: "SALARY_RECIEPTS",
-                  },
-                ],
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
               },
             },
             {
@@ -3269,15 +3264,14 @@ export const configsCreateOrderWarrant = [
         disable: false,
         populators: {
           name: "warrantType",
-          optionsKey: "code",
+          optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
           styles: { maxWidth: "100%" },
-          options: [
-            {
-              code: "Arrest",
-              name: "arrest",
-            },
-          ],
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "WarrantType",
+            select: "(data) => {return data['Order'].WarrantType?.map((item) => {return item;});}",
+          },
         },
       },
       {

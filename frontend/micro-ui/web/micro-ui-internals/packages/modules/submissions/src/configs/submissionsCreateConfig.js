@@ -52,7 +52,7 @@ export const applicationTypeConfig = [
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
             select:
-              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`EXTENSION_SUBMISSION_DEADLINE`,`DOCUMENT`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
           customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
         },
@@ -858,16 +858,11 @@ export const configsProductionOfDocuments = [
                 name: "documentType",
                 optionsKey: "name",
                 required: true,
-                options: [
-                  {
-                    code: "taxRecords",
-                    name: "Tax Records",
-                  },
-                  {
-                    code: "salaryReciepts",
-                    name: "Salary Reciepts",
-                  },
-                ],
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
               },
             },
             {
@@ -1442,18 +1437,7 @@ export const configsSurety = [
               type: "InfoComponent",
               linkText: "CLICK_HERE",
               modalHeading: "LIST_OF_SURETY_DOCUMENT",
-              modalData: [
-                {
-                  title: "TAX_RECORDS",
-                  description: "TAX_RECORDS_DESCRIPTION",
-                  hint: "TAX_RECORDS_DOCUMENT_TYPE",
-                },
-                {
-                  title: "SALARY_RECEIPTS",
-                  description: "SALARY_RECEIPTS_DESCRIPTION",
-                  hint: "SALARY_RECEIPTS_DOCUMENT_TYPE",
-                },
-              ],
+              modalData: [],
             },
           ],
         },
@@ -1478,16 +1462,11 @@ export const configsSurety = [
                 name: "documentType",
                 optionsKey: "name",
                 required: true,
-                options: [
-                  {
-                    code: "TAX_RECORDS",
-                    name: "TAX_RECORDS",
-                  },
-                  {
-                    code: "SALARY_RECIEPTS",
-                    name: "SALARY_RECIEPTS",
-                  },
-                ],
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
               },
             },
             {
@@ -1595,16 +1574,11 @@ export const configsBailBond = [
                 name: "documentType",
                 optionsKey: "name",
                 required: true,
-                options: [
-                  {
-                    code: "taxRecords",
-                    name: "Tax Records",
-                  },
-                  {
-                    code: "salaryReciepts",
-                    name: "Salary Reciepts",
-                  },
-                ],
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
               },
             },
             {

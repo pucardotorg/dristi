@@ -184,7 +184,7 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
           caseName: courtCase.caseTitle,
           caseNo: "87465464",
           judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
+          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           partyName: partyName,

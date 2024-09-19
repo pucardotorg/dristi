@@ -239,7 +239,7 @@ async function applicationCheckout(req, res, qrCode) {
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
+          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           partyName,
@@ -251,7 +251,7 @@ async function applicationCheckout(req, res, qrCode) {
           initialHearingDate,
           proposedHearingDate,
           prayerOptional: "",
-          advocateSignature: "Advocate_Signature", //FIXME: It should also come from the application
+          advocateSignature: "Advocate Signature", //FIXME: It should also come from the application
           advocateName: advocateName,
           barRegistrationNumber,
           day: day + ordinalSuffix,

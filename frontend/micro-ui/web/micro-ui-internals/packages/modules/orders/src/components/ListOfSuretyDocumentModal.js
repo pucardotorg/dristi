@@ -34,7 +34,7 @@ const getStyles = () => ({
     height: "122px",
     borderBottom: "1px solid #E8E8E8",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     padding: "16px 0px",
   },
   number: {
@@ -106,7 +106,7 @@ const ListOfSuretyDocumentModal = ({ handleClose, heading, data }) => {
         popupStyles={styles.modal}
         popupModuleActionBarStyles={styles.actionBar}
         popupModuleMianStyles={{}}
-        headerBarMain={<Heading label={t(`${heading} (${data?.length})`)} />}
+        headerBarMain={<Heading label={`${t(heading)} (${data?.length})`} />}
         headerBarEnd={<CloseBtn onClick={handleClose} />}
         actionSaveLabel={t("Download")}
         formId="modal-action"
@@ -116,9 +116,9 @@ const ListOfSuretyDocumentModal = ({ handleClose, heading, data }) => {
             <div style={styles.document}>
               <div style={styles.number}>{String(index + 1).padStart(2, "0")}. </div>
               <div>
-                <div style={styles.textheading}>{data.title}</div>
-                <div style={styles.text}>{data.description}</div>
-                <div style={styles.textHint}>{data.hint}</div>
+                <div style={styles.textheading}>{t(data?.name)}</div>
+                <div style={styles.text}>{t(data?.description)}</div>
+                <div style={styles.textHint}>{t(data?.hint)}</div>
               </div>
             </div>
           ))}

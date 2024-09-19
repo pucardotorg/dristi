@@ -150,7 +150,10 @@ async function orderAcceptVoluntary(req, res, qrCode) {
 
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    const submissionDate = formatDate(new Date(application?.createdDate));
+    const submissionDate = formatDate(
+      new Date(application?.createdDate),
+      "DD-MM-YYYY"
+    );
     let caseYear;
     if (typeof courtCase.filingDate === "string") {
       caseYear = courtCase.filingDate.slice(-4);

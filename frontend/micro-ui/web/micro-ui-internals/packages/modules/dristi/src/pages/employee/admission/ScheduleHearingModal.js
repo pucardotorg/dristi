@@ -77,15 +77,6 @@ const hearingTypeOptions = [
   },
 ];
 
-const dropdownConfig = {
-  label: "HEARING_TYPE",
-  type: "dropdown",
-  name: "hearingType",
-  optionsKey: "type",
-  isMandatory: true,
-  options: hearingTypeOptions,
-};
-
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
@@ -143,19 +134,50 @@ function ScheduleHearing({
   showPurposeOfHearing = false,
   oldCaseDetails,
 }) {
-  const getNextNDates = (n) => {
-    const today = new Date();
+  const { data: availableDateResponse } = window?.Digit.Hooks.dristi.useJudgeAvailabilityDates(
+    {
+      SearchCriteria: {
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        fromDate: dateToEpoch(new Date(new Date().setDate(new Date().getDate() + 1))),
+      },
+    },
+    {},
+    "",
+    true
+  );
+  const [nextFiveDates, setNextFiveDates] = useState([]);
+
+  const convertAvailableDatesToDateObjects = (availableDates) => {
+    return availableDates.map((dateInfo) => ({
+      ...dateInfo,
+      date: new Date(dateInfo.date / 1),
+    }));
+  };
+
+  const getNextNDates = (n, availableDates) => {
     const datesArray = [];
 
-    for (let i = 1; i <= n; i++) {
-      const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + i);
-      datesArray.push(formatDateInMonth(nextDate));
+    for (let i = 0; i < n; i++) {
+      if (i < availableDates?.length) {
+        const dateObject = availableDates[i].date;
+        datesArray.push(formatDateInMonth(dateObject));
+      } else {
+        break;
+      }
     }
-
     return datesArray;
   };
 
+  function dateToEpoch(date) {
+    return Math.floor(new Date(date).getTime());
+  }
+  useEffect(() => {
+    if (availableDateResponse?.AvailableDates) {
+      const availableDatesWithDateObjects = convertAvailableDatesToDateObjects(availableDateResponse?.AvailableDates);
+      const nextDates = getNextNDates(5, availableDatesWithDateObjects);
+      setNextFiveDates(nextDates);
+    }
+  }, [availableDateResponse]);
   const getSuggestedDates = (dateResponse) => {
     if (dateResponse?.Hearings?.[0]?.suggestedDates) {
       return dateResponse.Hearings[0].suggestedDates;
@@ -264,7 +286,7 @@ function ScheduleHearing({
     !!referenceId
   );
 
-  const nextFourDates = status === "OPTOUT" ? getSuggestedDates(dateResponse) : getNextNDates(5);
+  const nextFourDates = status === "OPTOUT" ? getSuggestedDates(dateResponse) : nextFiveDates;
 
   const { data: OptOutLimit, isLoading: loading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
@@ -458,26 +480,6 @@ function ScheduleHearing({
       }}
     >
       <div className="schedule-admission-main">
-        {/* {shortCaseInfo && <CustomCaseInfoDiv t={t} data={shortCaseInfo} style={{ marginTop: "24px" }} />}
-
-        {status === "OPTOUT" && Array.isArray(selectedChip) && selectedChip.length > 0 && (
-          <InfoCard
-            className="payment-status-info-card"
-            headerWrapperClassName="payment-status-info-header"
-            populators={{
-              name: "infocard",
-            }}
-            variant="default"
-            text={"The date for the next hearing will be decided based on the selections made below."}
-            label={"Please Note"}
-            style={{ marginTop: "1.5rem" }}
-            textStyle={{
-              color: "#3D3C3C",
-              margin: "0.5rem 0",
-            }}
-          />
-        )} */}
-        {/* {config.label && <CardText className="card-label-smaller">{t(config.label)}</CardText>} */}
         {!modalInfo?.showCustomDate && (
           <div>
             <CardText>{status === "OPTOUT" ? `Select upto ${OptOutLimitValue} dates that do not work for you` : t("CS_SELECT_DATE")}</CardText>

@@ -110,6 +110,12 @@ const SubmissionsCreate = ({ path }) => {
     }
   );
 
+  const { data: documentTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Application", [{ name: "DocumentType" }], {
+    select: (data) => {
+      return data?.Application?.DocumentType || [];
+    },
+  });
+
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -175,6 +181,9 @@ const SubmissionsCreate = ({ path }) => {
                 };
               }
             }
+            if (body?.key === "suretyDocuments") {
+              body.populators.inputs[0].modalData = documentTypeData;
+            }
             return {
               ...body,
             };
@@ -185,7 +194,7 @@ const SubmissionsCreate = ({ path }) => {
     } else {
       return [];
     }
-  }, [applicationType, isCitizen]);
+  }, [applicationType, documentTypeData, isCitizen]);
 
   const formatDate = (date, format) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -214,6 +223,9 @@ const SubmissionsCreate = ({ path }) => {
     applicationNumber,
     applicationNumber
   );
+
+  const orderRefNumber = useMemo(() => applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.refOrderId, [applicationData]);
+  const referenceId = useMemo(() => applicationData?.applicationList?.[0]?.referenceId, [applicationData]);
 
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -276,12 +288,28 @@ const SubmissionsCreate = ({ path }) => {
   );
 
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
-    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber } },
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber, orderNumber: orderNumber || orderRefNumber } },
     { tenantId },
     filingNumber + caseDetails?.cnrNumber,
-    Boolean(filingNumber && caseDetails?.cnrNumber && orderNumber)
+    Boolean(filingNumber && caseDetails?.cnrNumber && (orderNumber || orderRefNumber))
   );
   const orderDetails = useMemo(() => orderData?.list?.[0], [orderData]);
+
+  const { entityType, taxHeadMasterCode } = useMemo(() => {
+    const isResponseRequired = orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true;
+    if ((orderNumber || orderRefNumber) && referenceId) {
+      return {
+        entityType: isResponseRequired ? "application-order-submission-feedback" : "application-order-submission-default",
+        taxHeadMasterCode: isResponseRequired
+          ? "APPLICATION_ORDER_SUBMISSION_FEEDBACK_ADVANCE_CARRYFORWARD"
+          : "APPLICATION_ORDER_SUBMISSION_DEFAULT_ADVANCE_CARRY_FORWARD",
+      };
+    }
+    return {
+      entityType: "application-voluntary-submission",
+      taxHeadMasterCode: "APPLICATION_VOLUNTARY_SUBMISSION_ADVANCE_CARRY_FORWARD",
+    };
+  }, [orderDetails, orderNumber, orderRefNumber, referenceId]);
 
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
@@ -434,13 +462,6 @@ const SubmissionsCreate = ({ path }) => {
     isAssignedRole = false,
     assignedRole = [],
   }) => {
-    let entityType = "application-voluntary-submission";
-    if (orderNumber) {
-      entityType =
-        orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true
-          ? "application-order-submission-feedback"
-          : "application-order-submission-default";
-    }
     const assignes = !isAssignedRole ? [userInfo?.uuid] || [] : [];
     await submissionService.customApiService(Urls.application.pendingTask, {
       pendingTask: {
@@ -471,6 +492,9 @@ const SubmissionsCreate = ({ path }) => {
       }
       if (formdata?.submissionDocuments?.documents?.length > 0) {
         documentsList = [...documentsList, ...formdata?.submissionDocuments?.documents];
+      }
+      if (formdata?.othersDocument?.documents?.length > 0) {
+        documentsList = [...documentsList, ...formdata?.othersDocument?.documents];
       }
       const applicationDocuments =
         formdata?.submissionDocuments?.submissionDocuments?.map((item) => ({
@@ -662,10 +686,14 @@ const SubmissionsCreate = ({ path }) => {
     }
   };
 
-  const handleAddSignature = () => {
+  const handleAddSignature = async () => {
     setLoader(true);
-    updateSubmission(SubmissionWorkflowAction.ESIGN);
-    createDemand();
+    try {
+      await createDemand();
+      await updateSubmission(SubmissionWorkflowAction.ESIGN);
+    } catch (error) {
+      setLoader(false);
+    }
   };
 
   const handleCloseSignaturePopup = () => {
@@ -684,19 +712,6 @@ const SubmissionsCreate = ({ path }) => {
       setShowSuccessModal(true);
     }
   };
-  let entityType = "application-voluntary-submission";
-  let taxHeadMasterCode = "ASYNC_VOLUNTARY_SUNMISSION_ADVANCE_CARRYFORWARD";
-  if (orderNumber) {
-    entityType =
-      orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
-        ? "application-order-submission-feedback"
-        : "application-order-submission-default";
-
-    taxHeadMasterCode =
-      orderDetails?.additionalDetails?.formdata?.isResponseRequired?.code === "Yes"
-        ? "ASYNC_SUBMISSION_RESPONSE_ADVANCE_CARRYFORWARD"
-        : "ASYNC_ORDER_SUBMISSION_ADVANCE_CARRYFORWARD";
-  }
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
@@ -708,7 +723,7 @@ const SubmissionsCreate = ({ path }) => {
     scenario,
   });
 
-  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType), [entityType, paymentTypeData]);
+  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType) || "APPL_FILING", [entityType, paymentTypeData]);
 
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},

@@ -196,7 +196,7 @@ const orderBailRejection = async (req, res, qrCode) => {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          courtPlace: "Kochi",
+          courtPlace: "Kollam",
           state: "Kerala",
           caseNumber: courtCase?.caseNumber,
           caseYear: caseYear,

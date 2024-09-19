@@ -219,7 +219,7 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "HIGHT COURRT", //FIXME: mdmsDesignation.name,
+          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
           addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           partyName: partyName,
@@ -227,7 +227,7 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
           additionalComments,
           reasonForApplication,
           prayerOptional: "",
-          advocateSignature: "Advocate_Signature", //FIXME: It should also come from the application
+          advocateSignature: "Advocate Signature", //FIXME: It should also come from the application
           advocateName: advocateName,
           nameOfDocument: "Aadhar card", //FIXME: It should come from the application, currently there is not field present inside of it
           documentList,
