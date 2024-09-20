@@ -43,36 +43,36 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
       const updatedRespondentData = respondentData.map((item) => ({
         ...item,
         data: {
-          ...item.data,
-          firstName: item.data.respondentFirstName,
-          lastName: item.data.respondentLastName,
-          address: item.data.addressDetails.map((address) => ({
-            locality: address.addressDetails.locality,
-            city: address.addressDetails.city,
-            district: address.addressDetails.district,
-            pincode: address.addressDetails.pincode,
+          ...item?.data,
+          firstName: item?.data?.respondentFirstName || "",
+          lastName: item?.data?.respondentLastName || "",
+          address: item?.data?.addressDetails?.map((address) => ({
+            locality: address?.addressDetails?.locality || "",
+            city: address?.addressDetails?.city || "",
+            district: address?.addressDetails?.district || "",
+            pincode: address?.addressDetails?.pincode || "",
           })),
           partyType: "Respondent",
-          phone_numbers: item.data.phonenumbers?.mobileNumber || [],
-          email: item.data.emails?.emailId,
+          phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
+          email: item?.data?.emails?.emailId || [],
         },
       }));
       const updatedWitnessData = witnessData.map((item) => ({
         ...item,
         data: {
-          ...item.data,
-          firstName: item.data.firstName,
-          lastName: item.data.lastName,
-          address: item.data.addressDetails?.map((address) => ({
-            locality: address.addressDetails.locality,
-            city: address.addressDetails.city,
-            district: address.addressDetails.district,
-            pincode: address.addressDetails.pincode,
-            address: address.addressDetails,
+          ...item?.data,
+          firstName: item?.data?.firstName,
+          lastName: item?.data?.lastName,
+          address: item?.data?.addressDetails?.map((address) => ({
+            locality: address?.addressDetails?.locality,
+            city: address?.addressDetails?.city,
+            district: address?.addressDetails?.district,
+            pincode: address?.addressDetails?.pincode,
+            address: address?.addressDetails,
           })),
           partyType: "Witness",
-          phone_numbers: item.data.phonenumbers?.mobileNumber || [],
-          email: item.data.emails?.emailId,
+          phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
+          email: item?.data?.emails?.emailId || [],
         },
       }));
       users = [...updatedRespondentData, ...updatedWitnessData];
@@ -173,9 +173,12 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   };
 
   const selectedParty = useMemo(() => {
-    return formData[config.key]?.party != null
+    const partyData = formData?.[config.key]?.party?.data || {};
+    const { firstName = "", lastName = "", partyType } = partyData;
+    const label = [firstName, lastName, partyType ? `(${partyType})` : ""].filter(Boolean).join(" ");
+    return formData[config.key]?.party
       ? {
-          label: [formData[config.key]?.party?.data?.firstName, formData[config.key]?.party?.data?.lastName].filter(Boolean).join(" "),
+          label,
           value: formData[config.key]?.party,
         }
       : null;
@@ -198,7 +201,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
               <Dropdown
                 t={t}
                 option={userList.map((user) => ({
-                  label: [user.data.firstName, user.data.lastName].filter(Boolean).join(" "),
+                  label: [user.data.firstName, user.data.lastName, `(${user.data.partyType})`].filter(Boolean).join(" "),
                   value: user,
                 }))}
                 optionKey="label"
