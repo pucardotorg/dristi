@@ -202,6 +202,7 @@ export const taskTypes = [
   { code: "application-order-submission-feedback", name: "Order Submission Feedback" },
   { code: "application-order-submission-default", name: "Order Submission" },
   { code: "artifact-default", name: "Evidence" },
+  { code: "task-summons", name: "Task Summons" },
 ];
 export const pendingTaskCaseActions = {
   PAYMENT_PENDING: {
@@ -531,6 +532,17 @@ export const pendingTaskSubmissionWithoutResponseActions = {
 
 export const pendingTaskForArtifactActions = {};
 
+export const pendingTaskForSummonsActions = {
+  ISSUESUMMON: {
+    actorName: ["CMO"],
+    actionName: "Esign the Task Summon",
+    redirectDetails: {
+      url: "/orders/Summons&Notice",
+      params: [{ key: "taskNumber", value: "referenceId" }],
+    },
+  },
+};
+
 export const selectTaskType = {
   "case-default": pendingTaskCaseActions,
   "hearing-default": pendingTaskHearingActions,
@@ -539,4 +551,5 @@ export const selectTaskType = {
   "application-order-submission-feedback": pendingTaskSubmissionWithResponseActions,
   "application-order-submission-default": pendingTaskSubmissionWithoutResponseActions,
   "artifact-default": pendingTaskForArtifactActions,
+  "task-summons": pendingTaskForSummonsActions,
 };
