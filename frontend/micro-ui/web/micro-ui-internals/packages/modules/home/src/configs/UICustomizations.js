@@ -414,7 +414,7 @@ export const UICustomizations = {
         body: {
           ...requestCriteria.body,
           criteria: {
-            ...requestCriteria.body.criteria,
+            completeStatus: requestCriteria.body?.criteria?.completeStatus,
             ...filterList,
             ...(filterList?.orderType ? { orderType: [filterList?.orderType] } : { orderType: [] }),
           },

@@ -642,7 +642,10 @@ export const UICustomizations = {
             return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
               ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
               : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
-              ? { ...data, applicationList: data.applicationList?.filter((application) => application.status != "PENDINGPAYMENT") }
+              ? {
+                  ...data,
+                  applicationList: data.applicationList?.filter((application) => !["PENDINGESIGN", "PENDINGPAYMENT"].includes(application.status)),
+                }
               : data;
             // }
           },

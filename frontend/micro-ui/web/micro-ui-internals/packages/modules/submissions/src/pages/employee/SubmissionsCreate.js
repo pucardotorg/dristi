@@ -713,6 +713,8 @@ const SubmissionsCreate = ({ path }) => {
     }
   };
 
+  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType) || "APPL_FILING", [entityType, paymentTypeData]);
+
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
     consumerCode: applicationDetails?.applicationNumber + `_${suffix}`,
@@ -722,8 +724,6 @@ const SubmissionsCreate = ({ path }) => {
     totalAmount: "4",
     scenario,
   });
-
-  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType), [entityType, paymentTypeData]);
 
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
@@ -808,15 +808,17 @@ const SubmissionsCreate = ({ path }) => {
   return (
     <div className="citizen create-submission" style={{ width: "50%", ...(!isCitizen && { padding: "0 8px 24px 16px" }) }}>
       <Header> {t("CREATE_SUBMISSION")}</Header>
-      <FormComposerV2
-        label={t("REVIEW_SUBMISSION")}
-        config={modifiedFormConfig}
-        defaultValues={defaultFormValue}
-        onFormValueChange={onFormValueChange}
-        onSubmit={handleOpenReview}
-        fieldStyle={fieldStyle}
-        key={applicationType}
-      />
+      <div style={{ minHeight: "550px", overflowY: "auto" }}>
+        <FormComposerV2
+          label={t("REVIEW_SUBMISSION")}
+          config={modifiedFormConfig}
+          defaultValues={defaultFormValue}
+          onFormValueChange={onFormValueChange}
+          onSubmit={handleOpenReview}
+          fieldStyle={fieldStyle}
+          key={applicationType}
+        />
+      </div>
       {showReviewModal && (
         <ReviewSubmissionModal
           t={t}
