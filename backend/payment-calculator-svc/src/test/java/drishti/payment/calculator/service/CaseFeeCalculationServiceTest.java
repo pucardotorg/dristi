@@ -45,7 +45,7 @@ public class CaseFeeCalculationServiceTest {
         List<Calculation> result = caseFeesCalculationService.calculateCaseFees(request);
         assertEquals(request.getCalculationCriteria().size(), result.size());
         Calculation firstCalculation = result.get(0);
-        assertEquals(6, firstCalculation.getBreakDown().size());
+        assertEquals(5, firstCalculation.getBreakDown().size());
 
     }
 

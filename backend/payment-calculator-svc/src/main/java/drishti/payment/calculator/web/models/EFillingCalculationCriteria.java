@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class EFillingCalculationCriteria {
 
     @JsonProperty("checkAmount")
-    @NotNull (message = "Check amount cannot be null")
+    @NotNull(message = "Check amount cannot be null")
     private Double checkAmount;
 
     @JsonProperty("numberOfApplication")
@@ -28,6 +28,5 @@ public class EFillingCalculationCriteria {
     private String caseId;
 
     @JsonProperty("delayCondonation")
-    @NotNull (message = "Delay Condonation cannot be done")
-    private Long delayCondonation;
+    private Long delayCondonation = 0L;
 }

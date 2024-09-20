@@ -53,7 +53,7 @@ public class CaseFeeCalculationService {
             Double petitionFee = getPetitionFee(criteria.getCheckAmount(), petitionFeeRange);
             Double delayFee = isDelayCondonationFeeApplicable(criteria.getDelayCondonation(), delayCondonationPeriod) ? delayCondonationFee : 0.0;
 
-            List<BreakDown> feeBreakdown = getFeeBreakdown(vakalathnamaFee, advocateWelfareFund, advocateClerkWelfareFund, totalApplicationFee, petitionFee,delayFee);
+            List<BreakDown> feeBreakdown = getFeeBreakdown(vakalathnamaFee, advocateWelfareFund, advocateClerkWelfareFund, totalApplicationFee, petitionFee, delayFee);
             Double totalCourtFee = vakalathnamaFee + advocateWelfareFund + advocateClerkWelfareFund + totalApplicationFee + petitionFee + delayFee;
             Calculation calculation = Calculation.builder()
                     .applicationId(criteria.getCaseId())
@@ -69,7 +69,7 @@ public class CaseFeeCalculationService {
 
     }
 
-    public List<BreakDown> getFeeBreakdown(double vakalathnamaFee, double advocateWelfareFund, double advocateClerkWelfareFund, double totalApplicationFee, double petitionFee ,double condonationFee) {
+    public List<BreakDown> getFeeBreakdown(double vakalathnamaFee, double advocateWelfareFund, double advocateClerkWelfareFund, double totalApplicationFee, double petitionFee, double condonationFee) {
         List<BreakDown> feeBreakdowns = new ArrayList<>();
 
         feeBreakdowns.add(new BreakDown(VAKALATHNAMA_FEE, vakalathnamaFee, new HashMap<>()));
@@ -77,7 +77,8 @@ public class CaseFeeCalculationService {
         feeBreakdowns.add(new BreakDown(ADVOCATE_CLERK_WELFARE_FUND, advocateClerkWelfareFund, new HashMap<>()));
         feeBreakdowns.add(new BreakDown(TOTAL_APPLICATION_FEE, totalApplicationFee, new HashMap<>()));
         feeBreakdowns.add(new BreakDown(PETITION_FEE, petitionFee, new HashMap<>()));
-        feeBreakdowns.add(new BreakDown(DELAY_CONDONATION_FEE, condonationFee, new HashMap<>()));
+        if (condonationFee > 0)
+            feeBreakdowns.add(new BreakDown(DELAY_CONDONATION_FEE, condonationFee, new HashMap<>()));
 
         return feeBreakdowns;
     }
