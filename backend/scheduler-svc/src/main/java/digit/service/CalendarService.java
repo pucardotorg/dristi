@@ -109,7 +109,7 @@ public class CalendarService {
         for (int i = 0; i < loopLength; i++) {
 
             if (i < hearingLength)
-                dateMap.put(availableDateForHearing.get(i).getDate(), (availableDateForHearing.get(i).getOccupiedBandwidth())/60);
+                dateMap.put(availableDateForHearing.get(i).getDate(), (availableDateForHearing.get(i).getOccupiedBandwidth()) / 60);
             if (i < court000334.size()) {
                 LinkedHashMap map = (LinkedHashMap) court000334.get(i);
                 if (map.containsKey("date")) {
@@ -125,13 +125,15 @@ public class CalendarService {
         }
 
         // calculating date after 6 month from provided date
-        Long dateAfterSixMonths =  dateUtil.getEPochFromLocalDate(dateUtil.getLocalDateFromEpoch(criteria.getFromDate()).plusDays(30 * 6));// configurable?
+        Long dateAfterSixMonths = dateUtil.getEPochFromLocalDate(dateUtil.getLocalDateFromEpoch(criteria.getFromDate()).plusDays(30 * 6));// configurable?
 
 
         //last date which is store in default calendar
         Long endDate = lastDateInDefaultCalendar == null ? lastDateInDefaultCalendar : dateAfterSixMonths;
+
+        Long fromDate = dateUtil.getStartOfTheDayForEpoch(criteria.getFromDate());
 //         check startDate in date map if its exits and value is true then add to the result list
-        Stream.iterate(criteria.getFromDate(), startDate -> startDate < (endDate), startDate -> dateUtil.getEPochFromLocalDate(dateUtil.getLocalDateFromEpoch(startDate).plusDays(1)))
+        Stream.iterate(fromDate, startDate -> startDate < (endDate), startDate -> dateUtil.getEPochFromLocalDate(dateUtil.getLocalDateFromEpoch(startDate).plusDays(1)))
                 .takeWhile(startDate -> resultList.size() < criteria.getNumberOfSuggestedDays()).forEach(startDate -> {
 
                     if (dateMap.containsKey(startDate.toString()) && dateMap.get(startDate.toString()) != -1.0 && dateMap.get(startDate.toString()) < totalHrs)

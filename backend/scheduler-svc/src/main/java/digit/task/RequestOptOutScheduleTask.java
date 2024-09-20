@@ -33,11 +33,8 @@ import static digit.config.ServiceConstants.OPT_OUT_DUE;
 public class RequestOptOutScheduleTask {
 
     private final ReScheduleRequestRepository reScheduleRepository;
-
     private final RescheduleRequestOptOutRepository requestOptOutRepository;
-
     private final Producer producer;
-
     private final Configuration config;
     private final MasterDataUtil mdmsUtil;
     private final ServiceConstants constants;
