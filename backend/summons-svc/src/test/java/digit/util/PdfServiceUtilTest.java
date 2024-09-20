@@ -58,7 +58,7 @@ class PdfServiceUtilTest {
         when(taskDetails.getCaseDetails()).thenReturn(caseDetails);
         when(taskDetails.getRespondentDetails()).thenReturn(respondentDetails);
         when(respondentDetails.getAddress()).thenReturn(address);
-        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey);
+        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey, false);
 
         assertNotNull(result);
         assertArrayEquals(new byte[]{1, 2, 3}, result.getByteArray());
@@ -76,7 +76,7 @@ class PdfServiceUtilTest {
                 .thenThrow(new RuntimeException("Service error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey));
+                pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey, false));
 
         assertEquals("SU_PDF_APP_ERROR", exception.getCode());
         assertEquals("Error getting response from Pdf Service", exception.getMessage());

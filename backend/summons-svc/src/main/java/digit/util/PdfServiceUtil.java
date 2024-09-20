@@ -3,6 +3,7 @@ package digit.util;
 import digit.config.Configuration;
 import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -34,7 +35,7 @@ public class PdfServiceUtil {
     }
 
     public ByteArrayResource generatePdfFromPdfService(TaskRequest taskRequest, String tenantId,
-                                                       String pdfTemplateKey) {
+                                                       String pdfTemplateKey, boolean qrCode) {
         try {
             StringBuilder uri = new StringBuilder();
             uri.append(config.getPdfServiceHost())
@@ -44,6 +45,14 @@ public class PdfServiceUtil {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             SummonsPdf summonsPdf = createSummonsPdfFromTask(taskRequest.getTask());
+            if (qrCode && !taskRequest.getTask().getDocuments().isEmpty()) {
+                Document document = taskRequest.getTask().getDocuments().get(0);
+                if (document != null) {
+                    String embeddedUrl = config.getFileStoreHost() + config.getFileStoreSearchEndPoint() + "?tenantId=" + tenantId + "&fileStoreId=" + document.getFileStore();
+                    summonsPdf.setEmbeddedUrl(embeddedUrl);
+
+                }
+            }
             SummonsPdfRequest summonsPdfRequest = SummonsPdfRequest.builder()
                     .summonsPdf(summonsPdf).requestInfo(taskRequest.getRequestInfo()).build();
             HttpEntity<SummonsPdfRequest> requestEntity = new HttpEntity<>(summonsPdfRequest, headers);

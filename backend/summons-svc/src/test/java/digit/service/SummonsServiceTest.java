@@ -114,14 +114,18 @@ class SummonsServiceTest {
 
     @Test
     void sendSummonsViaChannels_Success() {
-        TaskRequest request = createTaskRequest("summon");
+        TaskRequest request = createTaskRequest("SUMMONS");
         SummonsDelivery summonsDelivery = new SummonsDelivery();
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setAcknowledgementStatus("SUCCESS");
         channelMessage.setAcknowledgeUniqueNumber("123");
+        ByteArrayResource byteArrayResource = new ByteArrayResource(new byte[]{});
 
         when(summonsDeliveryEnrichment.generateAndEnrichSummonsDelivery(any(), any())).thenReturn(summonsDelivery);
         when(externalChannelUtil.sendSummonsByDeliveryChannel(any(), any())).thenReturn(channelMessage);
+        when(pdfServiceUtil.generatePdfFromPdfService(any(),any(),any(),anyBoolean())).thenReturn(byteArrayResource);
+        when(fileStorageUtil.saveDocumentToFileStore(any())).thenReturn("kdshfj");
+        when(taskUtil.callUpdateTask(any())).thenReturn(taskResponse);
 
         SummonsDelivery result = summonsService.sendSummonsViaChannels(request);
 
@@ -132,14 +136,18 @@ class SummonsServiceTest {
 
     @Test
     void sendSummonsViaChannels_SMSChannel() {
-        TaskRequest request = createTaskRequest("summon");
+        TaskRequest request = createTaskRequest("SUMMONS");
         SummonsDelivery summonsDelivery = new SummonsDelivery();
         summonsDelivery.setChannelName(ChannelName.SMS);
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setAcknowledgementStatus("SUCCESS");
+        ByteArrayResource byteArrayResource = new ByteArrayResource(new byte[]{});
 
         when(summonsDeliveryEnrichment.generateAndEnrichSummonsDelivery(any(), any())).thenReturn(summonsDelivery);
         when(externalChannelUtil.sendSummonsByDeliveryChannel(any(), any())).thenReturn(channelMessage);
+        when(pdfServiceUtil.generatePdfFromPdfService(any(),any(),any(),anyBoolean())).thenReturn(byteArrayResource);
+        when(fileStorageUtil.saveDocumentToFileStore(any())).thenReturn("kdshfj");
+        when(taskUtil.callUpdateTask(any())).thenReturn(taskResponse);
 
         SummonsDelivery result = summonsService.sendSummonsViaChannels(request);
 

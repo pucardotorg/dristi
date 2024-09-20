@@ -44,8 +44,9 @@ public class CaseManagementUtil {
                     .append(config.getBffServiceVCEndpoint());
 
             String referenceId = taskRequest.getTask().getId().toString();
+            String orderId = taskRequest.getTask().getOrderId().toString();
             String tenantId = taskRequest.getTask().getTenantId();
-            String filestoreId = orderUtil.fetchSignedFileStore(referenceId, tenantId, taskRequest.getRequestInfo());
+            String filestoreId = orderUtil.fetchSignedFileStore(orderId, tenantId, taskRequest.getRequestInfo());
             VcCredentialRequest credentialRequest = VcCredentialRequest.builder()
                     .requestInfo(taskRequest.getRequestInfo())
                     .tenantId(tenantId)

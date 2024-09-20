@@ -46,7 +46,7 @@ public class DemandService {
         this.mdmsUtil = mdmsUtil;
         this.taskUtil = taskUtil;
     }
-    public final Map<String, String> masterCodePayemntTypeMap= new HashMap<String,String>();
+     Map<String, String> masterCodePayemntTypeMap= new HashMap<String,String>();
 
     public BillResponse fetchPaymentDetailsAndGenerateDemandAndBill(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
@@ -128,11 +128,29 @@ public class DemandService {
             demandDetailList.add(courtDetail);
             demandDetailList.add(ePostDetail);
         }
-        else {
+        else if(channelName.equals("POLICE")){
             DemandDetail basicDetail = DemandDetail.builder()
                     .tenantId(tenantId)
                     .taxAmount(BigDecimal.valueOf(4))
-                    .taxHeadMasterCode(getTestTaxHeadMasterCode(businessService))
+                    .taxHeadMasterCode(getTestPoliceTaxHeadMasterCode(businessService))
+                    .build();
+
+            demandDetailList.add(basicDetail);
+        }
+        else if(channelName.equals("EMAIL")){
+            DemandDetail basicDetail = DemandDetail.builder()
+                    .tenantId(tenantId)
+                    .taxAmount(BigDecimal.valueOf(4))
+                    .taxHeadMasterCode(getTestTaxEmailHeadMasterCode(businessService))
+                    .build();
+
+            demandDetailList.add(basicDetail);
+        }
+        else if(channelName.equals("SMS")){
+            DemandDetail basicDetail = DemandDetail.builder()
+                    .tenantId(tenantId)
+                    .taxAmount(BigDecimal.valueOf(4))
+                    .taxHeadMasterCode(getTestTaxSmsHeadMasterCode(businessService))
                     .build();
 
             demandDetailList.add(basicDetail);
@@ -313,11 +331,22 @@ public class DemandService {
         }
     }
 
-    private String getTestTaxHeadMasterCode(String businessService) {
+    private String getTestPoliceTaxHeadMasterCode(String businessService) {
+            return config.getTaskSummonPoliceTaxHeadMasterCode();
+
+    }
+    private String getTestTaxEmailHeadMasterCode(String businessService) {
         if (businessService.equalsIgnoreCase(config.getTaskNoticeBusinessService())) {
-            return config.getTaskNoticeTaxHeadMasterCode();
+            return config.getTaskNoticeEmailTaxHeadMasterCode();
         } else {
-            return config.getTaskSummonTaxHeadCourtMasterCode();
+            return config.getTaskSummonEmailTaxHeadMasterCode();
+        }
+    }
+    private String getTestTaxSmsHeadMasterCode(String businessService) {
+        if (businessService.equalsIgnoreCase(config.getTaskNoticeBusinessService())) {
+            return config.getTaskNoticeSmsTaxHeadMasterCode();
+        } else {
+            return config.getTaskSummonSmsTaxHeadMasterCode();
         }
     }
 
