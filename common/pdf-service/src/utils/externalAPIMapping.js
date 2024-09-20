@@ -5,7 +5,7 @@ import {
   getLocalisationkey,
   findLocalisation,
   getDateInRequiredFormat,
-  getValue
+  getValue,
 } from "./commons";
 import logger from "../config/logger";
 /**
@@ -19,10 +19,8 @@ import logger from "../config/logger";
  */
 
 function escapeRegex(string) {
-  if (typeof string == "string")
-    return string.replace(/[\\"]/g, '\\$&');
-  else
-    return string;
+  if (typeof string == "string") return string.replace(/[\\"]/g, "\\$&");
+  else return string;
 }
 
 export const externalAPIMapping = async function (
@@ -40,14 +38,14 @@ export const externalAPIMapping = async function (
     [],
     "$.DataConfigs.mappings.*.mappings.*.externalAPI.*"
   );
-  var externalAPIArray = objectOfExternalAPI.map(item => {
+  var externalAPIArray = objectOfExternalAPI.map((item) => {
     return {
       uri: item.path,
       queryParams: item.queryParam,
       jPath: item.responseMapping,
       requesttype: item.requesttype || "POST",
       variable: "",
-      val: ""
+      val: "",
     };
   });
 
@@ -114,7 +112,6 @@ export const externalAPIMapping = async function (
           ].queryParams.replace("{", "");
         }
 
-
         if (externalAPIArray[i].queryParams[j] == "$") {
           flag = 1;
         }
@@ -140,7 +137,6 @@ export const externalAPIMapping = async function (
               i
             ].queryParams.replace("}", "");
           }
-
         }
         if (flag == 1) {
           temp1 += externalAPIArray[i].queryParams[j];
@@ -171,39 +167,41 @@ export const externalAPIMapping = async function (
     header.TENANTID = envVariables.STATE_LEVEL_TENANT_ID;
 
     let headerConfig = {
-      headers: header
+      headers: header,
     };
 
     let resPromise;
     if (externalAPIArray[i].requesttype == "POST") {
       resPromise = await axios.post(
-        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams, {
-          RequestInfo: requestInfo
-        },headerConfig
+        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams,
+        {
+          RequestInfo: requestInfo,
+        },
+        headerConfig
       );
     } else {
       resPromise = axios.get(
-        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams, {
-          responseType: "application/json"
+        externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams,
+        {
+          responseType: "application/json",
         }
       );
     }
 
-    responsePromises.push(resPromise)
+    responsePromises.push(resPromise);
   }
-
 
   try {
-    responses = await Promise.all(responsePromises)
+    responses = await Promise.all(responsePromises);
   } catch (error) {
     logger.error(error.stack || error);
-    throw{
-      message: `Error in external service call: ${error.Errors[0].message}`
-    }; 
+    throw {
+      message: `Error in external service call: ${error.Errors[0].message}`,
+    };
   }
-  
+
   for (let i = 0; i < externalAPIArray.length; i++) {
-    let res = responses[i].data
+    let res = responses[i].data;
 
     //putting required data from external API call in format config
 
@@ -222,8 +220,9 @@ export const externalAPIMapping = async function (
           try {
             let len = replaceValue[0].split(",").length;
             let response = await axios.get(
-              replaceValue[0].split(",")[len - 1], {
-                responseType: "arraybuffer"
+              replaceValue[0].split(",")[len - 1],
+              {
+                responseType: "arraybuffer",
               }
             );
             imageData =
@@ -234,7 +233,7 @@ export const externalAPIMapping = async function (
           } catch (error) {
             logger.error(error.stack || error);
             throw {
-              message: `error while loading image from: ${replaceValue[0]}`
+              message: `error while loading image from: ${replaceValue[0]}`,
             };
           }
         }
@@ -244,23 +243,23 @@ export const externalAPIMapping = async function (
         if (isNaN(myDate) || replaceValue[0] === 0) {
           variableTovalueMap[externalAPIArray[i].jPath[j].variable] = "NA";
         } else {
-          replaceValue = getDateInRequiredFormat(replaceValue[0], externalAPIArray[i].jPath[j].format);
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = replaceValue;
+          replaceValue = getDateInRequiredFormat(
+            replaceValue[0],
+            externalAPIArray[i].jPath[j].format
+          );
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] =
+            replaceValue;
         }
       } else if (externalAPIArray[i].jPath[j].type == "array") {
-
         let arrayOfOwnerObject = [];
         // let ownerObject = JSON.parse(JSON.stringify(get(formatconfig, directArr[i].jPath + "[0]", [])));
         let {
-          format = {}, value = [], variable
+          format = {},
+          value = [],
+          variable,
         } = externalAPIArray[i].jPath[j];
-        let {
-          scema = []
-        } = format;
+        let { scema = [] } = format;
         let val = getValue(jp.query(res, value), "NA", value);
-
 
         //taking values about owner from request body
         for (let l = 0; l < val.length; l++) {
@@ -274,7 +273,10 @@ export const externalAPIMapping = async function (
               if (isNaN(myDate) || fieldValue === 0) {
                 ownerObject[scema[k].variable] = "NA";
               } else {
-                let replaceValue = getDateInRequiredFormat(fieldValue, scema[k].format);
+                let replaceValue = getDateInRequiredFormat(
+                  fieldValue,
+                  scema[k].format
+                );
                 // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
                 ownerObject[scema[k].variable] = replaceValue;
               }
@@ -285,21 +287,21 @@ export const externalAPIMapping = async function (
                 scema[k].localisation.required
               ) {
                 let loc = scema[k].localisation;
-              fieldValue = await getLocalisationkey(
-                loc.prefix,
-                fieldValue,
-                loc.isCategoryRequired,
-                loc.isMainTypeRequired,
-                loc.isSubTypeRequired,
-                loc.delimiter
-              );
-              if(!localisationCodes.includes(fieldValue))
-                localisationCodes.push(fieldValue);
+                fieldValue = await getLocalisationkey(
+                  loc.prefix,
+                  fieldValue,
+                  loc.isCategoryRequired,
+                  loc.isMainTypeRequired,
+                  loc.isSubTypeRequired,
+                  loc.delimiter
+                );
+                if (!localisationCodes.includes(fieldValue))
+                  localisationCodes.push(fieldValue);
 
-              if(!localisationModules.includes(loc.module))
-                localisationModules.push(loc.module);
+                if (!localisationModules.includes(loc.module))
+                  localisationModules.push(loc.module);
 
-              variableToModuleMap[scema[k].variable] = loc.module;
+                variableToModuleMap[scema[k].variable] = loc.module;
               }
               //console.log("\nvalue-->"+fieldValue)
               let currentValue = fieldValue;
@@ -308,26 +310,23 @@ export const externalAPIMapping = async function (
 
               currentValue = escapeRegex(currentValue);
               ownerObject[scema[k].variable] = currentValue;
-
             }
             // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));
             // x += 2;
           }
           arrayOfOwnerObject.push(ownerObject);
-
         }
 
         variableTovalueMap[variable] = arrayOfOwnerObject;
         //console.log("\nvariableTovalueMap[externalAPIArray[i].jPath.variable]--->\n"+JSON.stringify(variableTovalueMap[externalAPIArray[i].jPath.variable]));
-
       } else {
         if (
           replaceValue !== "NA" &&
           externalAPIArray[i].jPath[j].localisation &&
           externalAPIArray[i].jPath[j].localisation.required &&
           externalAPIArray[i].jPath[j].localisation.prefix
-        ){
-          let currentValue= await getLocalisationkey(
+        ) {
+          let currentValue = await getLocalisationkey(
             loc.prefix,
             replaceValue,
             loc.isCategoryRequired,
@@ -339,32 +338,26 @@ export const externalAPIMapping = async function (
             currentValue = currentValue[0];
 
           //currentValue = escapeRegex(currentValue);
-          if(!localisationCodes.includes(currentValue))
+          if (!localisationCodes.includes(currentValue))
             localisationCodes.push(currentValue);
 
-          if(!localisationModules.includes(loc.module))
+          if (!localisationModules.includes(loc.module))
             localisationModules.push(loc.module);
 
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = currentValue;
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] =
+            currentValue;
 
-          variableToModuleMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = loc.module;
-
-        }
-        else {
+          variableToModuleMap[externalAPIArray[i].jPath[j].variable] =
+            loc.module;
+        } else {
           let currentValue = replaceValue;
           if (typeof currentValue == "object" && currentValue.length > 0)
             currentValue = currentValue[0];
 
           // currentValue=currentValue.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
           currentValue = escapeRegex(currentValue);
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = currentValue;
-
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] =
+            currentValue;
         }
         if (externalAPIArray[i].jPath[j].isUpperCaseRequired) {
           let currentValue =
@@ -372,72 +365,73 @@ export const externalAPIMapping = async function (
           if (typeof currentValue == "object" && currentValue.length > 0)
             currentValue = currentValue[0];
 
-          variableTovalueMap[
-            externalAPIArray[i].jPath[j].variable
-          ] = currentValue.toUpperCase();
+          variableTovalueMap[externalAPIArray[i].jPath[j].variable] =
+            currentValue.toUpperCase();
         }
       }
     }
   }
 
   let localisationMap = [];
-  try{
+  try {
     let resposnseMap = await findLocalisation(
       requestInfo,
       localisationModules,
       localisationCodes,
-      pdfKey+'-externalMapping'
+      pdfKey + "-externalMapping"
     );
     resposnseMap.messages.map((item) => {
       localisationMap[item.code + "_" + item.module] = item.message;
     });
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(error.stack || error);
-    throw{
-      message: `Error in localisation service call: ${error.Errors[0].message}`
-    }; 
+    throw {
+      message: `Error in localisation service call: ${error.Errors[0].message}`,
+    };
   }
 
-  Object.keys(variableTovalueMap).forEach(function(key) {
-    if(variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string'){
+  Object.keys(variableTovalueMap).forEach(function (key) {
+    if (
+      variableToModuleMap[key] &&
+      typeof variableTovalueMap[key] == "string"
+    ) {
       var code = variableTovalueMap[key];
       var module = variableToModuleMap[key];
-      if(localisationMap[code+"_"+module]){
-        variableTovalueMap[key] = localisationMap[code+"_"+module];
-        if(unregisteredLocalisationCodes.includes(code)){
+      if (localisationMap[code + "_" + module]) {
+        variableTovalueMap[key] = localisationMap[code + "_" + module];
+        if (unregisteredLocalisationCodes.includes(code)) {
           var index = unregisteredLocalisationCodes.indexOf(code);
           unregisteredLocalisationCodes.splice(index, 1);
         }
-      }
-      else{
-        if(!unregisteredLocalisationCodes.includes(code))
+      } else {
+        if (!unregisteredLocalisationCodes.includes(code))
           unregisteredLocalisationCodes.push(code);
       }
     }
 
-    if(typeof variableTovalueMap[key] =='object'){
-      Object.keys(variableTovalueMap[key]).forEach(function(objectKey){
-        Object.keys(variableTovalueMap[key][objectKey]).forEach(function(objectItemkey) {
-          if(variableToModuleMap[objectItemkey]){
-            var module = variableToModuleMap[objectItemkey];
-            var code = variableTovalueMap[key][objectKey][objectItemkey];
-            if(localisationMap[code+"_"+module]){
-              variableTovalueMap[key][objectKey][objectItemkey] = localisationMap[code+"_"+module];
-              if(unregisteredLocalisationCodes.includes(code)){
-                var index = unregisteredLocalisationCodes.indexOf(code);
-                unregisteredLocalisationCodes.splice(index, 1);
+    if (typeof variableTovalueMap[key] == "object") {
+      Object.keys(variableTovalueMap[key]).forEach(function (objectKey) {
+        const objectItem = objectItem;
+        if (objectItem && typeof objectItem == "object") {
+          Object.keys(objectItem).forEach(function (objectItemkey) {
+            if (variableToModuleMap[objectItemkey]) {
+              var module = variableToModuleMap[objectItemkey];
+              var code = objectItem[objectItemkey];
+              if (localisationMap[code + "_" + module]) {
+                objectItem[objectItemkey] =
+                  localisationMap[code + "_" + module];
+                if (unregisteredLocalisationCodes.includes(code)) {
+                  var index = unregisteredLocalisationCodes.indexOf(code);
+                  unregisteredLocalisationCodes.splice(index, 1);
+                }
+              } else {
+                if (!unregisteredLocalisationCodes.includes(code))
+                  unregisteredLocalisationCodes.push(code);
               }
             }
-            else{
-              if(!unregisteredLocalisationCodes.includes(code))
-                unregisteredLocalisationCodes.push(code);
-            }
-          }
-        });
-      });    
+          });
+        }
+      });
     }
-
   });
-
 };

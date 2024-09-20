@@ -1221,7 +1221,7 @@ const handlelogic = async (
 ) => {
   let variableTovalueMap = {};
   //direct mapping service
-  await Promise.allSettled([
+  await Promise.all([
     directMapping(
       moduleObject,
       dataconfig,

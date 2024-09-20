@@ -1,7 +1,7 @@
 const envVariables = {
   MAX_NUMBER_PAGES: process.env.MAX_NUMBER_PAGES || 80,
   EGOV_LOCALISATION_HOST:
-    process.env.EGOV_LOCALISATION_HOST || "http://egov-localization:8080/",
+    process.env.EGOV_LOCALISATION_HOST || "http://localhost:9001/",
   EGOV_LOCALISATION_SEARCH:
     process.env.EGOV_LOCALISATION_SEARCH || "localization/messages/v2/_search",
   EGOV_FILESTORE_SERVICE_HOST:
@@ -32,8 +32,12 @@ const envVariables = {
   DEFAULT_LOCALISATION_LOCALE:
     process.env.DEFAULT_LOCALISATION_LOCALE || "en_IN",
   DEFAULT_LOCALISATION_TENANT: process.env.DEFAULT_LOCALISATION_TENANT || "pb",
-  DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
-  FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS,
+  DATA_CONFIG_URLS:
+    process.env.DATA_CONFIG_URLS ||
+    "https://raw.githubusercontent.com/pucardotorg/kerala-configs/develop/pdf-service/data-config/case.json",
+  FORMAT_CONFIG_URLS:
+    process.env.FORMAT_CONFIG_URLS ||
+    "https://raw.githubusercontent.com/pucardotorg/kerala-configs/develop/pdf-service/format-config/case.json",
   STATE_LEVEL_TENANT_ID: "in.stateb",
   DEFAULT_VARIABLE_VALUE:
     process.env.DEFAULT_VARIABLE_VALUE === undefined ||

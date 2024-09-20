@@ -6,7 +6,7 @@ import {
   getLocalisationkey,
   findLocalisation,
   getDateInRequiredFormat,
-  getValue
+  getValue,
 } from "./commons";
 
 var jp = require("jsonpath");
@@ -22,11 +22,9 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
  */
 
 function escapeRegex(string) {
-  if(typeof string == "string")
-  return string.replace(/[\\"]/g, '\\$&'); 
-   else
-    return string;
-  }
+  if (typeof string == "string") return string.replace(/[\\"]/g, "\\$&");
+  else return string;
+}
 
 export const directMapping = async (
   req,
@@ -50,25 +48,35 @@ export const directMapping = async (
     [],
     "$.DataConfigs.mappings.*.mappings.*.direct.*"
   );
-  directArr = objectOfDirectMapping.map(item => {
+  directArr = objectOfDirectMapping.map((item) => {
     return {
       jPath: item.variable,
       val:
         item.value &&
-        getValue(jp.query(req, item.value.path), envVariables.DEFAULT_VARIABLE_VALUE, item.value.path),
+        getValue(
+          jp.query(req, item.value.path),
+          envVariables.DEFAULT_VARIABLE_VALUE,
+          item.value.path
+        ),
       valJsonPath: item.value && item.value.path,
       type: item.type,
       url: item.url,
       format: item.format,
       localisation: item.localisation,
-      uCaseNeeded: item.isUpperCaseRequired
+      uCaseNeeded: item.isUpperCaseRequired,
     };
   });
 
   for (var i = 0; i < directArr.length; i++) {
     //for array type direct mapping
     if (directArr[i].type == "citizen-employee-title") {
-      if (get(requestInfo, "userInfo.type", envVariables.DEFAULT_VARIABLE_VALUE).toUpperCase() == "EMPLOYEE") {
+      if (
+        get(
+          requestInfo,
+          "userInfo.type",
+          envVariables.DEFAULT_VARIABLE_VALUE
+        ).toUpperCase() == "EMPLOYEE"
+      ) {
         variableTovalueMap[directArr[i].jPath] = "Employee Copy";
       } else {
         variableTovalueMap[directArr[i].jPath] = "Citizen Copy";
@@ -85,17 +93,15 @@ export const directMapping = async (
         directArr[i].val = directArr[i].val[0];
 
       variableTovalueMap[directArr[i].jPath] = directArr[i].val;
-    } 
-    else if (directArr[i].type == "external_host") {
+    } else if (directArr[i].type == "external_host") {
       variableTovalueMap[directArr[i].jPath] = externalHost;
-    }
-    else if (directArr[i].type == "function") {
+    } else if (directArr[i].type == "function") {
       var fun = Function("type", directArr[i].format);
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
       try {
         var response = await axios.get(directArr[i].url, {
-          responseType: "arraybuffer"
+          responseType: "arraybuffer",
         });
         variableTovalueMap[directArr[i].jPath] =
           "data:" +
@@ -106,7 +112,7 @@ export const directMapping = async (
       } catch (error) {
         logger.error(error.stack || error);
         throw {
-          message: `error while loading image from: ${directArr[i].url}`
+          message: `error while loading image from: ${directArr[i].url}`,
         };
       }
     } else if (directArr[i].type == "array") {
@@ -121,14 +127,25 @@ export const directMapping = async (
         // var x = 1;
         let ownerObject = {};
         for (let k = 0; k < scema.length; k++) {
-          let fieldValue = get(val[j], scema[k].value, envVariables.DEFAULT_VARIABLE_VALUE);
-          fieldValue = fieldValue == null ? envVariables.DEFAULT_VARIABLE_VALUE : fieldValue;
+          let fieldValue = get(
+            val[j],
+            scema[k].value,
+            envVariables.DEFAULT_VARIABLE_VALUE
+          );
+          fieldValue =
+            fieldValue == null
+              ? envVariables.DEFAULT_VARIABLE_VALUE
+              : fieldValue;
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
-              ownerObject[scema[k].variable] = envVariables.DEFAULT_VARIABLE_VALUE;
+              ownerObject[scema[k].variable] =
+                envVariables.DEFAULT_VARIABLE_VALUE;
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
+              let replaceValue = getDateInRequiredFormat(
+                fieldValue,
+                scema[k].format
+              );
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               ownerObject[scema[k].variable] = replaceValue;
             }
@@ -147,10 +164,10 @@ export const directMapping = async (
                 loc.isSubTypeRequired,
                 loc.delimiter
               );
-              if(!localisationCodes.includes(fieldValue))
+              if (!localisationCodes.includes(fieldValue))
                 localisationCodes.push(fieldValue);
 
-              if(!localisationModules.includes(loc.module))
+              if (!localisationModules.includes(loc.module))
                 localisationModules.push(loc.module);
 
               variableToModuleMap[scema[k].variable] = loc.module;
@@ -159,7 +176,7 @@ export const directMapping = async (
             if (typeof currentValue == "object" && currentValue.length > 0)
               currentValue = currentValue[0];
 
-            currentValue= escapeRegex(currentValue);
+            currentValue = escapeRegex(currentValue);
             ownerObject[scema[k].variable] = currentValue;
           }
           // set(ownerObject[x], "text", get(val[j], scema[k].key, ""));
@@ -184,26 +201,38 @@ export const directMapping = async (
       for (let j = 0; j < val.length; j++) {
         let arrayOfItems = [];
         for (let k = 0; k < scema.length; k++) {
-          let fieldValue = get(val[j], scema[k].value, envVariables.DEFAULT_VARIABLE_VALUE);
-          fieldValue = fieldValue == null ? envVariables.DEFAULT_VARIABLE_VALUE : fieldValue;
+          let fieldValue = get(
+            val[j],
+            scema[k].value,
+            envVariables.DEFAULT_VARIABLE_VALUE
+          );
+          fieldValue =
+            fieldValue == null
+              ? envVariables.DEFAULT_VARIABLE_VALUE
+              : fieldValue;
           if (scema[k].type == "date") {
             let myDate = new Date(fieldValue);
             if (isNaN(myDate) || fieldValue === 0) {
               arrayOfItems.push(envVariables.DEFAULT_VARIABLE_VALUE);
             } else {
-              let replaceValue = getDateInRequiredFormat(fieldValue,scema[k].format);
+              let replaceValue = getDateInRequiredFormat(
+                fieldValue,
+                scema[k].format
+              );
               // set(formatconfig,externalAPIArray[i].jPath[j].variable,replaceValue);
               arrayOfItems.push(replaceValue);
             }
-          } 
-          /**
-           * This condition is for displaying the ordered list data 
-           * when data is coming as array of strings instead of key value pair.
-           * Provided new scema type (array-orderedlist) which we should mention at data-config
-           * to display the array of string in order list.
-           */
-          else if (scema[k].type == "array-orderedlist" && Array.isArray(fieldValue)) {
-            if(fieldValue !== envVariables.DEFAULT_VARIABLE_VALUE) {
+          } else if (
+            /**
+             * This condition is for displaying the ordered list data
+             * when data is coming as array of strings instead of key value pair.
+             * Provided new scema type (array-orderedlist) which we should mention at data-config
+             * to display the array of string in order list.
+             */
+            scema[k].type == "array-orderedlist" &&
+            Array.isArray(fieldValue)
+          ) {
+            if (fieldValue !== envVariables.DEFAULT_VARIABLE_VALUE) {
               for (var p = 0; p < fieldValue.length; p++) {
                 let orderedList = [];
                 orderedList.push(fieldValue[p]);
@@ -226,17 +255,16 @@ export const directMapping = async (
                 loc.isSubTypeRequired,
                 loc.delimiter
               );
-              if(!localisationCodes.includes(fieldValue))
+              if (!localisationCodes.includes(fieldValue))
                 localisationCodes.push(fieldValue);
 
-              if(!localisationModules.includes(loc.module))
+              if (!localisationModules.includes(loc.module))
                 localisationModules.push(loc.module);
             }
             arrayOfItems.push(fieldValue);
           }
         }
-        if(isOrderedList === false)
-          arrayOfBuiltUpDetails.push(arrayOfItems);
+        if (isOrderedList === false) arrayOfBuiltUpDetails.push(arrayOfItems);
       }
 
       // remove enclosing [ &  ]
@@ -262,28 +290,27 @@ export const directMapping = async (
         directArr[i].localisation.isSubTypeRequired,
         directArr[i].localisation.delimiter
       );
-      if(!localisationCodes.includes(code))
-        localisationCodes.push(code);
+      if (!localisationCodes.includes(code)) localisationCodes.push(code);
 
-      if(!localisationModules.includes(directArr[i].localisation.module))
+      if (!localisationModules.includes(directArr[i].localisation.module))
         localisationModules.push(directArr[i].localisation.module);
 
       variableTovalueMap[directArr[i].jPath] = code;
-      variableToModuleMap[directArr[i].jPath] = directArr[i].localisation.module;
-
-    } 
-    
-    else if (directArr[i].type == "date") {
+      variableToModuleMap[directArr[i].jPath] =
+        directArr[i].localisation.module;
+    } else if (directArr[i].type == "date") {
       let myDate = new Date(directArr[i].val[0]);
       if (isNaN(myDate) || directArr[i].val[0] === 0) {
-        variableTovalueMap[directArr[i].jPath] = envVariables.DEFAULT_VARIABLE_VALUE;
+        variableTovalueMap[directArr[i].jPath] =
+          envVariables.DEFAULT_VARIABLE_VALUE;
       } else {
-        let replaceValue = getDateInRequiredFormat(directArr[i].val[0],directArr[i].format);
+        let replaceValue = getDateInRequiredFormat(
+          directArr[i].val[0],
+          directArr[i].format
+        );
         variableTovalueMap[directArr[i].jPath] = replaceValue;
       }
-    } 
-
-    else {
+    } else {
       directArr[i].val = getValue(
         directArr[i].val,
         envVariables.DEFAULT_VARIABLE_VALUE,
@@ -293,8 +320,7 @@ export const directMapping = async (
         directArr[i].val !== envVariables.DEFAULT_VARIABLE_VALUE &&
         directArr[i].localisation &&
         directArr[i].localisation.required
-      ){
-
+      ) {
         let code = await getLocalisationkey(
           directArr[i].localisation.prefix,
           directArr[i].val,
@@ -304,30 +330,26 @@ export const directMapping = async (
           directArr[i].localisation.delimiter
         );
 
-        if (typeof code == "object" && code.length > 0)
-          code = code[0];
+        if (typeof code == "object" && code.length > 0) code = code[0];
 
-        if(!localisationCodes.includes(code))
-          localisationCodes.push(code);
+        if (!localisationCodes.includes(code)) localisationCodes.push(code);
 
-        if(!localisationModules.includes(directArr[i].localisation.module))
+        if (!localisationModules.includes(directArr[i].localisation.module))
           localisationModules.push(directArr[i].localisation.module);
 
         variableTovalueMap[directArr[i].jPath] = code;
 
-        variableToModuleMap[directArr[i].jPath] = directArr[i].localisation.module;
-
-      }
-        
-      else{
+        variableToModuleMap[directArr[i].jPath] =
+          directArr[i].localisation.module;
+      } else {
         let currentValue = directArr[i].val;
-          if (typeof currentValue == "object" && currentValue.length > 0)
-            currentValue = currentValue[0];
-          
-         // currentValue=currentValue.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
-        currentValue= escapeRegex(currentValue);
+        if (typeof currentValue == "object" && currentValue.length > 0)
+          currentValue = currentValue[0];
+
+        // currentValue=currentValue.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+        currentValue = escapeRegex(currentValue);
         variableTovalueMap[directArr[i].jPath] = currentValue;
-      } 
+      }
       if (directArr[i].uCaseNeeded) {
         let currentValue = variableTovalueMap[directArr[i].jPath];
         if (typeof currentValue == "object" && currentValue.length > 0)
@@ -338,67 +360,66 @@ export const directMapping = async (
   }
 
   let localisationMap = [];
-  try{
+  try {
     let resposnseMap = await findLocalisation(
       requestInfo,
       localisationModules,
       localisationCodes,
-      pdfKey+'-directMapping'
+      pdfKey + "-directMapping"
     );
-  
+
     resposnseMap.messages.map((item) => {
       localisationMap[item.code + "_" + item.module] = item.message;
     });
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(error.stack || error);
-    throw{
-      message: `Error in localisation service call: ${error.Errors[0].message}`
-    }; 
+    throw {
+      message: `Error in localisation service call: ${error.Errors[0].message}`,
+    };
   }
 
-  
-  
-
-  Object.keys(variableTovalueMap).forEach(function(key) {
-    if(variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string'){
+  Object.keys(variableTovalueMap).forEach(function (key) {
+    if (
+      variableToModuleMap[key] &&
+      typeof variableTovalueMap[key] == "string"
+    ) {
       var code = variableTovalueMap[key];
       var module = variableToModuleMap[key];
-      if(localisationMap[code+"_"+module]){
-        variableTovalueMap[key] = localisationMap[code+"_"+module];
-        if(unregisteredLocalisationCodes.includes(code)){
+      if (localisationMap[code + "_" + module]) {
+        variableTovalueMap[key] = localisationMap[code + "_" + module];
+        if (unregisteredLocalisationCodes.includes(code)) {
           var index = unregisteredLocalisationCodes.indexOf(code);
           unregisteredLocalisationCodes.splice(index, 1);
         }
-      }
-      else{
-        if(!unregisteredLocalisationCodes.includes(code))
+      } else {
+        if (!unregisteredLocalisationCodes.includes(code))
           unregisteredLocalisationCodes.push(code);
       }
     }
 
-    if(typeof variableTovalueMap[key] =='object'){
-      Object.keys(variableTovalueMap[key]).forEach(function(objectKey){
-        Object.keys(variableTovalueMap[key][objectKey]).forEach(function(objectItemkey) {
-          if(variableToModuleMap[objectItemkey]){
-            var module = variableToModuleMap[objectItemkey];
-            var code = variableTovalueMap[key][objectKey][objectItemkey];
-            if(localisationMap[code+"_"+module]){
-              variableTovalueMap[key][objectKey][objectItemkey] = localisationMap[code+"_"+module];
-              if(unregisteredLocalisationCodes.includes(code)){
-                var index = unregisteredLocalisationCodes.indexOf(code);
-                unregisteredLocalisationCodes.splice(index, 1);
+    if (typeof variableTovalueMap[key] == "object") {
+      Object.keys(variableTovalueMap[key]).forEach(function (objectKey) {
+        const objectItem = variableTovalueMap[key][objectKey];
+        if (objectItem && typeof objectItem == "object") {
+          Object.keys(objectItem).forEach(function (objectItemkey) {
+            if (variableToModuleMap[objectItemkey]) {
+              var module = variableToModuleMap[objectItemkey];
+              var code = objectItem[objectItemkey];
+              if (localisationMap[code + "_" + module]) {
+                objectItem[objectItemkey] =
+                  localisationMap[code + "_" + module];
+                if (unregisteredLocalisationCodes.includes(code)) {
+                  var index = unregisteredLocalisationCodes.indexOf(code);
+                  unregisteredLocalisationCodes.splice(index, 1);
+                }
+              } else {
+                if (!unregisteredLocalisationCodes.includes(code))
+                  unregisteredLocalisationCodes.push(code);
               }
             }
-            else{
-              if(!unregisteredLocalisationCodes.includes(code))
-                unregisteredLocalisationCodes.push(code);
-            }
-          }
-        });
-      });    
+          });
+        }
+      });
     }
-
   });
-  
 };
