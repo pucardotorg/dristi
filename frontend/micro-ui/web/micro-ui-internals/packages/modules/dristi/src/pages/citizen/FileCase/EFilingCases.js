@@ -1691,6 +1691,7 @@ function EFilingCases({ path }) {
             numberOfApplication: 1,
             tenantId: tenantId,
             caseId: caseId,
+            delayCondonation: delayCondonation,
           },
         ],
       },
@@ -1713,7 +1714,6 @@ function EFilingCases({ path }) {
               taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
               taxAmount: 4, // amount to be replaced with calculationResponse
               collectionAmount: 0,
-              delayCondonation: delayCondonation,
             },
           ],
         },
