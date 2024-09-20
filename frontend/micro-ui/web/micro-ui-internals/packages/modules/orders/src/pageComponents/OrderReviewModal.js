@@ -72,6 +72,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
 
   const { data: { file: orderPreviewPdf, fileName: orderPreviewFileName } = {}, isFetching: isLoading } = useQuery({
     queryKey: ["orderPreviewPdf", tenantId, order?.id, order?.cnrNumber, orderPreviewKey],
+    retry: 3,
     queryFn: async () => {
       return Axios({
         method: "POST",
