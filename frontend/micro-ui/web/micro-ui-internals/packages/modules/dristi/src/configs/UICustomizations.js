@@ -406,7 +406,7 @@ export const UICustomizations = {
       // We need to change tenantId "processSearchCriteria" here
       const tenantId = window?.Digit.ULBService.getStateId();
       const moduleSearchCriteria = {
-        ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
+        billStatus: requestCriteria?.body?.inbox?.moduleSearchCriteria?.billStatus,
         ...requestCriteria?.state?.searchForm,
         tenantId: tenantId,
       };

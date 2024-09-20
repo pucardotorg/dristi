@@ -141,18 +141,50 @@ function ScheduleHearing({
   isCaseAdmitted = false,
   showPurposeOfHearing = false,
 }) {
-  const getNextNDates = (n) => {
-    const today = new Date();
+  const { data: availableDateResponse } = window?.Digit.Hooks.dristi.useJudgeAvailabilityDates(
+    {
+      SearchCriteria: {
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        fromDate: dateToEpoch(new Date(new Date().setDate(new Date().getDate() + 1))),
+      },
+    },
+    {},
+    "",
+    true
+  );
+  const [nextFiveDates, setNextFiveDates] = useState([]);
+
+  const convertAvailableDatesToDateObjects = (availableDates) => {
+    return availableDates.map((dateInfo) => ({
+      ...dateInfo,
+      date: new Date(dateInfo.date / 1),
+    }));
+  };
+
+  const getNextNDates = (n, availableDates) => {
     const datesArray = [];
 
-    for (let i = 1; i <= n; i++) {
-      const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + i);
-      datesArray.push(formatDateInMonth(nextDate));
+    for (let i = 0; i < n; i++) {
+      if (i < availableDates?.length) {
+        const dateObject = availableDates[i].date;
+        datesArray.push(formatDateInMonth(dateObject));
+      } else {
+        break;
+      }
     }
-
     return datesArray;
   };
+
+  function dateToEpoch(date) {
+    return Math.floor(new Date(date).getTime());
+  }
+  useEffect(() => {
+    if (availableDateResponse?.AvailableDates) {
+      const availableDatesWithDateObjects = convertAvailableDatesToDateObjects(availableDateResponse?.AvailableDates);
+      const nextDates = getNextNDates(5, availableDatesWithDateObjects);
+      setNextFiveDates(nextDates);
+    }
+  }, [availableDateResponse]);
 
   const getSuggestedDates = (dateResponse) => {
     if (dateResponse?.Hearings?.[0]?.suggestedDates) {
@@ -264,7 +296,7 @@ function ScheduleHearing({
     !!referenceId
   );
 
-  const nextFourDates = status === "OPTOUT" ? getSuggestedDates(dateResponse) : getNextNDates(5);
+  const nextFourDates = status === "OPTOUT" ? getSuggestedDates(dateResponse) : nextFiveDates;
 
   const { data: OptOutLimit, isLoading: loading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
@@ -286,7 +318,7 @@ function ScheduleHearing({
   const setPurposeValue = (value, input) => {
     setScheduleHearingParam({ ...scheduleHearingParams, purpose: isCaseAdmitted ? value : value.code });
   };
-  console.log("STATUS", status);
+
   const handleClickDate = (label) => {
     if (status === "OPTOUT") {
       const newSelectedChip = selectedChip.includes(label) ? null : label;
@@ -332,7 +364,6 @@ function ScheduleHearing({
     if (status !== "OPTOUT") {
       const dateArr = data.date.split(" ").map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date));
       const date = new Date(dateArr.join(" "));
-      console.log(dateArr, " DATE ARRAYE");
       const reqBody = {
         order: {
           createdDate: new Date().getTime(),

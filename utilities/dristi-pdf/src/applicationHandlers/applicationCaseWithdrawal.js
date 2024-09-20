@@ -124,7 +124,6 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
       application?.applicationDetails?.additionalComments || "";
     const reasonForWithdrawal =
       application?.applicationDetails?.benefitOfExtension || "";
-
     const onBehalfOfLitigent = courtCase?.litigants?.find(
       (item) => item.additionalDetails.uuid === onBehalfOfuuid
     );

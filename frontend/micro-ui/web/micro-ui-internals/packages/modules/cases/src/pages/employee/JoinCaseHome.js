@@ -201,7 +201,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
   const [barDetails, setBarDetails] = useState([]);
   const [selectedParty, setSelectedParty] = useState({});
   const [representingYourself, setRepresentingYourself] = useState("");
-  const [roleOfNewAdvocate, setRoleOfNewAdvocate] = useState("");
+  const [roleOfNewAdvocate, setRoleOfNewAdvocate] = useState({ label: "", value: "" });
   const [parties, setParties] = useState([]);
   const [advocateDetail, setAdvocateDetail] = useState({});
   const [advocateDetailForm, setAdvocateDetailForm] = useState({});
@@ -490,9 +490,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
         const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
         const { isFound } = searchLitigantInRepresentives();
         if (
-          (isFound && roleOfNewAdvocate) ||
+          (isFound && roleOfNewAdvocate?.value) ||
           (!isFound && selectedParty?.partyType?.includes(partyType)) ||
-          (!advIsFound && ((isFound && roleOfNewAdvocate) || !isFound))
+          (!advIsFound && ((isFound && roleOfNewAdvocate?.value) || !isFound))
         ) {
           setIsDisabled(false);
         } else {
@@ -825,7 +825,11 @@ const JoinCaseHome = ({ refreshInbox }) => {
                       setRoleOfNewAdvocate(value);
                       setRepresentingYourself("");
                     }}
-                    options={[t(JoinHomeLocalisation.PRIMARY_ADVOCATE), t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)]}
+                    optionsKey={"label"}
+                    options={[
+                      { label: t(JoinHomeLocalisation.PRIMARY_ADVOCATE), value: "PRIMARY_ADVOCATE" },
+                      { label: t(JoinHomeLocalisation.SUPPORTING_ADVOCATE), value: "SUPPORTING_ADVOCATE" },
+                    ]}
                   />
                 </LabelFieldPair>
               </React.Fragment>
@@ -915,7 +919,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
     {
       modalMain: (
         <div className="general-details-vek">
-          {roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE) ? (
+          {roleOfNewAdvocate?.value === "SUPPORTING_ADVOCATE" ? (
             <React.Fragment>
               <InfoCard
                 variant={"default"}
@@ -1310,12 +1314,12 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 <Button
                   className={"selector-button-primary"}
                   label={
-                    roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)
+                    roleOfNewAdvocate?.value === "PRIMARY_ADVOCATE"
                       ? t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
                       : t(JoinHomeLocalisation.CONFIRM_ATTENDANCE)
                   }
                   onButtonClick={() => {
-                    if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
+                    if (roleOfNewAdvocate?.value === "PRIMARY_ADVOCATE") {
                       history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
                     }
                   }}
@@ -1520,7 +1524,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       } else if (userType && userType === "Advocate" && selectedParty?.label) {
         setParties([...parties, selectedParty]);
         setParty(selectedParty);
-        if (roleOfNewAdvocate !== t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)) {
+        if (roleOfNewAdvocate?.value !== "SUPPORTING_ADVOCATE") {
           const { isFound, representative } = searchLitigantInRepresentives();
           if (isFound && representative?.advocateId === advocateId) {
             setStep(8);
@@ -1572,7 +1576,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
         }
       }
     } else if (step === 2) {
-      if (roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)) {
+      if (roleOfNewAdvocate?.value === "SUPPORTING_ADVOCATE") {
         closeModal();
         return;
       }
@@ -1597,7 +1601,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
       setStep(step + 1);
       setIsDisabled(false);
     } else if (step === 5) {
-      if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) {
+      if (roleOfNewAdvocate?.value === "PRIMARY_ADVOCATE") {
         setStep(step + 1);
       } else {
         setStep(step + 2);
@@ -2292,7 +2296,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             } else if (step === 7) {
               if (userType === "Litigant") setStep(step - 5);
               else {
-                if (roleOfNewAdvocate === t(JoinHomeLocalisation.PRIMARY_ADVOCATE)) setStep(step - 1);
+                if (roleOfNewAdvocate?.value === "PRIMARY_ADVOCATE") setStep(step - 1);
                 else setStep(step - 4);
               }
               setValidationCode("");
@@ -2306,7 +2310,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
             setIsDisabled(false);
           }}
           actionSaveLabel={
-            step === 2 && roleOfNewAdvocate === t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)
+            step === 2 && roleOfNewAdvocate?.value === "SUPPORTING_ADVOCATE"
               ? t("GOT_IT_TEXT")
               : // : step === 3
               // ? "E-Sign"

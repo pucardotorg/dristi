@@ -176,7 +176,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal } = usePaymentProcess({
     tenantId,
-    consumerCode: caseDetails?.filingNumber,
+    consumerCode: caseDetails?.filingNumber + `_${suffix}`,
     service: "case-default",
     path,
     caseDetails,

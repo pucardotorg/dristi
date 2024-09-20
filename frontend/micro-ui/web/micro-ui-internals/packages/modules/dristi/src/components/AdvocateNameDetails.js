@@ -4,23 +4,23 @@ import { idProofVerificationConfig } from "../configs/component";
 import { userTypeOptions } from "../pages/citizen/registration/config";
 
 function splitNamesPartiallyFromFullName(fullName) {
-  const nameParts = fullName.trim().split(/\s+/);
+  const nameParts = fullName?.trim()?.split(/\s+/);
 
   let firstName = "";
   let middleName = "";
   let lastName = "";
 
-  const numParts = nameParts.length;
+  const numParts = nameParts?.length;
 
   if (numParts === 1) {
-    firstName = nameParts[0];
+    firstName = nameParts?.[0];
   } else if (numParts === 2) {
-    firstName = nameParts[0];
-    lastName = nameParts[1];
+    firstName = nameParts?.[0];
+    lastName = nameParts?.[1];
   } else if (numParts >= 3) {
-    firstName = nameParts[0];
-    lastName = nameParts[numParts - 1];
-    middleName = nameParts.slice(1, numParts - 1).join(" ");
+    firstName = nameParts?.[0];
+    lastName = nameParts?.[numParts - 1];
+    middleName = nameParts?.slice(1, numParts - 1)?.join(" ");
   }
 
   return {
@@ -66,7 +66,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
   );
 
   const userTypeDetail = useMemo(() => {
-    return userTypeOptions.find((item) => item.code === userType) || {};
+    return userTypeOptions.find((item) => item?.code === userType) || {};
   }, [userType]);
 
   const searchResult = useMemo(() => {
@@ -90,7 +90,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   useEffect(() => {
     if (formData.advocateBarRegNumberWithName) {
-      const fullName = formData.advocateBarRegNumberWithName[0]?.advocateName;
+      const fullName = formData?.advocateBarRegNumberWithName?.[0]?.advocateName;
       let advName = "";
       if (!fullName) {
         advName = splitNamesPartiallyFromFullName("");
@@ -116,9 +116,9 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
         },
       ]);
       onSelect("AdvocateNameDetails", {
-        firstName: splitNamesPartiallyFromFullName(userName).firstName,
-        middleName: splitNamesPartiallyFromFullName(userName).middleName,
-        lastName: splitNamesPartiallyFromFullName(userName).lastName,
+        firstName: splitNamesPartiallyFromFullName(userName)?.firstName,
+        middleName: splitNamesPartiallyFromFullName(userName)?.middleName,
+        lastName: splitNamesPartiallyFromFullName(userName)?.lastName,
       });
     }
   }, [isApproved, onSelect, searchResult]);
@@ -147,18 +147,18 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   return (
     <div className={"advocate-basic-info"} style={config?.componentStyle}>
-      {formData.advocateBarRegNumberWithName && (
+      {formData?.advocateBarRegNumberWithName && (
         <React.Fragment>
           {inputs?.map((input, index) => {
-            let currentValue = advocateName[input.name] || "";
+            let currentValue = advocateName?.[input.name] || "";
             return (
               <React.Fragment key={index}>
-                <CardLabel>{t(input.label)}</CardLabel>
+                <CardLabel>{t(input?.label)}</CardLabel>
                 <LabelFieldPair>
-                  <div className={`field ${input.inputFieldClassName}`}>
+                  <div className={`field ${input?.inputFieldClassName}`}>
                     {
                       <React.Fragment>
-                        <TextInput className="field desktop-w-full" name={input.name} disable={input.isDisabled} value={currentValue} />
+                        <TextInput className="field desktop-w-full" name={input?.name} disable={input?.isDisabled} value={currentValue} />
                       </React.Fragment>
                     }
                   </div>
@@ -168,7 +168,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
           })}
         </React.Fragment>
       )}
-      {!formData.advocateBarRegNumberWithName && <div></div>}
+      {!formData?.advocateBarRegNumberWithName && <div></div>}
     </div>
   );
 }

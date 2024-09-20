@@ -135,9 +135,11 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
     };
   }, [caseDetails?.filingNumber]);
 
+  const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, "case-default"), [paymentTypeData]);
+
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal } = usePaymentProcess({
     tenantId,
-    consumerCode: caseDetails?.filingNumber,
+    consumerCode: caseDetails?.filingNumber + `_${suffix}`,
     service: "case-default",
     path,
     caseDetails,
@@ -147,7 +149,6 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
   });
   const onSubmitCase = async () => {
     try {
-      const suffix = getSuffixByBusinessCode(paymentTypeData, "case-default");
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
       if (bill?.Bill?.length) {
         const paymentStatus = await openPaymentPortal(bill);

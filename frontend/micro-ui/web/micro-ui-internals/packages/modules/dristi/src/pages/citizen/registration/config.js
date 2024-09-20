@@ -313,16 +313,14 @@ export const newConfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
+        label: "CORE_LAST_NAME",
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE_ONE_CHAR",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            minLength: 1,
             title: "",
             patternType: "Name",
           },
