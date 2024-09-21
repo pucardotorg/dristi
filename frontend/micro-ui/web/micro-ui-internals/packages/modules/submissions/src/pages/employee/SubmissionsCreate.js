@@ -672,6 +672,13 @@ const SubmissionsCreate = ({ path }) => {
           assignedRole: ["SUBMISSION_CREATOR", "SUBMISSION_RESPONDER"],
         });
       }
+      applicationType === "PRODUCTION_DOCUMENTS" &&
+        (orderNumber || orderRefNumber) &&
+        createPendingTask({
+          refId: `${userInfo?.uuid}_${orderNumber || orderRefNumber}`,
+          isCompleted: true,
+          status: "Completed",
+        });
       history.push(
         orderNumber
           ? `?filingNumber=${filingNumber}&applicationNumber=${newapplicationNumber}&orderNumber=${orderNumber}`
@@ -769,13 +776,6 @@ const SubmissionsCreate = ({ path }) => {
           setMakePaymentLabel(false);
           setShowPaymentModal(false);
           setShowSuccessModal(true);
-          applicationType === "PRODUCTION_DOCUMENTS" &&
-            (orderNumber || orderRefNumber) &&
-            createPendingTask({
-              refId: `${userInfo?.uuid}_${orderNumber || orderRefNumber}`,
-              isCompleted: true,
-              status: "Completed",
-            });
           createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
         } else {
           setMakePaymentLabel(true);

@@ -389,7 +389,12 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   };
 
   const infos = useMemo(() => {
-    const name = `${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.firstName} ${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.lastName}`;
+    const name = [
+      orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.firstName,
+      orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.lastName,
+    ]
+      ?.filter(Boolean)
+      ?.join(" ");
 
     const task = filteredTasks?.[0];
     const taskDetails = task?.taskDetails;

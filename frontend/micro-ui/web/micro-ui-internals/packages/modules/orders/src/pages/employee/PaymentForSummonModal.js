@@ -458,7 +458,12 @@ const PaymentForSummonModal = ({ path }) => {
   };
 
   const infos = useMemo(() => {
-    const name = `${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.firstName} ${orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.lastName}`;
+    const name = [
+      orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.firstName,
+      orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.lastName,
+    ]
+      ?.filter(Boolean)
+      ?.join(" ");
     const addressDetails = orderData?.list?.[0]?.additionalDetails?.formdata?.SummonsOrder?.party?.data?.addressDetails?.[0]?.addressDetails;
     console.log("addressDetails :>> ", addressDetails);
     return [

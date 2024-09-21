@@ -48,6 +48,7 @@ import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
 import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -170,6 +171,7 @@ function EFilingCases({ path }) {
   const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
+  const { downloadPdf } = useDownloadCasePdf();
 
   const { data: casePdf, isPdfLoading, refetch: refetchCasePDfGeneration } = useCasePdfGeneration(
     {
@@ -2209,7 +2211,16 @@ function EFilingCases({ path }) {
       {openConfirmCorrectionModal && (
         <ConfirmCorrectionModal onCorrectionCancel={() => setOpenConfirmCorrectionModal(false)} onSubmit={onErrorCorrectionSubmit} />
       )}
-      {caseResubmitSuccess && <CorrectionsSubmitModal t={t} filingNumber={caseDetails?.filingNumber} handleGoToHome={handleGoToHome} />}
+      {caseResubmitSuccess && (
+        <CorrectionsSubmitModal
+          t={t}
+          filingNumber={caseDetails?.filingNumber}
+          handleGoToHome={handleGoToHome}
+          downloadPdf={downloadPdf}
+          tenantId={tenantId}
+          caseDetails={caseDetails}
+        />
+      )}
       {selected === "witnessDetails" && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
         <ActionBar className={"e-filing-action-bar"}>
           <SubmitBar

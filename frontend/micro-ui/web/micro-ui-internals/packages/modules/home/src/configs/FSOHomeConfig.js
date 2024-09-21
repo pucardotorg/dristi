@@ -163,7 +163,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Status",
+                label: "Stage",
                 isMandatory: false,
                 key: "stage",
                 type: "dropdown",
@@ -304,14 +304,18 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Status",
+                label: "Stage",
                 isMandatory: false,
                 key: "stage",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "substage",
-                  options: [],
+                  mdmsConfig: {
+                    masterName: "SubStage",
+                    moduleName: "case",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                  },
                   styles: {
                     maxWidth: "250px",
                     minWidth: "200px",
