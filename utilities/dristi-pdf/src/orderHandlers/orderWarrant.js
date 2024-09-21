@@ -108,9 +108,8 @@ async function orderWarrant(req, res, qrCode) {
     if (!order) {
       renderError(res, "Order not found", 404);
     }
-    console.debug(order);
 
-    const reasonForWarrant = "";
+    const reasonForWarrant = order.orderDetails.warrantType;
     const personName = order?.orderDetails?.respondentName;
     const additionalComments = order.comments || "";
     const hearingDate = formatDate(

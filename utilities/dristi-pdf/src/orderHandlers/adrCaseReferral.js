@@ -147,12 +147,12 @@ async function adrCaseReferral(req, res, qrCode) {
 
     let caseYear;
     if (typeof courtCase.filingDate === "string") {
-      year = courtCase.filingDate.slice(-4);
+      caseYear = courtCase.filingDate.slice(-4);
     } else if (courtCase.filingDate instanceof Date) {
-      year = courtCase.filingDate.getFullYear();
+      caseYear = courtCase.filingDate.getFullYear();
     } else if (typeof courtCase.filingDate === "number") {
       // Assuming the number is in milliseconds (epoch time)
-      year = new Date(courtCase.filingDate).getFullYear();
+      caseYear = new Date(courtCase.filingDate).getFullYear();
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }

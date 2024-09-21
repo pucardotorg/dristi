@@ -8,6 +8,7 @@ const {
   search_application,
   create_pdf,
   search_advocate,
+  search_message,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { getAdvocates } = require("./getAdvocates");
@@ -62,6 +63,19 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
   };
 
   try {
+    const resMessage = await handleApiCall(
+      () =>
+        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
+      "Failed to query Localized messages"
+    );
+    const messages = resMessage?.data?.messages || [];
+    const messagesMap =
+      messages?.length > 0
+        ? Object.fromEntries(
+            messages.map(({ code, message }) => [code, message])
+          )
+        : {};
+
     // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
@@ -197,8 +211,16 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
       "November",
       "December",
     ];
-    const documentList = application?.applicationDetails
-      ?.applicationDocuments || [{ documentType: "" }];
+    const applicationDocuments =
+      application?.applicationDetails?.applicationDocuments || [];
+    const documentList =
+      applicationDocuments?.length > 0
+        ? applicationDocuments.map((item) => ({
+            ...item,
+            documentType:
+              messagesMap?.[item?.documentType] || item?.documentType,
+          }))
+        : [{ documentType: "" }];
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const day = currentDate.getDate();

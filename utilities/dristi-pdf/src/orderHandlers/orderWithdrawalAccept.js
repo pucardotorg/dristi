@@ -108,18 +108,6 @@ async function orderWithdrawalAccept(req, res, qrCode) {
       return renderError(res, "Application not found", 404);
     }
 
-    // Filter litigants to find the respondent.primary
-    const respondentParty = courtCase.litigants.find(
-      (party) => party.partyType === "respondent.primary"
-    );
-    if (!respondentParty) {
-      return renderError(
-        res,
-        "No party with partyType 'respondent.primary' found",
-        400
-      );
-    }
-
     const behalfOfIndividual = await handleApiCall(
       () =>
         search_individual_uuid(

@@ -192,8 +192,8 @@ const applicationCaseTransfer = async (req, res, qrCode) => {
           caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          caseNo: "87465464",
-          originalCourt: "Suprem court of India", // FIXME:Take current court
+          caseNo: courtCase.caseNumber,
+          originalCourt: "Supreme Court of India", // FIXME:Take current court
           newCourt: selectRequestedCourt,
           judgeName: "John Doe", // FIXME: employee.user.name
           courtDesignation: "High Court", //FIXME: mdmsDesignation.name,

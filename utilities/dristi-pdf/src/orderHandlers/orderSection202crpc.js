@@ -2,47 +2,33 @@ const cheerio = require("cheerio");
 const config = require("../config");
 const {
   search_case,
+  search_order,
   search_mdms,
   search_hrms,
   search_sunbirdrc_credential_service,
-  search_application,
   create_pdf,
-  search_order,
-  search_message,
+  search_individual,
+  search_application,
+  search_individual_uuid,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
-const { getAdvocates } = require("../applicationHandlers/getAdvocates");
 
-function getOrdinalSuffix(day) {
-  if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
-  switch (day % 10) {
-    case 1:
-      return "st"; // 1st, 21st, 31st
-    case 2:
-      return "nd"; // 2nd, 22nd
-    case 3:
-      return "rd"; // 3rd, 23rd
-    default:
-      return "th"; // 4th, 5th, 6th, etc.
-  }
-}
-
-const orderBailAcceptance = async (req, res, qrCode) => {
+async function orderSection202crpc(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
-  const tenantId = req.query.tenantId;
   const entityId = req.query.entityId;
   const code = req.query.code;
+  const tenantId = req.query.tenantId;
   const requestInfo = req.body.RequestInfo;
 
   const missingFields = [];
   if (!cnrNumber) missingFields.push("cnrNumber");
   if (!orderId) missingFields.push("orderId");
   if (!tenantId) missingFields.push("tenantId");
-  if (requestInfo === undefined) missingFields.push("requestInfo");
   if (qrCode === "true" && (!entityId || !code))
     missingFields.push("entityId and code");
+  if (requestInfo === undefined) missingFields.push("requestInfo");
 
   if (missingFields.length > 0) {
     return renderError(
@@ -61,27 +47,27 @@ const orderBailAcceptance = async (req, res, qrCode) => {
       throw ex; // Ensure the function stops on error
     }
   };
-  // Search for case details
-  try {
-    const resMessage = await handleApiCall(
-      () =>
-        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
-      "Failed to query Localized messages"
-    );
-    const messages = resMessage?.data?.messages;
-    const messagesMap = messages.reduce((acc, curr) => {
-      acc[curr.code] = curr.message;
-      return acc;
-    }, {});
 
+  try {
+    // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
     );
     const courtCase = resCase?.data?.criteria[0]?.responseList[0];
     if (!courtCase) {
-      return renderError(res, "Court case not found", 404);
+      renderError(res, "Court case not found", 404);
     }
+
+    // Search for HRMS details
+    // const resHrms = await handleApiCall(
+    //     () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
+    //     "Failed to query HRMS service"
+    // );
+    // const employee = resHrms?.data?.Employees[0];
+    // if (!employee) {
+    //     renderError(res, "Employee not found", 404);
+    // }
 
     // Search for MDMS court room details
     const resMdms = await handleApiCall(
@@ -96,8 +82,49 @@ const orderBailAcceptance = async (req, res, qrCode) => {
     );
     const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
     if (!mdmsCourtRoom) {
-      return renderError(res, "Court room MDMS master not found", 404);
+      renderError(res, "Court room MDMS master not found", 404);
     }
+
+    // Search for MDMS court establishment details
+
+    // const resMdms1 = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       mdmsCourtRoom.courtEstablishmentId,
+    //       "case.CourtEstablishment",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court establishment"
+    // );
+    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
+    // if (!mdmsCourtEstablishment) {
+    //   renderError(res, "Court establishment MDMS master not found", 404);
+    // }
+
+    // Search for order details
+
+    const respondentParty = courtCase.litigants.find(
+      (party) => party.partyType === "respondent.primary"
+    );
+    if (!respondentParty) {
+      return renderError(
+        res,
+        "No party with partyType 'respondent.primary' found",
+        400
+      );
+    }
+
+    const resIndividual = await handleApiCall(
+      () =>
+        search_individual(tenantId, respondentParty.individualId, requestInfo),
+      "Failed to query individual service using individualId"
+    );
+    const respondentIndividual = resIndividual?.data?.Individual[0];
+    if (!respondentIndividual) {
+      renderError(res, "Respondent individual not found", 404);
+    }
+
     const resOrder = await handleApiCall(
       () => search_order(tenantId, orderId, requestInfo),
       "Failed to query order service"
@@ -121,28 +148,19 @@ const orderBailAcceptance = async (req, res, qrCode) => {
       return renderError(res, "Application not found", 404);
     }
 
-    const applicationDocuments =
-      application?.applicationDetails?.applicationDocuments;
-    const documentList =
-      applicationDocuments?.length > 0
-        ? applicationDocuments.map((item) => ({
-            ...item,
-            documentType:
-              messagesMap?.[item?.documentType] || item?.documentType,
-          }))
-        : [{ documentType: "" }];
-    const allAdvocates = getAdvocates(courtCase);
-    const onBehalfOfuuid = application?.onBehalfOf?.[0];
-    const advocate = allAdvocates?.[onBehalfOfuuid]?.[0]?.additionalDetails
-      ?.advocateName
-      ? allAdvocates[onBehalfOfuuid]?.[0]
-      : {};
-    const advocateName = advocate?.additionalDetails?.advocateName || "";
-    const partyName = application?.additionalDetails?.onBehalOfName || "";
-    const applicationDate = formatDate(
-      new Date(application?.createdDate),
-      "DD-MM-YYYY"
+    const behalfOfIndividual = await handleApiCall(
+      () =>
+        search_individual_uuid(
+          tenantId,
+          application.onBehalfOf[0],
+          requestInfo
+        ),
+      "Failed to query individual service using id"
     );
+    const onbehalfOfIndividual = behalfOfIndividual?.data?.Individual[0];
+    if (!onbehalfOfIndividual) {
+      renderError(res, "Individual not found", 404);
+    }
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -197,51 +215,59 @@ const orderBailAcceptance = async (req, res, qrCode) => {
     ];
 
     const currentDate = new Date();
+    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const day = currentDate.getDate();
     const month = months[currentDate.getMonth()];
     const year = currentDate.getFullYear();
-
-    const ordinalSuffix = getOrdinalSuffix(day);
-    const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    let bailType = "Cash";
-    if (application?.applicationType === "SURETY") {
-      bailType = "In Person Surety";
-    }
-    if (application?.applicationType === "BAIL_BOND") {
-      bailType = "Bail Bond";
-    }
-
+    const additionalComments = order?.comments || "";
+    // Prepare data for PDF generation
+    const partyName = [
+      onbehalfOfIndividual.name.givenName,
+      onbehalfOfIndividual.name.otherNames,
+      onbehalfOfIndividual.name.familyName,
+    ]
+      .filter(Boolean)
+      .join(" ");
+    const otherPartyName = [
+      respondentIndividual.name.givenName,
+      respondentIndividual.name.otherNames,
+      respondentIndividual.name.familyName,
+    ]
+      .filter(Boolean)
+      .join(" ");
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           courtPlace: "Kollam",
           state: "Kerala",
-          caseNumber: courtCase?.caseNumber,
           caseYear: caseYear,
-          applicantName: advocateName || partyName,
-          partyName,
-          dateOfApplication: applicationDate,
-          briefSummaryOfBail: order?.comments || "",
+          caseName: courtCase.caseTitle,
+          caseNumber: courtCase.caseNumber,
           date: formattedToday,
-          documentNameList: ["Addhar Card", "Pan Card", "Passport"],
-          documentList,
-          bailType: bailType,
-          conditionOfBail:
-            "Don't go outside of the city without informing the court",
+          day: day,
+          month: month,
+          year: year,
+          complainantName: partyName,
+          respondentName: otherPartyName,
+          section: "202",
+          numberOfDays: "",
+          additionalComments: additionalComments,
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",
           courtSeal: "Court Seal",
+          qrCodeUrl: base64Url,
         },
       ],
     };
+    // Generate the PDF
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_bail_acceptance_qr
-        : config.pdf.order_bail_acceptance;
+        ? config.pdf.order_section202_crpc_qr
+        : config.pdf.order_section202_crpc;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Order for acceptance of Bail"
+      "Failed to generate PDF of order Section202 Crpc"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;
@@ -260,11 +286,11 @@ const orderBailAcceptance = async (req, res, qrCode) => {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to generate PDF for Acceptance of Bail",
+      "Failed to query details of order Section202 Crpc",
       500,
       ex
     );
   }
-};
+}
 
-module.exports = orderBailAcceptance;
+module.exports = orderSection202crpc;

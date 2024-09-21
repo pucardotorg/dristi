@@ -13,7 +13,8 @@ const OrderPreviewOrderTypeMap = {
   INITIATING_RESCHEDULING_OF_HEARING_DATE: "accept-reschedule-request",
   OTHERS: "order-generic",
   REFERRAL_CASE_TO_ADR: "order-referral-case-adr",
-  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: "order-generic",
+  EXTENSION_DEADLINE_ACCEPT: "order-for-extension-deadline",
+  EXTENSION_DEADLINE_REJECT: "order-reject-application-submission-deadline",
   SCHEDULING_NEXT_HEARING: "schedule-hearing-date",
   RESCHEDULE_OF_HEARING_DATE: "new-hearing-date-after-rescheduling",
   REJECTION_RESCHEDULE_REQUEST: "order-for-rejection-rescheduling-request",
@@ -30,9 +31,28 @@ const OrderPreviewOrderTypeMap = {
   APPROVE_VOLUNTARY_SUBMISSIONS: "order-accept-voluntary",
   REJECT_VOLUNTARY_SUBMISSIONS: "order-reject-voluntary",
   JUDGEMENT: "order-generic",
-  SECTION_202_CRPC: "order-generic",
+  SECTION_202_CRPC: "order-202-crpc",
   CHECKOUT_ACCEPTANCE: "order-accept-checkout-request",
   CHECKOUT_REJECT: "order-reject-checkout-request",
+};
+
+const orderPDFMap = {
+  BAIL: {
+    APPROVED: "BAIL_APPROVED",
+    REJECTED: "BAIL_REJECT",
+  },
+  SETTLEMENT: {
+    APPROVED: "SETTLEMENT_ACCEPT",
+    REJECTED: "SETTLEMENT_REJECT",
+  },
+  WITHDRAWAL: {
+    APPROVED: "WITHDRAWAL_ACCEPT",
+    REJECTED: "WITHDRAWAL_REJECT",
+  },
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: {
+    APPROVED: "EXTENSION_DEADLINE_ACCEPT",
+    REJECTED: "EXTENSION_DEADLINE_REJECT",
+  },
 };
 
 const onDocumentUpload = async (fileData, filename) => {
@@ -52,23 +72,10 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
 
-  let orderPreviewKey = order?.orderType;
-  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "BAIL") {
-    orderPreviewKey = "BAIL_APPROVED";
-  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "BAIL") {
-    orderPreviewKey = "BAIL_REJECT";
-  }
-  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "SETTLEMENT") {
-    orderPreviewKey = "SETTLEMENT_ACCEPT";
-  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "SETTLEMENT") {
-    orderPreviewKey = "SETTLEMENT_REJECT";
-  }
-  if (order?.additionalDetails?.applicationStatus === t("APPROVED") && order?.orderType === "WITHDRAWAL") {
-    orderPreviewKey = "WITHDRAWAL_ACCEPT";
-  } else if (order?.additionalDetails?.applicationStatus === t("REJECTED") && order?.orderType === "WITHDRAWAL") {
-    orderPreviewKey = "WITHDRAWAL_REJECT";
-  }
-  orderPreviewKey = OrderPreviewOrderTypeMap[orderPreviewKey] || OrderPreviewOrderTypeMap[order?.orderType];
+  const applicationStatus = order?.additionalDetails?.applicationStatus === t("APPROVED") ? "APPROVED" : "REJECTED";
+  const orderType = order?.orderType;
+  let orderPreviewKey = orderPDFMap?.[orderType]?.[applicationStatus] || orderType;
+  orderPreviewKey = OrderPreviewOrderTypeMap[orderPreviewKey];
 
   const { data: { file: orderPreviewPdf, fileName: orderPreviewFileName } = {}, isFetching: isLoading } = useQuery({
     queryKey: ["orderPreviewPdf", tenantId, order?.id, order?.cnrNumber, orderPreviewKey],

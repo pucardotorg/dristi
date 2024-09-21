@@ -180,6 +180,7 @@ async function orderRejectVoluntary(req, res, qrCode) {
           date: formattedToday,
           Date: formattedToday,
           partyName: partyName,
+          additionalComments: additionalComments,
           applicationNumber: application?.applicationNumber,
           additionalComments: additionalComments,
           content: order?.comments || "",

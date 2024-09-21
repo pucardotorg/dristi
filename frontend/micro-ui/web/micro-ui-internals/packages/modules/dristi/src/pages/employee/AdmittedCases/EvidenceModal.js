@@ -484,7 +484,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "SURETY":
         return "BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
+        return "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "CHECKOUT_REJECT" : "CHECKOUT_ACCEPTANCE";
       default:
@@ -497,17 +497,17 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       case "RE_SCHEDULE":
         return type === "reject" ? "REJECTION_ORDER_RESCHEDULE_REQUEST" : "ORDER_FOR_INITIATING_RESCHEDULING_OF_HEARING_DATE";
       case "WITHDRAWAL":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_WITHDRAWAL";
+        return "ORDER_FOR_WITHDRAWAL";
       case "TRANSFER":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_CASE_TRANSFER";
+        return "ORDER_FOR_CASE_TRANSFER";
       case "SETTLEMENT":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_SETTLEMENT";
+        return "ORDER_FOR_SETTLEMENT";
       case "BAIL_BOND":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+        return "ORDER_FOR_BAIL";
       case "SURETY":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "ORDER_FOR_BAIL";
+        return "ORDER_FOR_BAIL";
       case "EXTENSION_SUBMISSION_DEADLINE":
-        return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVAL_ORDER_EXTENSION_SUBMISSION_DEADLINE";
+        return "ORDER_EXTENSION_SUBMISSION_DEADLINE";
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "REJECT_CHECKOUT_REQUEST" : "ACCEPT_CHECKOUT_REQUEST";
       default:

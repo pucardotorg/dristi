@@ -709,6 +709,14 @@ export const configsOrderSubmissionExtension = [
         populators: { name: "refApplicationId" },
       },
       {
+        label: "APPLICATION_STATUS",
+        isMandatory: true,
+        key: "applicationStatus",
+        type: "text",
+        disable: true,
+        populators: { name: "applicationStatus" },
+      },
+      {
         label: "COURT_NAME",
         isMandatory: true,
         key: "courtName",
@@ -806,6 +814,8 @@ export const configsOrderSubmissionExtension = [
         key: "proposedSubmissionDate",
         disable: true,
         type: "date",
+        schemaKeyPath: "orderDetails.proposedSubmissionDate",
+        transformer: "date",
         populators: {
           name: "proposedSubmissionDate",
         },
@@ -815,6 +825,8 @@ export const configsOrderSubmissionExtension = [
         isMandatory: true,
         key: "newSubmissionDate",
         type: "date",
+        schemaKeyPath: "orderDetails.newSubmissionDate",
+        transformer: "date",
         labelChildren: "OutlinedInfoIcon",
         tooltipValue: "ONLY_CURRENT_AND_FUTURE_DATES_ARE_ALLOWED",
         populators: {
@@ -2328,6 +2340,7 @@ export const configsCaseTransfer = [
         schemaKeyPath: "orderDetails.grounds",
         transformer: "customTextArea",
         isMandatory: true,
+        disable: true,
         populators: {
           inputs: [
             {
@@ -2361,6 +2374,7 @@ export const configsCaseTransfer = [
         label: "CASE_TRANSFERRED_TO",
         isMandatory: true,
         key: "caseTransferredTo",
+        disable: true,
         type: "text",
         populators: {
           name: "caseTransferredTo",

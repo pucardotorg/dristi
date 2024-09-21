@@ -196,6 +196,7 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
           responseSubmissionDeadline,
           additionalComments: order?.comments || "",
           Date: formattedToday,
+          day: day,
           Month: month,
           Year: year,
           judgeSignature: "Judge Signature",

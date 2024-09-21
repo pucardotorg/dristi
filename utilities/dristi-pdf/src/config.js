@@ -209,11 +209,27 @@ module.exports = {
     order_case_withdrawal_rejected_qr:
       process.env.ORDER_CASE_WITHDRAWAL_REJECT ||
       "order-case-withdrawal-rejected-qr",
+    order_reject_application_submission_deadline_qr:
+      process.env.ORDER_REJECT_APPLICATION_SUBMISSION_DEADLINE_QR ||
+      "order-reject-application-submission-deadline-qr",
+    order_reject_application_submission_deadline:
+      process.env.ORDER_REJECT_APPLICATION_SUBMISSION_DEADLINE ||
+      "order-reject-application-submission-deadline",
+    order_for_extension_deadline_qr:
+      process.env.ORDER_FOR_EXTENSION_DEADLINE_QR ||
+      "order-for-extension-deadline-qr",
+    order_for_extension_deadline:
+      process.env.ORDER_FOR_EXTENSION_DEADLINE ||
+      "order-for-extension-deadline",
     case_settlement_application:
       process.env.CASE_SETTLEMENT_APPLICATION || "application-case-settlement",
     case_settlement_application_qr:
       process.env.CASE_SETTLEMENT_APPLICATION_QR ||
       "application-case-settlement-qr",
+    order_section202_crpc:
+      process.env.ORDER_SECTION202_CRPC || "order-202-crpc",
+    order_section202_crpc_qr:
+      process.env.ORDER_SECTION202_CRPC_QR || "order-202-crpc-qr",
   },
 
   app: {
@@ -252,6 +268,7 @@ module.exports = {
     mdms_search: "/egov-mdms-service/v2/_search",
     sunbirdrc_credential_service_search:
       "/sunbirdrc-credential-service/qrcode/_get",
+    message_search: "/localization/messages/v1/_search",
   },
 
   constraints: {

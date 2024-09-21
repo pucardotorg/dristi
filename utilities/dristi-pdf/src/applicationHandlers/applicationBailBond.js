@@ -8,6 +8,7 @@ const {
   search_application,
   create_pdf,
   search_advocate,
+  search_message,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { getAdvocates } = require("./getAdvocates");
@@ -62,6 +63,19 @@ const applicationBailBond = async (req, res, qrCode) => {
   };
   // Search for case details
   try {
+    const resMessage = await handleApiCall(
+      () =>
+        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
+      "Failed to query Localized messages"
+    );
+    const messages = resMessage?.data?.messages || [];
+    const messagesMap =
+      messages?.length > 0
+        ? Object.fromEntries(
+            messages.map(({ code, message }) => [code, message])
+          )
+        : {};
+
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
@@ -125,8 +139,17 @@ const applicationBailBond = async (req, res, qrCode) => {
       : {};
     const advocateName = advocate?.additionalDetails?.advocateName || "";
     const partyName = application?.additionalDetails?.onBehalOfName || "";
-    const documentList = application?.applicationDetails
-      ?.applicationDocuments || [{ documentType: "" }];
+
+    const applicationDocuments =
+      application?.applicationDetails?.applicationDocuments || [];
+    const documentList =
+      applicationDocuments?.length > 0
+        ? applicationDocuments.map((item) => ({
+            ...item,
+            documentType:
+              messagesMap?.[item?.documentType] || item?.documentType,
+          }))
+        : [{ documentType: "" }];
     const additionalComments =
       application?.applicationDetails?.additionalComments || "";
     const reasonForApplication =
