@@ -8,6 +8,7 @@ const {
   search_application,
   create_pdf,
   search_advocate,
+  search_message,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { getAdvocates } = require("./getAdvocates");
@@ -62,6 +63,19 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
   };
   // Search for case details
   try {
+    const resMessage = await handleApiCall(
+      () =>
+        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
+      "Failed to query Localized messages"
+    );
+    const messages = resMessage?.data?.messages || [];
+    const messagesMap =
+      messages?.length > 0
+        ? Object.fromEntries(
+            messages.map(({ code, message }) => [code, message])
+          )
+        : {};
+
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
@@ -122,9 +136,9 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
     const partyName = application?.additionalDetails?.onBehalOfName || "";
     const additionalComments =
       application?.applicationDetails?.additionalComments || "";
-    const reasonForWithdrawal =
+    const localreasonForWithdrawal =
       application?.applicationDetails?.reasonForWithdrawal || "";
-
+    const reasonForWithdrawal = messagesMap?.[localreasonForWithdrawal] || localreasonForWithdrawal;
     const onBehalfOfLitigent = courtCase?.litigants?.find(
       (item) => item.additionalDetails.uuid === onBehalfOfuuid
     );

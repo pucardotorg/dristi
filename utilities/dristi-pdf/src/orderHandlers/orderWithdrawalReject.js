@@ -9,6 +9,7 @@ const {
   create_pdf,
   search_individual_uuid,
   search_application,
+  search_message,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
@@ -48,6 +49,19 @@ async function orderWithdrawalReject(req, res, qrCode) {
   };
 
   try {
+    const resMessage = await handleApiCall(
+      () =>
+        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
+      "Failed to query Localized messages"
+    );
+    const messages = resMessage?.data?.messages || [];
+    const messagesMap =
+      messages?.length > 0
+        ? Object.fromEntries(
+            messages.map(({ code, message }) => [code, message])
+          )
+        : {};
+
     // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
@@ -148,6 +162,30 @@ async function orderWithdrawalReject(req, res, qrCode) {
       base64Url = imgTag.attr("src");
     }
 
+    let caseYear;
+    if (typeof courtCase.filingDate === "string") {
+      caseYear = courtCase.filingDate.slice(-4);
+    } else if (courtCase.filingDate instanceof Date) {
+      caseYear = courtCase.filingDate.getFullYear();
+    } else if (typeof courtCase.filingDate === "number") {
+      // Assuming the number is in milliseconds (epoch time)
+      caseYear = new Date(courtCase.filingDate).getFullYear();
+    } else {
+      return renderError(res, "Invalid filingDate format", 500);
+    }
+
+    const onBehalfOfuuid = application?.onBehalfOf?.[0];
+    const onBehalfOfLitigent = courtCase?.litigants?.find(
+      (item) => item.additionalDetails.uuid === onBehalfOfuuid
+    );
+    let partyType = "COURT";
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant")) {
+      partyType = "COMPLAINANT";
+    }
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("respondent")) {
+      partyType = "ACCUSED";
+    }
+
     const partyName = [
       onbehalfOfIndividual.name.givenName,
       onbehalfOfIndividual.name.otherNames,
@@ -159,15 +197,21 @@ async function orderWithdrawalReject(req, res, qrCode) {
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
 
     const additionalComments = order?.comments || "";
-    const summaryReasonForWithdrawal =
+    const localreasonForWithdrawal =
       application?.applicationDetails?.reasonForWithdrawal || "";
+    const summaryReasonForWithdrawal =
+      messagesMap?.[localreasonForWithdrawal] || localreasonForWithdrawal;
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
+          place: "Kollam",
+          state: "Kerala",
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
+          caseYear: caseYear,
           partyName: partyName,
+          partyType: partyType,
           date: formattedToday,
           dateOfMotion: formattedToday,
           additionalComments: additionalComments,
