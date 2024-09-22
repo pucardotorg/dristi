@@ -186,6 +186,8 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
+          place: "Kollam",
+          state: "Kerala",
           caseNumber: courtCase.caseNumber,
           year: year,
           caseName: courtCase.caseTitle,

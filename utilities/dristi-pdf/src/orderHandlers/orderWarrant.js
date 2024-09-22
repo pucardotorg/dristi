@@ -148,6 +148,8 @@ async function orderWarrant(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
+          place: "Kollam",
+          state: "Kerala",
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,

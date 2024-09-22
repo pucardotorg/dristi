@@ -193,6 +193,8 @@ async function caseSettlementRejection(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
+          place: "Kollam",
+          state: "Kerala",
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           partyName: partyName,

@@ -170,6 +170,9 @@ async function orderAcceptVoluntary(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
+          place: "Kollam",
+          courtPlace: "Kollam",
+          state: "Kerala",
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
