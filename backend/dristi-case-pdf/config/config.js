@@ -1,3 +1,4 @@
 module.exports = {
-    pdfServiceUrl: process.env.PDF_SERVICE_URL || 'http://localhost:8087/pdf-service/v1/_createnosave?key=case&tenantId=kl'
+    pdfServiceUrl: process.env.PDF_SERVICE_URL || 'http://localhost:8087',
+    fileStoreHost: process.env.FILE_STORE_HOST || 'https://dristi-kerala-dev.pucar.org'
 };

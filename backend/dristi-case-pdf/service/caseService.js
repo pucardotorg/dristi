@@ -19,8 +19,16 @@ exports.getCaseSectionNumber = async (cases) => {
 };
 
 const getDocumentFileStore = (documents, fileName) => {
-    const document = documents && documents.find(doc => doc.fileName === fileName);
-    return document ? document.fileStore : null;
+    if (Array.isArray(documents)) {
+        // If documents is an array, find the document by fileName
+        const document = documents.find(doc => doc.fileName === fileName);
+        return document ? document.fileStore : null;
+    } else if (documents && documents.fileName) {
+        // If documents is a single object and has a fileName property
+        return documents.fileName === fileName ? documents.fileStore : null;
+    }
+    // Return null if no match is found or if documents is null/undefined
+    return null;
 };
 
 exports.getComplainantsDetails = async (cases) => {
@@ -122,14 +130,12 @@ exports.getWitnessDetails = async (cases) => {
         const middleName = data.middleName || '';
         const lastName = data.lastName || '';
 
-        const additionalDetails = data && data.witnessAdditionalDetails && typeof data.witnessAdditionalDetails === 'object'
-          ? data.witnessAdditionalDetails.text || ''
-          : '';
+        const additionalDetails = data && data.witnessAdditionalDetails && typeof data.witnessAdditionalDetails === 'object' && data.witnessAdditionalDetails.text ? data.witnessAdditionalDetails.text : '';
 
         return {
             name: `${firstName} ${middleName} ${lastName}`,
-            phoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber[0] || null,
-            email: data.emails && data.emails.textfieldValue || null,
+            phoneNumber: data && data.phonenumbers && Array.isArray(data.phonenumbers.mobileNumber) && data.phonenumbers.mobileNumber.length > 0 ? data.phonenumbers.mobileNumber[0] : null,
+            email: data && data.emails && data.emails.textfieldValue ? data.emails.textfieldValue : null,
             address: addresses,
             additionalDetails
         };

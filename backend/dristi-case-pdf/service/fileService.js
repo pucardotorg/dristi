@@ -3,10 +3,11 @@ const { PDFDocument } = require('pdf-lib');
 const imageToPdf = require('image-to-pdf');
 const fs = require('fs');
 const path = require('path');
+const config = require('../config/config');
 
 async function fetchDocument(fileStoreId) {
-    const url = `https://dristi-kerala-dev.pucar.org/filestore/v1/files/id?tenantId=kl&fileStoreId=${fileStoreId}`;
-    
+    const url = `${config.fileStoreHost}/filestore/v1/files/id?tenantId=kl&fileStoreId=${fileStoreId}`;
+
     try {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
 
