@@ -43,6 +43,9 @@ J->ARU: Review application and comments if any
 alt approve application
 J->ARU: Click "Accept"
 ARU->AS++: updateAppication (approved)
+AS->CS++: getCMPNumber (caseId)
+return cmpNumber
+AS->AS: enrich applicationNumber = cmpNumber
 AS->W++: action "APPROVE"
 W->K: post state transition event
 return "COMPLETED"
@@ -61,6 +64,9 @@ end
 else reject application
 J->ARU: Click "Reject"
 ARU->AS++: updateAppication (rejected)
+AS->CS++: getCMPNumber (caseId)
+return cmpNumber
+AS->AS: enrich applicationNumber = cmpNumber
 AS->W++: action "REJECT"
 W->K: post state transition event
 return "REJECTED"

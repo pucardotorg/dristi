@@ -1,0 +1,76 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Static Causelist Generation"
+
+control CronJob as CJ #aqua
+
+box DRISIT Services
+participant CauselistSvc as CLS #gold
+participant CaseSvc as CS #gold
+participant ApplicationSvc as AS #gold
+participant HearingSvc as HS #gold
+end box
+
+
+box DIGIT Services #lightgray
+participant HRMSSvc as HRS #lightgreen
+participant MDMSSvc as MS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant FilestoreSvc as FS #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+end box
+
+== Static Causelist Generation ==
+note right of CJ: Cron Job runs at 5 pm daily
+CJ->CLS++: generate causelist for today
+CLS->HS++: getHearings(date, judge)
+return hearingList
+CLS->CLS: enrich causeList = hearingList
+loop for each causeListItem in causeList 
+CLS->CS++: search(causeListItem.caseId)
+return case
+CLS->CLS: enrich causeList(case.caseType, case.registrationDate)
+CLS->AS++: search(hearing.filingNumber, 'pending_approval')
+return applicationList
+CLS->CLS: enrich hearing(applicationList)
+end loop
+
+note right of CLS: we have a hearing list for the day with case type, registration date and all open applications
+
+
+CLS->MS++: get hearingType priority list 
+return hearingTypePriority hashmap
+
+note right of CLS
+    // collections.sort
+    // Comparator to sort by hearing type priority, then case type, then date
+    Collections.sort(hearings, Comparator
+        .comparing((Hearing hearing) -> hearingTypePriority.getOrDefault(hearing.getHearingType(), Integer.MAX_VALUE)) // Sort by priority
+        .thenComparing(Hearing::getCaseType) // Then by case type - ST and then CMP
+        .thenComparing(Hearing::getRegistrationDate));   // Finally by registration date
+end note
+
+CLS->HRS++: getDetails(judgeId)
+note left of HRS #aqua: Not sure if the above service exists
+return name, designation
+CLS->CLS: enrich causeList(name, designation)
+
+CLS->PS++: generate causeList PDF
+return causeList PDF
+CLS->FS++: save causeList PDF
+return filestoreID
+CLS->CLS: store filestoreID
+
+CLS->K: Push payload to causelist-generated topic
+P-> K: Read payload
+P-> DB: update record in DB
+
+CLS->HS++: bulk update startTime and endTime in Hearing based on causeList date time
+return success
+return success
+
+@enduml
