@@ -157,7 +157,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
                     marginTop: "16px",
                   }}
                 >
-                  <Button variation={"outlined"} label={"Raise Application"} onClick={handleMakeSubmission} />
+                  <Button variation={"outlined"} label={"Raise Application"} onButtonClick={handleMakeSubmission} />
                 </div>
               )}
             </div>
