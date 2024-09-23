@@ -21,6 +21,7 @@ import ViewAllSubmissions from "./ViewAllSubmissions";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import HearingTranscriptModal from "./HearingTranscriptModal";
+import { removeInvalidNameParts } from "../../../Utils";
 
 const defaultSearchValues = {};
 
@@ -88,15 +89,15 @@ const AdmittedCases = () => {
   const finalLitigantsData = litigants.map((litigant) => {
     return {
       ...litigant,
-      name: litigant.additionalDetails?.fullName,
+      name: removeInvalidNameParts(litigant.additionalDetails?.fullName),
     };
   });
   const reps = caseDetails?.representatives?.length > 0 ? caseDetails?.representatives : [];
   const finalRepresentativesData = reps.map((rep) => {
     return {
       ...rep,
-      name: rep.additionalDetails?.advocateName,
-      partyType: `Advocate (for ${rep.representing.map((client) => client?.additionalDetails?.fullName).join(", ")})`,
+      name: removeInvalidNameParts(rep.additionalDetails?.advocateName),
+      partyType: `Advocate (for ${rep.representing.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName)).join(", ")})`,
     };
   });
 
@@ -243,7 +244,7 @@ const AdmittedCases = () => {
                         name: "parties",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name };
+                          return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name) };
                         }),
                       },
                     },
@@ -296,7 +297,7 @@ const AdmittedCases = () => {
                         name: "parties",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name };
+                          return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name) };
                         }),
                       },
                     },
@@ -362,7 +363,7 @@ const AdmittedCases = () => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name, value: party.individualId };
+                          return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name), value: party.individualId };
                         }),
                       },
                     },
@@ -415,7 +416,11 @@ const AdmittedCases = () => {
                         name: "owner",
                         optionsKey: "name",
                         options: caseRelatedData.parties.map((party) => {
-                          return { code: party.name, name: party.name, value: party.additionalDetails.uuid };
+                          return {
+                            code: removeInvalidNameParts(party.name),
+                            name: removeInvalidNameParts(party.name),
+                            value: party.additionalDetails.uuid,
+                          };
                         }),
                       },
                     },

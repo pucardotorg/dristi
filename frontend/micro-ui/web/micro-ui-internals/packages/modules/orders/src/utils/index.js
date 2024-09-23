@@ -95,3 +95,13 @@ export const getSuffixByBusinessCode = (paymentType = [], businessCode) => {
 export const getTaxPeriodByBusinessService = (taxPeriod = [], businessService) => {
   return taxPeriod?.find((data) => data?.service === businessService) || {};
 };
+export const removeInvalidNameParts = (name) => {
+  return name
+    ?.split(" ")
+    .filter((part) => part && !["undefined", "null"].includes(part.toLowerCase()))
+    .join(" ");
+};
+
+export const constructFullName = (firstName, middleName, lastName) => {
+  return [firstName, middleName, lastName].filter(Boolean).join(" ").trim();
+};

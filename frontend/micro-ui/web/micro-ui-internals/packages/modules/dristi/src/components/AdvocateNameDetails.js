@@ -26,7 +26,7 @@ function splitNamesPartiallyFromFullName(fullName) {
   return {
     firstName: firstName,
     middleName: middleName,
-    lastName: lastName ? lastName : firstName?.[0],
+    lastName: lastName ? lastName : "",
   };
 }
 

@@ -293,7 +293,7 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
 
     return Object.keys(hearingCountsByType)
       .map((hearingType) => {
-        return `${hearingType} (${hearingCountsByType[hearingType]})`;
+        return `${t(hearingType)} (${hearingCountsByType[hearingType]})`;
       })
       .join(", ");
   }, [earliestHearingSlot]);

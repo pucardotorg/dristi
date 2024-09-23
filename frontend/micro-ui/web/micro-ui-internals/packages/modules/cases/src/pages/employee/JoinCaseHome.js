@@ -19,6 +19,7 @@ import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { formatDate } from "../../utils";
+import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 
 const CloseBtn = (props) => {
   return (
@@ -235,6 +236,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const isCitizen = useMemo(() => userInfo?.type === "CITIZEN", [userInfo]);
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
 
@@ -318,6 +320,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   isDisabled: true,
                   inputFieldClassName: "user-details-form-style",
                   validation: {},
+                  isMandatory: false,
                 },
                 {
                   label: "LAST_NAME",
@@ -328,7 +331,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                   validation: {
                     isRequired: true,
                   },
-                  isMandatory: true,
+                  isMandatory: false,
                 },
               ],
               validation: {},
@@ -431,6 +434,20 @@ const JoinCaseHome = ({ refreshInbox }) => {
       return { isFound: true, representative: representative, representing: representing };
     } else return { isFound: false, representative: undefined, representing: undefined };
   }, [caseDetails?.representatives, selectedParty?.individualId]);
+
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const onBehalfOfuuid = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+  ]);
+  const onBehalfOfLitigent = useMemo(() => caseDetails?.litigants?.find((item) => item.additionalDetails.uuid === onBehalfOfuuid), [
+    caseDetails,
+    onBehalfOfuuid,
+  ]);
+  const sourceType = useMemo(
+    () => (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant") ? "COMPLAINANT" : !isCitizen ? "COURT" : "ACCUSED"),
+    [onBehalfOfLitigent, isCitizen]
+  );
 
   const searchAdvocateInRepresentives = useCallback(
     (advocateId) => {
@@ -1348,9 +1365,9 @@ const JoinCaseHome = ({ refreshInbox }) => {
   };
 
   const createShorthand = (fullname) => {
-    const words = fullname.split(" ");
-    const firstChars = words.map((word) => word.charAt(0));
-    const shorthand = firstChars.join("");
+    const words = fullname?.split(" ");
+    const firstChars = words?.map((word) => word?.charAt(0));
+    const shorthand = firstChars?.join("");
     return shorthand;
   };
   const getUserFullName = (individual, formDataNames = {}) => {
@@ -1672,7 +1689,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 await DRISTIService.createEvidence({
                   artifact: {
                     artifactType: "DOCUMENTARY",
-                    sourceType: "COMPLAINANT",
+                    sourceType: sourceType,
                     sourceID: individualId,
                     caseId: caseDetails?.id,
                     filingNumber: caseDetails?.filingNumber,
@@ -1806,7 +1823,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 await DRISTIService.createEvidence({
                   artifact: {
                     artifactType: "DOCUMENTARY",
-                    sourceType: "COMPLAINANT",
+                    sourceType: sourceType,
                     sourceID: individualId,
                     caseId: caseDetails?.id,
                     filingNumber: caseDetails?.filingNumber,
@@ -2033,7 +2050,7 @@ const JoinCaseHome = ({ refreshInbox }) => {
                 await DRISTIService.createEvidence({
                   artifact: {
                     artifactType: "DOCUMENTARY",
-                    sourceType: "COMPLAINANT",
+                    sourceType: sourceType,
                     sourceID: individualId,
                     caseId: caseDetails?.id,
                     filingNumber: caseDetails?.filingNumber,

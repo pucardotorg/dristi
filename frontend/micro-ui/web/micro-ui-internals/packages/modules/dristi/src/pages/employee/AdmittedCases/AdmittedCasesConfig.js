@@ -690,6 +690,7 @@ export const TabSearchconfig = {
               {
                 label: "Party Name",
                 jsonPath: "name",
+                additionalCustomization: true,
               },
               {
                 label: "Party Type",
