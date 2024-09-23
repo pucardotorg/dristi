@@ -235,15 +235,23 @@ public class CaseRegistrationEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
         }
     }
-    public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
+    public void enrichCaseNumberAndCourtCaseNumber(CaseRequest caseRequest) {
         try {
             List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
             caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
             caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+        } catch (Exception e) {
+            log.error("Error enriching case number and court case number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and court case number: " + e.getMessage());
+        }
+    }
+
+    public void enrichCNRNumber(CaseRequest caseRequest) {
+        try {
             caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
-            log.error("Error enriching case number and cnr number: {}", e.toString());
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
+            log.error("Error enriching cnr number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching cnr number: " + e.getMessage());
         }
     }
 

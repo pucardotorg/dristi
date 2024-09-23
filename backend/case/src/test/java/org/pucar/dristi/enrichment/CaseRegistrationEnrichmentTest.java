@@ -226,24 +226,22 @@ class CaseRegistrationEnrichmentTest {
     }
 
     @Test
-    void enrichCaseNumberAndCNRNumber_generatesCaseNumberAndCNRNumber() {
+    void enrichCaseNumberAndCourtCaseNumber_generatesCaseNumberAndCourtCaseNumber() {
         CourtCase courtCase = new CourtCase();
         courtCase.setFilingNumber("2022-12345");
         caseRequest.setCases(courtCase);
         when(idgenUtil.getIdList(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList("12345"));
-        when(caseUtil.getCNRNumber(anyString(), anyString(), anyString(), anyString())).thenReturn("KLJL01-12345-2022");
-        caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest);
+        caseRegistrationEnrichment.enrichCaseNumberAndCourtCaseNumber(caseRequest);
 
         assertNotNull(caseRequest.getCases().getCaseNumber());
         assertNotNull(caseRequest.getCases().getCourtCaseNumber());
-        assertNotNull(caseRequest.getCases().getCnrNumber());
     }
 
     @Test
     void enrichCaseNumberAndCNRNumber_handlesException() {
         caseRequest.setCases(null);
 
-        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest));
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCourtCaseNumber(caseRequest));
     }
 
     @Test
