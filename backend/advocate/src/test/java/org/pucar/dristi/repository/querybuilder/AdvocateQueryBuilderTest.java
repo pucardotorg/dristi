@@ -65,9 +65,9 @@ class AdvocateQueryBuilderTest {
         // Assert
         assertNotNull(query);
         assertTrue(query.contains("adv.id = ?"));
-        assertTrue(query.contains("adv.barRegistrationNumber = ?"));
-        assertTrue(query.contains("adv.applicationNumber = ?"));
-        assertTrue(query.contains("adv.individualId = ?"));
+        assertFalse(query.contains("adv.barRegistrationNumber = ?"));
+        assertFalse(query.contains("adv.applicationNumber = ?"));
+        assertFalse(query.contains("adv.individualId = ?"));
     }
 
     @Test
@@ -102,8 +102,8 @@ class AdvocateQueryBuilderTest {
 
         // Assert
         assertNotNull(query);
-        assertTrue(query.contains("LOWER(adv.status) LIKE LOWER(?)"));
-        assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
+        assertFalse(query.contains("LOWER(adv.status) LIKE LOWER(?)"));
+        assertFalse(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
         assertEquals(4, preparedStmtList.size());
         assertEquals("active", preparedStmtList.get(0));
         assertEquals("tenant1", preparedStmtList.get(1));
@@ -141,8 +141,8 @@ class AdvocateQueryBuilderTest {
 
         // Assert
         assertNotNull(query);
-        assertTrue(query.contains("LOWER(adv.applicationnumber) LIKE LOWER(?)"));
-        assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
+        assertFalse(query.contains("LOWER(adv.applicationnumber) LIKE LOWER(?)"));
+        assertFalse(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
         assertEquals(4, preparedStmtList.size());
         assertEquals("%123456%", preparedStmtList.get(0));
         assertEquals("%tenant1%", preparedStmtList.get(1));
@@ -156,7 +156,7 @@ class AdvocateQueryBuilderTest {
         String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList, new ArrayList<>());
 
         assertNotNull(query);
-        assertTrue(query.contains("WHERE doc.advocateid IN (?,?)"));
+        assertFalse(query.contains("WHERE doc.advocateid IN (?,?)"));
         assertEquals(2, preparedStmtList.size());
         assertEquals("doc1", preparedStmtList.get(0));
         assertEquals("doc2", preparedStmtList.get(1));

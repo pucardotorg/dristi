@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-advocate-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,status,barRegistrationNumber,advocateType,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?);
+        - query: INSERT INTO dristi_advocate(id,tenant_id,application_number,wf_status,bar_registration_number,advocate_type,organisation_id,individual_id,is_active, additional_details,created_by,last_modified_by,created_time,last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: advocate
           jsonMaps:
             - jsonPath: $.advocate.id
@@ -26,7 +26,7 @@ serviceMaps:
             - jsonPath: $.advocate.auditDetails.createdTime
             - jsonPath: $.advocate.auditDetails.lastModifiedTime
 
-        - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType,advocateId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_advocate_document(id,filestore_id,document_uid,document_type,advocate_id,additional_details, is_active, created_by,last_modified_by,created_time,last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: advocate.documents.*
           jsonMaps:
             - jsonPath: $.advocate.documents.*.id
@@ -37,13 +37,19 @@ serviceMaps:
             - jsonPath: $.advocate.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
+            - jsonPath: $.advocate.isActive
+            - jsonPath: $.advocate.auditDetails.createdBy
+            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.advocate.auditDetails.createdTime
+            - jsonPath: $.advocate.auditDetails.lastModifiedTime
+
 
     - version: 1.0
       description: Update advocate details in tables
       fromTopic: update-advocate-application
       isTransaction: true
       queryMaps:
-        - query: UPDATE  dristi_advocate SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+        - query: UPDATE  dristi_advocate SET wf_status =?, is_active =?,last_modified_by =?,last_modified_time = ? where id =?;
           basePath: advocate
           jsonMaps:
             - jsonPath: $.advocate.status

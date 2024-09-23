@@ -14,12 +14,12 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 @Slf4j
 public class AdvocateQueryBuilder {
-    private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status ";
+    private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenant_id as tenantid, adv.application_number as applicationnumber, adv.bar_registration_number as barregistrationnumber, adv.advocate_type as advocatetype, adv.organisation_id as organisationid, adv.individual_id as individualid, adv.is_active as isactive, adv.additional_details as additionaldetails, adv.created_by as createdby, adv.last_modified_by as lastmodifiedby, adv.created_time as createdtime, adv.last_modified_time as lastmodifiedtime, adv.wf_status as status  ";
 
-    private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid ";
+    private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.document_type as documenttype, doc.filestore_id as filestore, doc.document_uid as documentuid, doc.additional_details as docadditionaldetails, doc.advocate_id as advocateid ";
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
-    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
-    private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
+    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_advocate_document doc ";
+    private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.created_time DESC ";
     private static final String LIMIT_OFFSET = " LIMIT ? OFFSET ?";
 
     /**   /** To build query using search criteria to search advocate
@@ -39,7 +39,7 @@ public class AdvocateQueryBuilder {
 
                 if(tenantId != null && !tenantId.isEmpty()){
                     addClauseIfRequiredForTenantId(query, firstCriteria);
-                    query.append("LOWER(adv.tenantid) = LOWER(?)");
+                    query.append("LOWER(adv.tenant_id) = LOWER(?)");
                     preparedStmtList.add(tenantId.toLowerCase());
                     preparedStmtArgList.add(Types.VARCHAR);
                 }
@@ -60,9 +60,9 @@ public class AdvocateQueryBuilder {
 
     private boolean addCriteriaToQuery(AdvocateSearchCriteria criteria, StringBuilder query, List<Object> preparedStmtList, List<Integer> preparedStmtArgList,boolean firstCriteria) {
         firstCriteria = addSingleCriteria(criteria.getId(), "adv.id = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getBarRegistrationNumber(), "adv.barRegistrationNumber = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getApplicationNumber(), "adv.applicationNumber = ?", query, preparedStmtList, preparedStmtArgList,firstCriteria);
-        firstCriteria = addSingleCriteria(criteria.getIndividualId(), "adv.individualId = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getBarRegistrationNumber(), "adv.bar_registration_number = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getApplicationNumber(), "adv.application_number = ?", query, preparedStmtList, preparedStmtArgList,firstCriteria);
+        firstCriteria = addSingleCriteria(criteria.getIndividualId(), "adv.individual_id = ?", query, preparedStmtList,preparedStmtArgList, firstCriteria);
 
         return firstCriteria;
     }
@@ -86,7 +86,7 @@ public class AdvocateQueryBuilder {
 
             if(status != null && !status.isEmpty()){
                 addClauseIfRequiredForStatus(query, firstCriteria);
-                query.append("LOWER(adv.status) LIKE LOWER(?)")
+                query.append("LOWER(adv.wf_status) LIKE LOWER(?)")
                         .append(")");
                 preparedStmtList.add(status.toLowerCase());
                 preparedStmtArguList.add(Types.VARCHAR);
@@ -94,7 +94,7 @@ public class AdvocateQueryBuilder {
             }
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, firstCriteria);
-                query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
+                query.append("LOWER(adv.tenant_id) LIKE LOWER(?)");
                 preparedStmtList.add(tenantId.toLowerCase());
                 preparedStmtArguList.add(Types.VARCHAR);
             }
@@ -120,7 +120,7 @@ public class AdvocateQueryBuilder {
 
             if(applicationNumber != null && !applicationNumber.isEmpty()){
                 addClauseIfRequiredForStatus(query, firstCriteria);
-                query.append("LOWER(adv.applicationnumber) LIKE LOWER(?)")
+                query.append("LOWER(adv.application_number) LIKE LOWER(?)")
                         .append(")");
                 preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
                 preparedStmtArgssList.add(Types.VARCHAR);
@@ -128,7 +128,7 @@ public class AdvocateQueryBuilder {
             }
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, firstCriteria);
-                query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
+                query.append("LOWER(adv.tenant_id) LIKE LOWER(?)");
                 preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
                 preparedStmtArgssList.add(Types.VARCHAR);
             }
@@ -187,7 +187,7 @@ public class AdvocateQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.advocateid IN (")
+                query.append(" WHERE doc.advocate_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
