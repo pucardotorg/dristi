@@ -62,7 +62,8 @@
               "action": "PAY",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "SYSTEM_ADMIN"
+                "SYSTEM_ADMIN",
+                "SUBMISSION_CREATOR"
               ]
             },
             {
