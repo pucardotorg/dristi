@@ -34,6 +34,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
 
+      - name: Dependency check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        id: Depcheck
+        with:
+          project: 'case'
+          path: 'backend/case'
+          format: 'SARIF'
+          others: ''
+      - name: Upload SARIF result to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check-report.sarif
+        if: always()
       - name: Login to Azure Container Registry
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
@@ -51,6 +66,7 @@ jobs:
           docker build -t pucar_case_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_case_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
+
         working-directory: backend/case/src/main/resources/db
       - name: Trigger Deployment Pipeline
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
