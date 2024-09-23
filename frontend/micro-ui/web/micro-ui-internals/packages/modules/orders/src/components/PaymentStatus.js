@@ -107,28 +107,16 @@ const PaymentStatus = ({ path }) => {
               }}
             />
           ) : (
-            <a
-              href={uri}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "flex",
-                color: "#505A5F",
-                textDecoration: "none",
-                // width: 250,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+            <Button
+              variation={"secondary"}
+              className={"secondary-button-selector"}
+              label={t("CS_PRINT_RECEIPT")}
+              labelClassName={"secondary-label-selector"}
+              isDisabled={true}
+              onButtonClick={() => {
+                // To Do:  implement generate pdf functionality when backend support is ready.
               }}
-            >
-              <Button
-                variation={"secondary"}
-                className={"secondary-button-selector"}
-                label={t("CS_PRINT_RECEIPT")}
-                labelClassName={"secondary-label-selector"}
-                onButtonClick={() => {}}
-              />
-            </a>
+            />
           )}
 
           <Button

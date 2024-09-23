@@ -1989,12 +1989,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
             setJoinCaseRequest(res?.joinCaseRequest);
             setRespondentList(
               respondentList?.map((respondent) => {
-                if (respondent?.index === selectedParty?.index)
+                if (respondent?.index === selectedParty?.index) {
+                  const fullName = [name?.givenName, name?.otherNames, name?.familyName]?.filter(Boolean)?.join(" "); // Removes empty or falsy values and joins with a space
+
                   return {
                     ...respondent,
-                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                    fullName: fullName,
                   };
-                else return respondent;
+                } else {
+                  return respondent;
+                }
               })
             );
             setStep(step + 1);
@@ -2201,12 +2205,16 @@ const JoinCaseHome = ({ refreshInbox }) => {
             setJoinCaseRequest(res?.joinCaseRequest);
             setRespondentList(
               respondentList?.map((respondent) => {
-                if (respondent?.index === selectedParty?.index)
+                if (respondent?.index === selectedParty?.index) {
+                  const fullName = [name?.givenName, name?.otherNames, name?.familyName]?.filter(Boolean)?.join(" ");
+
                   return {
                     ...respondent,
-                    fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                    fullName: fullName,
                   };
-                else return respondent;
+                } else {
+                  return respondent;
+                }
               })
             );
             setStep(step + 1);

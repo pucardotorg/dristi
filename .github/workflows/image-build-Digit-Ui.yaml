@@ -6,14 +6,14 @@ on:
       - uat
       - dpg-qa-deployment
     paths:
-      - "frontend/micro-ui/**"
+      - 'frontend/micro-ui/**'
   pull_request:
     branches:
       - develop
       - uat
       - dpg-qa-deployment
     paths:
-      - "frontend/micro-ui/**"
+      - 'frontend/micro-ui/**'
   workflow_dispatch:
   workflow_call:
 

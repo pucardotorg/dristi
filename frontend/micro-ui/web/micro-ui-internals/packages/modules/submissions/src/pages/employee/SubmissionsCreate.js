@@ -572,6 +572,7 @@ const SubmissionsCreate = ({ path }) => {
             isResponseRequired:
               orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true : true,
             ...(hearingId && { hearingId }),
+            owner: caseDetails?.additionalDetails?.payerName,
           },
           documents,
           onBehalfOf: [isCitizen ? onBehalfOfuuid : userInfo?.uuid],

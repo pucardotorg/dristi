@@ -186,6 +186,7 @@ async function orderRejectVoluntary(req, res, qrCode) {
           partyName: partyName,
           additionalComments: additionalComments,
           applicationNumber: application?.applicationNumber,
+          additionalComments: additionalComments,
           content: order?.comments || "",
           judgeSignature: "Judge Signature",
           judgeName: "John Doe",

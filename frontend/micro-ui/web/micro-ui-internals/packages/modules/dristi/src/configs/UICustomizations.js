@@ -26,6 +26,13 @@ const partyTypes = {
   "respondent.additional": "Respondent",
 };
 
+const removeInvalidNameParts = (name) => {
+  return name
+    ?.split(" ")
+    .filter((part) => part && !["undefined", "null"].includes(part.toLowerCase()))
+    .join(" ");
+};
+
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
@@ -186,12 +193,12 @@ export const UICustomizations = {
                   <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
                     <span className="icon">{adv?.barRegistrationNumber}</span>
                     <span className="icon" style={{ justifyContent: "end" }}>
-                      {adv?.additionalDetails?.username}
+                      {removeInvalidNameParts(adv?.additionalDetails?.username)}
                     </span>
                   </span>
                 ),
-                barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
-                advocateName: adv?.additionalDetails?.username,
+                barRegistrationNumber: `${adv?.barRegistrationNumber} (${removeInvalidNameParts(adv?.additionalDetails?.username)})`,
+                advocateName: removeInvalidNameParts(adv?.additionalDetails?.username),
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
                 advocateUuid: adv?.auditDetails?.createdBy,
@@ -222,12 +229,12 @@ export const UICustomizations = {
                     <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
                       <span className="icon">{adv?.barRegistrationNumber}</span>
                       <span className="icon" style={{ justifyContent: "end" }}>
-                        {adv?.additionalDetails?.username}
+                        {removeInvalidNameParts(adv?.additionalDetails?.username)}
                       </span>
                     </span>
                   ),
                   barRegistrationNumber: `${adv?.barRegistrationNumber}`,
-                  advocateName: adv?.additionalDetails?.username,
+                  advocateName: removeInvalidNameParts(adv?.additionalDetails?.username),
                   advocateId: adv?.id,
                   barRegistrationNumberOriginal: adv?.barRegistrationNumber,
                   data: adv,

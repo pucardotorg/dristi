@@ -770,6 +770,7 @@ const AdmittedCases = () => {
               <Button
                 variation={"outlined"}
                 label={t("DOWNLOAD_CASE_FILE")}
+                isDisabled={!caseDetails?.additionalDetails?.signedCaseDocument}
                 onButtonClick={() => downloadPdf(tenantId, caseDetails?.additionalDetails?.signedCaseDocument)}
               />
             )}
@@ -846,12 +847,12 @@ const AdmittedCases = () => {
       {config?.label !== "Overview" && config?.label !== "Complaint" && config?.label !== "History" && (
         <div style={{ width: "100%", background: "white", padding: "10px", display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: 700, fontSize: "24px", lineHeight: "28.8px" }}>{t(`All_${config?.label.toUpperCase()}_TABLE_HEADER`)}</div>
-          {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
+          {/* {(!userRoles.includes("CITIZENS") || userRoles.includes("ADVOCATE_ROLE")) &&
             (config?.label === "Hearings" || config?.label === "Documents") && (
               <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}
               </div>
-            )}
+            )} */}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Orders" && (
             <div style={{ display: "flex", gap: "10px" }}>
               <div
@@ -860,9 +861,9 @@ const AdmittedCases = () => {
               >
                 {t("GENERATE_ORDERS_LINK")}
               </div>
-              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+              {/* <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}
-              </div>
+              </div> */}
             </div>
           )}
           {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
@@ -873,9 +874,9 @@ const AdmittedCases = () => {
               >
                 {t("REQUEST_DOCUMENTS_LINK")}
               </div>
-              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+              {/* <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}
-              </div>
+              </div> */}
             </div>
           )}
           {isCitizen && config?.label === "Submissions" && (
@@ -889,9 +890,9 @@ const AdmittedCases = () => {
                 </div>
               )}
 
-              <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
+              {/* <div style={{ fontWeight: 500, fontSize: "16px", lineHeight: "20px", color: "#0A5757", cursor: "pointer" }}>
                 {t("DOWNLOAD_ALL_LINK")}
-              </div>
+              </div> */}
             </div>
           )}
         </div>

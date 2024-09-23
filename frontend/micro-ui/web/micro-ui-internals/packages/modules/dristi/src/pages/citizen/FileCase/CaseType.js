@@ -150,6 +150,7 @@ function CaseType({ t }) {
           icon={<FileDownloadIcon />}
           className="download-button"
           label={t("CS_COMMON_DOWNLOAD")}
+          isDisabled={!requiredDocumentsPdfNIA?.fileStoreId}
           onButtonClick={() => downloadPdf(tenantId, requiredDocumentsPdfNIA?.fileStoreId)}
         />
         <div className="right-div">

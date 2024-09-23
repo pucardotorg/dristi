@@ -268,7 +268,13 @@ export const TabFSOSearchConfig = {
             primaryLabel: "ES_COMMON_SEARCH",
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
+            defaultValues: {
+              ...defaultSearchValues,
+              sortCaseListByDate: {
+                sortBy: "createdtime",
+                order: "desc",
+              },
+            },
             fields: [
               {
                 type: "component",
@@ -278,8 +284,8 @@ export const TabFSOSearchConfig = {
                 name: "Filed",
                 key: "sortCaseListByDate",
                 sortBy: "createdtime",
-                ascText: "(new first)",
-                descText: "(old first)",
+                ascText: "(old first)",
+                descText: "(new first)",
                 showAdditionalText: true,
                 showIcon: true,
                 icon: "UpDownArrowIcon",
@@ -378,9 +384,9 @@ export const TabFSOSearchConfig = {
           },
           show: true,
         },
-        additionalDetails: {
-          sortBy: "sortCaseListByDate",
-        },
+      },
+      additionalDetails: {
+        sortBy: "sortCaseListByDate",
       },
     },
   ],
