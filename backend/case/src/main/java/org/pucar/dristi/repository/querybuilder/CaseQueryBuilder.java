@@ -25,13 +25,100 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class CaseQueryBuilder {
-    private static final String BASE_CASE_QUERY = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, " +
-            "cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber, " +
-            " cases.outcome as outcome, cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
-            " cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime ";
-    private static final String FROM_CASES_TABLE = " FROM dristi_cases cases";
-    private static final String ORDERBY_CLAUSE = " ORDER BY cases.{orderBy} {sortingOrder} ";
-    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY cases.createdtime DESC ";
+    private static final String BASE_CASE_QUERY = "   WITH PaginatedCases AS (\n" +
+            "     SELECT id  \n" +
+            "     FROM dristi_cases \n" +
+            "      ORDER BY status \n" +
+            "       limit 50\n" +
+            "        offset 0\n" +
+            ")\n" +
+            "SELECT \n" +
+            "    dc.id,\n" +
+            "    dc.tenantid,\n" +
+            "    dc.resolutionmechanism,\n" +
+            "    dc.casetitle,\n" +
+            "    dc.casedescription,\n" +
+            "    dc.filingnumber,\n" +
+            "    dc.casenumber,\n" +
+            "    dc.cnrnumber,\n" +
+            "    dc.courtcasenumber,\n" +
+            "    dc.accesscode,\n" +
+            "    dc.courtid,\n" +
+            "    dc.benchid,\n" +
+            "    dc.casecategory,\n" +
+            "    dc.natureofpleading,\n" +
+            "    dc.status,\n" +
+            "    dc.remarks,\n" +
+            "    dc.isactive,\n" +
+            "    dc.casedetails,\n" +
+            "    dc.additionaldetails,\n" +
+            "    dc.createdby,\n" +
+            "    dc.lastmodifiedby,\n" +
+            "    dc.createdtime,\n" +
+            "    dc.lastmodifiedtime,\n" +
+            "    dc.judgeid,\n" +
+            "    dc.stage,\n" +
+            "    dc.substage,\n" +
+            "    dc.filingdate,\n" +
+            "    dc.registrationdate,\n" +
+            "    dc.judgementdate,\n" +
+            "    dc.outcome,\n" +
+            "    dcl.id AS litigant_id,\n" +
+            "    dcl.tenantid AS litigant_tenantid,\n" +
+            "    dcl.partycategory,\n" +
+            "    dcl.individualid AS litigant_individualid,\n" +
+            "    dcl.organisationid AS litigant_organisationid,\n" +
+            "    dcl.partytype,\n" +
+            "    dcl.isactive AS litigant_isactive,\n" +
+            "    dcl.additionaldetails AS litigant_additionaldetails,\n" +
+            "    dcr.id AS representative_id,\n" +
+            "    dcr.tenantid AS representative_tenantid,\n" +
+            "    dcr.advocateid,\n" +
+            "    dcr.isactive AS representative_isactive,\n" +
+            "    dcr.additionaldetails AS representative_additionaldetails,\n" +
+            "    dcrp.id AS representing_id,\n" +
+            "    dcrp.tenantid AS representing_tenantid,\n" +
+            "    dcrp.partycategory AS representing_partycategory,\n" +
+            "    dcrp.individualid AS representing_individualid,\n" +
+            "    dcrp.organisationid AS representing_organisationid,\n" +
+            "    dcrp.partytype AS representing_partytype,\n" +
+            "    dcrp.isactive AS representing_isactive,\n" +
+            "    dcrp.representative_id AS representing_representative_id,\n" +
+            "    dcrp.additionaldetails AS representing_additionaldetails,\n" +
+            "    dcss.id AS statute_section_id,\n" +
+            "    dcss.tenantid AS statute_section_tenantid,\n" +
+            "    dcss.statutes,\n" +
+            "    dcss.sections,\n" +
+            "    dcss.subsections,\n" +
+            "    dcss.additionaldetails AS statute_section_additionaldetails,\n" +
+            "    dw.id AS witness_id,\n" +
+            "    dw.caseid AS witness_caseid,\n" +
+            "    dw.filingnumber AS witness_filingnumber,\n" +
+            "    dw.cnrnumber AS witness_cnrnumber,\n" +
+            "    dw.witnessidentifier,\n" +
+            "    dw.individualid AS witness_individualid,\n" +
+            "    dw.remarks AS witness_remarks,\n" +
+            "    dw.isactive AS witness_isactive,\n" +
+            "    dw.additionaldetails AS witness_additionaldetails\n" +
+            "\n" +
+            "FROM \n" +
+            "    public.dristi_cases dc\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_case_litigants dcl ON dc.id = dcl.case_id\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_case_representatives dcr ON dc.id = dcr.case_id\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_case_representing dcrp ON dc.id = dcrp.case_id\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_case_statutes_and_sections dcss ON dc.id = dcss.case_id\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_linked_case dlc ON dc.id = dlc.case_id\n" +
+            "LEFT JOIN \n" +
+            "    public.dristi_witness dw ON dc.id = dw.caseid\n" +
+            "    WHERE dc.id IN (SELECT id FROM PaginatedCases)";
+    private static final String FROM_CASES_TABLE = " FROM dristi_cases dc";
+    private static final String ORDERBY_CLAUSE = " ORDER BY dc.{orderBy} {sortingOrder} ";
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY dc.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
@@ -40,11 +127,11 @@ public class CaseQueryBuilder {
     private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
 
 
-    private static final String BASE_LINKED_CASE_QUERY = " SELECT lics.id as id, lics.casenumbers as casenumbers, lics.case_id as case_id," +
-            "lics.relationshiptype as relationshiptype," +
-            " lics.isactive as isactive, lics.additionaldetails as additionaldetails, lics.createdby as createdby," +
-            " lics.lastmodifiedby as lastmodifiedby, lics.createdtime as createdtime, lics.lastmodifiedtime as lastmodifiedtime ";
-    private static final String FROM_LINKED_CASE_TABLE = " FROM dristi_linked_case lics";
+    private static final String BASE_LINKED_CASE_QUERY = " SELECT dlc.id as id, dlc.casenumbers as casenumbers, dlc.case_id as case_id," +
+            "dlc.relationshiptype as relationshiptype," +
+            " dlc.isactive as isactive, dlc.additionaldetails as additionaldetails, dlc.createdby as createdby," +
+            " dlc.lastmodifiedby as lastmodifiedby, dlc.createdtime as createdtime, dlc.lastmodifiedtime as lastmodifiedtime ";
+    private static final String FROM_LINKED_CASE_TABLE = " FROM dristi_linked_case dlc";
 
 
     private static final String BASE_LITIGANT_QUERY = " SELECT ltg.id as id, ltg.tenantid as tenantid, ltg.partycategory as partycategory, ltg.case_id as case_id, " +
@@ -102,31 +189,31 @@ public class CaseQueryBuilder {
     public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList,RequestInfo requestInfo) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
-            query.append(FROM_CASES_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+//            query.append(FROM_CASES_TABLE);
+            boolean firstCriteria = false; // To check if it's the first criteria
             if (criteria != null) {
 
-                firstCriteria = addCriteria(criteria.getCaseId(), query, firstCriteria, "cases.id = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getCaseId(), query, firstCriteria, "dc.id = ?", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getCnrNumber(), query, firstCriteria, "cases.cnrNumber = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getCnrNumber(), query, firstCriteria, "dc.cnrNumber = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getFilingNumber() == null? null : "%" + criteria.getFilingNumber() + "%", query, firstCriteria, "LOWER(cases.filingnumber) LIKE LOWER(?)", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getFilingNumber() == null? null : "%" + criteria.getFilingNumber() + "%", query, firstCriteria, "LOWER(dc.filingnumber) LIKE LOWER(?)", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getCourtCaseNumber(), query, firstCriteria, "cases.courtcasenumber = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getCourtCaseNumber(), query, firstCriteria, "dc.courtcasenumber = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getJudgeId(), query, firstCriteria, "cases.judgeid = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getJudgeId(), query, firstCriteria, "dc.judgeid = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addListCriteria(criteria.getStage(), query, firstCriteria, "cases.stage", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addListCriteria(criteria.getStage(), query, firstCriteria, "dc.stage", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addListCriteria(criteria.getOutcome(), query, firstCriteria, "cases.outcome", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addListCriteria(criteria.getOutcome(), query, firstCriteria, "dc.outcome", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
-                firstCriteria = addCriteria(criteria.getSubstage(), query, firstCriteria, "cases.substage = ?",preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addCriteria(criteria.getSubstage(), query, firstCriteria, "dc.substage = ?",preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
                 firstCriteria = addLitigantCriteria(criteria,preparedStmtList, preparedStmtArgList, requestInfo, query, firstCriteria);
 
                 firstCriteria = addAdvocateCriteria(criteria,preparedStmtList, preparedStmtArgList, requestInfo, query, firstCriteria);
 
-                firstCriteria = addListCriteria(criteria.getStatus(), query, firstCriteria, "cases.status", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
+                firstCriteria = addListCriteria(criteria.getStatus(), query, firstCriteria, "dc.status", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
                 firstCriteria = addFilingDateCriteria(criteria, firstCriteria, query, preparedStmtList, preparedStmtArgList);
 
@@ -164,7 +251,7 @@ public class CaseQueryBuilder {
             if (!firstCriteria)
                 query.append(" OR cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
             else {
-                query.append(" WHERE cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
+                query.append(" AND cases.registrationdate>= ? AND cases.registrationdate <= ? ").append(" ");
             }
             preparedStmtList.add(criteria.getRegistrationFromDate());
             preparedStmtListArgs.add(Types.TIMESTAMP);
@@ -178,7 +265,7 @@ public class CaseQueryBuilder {
             if (!firstCriteria)
                 query.append(" OR cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
             else {
-                query.append(" WHERE cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
+                query.append(" AND cases.filingdate >= ? AND cases.filingdate <= ? ").append(" ");
             }
             preparedStmtList.add(criteria.getFilingFromDate());
             preparedStmtListArgs.add(Types.TIMESTAMP);
@@ -260,7 +347,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(BASE_LINKED_CASE_QUERY);
             query.append(FROM_LINKED_CASE_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE lics.case_id IN (")
+                query.append(" WHERE dlc.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
