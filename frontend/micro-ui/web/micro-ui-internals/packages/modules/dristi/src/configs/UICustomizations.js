@@ -27,13 +27,6 @@ const partyTypes = {
   "respondent.additional": "Respondent",
 };
 
-const removeInvalidNameParts = (name) => {
-  return name
-    ?.split(" ")
-    .filter((part) => part && !["undefined", "null"].includes(part.toLowerCase()))
-    .join(" ");
-};
-
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
