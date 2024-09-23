@@ -788,8 +788,6 @@ export const configsOrderSubmissionExtension = [
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
         isMandatory: false,
         key: "originalSubmissionOrderDate",
-        schemaKeyPath: "orderDetails.originalDocSubmissionDate",
-        transformer: "date",
         disable: true,
         type: "date",
         populators: {
@@ -800,7 +798,7 @@ export const configsOrderSubmissionExtension = [
         label: "ORIGINAL_DEADLINE",
         isMandatory: false,
         key: "originalDeadline",
-        schemaKeyPath: "orderDetails.originalDate",
+        schemaKeyPath: "orderDetails.originalDocSubmissionDate",
         transformer: "date",
         disable: true,
         type: "date",
