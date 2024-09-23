@@ -256,6 +256,8 @@ components:
             maxLength: 36
         courtID:
           type: string
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
     Application:
       required: [tenantId, caseId, createdDate, applicationType, status, isActive]
       type: object

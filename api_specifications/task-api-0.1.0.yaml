@@ -333,3 +333,5 @@ components:
         status:
           type: string
           description: status of payment
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'  
