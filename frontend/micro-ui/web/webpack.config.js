@@ -7,7 +7,7 @@ module.exports = {
   // mode: 'development',
   entry: {
     main: "./src/index.js",
-    telemetry: "./public/scripts/telemetry/index.js",
+//    telemetry: "./public/scripts/telemetry/index.js",
   },
   devtool: "none",
   module: {
