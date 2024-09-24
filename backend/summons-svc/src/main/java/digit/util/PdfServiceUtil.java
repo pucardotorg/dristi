@@ -45,7 +45,7 @@ public class PdfServiceUtil {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             SummonsPdf summonsPdf = createSummonsPdfFromTask(taskRequest.getTask());
-            if (qrCode && !taskRequest.getTask().getDocuments().isEmpty()) {
+            if (qrCode && taskRequest.getTask().getDocuments() != null && !taskRequest.getTask().getDocuments().isEmpty()) {
                 Document document = taskRequest.getTask().getDocuments().get(0);
                 if (document != null) {
                     String embeddedUrl = config.getFileStoreHost() + config.getFileStoreSearchEndPoint() + "?tenantId=" + tenantId + "&fileStoreId=" + document.getFileStore();

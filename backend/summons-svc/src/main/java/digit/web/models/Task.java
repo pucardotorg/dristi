@@ -103,6 +103,9 @@ public class Task {
 
 
     public Task addDocumentsItem(Document documentsItem) {
+        if(this.documents == null || this.documents.isEmpty()){
+            this.documents = new ArrayList<>();
+        }
         this.documents.add(documentsItem);
         return this;
     }
