@@ -10,7 +10,7 @@ const getLocation = (places, code) => {
   })?.long_name;
   return location ? location : null;
 };
-const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex, disable = false }) => {
+const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex, disable = false, isAutoFilledDisabled = false }) => {
   const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const inputs = useMemo(
     () =>
@@ -132,6 +132,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                     position={locationFormData?.[config.key]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
                     index={mapIndex}
+                    isAutoFilledDisabled={isAutoFilledDisabled}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {

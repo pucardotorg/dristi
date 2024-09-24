@@ -170,6 +170,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
               errors={{}}
               mapIndex={data.id}
               disable={config?.disable}
+              isAutoFilledDisabled={true}
             ></LocationComponent>
           </div>
         ))}

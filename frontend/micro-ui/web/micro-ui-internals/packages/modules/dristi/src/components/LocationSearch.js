@@ -347,7 +347,7 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false, index) =>
 };
 
 const LocationSearch = (props) => {
-  const { setCoordinateData } = props;
+  const { setCoordinateData, isAutoFilledDisabled = false } = props;
   const [coordinates, setCoordinates] = useState({ lat: 31.6160638, lng: 74.8978579 });
   useEffect(() => {
     async function mapScriptCall() {
@@ -370,7 +370,7 @@ const LocationSearch = (props) => {
       const initMaps = () => {
         if (props.position?.latitude && props.position?.longitude) {
           getLatLng({ coords: props.position });
-        } else if (navigator?.geolocation) {
+        } else if (!isAutoFilledDisabled && navigator?.geolocation) {
           navigator.geolocation.getCurrentPosition(getLatLng, getLatLngError);
         } else {
           getLatLngError();
