@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.models.AuditDetails;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +27,9 @@ public class TransactionDetails {
 
     @JsonProperty("MerchantCurrency")
     private String merchantCurrency;
+
+    @JsonProperty("amountDetails")
+    private List<AmountDetails> amountDetails;
 
     @JsonProperty("PostingAmount")
     private double postingAmount;
@@ -152,5 +158,17 @@ public class TransactionDetails {
                 payMode + "|" +
                 accessMedium + "|" +
                 transactionSource;
+    }
+
+    public String toMultiAccountPaymentString() {
+        if (amountDetails == null || amountDetails.isEmpty()) {
+            return "";
+        }
+        return amountDetails.stream()
+                .map(detail -> String.format("%s|%s|%s",
+                        detail.getPostingAmount(),
+                        detail.getMerchantCurrency(),
+                        detail.getAccountIdentifier()))
+                .collect(Collectors.joining("||"));
     }
 }

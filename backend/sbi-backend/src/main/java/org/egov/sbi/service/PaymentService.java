@@ -55,7 +55,7 @@ public class PaymentService {
 
     public Map<String, String> processTransaction(TransactionRequest request) {
         paymentEnrichment.enrichTransaction(request);
-        String transactionString = request.getTransactionDetails().toString();
+        String transactionString = request.getTransactionDetails().toMultiAccountPaymentString();
         SecretKeySpec secretKeySpec = aes256Util.readKeyBytes(config.getSbiSecretKey());
         String encryptedString = aes256Util.encrypt(transactionString, secretKeySpec);
 
@@ -65,8 +65,6 @@ public class PaymentService {
         transactionMap.put("merchantId", config.getSbiMerchantId());
 
         producer.push(paymentConfiguration.getCreateTransactionDetails(), request);
-
-        paymentUtil.callSbiGateway(transactionMap);
 
         return transactionMap;
     }

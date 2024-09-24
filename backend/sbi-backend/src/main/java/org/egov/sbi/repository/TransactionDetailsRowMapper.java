@@ -1,20 +1,44 @@
 package org.egov.sbi.repository;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.sbi.model.AmountDetails;
 import org.egov.sbi.model.TransactionDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Slf4j
 public class TransactionDetailsRowMapper implements RowMapper<TransactionDetails> {
 
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public TransactionDetailsRowMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public TransactionDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+        List<AmountDetails> amountDetails = new ArrayList<>();
+        String amountDetailsString = rs.getString("amount_details");
+        try {
+            if (amountDetailsString != null) {
+                amountDetails = objectMapper.readValue(amountDetailsString, new TypeReference<List<AmountDetails>>() {});
+            }
+        } catch (Exception e) {
+            log.error("Error deserializing 'amount_details' field: {}", amountDetailsString, e);
+            throw new SQLException("Error deserializing 'amount_details' field: " + amountDetailsString, e);
+        }
 
         AuditDetails auditdetails = AuditDetails.builder()
                 .createdBy(rs.getString("created_by"))
@@ -63,6 +87,7 @@ public class TransactionDetailsRowMapper implements RowMapper<TransactionDetails
                 .payerName(rs.getString("payer_name"))
                 .paidBy(rs.getString("paid_by"))
                 .mobileNumber(rs.getString("mobile_number"))
+                .amountDetails(amountDetails)
                 .build();
     }
 }
