@@ -5,15 +5,21 @@ import { Loader } from "@googlemaps/js-api-loader";
 let defaultBounds = {};
 
 const updateDefaultBounds = (center) => {
-  if (!center.lat || !center.lng) {
-    return;
-  }
-  defaultBounds = {
-    north: center.lat + 0.1,
-    south: center.lat - 0.1,
-    east: center.lng + 0.1,
-    west: center.lng - 0.1,
+  return {
+    north: 37 + 6 / 60,
+    south: 8 + 4 / 60,
+    east: 97 + 25 / 60,
+    west: 68 + 7 / 60,
   };
+  // if (!center.lat || !center.lng) {
+  //   return;
+  // }
+  // defaultBounds = {
+  //   north: center.lat + 0.1,
+  //   south: center.lat - 0.1,
+  //   east: center.lng + 0.1,
+  //   west: center.lng - 0.1,
+  // };
 };
 const GetPinCode = (places) => {
   let postalCode = null;
@@ -255,7 +261,7 @@ const onMarkerDragged = (marker, onChange, isPlaceRequired = false, index) => {
   else setLocationText(location, onChange, false, index);
 };
 
-const initAutocomplete = (onChange, position, isPlaceRequired = false, index) => {
+const initAutocomplete = (onChange, onInitChange, position, isPlaceRequired = false, index) => {
   if (position.lat === null || position.lng === null) {
     // Handle null values before proceeding
     console.warn("Position is invalid:", position);
@@ -269,7 +275,7 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false, index) =>
   }); // Create the search box and link it to the UI element.
 
   const input = document.getElementById("pac-input-" + index);
-  updateDefaultBounds(position);
+  updateDefaultBounds();
   const options = {
     bounds: defaultBounds,
     componentRestrictions: { country: "in" },
@@ -296,8 +302,8 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false, index) =>
     }),
   ];
   if (position.lat !== null && position.lng !== null) {
-    if (isPlaceRequired) setLocationText(position, onChange, true, index);
-    else setLocationText(position, onChange, false, index);
+    if (isPlaceRequired) setLocationText(position, onInitChange, true, index);
+    else setLocationText(position, onInitChange, false, index);
   }
 
   // Listen for the event fired when the user selects a prediction and retrieve
@@ -373,7 +379,13 @@ const LocationSearch = (props) => {
         if (latitude === null || longitude === null) {
           return getLatLngError();
         }
-        initAutocomplete(props.onChange, { lat: latitude, lng: longitude }, props.isPlaceRequired, props?.index);
+        initAutocomplete(
+          props.onChange,
+          !isAutoFilledDisabled && props.onChange,
+          { lat: latitude, lng: longitude },
+          props.isPlaceRequired,
+          props?.index
+        );
       };
       const getLatLngError = (error) => {
         let defaultLatLong = {};
@@ -386,7 +398,7 @@ const LocationSearch = (props) => {
           // Handle case when default coordinates are null
           return; // or set to a safe default
         }
-        initAutocomplete(props.onChange, defaultLatLong, props.isPlaceRequired, props?.index);
+        initAutocomplete(props.onChange, !isAutoFilledDisabled && props.onChange, defaultLatLong, props.isPlaceRequired, props?.index);
       };
 
       const initMaps = () => {
