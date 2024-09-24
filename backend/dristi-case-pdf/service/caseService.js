@@ -255,9 +255,9 @@ exports.getPrayerSwornStatementDetails = (cases) => {
             whetherComplainantWillingToSettle: swornStatementData.infoBoxData && swornStatementData.infoBoxData.data || null,
             circumstancesUnderWhichComplainantWillingToSettle: swornStatementData.caseSettlementCondition && swornStatementData.caseSettlementCondition.text || null,
             memorandumOfComplaintText: swornStatementData.memorandumOfComplaint && swornStatementData.memorandumOfComplaint.text || null,
-            memorandumOfComplaintFileStore: getDocumentFileStore(swornStatementData.memorandumOfComplaint.document, 'ATTACHED_DOCUMENT'),
+            memorandumOfComplaintFileStore: getDocumentFileStore(swornStatementData.memorandumOfComplaint.document, 'CS_MEMORANDUM_OF_COMPLAINT_HEADER'),
             prayerForReliefText: swornStatementData.prayerForRelief && swornStatementData.prayerForRelief.text || null,
-            prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief.document, 'ATTACHED_DOCUMENT'),
+            prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief.document, 'CS_PRAYER_FOR_RELIEF_HEADER'),
             swornStatement: swornStatementDocument ? swornStatementDocument.fileStore : null,
             additionalDetails: swornStatementData.additionalDetails && swornStatementData.additionalDetails.text || null,
             additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null
