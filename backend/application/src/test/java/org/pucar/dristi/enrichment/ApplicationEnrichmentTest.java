@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
@@ -27,6 +28,9 @@ class ApplicationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
+
+    @Mock
+    private Configuration configuration;
 
     @InjectMocks
     private ApplicationEnrichment applicationEnrichment;
@@ -49,9 +53,11 @@ class ApplicationEnrichmentTest {
 
     @Test
     void enrichApplication() {
-        when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt()))
+        when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt(),any()))
                 .thenReturn(Collections.singletonList("application-number"));
 
+        when(configuration.getApplicationConfig()).thenReturn("config");
+        when(configuration.getApplicationFormat()).thenReturn("format");
         applicationEnrichment.enrichApplication(applicationRequest);
 
         Application application = applicationRequest.getApplication();
@@ -64,7 +70,7 @@ class ApplicationEnrichmentTest {
             assertNotNull(document.getId());
         });
 
-        verify(idgenUtil).getIdList(any(), any(), any(), any(), anyInt());
+        verify(idgenUtil).getIdList(any(), any(), any(), any(), anyInt(),any());
     }
 
     @Test
@@ -95,7 +101,7 @@ class ApplicationEnrichmentTest {
     }
     @Test
     public void testEnrichApplication_CustomException() {
-        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1))
+        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1,false))
                 .thenThrow(new CustomException("IDGEN_ERROR", "ID generation error"));
 
         assertThrows(CustomException.class, () -> {
@@ -105,7 +111,7 @@ class ApplicationEnrichmentTest {
 
     @Test
     public void testEnrichApplication_GenericException() {
-        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1))
+        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1,false))
                 .thenThrow(new RuntimeException("Runtime exception"));
 
         assertThrows(CustomException.class, () -> {
