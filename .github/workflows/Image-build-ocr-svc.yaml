@@ -67,8 +67,8 @@ jobs:
       - name: Build and Push Docker image for Scheduler-svc
         if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
         run: |
-          docker build --build-arg WORK_DIR="backend/ocr-service" -t ucarsolutionsdev.azurecr.io/pucar_ocr_svc:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push ucarsolutionsdev.azurecr.io/pucar_ocr_svc:v1.0.0-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/ocr-service" -t pucarsolutionsdev.azurecr.io/pucar_ocr_svc:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_ocr_svc:v1.0.0-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for scheduler-svc_DB
         if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'

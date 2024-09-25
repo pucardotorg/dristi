@@ -55,7 +55,7 @@ jobs:
 
       - name: Build and Push Docker image for Mdms-Service
         run: |
-          docker build --build-arg WORK_DIR="common/egov-mdms-service" -t pucarsolutionsdev.azurecr.io/pucar_billing:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker build --build-arg WORK_DIR="common/egov-mdms-service" -t pucarsolutionsdev.azurecr.io/egov-mdms-service:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/egov-mdms-service:v1.0.0-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Mdms-Service Db
