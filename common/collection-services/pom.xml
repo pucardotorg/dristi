@@ -8,6 +8,7 @@
     <version>3.2.2</version>
     <relativePath></relativePath>
   </parent>
+
   <groupId>collection-services</groupId>
   <artifactId>collection-services</artifactId>
   <version>1.1.6-SNAPSHOT</version>

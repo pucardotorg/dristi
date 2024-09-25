@@ -12,7 +12,6 @@
 	<version>1.3.1-SNAPSHOT</version>
 	<name>inbox-services</name>
 	<description>inbox services</description>
-
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
 		<java.version>1.8</java.version>
