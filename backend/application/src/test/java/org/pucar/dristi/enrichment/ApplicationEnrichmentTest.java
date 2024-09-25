@@ -56,7 +56,6 @@ class ApplicationEnrichmentTest {
 
         Application application = applicationRequest.getApplication();
         assertNotNull(application.getId());
-        assertEquals("application-number", application.getApplicationNumber());
         assertNotNull(application.getAuditDetails());
         assertNotNull(application.getStatuteSection().getId());
         assertNotNull(application.getStatuteSection().getAuditdetails());

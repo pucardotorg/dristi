@@ -54,6 +54,8 @@ class CaseRowMapperTest {
         when(rs.getLong("judgementdate")).thenReturn(12325326L);
         when(rs.getLong("registrationdate")).thenReturn(123453634747L);
         when(rs.getString("casecategory")).thenReturn("category1");
+        when(rs.getString("casetype")).thenReturn("casetype");
+        when(rs.getString("cmpnumber")).thenReturn("cmpnumber");
         when(rs.getString("natureofpleading")).thenReturn("pleading");
         when(rs.getString("status")).thenReturn("status1");
         when(rs.getString("remarks")).thenReturn("remarks");

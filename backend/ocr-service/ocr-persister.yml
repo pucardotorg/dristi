@@ -1,0 +1,25 @@
+serviceMaps:
+  serviceName: ocr-service
+  mappings:
+    - version: 1.0
+      description: Persists ocr details in tables
+      fromTopic: save-ocr-application
+      isTransaction: true
+      isAuditEnabled: false
+      module: OCR
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.filingNumber
+      queryMaps:
+        - query: INSERT INTO dristi_ocr(id, tenantid, filingnumber, filestoreid, documenttype, message, extracteddata) VALUES (?, ?, ?, ?, ?, ?, ?);
+          basePath: ocr
+          jsonMaps:
+            - jsonPath: $.ocr.id
+            - jsonPath: $.ocr.tenantId
+            - jsonPath: $.ocr.filingNumber
+            - jsonPath: $.ocr.fileStoreId
+            - jsonPath: $.ocr.documentType
+            - jsonPath: $.ocr.message
+            - jsonPath: $.ocr.extractedData
+              type: JSON
+              dbType: JSONB

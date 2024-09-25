@@ -6,10 +6,12 @@ serviceMaps:
       fromTopic: reschedule-opt-out
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO reschedule_request_opt_out_detail (individual_id, judge_id, case_id, reschedule_request_id, opt_out_dates, created_by, created_time, last_modified_by, last_modified_time, tenant_id ,row_version)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?);
+        - query: INSERT INTO reschedule_request_opt_out_detail (id,individual_id, judge_id, case_id, reschedule_request_id, opt_out_dates, created_by, created_time, last_modified_by, last_modified_time, tenant_id ,row_version)
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?);
           basePath: $
           jsonMaps:
+            - jsonPath: $.id
+
             - jsonPath: $.individualId
 
             - jsonPath: $.judgeId

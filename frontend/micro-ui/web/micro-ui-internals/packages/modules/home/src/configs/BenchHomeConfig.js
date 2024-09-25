@@ -104,7 +104,15 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: [],
-              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
+              status: [
+                "PENDING_REGISTRATION",
+                "PENDING_ADMISSION",
+                "ADMISSION_HEARING_SCHEDULED",
+                "CASE_ADMITTED",
+                "PENDING_ADMISSION_HEARING",
+                "PENDING_NOTICE",
+                "PENDING_RESPONSE",
+              ],
             },
           ],
         },
@@ -229,7 +237,15 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: ["Trial"],
-              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED", "CASE_ADMITTED"],
+              status: [
+                "PENDING_REGISTRATION",
+                "PENDING_ADMISSION",
+                "ADMISSION_HEARING_SCHEDULED",
+                "CASE_ADMITTED",
+                "PENDING_ADMISSION_HEARING",
+                "PENDING_NOTICE",
+                "PENDING_RESPONSE",
+              ],
             },
           ],
         },
@@ -354,7 +370,14 @@ export const TabBenchSearchConfig = {
           criteria: [
             {
               stage: ["Pre-Trial"],
-              status: ["PENDING_ADMISSION", "ADMISSION_HEARING_SCHEDULED"],
+              status: [
+                "PENDING_REGISTRATION",
+                "PENDING_ADMISSION",
+                "ADMISSION_HEARING_SCHEDULED",
+                "PENDING_ADMISSION_HEARING",
+                "PENDING_NOTICE",
+                "PENDING_RESPONSE",
+              ],
             },
           ],
         },

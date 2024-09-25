@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { Button, InboxSearchComposer, CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { InfoCard } from "@egovernments/digit-ui-components";
+
 import { rolesToConfigMapping, userTypeOptions } from "../../configs/HomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import { Loader } from "@egovernments/digit-ui-react-components";
@@ -13,7 +15,15 @@ import { TabLitigantSearchConfig } from "../../configs/LitigantHomeConfig";
 import ReviewCard from "../../components/ReviewCard";
 import { InboxIcon, DocumentIcon } from "../../../homeIcon";
 import { Link } from "react-router-dom";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+import CustomStepperSuccess from "@egovernments/digit-ui-module-orders/src/components/CustomStepperSuccess";
+import { uploadResponseDocumentConfig } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/Config/resgisterRespondentConfig";
+import UploadIdType from "@egovernments/digit-ui-module-dristi/src/pages/citizen/registration/UploadIdType";
+import DocumentModal from "@egovernments/digit-ui-module-orders/src/components/DocumentModal";
+import { submitJoinCase, updateCaseDetails } from "../../../../cases/src/utils/joinCaseUtils";
+import CustomErrorTooltip from "@egovernments/digit-ui-module-dristi/src/components/CustomErrorTooltip";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
+import { Urls as PendingsUrls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 
 const defaultSearchValues = {
   filingNumber: "",
@@ -44,6 +54,14 @@ const HomeView = () => {
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState(state?.taskType || {});
   const [caseType, setCaseType] = useState(state?.caseType || {});
+
+  const [askOtp, setAskOtp] = useState(true);
+  const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
+  const [selectedParty, setSelectedParty] = useState({});
+  const [validationCode, setValidationCode] = useState("");
+  const [errors, setErrors] = useState({});
+  const [responsePendingTask, setResponsePendingTask] = useState({});
+  const [responseDoc, setResponseDoc] = useState({});
 
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const isJudge = useMemo(() => roles?.some((role) => role?.code === "JUDGE_ROLE"), [roles]);
@@ -118,6 +136,203 @@ const HomeView = () => {
         : {}),
     };
   }, [advocateId, individualId]);
+
+  const verifyAccessCode = async (responsePendingTask, validationCode) => {
+    const [res, err] = await submitJoinCase({
+      caseFilingNumber: responsePendingTask?.filingNumber,
+      tenantId: tenantId,
+      accessCode: validationCode,
+    });
+
+    if (res) {
+      setValidationCode("");
+      return { continue: true };
+    } else {
+      setErrors({
+        ...errors,
+        validationCode: {
+          message: "INVALID_ACCESS_CODE_MESSAGE",
+        },
+      });
+      return { continue: false };
+    }
+  };
+
+  const submitResponse = async (responseDoc) => {
+    let newCase;
+
+    const caseResponse = await DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            filingNumber: responsePendingTask?.filingNumber,
+          },
+        ],
+        tenantId,
+      },
+      {}
+    );
+
+    if (caseResponse?.criteria[0]?.responseList?.length === 1) {
+      newCase = caseResponse?.criteria[0]?.responseList[0];
+    }
+
+    if (newCase && responsePendingTask?.individualId && responseDoc.fileStore) {
+      newCase = {
+        ...newCase,
+        litigants: newCase?.litigants?.map((data) => {
+          if (data?.individualId === responsePendingTask?.individualId) {
+            return {
+              ...data,
+              documents: [
+                {
+                  ...responseDoc,
+                  additionalDetails: {
+                    fileName: `Response (${data?.additionalDetails?.fullName})`,
+                  },
+                },
+              ],
+            };
+          } else return data;
+        }),
+      };
+    }
+    const response = await updateCaseDetails(newCase, tenantId, "RESPOND");
+    if (response) {
+      try {
+        await DRISTIService.customApiService(PendingsUrls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Pending Response",
+            entityType: "case-default",
+            referenceId: `MANUAL_${responsePendingTask?.filingNumber}`,
+            status: "PENDING_RESPONSE",
+            assignedTo: [{ uuid: userInfo?.uuid }],
+            assignedRole: ["CASE_RESPONDER"],
+            cnrNumber: responsePendingTask?.cnrNumber,
+            filingNumber: responsePendingTask?.filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+      } catch (err) {
+        console.log("err :>> ", err);
+      }
+      return { continue: true };
+    } else return { continue: false };
+  };
+
+  const sumbitResponseConfig = useMemo(() => {
+    return {
+      handleClose: () => {
+        setShowSubmitResponseModal(false);
+      },
+      heading: { label: "" },
+      actionSaveLabel: "",
+      isStepperModal: true,
+      actionSaveOnSubmit: () => {},
+      steps: [
+        askOtp && {
+          heading: { label: "Verify with access code" },
+          actionSaveLabel: "Verify",
+          modalBody: (
+            <div className="enter-validation-code">
+              <InfoCard
+                variant={"default"}
+                label={t("PLEASE_NOTE")}
+                additionalElements={{}}
+                inline
+                text={t("SIX_DIGIT_CODE_INFO")}
+                textStyle={{}}
+                className={`custom-info-card`}
+              />
+              <LabelFieldPair className="case-label-field-pair">
+                <div className="join-case-tooltip-wrapper">
+                  <CardLabel className="case-input-label">{`${t("ENTER_CODE_JOIN_CASE")}`}</CardLabel>
+                  <CustomErrorTooltip message={`${t("ENTER_CODE_JOIN_CASE")}`} showTooltip={true} icon />
+                </div>
+                <div style={{ width: "100%", maxWidth: "960px" }}>
+                  <TextInput
+                    style={{ width: "100%" }}
+                    type={"text"}
+                    name="validationCode"
+                    value={validationCode}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      val = val.substring(0, 6);
+                      val = val.replace(/\D/g, "");
+                      setValidationCode(val);
+
+                      setErrors({
+                        ...errors,
+                        validationCode: undefined,
+                      });
+                    }}
+                  />
+                  {errors?.validationCode && <CardLabelError> {t(errors?.validationCode?.message)} </CardLabelError>}
+                  {}
+                </div>
+              </LabelFieldPair>
+            </div>
+          ),
+          actionSaveOnSubmit: async () => {
+            return await verifyAccessCode(responsePendingTask, validationCode);
+          },
+          async: true,
+          isDisabled: validationCode?.length === 6 ? false : true,
+        },
+        {
+          heading: { label: "Submit Response" },
+          actionSaveLabel: "Submit",
+          ...(askOtp && {
+            actionCancelLabel: "Back",
+          }),
+          modalBody: (
+            <UploadIdType
+              config={uploadResponseDocumentConfig}
+              isAdvocateUploading={true}
+              onFormValueChange={(setValue, formData) => {
+                const documentData = {
+                  fileStore: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
+                  documentType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
+                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
+                  additionalDetails: {
+                    fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
+                    fileType: "respondent-response",
+                  },
+                };
+                if (!isEqual(documentData, responseDoc)) setResponseDoc(documentData);
+              }}
+            />
+          ),
+          actionSaveOnSubmit: async () => {
+            await submitResponse(responseDoc);
+          },
+          isDisabled: responseDoc?.fileStore ? false : true,
+        },
+        {
+          type: "success",
+          hideSubmit: true,
+          modalBody: (
+            <CustomStepperSuccess
+              successMessage={"RESPONSE_SUCCESSFULLY"}
+              submitButtonAction={async () => {
+                setShowSubmitResponseModal(false);
+                history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${responsePendingTask?.caseId}`);
+              }}
+              submitButtonText={"VIEW_CASE_DETAILS"}
+              closeButtonText={"BACK_HOME"}
+              closeButtonAction={() => {
+                setShowSubmitResponseModal(false);
+              }}
+              t={t}
+            />
+          ),
+        },
+      ].filter(Boolean),
+    };
+  }, [askOtp, errors, responseDoc, responsePendingTask, selectedParty?.individualId, t, tenantId, userInfoType, validationCode]);
 
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
@@ -253,7 +468,19 @@ const HomeView = () => {
       });
       history.push(`/${window?.contextPath}/${userInfoType}${onRowClickData?.url}?${searchParams.toString()}`);
     } else {
-      const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+      const statusArray = [
+        "PENDING_REGISTRATION",
+        "CASE_ADMITTED",
+        "ADMISSION_HEARING_SCHEDULED",
+        "PENDING_PAYMENT",
+        "UNDER_SCRUTINY",
+        "PENDING_ADMISSION",
+        "PENDING_E-SIGN",
+        "PENDING_RE_E-SIGN",
+        "PENDING_ADMISSION_HEARING",
+        "PENDING_NOTICE",
+        "PENDING_RESPONSE",
+      ];
       if (statusArray.includes(row?.original?.status)) {
         if (row?.original?.status === "CASE_ADMITTED") {
           history.push(
@@ -263,6 +490,16 @@ const HomeView = () => {
           history.push(
             `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaint`
           );
+        } else if (row?.original?.status === "PENDING_REGISTRATION") {
+          history.push(
+            userInfoType === "employee"
+              ? `/${window?.contextPath}/${userInfoType}/dristi/admission?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}`
+              : `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaint`
+          );
+        } else if (row?.original?.status === "PENDING_E-SIGN") {
+          history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${row?.original?.id}&selected=addSignature`);
+        } else if (row?.original?.status === "PENDING_RE_E-SIGN") {
+          history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${row?.original?.id}&selected=addSignature`);
         } else {
           history.push(
             `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaint`
@@ -321,7 +558,16 @@ const HomeView = () => {
                 {individualId && userType && userInfoType === "citizen" && (
                   <div className="button-field" style={{ width: "50%" }}>
                     <React.Fragment>
-                      <JoinCaseHome refreshInbox={refreshInbox} t={t} />
+                      <JoinCaseHome
+                        refreshInbox={refreshInbox}
+                        t={t}
+                        setShowSubmitResponseModal={setShowSubmitResponseModal}
+                        setAskOtp={setAskOtp}
+                        updateCase={setCaseDetails}
+                        updateSelectedParty={setSelectedParty}
+                        setResponsePendingTask={setResponsePendingTask}
+                      />
+                      {showSubmitResponseModal && <DocumentModal config={sumbitResponseConfig} />}
                       <Button
                         className={"tertiary-button-selector"}
                         label={t("FILE_A_CASE")}
@@ -368,6 +614,9 @@ const HomeView = () => {
               isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
               uuid={userInfo?.uuid}
               userInfoType={userInfoType}
+              setAskOtp={setAskOtp}
+              setShowSubmitResponseModal={setShowSubmitResponseModal}
+              setResponsePendingTask={setResponsePendingTask}
             />
           </div>
         </React.Fragment>

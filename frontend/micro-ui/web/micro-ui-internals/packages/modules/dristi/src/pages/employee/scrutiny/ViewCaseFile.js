@@ -167,27 +167,53 @@ function ViewCaseFile({ t, inViewCase = false }) {
       ...reviewCaseFileFormConfig.map((form) => {
         return {
           ...form,
-          body: form.body.map((section) => {
-            return {
-              ...section,
-              isPrevScrutiny,
-              populators: {
-                ...section.populators,
-                inputs: section.populators.inputs?.map((input) => {
-                  delete input.data;
-                  return {
-                    ...input,
-                    data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
-                    prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
-                  };
-                }),
-              },
-            };
-          }),
+          body: form.body
+            ?.filter((section) => !(section?.key === "submissionFromAccused" && isScrutiny))
+            .map((section) => {
+              return {
+                ...section,
+                isPrevScrutiny,
+                populators: {
+                  ...section.populators,
+                  inputs: section.populators.inputs?.map((input) => {
+                    delete input.data;
+                    if (input?.key === "submissionFromAccused") {
+                      const responseDocuments = caseDetails?.litigants?.filter((litigant) => litigant?.partyType?.includes("respondent"))?.[0]
+                        ?.documents;
+                      const vakalatnamaDocument = caseDetails?.representatives?.filter((representative) =>
+                        representative?.representing?.some((represent) => represent?.partyType?.includes("respondent"))
+                      )?.[0]?.additionalDetails?.document?.vakalatnamaFileUpload;
+                      return {
+                        ...input,
+                        data: [
+                          {
+                            data: {
+                              infoBoxData: {
+                                data: responseDocuments ? "RESPONSE_SUBMISSION_MESSAGE" : "RESPONSE_NOT_SUMISSION_MESSAGE",
+                                header: responseDocuments ? "INFO_TEXT" : "PLEASE_NOTE",
+                              },
+                              responseDocuments: responseDocuments,
+                              vakalatnamaDocument: vakalatnamaDocument,
+                            },
+                          },
+                        ],
+                      };
+                    }
+                    return {
+                      ...input,
+                      data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                      prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                    };
+                  }),
+                },
+              };
+            }),
         };
       }),
     ];
   }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
+
+  console.log("formConfig :>> ", formConfig);
 
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
@@ -314,6 +340,14 @@ function ViewCaseFile({ t, inViewCase = false }) {
     }, 2000);
   };
 
+  const sidebar = useMemo(
+    () =>
+      ["litigentDetails", "caseSpecificDetails", "additionalDetails", "submissionFromAccused"].filter(
+        (sidebar) => !(sidebar === "submissionFromAccused" && isScrutiny)
+      ),
+    [isScrutiny]
+  );
+
   if (!caseId) {
     return <Redirect to="cases" />;
   }
@@ -324,11 +358,11 @@ function ViewCaseFile({ t, inViewCase = false }) {
   // if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
   //   history.push("/digit-ui/employee/dristi/cases");
   // }
-  const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
     litigentDetails: "CS_LITIGENT_DETAILS",
     caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
     additionalDetails: "CS_ADDITIONAL_DETAILS",
+    submissionFromAccused: "CS_SUBMISSSIONS_FROM_ACCUSED",
   };
   const checkList = [
     "CS_SPELLING_MISTAKES",

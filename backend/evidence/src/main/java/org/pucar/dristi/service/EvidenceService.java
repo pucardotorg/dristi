@@ -78,7 +78,6 @@ public class EvidenceService {
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(artifacts))
                 return new ArrayList<>();
-            artifacts.forEach(artifact -> artifact.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, artifact.getTenantId(), artifact.getArtifactNumber()))));
             return artifacts;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");

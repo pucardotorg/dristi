@@ -411,6 +411,36 @@ export const reviewCaseFileFormConfig = [
         },
       },
       {
+        type: "component",
+        component: "SelectReviewAccordion",
+        key: "submissionFromAccused",
+        label: "CS_SUBMISSSIONS_FROM_ACCUSED",
+        number: 4,
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              key: "submissionFromAccused",
+              name: "submissionFromAccused",
+              label: "CS_SUBMISSSIONS_FROM_ACCUSED",
+              icon: "WitnessDetailsIcon",
+              config: [
+                {
+                  type: "infoBox",
+                  value: "infoBoxData",
+                },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["vakalatnamaDocument", "responseDocuments"],
+                },
+              ],
+              data: {},
+            },
+          ],
+        },
+      },
+      {
         key: "scrutinyMessage",
         type: "component",
         withoutLabel: true,

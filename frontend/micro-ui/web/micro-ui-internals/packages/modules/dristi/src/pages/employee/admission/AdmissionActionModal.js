@@ -1,5 +1,5 @@
 import { CardText, Modal, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 
 import { modalConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
@@ -12,6 +12,8 @@ import { WhiteRightArrow } from "../../../icons/svgIndex";
 import { formatDateInMonth } from "../../../Utils";
 import { DRISTIService } from "../../../services";
 import ScheduleHearing from "./ScheduleHearingModal";
+import { OrderWorkflowAction } from "../../../Utils/orderWorkflow";
+import { Urls } from "../../../hooks";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -55,6 +57,7 @@ function AdmissionActionModal({
   disabled,
   filingNumber,
   isCaseAdmitted = false,
+  createAdmissionOrder = false,
   caseAdmittedSubmit = () => {},
   caseAdmitLoader,
   caseDetails,
@@ -122,7 +125,10 @@ function AdmissionActionModal({
   const [selectedChip, setSelectedChip] = React.useState(null);
 
   const setPurposeValue = (value, input) => {
-    setScheduleHearingParam({ ...scheduleHearingParams, purpose: isCaseAdmitted ? value : value.code });
+    setScheduleHearingParam({
+      ...scheduleHearingParams,
+      purpose: isCaseAdmitted || createAdmissionOrder ? value : value.code,
+    });
   };
 
   const showCustomDateModal = () => {
@@ -176,9 +182,53 @@ function AdmissionActionModal({
       });
   };
 
+  const handleIssueNotice = async (hearingDate, hearingNumber) => {
+    try {
+      const orderBody = {
+        createdDate: new Date().getTime(),
+        tenantId,
+        cnrNumber: caseDetails?.cnrNumber,
+        filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "NOTICE",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        ...(hearingNumber && { hearingNumber }),
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              code: "NOTICE",
+              type: "NOTICE",
+              name: "ORDER_TYPE_NOTICE",
+            },
+            hearingDate,
+          },
+        },
+      };
+      DRISTIService.customApiService(Urls.dristi.ordersCreate, orderBody, { tenantId })
+        .then((res) => {
+          history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`, {
+            caseId: caseDetails?.id,
+            tab: "Orders",
+          });
+        })
+        .catch();
+    } catch (error) {}
+  };
+
   return (
     <React.Fragment>
-      {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
+      {modalInfo?.page === 0 && modalInfo?.type === "sendCaseBack" && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
@@ -207,7 +257,7 @@ function AdmissionActionModal({
           {showErrorToast && <Toast error={true} label={t(label)} isDleteBtn={true} onClose={closeToast} />}
         </Modal>
       )}
-      {modalInfo?.page == 0 && modalInfo?.type === "admitCase" && (
+      {modalInfo?.page === 0 && modalInfo?.type === "admitCase" && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[1].headModal)} />}
           actionSaveLabel={t(stepItems[1]?.submitText)}
@@ -219,7 +269,7 @@ function AdmissionActionModal({
         </Modal>
       )}
 
-      {modalInfo?.page == 0 && modalInfo?.type === "schedule" && (
+      {modalInfo?.page === 0 && modalInfo?.type === "schedule" && (
         <Modal
           headerBarMain={<Heading label={scheduleHearing ? t("CS_SCHEDULE_HEARING") : t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
@@ -242,12 +292,13 @@ function AdmissionActionModal({
             handleClickDate={handleClickDate}
             disabled={disabled}
             isCaseAdmitted={isCaseAdmitted}
+            createAdmissionOrder={createAdmissionOrder}
             isSubmitBarDisabled={isGenerateOrderDisabled}
             caseAdmittedSubmit={caseAdmittedSubmit}
           />
         </Modal>
       )}
-      {modalInfo?.page == 1 && modalInfo?.type === "schedule" && (
+      {modalInfo?.page === 1 && modalInfo?.type === "schedule" && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
@@ -308,6 +359,8 @@ function AdmissionActionModal({
             if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
               // handleScheduleNextHearing();
               setModalInfo({ page: 3, type: "schedule" });
+            } else if (submitModalInfo?.nextButtonText === "ISSUE_NOTICE") {
+              handleIssueNotice();
             } else {
               handleNextCase();
             }
@@ -318,7 +371,7 @@ function AdmissionActionModal({
           <CustomSubmitModal submitModalInfo={submitModalInfo} t={t} />
         </Modal>
       )}
-      {modalInfo?.page == 3 && modalInfo?.type === "schedule" && (
+      {modalInfo?.page === 3 && modalInfo?.type === "schedule" && (
         <ScheduleHearing
           config={stepItems[2]}
           t={t}
@@ -339,6 +392,33 @@ function AdmissionActionModal({
           caseAdmittedSubmit={caseAdmittedSubmit}
           oldCaseDetails={caseDetails}
         />
+      )}
+      {modalInfo?.page === 4 && (
+        <Modal
+          actionSaveLabel={
+            <div>
+              {t(submitModalInfo?.nextButtonText)}
+              {submitModalInfo?.isArrow && <WhiteRightArrow />}
+            </div>
+          }
+          actionCancelLabel={t(submitModalInfo?.backButtonText)}
+          actionCancelOnSubmit={() => {
+            history.push(`/${window?.contextPath}/employee`);
+          }}
+          actionSaveOnSubmit={() => {
+            if (submitModalInfo?.nextButtonText === "SCHEDULE_NEXT_HEARING") {
+              handleScheduleNextHearing();
+            } else if (submitModalInfo?.nextButtonText === "CS_SCHEDULE_ADMISSION_HEARING") {
+              setModalInfo({ ...modalInfo, page: 0, type: "schedule" });
+            } else {
+              handleNextCase();
+            }
+          }}
+          className="case-types"
+          formId="modal-action"
+        >
+          <CustomSubmitModal submitModalInfo={submitModalInfo} t={t} />
+        </Modal>
       )}
     </React.Fragment>
   );

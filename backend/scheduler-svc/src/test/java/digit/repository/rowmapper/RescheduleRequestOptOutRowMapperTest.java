@@ -38,6 +38,7 @@ public class RescheduleRequestOptOutRowMapperTest {
     public void testMapRow() throws SQLException, JsonProcessingException {
 
         when(resultSet.getString("judge_id")).thenReturn("J001");
+        when(resultSet.getString("id")).thenReturn("id");
         when(resultSet.getString("case_id")).thenReturn("CASE001");
         when(resultSet.getString("reschedule_request_id")).thenReturn("RR001");
         when(resultSet.getString("individual_id")).thenReturn("IND001");
@@ -64,6 +65,7 @@ public class RescheduleRequestOptOutRowMapperTest {
     @Test
     public void testMapRowWithNullValues() throws SQLException, JsonProcessingException {
         when(resultSet.getString("judge_id")).thenReturn(null);
+        when(resultSet.getString("id")).thenReturn("id");
         when(resultSet.getString("case_id")).thenReturn("CASE002");
         when(resultSet.getString("reschedule_request_id")).thenReturn("RR002");
         when(resultSet.getString("individual_id")).thenReturn("IND002");

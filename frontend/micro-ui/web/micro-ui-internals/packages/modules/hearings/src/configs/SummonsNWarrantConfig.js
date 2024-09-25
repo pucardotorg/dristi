@@ -4,9 +4,9 @@
 //   applicationNumber:""
 // };
 
-export const summonsConfig = ({ filingNumber, limit, offset, orderNumber, orderId }) => {
+export const summonsConfig = ({ filingNumber, limit, offset, orderNumber, orderId, orderType }) => {
   return {
-    label: "1(Summons)",
+    label: `1(${orderType === "NOTICE" ? "Notice" : "Summon"}s)`,
     type: "search",
     apiDetails: {
       serviceName: "/task/v1/search",

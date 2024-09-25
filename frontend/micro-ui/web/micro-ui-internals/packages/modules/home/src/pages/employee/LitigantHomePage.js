@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import JoinCaseHome from "../../../../cases/src/pages/employee/JoinCaseHome";
+import DocumentModal from "@egovernments/digit-ui-module-orders/src/components/DocumentModal";
+import UploadIdType from "@egovernments/digit-ui-module-dristi/src/pages/citizen/registration/UploadIdType";
+import { uploadResponseDocumentConfig } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/Config/resgisterRespondentConfig";
+import OtpComponent from "../../../../cases/src/components/OtpComponent";
+import CustomStepperSuccess from "@egovernments/digit-ui-module-orders/src/components/CustomStepperSuccess";
+import { updateCaseDetails } from "../../../../cases/src/utils/joinCaseUtils";
 const FileNewCaseIcon = () => (
   <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="120" height="120" rx="60" fill="#FFF4FC" fill-opacity="0.5" />
@@ -444,12 +450,120 @@ const containerJoinFileCaseStyle = {
 };
 const LitigantHomePage = ({ isApprovalPending }) => {
   const userName = Digit.SessionStorage.get("User");
+  const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const { t } = useTranslation();
   const today = new Date();
   const history = useHistory();
   const curHr = today.getHours();
   const userType = Digit.UserService.getType();
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const [callRefetch, SetCallRefetch] = useState(false);
+  const [askOtp, setAskOtp] = useState(true);
+  const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [caseDetails, setCaseDetails] = useState(null);
+  const [selectedParty, setSelectedParty] = useState({});
+
+  const onOtpChange = (value) => {
+    setOtp(value);
+  };
+
+  const sumbitResponseConfig = useMemo(() => {
+    return {
+      handleClose: () => {
+        // setShow(true);
+        // setShowEditRespondentDetailsModal(false);
+      },
+      heading: { label: "" },
+      actionSaveLabel: "",
+      isStepperModal: true,
+      actionSaveOnSubmit: () => {},
+      steps: [
+        askOtp && {
+          heading: { label: "Verify with access code" },
+          actionSaveLabel: "Verify",
+          modalBody: (
+            <OtpComponent
+              t={t}
+              length={6}
+              onOtpChange={onOtpChange}
+              otp={otp}
+              size={6}
+              otpEnterTime={10}
+              // onResend={onResendOtp}
+              // mobileNumber={accusedRegisterFormData?.phoneNumber}
+            />
+          ),
+          actionSaveOnSubmit: async () => {
+            // return await otpVerificationAction();
+          },
+          async: true,
+          isDisabled: otp?.length === 6 ? false : true,
+        },
+        {
+          heading: { label: "Submit Response" },
+          actionSaveLabel: "Submit",
+          actionCancelLabel: "Back",
+          modalBody: (
+            <UploadIdType
+              config={uploadResponseDocumentConfig}
+              isAdvocateUploading={true}
+              onFormValueChange={(setValue, formData) => {
+                console.log("formData :>> ", formData);
+                const documentData = {
+                  fileStoreId: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
+                  fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
+                  fileType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
+                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
+                };
+                setCaseDetails({
+                  ...caseDetails,
+                  litigants: caseDetails?.litigants?.map((data) => {
+                    if (data?.individualId === selectedParty?.individualId) {
+                      return {
+                        ...data,
+                        documents: [documentData],
+                      };
+                    } else return data;
+                  }),
+                });
+              }}
+            />
+          ),
+          actionSaveOnSubmit: async () => {
+            if (caseDetails?.status === "PENDING_RESPONSE") await updateCaseDetails(caseDetails, tenantId, "RESPOND");
+            setShowSubmitResponseModal(false);
+          },
+          // isDisabled:
+          //   accusedIdVerificationDocument?.SelectUserTypeComponent?.ID_Proof?.length > 0 &&
+          //   accusedIdVerificationDocument?.SelectUserTypeComponent?.selectIdType?.type
+          //     ? false
+          //     : true,
+        },
+        {
+          type: "success",
+          hideSubmit: true,
+          modalBody: (
+            <CustomStepperSuccess
+              successMessage={"RESPONSE_SUCCESSFULLY"}
+              submitButtonAction={() => {
+                setShowSubmitResponseModal(false);
+                history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
+              }}
+              submitButtonText={"VIEW_CASE_DETAILS"}
+              closeButtonText={"BACK_HOME"}
+              closeButtonAction={() => {
+                setShowSubmitResponseModal(false);
+              }}
+              t={t}
+            />
+          ),
+        },
+      ].filter(Boolean),
+    };
+  }, [askOtp, otp, t]);
+
   const refreshInbox = () => {
     SetCallRefetch(true);
     history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
@@ -535,7 +649,15 @@ const LitigantHomePage = ({ isApprovalPending }) => {
                 {t("CS_JOIN_ONGOING_CASE_SUBTEXT_1")}
               </span>
             </React.Fragment>
-            <JoinCaseHome refreshInbox={refreshInbox} t={t} />
+            <JoinCaseHome
+              refreshInbox={refreshInbox}
+              t={t}
+              setShowSubmitResponseModal={setShowSubmitResponseModal}
+              setAskOtp={setAskOtp}
+              updateCase={setCaseDetails}
+              updateSelectedParty={setSelectedParty}
+            />
+            {showSubmitResponseModal && <DocumentModal config={sumbitResponseConfig} />}
           </div>
         </div>
       </div>

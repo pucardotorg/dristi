@@ -125,4 +125,46 @@ public class Configuration {
 
 	@Value("${evidence.kafka.comments.update.topic}")
 	private String evidenceUpdateCommentsTopic;
+
+	//Idgen
+	@Value("${egov.idgen.prosecutionConfig}")
+	private String prosecutionConfig;
+
+	@Value("${egov.idgen.prosecutionFormat}")
+	private String prosecutionFormat;
+
+	//Idgen
+	@Value("${egov.idgen.defenceConfig}")
+	private String defenceConfig;
+
+	@Value("${egov.idgen.defenceFormat}")
+	private String defenceFormat;
+
+	//Idgen
+	@Value("${egov.idgen.courtConfig}")
+	private String courtConfig;
+
+	@Value("${egov.idgen.courtFormat}")
+	private String courtFormat;
+
+	//Idgen
+	@Value("${egov.idgen.defenceWitnessConfig}")
+	private String defenceWitnessConfig;
+
+	@Value("${egov.idgen.defenceWitnessFormat}")
+	private String defenceWitnessFormat;
+
+	//Idgen
+	@Value("${egov.idgen.prosecutionWitnessConfig}")
+	private String prosecutionWitnessConfig;
+
+	@Value("${egov.idgen.prosecutionWitnessFormat}")
+	private String prosecutionWitnessFormat;
+
+	//Idgen
+	@Value("${egov.idgen.courtWitnessConfig}")
+	private String courtWitnessConfig;
+
+	@Value("${egov.idgen.courtWitnessFormat}")
+	private String courtWitnessFormat;
 }

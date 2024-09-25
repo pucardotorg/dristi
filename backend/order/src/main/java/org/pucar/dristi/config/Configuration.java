@@ -125,4 +125,11 @@ public class Configuration {
 
     @Value("${egov.filestore.path}")
     private String fileStorePath;
+
+    //Idgen
+    @Value("${egov.idgen.orderConfig}")
+    private String orderConfig;
+
+    @Value("${egov.idgen.orderFormat}")
+    private String orderFormat;
 }

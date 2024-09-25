@@ -5,7 +5,17 @@ import { CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
 import AdmissionActionModal from "../admission/AdmissionActionModal";
 import { DRISTIService } from "../../../services";
 
-const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, showToast, advocateDetails, caseAdmittedSubmit }) => {
+const ScheduleHearing = ({
+  tenantId,
+  setShowModal,
+  caseData,
+  setUpdateCounter,
+  showToast,
+  advocateDetails,
+  caseAdmittedSubmit,
+  isCaseAdmitted,
+  createAdmissionOrder = false,
+}) => {
   const { t } = useTranslation();
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
   const [selectedChip, setSelectedChip] = useState(null);
@@ -153,8 +163,9 @@ const ScheduleHearing = ({ tenantId, setShowModal, caseData, setUpdateCounter, s
           updatedConfig={updatedConfig}
           tenantId={tenantId}
           handleScheduleNextHearing={() => {}}
-          disabled={false}
-          isCaseAdmitted={true}
+          disabled={!isCaseAdmitted}
+          isCaseAdmitted={isCaseAdmitted}
+          createAdmissionOrder={createAdmissionOrder}
           caseAdmittedSubmit={caseAdmittedSubmit}
           scheduleHearing={true}
         />

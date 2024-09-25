@@ -25,11 +25,18 @@ const DocumentModal = ({ config, setShow, currentStep }) => {
     return config?.isDisabled;
   }, [config?.isDisabled, config?.isStepperModal, config?.steps, step]);
 
-  const actionSaveOnSubmit = () => {
+  const actionSaveOnSubmit = async () => {
+    let action = {};
     if (config?.isStepperModal && config?.steps[step]?.actionSaveOnSubmit) {
-      config?.steps[step]?.actionSaveOnSubmit();
+      if (config?.steps?.[step]?.async === true) {
+        action = await config?.steps[step]?.actionSaveOnSubmit();
+      } else config?.steps[step]?.actionSaveOnSubmit();
     } else if (config?.actionSaveOnSubmit) config?.actionSaveOnSubmit();
-    if (step + 1 < config?.steps?.length) setStep(step + 1);
+    if (step + 1 < config?.steps?.length) {
+      if (config?.steps?.[step]?.async === true) {
+        if (action?.continue === true) setStep(step + 1);
+      } else setStep(step + 1);
+    }
   };
 
   const actionCancelOnSubmit = () => {
@@ -42,7 +49,11 @@ const DocumentModal = ({ config, setShow, currentStep }) => {
 
   return (
     <Modal
-      headerBarEnd={<CloseBtn onClick={config?.isStepperModal ? config?.steps[step]?.handleClose || config?.handleClose : config?.handleClose} />}
+      headerBarEnd={
+        (config?.isStepperModal && (config?.steps[step]?.handleClose || config?.handleClose)) || (!config?.isStepperModal && config?.handleClose) ? (
+          <CloseBtn onClick={config?.isStepperModal ? config?.steps[step]?.handleClose || config?.handleClose : config?.handleClose} />
+        ) : undefined
+      }
       actionSaveLabel={config?.isStepperModal ? config?.steps[step]?.actionSaveLabel || config?.actionSaveLabel : config?.actionSaveLabel}
       actionSaveOnSubmit={actionSaveOnSubmit}
       hideSubmit={config?.isStepperModal ? config?.steps[step]?.hideSubmit || config?.hideSubmit : config?.hideSubmit}
@@ -52,8 +63,10 @@ const DocumentModal = ({ config, setShow, currentStep }) => {
       headerBarMain={
         config?.isStepperModal && config?.steps[step]?.type !== "success" ? (
           <Heading heading={config?.steps[step]?.heading || config?.heading} />
-        ) : (
+        ) : !config?.isStepperModal ? (
           <Heading heading={config?.heading} />
+        ) : (
+          ""
         )
       }
       className={

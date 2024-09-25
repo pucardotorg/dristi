@@ -52,11 +52,11 @@ public class Order {
     private String hearingNumber = null;
 
     @JsonProperty("orderNumber")
-    @Size(min = 24, max = 256)
+    @Size(min = 20, max = 256)
     private String orderNumber = null;
 
     @JsonProperty("linkedOrderNumber")
-    @Size(min = 24, max = 256)
+    @Size(min = 20, max = 256)
     private String linkedOrderNumber = null;
 
     @JsonProperty("createdDate")

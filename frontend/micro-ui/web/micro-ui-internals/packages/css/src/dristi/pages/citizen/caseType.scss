@@ -176,8 +176,11 @@
 
 .custom-stepper-modal-success {
   .action-button-success {
+    display: flex;
+    justify-content: space-between;
     .jk-digit-primary-btn.selector-button-primary,
     .jk-digit-primary-btn.selector-button-border {
+      flex-grow: 1;
       width: 50% !important;
     }
 
@@ -482,6 +485,7 @@
   .popup-module-main {
     max-height: calc(100% - 52px);
     height: calc(100% - 52px);
+    overflow-y: unset !important;
     .popup-module-action-bar {
       border-top: 1px #e8e8e8 solid;
       margin: 0px;

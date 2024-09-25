@@ -41,6 +41,13 @@
               ]
             },
             {
+              "action": "BULK_RESCHEDULE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_SCHEDULER"
+              ]
+            },
+            {
               "action": "START",
               "nextState": "IN_PROGRESS",
               "roles": [

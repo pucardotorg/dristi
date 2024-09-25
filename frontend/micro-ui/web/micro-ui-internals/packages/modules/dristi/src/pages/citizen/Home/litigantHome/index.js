@@ -53,6 +53,8 @@ function Home() {
   );
 
   const [callRefetch, SetCallRefetch] = useState(false);
+  const [caseDetails, setCaseDetails] = useState(null);
+  const [selectedParty, setSelectedParty] = useState({});
 
   if (userType === "ADVOCATE" && searchData) {
     const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
@@ -91,7 +93,7 @@ function Home() {
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <JoinCaseHome refreshInbox={refreshInbox} />
+            <JoinCaseHome refreshInbox={refreshInbox} updateCase={setCaseDetails} updateSelectedParty={setSelectedParty} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}
@@ -125,7 +127,7 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
                   statusArray.includes(props?.original?.status)
                     ? history.push(`${path}/view-case?caseId=${props.original.id}&filingNumber=${props.original.filingNumber}&tab=Overview`)
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);

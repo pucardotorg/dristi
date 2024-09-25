@@ -5,7 +5,7 @@ const ApplicationInfoComponent = ({ infos, links }) => {
   const { t } = useTranslation();
   return (
     <React.Fragment>
-      <div className="application-info" style={{ width: "616px", flexWrap: "wrap" }}>
+      <div className="application-info" style={{ maxWidth: "616px", flexWrap: "wrap" }}>
         <div className={`info-row-wrapper ${links && links?.length > 0 ? "with-link" : ""}`}>
           {infos &&
             infos?.map((info, index) => (

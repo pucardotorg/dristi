@@ -30,7 +30,7 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PAYMENT_PENDING", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
                   if (statusArray.includes(props?.original?.status)) {
                     history.push(`${path}/view-case?caseId=${props.original.id}&filingNumber=${props.original.filingNumber}&tab=Overview`);
                   } else if (props?.original?.status === CaseWorkflowState.PENDING_ADMISSION) {

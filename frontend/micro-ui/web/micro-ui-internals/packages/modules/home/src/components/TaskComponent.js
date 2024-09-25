@@ -16,7 +16,19 @@ export const CaseWorkflowAction = {
 };
 const dayInMillisecond = 1000 * 3600 * 24;
 
-const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitigant, uuid, filingNumber, inCase = false }) => {
+const TasksComponent = ({
+  taskType,
+  setTaskType,
+  caseType,
+  setCaseType,
+  isLitigant,
+  uuid,
+  filingNumber,
+  inCase = false,
+  setAskOtp,
+  setShowSubmitResponseModal,
+  setResponsePendingTask,
+}) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
   const history = useHistory();
@@ -266,6 +278,8 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const actionName = data?.fields?.find((field) => field.key === "name")?.value;
           const referenceId = data?.fields?.find((field) => field.key === "referenceId")?.value;
           const entityType = data?.fields?.find((field) => field.key === "entityType")?.value;
+          const individualId = data?.fields?.find((field) => field.key === "additionalDetails.individualId")?.value;
+          const caseId = data?.fields?.find((field) => field.key === "additionalDetails.caseId")?.value;
           const updateReferenceId = referenceId.split("_").pop();
           const isManual = referenceId?.includes("MANUAL_");
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
@@ -292,6 +306,9 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
           const due = dayCount > 1 ? `Due in ${dayCount} Days` : dayCount === 1 || dayCount === 0 ? `Due today` : `No Due Date`;
           return {
             actionName: actionName || pendingTaskActions?.[status]?.actionName,
+            status,
+            individualId,
+            caseId,
             caseTitle: caseDetail?.caseTitle || "",
             filingNumber: filingNumber,
             caseType: "NIA S138",
@@ -388,6 +405,9 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                     totalCount={pendingTaskDataInWeek?.length}
                     isHighlighted={true}
                     isAccordionOpen={true}
+                    setAskOtp={setAskOtp}
+                    setShowSubmitResponseModal={setShowSubmitResponseModal}
+                    setResponsePendingTask={setResponsePendingTask}
                   />
                 </div>
                 <div className="task-section">
@@ -396,6 +416,9 @@ const TasksComponent = ({ taskType, setTaskType, caseType, setCaseType, isLitiga
                     accordionHeader={"ALL_OTHER_TASKS"}
                     t={t}
                     totalCount={allOtherPendingTask?.length}
+                    setAskOtp={setAskOtp}
+                    setShowSubmitResponseModal={setShowSubmitResponseModal}
+                    setResponsePendingTask={setResponsePendingTask}
                   />
                 </div>
                 <div className="task-section"></div>

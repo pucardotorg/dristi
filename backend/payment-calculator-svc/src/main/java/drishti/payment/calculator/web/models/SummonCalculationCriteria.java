@@ -17,7 +17,7 @@ public class SummonCalculationCriteria {
 
     @JsonProperty("channelId")
     @NotNull(message = " channelId cannot be null")
-    @NotBlank(message = " channelId cannot be blank")
+    @NotBlank(message = " channelId cannot be null")
     private String channelId;
 
     @JsonProperty("receiverPincode")

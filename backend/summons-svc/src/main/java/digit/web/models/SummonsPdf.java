@@ -47,4 +47,10 @@ public class SummonsPdf  {
 
     @JsonProperty("embeddedUrl")
     private String embeddedUrl;
+
+    @JsonProperty("complainantName")
+    private String complainantName;
+
+    @JsonProperty("complainantAddress")
+    private String complainantAddress;
 }

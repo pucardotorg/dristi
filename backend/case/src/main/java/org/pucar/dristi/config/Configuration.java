@@ -226,4 +226,42 @@ public class Configuration {
 	@Value("${user.oauth.url}")
 	private String userOauthUrl;
 
+	@Value("${spring.redis.timeout}")
+	private Long redisTimeout;
+
+	//	Models for encryption decryption in MDMS
+	@Value("${egov.enc.mdms.security.policy.court.case}")
+	private String courtCaseEncrypt;
+
+	@Value("${egov.enc.mdms.security.policy.case.decrypt.self}")
+	private String caseDecryptSelf;
+
+	@Value("${egov.enc.mdms.security.policy.court.decrypt.other}")
+	private String caseDecryptOther;
+
+	//Idgen updated
+	@Value("${egov.idgen.caseFilingConfig}")
+	private String caseFilingConfig;
+
+	@Value("${egov.idgen.caseFilingFormat}")
+	private String caseFilingFormat;
+
+	@Value("${egov.idgen.caseCNRConfig}")
+	private String caseCNRConfig;
+
+	@Value("${egov.idgen.caseCNRFormat}")
+	private String caseCNRFormat;
+
+	@Value("${egov.idgen.courtCaseConfig}")
+	private String courtCaseConfig;
+
+	@Value("${egov.idgen.courtCaseSTFormat}")
+	private String courtCaseSTFormat;
+
+	@Value("${egov.idgen.cmpConfig}")
+	private String cmpConfig;
+
+	@Value("${egov.idgen.cmpFormat}")
+	private String cmpFormat;
+
 }

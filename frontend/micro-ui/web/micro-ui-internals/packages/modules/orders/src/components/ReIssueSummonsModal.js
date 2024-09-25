@@ -9,7 +9,7 @@ import { Urls } from "../hooks/services/Urls";
 function ReIssueSummonsModal() {
   const { t } = useTranslation();
   const history = useHistory();
-  const { hearingId, filingNumber, cnrNumber } = Digit.Hooks.useQueryParams();
+  const { hearingId, filingNumber, cnrNumber, orderType } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: hearingsData, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -53,7 +53,7 @@ function ReIssueSummonsModal() {
   };
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
-  const hadleCreateOrder = async (orderType) => {
+  const hadleCreateOrder = async (orderType, taskOrderType) => {
     const reqbody = {
       order: {
         createdDate: new Date().getTime(),
@@ -75,7 +75,7 @@ function ReIssueSummonsModal() {
         },
         documents: [],
         additionalDetails: {
-          isReIssueSummons: true,
+          [taskOrderType === "NOTICE" ? "isReIssueNotice" : "isReIssueSummons"]: true,
           formdata: {
             orderType: {
               code: orderType,
@@ -126,13 +126,13 @@ function ReIssueSummonsModal() {
   };
   const handleRescheduleHearing = async () => {
     try {
-      return await hadleCreateOrder("RESCHEDULE_OF_HEARING_DATE");
+      return await hadleCreateOrder("RESCHEDULE_OF_HEARING_DATE", orderType);
     } catch (error) {}
   };
 
   const handleReIssueSummon = async () => {
     try {
-      return await hadleCreateOrder("SUMMONS");
+      return await hadleCreateOrder(orderType || "SUMMONS");
     } catch (error) {}
   };
 

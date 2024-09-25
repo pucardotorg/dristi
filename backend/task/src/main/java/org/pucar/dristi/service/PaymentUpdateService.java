@@ -1,6 +1,8 @@
 package org.pucar.dristi.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -41,17 +43,19 @@ public class PaymentUpdateService {
     private final Producer producer;
     private final Configuration config;
     private final MdmsUtil mdmsUtil;
+    private final ObjectMapper objectMapper;
 
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    public PaymentUpdateService(WorkflowUtil workflowUtil, ObjectMapper mapper, TaskRepository repository, Producer producer, Configuration config, MdmsUtil mdmsUtil, ServiceRequestRepository serviceRequestRepository) {
+    public PaymentUpdateService(WorkflowUtil workflowUtil, ObjectMapper mapper, TaskRepository repository, Producer producer, Configuration config, MdmsUtil mdmsUtil, ObjectMapper objectMapper, ServiceRequestRepository serviceRequestRepository) {
         this.workflowUtil = workflowUtil;
         this.mapper = mapper;
         this.repository = repository;
         this.producer = producer;
         this.config = config;
         this.mdmsUtil = mdmsUtil;
+        this.objectMapper = objectMapper;
         this.serviceRequestRepository = serviceRequestRepository;
     }
 
@@ -81,9 +85,6 @@ public class PaymentUpdateService {
         try {
 
             Bill bill = paymentDetail.getBill();
-            if (!Bill.StatusEnum.PAID.equals(bill.getStatus())) {
-                return;
-            }
             String consumerCode = bill.getConsumerCode();
             String businessService = bill.getBusinessService();
             String[] consumerCodeSplitArray = consumerCode.split("_", 2);
@@ -96,14 +97,16 @@ public class PaymentUpdateService {
             String filterString = String.format(FILTER_PAYMENT_TYPE, suffix, businessService);
 
             JSONArray paymentMaster = JsonPath.read(paymentType, filterString);
+
             List<String> deliveryChannels = JsonPath.read(paymentMaster, "$..deliveryChannel");
 
             //todo:handle error
             String filterStringDeliveryChannel = String.format(FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL, deliveryChannels.get(0), businessService);
 
             JSONArray paymentMasterWithDeliveryChannel = JsonPath.read(paymentType, filterStringDeliveryChannel);
+            List<Map<String, Object>> maps = filterServiceCode(paymentMasterWithDeliveryChannel, businessService);
 
-            int paymentCountForDeliveryChannel = paymentMasterWithDeliveryChannel.size();
+            int paymentCountForDeliveryChannel = maps.size();
 
             if (paymentCountForDeliveryChannel > 1) {
 
@@ -117,7 +120,7 @@ public class PaymentUpdateService {
                 }
                 BillResponse billResponse = getBill(requestInfo, bill.getTenantId(), consumerCodeSet);
                 List<Bill> partsBill = billResponse.getBill();
-                boolean canUpdateWorkflow = true;
+                boolean canUpdateWorkflow = !partsBill.isEmpty();
                 for (Bill element : partsBill) {
                     if (!element.getStatus().equals(Bill.StatusEnum.PAID)) {
                         canUpdateWorkflow = false;
@@ -147,7 +150,7 @@ public class PaymentUpdateService {
             throw new CustomException("INVALID_RECEIPT", "No Tasks found for the consumerCode " + criteria.getTaskNumber());
         }
 
-        Role role = Role.builder().code("TASK_UPDATOR").tenantId(tenantId).build();
+        Role role = Role.builder().code(config.getSystemAdmin()).tenantId(tenantId).build();
         requestInfo.getUserInfo().getRoles().add(role);
 
         for (Task task : tasks) {
@@ -162,6 +165,19 @@ public class PaymentUpdateService {
 
                 TaskRequest taskRequest = TaskRequest.builder().requestInfo(requestInfo).task(task).build();
                 if (ISSUESUMMON.equalsIgnoreCase(status))
+                    producer.push(config.getTaskIssueSummonTopic(), taskRequest);
+
+                producer.push(config.getTaskUpdateTopic(), taskRequest);
+            } else if (task.getTaskType().equals(NOTICE)) {
+                Workflow workflow = new Workflow();
+                workflow.setAction("MAKE_PAYMENT");
+                task.setWorkflow(workflow);
+                String status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, task.getTaskNumber(),
+                        config.getTaskNoticeBusinessServiceName(), workflow, config.getTaskNoticeBusinessName());
+                task.setStatus(status);
+
+                TaskRequest taskRequest = TaskRequest.builder().requestInfo(requestInfo).task(task).build();
+                if (ISSUENOTICE.equalsIgnoreCase(status))
                     producer.push(config.getTaskIssueSummonTopic(), taskRequest);
 
                 producer.push(config.getTaskUpdateTopic(), taskRequest);
@@ -211,4 +227,20 @@ public class PaymentUpdateService {
         }
     }
 
+    public List<Map<String, Object>> filterServiceCode(JSONArray paymentMasterWithDeliveryChannel, String serviceCode) throws JsonProcessingException {
+
+
+        String jsonString = paymentMasterWithDeliveryChannel.toString();
+        List<Map<String, Object>> jsonList = objectMapper.readValue(jsonString, new TypeReference<>() {
+        });
+
+        return jsonList.stream()
+                .filter(item ->
+                        ((List<Map<String, Object>>) item.get("businessService")).stream()
+                                .anyMatch(service -> serviceCode.equals(service.get("businessCode")))
+                )
+                .toList();
+
+
+    }
 }

@@ -3,6 +3,7 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
@@ -19,16 +20,22 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class ApplicationEnrichment {
     private final IdgenUtil idgenUtil;
+    private final Configuration configuration;
 
     @Autowired
-    public ApplicationEnrichment(IdgenUtil idgenUtil) {
+    public ApplicationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
         this.idgenUtil = idgenUtil;
+        this.configuration = configuration;
     }
 
     public void enrichApplication(ApplicationRequest applicationRequest) {
         try {
             if(applicationRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> applicationIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1);
+                String tenantId = applicationRequest.getApplication().getCnrNumber();
+                String idName = configuration.getApplicationConfig();
+                String idFormat = configuration.getApplicationFormat();
+
+                List<String> applicationIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), tenantId, idName, idFormat, 1,false);
                 Application application = applicationRequest.getApplication();
                 AuditDetails auditDetails = AuditDetails
                         .builder()
@@ -40,8 +47,8 @@ public class ApplicationEnrichment {
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
                 application.setCreatedDate(System.currentTimeMillis());
-                application.setApplicationNumber(applicationIdList.get(0));
                 application.setIsActive(true);
+                application.setApplicationNumber(application.getCnrNumber()+"-"+applicationIdList.get(0));
 
                 if (application.getStatuteSection() != null) {
                     application.getStatuteSection().setId(UUID.randomUUID());

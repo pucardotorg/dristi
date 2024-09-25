@@ -82,6 +82,8 @@ public class PdfServiceUtil {
                 .hearingDate(task.getTaskDetails().getCaseDetails().getHearingDate().toString())
                 .respondentName(task.getTaskDetails().getRespondentDetails().getName())
                 .respondentAddress(task.getTaskDetails().getRespondentDetails().getAddress().toString())
+                .complainantName(task.getTaskDetails().getComplainantDetails().getName())
+                .complainantAddress(task.getTaskDetails().getComplainantDetails().getAddress().toString())
                 .build();
     }
 

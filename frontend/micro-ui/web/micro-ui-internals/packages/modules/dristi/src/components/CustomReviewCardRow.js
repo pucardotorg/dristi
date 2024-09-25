@@ -415,7 +415,7 @@ const CustomReviewCardRow = ({
                                   tenantId={tenantId}
                                   docWidth="250px"
                                   showDownloadOption={false}
-                                  documentName={data?.fileName}
+                                  documentName={data?.fileName || data?.additionalDetails?.fileName}
                                   preview
                                 />
                               </div>

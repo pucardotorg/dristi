@@ -21,7 +21,7 @@ export const SummonsTabsConfig = {
         requestBody: {
           apiOperation: "SEARCH",
           criteria: {
-            completeStatus: ["ISSUESUMMON"], // have to do changes
+            completeStatus: ["ISSUE_SUMMON", "ISSUE_NOTICE"], // have to do changes
           },
         },
         masterName: "commonUiConfig",
@@ -155,7 +155,7 @@ export const SummonsTabsConfig = {
         },
         requestBody: {
           criteria: {
-            completeStatus: ["SUMMONSERVED", "COMPLETED"],
+            completeStatus: ["UNDELIVERED", "NOTICE_SENT", "SUMMON_SENT", "DELIVERED", "ABATED"],
           },
         },
         masterName: "commonUiConfig",
@@ -194,7 +194,7 @@ export const SummonsTabsConfig = {
                 disable: false,
                 populators: {
                   name: "orderType",
-                  options: ["SUMMONS", "WARRANT"],
+                  options: ["SUMMONS", "WARRANT", "NOTICE"],
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
@@ -205,13 +205,12 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Summon Status",
+                label: "Status",
                 isMandatory: false,
-                key: "applicationStatus",
+                key: "status",
                 type: "dropdown",
                 disable: false,
                 populators: {
-                  name: "applicationStatus",
                   name: "status",
                   options: ["DELIVERED", "NOT_DELIVERED"],
                   optionsCustomStyle: {

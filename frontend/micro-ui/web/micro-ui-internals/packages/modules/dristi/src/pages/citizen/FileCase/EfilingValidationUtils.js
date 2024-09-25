@@ -249,7 +249,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
     if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
-        if (Object.hasOwnProperty.call(formDataCopy, key)) {
+        if (["respondentFirstName", "respondentMiddleName", "respondentLastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
           const oldValue = formDataCopy[key];
           let value = oldValue;
           if (typeof value === "string") {
@@ -879,6 +879,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "SUBMISSION_RESPONDER",
             "SUBMISSION_DELETE",
             "TASK_VIEWER",
+            "CASE_RESPONDER",
           ]?.map((role) => ({
             code: role,
             name: role,
@@ -2048,7 +2049,7 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
-          ...(action === "SUBMIT_CASE" && {
+          ...(action === "E-SIGN" && {
             assignees,
           }),
         },

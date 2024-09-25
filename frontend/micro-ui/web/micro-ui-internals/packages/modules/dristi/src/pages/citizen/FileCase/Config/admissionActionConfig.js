@@ -71,6 +71,7 @@ export const scheduleCaseSubmitConfig = {
   isArrow: true,
   showTable: true,
 };
+
 export const admitCaseSubmitConfig = {
   header: "CS_ADMIT_SUCCESS",
   subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
@@ -86,4 +87,21 @@ export const sendBackCase = {
   nextButtonText: "NEXT_CASE",
   isArrow: true,
   showCopytext: true,
+};
+
+export const registerCaseConfig = {
+  header: "CS_REGISTER_SUCCESS",
+  subHeader: "CASE_UPDATES_NOTICE_ISSUED",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "CS_SCHEDULE_ADMISSION_HEARING",
+  isArrow: false,
+  showTable: true,
+};
+
+export const scheduleCaseAdmissionConfig = {
+  header: "CS_ADMISSION_SUCCESS",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "ISSUE_NOTICE",
+  isArrow: true,
+  showTable: true,
 };

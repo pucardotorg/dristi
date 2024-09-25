@@ -53,8 +53,36 @@
           ]
         },
         {
-          "sla": 1728000000,
+          "sla": 172800000,
           "state": "ISSUE_NOTICE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SEND",
+              "nextState": "NOTICE_SENT",
+              "roles": [
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 3888000000,
+          "state": "NOTICE_SENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,

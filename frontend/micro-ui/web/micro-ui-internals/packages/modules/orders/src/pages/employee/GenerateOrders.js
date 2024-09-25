@@ -15,6 +15,7 @@ import {
   configsCaseWithdrawal,
   configsCreateOrderWarrant,
   configsInitiateRescheduleHearingDate,
+  configsIssueNotice,
   configsIssueSummons,
   configsJudgement,
   configsOrderMandatorySubmissions,
@@ -47,6 +48,7 @@ import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import useGetStatuteSection from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useGetStatuteSection";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { constructFullName, removeInvalidNameParts } from "../../utils";
 
 const configKeys = {
@@ -66,6 +68,7 @@ const configKeys = {
   CASE_TRANSFER: configsCaseTransfer,
   SETTLEMENT: configsCaseSettlement,
   SUMMONS: configsIssueSummons,
+  NOTICE: configsIssueNotice,
   BAIL: configsBail,
   WARRANT: configsCreateOrderWarrant,
   WITHDRAWAL: configsCaseWithdrawal,
@@ -114,6 +117,7 @@ const stateSlaMap = {
   CASE_TRANSFER: 3,
   SETTLEMENT: 3,
   SUMMONS: 3,
+  NOTICE: 3,
   BAIL: 3,
   WARRANT: 3,
   WITHDRAWAL: 3,
@@ -152,6 +156,7 @@ const GenerateOrders = () => {
   const [signedDoucumentUploadedID, setSignedDocumentUploadID] = useState("");
   const [newHearingNumber, setNewHearingNumber] = useState(null);
   const [createdSummon, setCreatedSummon] = useState(null);
+  const [createdNotice, setCreatedNotice] = useState(null);
   const [orderPdfFileStoreID, setOrderPdfFileStoreID] = useState(null);
   const history = useHistory();
   const todayDate = new Date().getTime();
@@ -172,7 +177,7 @@ const GenerateOrders = () => {
   ]);
   const courtRooms = useMemo(() => courtRoomDetails?.Court_Rooms || [], [courtRoomDetails]);
 
-  const { data: caseData, isLoading: isCaseDetailsLoading } = Digit.Hooks.dristi.useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading, refetch: refetchCaseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
         {
@@ -220,6 +225,9 @@ const GenerateOrders = () => {
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
   const uuidNameMap = useMemo(() => getuuidNameMap(caseDetails), [caseDetails]);
+  const isCaseAdmitted = useMemo(() => {
+    return caseDetails?.status === "CASE_ADMITTED";
+  }, [caseDetails?.status]);
 
   const complainants = useMemo(() => {
     return (
@@ -520,6 +528,14 @@ const GenerateOrders = () => {
                   },
                 };
               }
+              if (field.key === "hearingPurpose") {
+                return {
+                  ...field,
+                  ...(currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type === "ADMISSION" && {
+                    disable: true,
+                  }),
+                };
+              }
               if (field.key === "unjoinedPartiesNote") {
                 const parties = [...unJoinedLitigant, ...witnesses];
                 return {
@@ -797,6 +813,35 @@ const GenerateOrders = () => {
               },
             }))?.[0],
           selectedChannels: currentOrder?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels,
+        };
+      }
+    }
+    if (orderType === "NOTICE") {
+      if (hearingDetails?.startTime) {
+        updatedFormdata.dateForHearing = formatDate(new Date(hearingDetails?.startTime));
+      }
+      if (currentOrder?.additionalDetails?.selectedParty && currentOrder?.additionalDetails?.selectedParty?.uuid) {
+        updatedFormdata.noticeOrder = {
+          party: caseDetails?.additionalDetails?.respondentDetails?.formdata
+            ?.filter((data) => data?.data?.uuid === currentOrder?.additionalDetails?.selectedParty?.uuid)
+            ?.map((item) => ({
+              ...item,
+              data: {
+                ...item.data,
+                firstName: item.data.respondentFirstName,
+                lastName: item.data.respondentLastName,
+                address: item.data.addressDetails.map((address) => ({
+                  locality: address.addressDetails.locality,
+                  city: address.addressDetails.city,
+                  district: address?.addressDetails?.district,
+                  pincode: address?.addressDetails?.pincode,
+                })),
+                partyType: "Respondent",
+                phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
+                email: item?.data?.emails?.emailId,
+              },
+            }))?.[0],
+          selectedChannels: currentOrder?.additionalDetails?.formdata?.noticeOrder?.selectedChannels,
         };
       }
     }
@@ -1136,6 +1181,39 @@ const GenerateOrders = () => {
         return await Promise.all(promises);
       }
     }
+    if (order?.orderType === "NOTICE") {
+      const assignee = [...complainants?.map((data) => data?.uuid[0])];
+      const advocateUuid = Object.keys(allAdvocates)
+        .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
+        ?.flat();
+      assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
+      if (Array.isArray(order?.additionalDetails?.formdata?.noticeOrder?.selectedChannels)) {
+        entityType = "order-default";
+        const promises = order?.additionalDetails?.formdata?.noticeOrder?.selectedChannels?.map(async (channel) => {
+          if (channel?.type === "Post" || channel.type === "SMS" || channel.type === "E-mail") {
+            return ordersService.customApiService(Urls.orders.pendingTask, {
+              pendingTask: {
+                name: t(`MAKE_PAYMENT_FOR_NOTICE_${channelTypeEnum?.[channel?.type]?.code}`),
+                entityType,
+                referenceId: `MANUAL_${channel.type}_${currentOrder?.orderNumber}`,
+                status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
+                assignedTo: assignees,
+                assignedRole,
+                cnrNumber: cnrNumber,
+                filingNumber: filingNumber,
+                isCompleted: false,
+                stateSla: stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate,
+                additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+                tenantId,
+              },
+            });
+          }
+
+          return null;
+        });
+        return await Promise.all(promises);
+      }
+    }
     if (order?.orderType === "WARRANT") {
       entityType = "order-default";
       create = true;
@@ -1147,13 +1225,22 @@ const GenerateOrders = () => {
     if (isAssignedRole) {
       assignees = [];
       assignedRole = ["JUDGE_ROLE"];
-      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId) {
+      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId && isCaseAdmitted) {
         referenceId = refId;
         create = true;
         status = "CREATE_SUMMONS_ORDER";
         name = t("CREATE_ORDERS_FOR_SUMMONS");
         entityType = "order-default";
         additionalDetails = { ...additionalDetails, orderType: "SUMMONS", hearingID: order?.hearingNumber };
+      }
+
+      if (order?.orderType === "SCHEDULE_OF_HEARING_DATE" && refId && !isCaseAdmitted) {
+        referenceId = refId;
+        create = true;
+        status = "CREATE_NOTICE_ORDER";
+        name = t("CREATE_ORDERS_FOR_NOTICE");
+        entityType = "order-default";
+        additionalDetails = { ...additionalDetails, orderType: "NOTICE", hearingID: order?.hearingNumber };
       }
     }
 
@@ -1314,8 +1401,9 @@ const GenerateOrders = () => {
     );
 
     const orderData = orderDetails?.order;
-    const orderFormData = orderDetails?.order?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
-    const selectedChannel = orderData?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels;
+    const orderFormData = orderDetails?.order?.additionalDetails?.formdata?.[orderType === "NOTICE" ? "noticeOrder" : "SummonsOrder"]?.party?.data;
+    const selectedChannel = orderData?.additionalDetails?.formdata?.[orderType === "NOTICE" ? "noticeOrder" : "SummonsOrder"]?.selectedChannels;
+    const noticeType = orderData?.additionalDetails?.formdata?.noticeType?.type;
     const respondentAddress = orderFormData?.addressDetails
       ? orderFormData?.addressDetails?.map((data) => ({ ...data?.addressDetails }))
       : caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.addressDetails?.map((data) => data?.addressDetails);
@@ -1373,7 +1461,46 @@ const GenerateOrders = () => {
             address: complainantAddress,
           },
           caseDetails: {
-            title: caseDetails?.caseTitle,
+            caseTitle: caseDetails?.caseTitle,
+            year: new Date(caseDetails).getFullYear(),
+            hearingDate: new Date(orderData?.additionalDetails?.formdata?.date || "").getTime(),
+            courtName: courtDetails?.name,
+            courtAddress: courtDetails?.address,
+            courtPhone: courtDetails?.phone,
+            courtId: caseDetails?.courtId,
+            hearingNumber: orderData?.hearingNumber,
+            judgeName: "super",
+          },
+          deliveryChannels: {
+            channelName: "",
+            status: "",
+            statusChangeDate: "",
+            fees: 0,
+            feesStatus: "pending",
+          },
+        };
+        break;
+      case "NOTICE":
+        payload = {
+          noticeDetails: {
+            issueDate: orderData?.auditDetails?.lastModifiedTime,
+            caseFilingDate: caseDetails?.filingDate,
+            noticeType,
+          },
+          respondentDetails: {
+            name: respondentName,
+            address: respondentAddress?.[0],
+            phone: respondentPhoneNo[0] || "",
+            email: respondentEmail[0] || "",
+            age: "",
+            gender: "",
+          },
+          complainantDetails: {
+            name: complainantName,
+            address: complainantAddress,
+          },
+          caseDetails: {
+            caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
             hearingDate: new Date(orderData?.additionalDetails?.formdata?.dateForHearing || "").getTime(),
             courtName: courtDetails?.name,
@@ -1407,7 +1534,7 @@ const GenerateOrders = () => {
             gender: "",
           },
           caseDetails: {
-            title: caseDetails?.caseTitle,
+            caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
             hearingDate: new Date(orderData?.additionalDetails?.formData?.date || "").getTime(),
             judgeName: "",
@@ -1649,6 +1776,103 @@ const GenerateOrders = () => {
     } catch (error) {}
   };
 
+  const updateCaseDetails = async (action) => {
+    const assignee = [...(respondents?.map((data) => data?.uuid[0]) || [])];
+    const advocateUuid =
+      Object.keys(allAdvocates)
+        .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
+        ?.flat() || [];
+    return await DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...caseDetails,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+          workflow: {
+            ...caseDetails?.workflow,
+            action,
+            ...(action === "ISSUE_ORDER" && { assignes: [...assignee, ...advocateUuid] }),
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    ).then(() => {
+      refetchCaseData();
+    });
+  };
+
+  const handleIssueNotice = async (hearingDate, hearingNumber) => {
+    try {
+      const orderbody = {
+        createdDate: new Date().getTime(),
+        tenantId,
+        cnrNumber,
+        filingNumber,
+        statuteSection: {
+          tenantId,
+        },
+        orderType: "NOTICE",
+        status: "",
+        isActive: true,
+        workflow: {
+          action: OrderWorkflowAction.SAVE_DRAFT,
+          comments: "Creating order",
+          assignes: null,
+          rating: null,
+          documents: [{}],
+        },
+        documents: [],
+        ...(hearingNumber && { hearingNumber }),
+        additionalDetails: {
+          formdata: {
+            orderType: {
+              code: "NOTICE",
+              type: "NOTICE",
+              name: "ORDER_TYPE_NOTICE",
+            },
+            hearingDate,
+          },
+        },
+      };
+      const summonsArray = currentOrder?.additionalDetails?.isReIssueNotice
+        ? [{}]
+        : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent");
+      const promiseList = summonsArray?.map((data) =>
+        ordersService
+          .createOrder(
+            {
+              order: {
+                ...orderbody,
+                additionalDetails: {
+                  ...orderbody?.additionalDetails,
+                  selectedParty: data,
+                },
+              },
+            },
+            { tenantId }
+          )
+          .then(() => {
+            updateCaseDetails("ADMIT");
+          })
+      );
+
+      const resList = await Promise.all(promiseList);
+      setCreatedNotice(resList[0]?.order?.orderNumber);
+      await Promise.all(
+        resList.forEach((res) =>
+          createPendingTask({
+            order: res?.order,
+            isAssignedRole: true,
+            createTask: true,
+            taskStatus: "DRAFT_IN_PROGRESS",
+            taskName: t("DRAFT_IN_PROGRESS_ISSUE_NOTICE"),
+            orderEntityType: "order-default",
+          })
+        )
+      );
+    } catch (error) {}
+  };
+
   const handleIssueOrder = async () => {
     try {
       setLoader(true);
@@ -1752,10 +1976,25 @@ const GenerateOrders = () => {
       currentOrder?.additionalDetails?.formdata?.refApplicationId && closeManualPendingTask(currentOrder?.orderNumber);
       if (orderType === "SCHEDULE_OF_HEARING_DATE") {
         closeManualPendingTask(filingNumber);
+        if (currentOrder?.additionalDetails?.formdata?.hearingPurpose?.code === "ADMISSION" && !isCaseAdmitted) {
+          updateCaseDetails("SCHEDULE_ADMISSION_HEARING");
+        }
       }
       closeManualPendingTask(currentOrder?.orderNumber);
       if (orderType === "SUMMONS") {
         closeManualPendingTask(currentOrder?.hearingNumber || hearingDetails?.hearingId);
+      }
+      if (orderType === "NOTICE") {
+        closeManualPendingTask(currentOrder?.hearingNumber || hearingDetails?.hearingId);
+        if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
+          updateCaseDetails("ADMIT").then(() => {
+            refetchCaseData().then(() => {
+              updateCaseDetails("ISSUE_ORDER");
+            });
+          });
+        } else {
+          updateCaseDetails("ISSUE_ORDER");
+        }
       }
       createTask(orderType, caseDetails, orderResponse);
       setLoader(false);
@@ -1787,14 +2026,20 @@ const GenerateOrders = () => {
   };
   const successModalActionSaveLabel = useMemo(() => {
     if (
-      prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" ||
-      (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
-        currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType.includes("respondent")))
+      (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" ||
+        (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
+          currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType.includes("respondent")))) &&
+      isCaseAdmitted
     ) {
+      if (currentOrder?.additionalDetails?.isReIssueNotice) {
+        return t("ISSUE_NOTICE_BUTTON");
+      }
       return t("ISSUE_SUMMONS_BUTTON");
+    } else if ((prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" || currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE") && !isCaseAdmitted) {
+      return t("ISSUE_NOTICE_BUTTON");
     }
     return t("CS_COMMON_CLOSE");
-  }, [currentOrder, prevOrder?.orderType, t]);
+  }, [currentOrder, prevOrder?.orderType, t, isCaseAdmitted]);
 
   const handleGoBackSignatureModal = () => {
     setShowsignatureModal(false);
@@ -1875,6 +2120,10 @@ const GenerateOrders = () => {
     if (successModalActionSaveLabel === t("ISSUE_SUMMONS_BUTTON")) {
       await handleIssueSummons(currentOrder?.additionalDetails?.formdata?.hearingDate, newHearingNumber || hearingId || hearingNumber);
       history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${createdSummon}`);
+    }
+    if (successModalActionSaveLabel === t("ISSUE_NOTICE_BUTTON")) {
+      await handleIssueNotice(currentOrder?.additionalDetails?.formdata?.hearingDate, newHearingNumber || hearingId || hearingNumber);
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${createdNotice}`);
     }
   };
 

@@ -46,7 +46,7 @@ public class EpostUtil {
                 .processNumber(processNumber)
                 .tenantId(config.getEgovStateTenantId())
                 .taskNumber(request.getTask().getTaskNumber())
-                .fileStoreId(request.getTask().getDocuments().get(0).getFileStore())
+                .fileStoreId(getFileStore(request))
                 .address(request.getTask().getTaskDetails().getRespondentDetails().getAddress().toString())
                 .pinCode(request.getTask().getTaskDetails().getRespondentDetails().getAddress().getPinCode())
                 .deliveryStatus(DeliveryStatus.NOT_UPDATED)
@@ -55,6 +55,13 @@ public class EpostUtil {
                 .bookingDate(currentDate)
                 .auditDetails(createAuditDetails(request.getRequestInfo()))
                 .build();
+    }
+
+    private String getFileStore(TaskRequest request) {
+        if(request.getTask().getDocuments() == null || request.getTask().getDocuments().isEmpty() || request.getTask().getDocuments().get(0).getFileStore() == null){
+            return null;
+        }
+        return request.getTask().getDocuments().get(0).getFileStore();
     }
 
     public EPostTracker updateEPostTracker(EPostRequest ePostRequest) {

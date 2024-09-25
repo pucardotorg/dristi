@@ -219,6 +219,8 @@ components:
           type: string
         attendeeIndividualId:
           type: string
+        courtId:
+          type: string
         fromDate:
           type: integer
           format: int64

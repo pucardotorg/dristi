@@ -25,6 +25,7 @@ public class RescheduleRequestOptOutRowMapper implements RowMapper<OptOut> {
     public OptOut mapRow(ResultSet rs, int rowNum) throws SQLException {
         try {
             return OptOut.builder()
+                    .id(rs.getString("id"))
                     .judgeId(rs.getString("judge_id"))
                     .caseId(rs.getString("case_id"))
                     .rescheduleRequestId(rs.getString("reschedule_request_id"))

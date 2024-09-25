@@ -8,7 +8,6 @@ import DocumentViewerWithComment from "../../components/DocumentViewerWithCommen
 import AddSignatureComponent from "../../components/AddSignatureComponent";
 import CustomStepperSuccess from "../../components/CustomStepperSuccess";
 import UpdateDeliveryStatusComponent from "../../components/UpdateDeliveryStatusComponent";
-import { formatDate } from "../../utils";
 import { ordersService, taskService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
 import { convertToDateInputFormat } from "../../utils/index";
@@ -44,13 +43,12 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [rowData, setRowData] = useState({});
   const { taskNumber } = Digit.Hooks.useQueryParams();
-  const [taskDocuments, setTaskDocumens] = useState([]);
   const [nextHearingDate, setNextHearingDate] = useState();
   const [step, setStep] = useState(0);
   const [signatureId, setSignatureId] = useState("");
   const [deliveryChannel, setDeliveryChannel] = useState("");
   const [reload, setReload] = useState(false);
-  const [taskDetails, setTaskDetails] = useState({});
+  // const [taskDetails, setTaskDetails] = useState({});
   const [tasksData, setTasksData] = useState(null);
   const [selectedDelievery, setSelectedDelievery] = useState({});
   const history = useHistory();
@@ -61,11 +59,11 @@ const ReviewSummonsNoticeAndWarrant = () => {
     SummonsTabsConfig?.SummonsTabsConfig?.map((configItem, index) => ({ key: index, label: configItem.label, active: index === 0 ? true : false }))
   );
 
-  const handleOpen = (props) => {
-    //change status to signed or unsigned
-  };
+  // const handleOpen = (props) => {
+  //change status to signed or unsigned
+  // };
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     const fileStoreId = rowData?.documents?.filter((data) => data?.documentType === "SIGNED")?.[0]?.fileStore;
     const url = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
     const link = document.createElement("a");
@@ -73,7 +71,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+  }, [rowData, tenantId]);
 
   const { data: fetchedTasksData, refetch } = Digit.Hooks.hearings.useGetTaskList(
     {
@@ -113,19 +111,21 @@ const ReviewSummonsNoticeAndWarrant = () => {
     Boolean(tasksData)
   );
 
+  const orderType = useMemo(() => orderData?.list[0]?.orderType, [orderData]);
+
   const handleSubmitButtonDisable = (disable) => {
     console.log("disable :>> ", disable);
     setIsDisabled(disable);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     localStorage.removeItem("SignedFileStoreID");
     setShowActionModal(false);
     if (taskNumber) history.replace(`/${window?.contextPath}/employee/orders/Summons&Notice`);
     setReload(!reload);
-  };
+  }, [history, reload, taskNumber]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     localStorage.removeItem("SignedFileStoreID");
     await refetch();
     if (tasksData) {
@@ -135,21 +135,21 @@ const ReviewSummonsNoticeAndWarrant = () => {
             ...tasksData?.list?.[0],
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
-              action: "SERVE",
+              action: "SEND",
               documents: [{}],
             },
           },
         };
-        const response = await taskService.updateTask(reqBody, { tenantId });
+        await taskService.updateTask(reqBody, { tenantId });
         setShowActionModal(false);
         setReload(!reload);
       } catch (error) {
         console.error("Error updating task data:", error);
       }
     }
-  };
+  }, [refetch, reload, tasksData, tenantId]);
 
-  const handleUpdateStatus = async () => {
+  const handleUpdateStatus = useCallback(async () => {
     await refetch();
     if (tasksData) {
       try {
@@ -158,19 +158,34 @@ const ReviewSummonsNoticeAndWarrant = () => {
             ...tasksData?.list?.[0],
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
-              action: "CLOSE",
+              action: selectedDelievery?.key === "DELIVERED" ? "SERVED" : "NOT_SERVED",
               documents: [{}],
             },
           },
         };
-        const response = await taskService.updateTask(reqBody, { tenantId });
+        await taskService.updateTask(reqBody, { tenantId }).then(async (res) => {
+          if (res?.task && selectedDelievery?.key === "NOT_DELIVERED") {
+            await taskService.updateTask(
+              {
+                task: {
+                  ...res.task,
+                  workflow: {
+                    ...res.task?.workflow,
+                    action: orderType === "SUMMONS" ? "NEW_SUMMON" : "NEW_NOTICE",
+                  },
+                },
+              },
+              { tenantId }
+            );
+          }
+        });
         if (selectedDelievery?.key === "NOT_DELIVERED") {
           ordersService.customApiService(Urls.orders.pendingTask, {
             pendingTask: {
-              name: "Re-issue Summon",
+              name: `Re-issue ${orderType === "NOTICE" ? "Notice" : "Summon"}`,
               entityType: "order-default",
               referenceId: `MANUAL_${orderData?.list[0]?.hearingNumber}`,
-              status: "RE-ISSUE_SUMMON",
+              status: `RE-ISSUE_${orderType === "NOTICE" ? "NOTICE" : "SUMMON"}`,
               assignedTo: [],
               assignedRole: ["JUDGE_ROLE"],
               cnrNumber: tasksData?.list[0]?.cnrNumber,
@@ -188,7 +203,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
         console.error("Error updating task data:", error);
       }
     }
-  };
+  }, [dayInMillisecond, orderData, orderType, refetch, reload, selectedDelievery, tasksData, tenantId, todayDate]);
 
   useEffect(() => {
     // Set default values when component mounts
@@ -240,33 +255,6 @@ const ReviewSummonsNoticeAndWarrant = () => {
     }
   };
 
-  const getTaskDocuments = async () => {
-    try {
-      const response = await window?.Digit?.DRISTIService.getTaskDocuments(
-        {
-          taskId: rowData?.id,
-        },
-        {}
-      );
-      console.log("response :>> ", response);
-    } catch (error) {
-      setTaskDocumens([
-        {
-          // fileName: "Summons Document",
-          fileStoreId: "03e93220-7254-4877-ac80-bb808a722a61",
-          documentName: "file_example_JPG_100kB.jpg",
-          // documentType: "image/jpeg",
-        },
-        {
-          // fileName: "Vakalatnama Document",
-          fileStoreId: "03e93220-7254-4877-ac80-bb808a722a61",
-          documentName: "file_example_JPG_100kB.jpg",
-          // documentType: "image/jpeg",
-        },
-      ]);
-    }
-  };
-
   const infos = useMemo(() => {
     if (rowData?.taskDetails || nextHearingDate) {
       const caseDetails = handleTaskDetails(rowData?.taskDetails);
@@ -274,8 +262,8 @@ const ReviewSummonsNoticeAndWarrant = () => {
         { key: "Issued to", value: caseDetails?.respondentDetails?.name },
         { key: "Issued Date", value: convertToDateInputFormat(rowData?.createdDate) },
         // { key: "Next Hearing Date", value: nextHearingDate?.startTime ? formatDate(nextHearingDate?.startTime) : "N/A" },
-        { key: "Amount Paid", value: `Rs. ${caseDetails?.deliveryChannels?.fees || 100}` },
-        { key: "Channel Details", value: caseDetails?.deliveryChannels?.channelName },
+        { key: "AMOUNT_PAID_TEXT", value: `Rs. ${caseDetails?.deliveryChannels?.fees || 100}` },
+        { key: "CHANNEL_DETAILS_TEXT", value: caseDetails?.deliveryChannels?.channelName },
       ];
     }
   }, [rowData, nextHearingDate]);
@@ -287,9 +275,9 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const documents = useMemo(() => {
     if (rowData?.documents)
       return rowData?.documents?.map((document) => {
-        return { ...document, fileName: "Summons Document" };
+        return { ...document, fileName: `${orderType === "NOTICE" ? "Notice" : "Summon"}s Document` };
       });
-  }, [rowData]);
+  }, [rowData, orderType]);
 
   const submissionData = useMemo(() => {
     return [
@@ -298,7 +286,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
     ];
   }, []);
 
-  const handleSubmitEsign = async () => {
+  const handleSubmitEsign = useCallback(async () => {
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
       const documents = Array.isArray(rowData?.documents) ? rowData.documents : [];
@@ -327,13 +315,13 @@ const ReviewSummonsNoticeAndWarrant = () => {
       // Handle errors that occur during the upload process
       console.error("Error uploading document:", error);
     }
-  };
+  }, [rowData, signatureId, tenantId]);
 
   const unsignedModalConfig = useMemo(() => {
     return {
       handleClose: handleClose,
-      heading: { label: "Review Document: Summons Document" },
-      actionSaveLabel: "E-sign",
+      heading: { label: `${t("REVIEW_DOCUMENT_TEXT")} ${orderType === "NOTICE" ? "Notices" : "Summons"} ${t("DOCUMENT_TEXT")}` },
+      actionSaveLabel: t("E_SIGN_TEXT"),
       isStepperModal: true,
       actionSaveOnSubmit: () => {},
       steps: [
@@ -343,9 +331,9 @@ const ReviewSummonsNoticeAndWarrant = () => {
           actionSaveOnSubmit: () => {},
         },
         {
-          heading: { label: "Add Signature (1)" },
-          actionSaveLabel: deliveryChannel === "Post" ? "Proceed to Send" : "Send Email",
-          actionCancelLabel: "Back",
+          heading: { label: t("ADD_SIGNATURE") },
+          actionSaveLabel: deliveryChannel === "Post" ? t("PROCEED_TO_SENT") : t("SEND_EMAIL_TEXT"),
+          actionCancelLabel: t("BACK"),
           modalBody: (
             <AddSignatureComponent
               t={t}
@@ -364,6 +352,10 @@ const ReviewSummonsNoticeAndWarrant = () => {
           hideSubmit: true,
           modalBody: (
             <CustomStepperSuccess
+              successMessage={t(`${t(orderType === "NOTICE" ? "SENT_NOTICE_VIA" : "SENT_SUMMONS_VIA")} ${deliveryChannel}`)}
+              bannerSubText={t("PARTY_NOTIFIED_ABOUT_DOCUMENT")}
+              submitButtonText={documents ? "MARK_AS_SENT" : "CS_CLOSE"}
+              closeButtonText={documents ? "CS_CLOSE" : "DOWNLOAD_DOCUMENT"}
               closeButtonAction={handleClose}
               submitButtonAction={handleSubmit}
               t={t}
@@ -375,33 +367,32 @@ const ReviewSummonsNoticeAndWarrant = () => {
         },
       ],
     };
-  }, [documents, infos, isSigned, links, submissionData, t]);
+  }, [deliveryChannel, documents, handleClose, handleSubmit, handleSubmitEsign, infos, isSigned, links, orderType, rowData, submissionData, t]);
+
+  const handleCloseActionModal = useCallback(() => {
+    setShowActionModal(false);
+    if (taskNumber) history.replace(`/${window?.contextPath}/employee/orders/Summons&Notice`);
+  }, [history, taskNumber]);
 
   const signedModalConfig = useMemo(() => {
     return {
-      handleClose: () => {
-        setShowActionModal(false);
-        if (taskNumber) history.replace(`/${window?.contextPath}/employee/orders/Summons&Notice`);
-      },
-      heading: { label: "Print & Send Documents" },
-      actionSaveLabel: "Mark As Sent",
+      handleClose: () => handleCloseActionModal(),
+      heading: { label: t("PRINT_SEND_DOCUMENT") },
+      actionSaveLabel: t("MARK_AS_SENT"),
       isStepperModal: false,
       modalBody: (
         <PrintAndSendDocumentComponent infos={infos} documents={documents?.filter((docs) => docs.documentType === "SIGNED")} links={links} t={t} />
       ),
       actionSaveOnSubmit: handleSubmit,
     };
-  }, [documents, infos, links, t]);
+  }, [documents, handleCloseActionModal, handleSubmit, infos, links, t]);
 
   const sentModalConfig = useMemo(() => {
     return {
-      handleClose: () => {
-        setShowActionModal(false);
-        if (taskNumber) history.replace(`/${window?.contextPath}/employee/orders/Summons&Notice`);
-      },
-      heading: { label: "Print & Send Documents" },
-      actionSaveLabel: "Update Status",
-      actionCancelLabel: "View Document",
+      handleClose: () => handleCloseActionModal(),
+      heading: { label: t("PRINT_SEND_DOCUMENT") },
+      actionSaveLabel: t("UPDATE_STATUS"),
+      actionCancelLabel: t("VIEW_DOCUMENT_TEXT"),
       isStepperModal: false,
       modalBody: (
         <UpdateDeliveryStatusComponent
@@ -412,19 +403,20 @@ const ReviewSummonsNoticeAndWarrant = () => {
           rowData={rowData}
           selectedDelievery={selectedDelievery}
           setSelectedDelievery={setSelectedDelievery}
+          orderType={orderType}
         />
       ),
       actionSaveOnSubmit: handleUpdateStatus,
       actionCancelOnSubmit: handleDownload,
       isDisabled: isDisabled,
     };
-  }, [infos, isDisabled, links, t]);
+  }, [handleCloseActionModal, handleDownload, handleUpdateStatus, infos, isDisabled, links, orderType, rowData, selectedDelievery, t]);
 
   useEffect(() => {
     // if (rowData?.id) getTaskDocuments();
     if (rowData?.filingNumber) getHearingFromCaseId();
     setSelectedDelievery(
-      rowData?.status === "SUMMONSERVED" || rowData?.status === "COMPLETED"
+      rowData?.status === "NOTICE_SENT" || rowData?.status === "SUMMON_SENT" || rowData?.status === "DELIVERED"
         ? {
             key: "DELIVERED",
             value: "Delivered",
@@ -434,7 +426,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   }, [rowData]);
 
   const handleRowClick = (props) => {
-    if (props?.original?.status === "COMPLETED") {
+    if (props?.original?.status === "DELIVERED") {
       return; // Do nothing if the row's status is 'Completed'
     }
 
@@ -444,7 +436,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
     setStep(0);
     setIsSigned(props?.original?.documentStatus === "SIGN_PENDING" ? false : true);
     setDeliveryChannel(handleTaskDetails(props?.original?.taskDetails)?.deliveryChannels?.channelName);
-    setTaskDetails(handleTaskDetails(props?.original?.taskDetails));
+    // setTaskDetails(handleTaskDetails(props?.original?.taskDetails));
   };
 
   useEffect(() => {

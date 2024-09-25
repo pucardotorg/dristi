@@ -217,7 +217,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
               name: "Pending Payment",
               entityType: "case-default",
               referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-              status: "PAYMENT_PENDING",
+              status: "PENDING_PAYMENT",
               cnrNumber: null,
               filingNumber: caseDetails?.filingNumber,
               isCompleted: true,

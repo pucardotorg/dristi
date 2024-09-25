@@ -45,6 +45,7 @@ public class HearingQueryBuilder {
             Long fromDate = criteria.getFromDate();
             Long toDate = criteria.getToDate();
             String attendeeIndividualId = criteria.getAttendeeIndividualId();
+            String courtId = criteria.getCourtId();
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
 
             addCriteriaString(cnrNumber, query, " AND cnrNumbers @> ?::jsonb", preparedStmtList, preparedStmtArgList,"[\"" + cnrNumber + "\"]");
@@ -55,6 +56,7 @@ public class HearingQueryBuilder {
             addCriteriaString(tenantId, query, " AND tenantId = ?", preparedStmtList,preparedStmtArgList, tenantId);
             addCriteriaDate(fromDate, query, " AND startTime >= ?", preparedStmtList,preparedStmtArgList);
             addCriteriaDate(toDate, query, " AND startTime <= ?", preparedStmtList,preparedStmtArgList);
+            addCriteriaString(courtId, query, " AND presidedby ->> 'courtID' = ? ", preparedStmtList, preparedStmtArgList, courtId);
             addCriteriaString(attendeeIndividualId, query," AND EXISTS (SELECT 1 FROM jsonb_array_elements(attendees) elem WHERE elem->>'individualId' = ?)", preparedStmtList,preparedStmtArgList, attendeeIndividualId);
 
             return query.toString();
@@ -80,7 +82,7 @@ public class HearingQueryBuilder {
         }
     }
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";"))  {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;

@@ -5,7 +5,7 @@ import { TabJudgeSearchConfig } from "./JudgeHomeConfig";
 import { TabLitigantSearchConfig } from "./LitigantHomeConfig";
 
 export const CaseWorkflowState = {
-  CASE_RE_ASSIGNED: "CASE_RE_ASSIGNED",
+  CASE_REASSIGNED: "CASE_REASSIGNED",
   DRAFT_IN_PROGRESS: "DRAFT_IN_PROGRESS",
   UNDER_SCRUTINY: "UNDER_SCRUTINY",
   CASE_ADMITTED: "CASE_ADMITTED",
@@ -104,7 +104,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/admission",
       urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      urlDependentValue: "",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -118,7 +118,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/admission",
       urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      urlDependentValue: "",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -143,7 +143,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/admission",
       urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      urlDependentValue: "",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -157,7 +157,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/admission",
       urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      urlDependentValue: "",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -171,7 +171,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/admission",
       urlDependentOn: "status",
-      urlDependentValue: "PENDING_ADMISSION",
+      urlDependentValue: "",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -186,7 +186,7 @@ export const rolesToConfigMapping = [
     onRowClickRoute: {
       dependentUrl: "/dristi/home/file-case/case",
       urlDependentOn: "status",
-      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_RE_ASSIGNED"],
+      urlDependentValue: ["DRAFT_IN_PROGRESS", "CASE_REASSIGNED"],
       params: [{ key: "caseId", value: "id" }],
     },
   },
@@ -205,12 +205,16 @@ export const taskTypes = [
   { code: "task-summons", name: "Task Summons" },
 ];
 export const pendingTaskCaseActions = {
-  PAYMENT_PENDING: {
+  PENDING_PAYMENT: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Make Payment",
     redirectDetails: {
       url: "/home/home-pending-task/e-filing-payment-breakdown",
     },
+  },
+  PENDING_RESPONSE: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Pending Response",
   },
   UNDER_SCRUTINY: {
     actorName: ["FSO"],
@@ -220,7 +224,7 @@ export const pendingTaskCaseActions = {
       params: [{ key: "caseId", value: "id" }],
     },
   },
-  CASE_RE_ASSIGNED: {
+  CASE_REASSIGNED: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Case Sent Back for Edit",
     redirectDetails: {
@@ -228,11 +232,22 @@ export const pendingTaskCaseActions = {
       params: [{ key: "caseId", value: "id" }],
     },
   },
+  "PENDING_E-SIGN": {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/case",
+      params: [
+        { key: "caseId", value: "id" },
+        { key: "selected", defaultValue: "addSignature" },
+      ],
+    },
+  },
   PENDING_ADMISSION: {
     actorName: ["JUDGE"],
     actionName: "Case Approved from Scrutiny",
     redirectDetails: {
-      url: "/dristi/admission",
+      url: "/dristi/home/view-case",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -243,7 +258,7 @@ export const pendingTaskCaseActions = {
     actorName: ["JUDGE"],
     actionName: "Admission hearing scheduled - Admit Case",
     redirectDetails: {
-      url: "/dristi/admission",
+      url: "/dristi/home/view-case",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -254,7 +269,7 @@ export const pendingTaskCaseActions = {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
     redirectDetails: {
-      url: "/dristi/admission",
+      url: "/dristi/home/view-case",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "caseId", value: "id" },
@@ -267,6 +282,28 @@ export const pendingTaskCaseActions = {
     redirectDetails: {
       url: "/home/home-pending-task/home-schedule-hearing",
       params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  PENDING_REGISTRATION: {
+    actorName: ["JUDGE"],
+    actionName: "Register the Case",
+    redirectDetails: {
+      url: "/dristi/admission",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
+    },
+  },
+  PENDING_ADMISSION_HEARING: {
+    actorName: ["JUDGE"],
+    actionName: "Register the Case",
+    redirectDetails: {
+      url: "/dristi/admission",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "caseId", value: "id" },
+      ],
     },
   },
 };
@@ -322,6 +359,17 @@ export const pendingTaskOrderActions = {
   SUMMON_WARRANT_STATUS: {
     actorName: ["JUDGE"],
     actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/summons-warrants-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "hearingId", value: "referenceId" },
+      ],
+    },
+  },
+  NOTICE_STATUS: {
+    actorName: ["JUDGE"],
+    actionName: "Show Notice Status",
     redirectDetails: {
       url: "/home/home-pending-task/summons-warrants-modal",
       params: [
@@ -389,6 +437,19 @@ export const pendingTaskOrderActions = {
         { key: "filingNumber", value: "filingNumber" },
         { key: "cnrNumber", value: "cnrNumber" },
         { key: "hearingId", value: "referenceId" },
+        { key: "orderType", value: "SUMMONS" },
+      ],
+    },
+  },
+  "RE-ISSUE_NOTICE": {
+    actorName: ["JUDGE"],
+    redirectDetails: {
+      url: "/home/home-pending-task/reissue-summons-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "cnrNumber", value: "cnrNumber" },
+        { key: "hearingId", value: "referenceId" },
+        { key: "orderType", value: "NOTICE" },
       ],
     },
   },
@@ -533,9 +594,20 @@ export const pendingTaskSubmissionWithoutResponseActions = {
 export const pendingTaskForArtifactActions = {};
 
 export const pendingTaskForSummonsActions = {
-  ISSUESUMMON: {
+  ISSUE_SUMMON: {
     actorName: ["CMO"],
     actionName: "Esign the Task Summon",
+    redirectDetails: {
+      url: "/orders/Summons&Notice",
+      params: [{ key: "taskNumber", value: "referenceId" }],
+    },
+  },
+};
+
+export const pendingTaskForNoticeActions = {
+  ISSUE_NOTICE: {
+    actorName: ["CMO"],
+    actionName: "Esign the Task Notice",
     redirectDetails: {
       url: "/orders/Summons&Notice",
       params: [{ key: "taskNumber", value: "referenceId" }],
@@ -552,4 +624,5 @@ export const selectTaskType = {
   "application-order-submission-default": pendingTaskSubmissionWithoutResponseActions,
   "artifact-default": pendingTaskForArtifactActions,
   "task-summons": pendingTaskForSummonsActions,
+  "task-notice": pendingTaskForNoticeActions,
 };

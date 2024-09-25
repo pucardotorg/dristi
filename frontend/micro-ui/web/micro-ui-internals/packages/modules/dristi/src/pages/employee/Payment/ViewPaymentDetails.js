@@ -9,6 +9,20 @@ import { Urls } from "../../../hooks";
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
 import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 
+const paymentTaskType = {
+  TASK_SUMMON: "task-summons",
+  TASK_NOTICE: "task-notice",
+  TASK_SUMMON_ADVANCE_CARRYFORWARD: "TASK_SUMMON_ADVANCE_CARRYFORWARD",
+  TASK_NOTICE_ADVANCE_CARRYFORWARD: "TASK_NOTICE_ADVANCE_CARRYFORWARD",
+  ORDER_MANAGELIFECYCLE: "order-default",
+  SUMMON_WARRANT_STATUS: "SUMMON_WARRANT_STATUS",
+  NOTICE_STATUS: "NOTICE_STATUS",
+  ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE: "application-order-submission-default",
+  PAYMENT_PENDING_POST: "PAYMENT_PENDING_POST",
+  PAYMENT_PENDING_EMAIL: "PAYMENT_PENDING_EMAIL",
+  PAYMENT_PENDING_SMS: "PAYMENT_PENDING_SMS",
+};
+
 const paymentOptionConfig = {
   label: "CS_MODE_OF_PAYMENT",
   type: "dropdown",
@@ -29,6 +43,8 @@ const paymentOptionConfig = {
 
 const ViewPaymentDetails = ({ location, match }) => {
   const { t } = useTranslation();
+  const todayDate = new Date().getTime();
+  const dayInMillisecond = 24 * 3600 * 1000;
   const history = useHistory();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [payer, setPayer] = useState("");
@@ -137,12 +153,15 @@ const ViewPaymentDetails = ({ location, match }) => {
     return updatedCalculation;
   }, [calculationResponse?.Calculation]);
   const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
-  const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
+  const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : null;
 
   const onSubmitCase = async () => {
     const consumerCodeWithoutSuffix = consumerCode.split("_")[0];
     let referenceId;
-    if (consumerCodeWithoutSuffix.includes("TASK")) {
+    let taskFilingNumber = "";
+    let taskHearingNumber = "";
+    let taskOrderType = "";
+    if (["task-notice", "task-summons"].includes(businessService)) {
       const {
         list: [tasksData],
       } = await Digit.HearingService.searchTaskList({
@@ -152,14 +171,17 @@ const ViewPaymentDetails = ({ location, match }) => {
         },
       });
       const {
-        list: [{ orderNumber }],
+        list: [{ orderNumber, hearingNumber, orderType }],
       } = await ordersService.searchOrder({
         criteria: {
           tenantId: tenantId,
           id: tasksData?.orderId,
         },
       });
+      taskHearingNumber = hearingNumber || "";
+      taskOrderType = orderType || "";
       referenceId = tasksData?.taskDetails?.deliveryChannels?.channelName + `_${orderNumber}`;
+      taskFilingNumber = tasksData?.filingNumber || caseDetails?.filingNumber;
     } else {
       referenceId = consumerCodeWithoutSuffix;
     }
@@ -187,7 +209,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           paidBy: "PAY_BY_OWNER",
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
-          totalAmountPaid: totalAmount,
+          totalAmountPaid: billFetched.totalAmount || totalAmount,
           instrumentNumber: additionDetails,
           instrumentDate: new Date().getTime(),
         },
@@ -197,15 +219,35 @@ const ViewPaymentDetails = ({ location, match }) => {
           name: "Pending Payment",
           entityType: businessService,
           referenceId: `MANUAL_${referenceId}`,
-          status: "PAYMENT_PENDING",
+          status: "PENDING_PAYMENT",
           cnrNumber: null,
-          filingNumber: caseDetails?.filingNumber,
+          filingNumber: caseDetails?.filingNumber || taskFilingNumber,
           isCompleted: true,
           stateSla: null,
           additionalDetails: {},
           tenantId,
         },
       });
+      if (["task-notice", "task-summons"].includes(businessService)) {
+        await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: taskOrderType === "SUMMONS" ? "Show Summon-Warrant Status" : "Show Notice Status",
+            entityType: paymentTaskType.ORDER_MANAGELIFECYCLE,
+            referenceId: taskHearingNumber,
+            status: taskOrderType === "SUMMONS" ? paymentTaskType.SUMMON_WARRANT_STATUS : paymentTaskType.NOTICE_STATUS,
+            assignedTo: [],
+            assignedRole: ["JUDGE_ROLE"],
+            cnrNumber: caseDetails?.cnrNumber,
+            filingNumber: filingNumber,
+            isCompleted: false,
+            stateSla: 3 * dayInMillisecond + todayDate,
+            additionalDetails: {
+              hearingId: taskHearingNumber,
+            },
+            tenantId,
+          },
+        });
+      }
       history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, {
         state: {
           success: true,

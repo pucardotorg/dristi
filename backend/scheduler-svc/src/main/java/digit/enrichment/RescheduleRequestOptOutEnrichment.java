@@ -6,12 +6,15 @@ import digit.web.models.OptOutRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class RescheduleRequestOptOutEnrichment {
 
     public void enrichCreateRequest(OptOutRequest request) {
 
         AuditDetails auditDetails = getAuditDetailsScheduleHearing(request.getRequestInfo());
+        request.getOptOut().setId(UUID.randomUUID().toString());
         request.getOptOut().setAuditDetails(auditDetails);
         request.getOptOut().setRowVersion(1);
 

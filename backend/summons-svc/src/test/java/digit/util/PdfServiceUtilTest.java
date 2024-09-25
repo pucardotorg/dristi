@@ -43,6 +43,7 @@ class PdfServiceUtilTest {
         SummonsDetails summonsDetails = mock(SummonsDetails.class);
         CaseDetails caseDetails = mock(CaseDetails.class);
         RespondentDetails respondentDetails = mock(RespondentDetails.class);
+        ComplainantDetails complainantDetails = mock(ComplainantDetails.class);
         Address address = mock(Address.class);
         String tenantId = "tenant1";
         String pdfTemplateKey = "templateKey";
@@ -57,7 +58,10 @@ class PdfServiceUtilTest {
         when(taskDetails.getSummonDetails()).thenReturn(summonsDetails);
         when(taskDetails.getCaseDetails()).thenReturn(caseDetails);
         when(taskDetails.getRespondentDetails()).thenReturn(respondentDetails);
+        when(taskDetails.getComplainantDetails()).thenReturn(complainantDetails);
         when(respondentDetails.getAddress()).thenReturn(address);
+        when(taskDetails.getComplainantDetails().getName()).thenReturn("jhdf");
+        when(complainantDetails.getAddress()).thenReturn(address);
         ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey, false);
 
         assertNotNull(result);

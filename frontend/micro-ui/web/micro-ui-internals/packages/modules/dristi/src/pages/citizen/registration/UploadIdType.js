@@ -2,7 +2,7 @@ import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
-function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pathOnRefresh }) {
+function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pathOnRefresh, isAdvocateUploading, onFormValueChange }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
   const validateFormData = (data) => {
@@ -58,7 +58,7 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
     return () => clearTimeout(timer);
   }, [closeToast]);
 
-  if (!params?.indentity) {
+  if (!isAdvocateUploading && !params?.indentity) {
     history.push(pathOnRefresh);
   }
   return (
@@ -67,6 +67,9 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
         config={config}
         t={t}
         onSubmit={(data) => {
+          if (isAdvocateUploading) {
+            return;
+          }
           if (!validateFormData(data)) {
             setShowErrorToast(!validateFormData(data));
           } else if (data?.SelectUserTypeComponent?.aadharNumber) {
@@ -80,12 +83,13 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
           }
           return;
         }}
+        onFormValueChange={onFormValueChange}
         noBoxShadow
         inline
-        label={"CS_COMMON_CONTINUE"}
+        label={!isAdvocateUploading ? "CS_COMMON_CONTINUE" : ""}
         // onFormValueChange={onFormValueChange}
-        onSecondayActionClick={() => { }}
-        submitInForm
+        onSecondayActionClick={() => {}}
+        submitInForm={!isAdvocateUploading}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>

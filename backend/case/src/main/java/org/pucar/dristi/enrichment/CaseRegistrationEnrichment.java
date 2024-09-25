@@ -47,7 +47,11 @@ public class CaseRegistrationEnrichment {
         try {
             CourtCase courtCase = caseRequest.getCases();
 
-            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
+            String tenantId = caseRequest.getCases().getTenantId();
+            String idName = config.getCaseFilingConfig();
+            String idFormat = config.getCaseFilingFormat();
+
+            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, true);
             log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(caseUtil.getCurrentTimeMil()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(caseUtil.getCurrentTimeMil()).build();
             courtCase.setAuditdetails(auditDetails);
@@ -82,13 +86,13 @@ public class CaseRegistrationEnrichment {
     }
 
     private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
-        if(courtCase.getWorkflow()!=null && courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)){
+        if (courtCase.getWorkflow() != null && courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)) {
             courtCase.setFilingDate(caseUtil.getCurrentTimeMil());
         }
     }
 
     private static void enrichDocumentsOnCreate(Document document) {
-        if(document.getId() == null) {
+        if (document.getId() == null) {
             document.setId(String.valueOf(UUID.randomUUID()));
             document.setDocumentUid(document.getId());
         }
@@ -107,7 +111,7 @@ public class CaseRegistrationEnrichment {
             if (advocateMapping.getDocuments() != null) {
                 advocateMapping.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
-            if(advocateMapping.getRepresenting() != null) {
+            if (advocateMapping.getRepresenting() != null) {
                 enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courtCaseId);
             }
         });
@@ -117,8 +121,8 @@ public class CaseRegistrationEnrichment {
             if (advocateMapping.getDocuments() != null) {
                 advocateMapping.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
-            if(advocateMapping.getRepresenting() != null) {
-               enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courtCaseId);
+            if (advocateMapping.getRepresenting() != null) {
+                enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courtCaseId);
             }
         });
     }
@@ -143,7 +147,7 @@ public class CaseRegistrationEnrichment {
     }
 
     public static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        if(courtCase.getLitigants() == null) {
+        if (courtCase.getLitigants() == null) {
             return;
         }
         String courtCaseId = courtCase.getId().toString();
@@ -166,7 +170,7 @@ public class CaseRegistrationEnrichment {
     }
 
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        if(courtCase.getStatutesAndSections() == null) {
+        if (courtCase.getStatutesAndSections() == null) {
             return;
         }
         List<StatuteSection> statutesAndSectionsListToCreate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() == null).toList();
@@ -186,21 +190,21 @@ public class CaseRegistrationEnrichment {
     }
 
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        if(courtCase.getLinkedCases() == null) {
+        if (courtCase.getLinkedCases() == null) {
             return;
         }
         List<LinkedCase> linkedCasesListToCreate = courtCase.getLinkedCases().stream().filter(linkedCase -> linkedCase.getId() == null).toList();
         linkedCasesListToCreate.forEach(linkedCase -> {
             linkedCase.setId(UUID.randomUUID());
             linkedCase.setAuditdetails(auditDetails);
-            if(linkedCase.getDocuments() != null) {
+            if (linkedCase.getDocuments() != null) {
                 linkedCase.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
         });
         List<LinkedCase> linkedCasesListToUpdate = courtCase.getLinkedCases().stream().filter(linkedCase -> linkedCase.getId() != null).toList();
         linkedCasesListToUpdate.forEach(linkedCase -> {
             linkedCase.setAuditdetails(auditDetails);
-            if(linkedCase.getDocuments() != null) {
+            if (linkedCase.getDocuments() != null) {
                 linkedCase.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
         });
@@ -225,7 +229,7 @@ public class CaseRegistrationEnrichment {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
             CourtCase courtCase = caseRequest.getCases();
-            AuditDetails auditDetails  = courtCase.getAuditdetails();
+            AuditDetails auditDetails = courtCase.getAuditdetails();
             auditDetails.setLastModifiedTime(caseUtil.getCurrentTimeMil());
             auditDetails.setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
             enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
@@ -235,28 +239,56 @@ public class CaseRegistrationEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
         }
     }
-    public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
+
+    public void enrichCourtCaseNumber(CaseRequest caseRequest) {
         try {
-            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
-            caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            String tenantId = caseRequest.getCases().getCourtId();
+            String idName = config.getCourtCaseConfig();
+            String idFormat = config.getCourtCaseSTFormat();
+            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1,false);
             caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
-            log.error("Error enriching case number and cnr number: {}", e.toString());
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
+            log.error("Error enriching case number and court case number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and court case number: " + e.getMessage());
         }
     }
 
-    public void enrichAccessCode(CaseRequest caseRequest){
-            try {
-
-                String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
-                caseRequest.getCases().setAccessCode(accessCode);
-            } catch (Exception e) {
-                log.error("Error enriching access code: {}", e.toString());
-                throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
-            }
+    public void enrichCNRNumber(CaseRequest caseRequest) {
+        try {
+            String tenantId = caseRequest.getCases().getCourtId();
+            String idName = config.getCaseCNRConfig();
+            String idFormat = config.getCaseCNRFormat();
+            List<String> cnrNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1,true);
+            caseRequest.getCases().setCnrNumber(cnrNumberIdList.get(0));
+        } catch (Exception e) {
+            log.error("Error enriching cnr number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching cnr number: " + e.getMessage());
         }
+    }
+
+    public void enrichCMPNumber(CaseRequest caseRequest) {
+        try {
+            String tenantId = caseRequest.getCases().getCourtId();
+            String idName = config.getCmpConfig();
+            String idFormat = config.getCmpFormat();
+            List<String> cmpNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(),tenantId, idName, idFormat, 1,false);
+            caseRequest.getCases().setCmpNumber(cmpNumberIdList.get(0));
+        } catch (Exception e) {
+            log.error("Error enriching cnr number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching cnr number: " + e.getMessage());
+        }
+    }
+
+    public void enrichAccessCode(CaseRequest caseRequest) {
+        try {
+
+            String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
+            caseRequest.getCases().setAccessCode(accessCode);
+        } catch (Exception e) {
+            log.error("Error enriching access code: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
+        }
+    }
 
     public void enrichRegistrationDate(CaseRequest caseRequest) {
         try {

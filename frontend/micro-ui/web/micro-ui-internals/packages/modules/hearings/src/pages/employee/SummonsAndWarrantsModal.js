@@ -29,6 +29,7 @@ const SummonsAndWarrantsModal = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [orderNumber, setOrderNumber] = useState(null);
   const [orderId, setOrderId] = useState(null);
+  const [orderType, setOrderType] = useState(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const userType = Digit.UserService.getType();
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
@@ -69,6 +70,8 @@ const SummonsAndWarrantsModal = () => {
     [caseData]
   );
 
+  const isCaseAdmitted = useMemo(() => caseDetails?.status === "CASE_ADMITTED", [caseDetails]);
+
   const { caseId, cnrNumber } = useMemo(() => ({ cnrNumber: caseDetails.cnrNumber || "", caseId: caseDetails?.id }), [caseDetails]);
 
   const handleCloseModal = () => {
@@ -78,7 +81,7 @@ const SummonsAndWarrantsModal = () => {
   const handleNavigate = () => {
     const contextPath = window?.contextPath || "";
     history.push(
-      `/${contextPath}/employee/home/home-pending-task/reissue-summons-modal?filingNumber=${filingNumber}&hearingId=${hearingId}&cnrNumber=${cnrNumber}`
+      `/${contextPath}/employee/home/home-pending-task/reissue-summons-modal?filingNumber=${filingNumber}&hearingId=${hearingId}&cnrNumber=${cnrNumber}&orderType=${orderType}`
     );
   };
 
@@ -153,7 +156,10 @@ const SummonsAndWarrantsModal = () => {
     if (!ordersData?.list) return [];
 
     const filteredOrders = ordersData?.list?.filter(
-      (item) => (item.orderType === "SUMMONS" || item.orderType === "WARRANT") && item?.status === "PUBLISHED" && item?.hearingNumber === hearingId
+      (item) =>
+        (item.orderType === "SUMMONS" || item.orderType === "WARRANT" || item.orderType === "NOTICE") &&
+        item?.status === "PUBLISHED" &&
+        item?.hearingNumber === hearingId
     );
 
     const sortedOrders = filteredOrders?.sort((a, b) => {
@@ -167,10 +173,11 @@ const SummonsAndWarrantsModal = () => {
   useEffect(() => {
     setOrderList(orderListFiltered || []);
     setOrderNumber(orderListFiltered?.[0]?.orderNumber);
+    setOrderType(orderListFiltered?.[0]?.orderType);
     setOrderId(orderListFiltered?.[0]?.id);
   }, [orderListFiltered]);
 
-  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId }), [filingNumber, orderId, orderNumber]);
+  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType }), [filingNumber, orderId, orderNumber, orderType]);
 
   const { respondentName, partyType } = useMemo(() => {
     const orderData = orderList[orderList.length - 1]?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
@@ -207,7 +214,7 @@ const SummonsAndWarrantsModal = () => {
         display: "none",
       }}
       formId="modal-action"
-      headerBarMain={<ModalHeading label={t("Summons and Warrants Status")} />}
+      headerBarMain={<ModalHeading label={t(`${orderType === "SUMMONS" ? "Summons and Warrants" : "Notice"} Status`)} />}
     >
       <div className="case-info">
         <div className="case-info-column">
@@ -259,6 +266,7 @@ const SummonsAndWarrantsModal = () => {
               setActiveIndex(index);
               setOrderLoading(true);
               setOrderNumber(item?.orderNumber);
+              setOrderType(item?.orderType);
               setOrderId(item?.id);
               setTimeout(() => {
                 setOrderLoading((prev) => !prev);
@@ -274,23 +282,25 @@ const SummonsAndWarrantsModal = () => {
       {orderNumber && !orderLoading && <InboxSearchComposer configs={config} defaultValues={filingNumber}></InboxSearchComposer>}
 
       <div className="action-buttons">
+        {isCaseAdmitted && (
+          <Button
+            variation="secondary"
+            className="action-button"
+            label={t("Issue Warrant")}
+            labelClassName={"secondary-label-selector"}
+            onButtonClick={() => {
+              handleIssueWarrant({
+                cnrNumber,
+                filingNumber,
+                orderType: "WARRANT",
+                hearingId,
+              });
+            }}
+            style={{ marginRight: "1rem", fontWeight: "900" }}
+          />
+        )}
         <Button
-          variation="secondary"
-          className="action-button"
-          label={t("Issue Warrant")}
-          labelClassName={"secondary-label-selector"}
-          onButtonClick={() => {
-            handleIssueWarrant({
-              cnrNumber,
-              filingNumber,
-              orderType: "WARRANT",
-              hearingId,
-            });
-          }}
-          style={{ marginRight: "1rem", fontWeight: "900" }}
-        />
-        <Button
-          label={t("Re-Issue Summon")}
+          label={t(`Re-Issue ${orderType === "SUMMONS" ? "Summon" : "Notice"}`)}
           onButtonClick={() => {
             handleNavigate();
           }}

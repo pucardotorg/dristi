@@ -141,4 +141,11 @@ public class Configuration {
 
     @Value("${egov.filestore.path}")
     private String fileStorePath;
+
+    //Idgen
+    @Value("${egov.idgen.applicationConfig}")
+    private String applicationConfig;
+
+    @Value("${egov.idgen.applicationFormat}")
+    private String applicationFormat;
 }
