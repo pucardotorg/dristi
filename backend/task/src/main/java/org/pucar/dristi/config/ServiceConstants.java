@@ -62,9 +62,11 @@ public class ServiceConstants {
     public static final String BAIL = "BAIL";
     public static final String SUMMON = "SUMMONS";
 
+    public static final String MAKE_PAYMENT = "MAKE_PAYMENT";
+
     public static final String NOTICE = "NOTICE";
     public static final String WARRANT = "WARRANT";
-    public static final String ISSUESUMMON = "ISSUESUMMON";
+    public static final String ISSUESUMMON = "ISSUE_SUMMON";
 
     public static final String ISSUENOTICE = "ISSUE_NOTICE";
 
