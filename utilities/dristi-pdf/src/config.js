@@ -277,15 +277,15 @@ module.exports = {
 
   constants: {
     mdmsCourtRoom: {
-      name: "Court of the Judicial First Class Magistrate Kollam",
+      name: "Court Centre, Kollam",
       place: "Kollam",
       state: "Kerala",
     },
     judgeDetails: {
-      name: "John Doe",
+      name: "John Koshy",
       judgeSignature: "Judge Signature",
       courtSeal: "Court Seal",
-      designation: "High Court",
+      designation: "Judicial First Class Magistrate III",
     },
   },
 };
