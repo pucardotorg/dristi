@@ -477,7 +477,7 @@ public class CaseService {
 
     public void saveInRedisCache(List<CaseCriteria> casesList, RequestInfo requestInfo) {
         for (CaseCriteria criteria : casesList) {
-            if (criteria.getResponseList() != null && !criteria.getResponseList().isEmpty()) {
+            if (!criteria.getDefaultFields() && criteria.getCaseId() != null && criteria.getResponseList() != null) {
                 for (CourtCase courtCase : criteria.getResponseList()) {
                     cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
                 }
