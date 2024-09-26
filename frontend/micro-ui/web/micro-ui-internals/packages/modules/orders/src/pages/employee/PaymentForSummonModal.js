@@ -84,7 +84,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
           {feeOptions[selectedOption?.value]?.map((action, index) => (
             <div className={`${index === 0 ? "header-row" : "action-row"}`}>
               <div className="payment-label">{t(action?.label)}</div>
-              <div className="payment-amount">{index === 0 ? action?.amount : `Rs. ${action?.amount}/-`}</div>
+              <div className="payment-amount">{action?.action !== "offline-process" && action?.amount ? `Rs. ${action?.amount}/-` : "-"}</div>
               <div className="payment-action">
                 {index === 0 ? (
                   t(action?.action)
@@ -106,7 +106,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
 
 const PaymentForSummonModal = ({ path }) => {
   const history = useHistory();
-  const { filingNumber, orderNumber } = Digit.Hooks.useQueryParams();
+  const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
 
@@ -153,11 +153,26 @@ const PaymentForSummonModal = ({ path }) => {
   console.log("caseData :>> ", caseData?.criteria?.[0]?.responseList?.[0]?.id);
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
+
+  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
+    {
+      criteria: {
+        tenantId: tenantId,
+        taskNumber: taskNumber,
+      },
+    },
+    {},
+    filingNumber,
+    Boolean(filingNumber)
+  );
+
+  const filteredTasks = useMemo(() => tasksData?.list, [tasksData]);
+
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
-    { tenantId, criteria: { orderNumber: orderNumber } },
+    { tenantId, criteria: { id: filteredTasks?.[0]?.orderId } },
     { tenantId },
-    orderNumber,
-    Boolean(orderNumber)
+    filteredTasks?.[0]?.orderId,
+    Boolean(filteredTasks?.[0]?.orderId)
   );
 
   const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
@@ -175,36 +190,6 @@ const PaymentForSummonModal = ({ path }) => {
     orderData?.list?.[0]?.hearingNumber,
     Boolean(orderData?.list?.[0]?.hearingNumber)
   );
-
-  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
-    {
-      criteria: {
-        tenantId: tenantId,
-        filingNumber: filingNumber,
-      },
-    },
-    {},
-    filingNumber,
-    Boolean(filingNumber)
-  );
-
-  const filteredTasks = useMemo(() => {
-    if (!tasksData || !tasksData.list) return [];
-
-    const tasksWithMatchingOrderId = tasksData.list.filter((task) => task.orderId === orderData?.list?.[0]?.id);
-
-    const tasksWithPostChannel = tasksWithMatchingOrderId.filter((task) => {
-      try {
-        const taskDetails = task?.taskDetails;
-        return taskDetails?.deliveryChannels?.channelName === "Post";
-      } catch (error) {
-        console.error("Error parsing taskDetails JSON:", error);
-        return false;
-      }
-    });
-
-    return tasksWithPostChannel;
-  }, [tasksData, orderData]);
 
   const consumerCode = useMemo(() => {
     return filteredTasks?.[0]?.taskNumber ? `${filteredTasks?.[0]?.taskNumber}_POST_COURT` : undefined;
@@ -332,7 +317,7 @@ const PaymentForSummonModal = ({ path }) => {
               pendingTask: {
                 name: orderType === "SUMMONS" ? `MAKE_PAYMENT_FOR_SUMMONS_POST` : `MAKE_PAYMENT_FOR_NOTICE_POST`,
                 entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-                referenceId: `MANUAL_Post_${orderNumber}`,
+                referenceId: `MANUAL_${taskNumber}`,
                 status: paymentType.PAYMENT_PENDING_POST,
                 assignedTo: [],
                 assignedRole: [],

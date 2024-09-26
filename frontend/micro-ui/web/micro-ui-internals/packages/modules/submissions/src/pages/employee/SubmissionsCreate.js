@@ -29,7 +29,7 @@ import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../../d
 import { Urls } from "../../hooks/services/Urls";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 import usePaymentProcess from "../../../../home/src/hooks/usePaymentProcess";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../utils";
+import { getSuffixByBusinessCode, getTaxPeriodByBusinessService, getCourtFeeAmountByPaymentType } from "../../utils";
 
 const fieldStyle = { marginRight: 0, width: "100%" };
 
@@ -106,6 +106,17 @@ const SubmissionsCreate = ({ path }) => {
     {
       select: (data) => {
         return data?.BillingService?.TaxPeriod || [];
+      },
+    }
+  );
+
+  const { data: courtFeeAmount, isLoading: isLoadingCourtFeeData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "payment",
+    [{ name: "courtFeePayment" }],
+    {
+      select: (data) => {
+        return data?.payment?.courtFeePayment || [];
       },
     }
   );
@@ -423,9 +434,9 @@ const SubmissionsCreate = ({ path }) => {
     if (applicationType && !["OTHERS", "DOCUMENT"].includes(applicationType) && !formData?.applicationDate) {
       setValue("applicationDate", formatDate(new Date()));
     }
-    if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
-      setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
-    }
+    // if (applicationType && applicationType === "TRANSFER" && !formData?.requestedCourt) {
+    //   setValue("requestedCourt", caseDetails?.courtId ? t(`COMMON_MASTERS_COURT_R00M_${caseDetails?.courtId}`) : "");
+    // }
     if (applicationType && hearingId && ["CHECKOUT_REQUEST", "RE_SCHEDULE"].includes(applicationType) && !formData?.initialHearingDate) {
       setValue("initialHearingDate", formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime)));
     }
@@ -722,7 +733,7 @@ const SubmissionsCreate = ({ path }) => {
   };
 
   const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, entityType) || "APPL_FILING", [entityType, paymentTypeData]);
-
+  // const amount = getCourtFeeAmountByPaymentType(courtFeeAmount, "APPLICATION_FEE");
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
     consumerCode: applicationDetails?.applicationNumber + `_${suffix}`,

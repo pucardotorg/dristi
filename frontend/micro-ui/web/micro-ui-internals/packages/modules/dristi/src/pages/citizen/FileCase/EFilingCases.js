@@ -483,7 +483,9 @@ function EFilingCases({ path }) {
       caseDetails?.caseDetails?.[selected]?.formdata ||
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
-
+    if (selected === "addSignature" && !caseDetails?.additionalDetails?.signedCaseDocument && !isLoading) {
+      setShowReviewCorrectionModal(true);
+    }
     if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
@@ -1541,9 +1543,11 @@ function EFilingCases({ path }) {
       if (selected === "reviewCaseFile") {
         setIsDisabled(true);
         res = await refetchCasePDfGeneration();
-        // if (res?.data?.cases?.[0]?.documents?.[0]?.fileStore) {
-        //   localStorage.setItem("fileStoreId", res?.data?.cases?.[0]?.documents?.[0]?.fileStore);
-        // }
+        if (res?.status === "error") {
+          setIsDisabled(false);
+          toast.error(t("CASE_PDF_ERROR"));
+          return;
+        }
       }
       updateCaseDetails({
         isCompleted: true,

@@ -788,8 +788,6 @@ export const configsOrderSubmissionExtension = [
         label: "ORIGINAL_SUBMISSION_ORDER_DATE",
         isMandatory: false,
         key: "originalSubmissionOrderDate",
-        schemaKeyPath: "orderDetails.originalDocSubmissionDate",
-        transformer: "date",
         disable: true,
         type: "date",
         populators: {
@@ -2340,7 +2338,7 @@ export const configsCaseTransfer = [
         schemaKeyPath: "orderDetails.grounds",
         transformer: "customTextArea",
         isMandatory: true,
-        disable: true,
+        disable: false,
         populators: {
           inputs: [
             {
@@ -2374,7 +2372,7 @@ export const configsCaseTransfer = [
         label: "CASE_TRANSFERRED_TO",
         isMandatory: true,
         key: "caseTransferredTo",
-        disable: true,
+        disable: false,
         type: "text",
         populators: {
           name: "caseTransferredTo",

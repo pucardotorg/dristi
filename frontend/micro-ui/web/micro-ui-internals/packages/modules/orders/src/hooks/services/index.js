@@ -1,6 +1,15 @@
 import { Request } from "@egovernments/digit-ui-libraries";
 import { Urls } from "./Urls";
 
+const judgeId = window?.globalConfigs?.getConfig("JUDGE_ID") || "JUDGE_ID";
+const benchId = window?.globalConfigs?.getConfig("BENCH_ID") || "BENCH_ID";
+const courtId = window?.globalConfigs?.getConfig("COURT_ID") || "COURT_ID";
+const presidedBy = {
+  judgeId: [judgeId],
+  benchId: benchId,
+  courtId: courtId,
+};
+
 export const ordersService = {
   createOrder: (data, params) =>
     Request({
@@ -42,22 +51,38 @@ export const ordersService = {
       data,
       params,
     }),
-  createHearings: (data, params) =>
-    Request({
+  createHearings: (data, params) => {
+    const updatedData = {
+      ...data,
+      hearing: {
+        ...data.hearing,
+        presidedBy: presidedBy,
+      },
+    };
+    return Request({
       url: Urls.orders.createHearings,
       useCache: false,
       userService: false,
-      data,
+      data: updatedData,
       params,
-    }),
-  updateHearings: (data, params) =>
-    Request({
+    });
+  },
+  updateHearings: (data, params) => {
+    const updatedData = {
+      ...data,
+      hearing: {
+        ...data.hearing,
+        presidedBy: presidedBy,
+      },
+    };
+    return Request({
       url: Urls.orders.updateHearings,
       useCache: false,
       userService: false,
-      data,
+      data: updatedData,
       params,
-    }),
+    });
+  },
 };
 
 export const EpostService = {

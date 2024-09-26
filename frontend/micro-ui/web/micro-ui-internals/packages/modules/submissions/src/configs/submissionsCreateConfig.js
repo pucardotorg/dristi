@@ -1197,7 +1197,7 @@ export const configsCaseTransfer = [
         label: "REQUESTED_COURT",
         schemaKeyPath: "applicationDetails.selectRequestedCourt",
         isMandatory: true,
-        disable: true,
+        disable: false,
         key: "requestedCourt",
         type: "text",
         populators: { name: "requestedCourt" },

@@ -177,6 +177,18 @@ const GenerateOrders = () => {
   ]);
   const courtRooms = useMemo(() => courtRoomDetails?.Court_Rooms || [], [courtRoomDetails]);
 
+  const { data: courtFeeAmount, isLoading: isLoadingCourtFeeData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "payment",
+    [{ name: "courtFeePayment" }],
+    {
+      select: (data) => {
+        return data?.payment?.courtFeePayment || [];
+      },
+    }
+  );
+  const summonsCourtFee = useMemo(() => courtFeeAmount?.find((p) => p?.paymentCode === "SUMMONS_COURT_FEE")?.amount || 0, [courtFeeAmount]);
+
   const { data: caseData, isLoading: isCaseDetailsLoading, refetch: refetchCaseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
@@ -768,10 +780,10 @@ const GenerateOrders = () => {
       updatedFormdata.submissionDocuments = applicationDetails?.additionalDetails?.formdata?.submissionDocuments;
       updatedFormdata.bailOf = applicationDetails?.additionalDetails?.onBehalOfName;
     }
-    if (orderType === "CASE_TRANSFER") {
-      updatedFormdata.caseTransferredTo = applicationDetails?.applicationDetails?.selectRequestedCourt;
-      updatedFormdata.grounds = { text: applicationDetails?.applicationDetails?.groundsForSeekingTransfer };
-    }
+    // if (orderType === "CASE_TRANSFER") {
+    //   updatedFormdata.caseTransferredTo = applicationDetails?.applicationDetails?.selectRequestedCourt;
+    //   updatedFormdata.grounds = { text: applicationDetails?.applicationDetails?.groundsForSeekingTransfer };
+    // }
     if (orderType === "WITHDRAWAL") {
       if (applicationDetails?.applicationType === applicationTypes.WITHDRAWAL) {
         updatedFormdata.applicationOnBehalfOf = applicationDetails?.additionalDetails?.onBehalOfName;
@@ -1070,6 +1082,8 @@ const GenerateOrders = () => {
     createTask = false,
     taskStatus = "CREATE_SUBMISSION",
     taskName = "",
+    channel = "",
+    orderType = "",
   }) => {
     const formdata = order?.additionalDetails?.formdata;
     let create = createTask;
@@ -1148,71 +1162,53 @@ const GenerateOrders = () => {
       });
       return await Promise.all(promises);
     }
-    if (order?.orderType === "SUMMONS") {
+    if ((order?.orderType === "SUMMONS" || orderType) && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
         .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
         ?.flat();
       assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
-      if (Array.isArray(order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels)) {
-        entityType = "order-default";
-        const promises = order?.additionalDetails?.formdata?.SummonsOrder?.selectedChannels?.map(async (channel) => {
-          if (channel?.type === "Post" || channel.type === "SMS" || channel.type === "E-mail") {
-            return ordersService.customApiService(Urls.orders.pendingTask, {
-              pendingTask: {
-                name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
-                entityType,
-                referenceId: `MANUAL_${channel.type}_${currentOrder?.orderNumber}`,
-                status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
-                assignedTo: assignees,
-                assignedRole,
-                cnrNumber: cnrNumber,
-                filingNumber: filingNumber,
-                isCompleted: false,
-                stateSla: stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate,
-                additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
-                tenantId,
-              },
-            });
-          }
-
-          return null;
-        });
-        return await Promise.all(promises);
-      }
+      entityType = "order-default";
+      return ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: t(`MAKE_PAYMENT_FOR_SUMMONS_${channelTypeEnum?.[channel?.type]?.code}`),
+          entityType,
+          referenceId: `MANUAL_${refId}`,
+          status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
+          assignedTo: assignees,
+          assignedRole,
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
+          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+          tenantId,
+        },
+      });
     }
-    if (order?.orderType === "NOTICE") {
+    if ((order?.orderType === "NOTICE" || orderType) && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
         .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
         ?.flat();
       assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
-      if (Array.isArray(order?.additionalDetails?.formdata?.noticeOrder?.selectedChannels)) {
-        entityType = "order-default";
-        const promises = order?.additionalDetails?.formdata?.noticeOrder?.selectedChannels?.map(async (channel) => {
-          if (channel?.type === "Post" || channel.type === "SMS" || channel.type === "E-mail") {
-            return ordersService.customApiService(Urls.orders.pendingTask, {
-              pendingTask: {
-                name: t(`MAKE_PAYMENT_FOR_NOTICE_${channelTypeEnum?.[channel?.type]?.code}`),
-                entityType,
-                referenceId: `MANUAL_${channel.type}_${currentOrder?.orderNumber}`,
-                status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
-                assignedTo: assignees,
-                assignedRole,
-                cnrNumber: cnrNumber,
-                filingNumber: filingNumber,
-                isCompleted: false,
-                stateSla: stateSlaMap?.[order?.orderType] * dayInMillisecond + todayDate,
-                additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
-                tenantId,
-              },
-            });
-          }
-
-          return null;
-        });
-        return await Promise.all(promises);
-      }
+      entityType = "order-default";
+      return ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: t(`MAKE_PAYMENT_FOR_NOTICE_${channelTypeEnum?.[channel?.type]?.code}`),
+          entityType,
+          referenceId: `MANUAL_${refId}`,
+          status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
+          assignedTo: assignees,
+          assignedRole,
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
+          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+          tenantId,
+        },
+      });
     }
     if (order?.orderType === "WARRANT") {
       entityType = "order-default";
@@ -1463,7 +1459,7 @@ const GenerateOrders = () => {
           caseDetails: {
             caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
-            hearingDate: new Date(orderData?.additionalDetails?.formdata?.date || "").getTime(),
+            hearingDate: new Date(orderData?.additionalDetails?.formdata?.dateForHearing || "").getTime(),
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
             courtPhone: courtDetails?.phone,
@@ -1536,7 +1532,7 @@ const GenerateOrders = () => {
           caseDetails: {
             caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
-            hearingDate: new Date(orderData?.additionalDetails?.formData?.date || "").getTime(),
+            hearingDate: new Date(orderData?.additionalDetails?.formData?.dateOfHearing || "").getTime(),
             judgeName: "",
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
@@ -1594,9 +1590,9 @@ const GenerateOrders = () => {
             channelName: channelTypeEnum?.[item?.type]?.type,
           };
 
-          const address = respondentAddress[channelMap.get(item?.type) - 1];
-          const sms = respondentPhoneNo[channelMap.get(item?.type) - 1];
-          const email = respondentEmail[channelMap.get(item?.type) - 1];
+          const address = ["Post", "Via Police"].includes(item?.type) ? respondentAddress[channelMap.get(item?.type) - 1] : respondentAddress[0];
+          const sms = ["SMS"].includes(item?.type) ? respondentPhoneNo[channelMap.get(item?.type) - 1] : respondentPhoneNo[0];
+          const email = ["E-mail"].includes(item?.type) ? respondentEmail[channelMap.get(item?.type) - 1] : respondentEmail[0];
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
@@ -1640,38 +1636,44 @@ const GenerateOrders = () => {
             gender: "",
           };
         }
-        await ordersService.customApiService(Urls.orders.taskCreate, {
-          task: {
-            taskDetails: payload,
-            workflow: {
-              action: "CREATE",
-              comments: orderType,
-              documents: [
-                {
-                  documentType: null,
-                  fileStore: null,
-                  documentUid: null,
-                  additionalDetails: {},
-                },
-              ],
-              assignes: null,
-              rating: null,
+        await ordersService
+          .customApiService(Urls.orders.taskCreate, {
+            task: {
+              taskDetails: payload,
+              workflow: {
+                action: "CREATE",
+                comments: orderType,
+                documents: [
+                  {
+                    documentType: null,
+                    fileStore: null,
+                    documentUid: null,
+                    additionalDetails: {},
+                  },
+                ],
+                assignes: null,
+                rating: null,
+              },
+              createdDate: new Date().getTime(),
+              orderId: orderData?.id,
+              filingNumber,
+              cnrNumber,
+              taskType: orderType,
+              status: "INPROGRESS",
+              tenantId,
+              amount: {
+                type: "FINE",
+                status: "DONE",
+                amount: summonsCourtFee,
+              },
             },
-            createdDate: new Date().getTime(),
-            orderId: orderData?.id,
-            filingNumber,
-            cnrNumber,
-            taskType: orderType,
-            status: "INPROGRESS",
             tenantId,
-            amount: {
-              type: "FINE",
-              status: "DONE",
-              amount: "100",
-            },
-          },
-          tenantId,
-        });
+          })
+          .then(async (data) => {
+            if (["SUMMONS", "NOTICE"].includes(orderType) && item?.type !== "Via Police") {
+              await createPendingTask({ refId: data?.task?.taskNumber, channel: item, orderType: orderType });
+            }
+          });
       });
     } else if (Object.keys(payload || {}).length > 0) {
       await ordersService.customApiService(Urls.orders.taskCreate, {
@@ -1701,7 +1703,7 @@ const GenerateOrders = () => {
           amount: {
             type: "FINE",
             status: "DONE",
-            amount: "100",
+            amount: summonsCourtFee,
           },
         },
         tenantId,

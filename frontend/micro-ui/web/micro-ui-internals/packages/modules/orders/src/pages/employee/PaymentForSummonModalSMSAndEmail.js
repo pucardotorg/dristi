@@ -62,7 +62,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
           {feeOptions[channelId]?.map((action, index) => (
             <div className={`${index === 0 ? "header-row" : "action-row"}`} key={index}>
               <div className="payment-label">{t(action?.label)}</div>
-              <div className="payment-amount">{index === 0 ? action?.amount : `Rs. ${action?.amount}/-`}</div>
+              <div className="payment-amount">{action?.action !== "offline-process" && action?.amount ? `Rs. ${action?.amount}/-` : "-"}</div>
               <div className="payment-action">
                 {index === 0 ? (
                   t(action?.action)
@@ -85,7 +85,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
 const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const history = useHistory();
   const location = useLocation();
-  const { filingNumber, orderNumber } = Digit.Hooks.useQueryParams();
+  const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
   const [channelId, setChannelId] = useState(null);
@@ -152,11 +152,26 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   console.log("caseData :>> ", caseData?.criteria?.[0]?.responseList?.[0]?.id);
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
+
+  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
+    {
+      criteria: {
+        tenantId: tenantId,
+        taskNumber: taskNumber,
+      },
+    },
+    {},
+    filingNumber,
+    Boolean(filingNumber)
+  );
+
+  const filteredTasks = useMemo(() => tasksData?.list, [tasksData]);
+
   const { data: orderData, isloading: isOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
-    { tenantId, criteria: { orderNumber: orderNumber } },
+    { tenantId, criteria: { id: filteredTasks?.[0]?.orderId } },
     { tenantId },
-    orderNumber,
-    Boolean(orderNumber)
+    filteredTasks?.[0]?.orderId,
+    Boolean(filteredTasks?.[0]?.orderId)
   );
 
   const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
@@ -174,38 +189,6 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     orderData?.list?.[0]?.hearingNumber,
     Boolean(orderData?.list?.[0]?.hearingNumber)
   );
-
-  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
-    {
-      criteria: {
-        tenantId: tenantId,
-        filingNumber: filingNumber,
-      },
-    },
-    {},
-    filingNumber,
-    Boolean(filingNumber)
-  );
-
-  const filteredTasks = useMemo(() => {
-    if (!tasksData || !tasksData.list) return [];
-
-    const tasksWithMatchingOrderId = tasksData.list.filter((task) => task.orderId === orderData?.list?.[0]?.id);
-    const requiredChannel =
-      channelId === "sms" ? "SMS" : channelId === "email" ? "Email" : channelId ? channelId.charAt(0).toUpperCase() + channelId.slice(1) : "";
-
-    const tasksWithRequiredChannel = tasksWithMatchingOrderId.filter((task) => {
-      try {
-        const taskDetails = task?.taskDetails;
-        return taskDetails?.deliveryChannels?.channelName === requiredChannel;
-      } catch (error) {
-        console.error("Error parsing taskDetails JSON:", error);
-        return false;
-      }
-    });
-
-    return tasksWithRequiredChannel;
-  }, [tasksData, orderData]);
 
   const suffix = useMemo(() => {
     return channelId === "sms" ? "SMS_COURT" : channelId === "email" ? "EMAIL_COURT" : "";
@@ -300,7 +283,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
             pendingTask: {
               name: orderType === "SUMMONS" ? `MAKE_PAYMENT_FOR_SUMMONS_POST` : `MAKE_PAYMENT_FOR_NOTICE_POST`,
               entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-              referenceId: `MANUAL_${referenceId}_${orderNumber}`,
+              referenceId: `MANUAL_${taskNumber}`,
               status: status,
               assignedTo: [],
               assignedRole: [],

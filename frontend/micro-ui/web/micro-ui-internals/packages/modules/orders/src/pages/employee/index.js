@@ -23,7 +23,7 @@ const ProjectBreadCrumb = ({ location }) => {
   const crumbs = [
     {
       path: `/${window?.contextPath}/${userType}/home/home-pending-task`,
-      content: t("HOME"),
+      content: t("ES_COMMON_HOME"),
       show: true,
     },
     {
@@ -32,7 +32,7 @@ const ProjectBreadCrumb = ({ location }) => {
       show: true,
     },
   ];
-  return <BreadCrumb crumbs={crumbs} spanStyle={bredCrumbStyle} />;
+  return <BreadCrumb crumbs={crumbs} spanStyle={bredCrumbStyle} style={{ color: "rgb(0, 126, 126)" }} />;
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {

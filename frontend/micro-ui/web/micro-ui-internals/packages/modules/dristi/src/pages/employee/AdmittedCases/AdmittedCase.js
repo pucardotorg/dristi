@@ -174,7 +174,7 @@ const AdmittedCases = () => {
     [caseDetails?.statutesAndSections]
   );
   const litigants = caseDetails?.litigants?.length > 0 ? caseDetails?.litigants : [];
-  const finalLitigantsData = litigants.map((litigant) => {
+  const finalLitigantsData = litigants?.map((litigant) => {
     return {
       ...litigant,
       name: removeInvalidNameParts(litigant.additionalDetails?.fullName),

@@ -109,3 +109,8 @@ export const removeInvalidNameParts = (name) => {
     .filter((part) => part && !["undefined", "null"].includes(part.toLowerCase()))
     .join(" ");
 };
+
+export const getFilteredPaymentData = (paymentType, paymentData, bill) => {
+  const processedPaymentType = paymentType?.trim()?.toLowerCase();
+  return !["case filing fee"].includes(processedPaymentType) ? [{ key: "Total Amount", value: bill?.totalAmount }] : paymentData;
+};

@@ -7,7 +7,7 @@ import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
+import { getSuffixByBusinessCode, getTaxPeriodByBusinessService, getFilteredPaymentData } from "../../../Utils";
 
 const paymentTaskType = {
   TASK_SUMMON: "task-summons",
@@ -157,7 +157,6 @@ const ViewPaymentDetails = ({ location, match }) => {
 
   const onSubmitCase = async () => {
     const consumerCodeWithoutSuffix = consumerCode.split("_")[0];
-    let referenceId;
     let taskFilingNumber = "";
     let taskHearingNumber = "";
     let taskOrderType = "";
@@ -180,11 +179,10 @@ const ViewPaymentDetails = ({ location, match }) => {
       });
       taskHearingNumber = hearingNumber || "";
       taskOrderType = orderType || "";
-      referenceId = tasksData?.taskDetails?.deliveryChannels?.channelName + `_${orderNumber}`;
       taskFilingNumber = tasksData?.filingNumber || caseDetails?.filingNumber;
-    } else {
-      referenceId = consumerCodeWithoutSuffix;
     }
+
+    const referenceId = consumerCodeWithoutSuffix;
     setIsDisabled(true);
     const regenerateBill = await DRISTIService.callFetchBill({}, { consumerCode: consumerCode, tenantId, businessService: businessService });
     const billFetched = regenerateBill?.Bill ? regenerateBill?.Bill[0] : {};
@@ -316,8 +314,9 @@ const ViewPaymentDetails = ({ location, match }) => {
         </div>
         <div style={{ display: "flex", flexDirection: "row-reverse", gap: 40, justifyContent: "space-between", width: "100%" }}>
           <div className="payment-calculator-wrapper" style={{ width: "33%" }}>
-            {paymentCalculation.map((item) => (
+            {getFilteredPaymentData(paymentType, paymentCalculation, bill).map((item) => (
               <div
+                key={item.key}
                 style={{
                   display: "flex",
                   justifyContent: "space-between",

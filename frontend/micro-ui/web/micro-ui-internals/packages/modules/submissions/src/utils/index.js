@@ -51,4 +51,8 @@ export const getTaxPeriodByBusinessService = (taxPeriod = [], businessService) =
   return taxPeriod?.find((data) => data?.service === businessService) || {};
 };
 
+export const getCourtFeeAmountByPaymentType = (courtFeeAmount = [], paymentCode) => {
+  return courtFeeAmount?.find((data) => data?.paymentCode === paymentCode)?.amount || "";
+};
+
 export default {};

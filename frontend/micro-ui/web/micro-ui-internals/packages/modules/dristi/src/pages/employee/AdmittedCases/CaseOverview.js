@@ -58,10 +58,8 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
     { tenantId: tenantId },
     "DRISTI",
     cnrNumber + filingNumber,
-    true
+    Boolean(filingNumber)
   );
-
-  // console.log(advocateDetails);
 
   const { data: hearingRes, refetch: refetchHearingsData, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -72,7 +70,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
     },
     {},
     cnrNumber + filingNumber,
-    true
+    Boolean(filingNumber)
   );
 
   const { data: ordersRes, isLoading: isOrdersLoading } = useGetOrders(
@@ -84,7 +82,7 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
     },
     {},
     cnrNumber + filingNumber,
-    true
+    Boolean(filingNumber)
   );
 
   const previousHearing = hearingRes?.HearingList?.filter((hearing) => hearing.endTime < Date.now()).sort(

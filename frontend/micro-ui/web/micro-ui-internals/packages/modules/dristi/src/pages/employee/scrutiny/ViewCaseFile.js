@@ -373,6 +373,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
     "CS_POOR_UPLOAD",
     "CS_WRONG_JURISDICTION",
     "CS_PHOTO_MISMATCH",
+    "CS_DATE_MATCH_DOCUMENT",
   ];
   const caseInfo = [
     {

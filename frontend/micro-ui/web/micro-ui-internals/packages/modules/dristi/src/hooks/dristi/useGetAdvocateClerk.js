@@ -10,6 +10,7 @@ function useGetAdvocateClerk(data, params, keys, enabled, url) {
         .catch(() => ({})),
     {
       enabled: Boolean(enabled),
+      cacheTime: 0,
     }
   );
 }

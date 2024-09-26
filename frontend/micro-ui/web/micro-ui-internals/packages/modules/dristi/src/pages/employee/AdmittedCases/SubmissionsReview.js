@@ -48,7 +48,7 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         details: {
           applicationType: application?.applicationType,
           applicationSentOn: getDate(parseInt(application?.auditDetails.createdTime)),
-          sender: application?.createdBy,
+          sender: caseData?.case?.additionalDetails?.payerName,
           additionalDetails: application?.additionalDetails,
           applicationId: application?.id,
           auditDetails: application?.auditDetails,
@@ -89,7 +89,6 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
     //   };
     // });
     setDocumentSubmission(docObj);
-    // console.log(docObj);
     setShow(true);
   };
 
@@ -172,14 +171,10 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
         )
       ),
     ].flat(Infinity);
-
-    // console.log(applicationsPending);
   }
   const applicationListToShow = userRoles.includes("CITIZEN")
     ? applicationsPending
     : applicationRes?.applicationList?.filter((application) => application.status === "PENDINGREVIEW");
-
-  // console.log(applicationListToShow);
 
   return (
     <React.Fragment>

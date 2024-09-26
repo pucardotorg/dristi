@@ -116,7 +116,7 @@ const ApplicationDetails = ({ location, match }) => {
     () =>
       workFlowDetails?.processInstances?.[0]?.state?.actions
         ?.filter((action) => action.roles.every((role) => userRoles.includes(role)))
-        .map((action) => action.action),
+        .map((action) => action.action) || [],
     [workFlowDetails?.processInstances, userRoles]
   );
 
@@ -261,7 +261,7 @@ const ApplicationDetails = ({ location, match }) => {
           )}
           {applicationNo && (
             <div className="action-button-application">
-              {actions.map((option, index) => (
+              {actions?.map((option, index) => (
                 <SubmitBar
                   key={index}
                   label={option == "REJECT" ? "Reject Request" : "Accept Request"}
