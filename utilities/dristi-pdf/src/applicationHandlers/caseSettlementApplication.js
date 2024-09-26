@@ -96,20 +96,22 @@ async function caseSettlementApplication(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      return renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   return renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
 
     // Search for MDMS designation details
     // const resMdms1 = await handleApiCall(
@@ -258,14 +260,13 @@ async function caseSettlementApplication(req, res, qrCode) {
           specifyMechanism: "", // nmissing from the form
           settlementStatus: "", // missing from the form
           additionalComments: additionalComments,
-          location: "Kerala",
+          location: mdmsCourtRoom.state,
           day: day + ordinalSuffix,
           month: month,
           year: year,
           advocateSignature: "Advocate Signature",
           advocateName: advocateName,
           barRegistrationNumber: barRegistrationNumber,
-
           qrCodeUrl: base64Url,
         },
       ],

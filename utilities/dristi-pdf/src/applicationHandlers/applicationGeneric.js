@@ -72,7 +72,7 @@ async function applicationGeneric(req, res, qrCode) {
       return renderError(res, "Court case not found", 404);
     }
     const allAdvocates = getAdvocates(courtCase);
-    
+
     // Search for HRMS details
     // const resHrms = await handleApiCall(
     //   () => search_hrms(tenantId, "JUDGE", courtCase.courtId, requestInfo),
@@ -84,20 +84,23 @@ async function applicationGeneric(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      return renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   return renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Search for MDMS designation details
     // const resMdms1 = await handleApiCall(
@@ -245,9 +248,9 @@ async function applicationGeneric(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
-          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
+          judgeName: judgeDetails.name, // FIXME: employee.user.name
+          courtDesignation: judgeDetails.designation, //FIXME: mdmsDesignation.name,
+          addressOfTheCourt: mdmsCourtRoom.state, //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           applicationName,
           partyName: partyName,

@@ -131,20 +131,22 @@ const orderBailRejection = async (req, res, qrCode) => {
     );
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      return renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   return renderError(res, "Court room MDMS master not found", 404);
+    // }
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -218,8 +220,8 @@ const orderBailRejection = async (req, res, qrCode) => {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          courtPlace: "Kollam",
-          state: "Kerala",
+          courtPlace: mdmsCourtRoom.place,
+          state: mdmsCourtRoom.state,
           caseNumber: courtCase?.caseNumber,
           caseYear: caseYear,
           applicantName: advocateName || partyName,
@@ -227,14 +229,13 @@ const orderBailRejection = async (req, res, qrCode) => {
           dateOfApplication: applicationDate,
           briefSummaryOfBail: order?.comments || "",
           date: formattedToday,
-          documentNameList: ["Addhar Card", "Pan Card", "Passport"],
           documentList,
           bailType,
           conditionOfBail:
             "Don't go outside of the city without informing the court",
-          judgeSignature: "Judge Signature",
-          judgeName: "John Doe",
-          courtSeal: "Court Seal",
+          judgeSignature: judgeDetails.judgeSignature,
+          judgeName: judgeDetails.name,
+          courtSeal: judgeDetails.courtSeal,
         },
       ],
     };

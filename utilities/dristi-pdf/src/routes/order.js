@@ -69,9 +69,6 @@ router.post(
 
     try {
       switch (orderType.toLowerCase()) {
-        case "reschedule-request-judge":
-          await rescheduleRequestJudge(req, res, qrCode);
-          break;
         case "new-hearing-date-after-rescheduling":
           await newHearingDateAfterReschedule(req, res, qrCode);
           break;
@@ -81,20 +78,11 @@ router.post(
         case "accept-reschedule-request":
           await acceptReschedulingRequest(req, res, qrCode);
           break;
-        case "reject-reschedule-request":
-          await rejectReschedulingRequest(req, res, qrCode);
-          break;
         case "mandatory-async-submissions-responses":
           await mandatoryAsyncSubmissionsResponses(req, res, qrCode);
           break;
         case "order-referral-case-adr":
           await adrCaseReferral(req, res, qrCode);
-          break;
-        case "accept-adr-application":
-          await acceptAdrApplication(req, res, qrCode);
-          break;
-        case "reject-adr-application":
-          await rejectAdrApplication(req, res, qrCode);
           break;
         case "order-case-settlement-rejected":
           await caseSettlementRejection(req, res, qrCode);
@@ -123,14 +111,8 @@ router.post(
         case "order-bail-rejection":
           await orderBailRejection(req, res, qrCode);
           break;
-        case "order-for-accept-rescheduling-request":
-          await orderForAcceptReschedulingRequest(req, res, qrCode);
-          break;
         case "order-for-rejection-rescheduling-request":
           await orderForRejectionReschedulingRequest(req, res, qrCode);
-          break;
-        case "order-for-mandatory-async-submissions-and-response":
-          await orderForMandatoryAsyncSubmissionsAndResponse(req, res, qrCode);
           break;
         case "order-accept-voluntary":
           await orderAcceptVoluntary(req, res, qrCode);

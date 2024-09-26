@@ -274,4 +274,18 @@ module.exports = {
   constraints: {
     beneficiaryIdByHeadCode: "Deduction_{tanentId}_{headcode}",
   },
+
+  constants: {
+    mdmsCourtRoom: {
+      name: "Court of the Judicial First Class Magistrate Kollam",
+      place: "Kollam",
+      state: "Kerala",
+    },
+    judgeDetails: {
+      name: "John Doe",
+      judgeSignature: "Judge Signature",
+      courtSeal: "Court Seal",
+      designation: "High Court",
+    },
+  },
 };

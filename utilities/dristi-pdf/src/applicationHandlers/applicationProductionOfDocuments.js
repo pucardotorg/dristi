@@ -97,20 +97,23 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      return renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   return renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Search for MDMS designation details
     // const resMdms1 = await handleApiCall(
@@ -240,9 +243,9 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          judgeName: "John Doe", // FIXME: employee.user.name
-          courtDesignation: "High Court", //FIXME: mdmsDesignation.name,
-          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address,
+          judgeName: judgeDetails.name, // FIXME: employee.user.name
+          courtDesignation: judgeDetails.designation, //FIXME: mdmsDesignation.name,
+          addressOfTheCourt: mdmsCourtRoom.state, //FIXME: mdmsCourtRoom.address,
           date: formattedToday,
           partyName: partyName,
           complainantName: partyName, //FIXME: REMOVE it from both pdf configs and here,
@@ -251,7 +254,6 @@ async function applicationProductionOfDocuments(req, res, qrCode) {
           prayerOptional: "",
           advocateSignature: "Advocate Signature", //FIXME: It should also come from the application
           advocateName: advocateName,
-          nameOfDocument: "Aadhar card", //FIXME: It should come from the application, currently there is not field present inside of it
           documentList,
           barRegistrationNumber,
           day: day + ordinalSuffix,

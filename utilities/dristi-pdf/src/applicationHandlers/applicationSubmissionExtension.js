@@ -85,20 +85,23 @@ async function applicationSubmissionExtension(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Search for MDMS designation details
     // const resMdms1 = await handleApiCall(
@@ -251,9 +254,9 @@ async function applicationSubmissionExtension(req, res, qrCode) {
           caseNumber: courtCase.caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          judgeName: "John Doe",
-          courtDesignation: "High Court",
-          addressOfTheCourt: "Kerala", //FIXME: mdmsCourtRoom.address
+          judgeName: judgeDetails.name,
+          courtDesignation: judgeDetails.designation,
+          addressOfTheCourt: mdmsCourtRoom.state,
           date: currentDate,
           partyName: partyName,
           advocateName: advocateName,

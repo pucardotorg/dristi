@@ -84,20 +84,22 @@ async function scheduleHearingDate(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   renderError(res, "Court room MDMS master not found", 404);
+    // }
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // FIXME: Commenting out MDMS court establishment calls as it is not implemented in the solution
     // Search for MDMS court establishment details
@@ -163,8 +165,8 @@ async function scheduleHearingDate(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          place: "Kollam",
-          state: "Kerala",
+          place: mdmsCourtRoom.place,
+          state: mdmsCourtRoom.state,
           caseNumber: courtCase.caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
@@ -174,12 +176,10 @@ async function scheduleHearingDate(req, res, qrCode) {
           ).toLocaleDateString("en-IN"),
           partyNames: order.orderDetails.partyName.join(", "),
           additionalComments: order.comments,
-          judgeSignature: "Judges Signature",
-          courtSeal: "Court Seal",
+          judgeSignature: judgeDetails.judgeSignature,
+          judgeName: judgeDetails.name,
+          courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
-          place: "Kollam", // FIXME: mdmsCourtEstablishment.boundaryName,
-          state: "Kerala", //FIXME: mdmsCourtEstablishment.rootBoundaryName,
-          judgeName: "John Doe", // FIXME: employee.user.name,
         },
       ],
     };

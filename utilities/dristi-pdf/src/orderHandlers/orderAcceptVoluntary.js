@@ -68,33 +68,36 @@ async function orderAcceptVoluntary(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Search for MDMS court establishment details
-    const resMdms1 = await handleApiCall(
-      () =>
-        search_mdms(
-          mdmsCourtRoom.courtEstablishmentId,
-          "case.CourtEstablishment",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court establishment"
-    );
-    const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
+    // const resMdms1 = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       mdmsCourtRoom.courtEstablishmentId,
+    //       "case.CourtEstablishment",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court establishment"
+    // );
+    // const mdmsCourtEstablishment = resMdms1?.data?.mdms[0]?.data;
     // if (!mdmsCourtEstablishment) {
     //     renderError(res, "Court establishment MDMS master not found", 404);
     // }
@@ -170,9 +173,9 @@ async function orderAcceptVoluntary(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          place: "Kollam",
-          courtPlace: "Kollam",
-          state: "Kerala",
+          place: mdmsCourtRoom.place,
+          courtPlace: mdmsCourtRoom.place,
+          state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           orderName: order.orderNumber,
@@ -186,9 +189,9 @@ async function orderAcceptVoluntary(req, res, qrCode) {
           content: order?.comments || "",
           applicationNumber: application?.applicationNumber,
           additionalDetails: order?.comments || "",
-          judgeSignature: "Judge Signature",
-          judgeName: "John Doe",
-          courtSeal: "Court Seal",
+          judgeSignature: judgeDetails.judgeSignature,
+          judgeName: judgeDetails.name,
+          courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
         },
       ],

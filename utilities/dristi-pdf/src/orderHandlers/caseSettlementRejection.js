@@ -68,20 +68,23 @@ async function caseSettlementRejection(req, res, qrCode) {
     // }
 
     // Search for MDMS court room details
-    const resMdms = await handleApiCall(
-      () =>
-        search_mdms(
-          courtCase.courtId,
-          "common-masters.Court_Rooms",
-          tenantId,
-          requestInfo
-        ),
-      "Failed to query MDMS service for court room"
-    );
-    const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    if (!mdmsCourtRoom) {
-      renderError(res, "Court room MDMS master not found", 404);
-    }
+    // const resMdms = await handleApiCall(
+    //   () =>
+    //     search_mdms(
+    //       courtCase.courtId,
+    //       "common-masters.Court_Rooms",
+    //       tenantId,
+    //       requestInfo
+    //     ),
+    //   "Failed to query MDMS service for court room"
+    // );
+    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    // if (!mdmsCourtRoom) {
+    //   renderError(res, "Court room MDMS master not found", 404);
+    // }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
 
     // Search for order details
     const resOrder = await handleApiCall(
@@ -193,8 +196,8 @@ async function caseSettlementRejection(req, res, qrCode) {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
-          place: "Kollam",
-          state: "Kerala",
+          place: mdmsCourtRoom.place,
+          state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
           caseNumber: courtCase.caseNumber,
           partyName: partyName,
@@ -205,9 +208,9 @@ async function caseSettlementRejection(req, res, qrCode) {
           settlementStatus: settlementStatus,
           additionalComments: additionalComments,
           rejectionSummary: rejectionSummary,
-          judgeSignature: "Judge Signature",
-          judgeName: "John Doe",
-          courtSeal: "Court Seal",
+          judgeSignature: judgeDetails.judgeSignature,
+          judgeName: judgeDetails.name,
+          courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
         },
       ],
