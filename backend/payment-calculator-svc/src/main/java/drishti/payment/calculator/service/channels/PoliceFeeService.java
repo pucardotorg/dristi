@@ -1,7 +1,7 @@
 package drishti.payment.calculator.service.channels;
 
 
-import drishti.payment.calculator.service.SummonPayment;
+import drishti.payment.calculator.service.Payment;
 import drishti.payment.calculator.util.TaskUtil;
 import drishti.payment.calculator.web.models.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -15,7 +15,7 @@ import java.util.List;
 import static drishti.payment.calculator.config.ServiceConstants.COURT_FEE;
 
 @Service
-public class PoliceFeeService implements SummonPayment {
+public class PoliceFeeService implements Payment {
 
     private final TaskUtil taskUtil;
 
@@ -52,5 +52,6 @@ public class PoliceFeeService implements SummonPayment {
                 .applicationId(criteria.getId())
                 .tenantId(criteria.getTenantId())
                 .totalAmount(courtFees)
-                .breakDown(Collections.singletonList(new BreakDown(COURT_FEE, courtFees, new HashMap<>()))).build();    }
+                .breakDown(Collections.singletonList(new BreakDown(COURT_FEE, courtFees, new HashMap<>()))).build();
+    }
 }

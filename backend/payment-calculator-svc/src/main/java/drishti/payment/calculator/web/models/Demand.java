@@ -60,6 +60,14 @@ public class Demand {
     @Builder.Default
     @JsonProperty("minimumAmountPayable")
     private BigDecimal minimumAmountPayable = BigDecimal.ZERO;
+    @JsonProperty("status")
+    private DemandStatusEnum status;
+
+    public Demand addDemandDetailsItem(DemandDetail demandDetailsItem) {
+        this.demandDetails.add(demandDetailsItem);
+        return this;
+    }
+
 
     /**
      * Gets or Sets status
@@ -72,16 +80,10 @@ public class Demand {
 
         ADJUSTED("ADJUSTED");
 
-        private String value;
+        private final String value;
 
         DemandStatusEnum(String value) {
             this.value = value;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
         }
 
         @JsonCreator
@@ -93,15 +95,12 @@ public class Demand {
             }
             return null;
         }
-    }
 
-    @JsonProperty("status")
-    private DemandStatusEnum status;
-
-
-    public Demand addDemandDetailsItem(DemandDetail demandDetailsItem) {
-        this.demandDetails.add(demandDetailsItem);
-        return this;
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
 }

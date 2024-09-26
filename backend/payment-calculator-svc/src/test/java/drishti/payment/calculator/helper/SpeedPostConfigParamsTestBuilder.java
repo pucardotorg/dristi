@@ -11,7 +11,7 @@ import java.util.Map;
 public class SpeedPostConfigParamsTestBuilder {
 
 
-    private SpeedPostConfigParams.SpeedPostConfigParamsBuilder builder;
+    private final SpeedPostConfigParams.SpeedPostConfigParamsBuilder builder;
 
     public SpeedPostConfigParamsTestBuilder() {
         this.builder = SpeedPostConfigParams.builder();

@@ -1,7 +1,6 @@
 package drishti.payment.calculator.repository.rowmapper;
 
 import digit.models.coremodels.AuditDetails;
-import drishti.payment.calculator.web.models.Address;
 import drishti.payment.calculator.web.models.PostalHub;
 import drishti.payment.calculator.web.models.enums.Classification;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PostalHubRowMapperTest {

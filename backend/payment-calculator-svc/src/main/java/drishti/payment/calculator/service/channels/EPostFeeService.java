@@ -2,7 +2,7 @@ package drishti.payment.calculator.service.channels;
 
 import drishti.payment.calculator.config.Configuration;
 import drishti.payment.calculator.repository.PostalHubRepository;
-import drishti.payment.calculator.service.SummonPayment;
+import drishti.payment.calculator.service.Payment;
 import drishti.payment.calculator.util.SpeedPostUtil;
 import drishti.payment.calculator.util.TaskUtil;
 import drishti.payment.calculator.web.models.*;
@@ -19,7 +19,7 @@ import static drishti.payment.calculator.config.ServiceConstants.POSTAL_HUB_NOT_
 import static drishti.payment.calculator.config.ServiceConstants.POSTAL_HUB_NOT_FOUND_MSG;
 
 @Service
-public class EPostFeeService implements SummonPayment {
+public class EPostFeeService implements Payment {
 
     private final TaskUtil taskUtil;
     private final PostalHubRepository repository;

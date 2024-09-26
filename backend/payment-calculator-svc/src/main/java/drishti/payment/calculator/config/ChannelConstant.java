@@ -16,16 +16,17 @@ public class ChannelConstant {
 
     private static final Map<String, String> CONSTANTS = new HashMap<>();
 
+    public static String getConstant(String key) {
+        return CONSTANTS.get(key);
+    }
+
     @PostConstruct
     public void init() {
         CONSTANTS.put("EPOST", "drishti.payment.calculator.service.channels.EPostFeeService");
         CONSTANTS.put("POLICE", "drishti.payment.calculator.service.channels.PoliceFeeService");
         CONSTANTS.put("EMAIL", "drishti.payment.calculator.service.channels.EmailFeeService");
         CONSTANTS.put("SMS", "drishti.payment.calculator.service.channels.SmsFeeService");
-    }
-
-    public static String getConstant(String key) {
-        return CONSTANTS.get(key);
+        CONSTANTS.put("RPAD", "drishti.payment.calculator.service.channels.RPADFeeService");
     }
 
 }

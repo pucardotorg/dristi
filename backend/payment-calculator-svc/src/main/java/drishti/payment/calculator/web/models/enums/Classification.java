@@ -7,16 +7,10 @@ public enum Classification {
 
     LTD("ltd"), ROC("roc");
 
-    private String value;
+    private final String value;
 
     Classification(String value) {
         this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
     }
 
     @JsonCreator
@@ -27,5 +21,11 @@ public enum Classification {
             }
         }
         return null;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
     }
 }

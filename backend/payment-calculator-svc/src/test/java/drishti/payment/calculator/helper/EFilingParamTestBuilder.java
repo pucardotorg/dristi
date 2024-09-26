@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class EFilingParamTestBuilder {
 
-    private EFilingParam.EFilingParamBuilder builder;
+    private final EFilingParam.EFilingParamBuilder builder;
 
     public EFilingParamTestBuilder() {
         this.builder = EFilingParam.builder();

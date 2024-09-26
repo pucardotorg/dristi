@@ -21,7 +21,7 @@ public class PostalHubQueryBuilderTest {
     private List<Object> preparedStmtList;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         postalHubQueryBuilder = new PostalHubQueryBuilder();
         preparedStmtList = new ArrayList<>();
     }

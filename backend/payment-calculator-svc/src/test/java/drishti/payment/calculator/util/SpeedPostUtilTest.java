@@ -18,7 +18,8 @@ import java.util.Map;
 
 import static drishti.payment.calculator.config.ServiceConstants.I_POST_MASTER;
 import static drishti.payment.calculator.config.ServiceConstants.SUMMON_MODULE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,7 +1,6 @@
 package drishti.payment.calculator.enrichment;
 
 import digit.models.coremodels.AuditDetails;
-import drishti.payment.calculator.web.models.Address;
 import drishti.payment.calculator.web.models.PostalHub;
 import drishti.payment.calculator.web.models.PostalHubRequest;
 import org.egov.common.contract.request.RequestInfo;
@@ -11,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PostalHubEnrichmentTest {
 
@@ -36,7 +37,7 @@ public class PostalHubEnrichmentTest {
 
         request = new PostalHubRequest();
         request.setRequestInfo(requestInfo);
-        request.setPostalHubs(Arrays.asList(postalHub));
+        request.setPostalHubs(Collections.singletonList(postalHub));
     }
 
     @Test

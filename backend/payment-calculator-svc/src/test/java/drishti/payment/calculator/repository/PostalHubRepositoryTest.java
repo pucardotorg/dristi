@@ -5,14 +5,12 @@ import drishti.payment.calculator.repository.querybuilder.PostalHubQueryBuilder;
 import drishti.payment.calculator.repository.rowmapper.PostalHubRowMapper;
 import drishti.payment.calculator.web.models.HubSearchCriteria;
 import drishti.payment.calculator.web.models.PostalHub;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +35,6 @@ public class PostalHubRepositoryTest {
 
     @Mock
     private JdbcTemplate jdbcTemplate;
-
 
 
     @Test

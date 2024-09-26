@@ -1,7 +1,7 @@
 package drishti.payment.calculator.service.channels;
 
 
-import drishti.payment.calculator.service.SummonPayment;
+import drishti.payment.calculator.service.Payment;
 import drishti.payment.calculator.util.TaskUtil;
 import drishti.payment.calculator.web.models.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import static drishti.payment.calculator.config.ServiceConstants.COURT_FEE;
 
 @Service
 @Slf4j
-public class EmailFeeService implements SummonPayment {
+public class EmailFeeService implements Payment {
 
     private final TaskUtil taskUtil;
 

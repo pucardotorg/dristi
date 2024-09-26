@@ -88,7 +88,7 @@ public class TaskUtil {
         return feeBreakdowns;
     }
 
-    public List<BreakDown> getFeeBreakdown(double courtFee,  double postFee) {
+    public List<BreakDown> getFeeBreakdown(double courtFee, double postFee) {
         List<BreakDown> feeBreakdowns = new ArrayList<>();
         feeBreakdowns.add(new BreakDown(COURT_FEE, courtFee, new HashMap<>()));
         feeBreakdowns.add(new BreakDown(E_POST, postFee, new HashMap<>()));

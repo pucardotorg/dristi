@@ -2,7 +2,7 @@ package drishti.payment.calculator.web.controllers;
 
 
 import drishti.payment.calculator.service.CaseFeeCalculationService;
-import drishti.payment.calculator.service.SummonCalculationService;
+import drishti.payment.calculator.service.PaymentCalculationService;
 import drishti.payment.calculator.util.ResponseInfoFactory;
 import drishti.payment.calculator.web.models.*;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,10 +27,10 @@ import java.util.List;
 public class PaymentApiController {
 
     private final CaseFeeCalculationService caseFeesService;
-    private final SummonCalculationService summonCalculationService;
+    private final PaymentCalculationService summonCalculationService;
 
     @Autowired
-    public PaymentApiController(CaseFeeCalculationService caseFeesService, SummonCalculationService summonCalculationService) {
+    public PaymentApiController(CaseFeeCalculationService caseFeesService, PaymentCalculationService summonCalculationService) {
         this.caseFeesService = caseFeesService;
         this.summonCalculationService = summonCalculationService;
     }

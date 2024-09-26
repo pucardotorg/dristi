@@ -21,7 +21,7 @@ public class EFillingCalculationReq {
 
     @JsonProperty("RequestInfo")
     @Valid
-    private  RequestInfo requestInfo = null;
+    private RequestInfo requestInfo = null;
 
     @JsonProperty("EFillingCalculationCriteria")
     @Valid

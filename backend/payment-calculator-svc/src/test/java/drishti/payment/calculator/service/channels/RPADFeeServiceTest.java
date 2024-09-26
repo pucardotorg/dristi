@@ -1,6 +1,5 @@
 package drishti.payment.calculator.service.channels;
 
-
 import drishti.payment.calculator.helper.TaskPaymentTestBuilder;
 import drishti.payment.calculator.util.TaskUtil;
 import drishti.payment.calculator.web.models.BreakDown;
@@ -24,29 +23,29 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PoliceFeeServiceTest {
+public class RPADFeeServiceTest {
+
 
     @Mock
     private TaskUtil taskUtil;
 
     @InjectMocks
-    private PoliceFeeService policeSummonFeeService;
+    private RPADFeeService rpadFeeService;
 
     @Test
-    @DisplayName("do calculate police summon fee")
-    public void doCalculatePoliceSummonFee() {
+    @DisplayName("do calculate rpad fee")
+    public void doCalculateEmailSummonFee() {
 
         TaskPayment payment = TaskPaymentTestBuilder.builder().withConfig("SUMMON").build();
 
         Double courtFee = 100.0;
         when(taskUtil.getTaskPaymentMasterData(any(), anyString())).thenReturn(Collections.singletonList(payment));
-
         when(taskUtil.calculateCourtFees(any(TaskPayment.class))).thenReturn(courtFee);
         TaskPaymentCriteria criteria = new TaskPaymentCriteria();
         criteria.setTenantId("pb");
         criteria.setTaskType("SUMMON");
 
-        Calculation result = policeSummonFeeService.calculatePayment(new RequestInfo(), criteria);
+        Calculation result = rpadFeeService.calculatePayment(new RequestInfo(), criteria);
 
         assertEquals(courtFee, result.getTotalAmount());
         assertEquals(1, result.getBreakDown().size());

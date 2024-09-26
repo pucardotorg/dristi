@@ -4,7 +4,7 @@ import drishti.payment.calculator.web.models.TaskPayment;
 
 public class TaskPaymentTestBuilder {
 
-    private TaskPayment.TaskPaymentBuilder builder;
+    private final TaskPayment.TaskPaymentBuilder builder;
 
     public TaskPaymentTestBuilder() {
         this.builder = TaskPayment.builder();

@@ -2,14 +2,12 @@ package drishti.payment.calculator.util;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ResponseInfoFactoryTest {
@@ -26,7 +24,7 @@ public class ResponseInfoFactoryTest {
         requestInfo.setTs(123456789L);
         requestInfo.setMsgId("msgId");
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
 
         assertNotNull(responseInfo);
         assertEquals("apiId", responseInfo.getApiId());
@@ -44,7 +42,7 @@ public class ResponseInfoFactoryTest {
         requestInfo.setTs(123456789L);
         requestInfo.setMsgId("msgId");
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false);
 
         assertNotNull(responseInfo);
         assertEquals("apiId", responseInfo.getApiId());
@@ -56,12 +54,12 @@ public class ResponseInfoFactoryTest {
 
     @Test
     public void testCreateResponseInfoFromRequestInfo_NullRequestInfo() {
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(null, true);
 
         assertNotNull(responseInfo);
         assertEquals("", responseInfo.getApiId());
         assertEquals("", responseInfo.getVer());
-        assertEquals(null, responseInfo.getTs());
+        assertNull(responseInfo.getTs());
         assertEquals("", responseInfo.getMsgId());
         assertEquals("successful", responseInfo.getStatus());
     }
@@ -71,11 +69,11 @@ public class ResponseInfoFactoryTest {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setApiId("apiId");
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
 
         assertNotNull(responseInfo);
         assertEquals("apiId", responseInfo.getApiId());
-        assertEquals(null, responseInfo.getTs());
+        assertNull(responseInfo.getTs());
         assertEquals("successful", responseInfo.getStatus());
     }
 }

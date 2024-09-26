@@ -1,8 +1,5 @@
 package drishti.payment.calculator.web.controllers;
 
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
-
 import drishti.payment.calculator.service.PostalHubService;
 import drishti.payment.calculator.web.models.HubSearchRequest;
 import drishti.payment.calculator.web.models.PostalHub;
@@ -21,6 +18,10 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PostalHubApiControllerTest {

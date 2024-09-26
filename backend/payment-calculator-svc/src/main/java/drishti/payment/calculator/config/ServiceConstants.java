@@ -45,5 +45,8 @@ public class ServiceConstants {
     public static final String HUB_ALREADY_EXIST = "HUB_ALREADY_EXIST";
     public static final String HUB_ALREADY_EXIST_MSG = "Hub already exist in DB";
 
+    public static final String CALCULATE_PAYMENT_EXCEPTION = "CALCULATE_PAYMENT_EXCEPTION";
+    public static final String ILLEGAL_STATE_EXCEPTION = "ILLEGAL_STATE_EXCEPTION";
+
 
 }

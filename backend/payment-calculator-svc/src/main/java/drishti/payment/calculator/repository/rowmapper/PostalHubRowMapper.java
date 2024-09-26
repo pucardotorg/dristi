@@ -1,7 +1,6 @@
 package drishti.payment.calculator.repository.rowmapper;
 
 import digit.models.coremodels.AuditDetails;
-import drishti.payment.calculator.web.models.Address;
 import drishti.payment.calculator.web.models.PostalHub;
 import drishti.payment.calculator.web.models.enums.Classification;
 import org.springframework.jdbc.core.RowMapper;

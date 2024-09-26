@@ -1,10 +1,7 @@
 package drishti.payment.calculator.web.controllers;
 
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
-
 import drishti.payment.calculator.service.CaseFeeCalculationService;
-import drishti.payment.calculator.service.SummonCalculationService;
+import drishti.payment.calculator.service.PaymentCalculationService;
 import drishti.payment.calculator.web.models.Calculation;
 import drishti.payment.calculator.web.models.CalculationRes;
 import drishti.payment.calculator.web.models.EFillingCalculationReq;
@@ -23,11 +20,16 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class PaymentApiControllerTest {
 
     @Mock
-    private SummonCalculationService summonCalculationService;
+    private PaymentCalculationService paymentCalculationService;
 
     @Mock
     private CaseFeeCalculationService calculationService;
@@ -61,28 +63,28 @@ public class PaymentApiControllerTest {
 
     @Test
     void v1CalculatePost_success() {
-        when(summonCalculationService.calculateSummonFees(request)).thenReturn(calculations);
+        when(paymentCalculationService.calculateSummonFees(request)).thenReturn(calculations);
 
         ResponseEntity<CalculationRes> responseEntity = paymentApiController.v1CalculatePost(request);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody().getCalculation()).isEqualTo(calculationRes.getCalculation());
-        verify(summonCalculationService).calculateSummonFees(request);
+        verify(paymentCalculationService).calculateSummonFees(request);
     }
 
     @Test
     void v1CalculatePost_serviceFailure() {
-        when(summonCalculationService.calculateSummonFees(request)).thenThrow(new RuntimeException("Service failure"));
+        when(paymentCalculationService.calculateSummonFees(request)).thenThrow(new RuntimeException("Service failure"));
 
         assertThatThrownBy(() -> paymentApiController.v1CalculatePost(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Service failure");
 
-        verify(summonCalculationService).calculateSummonFees(request);
+        verify(paymentCalculationService).calculateSummonFees(request);
     }
 
     @Test
-    void caseFeesCalculation_success(){
+    void caseFeesCalculation_success() {
         when(calculationService.calculateCaseFees(calculationReq)).thenReturn(calculations);
         ResponseEntity<CalculationRes> responseEntity = paymentApiController.caseFeesCalculation(calculationReq);
 
@@ -92,7 +94,7 @@ public class PaymentApiControllerTest {
     }
 
     @Test
-    void caseFeesCalculation_serviceFailure(){
+    void caseFeesCalculation_serviceFailure() {
         when(calculationService.calculateCaseFees(calculationReq)).thenThrow(new RuntimeException("Service failure"));
 
         assertThatThrownBy(() -> paymentApiController.caseFeesCalculation(calculationReq))

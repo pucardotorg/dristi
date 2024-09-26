@@ -1,6 +1,6 @@
 package drishti.payment.calculator.factory;
 
-import drishti.payment.calculator.service.SummonPayment;
+import drishti.payment.calculator.service.Payment;
 import drishti.payment.calculator.web.models.Calculation;
 import drishti.payment.calculator.web.models.SummonCalculationCriteria;
 import drishti.payment.calculator.web.models.TaskPaymentCriteria;
@@ -11,16 +11,16 @@ import org.egov.common.contract.request.RequestInfo;
 
 @Setter
 @AllArgsConstructor
-public class SummonContext {
+public class PaymentContext {
 
-    private SummonPayment payment;
+    private Payment payment;
 
     @Deprecated
     public Calculation calculatePayment(RequestInfo requestInfo, SummonCalculationCriteria criteria) {
-       return payment.calculatePayment(requestInfo,criteria);
+        return payment.calculatePayment(requestInfo, criteria);
     }
 
     public Calculation calculatePayment(RequestInfo requestInfo, TaskPaymentCriteria criteria) {
-        return payment.calculatePayment(requestInfo,criteria);
+        return payment.calculatePayment(requestInfo, criteria);
     }
 }
