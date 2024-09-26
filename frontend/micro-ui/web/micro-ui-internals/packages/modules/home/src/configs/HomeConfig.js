@@ -375,6 +375,7 @@ export const pendingTaskOrderActions = {
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "hearingId", value: "referenceId" },
+        { key: "taskOrderType", value: "NOTICE" },
       ],
     },
   },

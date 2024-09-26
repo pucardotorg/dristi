@@ -25,7 +25,7 @@ const modalPopup = {
 const SummonsAndWarrantsModal = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { filingNumber, hearingId } = Digit.Hooks.useQueryParams();
+  const { filingNumber, hearingId, taskOrderType } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [orderNumber, setOrderNumber] = useState(null);
   const [orderId, setOrderId] = useState(null);
@@ -157,7 +157,7 @@ const SummonsAndWarrantsModal = () => {
 
     const filteredOrders = ordersData?.list?.filter(
       (item) =>
-        (item.orderType === "SUMMONS" || item.orderType === "WARRANT" || item.orderType === "NOTICE") &&
+        (taskOrderType === "NOTICE" ? item.orderType === "NOTICE" : item.orderType === "SUMMONS" || item.orderType === "WARRANT") &&
         item?.status === "PUBLISHED" &&
         item?.hearingNumber === hearingId
     );
@@ -167,7 +167,7 @@ const SummonsAndWarrantsModal = () => {
     });
 
     return sortedOrders;
-  }, [hearingId, ordersData]);
+  }, [hearingId, ordersData, taskOrderType]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {

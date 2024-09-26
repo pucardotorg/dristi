@@ -260,12 +260,12 @@ function AdmissionActionModal({
       {modalInfo?.page === 0 && modalInfo?.type === "admitCase" && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[1].headModal)} />}
-          actionSaveLabel={t(stepItems[1]?.submitText)}
+          actionSaveLabel={t(caseDetails?.status === "PENDING_RESPONSE" ? "CS_ADMIT_CASE" : stepItems[1]?.submitText)}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           isDisabled={caseAdmitLoader}
           actionSaveOnSubmit={(props) => handleAdmitCase(props)}
         >
-          <CardText>{t(stepItems[1]?.text)}</CardText>
+          <CardText>{t(caseDetails?.status === "PENDING_RESPONSE" ? "CS_CONFIRM_CLOSE_HEARING_AFTER_ADMIT_CASE_TEXT" : stepItems[1]?.text)}</CardText>
         </Modal>
       )}
 
