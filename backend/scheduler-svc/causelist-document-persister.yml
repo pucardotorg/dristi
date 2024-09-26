@@ -1,0 +1,16 @@
+serviceMaps:
+  serviceName: CauseList-Service
+  mappings:
+    - version: 1.0
+      description: Persists the cause list data
+      fromTopic: causelist-pdf-save
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: INSERT INTO cause_list_document (file_store_id, court_id, judge_id,hearing_date) VALUES (?, ?, ?, ?);
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.fileStoreId
+            - jsonPath: $.courtId
+            - jsonPath: $.judgeId
+            - jsonPath: $.hearingDate

@@ -260,7 +260,7 @@ public class ReScheduleHearingService {
             // fetch dpg hearing with hearingids assign startTime and end time then hit their update api
             LocalDate startDate = dateUtil.getLocalDateFromEpoch(bulkRescheduling.getStartTime());
             LocalDate endDate = dateUtil.getLocalDateFromEpoch(bulkRescheduling.getEndTime());
-            HearingSearchCriteria searchCriteria = HearingSearchCriteria.builder().tenantId(bulkRescheduling.getTenantId()).fromDate(startDate).toDate(endDate).build();
+            HearingSearchCriteria searchCriteria = HearingSearchCriteria.builder().tenantId(bulkRescheduling.getTenantId()).fromDate(bulkRescheduling.getStartTime()).toDate(bulkRescheduling.getEndTime()).build();
             Pagination pagination = Pagination.builder().limit(100.0).build();
             HearingListSearchRequest searchRequest = HearingListSearchRequest.builder().requestInfo(request.getRequestInfo()).criteria(searchCriteria).pagination(pagination).build();
 

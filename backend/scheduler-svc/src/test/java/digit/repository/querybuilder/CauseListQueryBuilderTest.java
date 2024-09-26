@@ -32,7 +32,7 @@ public class CauseListQueryBuilderTest {
         criteria.setCaseIds(Arrays.asList("case1", "case2"));
         criteria.setSearchDate(LocalDate.of(2023, 1, 1));
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
@@ -43,7 +43,7 @@ public class CauseListQueryBuilderTest {
     void testGetCauseListQuery_EmptyCriteria() {
         CauseListSearchCriteria criteria = new CauseListSearchCriteria();
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
@@ -55,7 +55,7 @@ public class CauseListQueryBuilderTest {
         CauseListSearchCriteria criteria = new CauseListSearchCriteria();
         criteria.setCourtId("court1");
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
@@ -67,7 +67,7 @@ public class CauseListQueryBuilderTest {
         CauseListSearchCriteria criteria = new CauseListSearchCriteria();
         criteria.setJudgeIds(Arrays.asList("judge1", "judge2"));
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
@@ -79,7 +79,7 @@ public class CauseListQueryBuilderTest {
         CauseListSearchCriteria criteria = new CauseListSearchCriteria();
         criteria.setCaseIds(Arrays.asList("case1", "case2"));
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);
@@ -91,7 +91,7 @@ public class CauseListQueryBuilderTest {
         CauseListSearchCriteria criteria = new CauseListSearchCriteria();
         criteria.setSearchDate(LocalDate.of(2023, 1, 1));
 
-        List<String> preparedStmtList = new ArrayList<>();
+        List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCauseListQuery(criteria, preparedStmtList);
 
         assertNotNull(query);

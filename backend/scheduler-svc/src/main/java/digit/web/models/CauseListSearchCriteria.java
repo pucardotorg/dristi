@@ -30,7 +30,6 @@ public class CauseListSearchCriteria {
     private List<String> caseIds = null;
 
     @JsonProperty("courtId")
-    @NotNull
     private String courtId = null;
 
     @JsonProperty("searchDate")

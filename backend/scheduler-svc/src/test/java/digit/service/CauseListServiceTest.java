@@ -5,6 +5,7 @@ import digit.config.ServiceConstants;
 import digit.kafka.producer.Producer;
 import digit.repository.CauseListRepository;
 import digit.repository.HearingRepository;
+import digit.util.FileStoreUtil;
 import digit.util.MdmsUtil;
 import digit.util.PdfServiceUtil;
 import digit.web.models.*;
@@ -48,6 +49,9 @@ public class CauseListServiceTest {
 
     @Mock
     private MdmsUtil mdmsUtil;
+
+    @Mock
+    private FileStoreUtil fileStoreUtil;
 
     @Mock
     private ServiceConstants serviceConstants;
@@ -109,21 +113,26 @@ public class CauseListServiceTest {
     }
 
     @Test
-    void testDownloadCauseListForTomorrow() {
-        // Mocking
-        CauseListSearchCriteria criteria = CauseListSearchCriteria.builder().searchDate(LocalDate.now().plusDays(1)).build();
-        CauseListSearchRequest request = CauseListSearchRequest.builder().causeListSearchCriteria(criteria).requestInfo(RequestInfo.builder().userInfo(new User()).build()).build();
-        List<CauseList> causeLists = new ArrayList<>();
-        when(causeListRepository.getCauseLists(any())).thenReturn(causeLists);
-        when(pdfServiceUtil.generatePdfFromPdfService(any(), any(), any())).thenReturn(new ByteArrayResource(new byte[0]));
-        when(config.getCauseListPdfTemplateKey()).thenReturn("causeListPdfTemplateKey");
+    void testDownloadCauseListForTomorrow_Success() {
+        // Given
+        CauseListSearchRequest searchRequest = mock(CauseListSearchRequest.class);
+        CauseListSearchCriteria criteria = mock(CauseListSearchCriteria.class);
+        when(searchRequest.getCauseListSearchCriteria()).thenReturn(criteria);
 
-        // Test
-        ByteArrayResource resource = causeListService.downloadCauseListForTomorrow(request);
+        List<String> fileStoreIds = Arrays.asList("fileStoreId1");
+        when(causeListService.getFileStoreForCauseList(criteria)).thenReturn(fileStoreIds);
 
-        // Verify
-        assertNotNull(resource);
+        byte[] expectedPdfBytes = "dummyPdfBytes".getBytes();
+        when(config.getEgovStateTenantId()).thenReturn("someTenantId");
+        when(fileStoreUtil.getFile("someTenantId", "fileStoreId1")).thenReturn(expectedPdfBytes);
+
+        ByteArrayResource result = causeListService.downloadCauseListForTomorrow(searchRequest);
+
+        assertNotNull(result);
+        assertArrayEquals(expectedPdfBytes, result.getByteArray());
+        verify(fileStoreUtil, times(1)).getFile("someTenantId", "fileStoreId1");
     }
+
 
 //    @Test
 //    void testGenerateCauseListForJudge_withHearings() {

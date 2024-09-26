@@ -34,12 +34,15 @@ public class HearingSearchCriteria {
     private String applicationNumber;
 
     @JsonProperty("fromDate")
-    private LocalDate fromDate;
+    private Long fromDate;
 
     @JsonProperty("toDate")
-    private LocalDate toDate;
+    private Long toDate;
 
     @JsonProperty("attendeeIndividualId")
     private String attendeeIndividualId;
+
+    @JsonProperty("courtId")
+    private String courtId;
 
 }

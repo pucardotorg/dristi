@@ -2,6 +2,7 @@ package digit.util;
 
 import digit.config.Configuration;
 import digit.web.models.CauseListRequest;
+import digit.web.models.SlotRequest;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class PdfServiceUtilTest {
                 .thenReturn(responseEntity);
 
         // When
-        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(causeListRequest, tenantId, pdfTemplateKey);
+        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(new SlotRequest(), tenantId, pdfTemplateKey);
 
         // Then
         assertNotNull(result);
@@ -61,7 +62,7 @@ public class PdfServiceUtilTest {
     @Test
     void generatePdfFromPdfService_NullResponse() {
         // Given
-        CauseListRequest causeListRequest = new CauseListRequest();
+        SlotRequest slotRequest = new SlotRequest();
         String tenantId = "tenant1";
         String pdfTemplateKey = "templateKey1";
         String pdfServiceHost = "http://localhost";
@@ -76,7 +77,7 @@ public class PdfServiceUtilTest {
                 .thenReturn(responseEntity);
 
         // When
-        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(causeListRequest, tenantId, pdfTemplateKey);
+        ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(slotRequest, tenantId, pdfTemplateKey);
 
         // Then
         assertNull(result);
@@ -85,7 +86,7 @@ public class PdfServiceUtilTest {
     @Test
     void generatePdfFromPdfService_Exception() {
         // Given
-        CauseListRequest causeListRequest = new CauseListRequest();
+        SlotRequest slotRequest = new SlotRequest();
         String tenantId = "tenant1";
         String pdfTemplateKey = "templateKey1";
         String pdfServiceHost = "http://localhost";
@@ -99,7 +100,7 @@ public class PdfServiceUtilTest {
 
         // When & Then
         CustomException exception = assertThrows(CustomException.class, () -> {
-            pdfServiceUtil.generatePdfFromPdfService(causeListRequest, tenantId, pdfTemplateKey);
+            pdfServiceUtil.generatePdfFromPdfService(slotRequest, tenantId, pdfTemplateKey);
         });
 
         assertEquals("CL_PDF_APP_ERROR", exception.getCode());

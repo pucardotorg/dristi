@@ -18,6 +18,9 @@ public class MdmsHearing {
     @JsonProperty("hearingTime")
     private Integer hearingTime;
 
+    @JsonProperty("priority")
+    private Integer priority;
+
     @JsonProperty("unitOfMeasurement")
     private String unitOfMeasurement;
 }

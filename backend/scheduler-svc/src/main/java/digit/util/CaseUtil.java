@@ -37,13 +37,14 @@ public class CaseUtil {
 
         Object response = requestRepository.postMethod(url, searchCaseRequest);
         JsonNode caseList = null;
-        try {
-            JsonNode jsonNode = mapper.readTree(response.toString());
-            caseList = jsonNode.get("criteria").get(0).get("responseList");
-
-        } catch (JsonProcessingException e) {
-            log.error("operation = getCases, result = FAILURE");
-            throw new CustomException("DK_RR_JSON_PROCESSING_ERR", "Invalid Json response");
+        if(response != null){
+            try {
+                JsonNode jsonNode = mapper.readTree(response.toString());
+                caseList = jsonNode.get("criteria").get(0).get("responseList");
+            } catch (JsonProcessingException e) {
+                log.error("operation = getCases, result = FAILURE");
+                throw new CustomException("DK_RR_JSON_PROCESSING_ERR", "Invalid Json response");
+            }
         }
 
         log.info("operation = getCases, result = SUCCESS");

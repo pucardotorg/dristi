@@ -22,12 +22,14 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
-
+    public static final String FILE_STORE_UTILITY_EXCEPTION = "FILE_STORE_UTILITY_EXCEPTION";
     public static final String OPT_OUT_DUE = "OPT_OUT_DUE";
-
+    public final String PENDINGAPPROVAL = "PENDINGAPPROVAL";
     public static final String OPT_OUT_SELECTION_LIMIT = "OPT_OUT_SELECTION_LIMIT";
-
-
+    public final String COMPLAINANT= "complainant.primary";
+    public final String RESPONDENT= "respondent.primary";
+    public final String FULLNAME = "fullName";
+    public final String PARTY_IN_PERSON = "Party In Person";
     public static final String INACTIVE = "INACTIVE";
     public static final String ACTIVE = "ACTIVE";
     public static final String BLOCKED = "BLOCKED";
@@ -37,6 +39,7 @@ public class ServiceConstants {
     public final String DEFAULT_COURT_MODULE_NAME = "court";
     public final String DEFAULT_SLOTTING_MASTER_NAME = "slots";
     public final String DEFAULT_HEARING_MASTER_NAME = "hearings";
+    public final String HEARING_PRIORITY_MASTER_NAME = "hearingPriority";
     public final String SCHEDULER_CONFIG_MASTER_NAME = "config";
     public final String SCHEDULER_CONFIG_MODULE_NAME = "SCHEDULER-CONFIG";
 
