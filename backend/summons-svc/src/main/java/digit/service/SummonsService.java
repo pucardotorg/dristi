@@ -80,7 +80,12 @@ public class SummonsService {
 
     public SummonsDelivery sendSummonsViaChannels(TaskRequest request) {
 
-        String taskType = request.getTask().getTaskType();
+        TaskCriteria taskCriteria = TaskCriteria.builder().taskNumber(request.getTask().getTaskNumber()).build();
+        TaskSearchRequest searchRequest = TaskSearchRequest.builder()
+                .requestInfo(request.getRequestInfo()).criteria(taskCriteria).build();
+        TaskListResponse taskListResponse = taskUtil.callSearchTask(searchRequest);
+        Task task = taskListResponse.getList().get(0);
+        String taskType = task.getTaskType();
         String pdfTemplateKey = getPdfTemplateKey(taskType, true);
 
         generateDocumentAndUpdateTask(request, pdfTemplateKey, true);
