@@ -25,7 +25,6 @@ const TasksComponent = ({
   uuid,
   filingNumber,
   inCase = false,
-  setAskOtp,
   setShowSubmitResponseModal,
   setResponsePendingTask,
 }) => {
@@ -405,7 +404,6 @@ const TasksComponent = ({
                     totalCount={pendingTaskDataInWeek?.length}
                     isHighlighted={true}
                     isAccordionOpen={true}
-                    setAskOtp={setAskOtp}
                     setShowSubmitResponseModal={setShowSubmitResponseModal}
                     setResponsePendingTask={setResponsePendingTask}
                   />
@@ -416,7 +414,6 @@ const TasksComponent = ({
                     accordionHeader={"ALL_OTHER_TASKS"}
                     t={t}
                     totalCount={allOtherPendingTask?.length}
-                    setAskOtp={setAskOtp}
                     setShowSubmitResponseModal={setShowSubmitResponseModal}
                     setResponsePendingTask={setResponsePendingTask}
                   />

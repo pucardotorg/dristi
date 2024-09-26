@@ -19,6 +19,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -44,6 +45,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
     ],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
@@ -74,6 +76,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",

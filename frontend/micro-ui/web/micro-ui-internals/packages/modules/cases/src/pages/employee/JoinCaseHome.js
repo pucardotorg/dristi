@@ -9,6 +9,7 @@ import {
   LabelFieldPair,
   RadioButtons,
   TextInput,
+  Toast,
 } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
@@ -28,6 +29,7 @@ import CustomStepperSuccess from "../../../../orders/src/components/CustomSteppe
 import { createRespondentIndividualUser, selectMobileNumber, selectOtp, submitJoinCase } from "../../utils/joinCaseUtils";
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
+import { Urls as hearingUrls } from "../../../../hearings/src/hooks/services/Urls";
 
 const CloseBtn = (props) => {
   return (
@@ -159,6 +161,7 @@ const advocateVakalatnamaAndNocConfig = [
     ],
   },
 ];
+
 const advocateVakalatnamaConfig = [
   {
     body: [
@@ -188,7 +191,7 @@ const advocateVakalatnamaConfig = [
   },
 ];
 
-const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, updateCase, updateSelectedParty, setResponsePendingTask }) => {
+const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePendingTask }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const todayDate = new Date().getTime();
@@ -251,14 +254,31 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
   const [isAccusedRegistered, setIsAccusedRegistered] = useState(false);
   const [otp, setOtp] = useState("");
   const [accusedIdVerificationDocument, setAccusedIdVerificationDocument] = useState();
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [isAttendeeAdded, setIsAttendeeAdded] = useState(false);
 
-  const [nextHearingDate, setNextHearingDate] = useState("");
+  const [nextHearing, setNextHearing] = useState("");
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const isCitizen = useMemo(() => userInfo?.type === "CITIZEN", [userInfo]);
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+    setIsAttendeeAdded(false);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (showErrorToast) {
+      timer = setTimeout(() => {
+        closeToast();
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [showErrorToast]);
 
   const documentUploaderConfig = {
     key: "vakalatnama",
@@ -280,6 +300,15 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
       ],
     },
   };
+
+  const { mutateAsync: updateAttendees } = Digit.Hooks.useCustomAPIMutationHook({
+    url: hearingUrls.hearing.hearingUpdateTranscript,
+    params: { applicationNumber: "", cnrNumber: "" },
+    body: { tenantId, hearingType: "", status: "" },
+    config: {
+      mutationKey: "addAttendee",
+    },
+  });
 
   const barRegistrationSerachConfig = useMemo(() => {
     return [
@@ -455,7 +484,6 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
     const now = Date.now();
     const futureStartTimes = objectsList.filter((obj) => obj.startTime > now);
     futureStartTimes.sort((a, b) => a.startTime - b.startTime);
-    console.log("futureStartTimes[0] :>> ", futureStartTimes?.[0]);
     return futureStartTimes.length > 0 ? futureStartTimes[0] : null;
   }
 
@@ -470,7 +498,7 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
         },
         {}
       );
-      setNextHearingDate(findNextHearings(response?.HearingList));
+      setNextHearing(findNextHearings(response?.HearingList));
     } catch (error) {
       console.error("error :>> ", error);
     }
@@ -1407,13 +1435,15 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
                   onButtonClick={() => {
                     setShow(false);
                     if (caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent) {
-                      setAskOtp(false);
                       setShowSubmitResponseModal(true);
                     } else {
                       if (isLitigantPartOfCase) {
                         closeModal();
                         setShowConfirmSummonModal(true);
-                      } else history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
+                      } else
+                        history.push(
+                          `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${caseDetails?.filingNumber}&tab=Overview`
+                        );
                     }
                   }}
                 >
@@ -1453,7 +1483,7 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
     const complainantList = await Promise.all(
       formdata?.map(async (data, index) => {
         try {
-          const response = await getUserUUID(data?.data?.complainantVerification?.individualDetails?.individualId);
+          const response = await getUserUUID(data?.individualId);
 
           const fullName = getUserFullName(response?.Individual?.[0]);
 
@@ -1506,18 +1536,22 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
     setRespondentList(respondentList?.map((data) => data));
   };
 
+  const formatFullName = (name) => {
+    return [name?.givenName, name?.otherNames, name?.familyName].filter(Boolean).join(" ");
+  };
+
   const attendanceDetails = useMemo(() => {
     return [
       {
         key: "Attendance to the Hearing Date on",
-        value: caseDetails?.filingNumber,
+        value: formatDate(new Date(nextHearing?.startTime)),
       },
       {
         key: "Responding as / for",
-        value: selectedParty?.fullName || "",
+        value: formatFullName(name) || "",
       },
     ];
-  }, [caseDetails?.filingNumber, selectedParty?.fullName]);
+  }, [name, nextHearing?.startTime]);
 
   useEffect(() => {
     if (userType === "Litigant") setParties(respondentList?.map((data, index) => ({ ...data, key: index })));
@@ -1526,7 +1560,7 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
 
   useEffect(() => {
     if (caseDetails?.caseCategory) {
-      getNextHearingFromCaseId(caseDetails?.id);
+      getNextHearingFromCaseId(caseDetails?.filingNumber);
       setCaseInfo([
         {
           key: "CASE_CATEGORY",
@@ -1557,12 +1591,11 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
   }, [caseDetails, t, userType?.value]);
 
   useEffect(() => {
-    updateSelectedParty(selectedParty);
     setAccusedRegisterFormData({
       ...selectedParty,
       ...(selectedParty?.phonenumbers?.mobileNumber?.[0] && { mobileNumber: selectedParty?.phonenumbers?.mobileNumber?.[0] }),
     });
-  }, [selectedParty, updateSelectedParty]);
+  }, [selectedParty]);
 
   useEffect(() => {
     setBarDetails([
@@ -1637,7 +1670,7 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
             setStep(8);
             setMessageHeader(t(JoinHomeLocalisation.ALREADY_PART_OF_CASE));
             setSuccess(true);
-            // setIsLitigantPartOfCase(true);
+            setIsLitigantPartOfCase(true);
           } else {
             setStep(step + 1);
           }
@@ -2593,11 +2626,30 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
     [caseDetails, selectedParty, t, tenantId]
   );
 
-  const verifySummonCode = async (summonCode) => {
-    console.log("summonCode :>> ", summonCode);
-    return {
-      continue: true,
-    };
+  const onConfirmAttendee = async () => {
+    const updatedHearing = structuredClone(nextHearing);
+    updatedHearing.attendees = updatedHearing.attendees || [];
+    if (updatedHearing?.attendees?.some((attendee) => attendee?.individualId === individualId)) {
+      setShowErrorToast(true);
+      setIsAttendeeAdded(false);
+      return {
+        continue: true,
+      };
+    } else {
+      updatedHearing.attendees.push({
+        name: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}` || "",
+        individualId: individualId,
+        type: "Respondent",
+      });
+      const response = await updateAttendees({ body: { hearing: updatedHearing } });
+      if (response) {
+        setShowErrorToast(true);
+        setIsAttendeeAdded(true);
+        return {
+          continue: true,
+        };
+      }
+    }
   };
 
   const registerRespondentConfig = useMemo(() => {
@@ -2789,50 +2841,14 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
           actionSaveLabel: "Yes",
           actionCancelLabel: "No",
           modalBody: <CustomCaseInfoDiv t={t} data={attendanceDetails} column={2} />,
-        },
-        {
-          heading: { label: "Verify your Summons ID" },
-          actionSaveLabel: "Done",
-          modalBody: (
-            <div className="enter-validation-code">
-              <LabelFieldPair className="case-label-field-pair">
-                <div className="join-case-tooltip-wrapper">
-                  <CardLabel className="case-input-label">{`${t("Enter Summons ID")}`}</CardLabel>
-                </div>
-                <div style={{ width: "100%", maxWidth: "960px" }}>
-                  <TextInput
-                    style={{ width: "100%" }}
-                    type={"text"}
-                    name="summonCode"
-                    value={summonCode}
-                    onChange={(e) => {
-                      let val = e.target.value;
-                      val = val.substring(0, 6);
-                      setSummonCode(val);
-
-                      setErrors({
-                        ...errors,
-                        summonCode: undefined,
-                      });
-                    }}
-                  />
-                  {errors?.summonCode && <CardLabelError> {t(errors?.validationCode?.message)} </CardLabelError>}
-                  {}
-                </div>
-              </LabelFieldPair>
-            </div>
-          ),
           actionSaveOnSubmit: async () => {
-            // return await verifyAccessCode(responsePendingTask, validationCode);
-            const resp = await verifySummonCode(summonCode);
+            const resp = await onConfirmAttendee();
             if (resp.continue) setShowConfirmSummonModal(false);
           },
-          async: true,
-          isDisabled: summonCode?.length === 6 ? false : true,
         },
       ].filter(Boolean),
     };
-  }, [attendanceDetails, errors, setShowSubmitResponseModal, summonCode, t]);
+  }, [attendanceDetails, setShowSubmitResponseModal, t]);
 
   return (
     <div>
@@ -2919,6 +2935,14 @@ const JoinCaseHome = ({ refreshInbox, setAskOtp, setShowSubmitResponseModal, upd
       )}
       {showEditRespondentDetailsModal && <DocumentModal config={registerRespondentConfig} />}
       {showConfirmSummonModal && <DocumentModal config={confirmSummonConfig} />}
+      {showErrorToast && (
+        <Toast
+          error={!isAttendeeAdded}
+          label={t(isAttendeeAdded ? "You have confirmed your attendance for summon!" : "You have already confirmed your attendance for the summon!")}
+          isDleteBtn={true}
+          onClose={closeToast}
+        />
+      )}
     </div>
   );
 };

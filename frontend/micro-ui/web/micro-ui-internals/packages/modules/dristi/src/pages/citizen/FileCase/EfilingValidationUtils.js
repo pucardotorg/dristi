@@ -880,6 +880,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "SUBMISSION_DELETE",
             "TASK_VIEWER",
             "CASE_RESPONDER",
+            "HEARING_ACCEPTOR"
           ]?.map((role) => ({
             code: role,
             name: role,

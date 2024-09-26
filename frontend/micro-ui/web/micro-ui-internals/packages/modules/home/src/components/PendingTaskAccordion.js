@@ -16,7 +16,6 @@ function PendingTaskAccordion({
   accordionKey = "accordion",
   isHighlighted = false,
   isAccordionOpen = false,
-  setAskOtp,
   setShowSubmitResponseModal,
   setResponsePendingTask,
 }) {
@@ -92,7 +91,6 @@ function PendingTaskAccordion({
               onClick={() => {
                 if (item?.status === "PENDING_RESPONSE") {
                   setResponsePendingTask(item);
-                  setAskOtp(true);
                   setShowSubmitResponseModal(true);
                 } else redirectPendingTaskUrl(item?.redirectUrl, item?.isCustomFunction, item?.params);
               }}

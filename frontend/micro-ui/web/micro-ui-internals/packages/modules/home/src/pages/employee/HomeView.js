@@ -49,17 +49,13 @@ const HomeView = () => {
       active: index === 0 ? true : false,
     }))
   );
-  const [callRefetch, SetCallRefetch] = useState(false);
+  const [callRefetch, setCallRefetch] = useState(false);
   const [tabConfig, setTabConfig] = useState(TabLitigantSearchConfig);
   const [onRowClickData, setOnRowClickData] = useState({ url: "", params: [] });
   const [taskType, setTaskType] = useState(state?.taskType || {});
   const [caseType, setCaseType] = useState(state?.caseType || {});
 
-  const [askOtp, setAskOtp] = useState(true);
   const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
-  const [selectedParty, setSelectedParty] = useState({});
-  const [validationCode, setValidationCode] = useState("");
-  const [errors, setErrors] = useState({});
   const [responsePendingTask, setResponsePendingTask] = useState({});
   const [responseDoc, setResponseDoc] = useState({});
 
@@ -96,6 +92,10 @@ const HomeView = () => {
     Boolean(userType !== "LITIGANT"),
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
+
+  const refreshInbox = () => {
+    setCallRefetch(!callRefetch);
+  };
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -137,26 +137,8 @@ const HomeView = () => {
     };
   }, [advocateId, individualId]);
 
-  const verifyAccessCode = async (responsePendingTask, validationCode) => {
-    const [res, err] = await submitJoinCase({
-      caseFilingNumber: responsePendingTask?.filingNumber,
-      tenantId: tenantId,
-      accessCode: validationCode,
-    });
-
-    if (res) {
-      setValidationCode("");
-      return { continue: true };
-    } else {
-      setErrors({
-        ...errors,
-        validationCode: {
-          message: "INVALID_ACCESS_CODE_MESSAGE",
-        },
-      });
-      return { continue: false };
-    }
-  };
+  const getCaseDetailsUrl = (caseId, filingNumber) =>
+    `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`;
 
   const submitResponse = async (responseDoc) => {
     let newCase;
@@ -233,61 +215,9 @@ const HomeView = () => {
       isStepperModal: true,
       actionSaveOnSubmit: () => {},
       steps: [
-        askOtp && {
-          heading: { label: "Verify with access code" },
-          actionSaveLabel: "Verify",
-          modalBody: (
-            <div className="enter-validation-code">
-              <InfoCard
-                variant={"default"}
-                label={t("PLEASE_NOTE")}
-                additionalElements={{}}
-                inline
-                text={t("SIX_DIGIT_CODE_INFO")}
-                textStyle={{}}
-                className={`custom-info-card`}
-              />
-              <LabelFieldPair className="case-label-field-pair">
-                <div className="join-case-tooltip-wrapper">
-                  <CardLabel className="case-input-label">{`${t("ENTER_CODE_JOIN_CASE")}`}</CardLabel>
-                  <CustomErrorTooltip message={`${t("ENTER_CODE_JOIN_CASE")}`} showTooltip={true} icon />
-                </div>
-                <div style={{ width: "100%", maxWidth: "960px" }}>
-                  <TextInput
-                    style={{ width: "100%" }}
-                    type={"text"}
-                    name="validationCode"
-                    value={validationCode}
-                    onChange={(e) => {
-                      let val = e.target.value;
-                      val = val.substring(0, 6);
-                      val = val.replace(/\D/g, "");
-                      setValidationCode(val);
-
-                      setErrors({
-                        ...errors,
-                        validationCode: undefined,
-                      });
-                    }}
-                  />
-                  {errors?.validationCode && <CardLabelError> {t(errors?.validationCode?.message)} </CardLabelError>}
-                  {}
-                </div>
-              </LabelFieldPair>
-            </div>
-          ),
-          actionSaveOnSubmit: async () => {
-            return await verifyAccessCode(responsePendingTask, validationCode);
-          },
-          async: true,
-          isDisabled: validationCode?.length === 6 ? false : true,
-        },
         {
           heading: { label: "Submit Response" },
           actionSaveLabel: "Submit",
-          ...(askOtp && {
-            actionCancelLabel: "Back",
-          }),
           modalBody: (
             <UploadIdType
               config={uploadResponseDocumentConfig}
@@ -319,11 +249,12 @@ const HomeView = () => {
               successMessage={"RESPONSE_SUCCESSFULLY"}
               submitButtonAction={async () => {
                 setShowSubmitResponseModal(false);
-                history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${responsePendingTask?.caseId}`);
+                history.push(history.push(getCaseDetailsUrl(responsePendingTask?.caseId, responsePendingTask?.filingNumber)));
               }}
               submitButtonText={"VIEW_CASE_DETAILS"}
               closeButtonText={"BACK_HOME"}
               closeButtonAction={() => {
+                refreshInbox();
                 setShowSubmitResponseModal(false);
               }}
               t={t}
@@ -332,7 +263,7 @@ const HomeView = () => {
         },
       ].filter(Boolean),
     };
-  }, [askOtp, errors, responseDoc, responsePendingTask, selectedParty?.individualId, t, tenantId, userInfoType, validationCode]);
+  }, [refreshInbox, responseDoc, responsePendingTask?.caseId, submitResponse, t, userInfoType]);
 
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
@@ -447,10 +378,6 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
-  const refreshInbox = () => {
-    SetCallRefetch(true);
-  };
-
   const onRowClick = (row) => {
     const searchParams = new URLSearchParams();
     if (
@@ -562,9 +489,7 @@ const HomeView = () => {
                         refreshInbox={refreshInbox}
                         t={t}
                         setShowSubmitResponseModal={setShowSubmitResponseModal}
-                        setAskOtp={setAskOtp}
                         updateCase={setCaseDetails}
-                        updateSelectedParty={setSelectedParty}
                         setResponsePendingTask={setResponsePendingTask}
                       />
                       {showSubmitResponseModal && <DocumentModal config={sumbitResponseConfig} />}
@@ -614,7 +539,6 @@ const HomeView = () => {
               isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
               uuid={userInfo?.uuid}
               userInfoType={userInfoType}
-              setAskOtp={setAskOtp}
               setShowSubmitResponseModal={setShowSubmitResponseModal}
               setResponsePendingTask={setResponsePendingTask}
             />
