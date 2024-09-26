@@ -55,10 +55,10 @@ public class ServiceConstants {
     public static final String PROCESS_INSTANCE_PATH = "$.ProcessInstances.*";
     public static final String REQUEST_INFO_PATH = "$.RequestInfo";
     public static final String ID_PATH = "$.id";
-//    public static final String BUSINESS_SERVICE_PATH = "$.businessService";
+    //    public static final String BUSINESS_SERVICE_PATH = "$.businessService";
     public static final String BUSINESS_ID_PATH = "$.businessId";
     public static final String STATE_PATH = "$.state.state";
-//    public static final String TENANT_ID_PATH = "$.tenantId";
+    //    public static final String TENANT_ID_PATH = "$.tenantId";
     public static final String ACTION_PATH = "$.action";
     public static final String ASSIGNES_PATH = "$.assignes.*";
     public static final String ASSIGNED_ROLE_PATH = "$.state.actions.*.roles.*";
@@ -116,9 +116,7 @@ public class ServiceConstants {
     public static final String Pending_Task_Exception = "Pending Task Exception";
 
 
-
-
-//    path for demand
+    //    path for demand
 //public static final String ID_PATH = "$.id";
     public static final String BUSINESS_SERVICE_PATH = "$.businessService";
     public static final String CONSUMER_TYPE_PATH = "$.consumerType";
@@ -183,4 +181,13 @@ public class ServiceConstants {
     public static final String OFFLINE_PAYMENT_ERROR = "OFFLINE_PAYMENT_NOT_SUPPORTED";
 
     public static final String OFFLINE_PAYMENT_ERROR_MESSAGE = "Offline paymnet is not supported";
+
+    public static final String JSON_PROCESSING_EXCEPTION = "JSON_PROCESSING_EXCEPTION";
+    public static final String JSON_PROCESSING_EXCEPTION_MSG = "Exception occurred while filtering payment type master data";
+
+    public static final String PAYMENT_TYPE = "paymentType";
+
+    public static final String NO_PAYMENT_TYPE_FOUND_CODE = "NO_PAYMENT_TYPE_FOUND";
+
+    public static final String NO_PAYMENT_TYPE_FOUND_MSG = "No payment type found for the given service code.";
 }

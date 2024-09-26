@@ -1,5 +1,6 @@
 package org.pucar.dristi.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +27,16 @@ class BillingUtilTest {
     private CaseUtil caseUtil;
     @Mock
     private MdmsUtil mdmsUtil;
+    @Mock
+    private ObjectMapper objectMapper;
+
 
     private BillingUtil billingUtil;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        billingUtil = new BillingUtil(config, indexerUtil, requestRepository, caseUtil,mdmsUtil);
+        billingUtil = new BillingUtil(config, indexerUtil, requestRepository, caseUtil,objectMapper,mdmsUtil);
     }
 
     @Test

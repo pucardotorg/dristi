@@ -1,10 +1,14 @@
 package org.pucar.dristi.util;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
@@ -25,15 +29,16 @@ public class BillingUtil {
     private final IndexerUtils indexerUtil;
     private final ServiceRequestRepository requestRepository;
     private final CaseUtil caseUtil;
-
+    private final ObjectMapper objectMapper;
     private final MdmsUtil mdmsUtil;
 
     @Autowired
-    public BillingUtil(Configuration config, IndexerUtils indexerUtil, ServiceRequestRepository requestRepository, CaseUtil caseUtil, MdmsUtil mdmsUtil) {
+    public BillingUtil(Configuration config, IndexerUtils indexerUtil, ServiceRequestRepository requestRepository, CaseUtil caseUtil, ObjectMapper objectMapper, MdmsUtil mdmsUtil) {
         this.config = config;
         this.indexerUtil = indexerUtil;
         this.requestRepository = requestRepository;
         this.caseUtil = caseUtil;
+        this.objectMapper = objectMapper;
         this.mdmsUtil = mdmsUtil;
     }
 
@@ -105,11 +110,17 @@ public class BillingUtil {
                 .get(PAYMENT_MODULE_NAME).get(PAYMENT_TYPE_MASTER_NAME);
 
         String filterString = String.format(FILTER_PAYMENT_TYPE, suffix, businessService);
-
         net.minidev.json.JSONArray payment = JsonPath.read(paymentMode, filterString);
-        net.minidev.json.JSONArray paymentTypes = JsonPath.read(payment.toJSONString(), PAYMENT_TYPE_PATH);
 
-        return paymentTypes.get(0).toString();
+        try {
+            List<Map<String, Object>> maps = filterServiceCode(payment, businessService);
+            if (maps.isEmpty()) {
+                throw new CustomException(NO_PAYMENT_TYPE_FOUND_CODE, NO_PAYMENT_TYPE_FOUND_MSG);
+            }
+            return maps.get(0).get(PAYMENT_TYPE).toString();
+        } catch (JsonProcessingException e) {
+            throw new CustomException(JSON_PROCESSING_EXCEPTION, JSON_PROCESSING_EXCEPTION_MSG);
+        }
     }
 
     private String getCaseType(net.minidev.json.JSONArray jsonArray) {
@@ -139,5 +150,22 @@ public class BillingUtil {
 
         }
         return totalAmount;
+    }
+
+    public List<Map<String, Object>> filterServiceCode(net.minidev.json.JSONArray paymentMasterWithDeliveryChannel, String serviceCode) throws JsonProcessingException {
+
+
+        String jsonString = paymentMasterWithDeliveryChannel.toString();
+        List<Map<String, Object>> jsonList = objectMapper.readValue(jsonString, new TypeReference<>() {
+        });
+
+        return jsonList.stream()
+                .filter(item ->
+                        ((List<Map<String, Object>>) item.get("businessService")).stream()
+                                .anyMatch(service -> serviceCode.equals(service.get("businessCode")))
+                )
+                .toList();
+
+
     }
 }
