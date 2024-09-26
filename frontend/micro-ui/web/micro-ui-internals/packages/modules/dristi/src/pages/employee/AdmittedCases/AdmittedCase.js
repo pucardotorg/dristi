@@ -213,14 +213,32 @@ const AdmittedCases = () => {
     return (
       isAdvocatePresent &&
       userRoles?.includes("APPLICATION_CREATOR") &&
-      [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status)
+      [
+        CaseWorkflowState.PENDING_ADMISSION_HEARING,
+        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
+        CaseWorkflowState.PENDING_NOTICE,
+        CaseWorkflowState.PENDING_RESPONSE,
+        CaseWorkflowState.PENDING_ADMISSION,
+        CaseWorkflowState.CASE_ADMITTED,
+      ].includes(caseDetails?.status)
     );
   }, [userRoles, caseDetails?.status, isAdvocatePresent]);
 
   const showSubmissionButtons = useMemo(() => {
     const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
-    return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
-  }, [currentOrder, userInfo?.uuid, userRoles]);
+    return (
+      submissionParty?.includes(userInfo?.uuid) &&
+      userRoles.includes("APPLICATION_CREATOR") &&
+      [
+        CaseWorkflowState.PENDING_ADMISSION_HEARING,
+        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
+        CaseWorkflowState.PENDING_NOTICE,
+        CaseWorkflowState.PENDING_RESPONSE,
+        CaseWorkflowState.PENDING_ADMISSION,
+        CaseWorkflowState.CASE_ADMITTED,
+      ].includes(caseDetails?.status)
+    );
+  }, [caseDetails?.status, currentOrder?.additionalDetails?.formdata?.submissionParty, userInfo?.uuid, userRoles]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
