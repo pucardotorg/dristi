@@ -775,7 +775,7 @@ function EFilingCases({ path }) {
           };
         });
       });
-      if (!isCaseReAssigned || selected === "addSignature" || selected === "reviewCaseFile") {
+      if ((!isCaseReAssigned && !isPendingESign) || selected === "addSignature" || selected === "reviewCaseFile") {
         return modifiedFormData;
       }
     }
@@ -1787,6 +1787,7 @@ function EFilingCases({ path }) {
   const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
     setIsDisabled(true);
+    let calculationResponse = {};
     const assignees = getAllAssignees(caseDetails);
     const fileStoreId = localStorage.getItem("fileStoreId");
     await DRISTIService.caseUpdateService(
@@ -1835,13 +1836,12 @@ function EFilingCases({ path }) {
             tenantId,
           },
         });
+        calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
       }
       if (isPendingReESign) setCaseResubmitSuccess(true);
       setIsDisabled(false);
       return;
     });
-
-    const calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
 
     setPrevSelected(selected);
     history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
@@ -2333,7 +2333,7 @@ function EFilingCases({ path }) {
           caseDetails={caseDetails}
         />
       )}
-      {selected === "witnessDetails" && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
+      {selected === "witnessDetails" && !isPendingESign && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
         <ActionBar className={"e-filing-action-bar"}>
           <SubmitBar
             label={t("CS_COMMON_CONTINUE")}

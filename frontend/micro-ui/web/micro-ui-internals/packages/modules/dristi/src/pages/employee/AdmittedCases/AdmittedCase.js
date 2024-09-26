@@ -51,7 +51,7 @@ const caseSecondaryActions = [
   { action: "SEND_BACK", label: "SEND_BACK_FOR_CORRECTION" },
   { action: "REJECT", label: "CS_CASE_REJECT" },
 ];
-const caseTertiaryActions = [{ action: "RESPOND", label: "CS_CASE_RESPOND" }];
+const caseTertiaryActions = [];
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -1000,6 +1000,20 @@ const AdmittedCases = () => {
     }
   };
 
+  const getHearingData = async () => {
+    const { HearingList = [] } = await Digit.HearingService.searchHearings({
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+      },
+    });
+    const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
+      (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
+    );
+    return { hearingDate, hearingNumber };
+  };
+
   const onSubmit = async () => {
     switch (primaryAction.action) {
       case "REGISTER":
@@ -1040,16 +1054,7 @@ const AdmittedCases = () => {
         }
         break;
       case "ISSUE_ORDER":
-        const { HearingList = [] } = await Digit.HearingService.searchHearings({
-          hearing: { tenantId },
-          criteria: {
-            tenantID: tenantId,
-            filingNumber: filingNumber,
-          },
-        });
-        const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-          (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
-        );
+        const { hearingDate, hearingNumber } = await getHearingData();
         const {
           list: [orderData],
         } = await Digit.ordersService.searchOrder({
@@ -1076,15 +1081,59 @@ const AdmittedCases = () => {
     }
   };
 
-  const onSaveDraft = () => {
+  const onSaveDraft = async () => {
     if (
       [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
         caseDetails?.status
       )
     ) {
-      history.push(
-        `/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${caseDetails?.filingNumber}&tab=Hearings`
-      );
+      const { hearingDate, hearingNumber } = await getHearingData();
+      const date = new Date(hearingDate);
+      const requestBody = {
+        order: {
+          createdDate: new Date().getTime(),
+          tenantId: tenantId,
+          hearingNumber: hearingNumber,
+          filingNumber: filingNumber,
+          cnrNumber: cnrNumber,
+          statuteSection: {
+            tenantId: tenantId,
+          },
+          orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+          status: "",
+          isActive: true,
+          workflow: {
+            action: OrderWorkflowAction.SAVE_DRAFT,
+            comments: "Creating order",
+            assignes: null,
+            rating: null,
+            documents: [{}],
+          },
+          documents: [],
+          additionalDetails: {
+            formdata: {
+              orderType: {
+                type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                isactive: true,
+                code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+              },
+              originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+              }`,
+            },
+          },
+        },
+      };
+      ordersService
+        .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+        .then((res) => {
+          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
+            caseId: caseDetails?.id,
+            tab: "Orders",
+          });
+        })
+        .catch((err) => {});
     } else {
       setShowModal(true);
       setSubmitModalInfo({
@@ -1250,7 +1299,9 @@ const AdmittedCases = () => {
   };
 
   const handleActionModal = () => {
-    updateCaseDetails("REJECT");
+    updateCaseDetails("REJECT").then(() => {
+      history.push(`/${window.contextPath}/employee/home/home-pending-task`);
+    });
   };
 
   const caseAdmittedSubmit = (data) => {
@@ -1340,10 +1391,11 @@ const AdmittedCases = () => {
       primaryAction.action ||
       secondaryAction.action ||
       tertiaryAction.action ||
-      [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
+      ([CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
         caseDetails?.status
-      ),
-    [caseDetails, primaryAction.action, secondaryAction.action, tertiaryAction.action]
+      ) &&
+        !isCitizen),
+    [caseDetails, primaryAction.action, secondaryAction.action, tertiaryAction.action, isCitizen]
   );
 
   if (isLoading || isWorkFlowLoading) {
@@ -1631,7 +1683,7 @@ const AdmittedCases = () => {
                 label={
                   [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
                     caseDetails?.status
-                  )
+                  ) && !isCitizen
                     ? t("RESCHEDULE_ADMISSION_HEARING")
                     : t(tertiaryAction.label)
                 }

@@ -1162,7 +1162,7 @@ const GenerateOrders = () => {
       });
       return await Promise.all(promises);
     }
-    if ((order?.orderType === "SUMMONS" || orderType) && refId) {
+    if ((order?.orderType === "SUMMONS" || orderType === "SUMMONS") && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
         .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
@@ -1186,7 +1186,7 @@ const GenerateOrders = () => {
         },
       });
     }
-    if ((order?.orderType === "NOTICE" || orderType) && refId) {
+    if ((order?.orderType === "NOTICE" || orderType === "NOTICE") && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
         .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))

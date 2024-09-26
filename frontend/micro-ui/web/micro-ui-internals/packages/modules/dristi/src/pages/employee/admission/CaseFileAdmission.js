@@ -37,10 +37,7 @@ const caseSecondaryActions = [
   { action: "SEND_BACK", label: "SEND_BACK_FOR_CORRECTION" },
   { action: "REJECT", label: "CS_CASE_REJECT" },
 ];
-const caseTertiaryActions = [
-  { action: "ISSUE_ORDER", label: "CS_CASE_ISSUE_ORDER" },
-  { action: "RESPOND", label: "CS_CASE_RESPOND" },
-];
+const caseTertiaryActions = [{ action: "ISSUE_ORDER", label: "CS_CASE_ISSUE_ORDER" }];
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
