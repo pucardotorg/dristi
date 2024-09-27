@@ -3,13 +3,62 @@ import useSearchCaseService from "../../../dristi/src/hooks/dristi/useSearchCase
 import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import AddParty from "../../../hearings/src/pages/employee/AddParty";
+
+const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckboxChange }) => {
+  return (
+    <div>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+        <h1>Select Delivery Channels</h1>
+        <p>
+          {partyDetails?.length || 0} of {deliveryChannels.reduce((acc, channel) => acc + (channel.values?.length || 0), 0)} selected
+        </p>
+      </div>
+      <form>
+        {deliveryChannels.map((channel) => (
+          <div key={channel?.type}>
+            {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
+              <div>
+                <h2>
+                  <strong>{channel.type} to </strong>
+                </h2>
+
+                {Array.isArray(channel?.values) &&
+                  channel?.values?.map((value, index) => (
+                    <div key={`${channel.type}-${index}`}>
+                      <input
+                        type="checkbox"
+                        id={`${channel.type}-${index}`}
+                        checked={
+                          Array.isArray(partyDetails) &&
+                          partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
+                        }
+                        onChange={() => handleCheckboxChange(channel.type, value)}
+                      />
+                      <label htmlFor={`${channel.type}-${index}`}>
+                        {channel.type === "Post" || channel.type === "Via Police"
+                          ? typeof value.address === "string"
+                            ? value.address
+                            : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
+                          : value}
+                      </label>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </form>
+    </div>
+  );
+};
+
 const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedChannels, setSelectedChannels] = useState(formData[config.key]?.["selectedChannels"] || []);
   const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs]);
-
+  const orderType = formData?.orderType?.code;
   const { data: caseData, refetch } = useSearchCaseService(
     {
       criteria: [{ filingNumber: filingNumber }],
@@ -114,63 +163,6 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   //     return values;
   //   }, []);
   // };
-  const renderDeliveryChannels = () => {
-    const party = formData[config.key]?.party;
-    if (!party) return null;
-    const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
-    const { address, phone_numbers, email } = party.data || {};
-    const deliveryChannels = [
-      { type: "SMS", values: phone_numbers || [] },
-      { type: "E-mail", values: email || [] },
-      { type: "Post", values: address || [] },
-      { type: "Via Police", values: address || [] },
-    ];
-    return (
-      <div>
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-          <h1>Select Delivery Channels</h1>
-          <p>
-            {partyDetails?.length || 0} of {deliveryChannels.reduce((acc, channel) => acc + (channel.values?.length || 0), 0)} selected
-          </p>
-        </div>
-        <form>
-          {deliveryChannels.map((channel) => (
-            <div key={channel?.type}>
-              {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
-                <div>
-                  <h2>
-                    <strong>{channel.type} to </strong>
-                  </h2>
-
-                  {Array.isArray(channel?.values) &&
-                    channel?.values?.map((value, index) => (
-                      <div key={`${channel.type}-${index}`}>
-                        <input
-                          type="checkbox"
-                          id={`${channel.type}-${index}`}
-                          checked={
-                            Array.isArray(partyDetails) &&
-                            partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
-                          }
-                          onChange={() => handleCheckboxChange(channel.type, value)}
-                        />
-                        <label htmlFor={`${channel.type}-${index}`}>
-                          {channel.type === "Post" || channel.type === "Via Police"
-                            ? typeof value.address === "string"
-                              ? value.address
-                              : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
-                            : value}
-                        </label>
-                      </div>
-                    ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </form>
-      </div>
-    );
-  };
 
   const selectedParty = useMemo(() => {
     const partyData = formData?.[config.key]?.party?.data || {};
@@ -185,8 +177,20 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   }, [config.key, formData]);
 
   const [isPartyModalOpen, setIsPartyModalOpen] = useState(false);
+  const party = formData[config.key]?.party;
+  const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
+  const { address, phone_numbers, email } = party?.data || {};
+
+  const deliveryChannels = useMemo(() => {
+    return [
+      { type: "SMS", values: phone_numbers || [] },
+      { type: "E-mail", values: email || [] },
+      { type: "Post", values: address || [] },
+      orderType === "SUMMONS" && { type: "Via Police", values: address || [] },
+    ];
+  }, [address, email, orderType, phone_numbers]);
+
   const handleAddParty = (e) => {
-    console.log(e);
     e?.stopPropagation();
     e?.preventDefault();
     setIsPartyModalOpen(!isPartyModalOpen);
@@ -228,7 +232,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
               }
             </div>
           )}
-          {input.type !== "dropdown" && renderDeliveryChannels()}
+          {input.type !== "dropdown" && selectedParty && (
+            <RenderDeliveryChannels deliveryChannels={deliveryChannels} handleCheckboxChange={handleCheckboxChange} partyDetails={partyDetails} />
+          )}
         </div>
       ))}
       {isPartyModalOpen && (
