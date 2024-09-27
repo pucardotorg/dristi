@@ -189,3 +189,17 @@ export const submitJoinCase = async (data) => {
     return [res, err];
   }
 };
+
+export const searchIndividualUserWithUuid = async (uuid, tenantId) => {
+  const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+    {
+      Individual: {
+        userUuid: [uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    "",
+    uuid
+  );
+  return individualData;
+};

@@ -93,7 +93,7 @@ function Home() {
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <JoinCaseHome refreshInbox={refreshInbox} updateCase={setCaseDetails} updateSelectedParty={setSelectedParty} />
+            <JoinCaseHome refreshInbox={refreshInbox} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}

@@ -57,7 +57,6 @@ const HomeView = () => {
 
   const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
   const [responsePendingTask, setResponsePendingTask] = useState({});
-  const [responseDoc, setResponseDoc] = useState({});
 
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles, [Digit.UserService]);
   const isJudge = useMemo(() => roles?.some((role) => role?.code === "JUDGE_ROLE"), [roles]);
@@ -136,134 +135,6 @@ const HomeView = () => {
         : {}),
     };
   }, [advocateId, individualId]);
-
-  const getCaseDetailsUrl = (caseId, filingNumber) =>
-    `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`;
-
-  const submitResponse = async (responseDoc) => {
-    let newCase;
-
-    const caseResponse = await DRISTIService.searchCaseService(
-      {
-        criteria: [
-          {
-            filingNumber: responsePendingTask?.filingNumber,
-          },
-        ],
-        tenantId,
-      },
-      {}
-    );
-
-    if (caseResponse?.criteria[0]?.responseList?.length === 1) {
-      newCase = caseResponse?.criteria[0]?.responseList[0];
-    }
-
-    if (newCase && responsePendingTask?.individualId && responseDoc.fileStore) {
-      newCase = {
-        ...newCase,
-        litigants: newCase?.litigants?.map((data) => {
-          if (data?.individualId === responsePendingTask?.individualId) {
-            return {
-              ...data,
-              documents: [
-                {
-                  ...responseDoc,
-                  additionalDetails: {
-                    fileName: `Response (${data?.additionalDetails?.fullName})`,
-                  },
-                },
-              ],
-            };
-          } else return data;
-        }),
-      };
-    }
-    const response = await updateCaseDetails(newCase, tenantId, "RESPOND");
-    if (response) {
-      try {
-        await DRISTIService.customApiService(PendingsUrls.dristi.pendingTask, {
-          pendingTask: {
-            name: "Pending Response",
-            entityType: "case-default",
-            referenceId: `MANUAL_${responsePendingTask?.filingNumber}`,
-            status: "PENDING_RESPONSE",
-            assignedTo: [{ uuid: userInfo?.uuid }],
-            assignedRole: ["CASE_RESPONDER"],
-            cnrNumber: responsePendingTask?.cnrNumber,
-            filingNumber: responsePendingTask?.filingNumber,
-            isCompleted: true,
-            stateSla: null,
-            additionalDetails: {},
-            tenantId,
-          },
-        });
-      } catch (err) {
-        console.log("err :>> ", err);
-      }
-      return { continue: true };
-    } else return { continue: false };
-  };
-
-  const sumbitResponseConfig = useMemo(() => {
-    return {
-      handleClose: () => {
-        setShowSubmitResponseModal(false);
-      },
-      heading: { label: "" },
-      actionSaveLabel: "",
-      isStepperModal: true,
-      actionSaveOnSubmit: () => {},
-      steps: [
-        {
-          heading: { label: "Submit Response" },
-          actionSaveLabel: "Submit",
-          modalBody: (
-            <UploadIdType
-              config={uploadResponseDocumentConfig}
-              isAdvocateUploading={true}
-              onFormValueChange={(setValue, formData) => {
-                const documentData = {
-                  fileStore: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
-                  documentType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
-                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
-                  additionalDetails: {
-                    fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
-                    fileType: "respondent-response",
-                  },
-                };
-                if (!isEqual(documentData, responseDoc)) setResponseDoc(documentData);
-              }}
-            />
-          ),
-          actionSaveOnSubmit: async () => {
-            await submitResponse(responseDoc);
-          },
-          isDisabled: responseDoc?.fileStore ? false : true,
-        },
-        {
-          type: "success",
-          hideSubmit: true,
-          modalBody: (
-            <CustomStepperSuccess
-              successMessage={"RESPONSE_SUCCESSFULLY"}
-              submitButtonAction={async () => {
-                setShowSubmitResponseModal(false);
-                history.push(history.push(getCaseDetailsUrl(responsePendingTask?.caseId, responsePendingTask?.filingNumber)));
-              }}
-              submitButtonText={"VIEW_CASE_DETAILS"}
-              closeButtonText={"BACK_HOME"}
-              closeButtonAction={() => {
-                refreshInbox();
-                setShowSubmitResponseModal(false);
-              }}
-              t={t}
-            />
-          ),
-        },
-      ].filter(Boolean),
-    };
-  }, [refreshInbox, responseDoc, responsePendingTask?.caseId, submitResponse, t, userInfoType]);
 
   useEffect(() => {
     setDefaultValues(defaultSearchValues);
@@ -465,7 +336,11 @@ const HomeView = () => {
   return (
     <div className="home-view-hearing-container">
       {individualId && userType && userInfoType === "citizen" && !caseDetails ? (
-        <LitigantHomePage isApprovalPending={isApprovalPending} />
+        <LitigantHomePage
+          isApprovalPending={isApprovalPending}
+          setShowSubmitResponseModal={setShowSubmitResponseModal}
+          setResponsePendingTask={setResponsePendingTask}
+        />
       ) : (
         <React.Fragment>
           <div className="left-side">
@@ -486,12 +361,9 @@ const HomeView = () => {
                     <React.Fragment>
                       <JoinCaseHome
                         refreshInbox={refreshInbox}
-                        t={t}
                         setShowSubmitResponseModal={setShowSubmitResponseModal}
-                        updateCase={setCaseDetails}
                         setResponsePendingTask={setResponsePendingTask}
                       />
-                      {showSubmitResponseModal && <DocumentModal config={sumbitResponseConfig} />}
                       <Button
                         className={"tertiary-button-selector"}
                         label={t("FILE_A_CASE")}
@@ -538,8 +410,8 @@ const HomeView = () => {
               isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
               uuid={userInfo?.uuid}
               userInfoType={userInfoType}
-              setShowSubmitResponseModal={setShowSubmitResponseModal}
-              setResponsePendingTask={setResponsePendingTask}
+              joinCaseResponsePendingTask={responsePendingTask}
+              joinCaseShowSubmitResponseModal={showSubmitResponseModal}
             />
           </div>
         </React.Fragment>

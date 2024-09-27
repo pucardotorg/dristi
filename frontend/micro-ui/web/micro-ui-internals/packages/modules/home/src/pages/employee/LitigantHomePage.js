@@ -448,121 +448,14 @@ const containerJoinFileCaseStyle = {
   border: "1px solid #e8e8e8",
   borderRadius: "8px",
 };
-const LitigantHomePage = ({ isApprovalPending }) => {
+const LitigantHomePage = ({ isApprovalPending, setShowSubmitResponseModal, setResponsePendingTask }) => {
   const userName = Digit.SessionStorage.get("User");
-  const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const { t } = useTranslation();
   const today = new Date();
   const history = useHistory();
   const curHr = today.getHours();
   const userType = Digit.UserService.getType();
-  const userInfo = Digit?.UserService?.getUser()?.info;
-  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const [callRefetch, SetCallRefetch] = useState(false);
-  const [askOtp, setAskOtp] = useState(true);
-  const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [caseDetails, setCaseDetails] = useState(null);
-  const [selectedParty, setSelectedParty] = useState({});
-
-  const onOtpChange = (value) => {
-    setOtp(value);
-  };
-
-  const sumbitResponseConfig = useMemo(() => {
-    return {
-      handleClose: () => {
-        // setShow(true);
-        // setShowEditRespondentDetailsModal(false);
-      },
-      heading: { label: "" },
-      actionSaveLabel: "",
-      isStepperModal: true,
-      actionSaveOnSubmit: () => {},
-      steps: [
-        askOtp && {
-          heading: { label: "Verify with access code" },
-          actionSaveLabel: "Verify",
-          modalBody: (
-            <OtpComponent
-              t={t}
-              length={6}
-              onOtpChange={onOtpChange}
-              otp={otp}
-              size={6}
-              otpEnterTime={10}
-              // onResend={onResendOtp}
-              // mobileNumber={accusedRegisterFormData?.phoneNumber}
-            />
-          ),
-          actionSaveOnSubmit: async () => {
-            // return await otpVerificationAction();
-          },
-          async: true,
-          isDisabled: otp?.length === 6 ? false : true,
-        },
-        {
-          heading: { label: "Submit Response" },
-          actionSaveLabel: "Submit",
-          actionCancelLabel: "Back",
-          modalBody: (
-            <UploadIdType
-              config={uploadResponseDocumentConfig}
-              isAdvocateUploading={true}
-              onFormValueChange={(setValue, formData) => {
-                console.log("formData :>> ", formData);
-                const documentData = {
-                  fileStoreId: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
-                  fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
-                  fileType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
-                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
-                };
-                setCaseDetails({
-                  ...caseDetails,
-                  litigants: caseDetails?.litigants?.map((data) => {
-                    if (data?.individualId === selectedParty?.individualId) {
-                      return {
-                        ...data,
-                        documents: [documentData],
-                      };
-                    } else return data;
-                  }),
-                });
-              }}
-            />
-          ),
-          actionSaveOnSubmit: async () => {
-            if (caseDetails?.status === "PENDING_RESPONSE") await updateCaseDetails(caseDetails, tenantId, "RESPOND");
-            setShowSubmitResponseModal(false);
-          },
-          // isDisabled:
-          //   accusedIdVerificationDocument?.SelectUserTypeComponent?.ID_Proof?.length > 0 &&
-          //   accusedIdVerificationDocument?.SelectUserTypeComponent?.selectIdType?.type
-          //     ? false
-          //     : true,
-        },
-        {
-          type: "success",
-          hideSubmit: true,
-          modalBody: (
-            <CustomStepperSuccess
-              successMessage={"RESPONSE_SUCCESSFULLY"}
-              submitButtonAction={() => {
-                setShowSubmitResponseModal(false);
-                history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${caseDetails?.id}`);
-              }}
-              submitButtonText={"VIEW_CASE_DETAILS"}
-              closeButtonText={"BACK_HOME"}
-              closeButtonAction={() => {
-                setShowSubmitResponseModal(false);
-              }}
-              t={t}
-            />
-          ),
-        },
-      ].filter(Boolean),
-    };
-  }, [askOtp, otp, t]);
 
   const refreshInbox = () => {
     SetCallRefetch(true);
@@ -651,13 +544,9 @@ const LitigantHomePage = ({ isApprovalPending }) => {
             </React.Fragment>
             <JoinCaseHome
               refreshInbox={refreshInbox}
-              t={t}
               setShowSubmitResponseModal={setShowSubmitResponseModal}
-              setAskOtp={setAskOtp}
-              updateCase={setCaseDetails}
-              updateSelectedParty={setSelectedParty}
+              setResponsePendingTask={setResponsePendingTask}
             />
-            {showSubmitResponseModal && <DocumentModal config={sumbitResponseConfig} />}
           </div>
         </div>
       </div>

@@ -15,7 +15,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { AdvocateIcon, RightArrow, SearchIcon } from "../../../../dristi/src/icons/svgIndex";
-import { CASEService } from "../../hooks/services";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -26,7 +25,13 @@ import OtpComponent from "../../components/OtpComponent";
 import UploadIdType from "@egovernments/digit-ui-module-dristi/src/pages/citizen/registration/UploadIdType";
 import { uploadIdConfig } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/Config/resgisterRespondentConfig";
 import CustomStepperSuccess from "../../../../orders/src/components/CustomStepperSuccess";
-import { createRespondentIndividualUser, selectMobileNumber, selectOtp, submitJoinCase } from "../../utils/joinCaseUtils";
+import {
+  createRespondentIndividualUser,
+  searchIndividualUserWithUuid,
+  selectMobileNumber,
+  selectOtp,
+  submitJoinCase,
+} from "../../utils/joinCaseUtils";
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 import { Urls as hearingUrls } from "../../../../hearings/src/hooks/services/Urls";
@@ -227,7 +232,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
 
   const [party, setParty] = useState("");
   const [validationCode, setValidationCode] = useState("");
-  const [summonCode, setSummonCode] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
   const [errors, setErrors] = useState({});
   const [caseInfo, setCaseInfo] = useState([]);
@@ -508,7 +512,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const isAttendingHearing = useMemo(() => {
     if (individualId && nextHearing?.attendees) return nextHearing?.attendees?.some((attendee) => attendee?.individualId === individualId);
     return false;
-  }, [individualId, nextHearing?.attendees]);
+  }, [individualId, nextHearing]);
 
   const searchLitigantInRepresentives = useCallback(() => {
     const representative = caseDetails?.representatives?.find((data) =>
@@ -597,7 +601,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         if (
           (isFound && roleOfNewAdvocate?.value) ||
           (!isFound && selectedParty?.partyType?.includes(partyType)) ||
-          (advIsFound && representative?.representing?.some((represent) => represent?.individualId === selectedParty?.individualId) !== undefined) ||
+          (advIsFound &&
+            representative?.representing?.some((represent) => represent?.individualId === selectedParty?.individualId) &&
+            selectedParty?.partyType?.includes(partyType)) ||
           (!advIsFound && ((isFound && roleOfNewAdvocate?.value) || !isFound))
         ) {
           setIsDisabled(false);
@@ -661,16 +667,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   ]);
 
   const fetchBasicUserInfo = async () => {
-    const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
-      {
-        Individual: {
-          userUuid: [userInfo?.uuid],
-        },
-      },
-      { tenantId, limit: 1000, offset: 0 },
-      "",
-      userInfo?.uuid && isUserLoggedIn
-    );
+    const individualData = await searchIndividualUserWithUuid(userInfo?.uuid, tenantId);
 
     setIndividualId(individualData?.Individual?.[0]?.individualId);
     setName(individualData?.Individual?.[0]?.name);
@@ -907,8 +904,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               <React.Fragment>
                 <hr className="horizontal-line" />
                 <InfoCard
-                  variant={"warning"}
-                  label={t(JoinHomeLocalisation.WARNING)}
+                  variant={"default"}
+                  label={t("ES_COMMON_INFO")}
                   additionalElements={[
                     <p>
                       {t(JoinHomeLocalisation.ALREADY_REPRESENTING)} <span style={{ fontWeight: "bold" }}>{selectedParty?.label}</span>{" "}
@@ -916,7 +913,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   ]}
                   inline
                   textStyle={{}}
-                  className={`custom-info-card warning`}
+                  className={`custom-info-card`}
                 />
               </React.Fragment>
             )}
@@ -1448,16 +1445,16 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   label={
                     caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent
                       ? "Submit Response"
-                      : !isAttendingHearing
+                      : !isAttendingHearing && nextHearing
                       ? "Confirm attendance in summon"
                       : t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
                   }
                   onButtonClick={() => {
                     setShow(false);
                     if (caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent) {
-                      setShowSubmitResponseModal(true);
+                      if (setShowSubmitResponseModal) setShowSubmitResponseModal(true);
                     } else {
-                      if (!isAttendingHearing) {
+                      if (!isAttendingHearing && nextHearing) {
                         closeModal();
                         setShowConfirmSummonModal(true);
                       } else
@@ -1571,7 +1568,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         value: formatFullName(name) || "",
       },
     ];
-  }, [name, nextHearing?.startTime]);
+  }, [name, nextHearing]);
 
   useEffect(() => {
     if (userType === "Litigant") setParties(respondentList?.map((data, index) => ({ ...data, key: index })));
@@ -1621,7 +1618,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     setBarDetails([
       {
         key: "CASE_NUMBER",
-        value: caseDetails?.caseNumber,
+        value: caseDetails?.filingNumber,
       },
       {
         key: JoinHomeLocalisation.COURT_COMPLEX_TEXT,
@@ -1676,6 +1673,19 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     setAdovacteVakalatnama({});
     setComplainantList([]);
     setRespondentList([]);
+  };
+
+  const removeAttendee = async (individualId) => {
+    const updatedHearing = structuredClone(nextHearing);
+    updatedHearing.attendees = updatedHearing.attendees || [];
+    if (updatedHearing?.attendees?.some((attendee) => attendee?.individualId === individualId)) {
+      updatedHearing.attendees = updatedHearing.attendees.filter((attendee) => attendee?.individualId !== individualId);
+      try {
+        await updateAttendees({ body: { hearing: updatedHearing } });
+      } catch (error) {
+        console.error("error :>> ", error);
+      }
+    }
   };
 
   const onProceed = useCallback(async () => {
@@ -1805,6 +1815,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
       setStep(step + 1);
       setIsDisabled(true);
     } else if (step === 7 && validationCode.length === 6) {
+      setIsDisabled(true);
       if (userType?.value === "Advocate") {
         const { representative } = searchLitigantInRepresentives();
         const replaceAdvocate = representative;
@@ -1959,49 +1970,59 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             },
           });
           if (res) {
-            // closing old pending task
-            try {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Response",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_RESPONSE",
-                  assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: replaceAdvocate?.additionalDetails?.uuid }],
-                  assignedRole: ["CASE_RESPONDER"],
-                  cnrNumber: caseDetails?.cnrNumber,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: true,
-                  stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
-                  tenantId,
-                },
-              });
-            } catch (err) {
-              console.error("err :>> ", err);
+            if (caseDetails?.status === "PENDING_RESPONSE") {
+              // closing old pending task
+              try {
+                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: replaceAdvocate?.additionalDetails?.uuid }],
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseDetails?.cnrNumber,
+                    filingNumber: caseDetails?.filingNumber,
+                    isCompleted: true,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId, caseId: caseDetails?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
+
+              // creating new pending task
+              try {
+                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: userInfo?.uuid }],
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseDetails?.cnrNumber,
+                    filingNumber: caseDetails?.filingNumber,
+                    isCompleted: false,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId, caseId: caseDetails?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
+            } else {
+              try {
+                const individualData = await searchIndividualUserWithUuid(replaceAdvocate?.additionalDetails?.uuid, tenantId);
+                await removeAttendee(individualData?.Individual?.[0]?.individualId);
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
             }
 
-            // creating new pending task
-            try {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Response",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_RESPONSE",
-                  assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: userInfo?.uuid }],
-                  assignedRole: ["CASE_RESPONDER"],
-                  cnrNumber: caseDetails?.cnrNumber,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: false,
-                  stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
-                  tenantId,
-                },
-              });
-            } catch (err) {
-              console.error("err :>> ", err);
-            }
             setStep(step + 1);
             setSuccess(true);
           } else {
@@ -2126,7 +2147,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 },
               });
             } catch (err) {
-              console.log("err :>> ", err);
+              console.error("err :>> ", err);
             }
             setStep(step + 1);
             setSuccess(true);
@@ -2218,7 +2239,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 },
               });
             } catch (err) {
-              console.log("err :>> ", err);
+              console.error("err :>> ", err);
             }
             setRespondentList(
               respondentList?.map((respondent) => {
@@ -2448,7 +2469,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 },
               });
             } catch (err) {
-              console.log("err :>> ", err);
+              console.error("err :>> ", err);
             }
             setRespondentList(
               respondentList?.map((respondent) => {
@@ -2476,6 +2497,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           }
         }
       }
+      setIsDisabled(false);
     }
   }, [
     adovacteVakalatnama?.adcVakalatnamaFileUpload?.document,
@@ -2667,17 +2689,21 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         individualId: individualId,
         type: "Respondent",
       });
-      const response = await updateAttendees({ body: { hearing: updatedHearing } });
-      if (response) {
-        setShowErrorToast(true);
-        setIsAttendeeAdded(true);
-        return {
-          continue: true,
-        };
-      } else {
-        setShowErrorToast(true);
-        setIsAttendeeAdded(false);
-        return { continue: false };
+      try {
+        const response = await updateAttendees({ body: { hearing: updatedHearing } });
+        if (response) {
+          setShowErrorToast(true);
+          setIsAttendeeAdded(true);
+          return {
+            continue: true,
+          };
+        } else {
+          setShowErrorToast(true);
+          setIsAttendeeAdded(false);
+          return { continue: false };
+        }
+      } catch (error) {
+        console.error("error :>> ", error);
       }
     }
   };
@@ -2905,7 +2931,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         },
       ].filter(Boolean),
     };
-  }, [attendanceDetails, setShowSubmitResponseModal, t]);
+  }, [attendanceDetails, t]);
 
   return (
     <div>

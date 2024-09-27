@@ -174,6 +174,7 @@ export const registerRespondentConfig = {
           error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
+          removeAddLocationButton: true,
           populators: {
             inputs: [
               { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },

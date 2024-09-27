@@ -8,6 +8,13 @@ import PendingTaskAccordion from "./PendingTaskAccordion";
 import { HomeService, Urls } from "../hooks/services";
 import { caseTypes, selectTaskType, taskTypes } from "../configs/HomeConfig";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomStepperSuccess from "@egovernments/digit-ui-module-orders/src/components/CustomStepperSuccess";
+import UploadIdType from "@egovernments/digit-ui-module-dristi/src/pages/citizen/registration/UploadIdType";
+import DocumentModal from "@egovernments/digit-ui-module-orders/src/components/DocumentModal";
+import { uploadResponseDocumentConfig } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/Config/resgisterRespondentConfig";
+import isEqual from "lodash/isEqual";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
+import { updateCaseDetails } from "../../../cases/src/utils/joinCaseUtils";
 
 export const CaseWorkflowAction = {
   SAVE_DRAFT: "SAVE_DRAFT",
@@ -25,8 +32,8 @@ const TasksComponent = ({
   uuid,
   filingNumber,
   inCase = false,
-  setShowSubmitResponseModal,
-  setResponsePendingTask,
+  joinCaseResponsePendingTask,
+  joinCaseShowSubmitResponseModal,
 }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
@@ -39,6 +46,11 @@ const TasksComponent = ({
   const todayDate = useMemo(() => new Date().getTime(), []);
   const [totalPendingTask, setTotalPendingTask] = useState(0);
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
+
+  const [showSubmitResponseModal, setShowSubmitResponseModal] = useState(false);
+  const [responsePendingTask, setResponsePendingTask] = useState({});
+  const [responseDoc, setResponseDoc] = useState({});
+
   const { data: pendingTaskDetails = [], isLoading, refetch } = useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -336,6 +348,136 @@ const TasksComponent = ({
     ]
   );
 
+  const submitResponse = async (responseDoc) => {
+    let newCase;
+    const pendingTask = joinCaseShowSubmitResponseModal ? joinCaseResponsePendingTask : responsePendingTask;
+
+    const caseResponse = await DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            filingNumber: pendingTask?.filingNumber,
+          },
+        ],
+        tenantId,
+      },
+      {}
+    );
+
+    if (caseResponse?.criteria[0]?.responseList?.length === 1) {
+      newCase = caseResponse?.criteria[0]?.responseList[0];
+    }
+
+    if (newCase && pendingTask?.individualId && responseDoc.fileStore) {
+      newCase = {
+        ...newCase,
+        litigants: newCase?.litigants?.map((data) => {
+          if (data?.individualId === pendingTask?.individualId) {
+            return {
+              ...data,
+              documents: [
+                {
+                  ...responseDoc,
+                  additionalDetails: {
+                    fileName: `Response (${data?.additionalDetails?.fullName})`,
+                  },
+                },
+              ],
+            };
+          } else return data;
+        }),
+      };
+    }
+    const response = await updateCaseDetails(newCase, tenantId, "RESPOND");
+    if (response) {
+      try {
+        await DRISTIService.customApiService(Urls.pendingTask, {
+          pendingTask: {
+            name: "Pending Response",
+            entityType: "case-default",
+            referenceId: `MANUAL_${pendingTask?.filingNumber}`,
+            status: "PENDING_RESPONSE",
+            assignedTo: [{ uuid: userInfo?.uuid }],
+            assignedRole: ["CASE_RESPONDER"],
+            cnrNumber: pendingTask?.cnrNumber,
+            filingNumber: pendingTask?.filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+      } catch (err) {
+        console.error("err :>> ", err);
+      }
+      return { continue: true };
+    } else return { continue: false };
+  };
+
+  const getCaseDetailsUrl = (caseId, filingNumber) =>
+    `/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`;
+
+  const sumbitResponseConfig = useMemo(() => {
+    return {
+      handleClose: () => {
+        setShowSubmitResponseModal(false);
+      },
+      heading: { label: "" },
+      actionSaveLabel: "",
+      isStepperModal: true,
+      actionSaveOnSubmit: () => {},
+      steps: [
+        {
+          heading: { label: "Submit Response" },
+          actionSaveLabel: "Submit",
+          modalBody: (
+            <UploadIdType
+              config={uploadResponseDocumentConfig}
+              isAdvocateUploading={true}
+              onFormValueChange={(setValue, formData) => {
+                const documentData = {
+                  fileStore: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
+                  documentType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
+                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
+                  additionalDetails: {
+                    fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
+                    fileType: "respondent-response",
+                  },
+                };
+                if (!isEqual(documentData, responseDoc)) setResponseDoc(documentData);
+              }}
+            />
+          ),
+          actionSaveOnSubmit: async () => {
+            await submitResponse(responseDoc);
+          },
+          isDisabled: responseDoc?.fileStore ? false : true,
+        },
+        {
+          type: "success",
+          hideSubmit: true,
+          modalBody: (
+            <CustomStepperSuccess
+              successMessage={"RESPONSE_SUCCESSFULLY"}
+              submitButtonAction={async () => {
+                const pendingTask = joinCaseShowSubmitResponseModal ? joinCaseResponsePendingTask : responsePendingTask;
+                setShowSubmitResponseModal(false);
+                history.push(getCaseDetailsUrl(pendingTask?.caseId, pendingTask?.filingNumber));
+              }}
+              submitButtonText={"VIEW_CASE_DETAILS"}
+              closeButtonText={"BACK_HOME"}
+              closeButtonAction={() => {
+                // refreshInbox();
+                setShowSubmitResponseModal(false);
+              }}
+              t={t}
+            />
+          ),
+        },
+      ].filter(Boolean),
+    };
+  }, [responseDoc, t, submitResponse, joinCaseShowSubmitResponseModal, joinCaseResponsePendingTask, responsePendingTask]);
+
   useEffect(() => {
     fetchPendingTasks();
   }, [fetchPendingTasks]);
@@ -437,6 +579,7 @@ const TasksComponent = ({
           {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
         </div>
       )}
+      {(showSubmitResponseModal || joinCaseShowSubmitResponseModal) && <DocumentModal config={sumbitResponseConfig} />}
     </div>
   );
 };
