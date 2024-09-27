@@ -64,7 +64,9 @@ public class DemandService {
         SummonCalculationCriteria criteria = SummonCalculationCriteria.builder()
                 .channelId(ChannelName.fromString(task.getTaskDetails().getDeliveryChannel().getChannelName()).toString())
                 .receiverPincode(task.getTaskDetails().getRespondentDetails().getAddress().getPinCode())
-                .tenantId(task.getTenantId()).summonId(task.getTaskNumber()).build();
+                .tenantId(task.getTenantId())
+                .taskType(task.getTaskType())
+                .id(task.getTaskNumber()).build();
 
         StringBuilder url = new StringBuilder().append(config.getPaymentCalculatorHost())
                 .append(config.getPaymentCalculatorCalculateEndpoint());
@@ -151,6 +153,15 @@ public class DemandService {
                     .tenantId(tenantId)
                     .taxAmount(BigDecimal.valueOf(4))
                     .taxHeadMasterCode(getTestTaxSmsHeadMasterCode(businessService))
+                    .build();
+
+            demandDetailList.add(basicDetail);
+        }
+        else if(channelName.equals("RPAD")){
+            DemandDetail basicDetail = DemandDetail.builder()
+                    .tenantId(tenantId)
+                    .taxAmount(BigDecimal.valueOf(4))
+                    .taxHeadMasterCode(getTestRpadTaxHeadMasterCode(businessService))
                     .build();
 
             demandDetailList.add(basicDetail);
@@ -310,6 +321,7 @@ public class DemandService {
     private String getBusinessService(String taskType) {
         return switch (taskType.toUpperCase()) {
             case SUMMON -> config.getTaskSummonBusinessService();
+            case WARRANT -> config.getTaskWarrantBusinessService();
             case NOTICE -> config.getTaskNoticeBusinessService();
             default -> throw new IllegalArgumentException("Unsupported task type: " + taskType);
         };
@@ -322,6 +334,13 @@ public class DemandService {
             return config.getTaskSummonTaxHeadCourtMasterCode();
         }
     }
+    private String getTestRpadTaxHeadMasterCode(String businessService) {
+        if (businessService.equalsIgnoreCase(config.getTaskNoticeBusinessService())) {
+            return config.getTaskNoticeTaxHeadRpadCourtMasterCode();
+        } else {
+            return config.getTaskSummonTaxHeadRpadCourtMasterCode();
+        }
+    }
 
     private String getTestPostTaxHeadMasterCode(String businessService) {
         if (businessService.equalsIgnoreCase(config.getTaskNoticeBusinessService())) {
@@ -332,9 +351,13 @@ public class DemandService {
     }
 
     private String getTestPoliceTaxHeadMasterCode(String businessService) {
+        if (businessService.equalsIgnoreCase(config.getTaskWarrantBusinessService())) {
+            return config.getTaskWarrantPoliceTaxHeadMasterCode();
+        } else {
             return config.getTaskSummonPoliceTaxHeadMasterCode();
-
+        }
     }
+
     private String getTestTaxEmailHeadMasterCode(String businessService) {
         if (businessService.equalsIgnoreCase(config.getTaskNoticeBusinessService())) {
             return config.getTaskNoticeEmailTaxHeadMasterCode();

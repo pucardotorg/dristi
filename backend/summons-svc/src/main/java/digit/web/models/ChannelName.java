@@ -2,7 +2,7 @@ package digit.web.models;
 
 public enum ChannelName {
 
-    POLICE("Police"), EPOST("Post"), SMS("Sms"), EMAIL("Email");
+    POLICE("Police"), EPOST("Post"), SMS("Sms"), EMAIL("Email"), RPAD("Rpad");
 
     String channelName;
 

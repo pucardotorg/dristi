@@ -20,8 +20,11 @@ public class SummonCalculationCriteria {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
-    @JsonProperty("summonId")
-    private String summonId;
+    @JsonProperty("taskType")
+    private String taskType;
+
+    @JsonProperty("id")
+    private String id;
 
 
 }

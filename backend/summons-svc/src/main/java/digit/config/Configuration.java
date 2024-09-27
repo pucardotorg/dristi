@@ -139,6 +139,8 @@ public class Configuration {
     @Value("${task.taxhead.master.epost.code}")
     private String taskSummonTaxHeadEPostMasterCode;
 
+    @Value("${task.warrant.taxhead.master.police.code}")
+    private String taskWarrantPoliceTaxHeadMasterCode;
 
     @Value("${task.notice.taxhead.master.email.code}")
     private String taskNoticeEmailTaxHeadMasterCode;
@@ -146,12 +148,17 @@ public class Configuration {
     @Value("${task.notice.taxhead.master.sms.code}")
     private String taskNoticeSmsTaxHeadMasterCode;
 
-
     @Value("${task.notice.taxhead.master.court.code}")
     private String taskNoticeTaxHeadCourtMasterCode;
 
     @Value("${task.notice.taxhead.master.epost.code}")
     private String taskNoticeTaxHeadEPostMasterCode;
+
+    @Value(("${task.notice.taxhead.master.rpad.court.code}"))
+    private String taskNoticeTaxHeadRpadCourtMasterCode;
+
+    @Value(("${task.summon.taxhead.master.rpad.court.code}"))
+    private String taskSummonTaxHeadRpadCourtMasterCode;
 
     @Value("${egov.tax.period.to}")
     private Long taxPeriodTo;
@@ -167,6 +174,9 @@ public class Configuration {
 
     @Value(("${task.summon.business.service}"))
     private String taskSummonBusinessService;
+
+    @Value(("${task.warrant.business.service}"))
+    private String taskWarrantBusinessService;
 
     @Value(("${task.notice.business.service}"))
     private String taskNoticeBusinessService;
