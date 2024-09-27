@@ -93,6 +93,11 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
       cacheTime: 0,
     }
   );
+  const mdmsCourtRoom = {
+    name: "Court of the Judicial First Class Magistrate Kollam",
+    place: "Kollam",
+    state: "Kerala",
+  };
 
   const courtDetails = useMemo(() => {
     if (!MdmsCourtList) return null;
@@ -213,7 +218,8 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
       },
       {
         key: "COURT_NAME",
-        value: courtDetails?.name,
+        // value: courtDetails?.name;
+        value: mdmsCourtRoom?.name,
       },
       {
         key: "CASE_TYPE",
