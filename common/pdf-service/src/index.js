@@ -1109,10 +1109,16 @@ const generateQRCodes = async (
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
+    let isUrl = qrmapping.url || false;
+
     let qrtext = mustache.render(qrmapping.value, variableTovalueMap);
 
-    //let qrCodeImage = await QRCode.toDataURL(qrtext);
-    variableTovalueMap[varname] = qrtext;
+    if (isUrl) {
+      let qrCodeImage = await QRCode.toDataURL(qrtext);
+      variableTovalueMap[varname] = qrCodeImage;
+    } else {
+      variableTovalueMap[varname] = qrtext;
+    }
   }
 };
 
