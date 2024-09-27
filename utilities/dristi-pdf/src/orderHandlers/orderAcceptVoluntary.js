@@ -169,6 +169,7 @@ async function orderAcceptVoluntary(req, res, qrCode) {
       return renderError(res, "Invalid filingDate format", 500);
     }
     const additionalComments = order.comments || "";
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -177,7 +178,7 @@ async function orderAcceptVoluntary(req, res, qrCode) {
           courtPlace: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           orderName: order.orderNumber,
           submissionType: "Application",
           submissionDate,

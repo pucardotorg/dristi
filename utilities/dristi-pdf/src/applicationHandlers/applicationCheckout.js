@@ -232,13 +232,13 @@ async function applicationCheckout(req, res, qrCode) {
     const year = currentDate.getFullYear();
 
     const ordinalSuffix = getOrdinalSuffix(day);
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: judgeDetails.name, // FIXME: employee.user.name

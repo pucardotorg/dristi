@@ -146,6 +146,7 @@ async function orderWarrant(req, res, qrCode) {
 
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     // Prepare data for PDF generation
     const data = {
       Data: [
@@ -154,7 +155,7 @@ async function orderWarrant(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           orderName: order.orderNumber,
           date: formattedToday,
           reasonForWarrant: reasonForWarrant,

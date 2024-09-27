@@ -243,12 +243,13 @@ async function applicationRescheduleRequest(req, res, qrCode) {
       application?.applicationDetails?.reasonForApplication || "";
     const additionalComments =
       application?.applicationDetails?.additionalComments || "";
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           judgeName: judgeDetails.name, // FIXME: employee.user.name

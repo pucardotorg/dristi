@@ -154,14 +154,14 @@ async function summonsIssue(req, res, qrCode) {
     } else {
       return renderError(res, "Invalid filingDate format", 500);
     }
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
           respondentName: order.orderDetails.respondentName,

@@ -2763,6 +2763,8 @@ export const configsIssueNotice = [
         type: "dropdown",
         key: "noticeType",
         label: "NOTICE_TYPE",
+        schemaKeyPath: "orderDetails.noticeType",
+        transformer: "mdmsDropdown",
         populators: {
           name: "noticeType",
           optionsKey: "type",
@@ -2771,8 +2773,9 @@ export const configsIssueNotice = [
           isMandatory: true,
           styles: { maxWidth: "100%" },
           mdmsConfig: {
-            masterName: "NoticeType",
             moduleName: "Notice",
+            masterName: "NoticeType",
+            select: "(data) => {return data?.['Notice']?.NoticeType?.map((item) => {return {...item, code: item?.type}})}",
           },
         },
       },

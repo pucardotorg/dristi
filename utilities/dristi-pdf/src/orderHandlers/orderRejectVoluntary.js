@@ -170,6 +170,7 @@ async function orderRejectVoluntary(req, res, qrCode) {
     }
     const additionalComments = "";
     const reasonForRejection = order?.comments || "";
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -178,7 +179,7 @@ async function orderRejectVoluntary(req, res, qrCode) {
           courtPlace: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear,
           orderName: order.orderNumber,
           submissionType: "Application",

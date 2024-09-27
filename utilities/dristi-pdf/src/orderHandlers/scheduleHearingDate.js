@@ -160,14 +160,14 @@ async function scheduleHearingDate(req, res, qrCode) {
     }
 
     const formattedToday = formatDate(Date.now());
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
           date: formattedToday,

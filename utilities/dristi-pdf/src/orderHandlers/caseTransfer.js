@@ -183,14 +183,14 @@ async function caseTransfer(req, res, qrCode) {
       order?.additionalDetails?.applicationStatus === "Rejected"
         ? additionalComments
         : "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           date: formattedToday,

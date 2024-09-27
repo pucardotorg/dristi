@@ -1008,8 +1008,6 @@ const GenerateOrders = () => {
   };
 
   const updateOrder = async (order, action) => {
-    // const orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
-    const orderSchema = {};
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
       const documents = Array.isArray(order?.documents) ? order.documents : [];

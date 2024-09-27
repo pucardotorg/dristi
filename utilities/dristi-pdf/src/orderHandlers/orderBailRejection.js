@@ -215,14 +215,14 @@ const orderBailRejection = async (req, res, qrCode) => {
     if (application?.applicationType === "BAIL_BOND") {
       bailType = "Bail Bond";
     }
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           courtPlace: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase?.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           applicantName: advocateName || partyName,
           partyName,

@@ -192,6 +192,7 @@ async function caseSettlementRejection(req, res, qrCode) {
       order.orderDetails.isSettlementImplemented === "ES_COMMON_YES"
         ? "Yes"
         : "No";
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -199,7 +200,7 @@ async function caseSettlementRejection(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           partyName: partyName,
           otherPartyName: otherPartyName,
           date: formattedToday,

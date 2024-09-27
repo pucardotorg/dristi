@@ -186,16 +186,16 @@ const applicationCaseTransfer = async (req, res, qrCode) => {
     const year = currentDate.getFullYear();
 
     const ordinalSuffix = getOrdinalSuffix(day);
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          caseNo: courtCase.caseNumber,
+          caseNo: caseNumber,
           originalCourt: "Supreme Court of India", // FIXME:Take current court
           newCourt: selectRequestedCourt,
           judgeName: judgeDetails.name, // FIXME: employee.user.name

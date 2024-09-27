@@ -238,6 +238,7 @@ async function orderSection202crpc(req, res, qrCode) {
     ]
       .filter(Boolean)
       .join(" ");
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -246,7 +247,7 @@ async function orderSection202crpc(req, res, qrCode) {
           state: mdmsCourtRoom.state,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           date: formattedToday,
           day: day,
           month: month,

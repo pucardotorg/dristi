@@ -181,14 +181,14 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
     const year = currentDate.getFullYear();
 
     const ordinalSuffix = getOrdinalSuffix(day);
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
           partyName: partyName,

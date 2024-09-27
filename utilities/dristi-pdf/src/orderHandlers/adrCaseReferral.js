@@ -163,7 +163,7 @@ async function adrCaseReferral(req, res, qrCode) {
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
     const additionalComments = order?.comments || "";
     const modeOfAdr = adr?.name || "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -171,7 +171,7 @@ async function adrCaseReferral(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           modeOfAdr: modeOfAdr,
           additionalComments: additionalComments,

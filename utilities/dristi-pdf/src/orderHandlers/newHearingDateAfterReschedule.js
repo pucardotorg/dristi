@@ -148,7 +148,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
     const newHearingDate = order?.orderDetails?.newHearingDate
       ? formatDate(order?.orderDetails?.newHearingDate)
       : "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -156,7 +156,7 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           originalHearingDate,
           date: formattedToday,
           newHearingDate,

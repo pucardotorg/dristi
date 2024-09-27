@@ -183,14 +183,14 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
           "DD-MM-YYYY"
         )
       : "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           year: year,
           caseName: courtCase.caseTitle,
           parties: partyToMakeSubmission?.join(", "),

@@ -214,7 +214,7 @@ async function orderAcceptExtension(req, res, qrCode) {
     const originalOrderDate = originalOrder.createdDate
       ? formatDate(new Date(originalOrder.createdDate), "DD-MM-YYYY")
       : "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -222,7 +222,7 @@ async function orderAcceptExtension(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           orderId: originalOrderNumber,
           orderDate: originalOrderDate,

@@ -243,13 +243,13 @@ async function caseSettlementApplication(req, res, qrCode) {
     const ordinalSuffix = getOrdinalSuffix(day);
     const additionalComments =
       application?.applicationDetails?.additionalComments || "";
-
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtName: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           applicationNumber: applicationNumber,

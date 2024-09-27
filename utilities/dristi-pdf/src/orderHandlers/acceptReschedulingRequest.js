@@ -171,6 +171,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
     }
 
     const formattedToday = formatDate(Date.now());
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
 
     const data = {
       Data: [
@@ -179,7 +180,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
           place: "Kollam",
           state: "Kerala",
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           date: formattedToday,
           partyNames: partyName,
           applicationId: order.orderDetails?.refApplicationId || "",

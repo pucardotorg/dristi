@@ -121,13 +121,13 @@ async function rescheduleRequestJudge(req, res, qrCode) {
         } catch (error) {
             return renderError(res, "Cannot convert epoch time to date", 500, error);
         }
-
+        const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
         const data = {
             "Data": [
                 {
                     "courtName": mdmsCourtRoom.name,
                     "caseName": courtCase.caseTitle,
-                    "caseNumber": courtCase.caseNumber,
+                    "caseNumber": caseNumber,
                     "date": stringDate,
                     "originalHearingDate": orderDate,
                     "reasonForRescheduling": application.applicationType,

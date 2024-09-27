@@ -192,15 +192,16 @@ const applicationCaseWithdrawal = async (req, res, qrCode) => {
 
     const currentDate = new Date();
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
           courtComplex: mdmsCourtRoom.name,
           caseType: "Negotiable Instruments Act 138 A",
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          caseNo: courtCase.caseNumber,
+          caseNo: caseNumber,
           judgeName: judgeDetails.name, // FIXME: employee.user.name
           courtDesignation: judgeDetails.designation, //FIXME: mdmsDesignation.name,
           addressOfTheCourt: mdmsCourtRoom.state, //FIXME: mdmsCourtRoom.address,

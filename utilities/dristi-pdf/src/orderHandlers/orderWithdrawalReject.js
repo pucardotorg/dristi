@@ -204,6 +204,7 @@ async function orderWithdrawalReject(req, res, qrCode) {
       application?.applicationDetails?.reasonForWithdrawal || "";
     const summaryReasonForWithdrawal =
       messagesMap?.[localreasonForWithdrawal] || localreasonForWithdrawal;
+    const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
@@ -211,7 +212,7 @@ async function orderWithdrawalReject(req, res, qrCode) {
           place: mdmsCourtRoom.place,
           state: mdmsCourtRoom.state,
           caseName: courtCase.caseTitle,
-          caseNumber: courtCase.caseNumber,
+          caseNumber: caseNumber,
           caseYear: caseYear,
           partyName: partyName,
           partyType: partyType,
