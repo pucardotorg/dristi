@@ -1,13 +1,14 @@
 const caseService = require('../service/caseService');
 const pdfService = require('../service/pdfService');
 const fileService = require('../service/fileService');
+const config = require('../config/config');
  
 exports.generateCasePdf = async (req, res, next) => {
     try {
         const cases = req.body.cases;
 
         const filingNumber = cases.filingNumber || null;
-        const courtName = cases.courtName || null;
+        const courtName = cases.courtName || `${config.courtName}`;
         
         const caseYear = await extractCaseYear(filingNumber);
         const caseNumber = await extractCaseNumber(filingNumber);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import static digit.config.ServiceConstants.*;
 
 
 @Component
@@ -30,14 +31,22 @@ public class SummonsDeliveryEnrichment {
         TaskDetails taskDetails = task.getTaskDetails();
         AuditDetails auditDetails = createAuditDetails(requestInfo);
         String id = idgenUtil.getIdList(requestInfo, task.getTenantId(), config.getSummonsIdFormat(), null, 1).get(0);
+
+        SummonsDetails summonDetails = taskDetails.getSummonDetails();
+        NoticeDetails noticeDetails = taskDetails.getNoticeDetails();
+
+        String docType = task.getTaskType().equals(NOTICE) ? noticeDetails.getDocType() : summonDetails.getDocType();
+        String docSubType = task.getTaskType().equals(NOTICE) ? noticeDetails.getDocSubType() : summonDetails.getDocSubType();
+        String partyType = task.getTaskType().equals(NOTICE) ? noticeDetails.getPartyType() : summonDetails.getPartyType();
+
         return SummonsDelivery.builder()
                 .summonDeliveryId(id)
                 .taskNumber(task.getTaskNumber())
                 .caseId(task.getCnrNumber())
                 .tenantId(config.getEgovStateTenantId())
-                .docType(taskDetails.getSummonDetails().getDocType())
-                .docSubType(taskDetails.getSummonDetails().getDocSubType())
-                .partyType(taskDetails.getSummonDetails().getPartyType())
+                .docType(docType)
+                .docSubType(docSubType)
+                .partyType(partyType)
                 .paymentFees(taskDetails.getDeliveryChannel().getPaymentFees())
                 .paymentStatus(taskDetails.getDeliveryChannel().getPaymentStatus())
                 .paymentTransactionId(taskDetails.getDeliveryChannel().getPaymentTransactionId())

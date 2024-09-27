@@ -55,6 +55,7 @@ public class PdfServiceUtil {
 
                 }
             }
+            log.info("Summons Pdf: {}", summonsPdf);
             SummonsPdfRequest summonsPdfRequest = SummonsPdfRequest.builder()
                     .summonsPdf(summonsPdf).requestInfo(taskRequest.getRequestInfo()).build();
             HttpEntity<SummonsPdfRequest> requestEntity = new HttpEntity<>(summonsPdfRequest, headers);
@@ -78,6 +79,7 @@ public class PdfServiceUtil {
         }
         String issueDateString = (issueDate != null) ? formatDateFromMillis(issueDate) : "";
         String filingNUmber = task.getFilingNumber();
+        String courtName = task.getTaskDetails().getCaseDetails().getCourtName();
         return SummonsPdf.builder()
                 .tenantId(task.getTenantId())
                 .cnrNumber(task.getCnrNumber())
@@ -86,7 +88,7 @@ public class PdfServiceUtil {
                 .caseNumber(extractCaseNumber(filingNUmber))
                 .caseYear(extractCaseYear(filingNUmber))
                 .judgeName(task.getTaskDetails().getCaseDetails().getJudgeName())
-                .courtName(task.getTaskDetails().getCaseDetails().getCourtName())
+                .courtName(courtName == null ? config.getCourtName(): courtName)
                 .hearingDate(task.getTaskDetails().getCaseDetails().getHearingDate().toString())
                 .respondentName(task.getTaskDetails().getRespondentDetails().getName())
                 .respondentAddress(task.getTaskDetails().getRespondentDetails().getAddress().toString())
@@ -95,7 +97,7 @@ public class PdfServiceUtil {
                 .build();
     }
 
-    private String extractCaseNumber(String input) {
+    private String extractCaseYear(String input) {
         if (input == null) {
             return "";
         }
@@ -111,11 +113,11 @@ public class PdfServiceUtil {
         }
     }
 
-    public static String extractCaseYear(String input) {
+    public static String extractCaseNumber(String input) {
         if (input == null) {
             return "";
         }
-        String regex = "-(\\d{4})-";
+        String regex = "-(\\d{6})-";
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
         java.util.regex.Matcher matcher = pattern.matcher(input);
 

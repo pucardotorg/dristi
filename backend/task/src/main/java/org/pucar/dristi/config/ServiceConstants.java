@@ -68,6 +68,10 @@ public class ServiceConstants {
     public static final String WARRANT = "WARRANT";
     public static final String ISSUESUMMON = "ISSUE_SUMMON";
 
+    public static final String SUMMON_SENT = "SUMMON_SENT";
+
+    public static final String NOTICE_SENT = "NOTICE_SENT";
+
     public static final String ISSUENOTICE = "ISSUE_NOTICE";
 
     public static final String DOCUMENT_UPLOAD_QUERY_EXCEPTION = "DOCUMENT_UPLOAD_QUERY_EXCEPTION";

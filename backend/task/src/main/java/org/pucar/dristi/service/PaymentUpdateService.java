@@ -165,9 +165,6 @@ public class PaymentUpdateService {
                     task.setStatus(status);
 
                     TaskRequest taskRequest = TaskRequest.builder().requestInfo(requestInfo).task(task).build();
-                    if (ISSUESUMMON.equalsIgnoreCase(status))
-                        producer.push(config.getTaskIssueSummonTopic(), taskRequest);
-
                     producer.push(config.getTaskUpdateTopic(), taskRequest);
                 }
                 case NOTICE -> {
@@ -179,9 +176,6 @@ public class PaymentUpdateService {
                     task.setStatus(status);
 
                     TaskRequest taskRequest = TaskRequest.builder().requestInfo(requestInfo).task(task).build();
-                    if (ISSUENOTICE.equalsIgnoreCase(status))
-                        producer.push(config.getTaskIssueSummonTopic(), taskRequest);
-
                     producer.push(config.getTaskUpdateTopic(), taskRequest);
                 }
             }

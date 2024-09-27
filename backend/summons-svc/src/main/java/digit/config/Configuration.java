@@ -237,4 +237,7 @@ public class Configuration {
     @Value("${dristi.dev.order.search.url}")
     private String orderSearchPath;
 
+    @Value("${dristi.court.name}")
+    private String courtName;
+
 }
