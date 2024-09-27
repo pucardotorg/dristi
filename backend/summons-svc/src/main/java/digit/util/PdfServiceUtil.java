@@ -20,6 +20,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import static digit.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class PdfServiceUtil {
@@ -68,7 +70,13 @@ public class PdfServiceUtil {
     }
 
     private SummonsPdf createSummonsPdfFromTask(Task task) {
-        String issueDateString = formatDateFromMillis(task.getTaskDetails().getSummonDetails().getIssueDate());
+        Long issueDate = null;
+        if (NOTICE.equals(task.getTaskType())) {
+            issueDate = task.getTaskDetails().getNoticeDetails().getIssueDate();
+        } else if (SUMMON.equals(task.getTaskType())) {
+            issueDate = task.getTaskDetails().getSummonDetails().getIssueDate();
+        }
+        String issueDateString = (issueDate != null) ? formatDateFromMillis(issueDate) : "";
         String filingNUmber = task.getFilingNumber();
         return SummonsPdf.builder()
                 .tenantId(task.getTenantId())

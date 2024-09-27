@@ -62,6 +62,7 @@ class PdfServiceUtilTest {
         when(respondentDetails.getAddress()).thenReturn(address);
         when(taskDetails.getComplainantDetails().getName()).thenReturn("jhdf");
         when(complainantDetails.getAddress()).thenReturn(address);
+        when(task.getTaskType()).thenReturn("SUMMONS");
         ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey, false);
 
         assertNotNull(result);
