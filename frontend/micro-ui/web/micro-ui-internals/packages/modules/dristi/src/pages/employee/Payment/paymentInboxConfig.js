@@ -83,7 +83,8 @@ export const paymentTabInboxConfig = {
                   mdmsConfig: {
                     masterName: "paymentType",
                     moduleName: "payment",
-                    select: "(data) => {return data['payment'].paymentType?.map((item) => {return item?.paymentType;});}",
+                    select:
+                      "(data) => {return data['payment'].paymentType?.filter((item) => item?.paymentType !== `Warrant Court Fee`).map((item) => {return item?.paymentType;});}",
                   },
                   styles: {
                     maxWidth: "300px",

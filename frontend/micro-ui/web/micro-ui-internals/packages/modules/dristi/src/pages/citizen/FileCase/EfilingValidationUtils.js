@@ -2051,10 +2051,6 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
-          ...(action === "E-SIGN" &&
-            caseDetails?.status === CaseWorkflowState.PENDING_E_SIGN && {
-              assignees,
-            }),
         },
       },
       tenantId,

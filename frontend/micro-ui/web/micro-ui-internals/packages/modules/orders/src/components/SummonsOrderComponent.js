@@ -3,6 +3,7 @@ import useSearchCaseService from "../../../dristi/src/hooks/dristi/useSearchCase
 import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import AddParty from "../../../hearings/src/pages/employee/AddParty";
+import useRepondentPincodeDetails from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useRepondentPincodeDetails";
 
 const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckboxChange }) => {
   return (
@@ -181,11 +182,35 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
   const { address, phone_numbers, email } = party?.data || {};
 
+  // console.log("selectedParty", selectedParty);
+
+  // const summonsPincode = useMemo(() => filteredTasks?.[0]?.taskDetails?.respondentDetails?.address?.pincode, [filteredTasks]);
+
+  // const { data: respondentPincodeDetails, isLoading: isRespondentPincodeLoading } = Digit.Hooks.dristi.useRepondentPincodeDetails(
+  //   {
+  //     Criteria: [
+  //       {
+  //         pincode: [summonsPincode],
+  //       },
+  //     ],
+  //   },
+  //   {},
+  //   "dristi",
+  //   Boolean(filteredTasks)
+  // );
+
   const deliveryChannels = useMemo(() => {
     return [
       { type: "SMS", values: phone_numbers || [] },
       { type: "E-mail", values: email || [] },
-      { type: "Post", values: address || [] },
+      {
+        type: "Post",
+        values:
+          address.map((item) => {
+            // console.log("item-address", item);
+            return item;
+          }) || [],
+      },
       orderType === "SUMMONS" && { type: "Via Police", values: address || [] },
     ];
   }, [address, email, orderType, phone_numbers]);

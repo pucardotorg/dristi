@@ -1812,6 +1812,7 @@ function EFilingCases({ path }) {
           workflow: {
             ...caseDetails?.workflow,
             action: data?.action || "E-SIGN",
+            assignes: data?.action === "E-SIGN" && caseDetails?.status === CaseWorkflowState.PENDING_E_SIGN ? caseDetails?.workflow?.assignes : [],
           },
         },
         tenantId,
@@ -1844,7 +1845,9 @@ function EFilingCases({ path }) {
     });
 
     setPrevSelected(selected);
-    history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
+    if (isPendingESign) {
+      history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
+    }
   };
 
   const getFormClassName = useCallback(() => {

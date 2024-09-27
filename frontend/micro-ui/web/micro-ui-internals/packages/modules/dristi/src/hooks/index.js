@@ -26,6 +26,10 @@ import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
 import useGetStatuteSection from "./dristi/useGetStatuteSection.js";
 import useDownloadCasePdf from "./dristi/useDownloadCasePdf.js";
 import useWorkflowDetails from "./dristi/useWorkflowDetails.js";
+import useSummonsPaymentBreakUp from "./dristi/useSummonsPaymentBreakUp.js";
+import { extractFeeMedium, getTaskType } from "../Utils/index.js";
+import useRepondentPincodeDetails from "./dristi/useRepondentPincodeDetails.js";
+
 export const Urls = {
   Authenticate: "/user/oauth/token",
   dristi: {
@@ -61,11 +65,12 @@ export const Urls = {
     fetchBill: "/billing-service/bill/v2/_fetchbill",
     searchBill: "/billing-service/bill/v2/_search",
     eTreasury: "/etreasury/payment/v1/_processChallan",
-    demandCreate: "/billing-service/demand/_create",
     judgeAvailabilityDates: "/scheduler/judge/v1/_availability",
     sendOCR: "/ocr-service/verify",
     receiveOCR: "/ocr-service/data",
     taskDocuments: "/task/v1/document/search",
+    summonsPayment: "/payment-calculator/v1/_calculate",
+    repondentPincodeSearch: "/payment-calculator/hub/v1/_search",
   },
   case: {
     addWitness: "/case/v1/add/witness",
@@ -98,6 +103,8 @@ const dristi = {
   useJudgeAvailabilityDates,
   useGetOCRData,
   useDownloadCasePdf,
+  useSummonsPaymentBreakUp,
+  useRepondentPincodeDetails,
 };
 
 const Hooks = {
@@ -105,7 +112,7 @@ const Hooks = {
 };
 
 const Utils = {
-  dristi: {},
+  dristi: { extractFeeMedium, getTaskType },
 };
 export const CustomizedHooks = {
   Hooks,

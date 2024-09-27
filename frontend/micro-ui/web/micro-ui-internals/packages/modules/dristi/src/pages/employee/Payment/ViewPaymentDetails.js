@@ -1,5 +1,5 @@
 import { Loader, SubmitBar, ActionBar, CustomDropdown, CardLabel, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
@@ -7,7 +7,7 @@ import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService, getFilteredPaymentData } from "../../../Utils";
+import { extractFeeMedium, getFilteredPaymentData, getTaskType } from "../../../Utils";
 
 const paymentTaskType = {
   TASK_SUMMON: "task-summons",
@@ -41,6 +41,21 @@ const paymentOptionConfig = {
   },
 };
 
+const handleTaskSearch = async (businessService, consumerCodeWithoutSuffix, tenantId) => {
+  if (["task-summons", "task-notice"].includes(businessService)) {
+    const {
+      list: [tasksData],
+    } = await Digit.HearingService.searchTaskList({
+      criteria: {
+        tenantId: tenantId,
+        taskNumber: consumerCodeWithoutSuffix,
+      },
+    });
+    return { tasksData };
+  }
+  return {};
+};
+
 const ViewPaymentDetails = ({ location, match }) => {
   const { t } = useTranslation();
   const todayDate = new Date().getTime();
@@ -54,6 +69,9 @@ const ViewPaymentDetails = ({ location, match }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { caseId, filingNumber, consumerCode, businessService, paymentType } = window?.Digit.Hooks.useQueryParams();
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+
+  const consumerCodeWithoutSuffix = consumerCode.split("_")[0];
+  const [tasksData, setTasksData] = useState(null);
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
     {
@@ -73,6 +91,16 @@ const ViewPaymentDetails = ({ location, match }) => {
     caseId || filingNumber,
     caseId || filingNumber
   );
+
+  useEffect(() => {
+    const fetchTaskData = async () => {
+      const { tasksData = {} } = await handleTaskSearch(businessService, consumerCodeWithoutSuffix, tenantId);
+      setTasksData(tasksData);
+    };
+    fetchTaskData();
+  }, [businessService, consumerCode, consumerCodeWithoutSuffix, tenantId]);
+  const summonsPincode = useMemo(() => tasksData?.taskDetails?.respondentDetails?.address?.pincode, [tasksData]);
+  const channelId = useMemo(() => extractFeeMedium(tasksData?.taskDetails?.deliveryChannels?.channelName || ""), [tasksData]);
 
   const caseDetails = useMemo(
     () => ({
@@ -129,14 +157,33 @@ const ViewPaymentDetails = ({ location, match }) => {
     },
     {},
     "dristi",
-    Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0")
+    Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0" && paymentType?.toLowerCase()?.includes("case"))
   );
+
+  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
+    {
+      Criteria: [
+        {
+          channelId: channelId,
+          receiverPincode: summonsPincode,
+          tenantId: tenantId,
+          Id: consumerCodeWithoutSuffix,
+          taskType: getTaskType(businessService),
+        },
+      ],
+    },
+    {},
+    "dristi",
+    Boolean(!paymentType?.toLowerCase()?.includes("application") && !paymentType?.toLowerCase()?.includes("case") && tasksData)
+  );
+
   const totalAmount = useMemo(() => {
-    const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || 0;
+    const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || breakupResponse?.Calculation?.[0]?.totalAmount || 0;
     return parseFloat(totalAmount).toFixed(2);
-  }, [calculationResponse?.Calculation]);
+  }, [calculationResponse?.Calculation, breakupResponse?.Calculation]);
+
   const paymentCalculation = useMemo(() => {
-    const breakdown = calculationResponse?.Calculation?.[0]?.breakDown || [];
+    const breakdown = calculationResponse?.Calculation?.[0]?.breakDown || breakupResponse?.Calculation?.[0]?.breakDown || [];
     const updatedCalculation = breakdown.map((item) => ({
       key: item?.type,
       value: item?.amount,
@@ -151,7 +198,7 @@ const ViewPaymentDetails = ({ location, match }) => {
     });
 
     return updatedCalculation;
-  }, [calculationResponse?.Calculation]);
+  }, [calculationResponse?.Calculation, breakupResponse?.Calculation, totalAmount]);
   const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : null;
 
@@ -161,14 +208,6 @@ const ViewPaymentDetails = ({ location, match }) => {
     let taskHearingNumber = "";
     let taskOrderType = "";
     if (["task-notice", "task-summons"].includes(businessService)) {
-      const {
-        list: [tasksData],
-      } = await Digit.HearingService.searchTaskList({
-        criteria: {
-          tenantId: tenantId,
-          taskNumber: consumerCodeWithoutSuffix,
-        },
-      });
       const {
         list: [{ orderNumber, hearingNumber, orderType }],
       } = await ordersService.searchOrder({
@@ -314,7 +353,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         </div>
         <div style={{ display: "flex", flexDirection: "row-reverse", gap: 40, justifyContent: "space-between", width: "100%" }}>
           <div className="payment-calculator-wrapper" style={{ width: "33%" }}>
-            {getFilteredPaymentData(paymentType, paymentCalculation, bill).map((item) => (
+            {getFilteredPaymentData(paymentType, paymentCalculation, bill)?.map((item) => (
               <div
                 key={item.key}
                 style={{

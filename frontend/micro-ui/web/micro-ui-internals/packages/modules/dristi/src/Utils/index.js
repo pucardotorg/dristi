@@ -111,6 +111,28 @@ export const removeInvalidNameParts = (name) => {
 };
 
 export const getFilteredPaymentData = (paymentType, paymentData, bill) => {
-  const processedPaymentType = paymentType?.trim()?.toLowerCase();
-  return !["case filing fee"].includes(processedPaymentType) ? [{ key: "Total Amount", value: bill?.totalAmount }] : paymentData;
+  const processedPaymentType = paymentType?.toLowerCase()?.includes("application");
+  return processedPaymentType ? [{ key: "Total Amount", value: bill?.totalAmount }] : paymentData;
+};
+
+export const getTaskType = (businessService) => {
+  const normalizedBusinessService = businessService?.trim().toLowerCase();
+  switch (normalizedBusinessService) {
+    case "task-summons":
+      return "SUMMON";
+    case "task-notice":
+      return "NOTICE";
+    default:
+      return "WARRANT";
+  }
+};
+
+export const extractFeeMedium = (feeName) => {
+  const feeMediums = {
+    post: "EPOST",
+    email: "EMAIL",
+    sms: "SMS",
+    police: "POLICE",
+  };
+  return feeMediums?.[feeName?.toLowerCase()] || "";
 };
