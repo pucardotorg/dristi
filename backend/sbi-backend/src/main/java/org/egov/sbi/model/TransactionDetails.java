@@ -142,8 +142,7 @@ public class TransactionDetails {
     @JsonProperty("mobileNumber")
     private String mobileNumber;
 
-    @Override
-    public String toString() {
+    public String toSingleRequestString() {
         return merchantId + "|" +
                 operatingMode + "|" +
                 merchantCountry + "|" +

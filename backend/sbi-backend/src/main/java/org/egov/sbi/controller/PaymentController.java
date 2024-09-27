@@ -37,6 +37,7 @@ public class PaymentController {
         log.info("Transaction request processed successfully: {}", request);
         return TransactionResponse.builder()
                 .encryptedString(transactionMap.get("encryptedString"))
+                .encryptedMultiAccountString(transactionMap.get("encryptedMultiAccountString"))
                 .transactionUrl(transactionMap.get("transactionUrl"))
                 .responseInfo(responseInfo)
                 .merchantId(transactionMap.get("merchantId")).build();

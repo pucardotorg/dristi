@@ -55,12 +55,17 @@ public class PaymentService {
 
     public Map<String, String> processTransaction(TransactionRequest request) {
         paymentEnrichment.enrichTransaction(request);
-        String transactionString = request.getTransactionDetails().toMultiAccountPaymentString();
         SecretKeySpec secretKeySpec = aes256Util.readKeyBytes(config.getSbiSecretKey());
-        String encryptedString = aes256Util.encrypt(transactionString, secretKeySpec);
+
+        String multiAccountString = request.getTransactionDetails().toMultiAccountPaymentString();
+        String singleRequestString = request.getTransactionDetails().toSingleRequestString();
+
+        String encryptedMultiAccountString = aes256Util.encrypt(multiAccountString, secretKeySpec);
+        String encryptedSingleRequestString = aes256Util.encrypt(singleRequestString, secretKeySpec);
 
         Map<String, String> transactionMap = new HashMap<>();
-        transactionMap.put("encryptedString", encryptedString);
+        transactionMap.put("encryptedString", encryptedSingleRequestString);
+        transactionMap.put("encryptedMultiAccountString", encryptedMultiAccountString);
         transactionMap.put("transactionUrl", config.getSbiTransactionUrl());
         transactionMap.put("merchantId", config.getSbiMerchantId());
 

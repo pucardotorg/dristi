@@ -22,6 +22,9 @@ public class TransactionResponse {
     @JsonProperty("encryptedString")
     private String encryptedString;
 
+    @JsonProperty("encryptedMultiAccountString")
+    private String encryptedMultiAccountString;
+
     @JsonProperty("merchantId")
     private String merchantId;
 }
