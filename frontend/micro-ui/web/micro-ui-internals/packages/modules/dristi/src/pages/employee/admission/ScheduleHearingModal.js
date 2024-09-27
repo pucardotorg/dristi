@@ -8,75 +8,6 @@ import { HomeService } from "../../../../../home/src/hooks/services";
 import { Urls } from "../../../hooks";
 import { InfoCard } from "@egovernments/digit-ui-components";
 
-const hearingTypeOptions = [
-  {
-    id: 1,
-    type: "EVIDENCE",
-    isactive: true,
-    code: "EVIDENCE",
-  },
-  {
-    id: 2,
-    type: "ADMIN",
-    isactive: true,
-    code: "ADMIN",
-  },
-  {
-    id: 3,
-    type: "82_83_HEARING",
-    isactive: true,
-    code: "82_83_HEARING",
-  },
-  {
-    id: 4,
-    type: "NBW_HEARING",
-    isactive: true,
-    code: "NBW_HEARING",
-  },
-  {
-    id: 5,
-    type: "ADMISSION",
-    isactive: true,
-    code: "ADMISSION",
-  },
-  {
-    id: 6,
-    type: "PLEA",
-    isactive: true,
-    code: "PLEA",
-  },
-  {
-    id: 7,
-    type: "ARGUMENTS",
-    isactive: true,
-    code: "ARGUMENTS",
-  },
-  {
-    id: 8,
-    type: "JUDGEMENT",
-    isactive: true,
-    code: "JUDGEMENT",
-  },
-  {
-    id: 9,
-    type: "SENTENCE",
-    isactive: true,
-    code: "SENTENCE",
-  },
-  {
-    id: 10,
-    type: "BAIL",
-    isactive: true,
-    code: "BAIL",
-  },
-  {
-    id: 11,
-    type: "OTHERS",
-    isactive: true,
-    code: "OTHERS",
-  },
-];
-
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
@@ -308,7 +239,6 @@ function ScheduleHearing({
   const setPurposeValue = (value, input) => {
     setScheduleHearingParam({ ...scheduleHearingParams, purpose: isCaseAdmitted ? value : value.code });
   };
-  console.log("STATUS", status);
   const handleClickDate = (label) => {
     if (status === "OPTOUT") {
       const newSelectedChip = selectedChip.includes(label) ? null : label;
@@ -354,7 +284,6 @@ function ScheduleHearing({
     if (status !== "OPTOUT") {
       const dateArr = data.date.split(" ").map((date, i) => (i === 0 ? date.slice(0, date.length - 2) : date));
       const date = new Date(dateArr.join(" "));
-      console.log(dateArr, " DATE ARRAYE");
       const reqBody = {
         order: {
           createdDate: new Date().getTime(),
@@ -414,7 +343,6 @@ function ScheduleHearing({
         })
         .catch((err) => {
           setIsSubmitDisabled(false);
-          console.log("err", err);
         });
     } else if (status && status === "OPTOUT") {
       const individualId = await fetchBasicUserInfo();
@@ -456,7 +384,6 @@ function ScheduleHearing({
         })
         .catch((err) => {
           setIsSubmitDisabled(false);
-          console.log("err", err);
         });
     }
   };

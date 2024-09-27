@@ -128,11 +128,6 @@ function ScheduleAdmission({
     }
   }, [dateResponse]);
 
-  const defaultHearingType = useMemo(() => getMDMSObj(hearingTypes, "type", "EVIDENCE"), [hearingTypes]);
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <div className="schedule-admission-main">
       {selectedChip && <CustomCaseInfoDiv t={t} data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
@@ -151,13 +146,9 @@ function ScheduleAdmission({
       ) : (
         <CustomDropdown
           t={t}
-          deafultValue={defaultHearingType}
-          defaulValue={defaultHearingType}
           onChange={(e) => {
             setPurposeValue(e, config.name);
-            console.log(e);
           }}
-          // value={userType}
           config={dropdownConfig}
         ></CustomDropdown>
       )}

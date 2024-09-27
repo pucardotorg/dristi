@@ -7,74 +7,7 @@ import useSearchCaseService from "@egovernments/digit-ui-module-dristi/src/hooks
 import { HomeService, Urls } from "../../hooks/services";
 import { InfoCard } from "@egovernments/digit-ui-components";
 
-const hearingTypeOptions = [
-  {
-    id: 1,
-    type: "EVIDENCE",
-    isactive: true,
-    code: "EVIDENCE",
-  },
-  {
-    id: 2,
-    type: "ADMIN",
-    isactive: true,
-    code: "ADMIN",
-  },
-  {
-    id: 3,
-    type: "82_83_HEARING",
-    isactive: true,
-    code: "82_83_HEARING",
-  },
-  {
-    id: 4,
-    type: "NBW_HEARING",
-    isactive: true,
-    code: "NBW_HEARING",
-  },
-  {
-    id: 5,
-    type: "ADMISSION",
-    isactive: true,
-    code: "ADMISSION",
-  },
-  {
-    id: 6,
-    type: "PLEA",
-    isactive: true,
-    code: "PLEA",
-  },
-  {
-    id: 7,
-    type: "ARGUMENTS",
-    isactive: true,
-    code: "ARGUMENTS",
-  },
-  {
-    id: 8,
-    type: "JUDGEMENT",
-    isactive: true,
-    code: "JUDGEMENT",
-  },
-  {
-    id: 9,
-    type: "SENTENCE",
-    isactive: true,
-    code: "SENTENCE",
-  },
-  {
-    id: 10,
-    type: "BAIL",
-    isactive: true,
-    code: "BAIL",
-  },
-  {
-    id: 11,
-    type: "OTHERS",
-    isactive: true,
-    code: "OTHERS",
-  },
-];
+const hearingTypeOptions = [{}];
 
 const dropdownConfig = {
   label: "HEARING_TYPE",
@@ -423,7 +356,6 @@ function ScheduleHearing({
         })
         .catch((err) => {
           setIsSubmitDisabled(false);
-          console.log("err", err);
         });
     } else if (status && status === "OPTOUT") {
       const individualId = await fetchBasicUserInfo();
@@ -465,7 +397,6 @@ function ScheduleHearing({
         })
         .catch((err) => {
           setIsSubmitDisabled(false);
-          console.log("err", err);
         });
     }
   };
@@ -529,7 +460,6 @@ function ScheduleHearing({
             defaulValue={hearingTypeOptions[4]}
             onChange={(e) => {
               setPurposeValue(e, config.name);
-              console.log(e);
             }}
             config={dropdownConfig}
           ></CustomDropdown>

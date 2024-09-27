@@ -13,11 +13,7 @@ const formatDate = (epochTime) => {
 
 function HearingTranscriptModal({ t, hearing, setShowHearingTranscriptModal }) {
   const Heading = () => {
-    return (
-      <h1 className="heading-m">{`${t(hearing?.hearingType)} ${
-        ["NBW_HEARING", "82_83_HEARING"].includes(hearing?.hearingType) ? "" : "Hearing"
-      } - ${formatDate(hearing?.startTime)}`}</h1>
-    );
+    return <h1 className="heading-m">{`${t(hearing?.hearingType)} Hearing- ${formatDate(hearing?.startTime)}`}</h1>;
   };
 
   const CloseBtn = (props) => {
