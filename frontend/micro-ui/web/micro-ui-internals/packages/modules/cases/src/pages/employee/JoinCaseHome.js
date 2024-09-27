@@ -208,7 +208,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [showEditRespondentDetailsModal, setShowEditRespondentDetailsModal] = useState(false);
   const [showConfirmSummonModal, setShowConfirmSummonModal] = useState(false);
 
-  const [isLitigantPartOfCase, setIsLitigantPartOfCase] = useState(false);
   const [step, setStep] = useState(0);
   const [caseNumber, setCaseNumber] = useState("");
   const [caseDetails, setCaseDetails] = useState({});
@@ -256,6 +255,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [accusedIdVerificationDocument, setAccusedIdVerificationDocument] = useState();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isAttendeeAdded, setIsAttendeeAdded] = useState(false);
+
+  const [registerId, setRegisterId] = useState({});
 
   const [nextHearing, setNextHearing] = useState("");
 
@@ -504,6 +505,11 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     }
   };
 
+  const isAttendingHearing = useMemo(() => {
+    if (individualId && nextHearing?.attendees) return nextHearing?.attendees?.some((attendee) => attendee?.individualId === individualId);
+    return false;
+  }, [individualId, nextHearing?.attendees]);
+
   const searchLitigantInRepresentives = useCallback(() => {
     const representative = caseDetails?.representatives?.find((data) =>
       data?.representing?.find((rep) => rep?.individualId === selectedParty?.individualId && rep?.isActive === true)
@@ -586,11 +592,12 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
       if (userType && userType?.value === "Litigant" && selectedParty?.label && !selectedParty?.individualId && representingYourself) {
         setIsDisabled(false);
       } else if (userType && userType?.value === "Advocate" && selectedParty?.label) {
-        const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
+        const { isFound: advIsFound, representative, partyType } = searchAdvocateInRepresentives(advocateId);
         const { isFound } = searchLitigantInRepresentives();
         if (
           (isFound && roleOfNewAdvocate?.value) ||
           (!isFound && selectedParty?.partyType?.includes(partyType)) ||
+          (advIsFound && representative?.representing?.some((represent) => represent?.individualId === selectedParty?.individualId) !== undefined) ||
           (!advIsFound && ((isFound && roleOfNewAdvocate?.value) || !isFound))
         ) {
           setIsDisabled(false);
@@ -783,7 +790,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               </div>
             </div>
             <p style={{ fontSize: "12px" }}>
-              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"F-<StatuteSection>-<YYYY>-<6 digit sequence number>"}
+              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"KL-<6 digit sequence number>-<YYYY>"}
             </p>
           </LabelFieldPair>
           {errors?.caseNumber && (
@@ -1441,7 +1448,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   label={
                     caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent
                       ? "Submit Response"
-                      : isLitigantPartOfCase
+                      : !isAttendingHearing
                       ? "Confirm attendance in summon"
                       : t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
                   }
@@ -1450,7 +1457,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                     if (caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent) {
                       setShowSubmitResponseModal(true);
                     } else {
-                      if (isLitigantPartOfCase) {
+                      if (!isAttendingHearing) {
                         closeModal();
                         setShowConfirmSummonModal(true);
                       } else
@@ -1678,12 +1685,11 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         setCaseNumber(searchCaseResult?.filingNumber);
       } else {
         if (userType?.value === "Litigant") {
-          const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId) !== undefined;
-          if (isFound) {
+          const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId);
+          if (isFound !== undefined) {
             setStep(8);
             setMessageHeader(t(JoinHomeLocalisation.ALREADY_PART_OF_CASE));
             setSuccess(true);
-            setIsLitigantPartOfCase(true);
           } else {
             setStep(step + 1);
           }
@@ -1703,10 +1709,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           barRegNumber: undefined,
         });
       } else if (userType && userType?.value === "Advocate") {
+        const { isFound: advIsFound, representative } = searchAdvocateInRepresentives(advocateId);
+
         if (selectedParty?.individualId) {
-          setParties([...parties, selectedParty]);
           setParty(selectedParty);
-          if (roleOfNewAdvocate?.value !== "SUPPORTING_ADVOCATE") {
+          if (advIsFound && representative?.representing?.some((represent) => represent?.individualId === selectedParty?.individualId)) {
+            setStep(8);
+            setMessageHeader(`${t(JoinHomeLocalisation.ALREADY_REPRESENTING)} ${selectedParty?.fullName}`);
+            setSuccess(true);
+          } else if (roleOfNewAdvocate?.value !== "SUPPORTING_ADVOCATE") {
             const { isFound, representative } = searchLitigantInRepresentives();
             if (isFound && representative?.advocateId === advocateId) {
               setStep(8);
@@ -2470,12 +2481,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     adovacteVakalatnama?.adcVakalatnamaFileUpload?.document,
     advocateDetailForm?.additionalDetails?.username,
     advocateDetailForm?.advocateBarRegNumberWithName,
+    advocateDetailForm?.barRegistrationNumber,
+    advocateDetailForm?.id,
     advocateDetailForm?.vakalatnamaFileUpload?.document,
     advocateId,
     affidavitText,
     caseDetails?.additionalDetails,
     caseDetails?.cnrNumber,
-    caseDetails?.filingNumber,
     caseDetails?.filingNumber,
     caseDetails?.id,
     caseDetails?.litigants,
@@ -2488,15 +2500,16 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     name?.familyName,
     name?.givenName,
     name?.otherNames,
-    parties,
     replaceAdvocateDocuments?.advocateCourtOrder?.document,
     replaceAdvocateDocuments?.nocFileUpload?.document,
     representingYourself,
     respondentList,
     roleOfNewAdvocate?.value,
+    searchAdvocateInRepresentives,
     searchCaseResult,
     searchLitigantInRepresentives,
     selectedParty,
+    sourceType,
     step,
     t,
     tenantId,
@@ -2661,16 +2674,25 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         return {
           continue: true,
         };
+      } else {
+        setShowErrorToast(true);
+        setIsAttendeeAdded(false);
+        return { continue: false };
       }
     }
   };
 
+  const handleRegisterRespondentModalClose = () => {
+    setShow(true);
+    setShowEditRespondentDetailsModal(false);
+    setAccusedRegisterFormData({});
+    setOtp("");
+    setSelectedParty(parties?.find((party) => party?.key === selectedParty?.key));
+  };
+
   const registerRespondentConfig = useMemo(() => {
     return {
-      handleClose: () => {
-        setShow(true);
-        setShowEditRespondentDetailsModal(false);
-      },
+      handleClose: () => handleRegisterRespondentModalClose(),
       heading: { label: "" },
       actionSaveLabel: "",
       isStepperModal: true,
@@ -2693,8 +2715,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           actionSaveLabel: t("VERIFY_WITH_OTP"),
           actionCancelLabel: t("BACK"),
           actionCancelOnSubmit: () => {
-            setShow(true);
-            setShowEditRespondentDetailsModal(false);
+            handleRegisterRespondentModalClose();
           },
           isDisabled:
             accusedRegisterFormData?.respondentType &&
@@ -2729,7 +2750,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           actionSaveOnSubmit: async () => {
             return await otpVerificationAction();
           },
-          async: true,
+          actionCancelOnSubmit: () => {
+            setOtp("");
+          },
           isDisabled: otp?.length === 6 ? false : true,
         },
         !isAccusedRegistered && {
@@ -2741,6 +2764,17 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               config={uploadIdConfig}
               isAdvocateUploading={true}
               onFormValueChange={(setValue, formData) => {
+                const documentData = {
+                  fileStore: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.fileStoreId?.fileStoreId,
+                  documentType: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.type,
+                  identifierType: formData?.SelectUserTypeComponent?.selectIdType?.type,
+                  additionalDetails: {
+                    fileName: formData?.SelectUserTypeComponent?.ID_Proof?.[0]?.[1]?.file?.name,
+                    fileType: "respondent-response",
+                  },
+                };
+                if (!isEqual(documentData, registerId)) setRegisterId(documentData);
+
                 if (!isEqual(accusedIdVerificationDocument, formData)) setAccusedIdVerificationDocument(formData);
               }}
             />
@@ -2801,11 +2835,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             };
             return await updateRespondentDetails(data, documentData);
           },
-          isDisabled:
-            accusedIdVerificationDocument?.SelectUserTypeComponent?.ID_Proof?.length > 0 &&
-            accusedIdVerificationDocument?.SelectUserTypeComponent?.selectIdType?.type
-              ? false
-              : true,
+          actionCancelType: "JUMP",
+          jumpValue: 2,
+          async: true,
+          actionCancelOnSubmit: () => {
+            setOtp("");
+          },
+          isDisabled: registerId?.fileStore && Boolean(accusedIdVerificationDocument?.SelectUserTypeComponent?.selectIdType?.type) ? false : true,
         },
         {
           type: "success",
@@ -2815,6 +2851,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               successMessage={isAccusedRegistered ? "ACCUSED_MOBILE_REGISTERED" : "RESPONDENT_DETAILS_VERIFIED"}
               bannerSubText={"EDIT_REQUEST_FROM_COMPLAINANT"}
               submitButtonAction={() => {
+                setOtp("");
+                setAccusedRegisterFormData({});
                 setShowEditRespondentDetailsModal(false);
                 setShow(isAccusedRegistered ? false : true);
               }}
@@ -2831,10 +2869,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     t,
     otp,
     isAccusedRegistered,
+    registerId,
     accusedIdVerificationDocument,
     registerRespondentFormAction,
     otpVerificationAction,
-    userData,
+    userData?.info?.mobileNumber,
+    userData?.info?.userName,
+    userData?.info?.uuid,
+    userData?.info?.id,
+    userData?.info?.type,
     tenantId,
     updateRespondentDetails,
   ]);
@@ -2842,7 +2885,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const confirmSummonConfig = useMemo(() => {
     return {
       handleClose: () => {
-        setShowSubmitResponseModal(false);
+        setShowConfirmSummonModal(false);
       },
       heading: { label: "" },
       actionSaveLabel: "",
@@ -2858,6 +2901,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             const resp = await onConfirmAttendee();
             if (resp.continue) setShowConfirmSummonModal(false);
           },
+          actionCancelOnSubmit: () => setShowConfirmSummonModal(false),
         },
       ].filter(Boolean),
     };

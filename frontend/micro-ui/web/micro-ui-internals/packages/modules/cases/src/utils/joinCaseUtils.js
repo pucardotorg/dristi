@@ -1,6 +1,7 @@
 import { userTypeOptions } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/registration/config";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { CASEService } from "../hooks/services";
+import { getUserDetails } from "@egovernments/digit-ui-module-dristi/src/hooks/useGetAccessToken";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -54,19 +55,14 @@ export const selectOtp = async (isUserRegistered, mobileNumber, otp, tenantId, n
       };
 
       const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.registerUser(requestData, tenantId);
-
       if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
         info.tenantId = Digit.ULBService.getStateId();
       }
+      localStorage.setItem(`temp-refresh-token-${mobileNumber}`, tokens?.refresh_token);
       return { info: info, ...tokens };
     }
   } catch (err) {
-    // setCanSubmitOtp(true);
-    // setOtpError(err?.response?.data?.error_description === "Account locked" ? t("MAX_RETRIES_EXCEEDED") : t("CS_INVALID_OTP"));
-    // setParmas((prev) => ({
-    //   ...prev,
-    //   otp: "",
-    // }));
+    console.error("err :>> ", err);
   }
 };
 
@@ -112,7 +108,7 @@ export const createRespondentIndividualUser = async (data, documentData, tenantI
             "SUBMISSION_DELETE",
             "TASK_VIEWER",
             "CASE_RESPONDER",
-            "HEARING_ACCEPTOR"
+            "HEARING_ACCEPTOR",
           ]?.map((role) => ({
             code: role,
             name: role,
@@ -123,7 +119,21 @@ export const createRespondentIndividualUser = async (data, documentData, tenantI
       userUuid: data?.userDetails?.userUuid,
       userId: data?.userDetails?.userId,
       mobileNumber: data?.userDetails?.mobileNumber,
-      address: data?.addressDetails,
+      address: [
+        {
+          tenantId: data?.addressDetails?.[0]?.tenantId,
+          type: "PERMANENT",
+          doorNo: data?.addressDetails?.[0]?.addressDetails?.doorNo,
+          latitude: data?.addressDetails?.[0]?.addressDetails?.coordinates?.latitude,
+          longitude: data?.addressDetails?.[0]?.addressDetails?.coordinates?.longitude,
+          city: data?.addressDetails?.[0]?.addressDetails?.city,
+          pincode: data?.addressDetails?.[0]?.addressDetails?.pincode,
+          addressLine1: data?.addressDetails?.[0]?.addressDetails?.state,
+          addressLine2: data?.addressDetails?.[0]?.addressDetails?.district,
+          buildingName: data?.addressDetails?.[0]?.addressDetails?.buildingName,
+          street: data?.addressDetails?.[0]?.addressDetails?.locality,
+        },
+      ],
       identifiers: [
         {
           identifierType: identifierType,
@@ -145,11 +155,11 @@ export const createRespondentIndividualUser = async (data, documentData, tenantI
     },
   };
   const response = await window?.Digit.DRISTIService.postIndividualService(Individual, tenantId);
-  // const refreshToken = window.localStorage.getItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
-  // window.localStorage.removeItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
-  // if (refreshToken) {
-  //   await getUserDetails(refreshToken, data?.complainantVerification?.userDetails?.mobileNumber);
-  // }
+  const refreshToken = window.localStorage.getItem(`temp-refresh-token-${response?.Individual?.mobileNumber}`);
+  window.localStorage.removeItem(`temp-refresh-token-${response?.Individual?.mobileNumber}`);
+  if (refreshToken) {
+    await getUserDetails(refreshToken, response?.Individual?.mobileNumber);
+  }
   return response;
 };
 
