@@ -804,6 +804,19 @@ function CaseFileAdmission({ t, path }) {
             tenantId,
           },
         });
+        await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Pending Response",
+            entityType: "case-default",
+            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+            status: "PENDING_RESPONSE",
+            assignedRole: ["CASE_RESPONDER"],
+            cnrNumber: caseDetails?.cnrNumber,
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: true,
+            tenantId,
+          },
+        });
         history.push(
           `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`
         );

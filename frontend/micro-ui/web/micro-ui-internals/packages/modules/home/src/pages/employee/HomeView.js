@@ -378,6 +378,28 @@ const HomeView = () => {
   };
   const JoinCaseHome = Digit?.ComponentRegistryService?.getComponent("JoinCaseHome");
 
+  const getRedirectUrl = (status, caseId, filingNumber) => {
+    const contextPath = window?.contextPath;
+    const userType = userInfoType;
+    const baseUrl = `/${contextPath}/${userType}/dristi/home/view-case`;
+    const params = `caseId=${caseId}&filingNumber=${filingNumber}`;
+
+    switch (status) {
+      case "UNDER_SCRUTINY":
+        return userType === "employee" ? `/${contextPath}/${userType}/dristi/cases?${params}` : `${baseUrl}?${params}&tab=Complaint`;
+      case "ADMISSION_HEARING_SCHEDULED":
+        return `${baseUrl}?${params}&tab=Complaint`;
+      case "PENDING_REGISTRATION":
+        return userType === "employee" ? `/${contextPath}/${userType}/dristi/admission?${params}` : `${baseUrl}?${params}&tab=Complaint`;
+      case "PENDING_E-SIGN":
+        return `/${contextPath}/${userType}/dristi/home/file-case/case?caseId=${caseId}&selected=addSignature`;
+      case "PENDING_RE_E-SIGN":
+        return `/${contextPath}/${userType}/dristi/home/file-case/case?caseId=${caseId}&selected=addSignature`;
+      default:
+        return `${baseUrl}?${params}&tab=Overview`;
+    }
+  };
+
   const onRowClick = (row) => {
     const searchParams = new URLSearchParams();
     if (
@@ -407,31 +429,10 @@ const HomeView = () => {
         "PENDING_ADMISSION_HEARING",
         "PENDING_NOTICE",
         "PENDING_RESPONSE",
+        "UNDER_SCRUTINY",
       ];
       if (statusArray.includes(row?.original?.status)) {
-        if (row?.original?.status === "CASE_ADMITTED") {
-          history.push(
-            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
-          );
-        } else if (row?.original?.status === "ADMISSION_HEARING_SCHEDULED") {
-          history.push(
-            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaint`
-          );
-        } else if (row?.original?.status === "PENDING_REGISTRATION") {
-          history.push(
-            userInfoType === "employee"
-              ? `/${window?.contextPath}/${userInfoType}/dristi/admission?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}`
-              : `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Complaint`
-          );
-        } else if (row?.original?.status === "PENDING_E-SIGN") {
-          history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${row?.original?.id}&selected=addSignature`);
-        } else if (row?.original?.status === "PENDING_RE_E-SIGN") {
-          history.push(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${row?.original?.id}&selected=addSignature`);
-        } else {
-          history.push(
-            `/${window?.contextPath}/${userInfoType}/dristi/home/view-case?caseId=${row?.original?.id}&filingNumber=${row?.original?.filingNumber}&tab=Overview`
-          );
-        }
+        history.push(getRedirectUrl(row?.original?.status, row?.original?.id, row?.original?.filingNumber));
       }
     }
   };

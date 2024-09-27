@@ -59,7 +59,17 @@ const Heading = (props) => {
 
 const CloseBtn = (props) => {
   return (
-    <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+    <div
+      onClick={props?.onClick}
+      style={{
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        paddingRight: "20px",
+        cursor: "pointer",
+        ...(props?.backgroundColor && { backgroundColor: props.backgroundColor }),
+      }}
+    >
       <CloseSvg />
     </div>
   );
@@ -114,7 +124,7 @@ const AdmittedCases = () => {
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const todayDate = new Date().getTime();
   const { downloadPdf } = useDownloadCasePdf();
-  const { data: caseData, isLoading } = useSearchCaseService(
+  const { data: caseData, isLoading, refetch: refetchCaseData } = useSearchCaseService(
     {
       criteria: [
         {
@@ -126,7 +136,8 @@ const AdmittedCases = () => {
     {},
     "dristi",
     caseId,
-    caseId
+    caseId,
+    false
   );
   const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
@@ -138,13 +149,12 @@ const AdmittedCases = () => {
     [caseData, userRoles]
   );
 
-  const { isLoading: isWorkFlowLoading, data: workFlowDetails } = window?.Digit.Hooks.useWorkflowDetails({
+  const { isLoading: isWorkFlowLoading, data: workFlowDetails, revalidate: revalidateWorkflow = () => {} } = window?.Digit.Hooks.useWorkflowDetails({
     tenantId,
     id: caseDetails?.filingNumber,
     moduleCode: "case-default",
     config: {
       enabled: Boolean(caseDetails?.filingNumber && tenantId),
-      cacheTime: 0,
     },
   });
 
@@ -776,6 +786,8 @@ const AdmittedCases = () => {
       },
       tenantId
     ).then((response) => {
+      refetchCaseData();
+      revalidateWorkflow();
       setUpdatedCaseDetails(response?.cases?.[0]);
     });
   };
@@ -1010,7 +1022,17 @@ const AdmittedCases = () => {
     });
     const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
       (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
-    );
+    ) || { startTime: null, hearingId: null };
+
+    if (!(hearingDate || hearingNumber)) {
+      showToast(
+        {
+          isError: true,
+          message: "NO_ADMISSION_HEARING_SCHEDULED",
+        },
+        3000
+      );
+    }
     return { hearingDate, hearingNumber };
   };
 
@@ -1055,20 +1077,22 @@ const AdmittedCases = () => {
         break;
       case "ISSUE_ORDER":
         const { hearingDate, hearingNumber } = await getHearingData();
-        const {
-          list: [orderData],
-        } = await Digit.ordersService.searchOrder({
-          tenantId,
-          criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS, hearingNumber: hearingNumber },
-          pagination: { limit: 1, offset: 0 },
-        });
-        if (orderData?.orderType === "NOTICE") {
-          history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`, {
-            caseId: caseId,
-            tab: "Orders",
+        if (hearingNumber) {
+          const {
+            list: [orderData],
+          } = await Digit.ordersService.searchOrder({
+            tenantId,
+            criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS, hearingNumber: hearingNumber },
+            pagination: { limit: 1, offset: 0 },
           });
-        } else {
-          handleIssueNotice(hearingDate, hearingNumber);
+          if (orderData?.orderType === "NOTICE") {
+            history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`, {
+              caseId: caseId,
+              tab: "Orders",
+            });
+          } else {
+            handleIssueNotice(hearingDate, hearingNumber);
+          }
         }
         break;
       case "SCHEDULE_ADMISSION_HEARING":
@@ -1088,52 +1112,54 @@ const AdmittedCases = () => {
       )
     ) {
       const { hearingDate, hearingNumber } = await getHearingData();
-      const date = new Date(hearingDate);
-      const requestBody = {
-        order: {
-          createdDate: new Date().getTime(),
-          tenantId: tenantId,
-          hearingNumber: hearingNumber,
-          filingNumber: filingNumber,
-          cnrNumber: cnrNumber,
-          statuteSection: {
+      if (hearingNumber) {
+        const date = new Date(hearingDate);
+        const requestBody = {
+          order: {
+            createdDate: new Date().getTime(),
             tenantId: tenantId,
-          },
-          orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-          status: "",
-          isActive: true,
-          workflow: {
-            action: OrderWorkflowAction.SAVE_DRAFT,
-            comments: "Creating order",
-            assignes: null,
-            rating: null,
-            documents: [{}],
-          },
-          documents: [],
-          additionalDetails: {
-            formdata: {
-              orderType: {
-                type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                isactive: true,
-                code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
-                name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+            hearingNumber: hearingNumber,
+            filingNumber: filingNumber,
+            cnrNumber: cnrNumber,
+            statuteSection: {
+              tenantId: tenantId,
+            },
+            orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+            status: "",
+            isActive: true,
+            workflow: {
+              action: OrderWorkflowAction.SAVE_DRAFT,
+              comments: "Creating order",
+              assignes: null,
+              rating: null,
+              documents: [{}],
+            },
+            documents: [],
+            additionalDetails: {
+              formdata: {
+                orderType: {
+                  type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                  isactive: true,
+                  code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                  name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                },
+                originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                  date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+                }`,
               },
-              originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
-                date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-              }`,
             },
           },
-        },
-      };
-      ordersService
-        .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
-        .then((res) => {
-          history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
-            caseId: caseDetails?.id,
-            tab: "Orders",
-          });
-        })
-        .catch((err) => {});
+        };
+        ordersService
+          .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+          .then((res) => {
+            history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`, {
+              caseId: caseDetails?.id,
+              tab: "Orders",
+            });
+          })
+          .catch((err) => {});
+      }
     } else {
       setShowModal(true);
       setSubmitModalInfo({
@@ -1359,6 +1385,21 @@ const AdmittedCases = () => {
             tenantId,
           },
         });
+        await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Pending Response",
+            entityType: "case-default",
+            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+            status: "PENDING_RESPONSE",
+            assignedRole: ["CASE_RESPONDER"],
+            cnrNumber: caseDetails?.cnrNumber,
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: true,
+            tenantId,
+          },
+        });
+        refetchCaseData();
+        revalidateWorkflow();
         history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}&orderNumber=${res.order.orderNumber}`);
       })
       .catch((err) => {
@@ -1736,6 +1777,7 @@ const AdmittedCases = () => {
           tenantId={tenantId}
           handleScheduleNextHearing={handleScheduleNextHearing}
           caseAdmitLoader={caseAdmitLoader}
+          caseDetails={caseDetails}
         ></AdmissionActionModal>
       )}
       {showDismissCaseConfirmation && (
@@ -1752,6 +1794,9 @@ const AdmittedCases = () => {
           actionCancelLabel={t("CS_BACK")}
           actionCancelOnSubmit={() => {
             setShowDismissCaseConfirmation(false);
+          }}
+          style={{
+            backgroundColor: "#BB2C2F",
           }}
           children={<div style={{ margin: "16px 0px" }}>{t("DISMISS_CASE_CONFIRMATION_TEXT")}</div>}
           actionSaveOnSubmit={() => {

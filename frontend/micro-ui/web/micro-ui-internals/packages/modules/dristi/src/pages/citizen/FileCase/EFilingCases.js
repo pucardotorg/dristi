@@ -1819,7 +1819,7 @@ function EFilingCases({ path }) {
       tenantId
     ).then(async (res) => {
       await closePendingTask({ status: "PENDING_PAYMENT" });
-      if (actionName === "E-SIGN" || res?.cases?.[0]?.status === "PENDING_PAYMENT") {
+      if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
         await DRISTIService.customApiService(Urls.dristi.pendingTask, {
           pendingTask: {
             name: "Pending Payment",

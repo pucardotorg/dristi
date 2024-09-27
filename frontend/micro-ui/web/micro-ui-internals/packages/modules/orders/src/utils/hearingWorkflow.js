@@ -1,5 +1,5 @@
 export const HearingWorkflowAction = {
-  SETDATE: "SETDATE",
+  SETDATE: "SET_DATE",
   ABANDON: "ABANDON",
   RESCHEDULE: "RESCHEDULE",
   BULK_RESCHEDULE: "BULK_RESCHEDULE",
