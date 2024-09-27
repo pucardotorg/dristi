@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static digit.models.coremodels.user.enums.UserType.CITIZEN;
 
@@ -143,6 +144,11 @@ public class CauseListService {
                     .courtId(config.getCourtEnabled() ? courtId : null)
                     .build();
             List<Hearing> hearingList = getHearingsForCourt(hearingSearchCriteria);
+            if(hearingList.isEmpty()){
+                log.info("No hearings found for court: {}", courtId);
+                return;
+            }
+
             List<CauseList> causeList  = getCauseListFromHearings(hearingList);
             enrichCauseList(causeList);
             Map<String, Integer> hearingTypeMap = getHearingTypeMap(causeList);
@@ -341,16 +347,40 @@ public class CauseListService {
         try {
            List<SlotList> slotLists;
            slotLists = buildSlotList(causeLists);
+           for(SlotList slotList : slotLists){
+               addIndexing(slotList.getCauseLists());
+           }
+            Map<String, List<SlotList>> groupedSlots = slotLists.stream()
+                    .collect(Collectors.groupingBy(SlotList::getSlotName));
+
+           List<HearingListPriority> hearingListPriorities = groupedSlots.entrySet().stream()
+                   .map(entry -> {
+                          List<SlotList> slotList = entry.getValue();
+                          return HearingListPriority.builder()
+                                 .slotName(entry.getKey())
+                                 .slotList(slotList)
+                                 .slotStartTime(slotList.get(0).getSlotStartTime())
+                                 .slotEndTime(slotList.get(0).getSlotEndTime())
+                                 .build();
+                   })
+                   .toList();
+
            SlotRequest slotRequest = SlotRequest.builder()
                    .requestInfo(getRequestInfo())
-                   .slotList(slotLists)
-                   .build();
+                   .hearingListPriority(hearingListPriorities).build();
+
            byteArrayResource =  pdfServiceUtil.generatePdfFromPdfService(slotRequest, config.getEgovStateTenantId(), config.getCauseListPdfTemplateKey());
            log.info("operation = generateCauseListPdf, result = SUCCESS");
         } catch (Exception e) {
             log.error("Error occurred while generating pdf: {}", e.getMessage());
         }
         return byteArrayResource;
+    }
+
+    public void addIndexing(List<CauseList> causeLists){
+        for(CauseList causeList: causeLists){
+            causeList.setIndex(causeLists.indexOf(causeList) + 1);
+        }
     }
     public List<SlotList> buildSlotList(List<CauseList> causeLists) {
         List<SlotList> slots = new ArrayList<>();

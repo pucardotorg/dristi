@@ -33,6 +33,9 @@ public class CauseList {
     @Valid
     private UUID id = null;
 
+    @JsonProperty("index")
+    private Integer index = null;
+
     @JsonProperty("tenantId")
     @NotNull
     private String tenantId = null;
