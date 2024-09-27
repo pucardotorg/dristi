@@ -43,13 +43,17 @@ public class PaymentUpdateService {
 
     private Configuration configuration;
 
+    private CacheService cacheService;
+
     @Autowired
-    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository, Producer producer, Configuration configuration) {
+    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository,
+                                Producer producer, Configuration configuration, CacheService cacheService) {
         this.workflowService = workflowService;
         this.mapper = mapper;
         this.repository = repository;
         this.producer = producer;
         this.configuration = configuration;
+        this.cacheService = cacheService;
     }
 
     public void process(Map<String, Object> record) {
@@ -110,6 +114,7 @@ public class PaymentUpdateService {
             auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
             courtCase.setAuditdetails(auditDetails);
             producer.push(configuration.getCaseUpdateStatusTopic(),courtCase);
+            cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
         });
     }
 
