@@ -10,6 +10,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.CasePdfUtil;
+import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CaseSearchRequest;
@@ -22,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.CASE_DECRYPT_SELF;
 import static org.pucar.dristi.config.ServiceConstants.CASE_PDF_SERVICE_EXCEPTION;
 
 @Service
@@ -40,14 +42,17 @@ public class CasePdfService {
 
     private Producer producer;
 
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+
     @Autowired
-    public CasePdfService(Configuration config, CasePdfUtil casePdfUtil, CaseRepository caseRepository, FileStoreUtil fileStoreUtil, ObjectMapper mapper, Producer producer) {
+    public CasePdfService(Configuration config, CasePdfUtil casePdfUtil, CaseRepository caseRepository, FileStoreUtil fileStoreUtil, ObjectMapper mapper, Producer producer, EncryptionDecryptionUtil encryptionDecryptionUtil) {
         this.config = config;
         this.casePdfUtil = casePdfUtil;
         this.caseRepository = caseRepository;
         this.fileStoreUtil = fileStoreUtil;
         this.mapper = mapper;
         this.producer = producer;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
     }
 
     public CourtCase generatePdf(CaseSearchRequest body) {
@@ -56,6 +61,8 @@ public class CasePdfService {
         try {
             caseRepository.getCases(body.getCriteria(), body.getRequestInfo());
             CourtCase courtCase = body.getCriteria().get(0).getResponseList().get(0);
+            courtCase = encryptionDecryptionUtil.decryptObject(courtCase, CASE_DECRYPT_SELF, CourtCase.class, body.getRequestInfo());
+
             if (!CollectionUtils.isEmpty(courtCase.getDocuments())) {
                 for (Document document : courtCase.getDocuments()) {
                     JsonNode additionalDetailsNode = mapper.convertValue(document.getAdditionalDetails(), JsonNode.class);
