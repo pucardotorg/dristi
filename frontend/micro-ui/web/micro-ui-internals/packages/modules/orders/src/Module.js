@@ -18,7 +18,7 @@ import SBIEpostPayment from "./pages/employee/SBIEpostPayment";
 
 export const OrdersModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
-  const moduleCode = ["orders", "hearings", "common", "workflow"];
+  const moduleCode = ["orders", "hearings", "common", "case", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({
     stateCode,

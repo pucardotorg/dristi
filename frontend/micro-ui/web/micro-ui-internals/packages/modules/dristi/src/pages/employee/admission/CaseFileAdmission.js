@@ -62,7 +62,7 @@ function CaseFileAdmission({ t, path }) {
   const moduleCode = "case-default";
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
 
-  const { data: caseFetchResponse, isLoading } = useSearchCaseService(
+  const { data: caseFetchResponse, isLoading, refetch } = useSearchCaseService(
     {
       criteria: [
         {
@@ -78,7 +78,7 @@ function CaseFileAdmission({ t, path }) {
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
 
-  const { isLoading: isWorkFlowLoading, data: workFlowDetails } = window?.Digit.Hooks.useWorkflowDetailsV2({
+  const { isLoading: isWorkFlowLoading, data: workFlowDetails, revalidate } = window?.Digit.Hooks.useWorkflowDetailsV2({
     tenantId,
     id: caseDetails?.filingNumber,
     moduleCode,
@@ -222,6 +222,8 @@ function CaseFileAdmission({ t, path }) {
       tenantId
     ).then((response) => {
       setUpdatedCaseDetails(response?.cases?.[0]);
+      refetch();
+      revalidate();
       return response;
     });
   };

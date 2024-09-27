@@ -34,6 +34,7 @@ import {
 import Modal from "../../../components/Modal";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { removeInvalidNameParts } from "../../../Utils";
+import useWorkflowDetails from "../../../hooks/dristi/useWorkflowDetails";
 
 const defaultSearchValues = {};
 
@@ -124,7 +125,7 @@ const AdmittedCases = () => {
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const todayDate = new Date().getTime();
   const { downloadPdf } = useDownloadCasePdf();
-  const { data: caseData, isLoading, refetch: refetchCaseData } = useSearchCaseService(
+  const { data: caseData, isLoading, refetch: refetchCaseData, isFetching } = useSearchCaseService(
     {
       criteria: [
         {
@@ -135,7 +136,7 @@ const AdmittedCases = () => {
     },
     {},
     "dristi",
-    caseId,
+    filingNumber,
     caseId,
     false
   );
@@ -149,7 +150,12 @@ const AdmittedCases = () => {
     [caseData, userRoles]
   );
 
-  const { isLoading: isWorkFlowLoading, data: workFlowDetails, revalidate: revalidateWorkflow = () => {} } = window?.Digit.Hooks.useWorkflowDetails({
+  const {
+    isLoading: isWorkFlowLoading,
+    data: workFlowDetails,
+    revalidate: revalidateWorkflow = () => {},
+    isFetching: isWorkFlowFetching,
+  } = useWorkflowDetails({
     tenantId,
     id: caseDetails?.filingNumber,
     moduleCode: "case-default",
@@ -1711,7 +1717,7 @@ const AdmittedCases = () => {
       {toast && toastDetails && (
         <Toast error={toastDetails?.isError} label={t(toastDetails?.message)} onClose={() => setToast(false)} style={{ maxWidth: "670px" }} />
       )}
-      {showActionBar && (
+      {showActionBar && !isWorkFlowFetching && (
         <ActionBar className={"e-filing-action-bar"} style={{ justifyContent: "space-between" }}>
           <div style={{ width: "fit-content", display: "flex", gap: 20 }}>
             {(tertiaryAction.action ||

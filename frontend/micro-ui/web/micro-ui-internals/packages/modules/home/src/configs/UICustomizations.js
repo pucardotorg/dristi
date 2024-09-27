@@ -409,14 +409,28 @@ export const UICustomizations = {
           {}
         );
       const tenantId = window?.Digit.ULBService.getStateId();
+      const { data: sentData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Order", [{ name: "SentStatus" }], {
+        select: (data) => {
+          return (data?.Order?.SentStatus || []).flatMap((item) => {
+            return [item?.code];
+          });
+        },
+      });
+      let completeStatusData = requestCriteria.body?.criteria?.completeStatus || [];
+      if (completeStatusData?.length === 0 || (typeof completeStatusData === "object" && !Array.isArray(completeStatusData))) {
+        completeStatusData = sentData;
+      }
+      const isCompleteStatus = Boolean(Object.keys(filterList?.completeStatus || {}).length);
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria.body,
           criteria: {
-            completeStatus: requestCriteria.body?.criteria?.completeStatus,
+            completeStatus: completeStatusData,
             ...filterList,
-            ...(filterList?.orderType ? { orderType: [filterList?.orderType] } : { orderType: [] }),
+            orderType: filterList?.orderType ? [filterList?.orderType?.code] : [],
+            applicationStatus: filterList?.applicationStatus?.code || "",
+            ...(isCompleteStatus && { completeStatus: [filterList?.completeStatus?.code] }),
           },
           tenantId,
           pagination: {
@@ -441,6 +455,8 @@ export const UICustomizations = {
           return t(value); // document status
         case "Issued":
           return `${formatDateDifference(value)} days ago`;
+        case "Order Type":
+          return t(value);
         case "Delivery Channel":
           return caseDetails?.deliveryChannels?.channelName || "N/A";
         default:

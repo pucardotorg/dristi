@@ -1,6 +1,7 @@
 const defaultSearchValues = {
   searchText: "",
   applicationStatus: "",
+  orderType: null,
 };
 
 export const SummonsTabsConfig = {
@@ -21,7 +22,7 @@ export const SummonsTabsConfig = {
         requestBody: {
           apiOperation: "SEARCH",
           criteria: {
-            completeStatus: ["ISSUE_SUMMON", "ISSUE_NOTICE"], // have to do changes
+            completeStatus: ["ISSUE_SUMMON", "ISSUE_NOTICE", "ISSUE_WARRANT"], // have to do changes
           },
         },
         masterName: "commonUiConfig",
@@ -60,7 +61,12 @@ export const SummonsTabsConfig = {
                 disable: false,
                 populators: {
                   name: "orderType",
-                  options: ["SUMMONS", "WARRANT"],
+                  optionsKey: "name",
+                  mdmsConfig: {
+                    moduleName: "Order",
+                    masterName: "CourtStaffOrderType",
+                    select: "(data) => {return data['Order'].CourtStaffOrderType?.map((item) => {return item;});}",
+                  },
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
@@ -78,7 +84,12 @@ export const SummonsTabsConfig = {
                 disable: false,
                 populators: {
                   name: "applicationStatus",
-                  options: ["SIGNED", "SIGN_PENDING"],
+                  optionsKey: "name",
+                  mdmsConfig: {
+                    moduleName: "Order",
+                    masterName: "ESignPendingStatus",
+                    select: "(data) => {return data['Order'].ESignPendingStatus?.map((item) => {return item;});}",
+                  },
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
@@ -89,7 +100,7 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Seach E-process or Case ID",
+                label: "Search E-process",
                 isMandatory: false,
                 type: "text",
                 key: "searchText", // seach text
@@ -114,6 +125,7 @@ export const SummonsTabsConfig = {
               {
                 label: "Status",
                 jsonPath: "documentStatus",
+                additionalCustomization: true,
               },
               {
                 label: "Case Name & ID",
@@ -123,6 +135,7 @@ export const SummonsTabsConfig = {
               {
                 label: "Order Type",
                 jsonPath: "taskType",
+                additionalCustomization: true,
               },
               {
                 label: "Delivery Channel",
@@ -155,7 +168,7 @@ export const SummonsTabsConfig = {
         },
         requestBody: {
           criteria: {
-            completeStatus: ["UNDELIVERED", "NOTICE_SENT", "SUMMON_SENT", "DELIVERED", "ABATED"],
+            completeStatus: [],
           },
         },
         masterName: "commonUiConfig",
@@ -194,7 +207,12 @@ export const SummonsTabsConfig = {
                 disable: false,
                 populators: {
                   name: "orderType",
-                  options: ["SUMMONS", "WARRANT", "NOTICE"],
+                  optionsKey: "name",
+                  mdmsConfig: {
+                    moduleName: "Order",
+                    masterName: "CourtStaffOrderType",
+                    select: "(data) => {return data['Order'].CourtStaffOrderType?.map((item) => {return item;});}",
+                  },
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
@@ -207,12 +225,17 @@ export const SummonsTabsConfig = {
               {
                 label: "Status",
                 isMandatory: false,
-                key: "status",
+                key: "completeStatus",
                 type: "dropdown",
                 disable: false,
                 populators: {
-                  name: "status",
-                  options: ["DELIVERED", "NOT_DELIVERED"],
+                  name: "completeStatus",
+                  optionsKey: "name",
+                  mdmsConfig: {
+                    moduleName: "Order",
+                    masterName: "SentStatus",
+                    select: "(data) => {return data['Order'].SentStatus?.map((item) => {return item;});}",
+                  },
                   optionsCustomStyle: {
                     overflowX: "hidden",
                   },
@@ -223,7 +246,7 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Seach E-process or Case ID",
+                label: "Search E-process",
                 isMandatory: false,
                 type: "text",
                 key: "searchText", // seach text
@@ -248,6 +271,7 @@ export const SummonsTabsConfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+                additionalCustomization: true,
               },
               {
                 label: "Case Name & ID",
@@ -257,6 +281,7 @@ export const SummonsTabsConfig = {
               {
                 label: "Order Type",
                 jsonPath: "taskType",
+                additionalCustomization: true,
               },
               {
                 label: "Delivery Channel",

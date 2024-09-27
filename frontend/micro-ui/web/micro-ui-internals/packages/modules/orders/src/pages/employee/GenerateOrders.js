@@ -428,7 +428,7 @@ const GenerateOrders = () => {
   const pendingTaskDetails = useMemo(() => pendingTaskData?.data || [], [pendingTaskData]);
   const mandatorySubmissionTasks = useMemo(() => {
     const pendingtask = pendingTaskDetails?.filter((obj) =>
-      obj.fields.some((field) => field.key === "referenceId" && field.value.includes(currentOrder?.linkedOrderNumber))
+      obj.fields.some((field) => field.key === "referenceId" && field.value?.includes(currentOrder?.linkedOrderNumber))
     );
     if (pendingtask?.length > 0) {
       return pendingtask?.map((item) =>
@@ -1163,7 +1163,7 @@ const GenerateOrders = () => {
     if ((order?.orderType === "SUMMONS" || orderType === "SUMMONS") && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
-        .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
+        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
         ?.flat();
       assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
@@ -1187,7 +1187,7 @@ const GenerateOrders = () => {
     if ((order?.orderType === "NOTICE" || orderType === "NOTICE") && refId) {
       const assignee = [...complainants?.map((data) => data?.uuid[0])];
       const advocateUuid = Object.keys(allAdvocates)
-        .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
+        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
         ?.flat();
       assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
@@ -1336,6 +1336,16 @@ const GenerateOrders = () => {
       return false;
     }
   };
+
+  const { revalidate: revalidateWorkflow = () => {} } = window?.Digit.Hooks.useWorkflowDetails({
+    tenantId,
+    id: caseDetails?.filingNumber,
+    moduleCode: "case-default",
+    config: {
+      cacheTime: 0,
+      enabled: Boolean(caseDetails?.filingNumber && tenantId),
+    },
+  });
 
   const handleUpdateHearing = async ({ startTime, endTime, action }) => {
     await ordersService.updateHearings(
@@ -1780,7 +1790,7 @@ const GenerateOrders = () => {
     const assignee = [...(respondents?.map((data) => data?.uuid[0]) || [])];
     const advocateUuid =
       Object.keys(allAdvocates)
-        .filter((data) => assignee.includes(allAdvocates?.[data]?.[0]))
+        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
         ?.flat() || [];
     return await DRISTIService.caseUpdateService(
       {
@@ -1798,6 +1808,7 @@ const GenerateOrders = () => {
       tenantId
     ).then(() => {
       refetchCaseData();
+      revalidateWorkflow();
     });
   };
 
@@ -1852,7 +1863,9 @@ const GenerateOrders = () => {
             { tenantId }
           )
           .then(() => {
-            updateCaseDetails("ADMIT");
+            if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
+              updateCaseDetails("ADMIT");
+            }
           })
       );
 
@@ -2028,7 +2041,7 @@ const GenerateOrders = () => {
     if (
       (prevOrder?.orderType === "RESCHEDULE_OF_HEARING_DATE" ||
         (currentOrder?.orderType === "SCHEDULE_OF_HEARING_DATE" &&
-          currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType.includes("respondent")))) &&
+          currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.some((data) => data?.partyType?.includes("respondent")))) &&
       isCaseAdmitted
     ) {
       if (currentOrder?.additionalDetails?.isReIssueNotice) {

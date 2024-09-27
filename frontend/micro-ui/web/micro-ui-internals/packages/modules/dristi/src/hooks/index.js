@@ -25,6 +25,7 @@ import { useGetPendingTask } from "./dristi/useGetPendingTask.js";
 import useEvidenceDetails from "./dristi/useEvidenceDetails.js";
 import useGetStatuteSection from "./dristi/useGetStatuteSection.js";
 import useDownloadCasePdf from "./dristi/useDownloadCasePdf.js";
+import useWorkflowDetails from "./dristi/useWorkflowDetails.js";
 export const Urls = {
   Authenticate: "/user/oauth/token",
   dristi: {
@@ -90,7 +91,7 @@ const dristi = {
   useEvidenceDetails,
   useToast,
   useGetStatuteSection,
-
+  useWorkflowDetails,
   useGetPendingTask,
   useBillSearch,
   useCreateDemand,

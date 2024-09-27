@@ -390,7 +390,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const sentModalConfig = useMemo(() => {
     return {
       handleClose: () => handleCloseActionModal(),
-      heading: { label: t("PRINT_SEND_DOCUMENT") },
+      heading: { label: t("DELIVERY_STATUS_AND_DETAILS") },
       actionSaveLabel: t("UPDATE_STATUS"),
       actionCancelLabel: t("VIEW_DOCUMENT_TEXT"),
       isStepperModal: false,

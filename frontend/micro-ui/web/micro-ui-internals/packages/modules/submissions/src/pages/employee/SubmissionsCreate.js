@@ -136,7 +136,7 @@ const SubmissionsCreate = ({ path }) => {
       APPLICATION: applicationTypeConfig,
     };
     if (Array.isArray(submissionConfigKeys[submissionType])) {
-      if (orderNumber || hearingId || !isCitizen) {
+      if (orderNumber || (hearingId && applicationTypeUrl) || !isCitizen) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
@@ -338,7 +338,7 @@ const SubmissionsCreate = ({ path }) => {
           },
         }),
       };
-    } else if (hearingId && hearingsData?.HearingList?.[0]?.startTime) {
+    } else if (hearingId && hearingsData?.HearingList?.[0]?.startTime && applicationTypeUrl) {
       return {
         submissionType: {
           code: "APPLICATION",
