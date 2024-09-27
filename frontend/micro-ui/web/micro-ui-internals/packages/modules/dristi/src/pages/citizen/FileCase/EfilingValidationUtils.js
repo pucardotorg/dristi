@@ -1085,7 +1085,8 @@ export const updateCaseDetails = async ({
   setFormDataValue,
   action = "SAVE_DRAFT",
   fileStoreId,
-  isCaseReAssigned = false,
+  isSaveDraftEnabled = false,
+  isCaseSignedState = false,
   setErrorCaseDetails = () => {},
 }) => {
   const data = {};
@@ -2033,9 +2034,10 @@ export const updateCaseDetails = async ({
     },
   });
 
-  const assignees = getAllAssignees(caseDetails);
-
-  if (isCaseReAssigned && action === "SAVE_DRAFT") {
+  if (isSaveDraftEnabled && action === "SAVE_DRAFT") {
+    return null;
+  }
+  if (isCaseSignedState && action === "SUBMIT_CASE") {
     return null;
   }
 
@@ -2051,6 +2053,7 @@ export const updateCaseDetails = async ({
         workflow: {
           ...caseDetails?.workflow,
           action: action,
+          assignes: [],
         },
       },
       tenantId,

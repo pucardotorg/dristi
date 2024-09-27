@@ -206,8 +206,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
       {
         type: "Post",
         values:
-          address.map((item) => {
-            // console.log("item-address", item);
+          address?.map((item) => {
             return item;
           }) || [],
       },

@@ -51,6 +51,7 @@ const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, 
                 }}
                 config={config.populators}
                 errorStyle={errors?.[config.name]}
+                disable={config?.disable}
               />
               {errors[config.name] && <CardLabelError>{t(config.error)}</CardLabelError>}
             </div>

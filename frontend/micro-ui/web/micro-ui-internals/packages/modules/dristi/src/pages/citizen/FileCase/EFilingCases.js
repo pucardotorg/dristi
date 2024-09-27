@@ -775,7 +775,7 @@ function EFilingCases({ path }) {
           };
         });
       });
-      if ((!isCaseReAssigned && !isPendingESign) || selected === "addSignature" || selected === "reviewCaseFile") {
+      if ((!isCaseReAssigned && !isPendingESign && !isPendingReESign) || selected === "addSignature" || selected === "reviewCaseFile") {
         return modifiedFormData;
       }
     }
@@ -1033,7 +1033,7 @@ function EFilingCases({ path }) {
             });
           });
           let updatedBody = [];
-          if (Object.keys(scrutinyObj).length > 0 || isPendingESign) {
+          if (Object.keys(scrutinyObj).length > 0 || isPendingESign || isPendingReESign) {
             updatedBody = config.body
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
@@ -1059,7 +1059,10 @@ function EFilingCases({ path }) {
                 if (selected === "delayApplications" && formComponent.component === "CustomRadioInfoComponent") {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
-                const modifiedFormComponent = isPendingESign ? formComponent : structuredClone(formComponent);
+                if (selected === "complaiantDetails" && formComponent.component === "CustomRadioInfoComponent") {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
+                }
+                const modifiedFormComponent = isPendingESign || isPendingReESign ? formComponent : structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
                 }
@@ -1081,7 +1084,7 @@ function EFilingCases({ path }) {
                   );
                 }
 
-                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || judgeObj ? false : true;
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || (judgeObj && !isPendingReESign) ? false : true;
 
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
                   if (formComponent.component == "SelectUploadFiles") {
@@ -1142,6 +1145,7 @@ function EFilingCases({ path }) {
     t,
     scrutinyObj,
     isPendingESign,
+    isPendingReESign,
   ]);
 
   const activeForms = useMemo(() => {
@@ -1561,7 +1565,8 @@ function EFilingCases({ path }) {
         setFormDataValue: setFormDataValue.current,
         action,
         setErrorCaseDetails,
-        isCaseReAssigned,
+        isCaseSignedState: isPendingESign || isPendingReESign,
+        isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
         ...(res && { fileStoreId: res?.data?.cases?.[0]?.documents?.[0]?.fileStore }),
       })
         .then(() => {
@@ -1673,7 +1678,7 @@ function EFilingCases({ path }) {
       setIsDisabled,
       tenantId,
       setErrorCaseDetails,
-      isCaseReAssigned,
+      isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
     })
       .then(() => {
         if (!isCaseReAssigned) {
@@ -1812,7 +1817,7 @@ function EFilingCases({ path }) {
           workflow: {
             ...caseDetails?.workflow,
             action: data?.action || "E-SIGN",
-            assignes: data?.action === "E-SIGN" && caseDetails?.status === CaseWorkflowState.PENDING_E_SIGN ? caseDetails?.workflow?.assignes : [],
+            assignes: [],
           },
         },
         tenantId,
@@ -1881,6 +1886,8 @@ function EFilingCases({ path }) {
           ? t("CS_COMMONS_NEXT")
           : isDraftInProgress
           ? t("CS_E_SIGN_CASE")
+          : isPendingReESign
+          ? t("CS_COMMON_CONTINUE")
           : t("CS_GO_TO_HOME")
         : selected === "addSignature"
         ? isPendingESign || isPendingReESign
@@ -2339,13 +2346,15 @@ function EFilingCases({ path }) {
       {selected === "witnessDetails" && !isPendingESign && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
         <ActionBar className={"e-filing-action-bar"}>
           <SubmitBar
-            label={t("CS_COMMON_CONTINUE")}
+            label={t(isCaseReAssigned ? "CS_COMMONS_NEXT" : "CS_COMMON_CONTINUE")}
             submit="submit"
             disabled={isDisabled}
             submitIcon={<RightArrow />}
             onSubmit={() => onSubmit("SAVE_DRAFT")}
           />
-          <Button className="previous-button" variation="secondary" label={t("CS_SAVE_DRAFT")} onButtonClick={onSaveDraft} />
+          {!(isCaseReAssigned || isPendingReESign) && (
+            <Button className="previous-button" variation="secondary" label={t("CS_SAVE_DRAFT")} onButtonClick={onSaveDraft} />
+          )}
         </ActionBar>
       )}
 
