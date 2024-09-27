@@ -453,13 +453,11 @@ const HomeView = () => {
     {
       logo: <InboxIcon />,
       title: t("REVIEW_SUMMON_NOTICE_WARRANTS_TEXT"),
-      pendingAction: 40,
       actionLink: "orders/Summons&Notice",
     },
     {
       logo: <DocumentIcon />,
       title: t("VIEW_ISSUED_ORDERS"),
-      pendingAction: 11,
       actionLink: "",
     },
   ];

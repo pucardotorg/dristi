@@ -123,13 +123,13 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
       setShowErrorToast(!validateFormData(formData));
       return;
     }
-    if (formData?.clientDetails?.barRegistrationNumber) {
-      const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
-      if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
-        setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
-        return;
-      }
-    }
+    // if (formData?.clientDetails?.barRegistrationNumber) {
+    //   const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
+    //   if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
+    //     setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
+    //     return;
+    //   }
+    // }
     setParams({
       ...params,
       formData: formData,
