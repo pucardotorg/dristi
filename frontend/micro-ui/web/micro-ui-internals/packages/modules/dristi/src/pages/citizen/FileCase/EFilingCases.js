@@ -42,7 +42,9 @@ import {
   updateCaseDetails,
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
-import _, { isEqual, isMatch } from "lodash";
+import isEqual from "lodash/isEqual";
+import isMatch from "lodash/isMatch";
+import cloneDeep from "lodash/cloneDeep";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
@@ -1063,7 +1065,7 @@ function EFilingCases({ path }) {
                 if (selected === "complainantDetails" && formComponent.component === "CustomRadioInfoComponent") {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
-                const modifiedFormComponent = _.cloneDeep(formComponent);
+                const modifiedFormComponent = cloneDeep(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
                 }

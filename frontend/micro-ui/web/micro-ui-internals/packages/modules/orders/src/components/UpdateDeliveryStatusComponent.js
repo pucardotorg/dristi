@@ -13,10 +13,6 @@ const UpdateDeliveryStatusComponent = ({ t, infos, links, handleSubmitButtonDisa
   const [remarks, setRemarks] = useState("");
   const deliveryOptions = [
     {
-      key: "SENT",
-      value: "Sent",
-    },
-    {
       key: "DELIVERED",
       value: "Delivered",
     },

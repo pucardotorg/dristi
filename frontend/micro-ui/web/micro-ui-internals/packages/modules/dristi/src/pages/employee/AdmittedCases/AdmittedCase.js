@@ -545,7 +545,7 @@ const AdmittedCases = () => {
                           return {
                             code: removeInvalidNameParts(party.name),
                             name: removeInvalidNameParts(party.name),
-                            value: party.additionalDetails.uuid,
+                            value: party.additionalDetails?.uuid,
                           };
                         }),
                       },
@@ -744,31 +744,34 @@ const AdmittedCases = () => {
     },
   ];
 
+  const getDefaultValue = (value) => value || "N.A.";
+  const formatDateOrDefault = (date) => (date ? formatDate(new Date(date)) : "N.A.");
+
   const caseBasicDetails = useMemo(() => {
     return [
       {
         key: "Filing No.",
-        value: caseDetails?.filingNumber,
+        value: getDefaultValue(caseDetails?.filingNumber),
       },
       {
         key: "Complaint / CMP No.",
-        value: caseDetails?.cmpNumber || "",
+        value: getDefaultValue(caseDetails?.cmpNumber),
       },
       {
         key: "CNR No.",
-        value: caseDetails?.cnrNumber,
+        value: getDefaultValue(caseDetails?.cnrNumber),
       },
       {
         key: "CCST No.",
-        value: caseDetails?.caseCourtNumber || "",
+        value: getDefaultValue(caseDetails?.courtCaseNumber),
       },
       {
         key: "Submitted on",
-        value: formatDate(new Date(caseDetails?.filingDate)),
+        value: formatDateOrDefault(caseDetails?.filingDate),
       },
       {
         key: "Registered on",
-        value: formatDate(caseDetails?.registrationDate) || "",
+        value: formatDateOrDefault(caseDetails?.registrationDate),
       },
     ];
   }, [caseDetails]);

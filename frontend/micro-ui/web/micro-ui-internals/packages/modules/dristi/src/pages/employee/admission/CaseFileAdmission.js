@@ -54,7 +54,7 @@ function CaseFileAdmission({ t, path }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [caseAdmitLoader, setCaseADmitLoader] = useState(false);
   const [updatedCaseDetails, setUpdatedCaseDetails] = useState({});
-  const [createAdmissionOrder, setCreateAdmissionOrder] = useState(false);
+  const [createAdmissionOrder, setCreateAdmissionOrder] = useState(true);
   const [showScheduleHearingModal, setShowScheduleHearingModal] = useState(false);
   const [updateCounter, setUpdateCounter] = useState(0);
   const roles = Digit.UserService.getUser()?.info?.roles;

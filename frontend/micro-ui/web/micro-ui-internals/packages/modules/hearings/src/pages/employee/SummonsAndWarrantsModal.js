@@ -22,6 +22,19 @@ const modalPopup = {
   overflowY: "scroll",
 };
 
+const ModalHeading = ({ label, orderList }) => {
+  return (
+    <h1 className="modal-heading" style={{ padding: 8 }}>
+      <span className="heading-m">{label}</span>
+      {orderList && orderList.length > 1 ? (
+        <span className="heading-xs">Failed {orderList.length - 1} times</span>
+      ) : (
+        <span className="heading-xs">No previous failed attempts</span>
+      )}{" "}
+    </h1>
+  );
+};
+
 const SummonsAndWarrantsModal = () => {
   const history = useHistory();
   const { t } = useTranslation();
@@ -179,15 +192,31 @@ const SummonsAndWarrantsModal = () => {
 
   const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType }), [filingNumber, orderId, orderNumber, orderType]);
 
-  const { respondentName, partyType } = useMemo(() => {
-    const orderData = orderList[orderList.length - 1]?.additionalDetails?.formdata?.SummonsOrder?.party?.data;
-    return {
-      respondentName: `${orderData?.firstName || ""}${orderData?.respondentMiddleName ? " " + orderData?.middleName + " " : " "}${
-        orderData?.lastName || ""
-      }`,
-      partyType: orderData?.partyType || "Respondent",
+  const getFormData = (orderType, orderList) => {
+    const orderItem = orderList?.find((item) => orderType === item?.orderType);
+    const formDataKeyMap = {
+      SUMMONS: "SummonsOrder",
+      WARRANT: "warrantFor",
+      NOTICE: "noticeOrder",
     };
-  }, [orderList]);
+    const formDataKey = formDataKeyMap[orderType];
+    return orderItem?.additionalDetails?.formdata?.[formDataKey];
+  };
+
+  const getOrderData = (orderType, orderFormData) => {
+    return ["SUMMONS", "NOTICE"].includes(orderType) ? orderFormData?.party?.data : orderFormData;
+  };
+
+  const { respondentName, partyType } = useMemo(() => {
+    const orderFormData = getFormData(orderType, orderList);
+    const orderData = getOrderData(orderType, orderFormData);
+    if (!orderData) {
+      return { respondentName: "Unknown Respondent", partyType: "Respondent" };
+    }
+    const respondentName = `${orderData?.firstName || ""} ${orderData?.middleName || ""} ${orderData?.lastName || ""}`.trim() || orderData || "";
+    const partyType = orderData?.partyType || "Respondent";
+    return { respondentName, partyType };
+  }, [orderList, orderType]);
 
   const CloseButton = (props) => {
     return (
@@ -197,14 +226,8 @@ const SummonsAndWarrantsModal = () => {
     );
   };
 
-  const ModalHeading = ({ label }) => {
-    return (
-      <h1 className="modal-heading" style={{ padding: 8 }}>
-        <span className="heading-m">{label}</span>
-        <span className="heading-xs">Failed {orderList.length - 1} times</span>
-      </h1>
-    );
-  };
+  const modalLabel = ["SUMMONS", "WARRANT"].includes(orderType) ? "SUMMON_WARRANT_STATUS" : "NOTICE_STATUS";
+
   return (
     <Modal
       isOpen={true}
@@ -214,7 +237,7 @@ const SummonsAndWarrantsModal = () => {
         display: "none",
       }}
       formId="modal-action"
-      headerBarMain={<ModalHeading label={t(`${orderType === "SUMMONS" ? "Summons and Warrants" : "Notice"} Status`)} />}
+      headerBarMain={orderList && <ModalHeading label={t(modalLabel)} orderList={orderList} />}
     >
       <div className="case-info">
         <div className="case-info-column">
