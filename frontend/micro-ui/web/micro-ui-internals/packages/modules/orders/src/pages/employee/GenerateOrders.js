@@ -1210,7 +1210,7 @@ const GenerateOrders = () => {
     }
     if (order?.orderType === "WARRANT") {
       entityType = "order-default";
-      create = true;
+      create = false; //Temporarily not allow to create pending task for warrant payment
       assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
       name = t("PAYMENT_PENDING_FOR_WARRANT");
       status = `PAYMENT_PENDING_FOR_WARRANT`;
