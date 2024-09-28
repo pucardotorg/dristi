@@ -1862,10 +1862,11 @@ const GenerateOrders = () => {
             },
             { tenantId }
           )
-          .then(() => {
+          .then((res) => {
             if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
               updateCaseDetails("ADMIT");
             }
+            return res;
           })
       );
 

@@ -51,9 +51,9 @@ export const getAdvocates = (caseDetails) => {
 
 export const getuuidNameMap = (caseDetails) => {
   return caseDetails?.representatives?.reduce((acc, item) => {
-    acc[item.additionalDetails.uuid] = item.additionalDetails.advocateName;
+    acc[item?.additionalDetails?.uuid] = item?.additionalDetails?.advocateName;
     item.representing.forEach((rep) => {
-      acc[rep.additionalDetails.uuid] = rep.additionalDetails.fullName;
+      acc[rep?.additionalDetails?.uuid] = rep?.additionalDetails?.fullName;
     });
     return acc;
   }, {});
