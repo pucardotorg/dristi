@@ -140,8 +140,8 @@ const AdmittedCases = () => {
     caseId,
     false
   );
-  const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0], [caseData]);
-  const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);
+  const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0] || {}, [caseData]);
+  const cnrNumber = useMemo(() => caseDetails?.cnrNumber || "", [caseDetails]);
 
   const showTakeAction = useMemo(
     () =>
@@ -179,16 +179,20 @@ const AdmittedCases = () => {
     [nextActions]
   );
 
-  const statue = useMemo(
-    () =>
-      caseDetails?.statutesAndSections?.[0]?.sections?.[0]
-        ? `${caseDetails?.statutesAndSections?.[0]?.sections?.[0]
-            ?.split(" ")
-            ?.map((splitString) => splitString.charAt(0))
-            ?.join("")} S${caseDetails?.statutesAndSections?.[0]?.subsections?.[0]}`
-        : "",
-    [caseDetails?.statutesAndSections]
-  );
+  const statue = useMemo(() => {
+    const statutesAndSections = caseDetails?.statutesAndSections;
+    if (!statutesAndSections?.length) return "";
+    const section = statutesAndSections[0]?.sections?.[0];
+    const subsection = statutesAndSections[0]?.subsections?.[0];
+
+    return section && subsection
+      ? `${section
+          ?.split(" ")
+          ?.map((splitString) => splitString.charAt(0))
+          ?.join("")} S${subsection}`
+      : "";
+  }, [caseDetails?.statutesAndSections]);
+
   const litigants = caseDetails?.litigants?.length > 0 ? caseDetails?.litigants : [];
   const finalLitigantsData = litigants?.map((litigant) => {
     return {

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
-import LocationSearch from "./LocationSearch";
+import LocationSearch, { defaultCoordinates } from "./LocationSearch";
 import Axios from "axios";
 
 const getLocation = (places, code) => {
@@ -153,7 +153,9 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                               ? locationFormData[config.key]["city"]
                               : getLocation(location, "locality") || "",
                           locality:
-                            isFirstRender && locationFormData?.[config.key]
+                            coordinates?.latitude === defaultCoordinates?.lat && coordinates?.longitude === defaultCoordinates?.lng
+                              ? ""
+                              : isFirstRender && locationFormData?.[config.key]
                               ? locationFormData[config.key]["locality"]
                               : (() => {
                                   const plusCode = getLocation(location, "plus_code");
