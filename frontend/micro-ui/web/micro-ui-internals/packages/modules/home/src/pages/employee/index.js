@@ -43,6 +43,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
   const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
   const ReIssueSummonsModal = Digit.ComponentRegistryService.getComponent("ReIssueSummonsModal") || <React.Fragment></React.Fragment>;
   const PaymentForSummonModal = Digit.ComponentRegistryService.getComponent("PaymentForSummonModal") || <React.Fragment></React.Fragment>;
+  const SBIPaymentStatus = Digit.ComponentRegistryService.getComponent("SBIPaymentStatus") || <React.Fragment></React.Fragment>;
   const PaymentForSummonModalSMSAndEmail = Digit.ComponentRegistryService.getComponent("PaymentForSummonModalSMSAndEmail") || (
     <React.Fragment></React.Fragment>
   );
@@ -88,6 +89,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         />
         <PrivateRoute path={`${path}/sbi-epost-payment`} component={() => <SBIEpostPayment></SBIEpostPayment>} />
         <PrivateRoute path={`${path}/post-payment-screen`} component={() => <PaymentStatus></PaymentStatus>} />
+        <PrivateRoute path={`${path}/sbi-payment-screen`} component={() => <SBIPaymentStatus />} />
         <PrivateRoute path={`${path}/view-hearing`} component={() => <ViewHearing></ViewHearing>} />
         <PrivateRoute path={`${path}/home-popup`} component={() => <HomePopUp></HomePopUp>} />
         <PrivateRoute path={`${path}/home-pending-task/home-schedule-hearing`} component={() => <ScheduleHearing />} />

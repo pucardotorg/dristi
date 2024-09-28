@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Loader } from "@egovernments/digit-ui-components";
 import { useMemo } from "react";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { SBIPaymentService } from "../../hooks/services";
 import { Modal, Button, CardText, RadioButtons, CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
@@ -23,9 +23,14 @@ const SBIEpostPayment = () => {
   const [optionLoader, setOptionLoader] = useState(true);
   const [paymentLoader, setPaymentLoader] = useState(false);
   const bill = location.state.state.billData;
-  const consumerCode = location.state.state.consumerCode;
-  const service = location.state.state.service;
+  const serviceNumber = location?.state?.state?.serviceNumber;
+  const businessService = location?.state?.state?.businessService;
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const userInfo = Digit.UserService.getUser()?.info;
+  const caseDetails = location?.state?.state?.caseDetails;
+  const orderData = location?.state?.state?.orderData;
+  const consumerCode = location?.state?.state?.consumerCode;
+  let history = useHistory();
 
   console.log(bill, "j");
 
@@ -41,133 +46,64 @@ const SBIEpostPayment = () => {
             OperatingMode: "DOM",
             MerchantCountry: "IN",
             MerchantCurrency: "INR",
-            PostingAmount: 4.0,
+            PostingAmount: 100,
             OtherDetails: "NA",
-            Paymode: selectedOption?.value,
-            tenantId: tenantId,
+            PayMode: "NB",
             billId: bill?.Bill?.[0]?.billDetails?.[0]?.billId,
-            totalDue: 35.0,
-            businessService: service || "task-summons",
-            serviceNumber: consumerCode,
-            payerName: "John Doe",
-            paidBy: "John Doe",
-            mobileNumber: "1234567890",
+            tenantId: "kl",
+            totalDue: 100,
+            businessService: businessService,
+            serviceNumber: serviceNumber,
+            mobileNumber: userInfo?.mobileNumber,
+            paidBy: userInfo?.name,
+            payerName: userInfo?.name,
+            amountDetails: [
+              {
+                accountIdentifier: "GRPT",
+                postingAmount: 100,
+                merchantCurrency: "INR",
+              },
+            ],
           },
         },
         {}
       );
       if (gateway) {
-        status = handleButtonClick(gateway?.transactionUrl, gateway?.encryptedString, gateway?.merchantId);
+        const receiptData = {
+          caseInfo: [
+            {
+              key: "Case Name & ID",
+              value: `${caseDetails?.caseTitle} + ${caseDetails?.filingNumber}`,
+              copyData: false,
+            },
+            {
+              key: "ORDER ID",
+              value: orderData?.list?.[0]?.orderNumber,
+              copyData: false,
+            },
+          ],
+          isArrow: false,
+          showTable: true,
+          showCopytext: true,
+          service: businessService,
+          consumerCode: consumerCode,
+        };
+
+        localStorage.setItem("paymentReceiptData", JSON.stringify({ receiptData }));
+        await handleButtonClick(gateway?.transactionUrl, gateway.encryptedMultiAccountString, gateway?.encryptedString, gateway?.merchantId);
+        setPaymentLoader(false);
       }
     } catch (e) {
       console.log(e);
     }
     if (status === true) {
       console.log("YAAAYYYYY");
-      const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
-
-      // await Promise.all([
-      //   ordersService.customApiService(Urls.orders.pendingTask, {
-      //     pendingTask: {
-      //       name: "Show Summon-Warrant Status",
-      //       entityType: paymentType.ORDER_MANAGELIFECYCLE,
-      //       referenceId: hearingsData?.HearingList?.[0]?.hearingId,
-      //       status: paymentType.SUMMON_WARRANT_STATUS,
-      //       assignedTo: [],
-      //       assignedRole: ["JUDGE_ROLE"],
-      //       cnrNumber: filteredTasks?.[0]?.cnrNumber,
-      //       filingNumber: filingNumber,
-      //       isCompleted: false,
-      //       stateSla: 3 * dayInMillisecond + todayDate,
-      //       additionalDetails: {
-      //         hearingId: hearingsData?.list?.[0]?.hearingId,
-      //       },
-      //       tenantId,
-      //     },
-      //   }),
-      //   ordersService.customApiService(Urls.orders.pendingTask, {
-      //     pendingTask: {
-      //       name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
-      //       entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-      //       referenceId: `MANUAL_Post_${orderNumber}`,
-      //       status: paymentType.PAYMENT_PENDING_POST,
-      //       assignedTo: [],
-      //       assignedRole: [],
-      //       cnrNumber: filteredTasks?.[0]?.cnrNumber,
-      //       filingNumber: filingNumber,
-      //       isCompleted: true,
-      //       stateSla: "",
-      //       additionalDetails: {},
-      //       tenantId,
-      //     },
-      //   }),
-      // ]);
-
-      // fileStoreId &&
-      //   history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-      //     state: {
-      //       success: true,
-      //       receiptData: {
-      //         ...mockSubmitModalInfo,
-      //         caseInfo: [
-      //           {
-      //             key: "Case Name & ID",
-      //             value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-      //             copyData: false,
-      //           },
-      //           {
-      //             key: "ORDER ID",
-      //             value: orderData?.list?.[0]?.orderNumber,
-      //             copyData: false,
-      //           },
-      //           {
-      //             key: "Transaction ID",
-      //             value: filteredTasks?.[0]?.taskNumber,
-      //             copyData: true,
-      //           },
-      //         ],
-      //         isArrow: false,
-      //         showTable: true,
-      //         showCopytext: true,
-      //       },
-      //       fileStoreId: fileStoreId?.Document?.fileStore,
-      //     },
-      //   });
     } else {
       console.log("NAAAYYYYY");
-      // history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-      //   state: {
-      //     success: false,
-      //     receiptData: {
-      //       ...mockSubmitModalInfo,
-      //       caseInfo: [
-      //         {
-      //           key: "Case Name & ID",
-      //           value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-      //           copyData: false,
-      //         },
-      //         {
-      //           key: "ORDER ID",
-      //           value: orderData?.list?.[0]?.orderNumber,
-      //           copyData: false,
-      //         },
-      //         {
-      //           key: "Transaction ID",
-      //           value: filteredTasks?.[0]?.taskNumber,
-      //           copyData: true,
-      //         },
-      //       ],
-      //       isArrow: false,
-      //       showTable: true,
-      //       showCopytext: true,
-      //     },
-      //     caseId: caseDetails?.filingNumber,
-      //   },
-      // });
     }
   };
 
-  const handleButtonClick = (transactionalUrl, encryptedString, merchantId) => {
+  const handleButtonClick = (transactionalUrl, multiAccountInstructionDtls, encryptedString, merchantId) => {
     return new Promise((resolve) => {
       const form = document.createElement("form");
       form.method = "POST";
@@ -175,9 +111,15 @@ const SBIEpostPayment = () => {
 
       const inputDataField = document.createElement("input");
       inputDataField.type = "hidden";
-      inputDataField.name = "EncryptTrans";
-      inputDataField.value = encryptedString;
+      inputDataField.name = "MultiAccountInstructionDtls";
+      inputDataField.value = multiAccountInstructionDtls;
       form.appendChild(inputDataField);
+
+      const inputDataField2 = document.createElement("input");
+      inputDataField2.type = "hidden";
+      inputDataField2.name = "EncryptTrans";
+      inputDataField2.value = encryptedString;
+      form.appendChild(inputDataField2);
 
       const inputHeadersField = document.createElement("input");
       inputHeadersField.type = "hidden";
@@ -189,8 +131,12 @@ const SBIEpostPayment = () => {
       form.submit();
 
       setPaymentLoader(true);
+      setTimeout(() => {
+        resolve(true); // Resolve the promise with true, indicating success
+      }, 1000);
     });
   };
+
   return (
     <div>
       {paymentLoader ? (
@@ -215,6 +161,7 @@ const SBIEpostPayment = () => {
             />
           </LabelFieldPair>
           <Button label={t("SBI_PAYMENT")} onButtonClick={onSBIPayment} />
+          {/* <Button label={t("TEST")} onButtonClick={goToUrl} /> */}
         </div>
       )}
     </div>

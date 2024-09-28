@@ -195,14 +195,6 @@ const PaymentForSummonModal = ({ path }) => {
     return filteredTasks?.[0]?.taskNumber ? `${filteredTasks?.[0]?.taskNumber}_POST_COURT` : undefined;
   }, [filteredTasks]);
 
-  console.log("consumerCode :>> ", consumerCode);
-
-  console.log("taskData", filteredTasks);
-
-  console.log("hearingsData :>> ", hearingsData);
-
-  console.log("orderData :>> ", orderData);
-
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
     consumerCode: consumerCode,
@@ -432,8 +424,11 @@ const PaymentForSummonModal = ({ path }) => {
       history.push(`/${window?.contextPath}/citizen/home/sbi-epost-payment`, {
         state: {
           billData: bill,
-          consumerCode: filteredTasks?.[0]?.taskNumber,
-          service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+          serviceNumber: filteredTasks?.[0]?.taskNumber,
+          businessService: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+          caseDetails: caseDetails,
+          consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
+          orderData: orderData,
         },
       });
     } catch (error) {
