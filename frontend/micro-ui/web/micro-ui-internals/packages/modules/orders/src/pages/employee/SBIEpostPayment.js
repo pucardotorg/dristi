@@ -30,13 +30,11 @@ const SBIEpostPayment = () => {
   const caseDetails = location?.state?.state?.caseDetails;
   const orderData = location?.state?.state?.orderData;
   const consumerCode = location?.state?.state?.consumerCode;
+  const filteredTasks = location?.state?.state?.filteredTasks;
+  const filingNumber = location?.state?.state?.filingNumber;
   let history = useHistory();
 
-  console.log(bill, "j");
-
   const onSBIPayment = async () => {
-    console.log("sbi payment done");
-    console.log(selectedOption, "lll");
     setPaymentLoader(true);
     let status;
     try {
@@ -46,12 +44,12 @@ const SBIEpostPayment = () => {
             OperatingMode: "DOM",
             MerchantCountry: "IN",
             MerchantCurrency: "INR",
-            PostingAmount: 100,
+            PostingAmount: bill?.Bill?.[0]?.totalAmount,
             OtherDetails: "NA",
             PayMode: "NB",
             billId: bill?.Bill?.[0]?.billDetails?.[0]?.billId,
             tenantId: "kl",
-            totalDue: 100,
+            totalDue: bill?.Bill?.[0]?.totalAmount,
             businessService: businessService,
             serviceNumber: serviceNumber,
             mobileNumber: userInfo?.mobileNumber,
@@ -60,7 +58,7 @@ const SBIEpostPayment = () => {
             amountDetails: [
               {
                 accountIdentifier: "GRPT",
-                postingAmount: 100,
+                postingAmount: bill?.Bill?.[0]?.totalAmount,
                 merchantCurrency: "INR",
               },
             ],
@@ -87,6 +85,9 @@ const SBIEpostPayment = () => {
           showCopytext: true,
           service: businessService,
           consumerCode: consumerCode,
+          filingNumber: filingNumber,
+          filteredTasks: filteredTasks,
+          orderNumber: orderData?.list?.[0]?.orderNumber,
         };
 
         localStorage.setItem("paymentReceiptData", JSON.stringify({ receiptData }));
@@ -95,11 +96,6 @@ const SBIEpostPayment = () => {
       }
     } catch (e) {
       console.log(e);
-    }
-    if (status === true) {
-      console.log("YAAAYYYYY");
-    } else {
-      console.log("NAAAYYYYY");
     }
   };
 
@@ -132,7 +128,7 @@ const SBIEpostPayment = () => {
 
       setPaymentLoader(true);
       setTimeout(() => {
-        resolve(true); // Resolve the promise with true, indicating success
+        resolve(true);
       }, 1000);
     });
   };
@@ -153,15 +149,13 @@ const SBIEpostPayment = () => {
               options={modeOptions}
               optionsKey={"label"}
               onSelect={(value) => {
-                setSelectedOption(value); // Set selected option's value
-                console.log(value);
+                setSelectedOption(value);
               }}
-              selectedOption={selectedOption} // Bind currently selected option to state
+              selectedOption={selectedOption}
               disabled={false}
             />
           </LabelFieldPair>
           <Button label={t("SBI_PAYMENT")} onButtonClick={onSBIPayment} />
-          {/* <Button label={t("TEST")} onButtonClick={goToUrl} /> */}
         </div>
       )}
     </div>

@@ -5,6 +5,10 @@ import { Banner } from "@egovernments/digit-ui-react-components";
 import { Button, InfoCard } from "@egovernments/digit-ui-components";
 import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCopyTextDiv";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { paymentType } from "../utils/paymentType";
+import { ordersService } from "../hooks/services";
+import { Urls } from "../hooks/services/Urls";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 
 const getStatusMessage = (status) => {
   switch (status) {
@@ -25,74 +29,58 @@ const getPaymentDueMessage = (status, amount) => {
 
 const SBIPaymentStatus = ({ path }) => {
   const { t } = useTranslation();
-  const { status, businessService, erviceNumber } = Digit.Hooks.useQueryParams();
+  const { status, businessService, serviceNumber } = Digit.Hooks.useQueryParams();
   const { state } = useLocation();
   const history = useHistory();
   const localStorageData = localStorage?.getItem("paymentReceiptData");
   const storedData = localStorageData ? JSON.parse(localStorageData) : {};
   const receiptData = storedData?.receiptData;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const amount = "!!";
+  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const billAfterPayment = await DRISTIService.callSearchBill(
-  //       {},
-  //       { tenantId: tenantId, consumerCode: receiptData?.consumerCode, service: businessService }
-  //     );
-  //     if (status === "SUCCESS" && billAfterPayment?.Bill?.[0]?.status === "PAID") {
-  //       setLoading(true);
-  //       setError(null); // Reset error state before the call
-  //       try {
-  //         await Promise.all([
-  //           ordersService.customApiService(Urls.orders.pendingTask, {
-  //             pendingTask: {
-  //               name: "Show Summon-Warrant Status",
-  //               entityType: paymentType.ORDER_MANAGELIFECYCLE,
-  //               referenceId: hearingsData?.HearingList?.[0]?.hearingId,
-  //               status: paymentType.SUMMON_WARRANT_STATUS,
-  //               assignedTo: [],
-  //               assignedRole: ["JUDGE_ROLE"],
-  //               cnrNumber: filteredTasks?.[0]?.cnrNumber,
-  //               filingNumber: filingNumber,
-  //               isCompleted: false,
-  //               stateSla: 3 * dayInMillisecond + todayDate,
-  //               additionalDetails: {
-  //                 hearingId: hearingsData?.list?.[0]?.hearingId,
-  //               },
-  //               tenantId,
-  //             },
-  //           }),
-  //           ordersService.customApiService(Urls.orders.pendingTask, {
-  //             pendingTask: {
-  //               name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
-  //               entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
-  //               referenceId: `MANUAL_Post_${orderNumber}`,
-  //               status: paymentType.PAYMENT_PENDING_POST,
-  //               assignedTo: [],
-  //               assignedRole: [],
-  //               cnrNumber: filteredTasks?.[0]?.cnrNumber,
-  //               filingNumber: filingNumber,
-  //               isCompleted: true,
-  //               stateSla: "",
-  //               additionalDetails: {},
-  //               tenantId,
-  //             },
-  //           }),
-  //         ]);
-  //       } catch (err) {
-  //         console.error("Error fetching payment tasks:", err);
-  //         setError("Failed to fetch payment tasks. Please try again later."); // Set error message
-  //       } finally {
-  //         setLoading(false); // Reset loading state
-  //       }
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const billAfterPayment = await DRISTIService.callSearchBill(
+        {},
+        { tenantId: tenantId, consumerCode: receiptData?.consumerCode, service: businessService }
+      );
+      setAmount(billAfterPayment?.Bill?.[0]?.totalAmount);
+      if (status === "SUCCESS" && billAfterPayment?.Bill?.[0]?.status === "PAID") {
+        setLoading(true);
+        setError(null);
+        try {
+          await Promise.all([
+            ordersService.customApiService(Urls.orders.pendingTask, {
+              pendingTask: {
+                name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
+                entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
+                referenceId: `MANUAL_${serviceNumber}`,
+                status: paymentType.PAYMENT_PENDING_POST,
+                assignedTo: [],
+                assignedRole: [],
+                cnrNumber: receiptData?.filteredTasks?.[0]?.cnrNumber,
+                filingNumber: receiptData?.filingNumber,
+                isCompleted: true,
+                stateSla: "",
+                additionalDetails: {},
+                tenantId,
+              },
+            }),
+          ]);
+        } catch (err) {
+          console.error("Error fetching payment tasks:", err);
+          setError("Failed to fetch payment tasks. Please try again later."); // Set error message
+        } finally {
+          setLoading(false); // Reset loading state
+        }
+      }
+    };
 
-  //   fetchData();
-  // }, [status]); // Dependency array to run this effect when status changes
+    fetchData();
+  }, [status]);
+
   const commonProps = {
     whichSvg: status === "SUCCESS" ? "tick" : null,
     headerStyles: { fontSize: "32px" },

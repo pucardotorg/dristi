@@ -427,8 +427,10 @@ const PaymentForSummonModal = ({ path }) => {
           serviceNumber: filteredTasks?.[0]?.taskNumber,
           businessService: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
           caseDetails: caseDetails,
-          consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
+          consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
           orderData: orderData,
+          filteredTasks: filteredTasks,
+          filingNumber: filingNumber,
         },
       });
     } catch (error) {
