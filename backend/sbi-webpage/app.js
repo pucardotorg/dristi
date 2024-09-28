@@ -7,6 +7,7 @@ const qs = require('qs');
 const app = express();
 const port = 8080;
 const backendUrl = process.env.EXTERNAL_HOST || "http://localhost:8088/sbi-backend/v1/_decryptBrowserResponse";
+const redirectUrl = process.env.REDIRECT_URL || 'https://dristi-kerala-dev.pucar.org/digit-ui/citizen/home/sbi-payment-screen';
 const pushResponseContextPath = "/sbi-payments";
 const successUrlContextPath = "/sbi-payments/success.jsp";
 const failUrlContextPath = "/sbi-payments/fail.jsp";
@@ -23,37 +24,44 @@ app.use(bodyParser.json());
         encryptedPayload: JSON.stringify(data)
       }
 
-      let backendResponse;
-      try {
-        // Log the data to send
-        console.log("Data to send:", JSON.stringify(dataToSend, null, 2));
-        backendResponse = await axios.post(`${backendUrl}`, dataToSend, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo="
-          }
-        });
-        console.log("Backend response:", backendResponse.data);
-      } catch (backendError) {
-        console.error("Backend request error:", backendError);
-        backendResponse = null;
-      }
+      console.log("Data to send:", JSON.stringify(dataToSend, null, 2));
 
-      console.log('Payload sent to backend successfully');
+      const backendResponse = await axios.post(`${backendUrl}`, dataToSend, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo="
+        }
+      });
+
+      console.log("Backend response:", backendResponse.data);
+      return backendResponse.data;
     } catch (error) {
       console.error('Error forwarding to backend:', error);
-      throw error;
+    return {
+        TransactionDetails: {
+          TransactionStatus: 'error'
+        }
+      };
     }
   }
 
-  function forwardJspPage(res, jspFileName) {
-    const jspFilePath = path.join(__dirname, "public", jspFileName);
-    res.sendFile(jspFilePath, (err) => {
-      if (err) {
-        console.error('Error serving JSP page:', err);
-        res.status(500).send('Error serving JSP page');
-      }
-    });
+  function forwardJspPage(res, redirectUrl, transactionDetails) {
+    const queryParams = new URLSearchParams();
+
+    if (transactionDetails.TransactionStatus) {
+      queryParams.append('status', transactionDetails.TransactionStatus);
+    }
+    if (transactionDetails.billId) {
+      queryParams.append('billId', transactionDetails.billId);
+    }
+    if (transactionDetails.businessService) {
+      queryParams.append('businessService', transactionDetails.businessService);
+    }
+    if (transactionDetails.serviceNumber) {
+      queryParams.append('serviceNumber', transactionDetails.serviceNumber);
+    }
+
+    res.redirect(`${redirectUrl}?${queryParams}`);
   }
 
   async function getRequestInfo() {
@@ -99,8 +107,9 @@ app.use(bodyParser.json());
 app.post(`${successUrlContextPath}`, async (req, res) => {
   console.log('Request body:', JSON.stringify(req.body));
   try {
-    await callBackendService(backendUrl, req.body);
-    forwardJspPage(res, '/success.jsp');
+    const backendResponse = await callBackendService(backendUrl, req.body.encData);
+    const transactionDetails = backendResponse.TransactionDetails;
+    forwardJspPage(res, redirectUrl, transactionDetails);
   } catch (error) {
     res.status(500).send('Failed to process payment');
   }
@@ -109,8 +118,9 @@ app.post(`${successUrlContextPath}`, async (req, res) => {
 app.post(`${failUrlContextPath}`, async (req, res) => {
   console.log('Request body:', JSON.stringify(req.body));
   try {
-    await callBackendService(backendUrl, req.body);
-    forwardJspPage(res, '/fail.jsp');
+    const backendResponse = await callBackendService(backendUrl, req.body.encData);
+    const transactionDetails = backendResponse.TransactionDetails;
+    forwardJspPage(res, redirectUrl, transactionDetails);
   } catch (error) {
     res.status(500).send('Failed to process payment');
   }
@@ -119,7 +129,7 @@ app.post(`${failUrlContextPath}`, async (req, res) => {
 app.post(`${pushResponseContextPath}`, async (req, res) => {
   console.log('Request body:', JSON.stringify(req.body));
   try {
-    await callBackendService(backendUrl, req.body);
+    await callBackendService(backendUrl, req.body.pushRespData);
     res.status(200).send('Response processed successfully');
   } catch (error) {
     res.status(500).send('Failed to process response');

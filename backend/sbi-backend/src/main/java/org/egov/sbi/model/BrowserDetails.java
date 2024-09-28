@@ -85,7 +85,7 @@ public class BrowserDetails {
     private String ref9;
 
     public static BrowserDetails fromString(String str) {
-        String[] parts = str.split("\\|");
+        String[] parts = str.split("\\|", -1);
         BrowserDetails browserDetails = new BrowserDetails();
 
         browserDetails.setMerchantOrderNumber(parts[0]);
@@ -102,7 +102,7 @@ public class BrowserDetails {
         browserDetails.setCountry(parts[11]);
         browserDetails.setCin(parts[12]);
         browserDetails.setMerchantId(parts[13]);
-        browserDetails.setTotalFeeGst(Double.parseDouble(parts[14]));
+        //browserDetails.setTotalFeeGst(Double.parseDouble(parts[14]));
         browserDetails.setRef1(parts[15]);
         browserDetails.setRef2(parts[16]);
         browserDetails.setRef3(parts[17]);
