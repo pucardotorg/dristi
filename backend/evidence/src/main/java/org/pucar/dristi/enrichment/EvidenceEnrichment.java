@@ -46,18 +46,18 @@ public class EvidenceEnrichment {
                 idFormat=configuration.getCourtFormat();
             }
 
-            String tenantId = evidenceRequest.getArtifact().getCnrNumber();
+            String processedFilingNumber = evidenceRequest.getArtifact().getFilingNumber().replace("-","");
 
             List<String> evidenceNumberList = idgenUtil.getIdList(
                     evidenceRequest.getRequestInfo(),
-                    tenantId,
+                    processedFilingNumber,
                     idName,
                     idFormat,
                     1,
                     false
             );
 
-            evidenceRequest.getArtifact().setArtifactNumber(evidenceRequest.getArtifact().getCnrNumber()+"-"+evidenceNumberList.get(0));
+            evidenceRequest.getArtifact().setArtifactNumber(processedFilingNumber+"-"+evidenceNumberList.get(0));
 
             AuditDetails auditDetails = AuditDetails.builder()
                     .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())

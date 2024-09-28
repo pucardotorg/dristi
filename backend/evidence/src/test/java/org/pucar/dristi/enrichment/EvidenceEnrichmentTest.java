@@ -69,6 +69,7 @@ public class EvidenceEnrichmentTest {
         Artifact artifact = new Artifact();
         artifact.setSourceType("COURT");
         artifact.setArtifactType("DOCUMENTARY");
+        artifact.setFilingNumber("filing-number");
         // Ensure that comments are initialized to an empty list
         artifact.setComments(new ArrayList<>());
         evidenceRequest.setArtifact(artifact);
