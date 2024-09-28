@@ -189,7 +189,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
                           {
                             data: {
                               infoBoxData: {
-                                data: responseDocuments ? "RESPONSE_SUBMISSION_MESSAGE" : "RESPONSE_NOT_SUMISSION_MESSAGE",
+                                data: responseDocuments ? t("RESPONSE_SUBMISSION_MESSAGE") : t("RESPONSE_NOT_SUMISSION_MESSAGE"),
                                 header: responseDocuments ? "ES_COMMON_INFO" : "PLEASE_NOTE",
                               },
                               responseDocuments: responseDocuments,

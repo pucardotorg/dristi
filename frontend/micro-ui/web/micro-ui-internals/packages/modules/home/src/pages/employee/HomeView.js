@@ -343,7 +343,7 @@ const HomeView = () => {
         />
       ) : (
         <React.Fragment>
-          <div className="left-side">
+          <div className="left-side" style={{ width: individualId && userType && userInfoType === "citizen" && !caseDetails ? "100vw" : "70vw" }}>
             <div className="home-header-wrapper">
               <UpcomingHearings handleNavigate={handleNavigate} attendeeIndividualId={individualId} userInfoType={userInfoType} t={t} />
               {isJudge && (
@@ -401,21 +401,23 @@ const HomeView = () => {
               </div>
             </div>
           </div>
-          <div className="right-side">
-            <TasksComponent
-              taskType={taskType}
-              setTaskType={setTaskType}
-              caseType={caseType}
-              setCaseType={setCaseType}
-              isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
-              uuid={userInfo?.uuid}
-              userInfoType={userInfoType}
-              joinCaseResponsePendingTask={responsePendingTask}
-              joinCaseShowSubmitResponseModal={showSubmitResponseModal}
-            />
-          </div>
         </React.Fragment>
       )}
+      <div className="right-side" style={{ width: individualId && userType && userInfoType === "citizen" && !caseDetails ? "0vw" : "30vw" }}>
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          caseType={caseType}
+          setCaseType={setCaseType}
+          isLitigant={Boolean(individualId && userType && userInfoType === "citizen")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+          joinCaseResponsePendingTask={responsePendingTask}
+          joinCaseShowSubmitResponseModal={showSubmitResponseModal}
+          setJoinCaseShowSubmitResponseModal={setShowSubmitResponseModal}
+          hideTaskComponent={individualId && userType && userInfoType === "citizen" && !caseDetails}
+        />
+      </div>
     </div>
   );
 };

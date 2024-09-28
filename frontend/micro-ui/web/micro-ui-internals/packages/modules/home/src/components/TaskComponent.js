@@ -34,6 +34,8 @@ const TasksComponent = ({
   inCase = false,
   joinCaseResponsePendingTask,
   joinCaseShowSubmitResponseModal,
+  setJoinCaseShowSubmitResponseModal,
+  hideTaskComponent,
 }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
@@ -461,14 +463,16 @@ const TasksComponent = ({
               successMessage={"RESPONSE_SUCCESSFULLY"}
               submitButtonAction={async () => {
                 const pendingTask = joinCaseShowSubmitResponseModal ? joinCaseResponsePendingTask : responsePendingTask;
-                setShowSubmitResponseModal(false);
                 history.push(getCaseDetailsUrl(pendingTask?.caseId, pendingTask?.filingNumber));
+                setShowSubmitResponseModal(false);
+                setJoinCaseShowSubmitResponseModal(false);
               }}
-              submitButtonText={"VIEW_CASE_DETAILS"}
+              submitButtonText={"VIEW_CASE_FILE"}
               closeButtonText={"BACK_HOME"}
               closeButtonAction={() => {
-                // refreshInbox();
+                if (joinCaseShowSubmitResponseModal) history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
                 setShowSubmitResponseModal(false);
+                setJoinCaseShowSubmitResponseModal(false);
               }}
               t={t}
             />
@@ -504,81 +508,86 @@ const TasksComponent = ({
   }
   return (
     <div className="tasks-component">
-      <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
-      {totalPendingTask !== undefined && totalPendingTask > 0 ? (
+      {!hideTaskComponent && (
         <React.Fragment>
-          <div className="task-filters">
-            <LabelFieldPair>
-              <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
-              <Dropdown
-                option={caseTypes}
-                selected={caseType}
-                optionKey={"name"}
-                select={(value) => {
-                  setCaseType(value);
-                }}
-                placeholder={t("CS_CASE_TYPE")}
-              />
-            </LabelFieldPair>
-            <LabelFieldPair>
-              <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
-              <Dropdown
-                option={taskTypes}
-                optionKey={"name"}
-                selected={taskType}
-                select={(value) => {
-                  setTaskType(value);
-                }}
-                placeholder={t("CS_TASK_TYPE")}
-              />
-            </LabelFieldPair>
-          </div>
+          <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
+          {totalPendingTask !== undefined && totalPendingTask > 0 ? (
+            <React.Fragment>
+              <div className="task-filters">
+                <LabelFieldPair>
+                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
+                  <Dropdown
+                    option={caseTypes}
+                    selected={caseType}
+                    optionKey={"name"}
+                    select={(value) => {
+                      setCaseType(value);
+                    }}
+                    placeholder={t("CS_CASE_TYPE")}
+                  />
+                </LabelFieldPair>
+                <LabelFieldPair>
+                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
+                  <Dropdown
+                    option={taskTypes}
+                    optionKey={"name"}
+                    selected={taskType}
+                    select={(value) => {
+                      setTaskType(value);
+                    }}
+                    placeholder={t("CS_TASK_TYPE")}
+                  />
+                </LabelFieldPair>
+              </div>
 
-          <React.Fragment>
-            {searchCaseLoading && <Loader />}
-            {!searchCaseLoading && (
               <React.Fragment>
-                <div className="task-section">
-                  <PendingTaskAccordion
-                    pendingTasks={pendingTaskDataInWeek}
-                    accordionHeader={"COMPLETE_THIS_WEEK"}
-                    t={t}
-                    totalCount={pendingTaskDataInWeek?.length}
-                    isHighlighted={true}
-                    isAccordionOpen={true}
-                    setShowSubmitResponseModal={setShowSubmitResponseModal}
-                    setResponsePendingTask={setResponsePendingTask}
-                  />
-                </div>
-                <div className="task-section">
-                  <PendingTaskAccordion
-                    pendingTasks={allOtherPendingTask}
-                    accordionHeader={"ALL_OTHER_TASKS"}
-                    t={t}
-                    totalCount={allOtherPendingTask?.length}
-                    setShowSubmitResponseModal={setShowSubmitResponseModal}
-                    setResponsePendingTask={setResponsePendingTask}
-                  />
-                </div>
-                <div className="task-section"></div>
+                {searchCaseLoading && <Loader />}
+                {!searchCaseLoading && (
+                  <React.Fragment>
+                    <div className="task-section">
+                      <PendingTaskAccordion
+                        pendingTasks={pendingTaskDataInWeek}
+                        accordionHeader={"COMPLETE_THIS_WEEK"}
+                        t={t}
+                        totalCount={pendingTaskDataInWeek?.length}
+                        isHighlighted={true}
+                        isAccordionOpen={true}
+                        setShowSubmitResponseModal={setShowSubmitResponseModal}
+                        setResponsePendingTask={setResponsePendingTask}
+                      />
+                    </div>
+                    <div className="task-section">
+                      <PendingTaskAccordion
+                        pendingTasks={allOtherPendingTask}
+                        accordionHeader={"ALL_OTHER_TASKS"}
+                        t={t}
+                        totalCount={allOtherPendingTask?.length}
+                        setShowSubmitResponseModal={setShowSubmitResponseModal}
+                        setResponsePendingTask={setResponsePendingTask}
+                      />
+                    </div>
+                    <div className="task-section"></div>
+                  </React.Fragment>
+                )}
               </React.Fragment>
-            )}
-          </React.Fragment>
+            </React.Fragment>
+          ) : (
+            <div
+              style={{
+                fontSize: "20px",
+                fontStyle: "italic",
+                lineHeight: "23.44px",
+                fontWeight: "500",
+                font: "Roboto",
+                color: "#77787B",
+              }}
+            >
+              {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
+            </div>
+          )}
         </React.Fragment>
-      ) : (
-        <div
-          style={{
-            fontSize: "20px",
-            fontStyle: "italic",
-            lineHeight: "23.44px",
-            fontWeight: "500",
-            font: "Roboto",
-            color: "#77787B",
-          }}
-        >
-          {!isLitigant ? t("NO_TASK_TEXT") : t("NO_PENDING_TASK_TEXT")}
-        </div>
       )}
+
       {(showSubmitResponseModal || joinCaseShowSubmitResponseModal) && <DocumentModal config={sumbitResponseConfig} />}
     </div>
   );

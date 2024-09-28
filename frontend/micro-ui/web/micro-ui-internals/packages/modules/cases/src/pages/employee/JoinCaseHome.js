@@ -82,7 +82,6 @@ const JoinHomeLocalisation = {
   CONFIRM_ATTENDANCE: "CONFIRM_ATTENDANCE",
   JOINING_THIS_CASE_AS: "JOINING_THIS_CASE_AS",
   SKIP_LATER: "SKIP_LATER",
-  CASE_NO_ADMITTED_STATUS: "CASE_NO_ADMITTED_STATUS",
   INVALID_ACCESS_CODE_MESSAGE: "INVALID_ACCESS_CODE_MESSAGE",
   AFFIDAVIT_MINIMUM_CHAR_MESSAGE: "AFFIDAVIT_MINIMUM_CHAR_MESSAGE",
   FILLING_NUMBER_FORMATE_TEXT: `FILLING_NUMBER_FORMATE_TEXT`,
@@ -109,7 +108,7 @@ const JoinHomeLocalisation = {
   CASE_NUMBER: "CASE_NUMBER",
   ALREADY_REPRESENTING: "ALREADY_REPRESENTING",
   CANT_REPRESENT_BOTH_PARTY: "CANT_REPRESENT_BOTH_PARTY",
-  VIEW_CASE_DETAILS: "VIEW_CASE_DETAILS",
+  VIEW_CASE_FILE: "VIEW_CASE_FILE",
 };
 
 const advocateVakalatnamaAndNocConfig = [
@@ -1447,7 +1446,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                       ? "Submit Response"
                       : !isAttendingHearing && nextHearing
                       ? "Confirm attendance in summon"
-                      : t(JoinHomeLocalisation.VIEW_CASE_DETAILS)
+                      : t(JoinHomeLocalisation.VIEW_CASE_FILE)
                   }
                   onButtonClick={() => {
                     setShow(false);
@@ -1970,7 +1969,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             },
           });
           if (res) {
-            if (caseDetails?.status === "PENDING_RESPONSE") {
+            if (caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent) {
               // closing old pending task
               try {
                 await DRISTIService.customApiService(Urls.dristi.pendingTask, {
@@ -2129,25 +2128,27 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           });
           if (res) {
             // creating new pending task for submit response
-            try {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Response",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_RESPONSE",
-                  assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: userInfo?.uuid }],
-                  assignedRole: ["CASE_RESPONDER"],
-                  cnrNumber: caseDetails?.cnrNumber,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: false,
-                  stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
-                  tenantId,
-                },
-              });
-            } catch (err) {
-              console.error("err :>> ", err);
+            if (caseDetails?.status === "PENDING_RESPONSE" && selectedParty?.isRespondent) {
+              try {
+                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: [{ uuid: selectedParty?.uuid }, { uuid: userInfo?.uuid }],
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseDetails?.cnrNumber,
+                    filingNumber: caseDetails?.filingNumber,
+                    isCompleted: false,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId, caseId: caseDetails?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
             }
             setStep(step + 1);
             setSuccess(true);
@@ -2221,25 +2222,27 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             {}
           );
           if (res) {
-            try {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Response",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_RESPONSE",
-                  assignedTo: [{ uuid: userInfo?.uuid }],
-                  assignedRole: ["CASE_RESPONDER"],
-                  cnrNumber: caseDetails?.cnrNumber,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: false,
-                  stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
-                  tenantId,
-                },
-              });
-            } catch (err) {
-              console.error("err :>> ", err);
+            if (caseDetails?.status === "PENDING_RESPONSE") {
+              try {
+                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: [{ uuid: userInfo?.uuid }],
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseDetails?.cnrNumber,
+                    filingNumber: caseDetails?.filingNumber,
+                    isCompleted: false,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId, caseId: caseDetails?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
             }
             setRespondentList(
               respondentList?.map((respondent) => {
@@ -2451,25 +2454,27 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             {}
           );
           if (res) {
-            try {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Response",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_RESPONSE",
-                  assignedTo: [{ uuid: userInfo?.uuid }, { uuid: userUUID }],
-                  assignedRole: ["CASE_RESPONDER"],
-                  cnrNumber: caseDetails?.cnrNumber,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: false,
-                  stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
-                  tenantId,
-                },
-              });
-            } catch (err) {
-              console.error("err :>> ", err);
+            if (caseDetails?.status === "PENDING_RESPONSE") {
+              try {
+                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: [{ uuid: userInfo?.uuid }, { uuid: userUUID }],
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseDetails?.cnrNumber,
+                    filingNumber: caseDetails?.filingNumber,
+                    isCompleted: false,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId, caseId: caseDetails?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
             }
             setRespondentList(
               respondentList?.map((respondent) => {
@@ -2513,6 +2518,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     caseDetails?.filingNumber,
     caseDetails?.id,
     caseDetails?.litigants,
+    caseDetails?.status,
     caseNumber,
     errors,
     individualAddress,
@@ -2880,7 +2886,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 setOtp("");
                 setAccusedRegisterFormData({});
                 setShowEditRespondentDetailsModal(false);
-                setShow(isAccusedRegistered ? false : true);
+                if (isAccusedRegistered) closeModal();
+                else setShow(true);
               }}
               submitButtonText={"NEXT"}
               t={t}

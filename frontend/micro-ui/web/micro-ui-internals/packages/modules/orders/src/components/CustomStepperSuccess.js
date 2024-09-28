@@ -4,6 +4,15 @@ import { FileIcon, PrintIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Urls } from "../hooks/services/Urls";
 
+const submitButtonStyle = {
+  fontFamily: "Roboto",
+  fontSize: "16px",
+  fontWeight: 700,
+  lineHeight: "18.75px",
+  textAlign: "center",
+  color: "#FFFFFF",
+};
+
 const CustomStepperSuccess = ({
   successMessage,
   bannerSubText,
@@ -69,7 +78,7 @@ const CustomStepperSuccess = ({
             <Button
               className={"selector-button-border"}
               label={t(closeButtonText)}
-              icon={documents ? undefined : <DownloadIcon />}
+              icon={documents ? <DownloadIcon /> : undefined}
               onButtonClick={() => {
                 // closeModal();
                 // refreshInbox();
@@ -89,6 +98,7 @@ const CustomStepperSuccess = ({
                 }
                 submitButtonAction();
               }}
+              textStyles={submitButtonStyle}
             >
               {/* <RightArrow /> */}
             </Button>
