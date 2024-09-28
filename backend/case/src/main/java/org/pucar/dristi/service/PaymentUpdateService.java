@@ -115,6 +115,7 @@ public class PaymentUpdateService {
             courtCase.setAuditdetails(auditDetails);
             producer.push(configuration.getCaseUpdateStatusTopic(),courtCase);
             cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
+
         });
     }
 

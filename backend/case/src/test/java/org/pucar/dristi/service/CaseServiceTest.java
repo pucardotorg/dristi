@@ -8,11 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +73,12 @@ public class CaseServiceTest {
 
     private CaseCriteria caseCriteria;
 
+    private static final String TEST_CASE_ID = "case-id";
+
+    private static final String TEST_FILING_NUMBER = "CASE123";
+
+    private static final String TEST_TENANT_ID = "tenant-id";
+
     @BeforeEach
     void setup() {
         caseRequest = new CaseRequest();
@@ -85,7 +87,7 @@ public class CaseServiceTest {
         caseRequest.setCases(courtCase);
         caseSearchRequest = new CaseSearchRequest();
         caseCriteria = new CaseCriteria();
-        caseCriteria.setCaseId("case-id");
+        caseCriteria.setCaseId(TEST_CASE_ID);
         caseSearchRequest.setCriteria(Collections.singletonList(caseCriteria));
         caseExistsRequest = new CaseExistsRequest();
         requestInfo = new RequestInfo();
@@ -104,6 +106,16 @@ public class CaseServiceTest {
         courtCase = new CourtCase();
         objectMapper = new ObjectMapper();
         caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper,cacheService);
+    }
+
+    CaseCriteria setupTestCaseCriteria(CourtCase courtCase) {
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(TEST_FILING_NUMBER).build();
+        if (courtCase != null) {
+            caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        } else {
+            caseCriteria.setResponseList(Collections.emptyList());
+        }
+        return caseCriteria;
     }
     @Test
     void testCreateCase() {
@@ -129,7 +141,8 @@ public class CaseServiceTest {
     @Test
     public void testVerifyJoinCaseRequest_CaseDoesNotExist() {
         // Mock the CaseRepository to return an empty list
-        when(caseRepository.getCases(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(new CaseCriteria()));
+        CaseCriteria caseCriteria = setupTestCaseCriteria(null);
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         assertThrows(CustomException.class, () -> {
@@ -145,13 +158,13 @@ public class CaseServiceTest {
         joinCaseRequest.setAccessCode("validAccessCode");
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("existingAdv");
+
         courtCase.setId(UUID.randomUUID());
         courtCase.setFilingNumber(joinCaseRequest.getCaseFilingNumber());
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setRepresentatives(Collections.singletonList(representative));
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        lenient().when(caseRepository.getCases(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
         assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
         });
@@ -170,9 +183,8 @@ public class CaseServiceTest {
         when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getCases(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
@@ -196,17 +208,12 @@ public class CaseServiceTest {
         joinCaseRequest.setCaseFilingNumber(filingNumber);
         joinCaseRequest.setAccessCode("access-code");
 
-        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
-        List<CaseCriteria> existingApplications = Collections.singletonList(caseCriteria);
-
         Party party = Party.builder().individualId("individual-id").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
         AdvocateMapping advocateMapping = AdvocateMapping.builder().representing(Collections.singletonList(party)).isActive(true).auditDetails(new AuditDetails()).build();
         courtCase.setRepresentatives(Collections.singletonList(advocateMapping));
 
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-
-
-        when(caseRepository.getCases(anyList(), any())).thenReturn(existingApplications);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
         requestInfo.setUserInfo(new User());
         joinCaseRequest.setRequestInfo(requestInfo);
@@ -237,9 +244,9 @@ public class CaseServiceTest {
         when(encryptionDecryptionUtil.decryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class), any(RequestInfo.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getCases(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
+
 
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
@@ -262,22 +269,23 @@ public class CaseServiceTest {
         joinCaseRequest.setCaseFilingNumber(filingNumber);
         joinCaseRequest.setAccessCode("access-code");
 
-        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
-
         Party party = Party.builder().individualId("111").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
         AdvocateMapping advocateMapping = AdvocateMapping.builder().advocateId("222").representing(Collections.singletonList(party)).isActive(true).auditDetails(new AuditDetails()).build();
-        courtCase.setRepresentatives(Collections.singletonList(advocateMapping));
+        List<AdvocateMapping> advocates = new ArrayList<>();
+        advocates.add(advocateMapping);
+        courtCase.setRepresentatives(advocates);
         courtCase.setAccessCode("access-code");
         courtCase.setId(UUID.randomUUID());
 
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        List<CaseCriteria> existingApplications = Collections.singletonList(caseCriteria);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
-        when(caseRepository.getCases(anyList(), any())).thenReturn(existingApplications);
         when(config.getUpdateRepresentativeJoinCaseTopic()).thenReturn("update-topic");
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
 
-        requestInfo.setUserInfo(new User());
+        User user = new User();
+        user.setTenantId(TEST_TENANT_ID);
+        requestInfo.setUserInfo(user);
         joinCaseRequest.setRequestInfo(requestInfo);
         Party party1 = Party.builder().individualId("111").partyType(ServiceConstants.COMPLAINANT_PRIMARY).isActive(true).auditDetails(new AuditDetails()).build();
         AdvocateMapping advocateMapping2 = AdvocateMapping.builder().advocateId("333").representing(Collections.singletonList(party1)).isActive(true).auditDetails(new AuditDetails()).build();
@@ -345,6 +353,8 @@ public class CaseServiceTest {
         when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
         when(config.getCourtCaseEncrypt()).thenReturn("CourtCase");
 
+        doNothing().when(cacheService).save(any(),any());
+
         // Call the method
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
 
@@ -361,9 +371,10 @@ public class CaseServiceTest {
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
-        CaseCriteria caseCriteria = new CaseCriteria();
-        caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getCases(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
+
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
@@ -435,6 +446,8 @@ public class CaseServiceTest {
         when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
+        doNothing().when(cacheService).save(any(),any());
+
         JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
         assertEquals("validAccessCode", response.getJoinCaseRequest().getAccessCode());
         assertEquals("12345", response.getJoinCaseRequest().getCaseFilingNumber());
@@ -455,9 +468,10 @@ public class CaseServiceTest {
 
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
-        List<CaseCriteria> existingApplications = List.of(CaseCriteria.builder().responseList(List.of(courtCase)).build());
 
-        when(caseRepository.getCases(anyList(), any())).thenReturn(existingApplications);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
+
 
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("advocate-1");
@@ -688,26 +702,27 @@ public class CaseServiceTest {
     @Test
     public void testAddWitness_Success() {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
-        addWitnessRequest.setCaseFilingNumber("CASE123");
+        addWitnessRequest.setCaseFilingNumber(TEST_FILING_NUMBER);
         addWitnessRequest.setAdditionalDetails("details");
         RequestInfo requestInfo = new RequestInfo();
         User user = new User();
         CourtCase cases = new CourtCase(); // Mock court case list
         cases.setId(UUID.randomUUID());
         user.setType("EMPLOYEE");
+        user.setTenantId(TEST_TENANT_ID);
         Role role = new Role();
         role.setName("EMPLOYEE");
         user.setRoles(Collections.singletonList(role));
         requestInfo.setUserInfo(user);
         addWitnessRequest.setRequestInfo(requestInfo);
 
-        CaseExists caseExists = new CaseExists();
-        caseExists.setExists(true);
-        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(cases);
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
+
         when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(cases);
         when(encryptionDecryptionUtil.decryptObject(any(),any(),any(),any())).thenReturn(cases);
 
-        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+        doNothing().when(cacheService).save(any(),any());
         when(config.getAdditionalJoinCaseTopic()).thenReturn("topic");
         AddWitnessResponse response = caseService.addWitness(addWitnessRequest);
 
@@ -719,42 +734,40 @@ public class CaseServiceTest {
     @Test
     public void testAddWitness_CaseNotFound() {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
-        addWitnessRequest.setCaseFilingNumber("CASE123");
+
+        addWitnessRequest.setCaseFilingNumber(TEST_FILING_NUMBER);
         RequestInfo requestInfo = new RequestInfo();
         User user = new User();
         user.setType("EMPLOYEE");
         requestInfo.setUserInfo(user);
         addWitnessRequest.setRequestInfo(requestInfo);
 
-        CaseExists caseExists = new CaseExists();
-        caseExists.setExists(false);
-        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
-
-        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(null); // or false for CaseNotFound scenario
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.addWitness(addWitnessRequest);
         });
 
         assertEquals("INVALID_CASE", exception.getCode());
-        assertEquals("No case found for the given filling Number", exception.getMessage());
+        assertEquals("No case found for the given filing Number", exception.getMessage());
     }
 
     @Test
     public void testAddWitness_InvalidUser() {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
-        addWitnessRequest.setCaseFilingNumber("CASE123");
+        addWitnessRequest.setCaseFilingNumber(TEST_FILING_NUMBER);
         addWitnessRequest.setAdditionalDetails("data");
         User user = new User();
         user.setType("CITIZEN");
         requestInfo.setUserInfo(user);
         addWitnessRequest.setRequestInfo(requestInfo);
 
-        CaseExists caseExists = new CaseExists();
-        caseExists.setExists(true);
-        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+        CourtCase cases = new CourtCase(); // Mock court case list
+        cases.setId(UUID.randomUUID());
 
-        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(cases);
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.addWitness(addWitnessRequest);
@@ -767,17 +780,17 @@ public class CaseServiceTest {
     @Test
     public void testAddWitness_AdditionalDetailsRequired() {
         AddWitnessRequest addWitnessRequest = new AddWitnessRequest();
-        addWitnessRequest.setCaseFilingNumber("CASE123");
+        addWitnessRequest.setCaseFilingNumber(TEST_FILING_NUMBER);
         User user = new User();
         user.setType("EMPLOYEE");
         requestInfo.setUserInfo(user);
         addWitnessRequest.setRequestInfo(requestInfo);
 
-        CaseExists caseExists = new CaseExists();
-        caseExists.setExists(true);
-        List<CaseExists> caseExistsList = Collections.singletonList(caseExists);
+        CourtCase cases = new CourtCase(); // Mock court case list
+        cases.setId(UUID.randomUUID());
 
-        when(caseRepository.checkCaseExists(anyList())).thenReturn(caseExistsList);
+        CaseCriteria caseCriteria = setupTestCaseCriteria(cases);
+        when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             caseService.addWitness(addWitnessRequest);
@@ -790,12 +803,12 @@ public class CaseServiceTest {
     @Test
     public void testSearchRedisCache_CaseFound() throws JsonProcessingException {
         caseCriteria = new CaseCriteria();
-        caseCriteria.setCaseId("case-id");
+        caseCriteria.setCaseId(TEST_CASE_ID);
         String expectedId = "tenant-id:case-id";
         CourtCase expectedCourtCase = new CourtCase();
         when(cacheService.findById(expectedId)).thenReturn(expectedCourtCase);
 
-        CourtCase result = caseService.searchRedisCache(requestInfo, caseCriteria);
+        CourtCase result = caseService.searchRedisCache(requestInfo, caseCriteria.getCaseId());
 
         assertNotNull(result);
         assertEquals(expectedCourtCase, result);
@@ -809,7 +822,7 @@ public class CaseServiceTest {
 
         when(cacheService.findById(anyString())).thenReturn(null);
 
-        CourtCase result = caseService.searchRedisCache(requestInfo, criteria);
+        CourtCase result = caseService.searchRedisCache(requestInfo, criteria.getCaseId());
 
         assertNull(result);
     }

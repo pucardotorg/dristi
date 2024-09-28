@@ -19,6 +19,10 @@ import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.analytics.CaseOutcome;
+import org.pucar.dristi.web.models.analytics.CaseOverallStatus;
+import org.pucar.dristi.web.models.analytics.CaseStageSubStage;
+import org.pucar.dristi.web.models.analytics.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -106,11 +110,13 @@ public class CaseService {
             for (CaseCriteria criteria : caseCriteriaList) {
                 CourtCase courtCase = null;
                 if (!criteria.getDefaultFields() && criteria.getCaseId() != null) {
-                    courtCase = searchRedisCache(caseSearchRequests.getRequestInfo(), criteria);
+                    courtCase = searchRedisCache(caseSearchRequests.getRequestInfo(), criteria.getCaseId());
                 }
                 if (courtCase != null) {
                     criteria.setResponseList(Collections.singletonList(courtCase));
                     caseCriteriaInRedis.add(criteria);
+                } else {
+                    log.debug("CourtCase not found in Redis cache for caseId: {}", criteria.getCaseId());
                 }
             }
 
@@ -197,40 +203,64 @@ public class CaseService {
         }
     }
 
+    public void updateCourtCaseInRedis(String tenantId, CourtCase courtCase){
+        if (tenantId == null || courtCase == null) {
+            throw new CustomException("INVALID_INPUT", "Tenant ID or CourtCase is null");
+        }
+        cacheService.save(tenantId + ":" + courtCase.getId().toString(), courtCase);
+    }
+
     public AddWitnessResponse addWitness(AddWitnessRequest addWitnessRequest) {
 
         try {
+            RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
             String filingNumber = addWitnessRequest.getCaseFilingNumber();
-            CaseExists caseExists = CaseExists.builder().filingNumber(filingNumber).build();
-            List<CaseExists> caseExistsList = caseRepository.checkCaseExists(Collections.singletonList(caseExists));
+            CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
+            List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(caseCriteria), requestInfo);
 
-            if (!caseExistsList.get(0).getExists())
-                throw new CustomException(INVALID_CASE, "No case found for the given filling Number");
+            if (existingApplications.isEmpty()) {
+                throw new CustomException(INVALID_CASE, "No case found for the given filing Number");
+            }
+            List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
+            if (courtCaseList.isEmpty()) {
+                throw new CustomException(INVALID_CASE, "No case found for the given filing Number");
+            }
 
             if (addWitnessRequest.getAdditionalDetails() == null)
                 throw new CustomException(VALIDATION_ERR, "Additional details are required");
 
-            RequestInfo requestInfo = addWitnessRequest.getRequestInfo();
+
             User userInfo = requestInfo.getUserInfo();
             String userType = userInfo.getType();
             if (!EMPLOYEE.equalsIgnoreCase(userType) || userInfo.getRoles().stream().filter(role -> EMPLOYEE.equalsIgnoreCase(role.getName())).findFirst().isEmpty())
                 throw new CustomException(VALIDATION_ERR, "Not a valid user to add witness details");
 
-            AuditDetails auditDetails = AuditDetails.builder().lastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            AuditDetails auditDetails = AuditDetails
+                    .builder()
+                    .lastModifiedBy(addWitnessRequest.getRequestInfo().getUserInfo().getUuid())
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build();
             addWitnessRequest.setAuditDetails(auditDetails);
+
             CourtCase caseObj = CourtCase.builder()
                     .filingNumber(filingNumber)
                     .build();
-            caseObj.setAdditionalDetails(addWitnessRequest.getAdditionalDetails());
 
+            caseObj.setAdditionalDetails(addWitnessRequest.getAdditionalDetails());
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
 
             addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), addWitnessRequest);
 
-            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,addWitnessRequest.getRequestInfo());
+            CourtCase courtCase = courtCaseList.get(0);
+            if (courtCase != null) {
+                courtCase.setAdditionalDetails(addWitnessRequest.getAdditionalDetails());
+                updateCourtCaseInRedis(addWitnessRequest.getRequestInfo().getUserInfo().getTenantId(), courtCase);
+            }
 
+            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,addWitnessRequest.getRequestInfo());
             addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
+
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
 
         } catch (CustomException e) {
@@ -242,12 +272,23 @@ public class CaseService {
 
     }
 
+
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase courtCase,CourtCase caseObj, AuditDetails auditDetails) {
         log.info("enriching litigants");
         enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
         log.info("Pushing join case litigant details :: {}", joinCaseRequest.getLitigant());
         producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+
+        String tenantId = joinCaseRequest.getRequestInfo().getUserInfo().getTenantId();
+
+        if (courtCase.getLitigants() != null) {
+            List<Party> litigants = courtCase.getLitigants();
+            litigants.add(joinCaseRequest.getLitigant());
+        } else {
+            courtCase.setLitigants(Collections.singletonList(joinCaseRequest.getLitigant()));
+        }
+        updateCourtCaseInRedis(tenantId, courtCase);
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
 
@@ -258,6 +299,10 @@ public class CaseService {
 
             log.info("Pushing additional details for litigant:: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+
+            courtCase.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
+            updateCourtCaseInRedis(tenantId, courtCase);
+
             caseObj.setAuditdetails(courtCase.getAuditdetails());
             caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
@@ -273,12 +318,26 @@ public class CaseService {
         log.info("Pushing join case representative details :: {}", joinCaseRequest.getRepresentative());
         producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
 
+        String tenantId = joinCaseRequest.getRequestInfo().getUserInfo().getTenantId();
+
+        if (courtCase.getRepresentatives() != null) {
+            List<AdvocateMapping> representatives = courtCase.getRepresentatives();
+            representatives.add(joinCaseRequest.getRepresentative());
+        } else {
+            courtCase.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
+        }
+        updateCourtCaseInRedis(tenantId, courtCase);
+
         if (joinCaseRequest.getAdditionalDetails() != null) {
             caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(),courtCase.getAdditionalDetails()));
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
             log.info("Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
+
+            courtCase.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
+            updateCourtCaseInRedis(tenantId, courtCase);
+
             caseObj.setAuditdetails(courtCase.getAuditdetails());
             caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
@@ -460,9 +519,9 @@ public class CaseService {
         return requestInfo.getUserInfo().getTenantId() + ":" + caseId;
     }
 
-    public CourtCase searchRedisCache(RequestInfo requestInfo, CaseCriteria criteria) {
+    public CourtCase searchRedisCache(RequestInfo requestInfo, String caseId) {
         try {
-            Object value = cacheService.findById(getRedisKey(requestInfo, criteria.getCaseId()));
+            Object value = cacheService.findById(getRedisKey(requestInfo, caseId));
             if (value != null) {
                 String caseObject = objectMapper.writeValueAsString(value);
                 return objectMapper.readValue(caseObject, CourtCase.class);
@@ -474,7 +533,7 @@ public class CaseService {
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
         }
     }
-
+    
     public void saveInRedisCache(List<CaseCriteria> casesList, RequestInfo requestInfo) {
         for (CaseCriteria criteria : casesList) {
             if (!criteria.getDefaultFields() && criteria.getCaseId() != null && criteria.getResponseList() != null) {
@@ -552,5 +611,47 @@ public class CaseService {
 
         // Convert the updated ObjectNode back to its original form
         return objectMapper.convertValue(details2Node, additionalDetails2.getClass());
+    }
+
+    private CourtCase fetchCourtCaseByFilingNumber(RequestInfo requestInfo, String filingNumber){
+
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
+        List<CaseCriteria> caseCriteriaList = caseRepository.getCases(Collections.singletonList(caseCriteria), requestInfo);
+        if (caseCriteriaList.isEmpty()) {
+            throw new CustomException(INVALID_CASE, "No case found for the given filing Number");
+        }
+        List<CourtCase> courtCaseList = caseCriteriaList.get(0).getResponseList();
+        if (courtCaseList.isEmpty()) {
+            throw new CustomException(INVALID_CASE, "No case found for the given filing Number");
+        }
+        return courtCaseList.get(0);
+    }
+
+    public void updateCaseOverallStatus(CaseStageSubStage caseStageSubStage) {
+
+        CaseOverallStatus caseOverallStatus = caseStageSubStage.getCaseOverallStatus();
+
+        CourtCase courtCaseDb = fetchCourtCaseByFilingNumber(caseStageSubStage.getRequestInfo(),caseOverallStatus.getFilingNumber());
+        CourtCase courtCaseRedis = searchRedisCache(caseStageSubStage.getRequestInfo(), courtCaseDb.getId().toString());
+
+        if (courtCaseRedis != null){
+            courtCaseRedis.setStage(caseOverallStatus.getStage());
+            courtCaseRedis.setSubstage(caseOverallStatus.getSubstage());
+        }
+        updateCourtCaseInRedis(caseOverallStatus.getTenantId(),courtCaseRedis);
+    }
+
+    public void updateCaseOutcome(CaseOutcome caseOutcome) {
+
+        Outcome outcome = caseOutcome.getOutcome();
+
+        CourtCase courtCaseDb = fetchCourtCaseByFilingNumber(caseOutcome.getRequestInfo(), outcome.getFilingNumber());
+        CourtCase courtCaseRedis = searchRedisCache(caseOutcome.getRequestInfo(), courtCaseDb.getId().toString());
+
+        if (courtCaseRedis != null){
+            courtCaseRedis.setOutcome(outcome.getOutcome());
+        }
+        updateCourtCaseInRedis(outcome.getTenantId(), courtCaseRedis);
+
     }
 }
