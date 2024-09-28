@@ -18,7 +18,9 @@ function CustomSubmitModal({ t, setShowModal, header, subHeader, submitModalInfo
       <Banner whichSvg={"tick"} successful={true} message={t(submitModalInfo?.header)} headerStyles={{ fontSize: "32px" }} />
       {submitModalInfo?.subHeader && <CardLabel>{t(submitModalInfo?.subHeader)}</CardLabel>}
       {submitModalInfo?.showTable && <CustomCaseInfoDiv data={submitModalInfo?.caseInfo} t={t} />}
-      {submitModalInfo?.showCopytext && <CustomCopyTextDiv data={submitModalInfo?.caseInfo} t={t} />}
+      {submitModalInfo?.showCopytext && (
+        <CustomCopyTextDiv textWrapperStyle={{ display: "flex", justifyContent: "start" }} data={submitModalInfo?.caseInfo} t={t} />
+      )}
     </div>
   );
 }
