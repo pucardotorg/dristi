@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 
-import { HeaderBar, PopUp, Toast } from "@egovernments/digit-ui-react-components";
+import { HeaderBar, Toast } from "@egovernments/digit-ui-react-components";
 import ButtonSelector from "./ButtonSelector";
+import PopUp from "./PopUp";
 
 const Modal = ({
   headerBarMain,
@@ -25,6 +26,7 @@ const Modal = ({
   submitTextClassName = "",
   className,
   cancelButtonBody,
+  popUpStyleMain = {},
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -37,7 +39,7 @@ const Modal = ({
     };
   }, []);
   return (
-    <PopUp>
+    <PopUp popUpStyleMain={popUpStyleMain}>
       <div className={`popup-module ${className}`} style={popupStyles}>
         {headerBarMain && <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />}
         <div className="popup-module-main" style={popupModuleMianStyles ? popupModuleMianStyles : {}}>

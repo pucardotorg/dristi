@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import LocationSearch, { defaultCoordinates } from "./LocationSearch";
 import Axios from "axios";
@@ -22,6 +22,19 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
         },
       ],
     [config?.populators?.inputs]
+  );
+
+  const getFieldValue = useCallback(
+    (coordinates, field, defaultValue = "") => {
+      const isDefaultCoordinates =
+        parseFloat(coordinates?.latitude) === defaultCoordinates?.lat && parseFloat(coordinates?.longitude) === defaultCoordinates?.lng;
+      if (isDefaultCoordinates) return "";
+      if (locationFormData?.[config?.key]) {
+        return locationFormData[config?.key][field];
+      }
+      return defaultValue;
+    },
+    [locationFormData, config?.key]
   );
 
   const getLatLngByPincode = async (pincode) => {
@@ -116,7 +129,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
     <div>
       {inputs?.map((input) => {
         let currentValue = (locationFormData && locationFormData[config.key] && locationFormData[config.key][input.name]) || "";
-        let isFirstRender = true;
         return (
           <React.Fragment key={input.label}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -136,46 +148,32 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
-                          pincode:
-                            locationFormData && isFirstRender && locationFormData?.[config.key]
-                              ? locationFormData[config.key]["pincode"]
-                              : pincode || "",
-                          state:
-                            locationFormData && isFirstRender && locationFormData?.[config.key]
-                              ? locationFormData[config.key]["state"]
-                              : getLocation(location, "administrative_area_level_1") || "",
-                          district:
-                            locationFormData && isFirstRender && locationFormData?.[config.key]
-                              ? locationFormData[config.key]["district"]
-                              : getLocation(location, "administrative_area_level_3") || "",
-                          city:
-                            locationFormData && isFirstRender && locationFormData?.[config.key]
-                              ? locationFormData[config.key]["city"]
-                              : getLocation(location, "locality") || "",
-                          locality:
-                            coordinates?.latitude === defaultCoordinates?.lat && coordinates?.longitude === defaultCoordinates?.lng
-                              ? ""
-                              : isFirstRender && locationFormData?.[config.key]
-                              ? locationFormData[config.key]["locality"]
-                              : (() => {
-                                  const plusCode = getLocation(location, "plus_code");
-                                  const neighborhood = getLocation(location, "neighborhood");
-                                  const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                                  const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                                  return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                                    .reduce((result, current) => {
-                                      if (current) {
-                                        result.push(current);
-                                      }
-                                      return result;
-                                    }, [])
-                                    .join(", ");
-                                })(),
+                          pincode: getFieldValue(coordinates, "pincode", pincode || ""),
+                          state: getFieldValue(coordinates, "state", getLocation(location, "administrative_area_level_1") || ""),
+                          district: getFieldValue(coordinates, "district", getLocation(location, "administrative_area_level_3") || ""),
+                          city: getFieldValue(coordinates, "city", getLocation(location, "locality") || ""),
+                          locality: getFieldValue(
+                            coordinates,
+                            "locality",
+                            (() => {
+                              const plusCode = getLocation(location, "plus_code");
+                              const neighborhood = getLocation(location, "neighborhood");
+                              const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                              const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                              return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                                .reduce((result, current) => {
+                                  if (current) {
+                                    result.push(current);
+                                  }
+                                  return result;
+                                }, [])
+                                .join(", ");
+                            })()
+                          ),
                           coordinates,
                         },
                         input.name
                       );
-                      isFirstRender = false;
                     }}
                     disable={input.isDisabled || disable}
                   />

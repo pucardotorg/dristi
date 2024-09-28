@@ -94,6 +94,7 @@ const DocumentModal = ({ config, setShow, currentStep }) => {
           ? "custom-modal-stepper"
           : "custom-modal-stepper-non-doc"
       }
+      popUpStyleMain={{ zIndex: "1000" }}
       isDisabled={isDisabled}
     >
       {config?.isStepperModal ? config?.steps[step]?.modalBody || config?.modalBody : config?.modalBody}
