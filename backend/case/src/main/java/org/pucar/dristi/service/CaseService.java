@@ -288,7 +288,6 @@ public class CaseService {
         } else {
             courtCase.setLitigants(Collections.singletonList(joinCaseRequest.getLitigant()));
         }
-        updateCourtCaseInRedis(tenantId, courtCase);
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
 
@@ -307,6 +306,9 @@ public class CaseService {
             caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
 
+        } else {
+            CourtCase encryptedCourtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
+            updateCourtCaseInRedis(tenantId, encryptedCourtCase);
         }
     }
 
@@ -326,7 +328,6 @@ public class CaseService {
         } else {
             courtCase.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
         }
-        updateCourtCaseInRedis(tenantId, courtCase);
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
             caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(),courtCase.getAdditionalDetails()));
@@ -341,6 +342,9 @@ public class CaseService {
             caseObj.setAuditdetails(courtCase.getAuditdetails());
             caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
+        } else {
+            CourtCase encryptedCourtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
+            updateCourtCaseInRedis(tenantId, encryptedCourtCase);
         }
     }
 
