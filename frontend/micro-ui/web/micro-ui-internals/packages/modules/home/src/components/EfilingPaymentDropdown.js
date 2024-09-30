@@ -1,9 +1,7 @@
-import { Banner, CardLabel, CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState, useEffect } from "react";
-import Button from "@egovernments/digit-ui-module-dristi/src/components/Button";
+import { CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import CustomCaseInfoDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCaseInfoDiv";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import useSearchCaseService from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useSearchCaseService";
 import { useToast } from "@egovernments/digit-ui-module-dristi/src/components/Toast/useToast";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
@@ -11,20 +9,7 @@ import usePaymentProcess from "../hooks/usePaymentProcess";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../utils";
-
-const mockSubmitModalInfo = {
-  header: "CS_HEADER_FOR_E_FILING_PAYMENT",
-  subHeader: "CS_SUBHEADER_TEXT_FOR_E_FILING_PAYMENT",
-  caseInfo: [
-    {
-      key: "Case Number",
-      value: "FSM-2019-04-23-898898",
-    },
-  ],
-  isArrow: false,
-  showTable: true,
-};
+import { getSuffixByBusinessCode } from "../utils";
 
 const CloseBtn = (props) => {
   return (
@@ -38,7 +23,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000 }) {
+function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
   const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
@@ -53,8 +38,6 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
   const caseId = params?.caseId;
   const toast = useToast();
   const scenario = "EfillingCase";
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const path = "";
 
   const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
@@ -64,17 +47,6 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
     {
       select: (data) => {
         return data?.payment?.paymentType || [];
-      },
-    }
-  );
-
-  const { data: taxPeriodData, isLoading: taxPeriodLoading } = Digit.Hooks.useCustomMDMS(
-    Digit.ULBService.getStateId(),
-    "BillingService",
-    [{ name: "TaxPeriod" }],
-    {
-      select: (data) => {
-        return data?.BillingService?.TaxPeriod || [];
       },
     }
   );
@@ -145,13 +117,6 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
 
   const suffix = useMemo(() => getSuffixByBusinessCode(paymentTypeData, "case-default"), [paymentTypeData]);
 
-  const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
-    {},
-    { tenantId, consumerCode: caseDetails?.filingNumber + `_${suffix}`, service: "case-default" },
-    `dristi_${suffix}`,
-    Boolean(caseDetails?.filingNumber && suffix)
-  );
-
   const totalAmount = useMemo(() => {
     const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || 0;
     return parseFloat(totalAmount).toFixed(2);
@@ -181,113 +146,54 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
     path,
     caseDetails,
     totalAmount: chequeDetails?.totalAmount,
-    mockSubmitModalInfo,
     scenario,
   });
   const onSubmitCase = async () => {
     try {
-      if (billResponse?.Bill?.length === 0) {
-        const taxPeriod = getTaxPeriodByBusinessService(taxPeriodData, "case-default");
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: caseDetails?.filingNumber + `_${suffix}`,
-              consumerType: "case-default",
-              businessService: "case-default",
-              taxPeriodFrom: taxPeriod?.fromDate,
-              taxPeriodTo: taxPeriod?.toDate,
-              demandDetails: [
-                {
-                  taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
-      if (bill?.Bill?.length) {
-        const paymentStatus = await openPaymentPortal(bill);
-        if (paymentStatus) {
-          await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-            pendingTask: {
-              name: "Pending Payment",
-              entityType: "case-default",
-              referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-              status: "PENDING_PAYMENT",
-              cnrNumber: null,
-              filingNumber: caseDetails?.filingNumber,
-              isCompleted: true,
-              stateSla: null,
-              additionalDetails: {},
-              tenantId,
-            },
-          });
-          const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
-          fileStoreId &&
-            history.push(`e-filing-payment-response`, {
-              state: {
-                success: true,
-                receiptData: {
-                  ...mockSubmitModalInfo,
-                  caseInfo: [
-                    {
-                      key: "Mode of Payment",
-                      value: "Online",
-                      copyData: false,
-                    },
-                    {
-                      key: "Amount",
-                      value: totalAmount,
-                      copyData: false,
-                    },
-                    {
-                      key: "Transaction ID",
-                      value: caseDetails?.filingNumber,
-                      copyData: true,
-                    },
-                  ],
-                  isArrow: false,
-                  showTable: true,
-                  showCopytext: true,
-                },
-                fileStoreId: fileStoreId?.Document?.fileStore,
-              },
-            });
-        } else {
+      if (!bill?.Bill?.length) return;
+
+      const paymentStatus = await openPaymentPortal(bill);
+      const success = Boolean(paymentStatus);
+
+      const receiptData = {
+        header: "CS_HEADER_FOR_E_FILING_PAYMENT",
+        subHeader: "CS_SUBHEADER_TEXT_FOR_E_FILING_PAYMENT",
+        isArrow: false,
+        showTable: true,
+        caseInfo: [
+          { key: "Mode of Payment", value: "Online", copyData: false },
+          { key: "Amount", value: totalAmount, copyData: false },
+          { key: "Transaction ID", value: caseDetails?.filingNumber, copyData: true },
+        ],
+        showCopytext: true,
+      };
+
+      if (success) {
+        await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Pending Payment",
+            entityType: "case-default",
+            referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+            status: "PENDING_PAYMENT",
+            cnrNumber: null,
+            filingNumber: caseDetails?.filingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+        const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
+        if (fileStoreId) {
           history.push(`e-filing-payment-response`, {
-            state: {
-              success: false,
-              receiptData: {
-                ...mockSubmitModalInfo,
-                caseInfo: [
-                  {
-                    key: "Mode of Payment",
-                    value: "Online",
-                    copyData: false,
-                  },
-                  {
-                    key: "Amount",
-                    value: totalAmount,
-                    copyData: false,
-                  },
-                  {
-                    key: "Transaction ID",
-                    value: caseDetails?.filingNumber,
-                    copyData: true,
-                  },
-                ],
-                isArrow: false,
-                showTable: true,
-                showCopytext: true,
-              },
-              caseId: caseId,
-            },
+            state: { success: true, receiptData, fileStoreId: fileStoreId?.Document?.fileStore },
           });
         }
+      } else {
+        history.push(`e-filing-payment-response`, {
+          state: { success: false, receiptData, caseId },
+        });
       }
     } catch (error) {
       toast.error(t("CS_PAYMENT_ERROR"));
@@ -295,7 +201,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader, submitModalI
     }
   };
 
-  if (isLoading || isPaymentLoading || isBillLoading) {
+  if (isLoading || isPaymentLoading || isPaymentTypeLoading) {
     return <Loader />;
   }
   return (
