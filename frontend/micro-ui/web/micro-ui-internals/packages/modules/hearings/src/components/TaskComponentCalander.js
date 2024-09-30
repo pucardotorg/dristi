@@ -133,8 +133,32 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
     fetchPendingTasks();
   }, [fetchPendingTasks]);
 
-  const handleDownload = () => {
-    // write the handleDownload logic here
+  const downloadCauseList = async () => {
+    return await hearingService.customApiService(
+      Urls.hearing.causeList,
+      {
+        tenantId,
+        SearchCriteria: {
+          courtId: window?.globalConfigs?.getConfig("COURT_ID"),
+        },
+      },
+      {},
+      false,
+      true
+    );
+  };
+  const handleDownload = async () => {
+    const pdfData = await downloadCauseList();
+    const blob = new Blob([pdfData.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    const currentDate = new Date().toISOString().split("T")[0];
+    link.setAttribute("download", `cause_list_${currentDate}.pdf`); // Name of the downloaded file
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   return (

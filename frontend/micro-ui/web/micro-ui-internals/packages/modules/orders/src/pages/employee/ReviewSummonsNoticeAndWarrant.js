@@ -131,9 +131,11 @@ const ReviewSummonsNoticeAndWarrant = () => {
     const { data: tasksData } = await refetch();
     if (tasksData) {
       try {
+        const task = tasksData?.list?.[0];
         const reqBody = {
           task: {
-            ...tasksData?.list?.[0],
+            ...task,
+            ...(typeof task?.taskDetails === "string" && { taskDetails: JSON.parse(task?.taskDetails) }),
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
               action: "SEND",
@@ -154,9 +156,11 @@ const ReviewSummonsNoticeAndWarrant = () => {
     const { data: tasksData } = await refetch();
     if (tasksData) {
       try {
+        const task = tasksData?.list?.[0];
         const reqBody = {
           task: {
-            ...tasksData?.list?.[0],
+            ...task,
+            ...(typeof task?.taskDetails === "string" && { taskDetails: JSON.parse(task?.taskDetails) }),
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
               action: selectedDelievery?.key === "DELIVERED" ? "SERVED" : "NOT_SERVED",
@@ -303,6 +307,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
       const reqBody = {
         task: {
           ...rowData,
+          ...(typeof rowData?.taskDetails === "string" && { taskDetails: JSON.parse(rowData?.taskDetails) }),
           documents: documentsFile ? [...documents, documentsFile] : documents,
           tenantId,
         },

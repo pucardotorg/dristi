@@ -71,13 +71,14 @@ export const hearingService = {
       params,
     });
   },
-  customApiService: (url, data, params, useCache = false, userService = true) =>
+  customApiService: (url, data, params, useCache = false, userDownload = false) =>
     Request({
       url: url,
       useCache: useCache,
       userService: true,
       data,
       params,
+      userDownload,
     }),
 
   generateWitnessDepostionDownload: (data, params) =>

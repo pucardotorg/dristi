@@ -8,6 +8,7 @@ export const Urls = {
     updateHearings: "/hearing/v1/update",
     downloadWitnesspdf: "/hearing/witnessDeposition/v1/downloadPdf",
     uploadWitnesspdf: "/hearing/witnessDeposition/v1/uploadPdf",
+    causeList: "/scheduler/causelist/v1/_download",
   },
   order: {
     createOrder: "/order/v1/create",
