@@ -135,7 +135,7 @@ public class PaymentService {
 
     private Long convertTimestampToMillis(String timestampStr) {
         List<DateTimeFormatter> formatters = new ArrayList<>();
-        formatters.add(DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm:ss"));
+        formatters.add(DateTimeFormatter.ofPattern("yyyy-mm-dd HH:mm:ss"));
         LocalDateTime dateTime = null;
         for (DateTimeFormatter formatter : formatters) {
             try {
