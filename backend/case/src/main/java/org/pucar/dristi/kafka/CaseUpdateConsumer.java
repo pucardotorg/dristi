@@ -38,25 +38,22 @@ public class CaseUpdateConsumer {
     @KafkaListener(topics = {"${egov.case.overall.status.topic}"})
     public void updateCaseOverallStatus(ConsumerRecord<String, Object> payload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
-            logger.info("Received record: {} on topic: {}", payload, topic);
-            CaseStageSubStage caseStageSubStage = (objectMapper.readValue((String) payload.value(), new TypeReference<CaseStageSubStage>() {
-            }));
+            logger.info("Received case overall status record on topic: {}", topic);
+            CaseStageSubStage caseStageSubStage = objectMapper.convertValue(payload.value(), CaseStageSubStage.class);
             caseService.updateCaseOverallStatus(caseStageSubStage);
         } catch (final Exception e) {
-            logger.error("Error while listening to value: {} on topic: {}: ", payload, topic, e);
+            logger.error("Error while listening to case overall status on topic: {}: ", topic, e);
         }
     }
 
     @KafkaListener(topics = {"${egov.case.outcome.topic}"})
     public void updateCaseOutcome(ConsumerRecord<String, Object> payload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
-            logger.info("Received record: {} on topic: {}", payload, topic);
-            CaseOutcome caseOutcome = (objectMapper.readValue((String) payload.value(), new TypeReference<CaseOutcome>() {
-            }));
-
+            logger.info("Received case outcome record on topic: {}", topic);
+            CaseOutcome caseOutcome = objectMapper.convertValue(payload.value(), CaseOutcome.class);
             caseService.updateCaseOutcome(caseOutcome);
         } catch (final Exception e) {
-            logger.error("Error while listening to value: {} on topic: {}: ", payload, topic, e);
+            logger.error("Error while listening to case outcome on topic: {}: ", topic, e);
         }
     }
 
