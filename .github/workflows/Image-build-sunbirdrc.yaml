@@ -21,7 +21,7 @@ permissions:
   contents: read
 jobs:
   docker_image-build:
-    if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -64,7 +64,7 @@ jobs:
         working-directory: common/sunbirdrc-credential-service/src/main/resources/db
 
   Workflow_Trigger:
-    if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: docker_image-build
     steps:

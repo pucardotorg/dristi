@@ -156,7 +156,7 @@ function ReviewSubmissionModal({
                 <h3>{t("SUBMISSION_DATE")}</h3>
               </div>
               <div className="info-value">
-                <h3>{t(convertToDateInputFormat(submissionDate))}</h3>
+                <h3>{convertToDateInputFormat(submissionDate)}</h3>
               </div>
             </div>
             <div className="info-row">

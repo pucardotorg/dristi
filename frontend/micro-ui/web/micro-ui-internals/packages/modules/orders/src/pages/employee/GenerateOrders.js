@@ -543,9 +543,10 @@ const GenerateOrders = () => {
               if (field.key === "hearingPurpose") {
                 return {
                   ...field,
-                  ...(currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type === "ADMISSION" && {
-                    disable: true,
-                  }),
+                  ...(currentOrder?.additionalDetails?.formdata?.hearingPurpose?.type === "ADMISSION" &&
+                    !isCaseAdmitted && {
+                      disable: true,
+                    }),
                 };
               }
               if (field.key === "unjoinedPartiesNote") {
@@ -874,6 +875,11 @@ const GenerateOrders = () => {
     ) {
       updatedFormdata.originalHearingDate =
         applicationDetails?.additionalDetails?.formdata?.initialHearingDate || currentOrder.additionalDetails?.formdata?.originalHearingDate || "";
+      if (!isCaseAdmitted) {
+        updatedFormdata.hearingPurpose = {
+          code: "ADMISSION",
+        };
+      }
     }
     setCurrentFormData(updatedFormdata);
     return updatedFormdata;

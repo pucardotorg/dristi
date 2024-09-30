@@ -1210,6 +1210,7 @@ export const configsScheduleNextHearingDate = [
           required: true,
           isMandatory: true,
           hideInForm: false,
+          styles: { maxWidth: "100%" },
           mdmsConfig: {
             masterName: "HearingType",
             moduleName: "Hearing",

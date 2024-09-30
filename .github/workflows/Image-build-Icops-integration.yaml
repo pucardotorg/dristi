@@ -63,20 +63,20 @@ jobs:
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
 
       - name: Build and Push Docker image for integration
-        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
         run: |
           docker build --build-arg WORK_DIR="backend/icops_integration-kerala" -t pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/integration:v1.0.0-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for integration_DB
-        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
         run: |
           docker build -t pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ env.commit_hash }}  .
           docker push pucarsolutionsdev.azurecr.io/integration_db:v1.0.0-${{ env.commit_hash }}
         working-directory: backend/icops_integration-kerala/src/main/resources/db
 
   Workflow_Trigger:
-    if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment') && github.event_name == 'push'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: docker_image-build
     steps:

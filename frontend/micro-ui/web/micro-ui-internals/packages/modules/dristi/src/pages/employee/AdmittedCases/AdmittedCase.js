@@ -209,11 +209,9 @@ const AdmittedCases = () => {
     };
   });
 
-  const allAdvocates = useMemo(() => getAdvocates(caseDetails)[userInfo?.uuid], [caseDetails, userInfo]);
-  const isAdvocatePresent = useMemo(
-    () => (userInfo?.roles?.some((role) => role?.code === "ADVOCATE_ROLE") ? true : allAdvocates?.includes(userInfo?.uuid)),
-    [allAdvocates, userInfo?.roles, userInfo?.uuid]
-  );
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const listAllAdvocates = useMemo(() => Object.values(allAdvocates || {}).flat(), [allAdvocates]);
+  const isAdvocatePresent = useMemo(() => listAllAdvocates?.includes(userInfo?.uuid), [listAllAdvocates, userInfo?.uuid]);
 
   const caseRelatedData = useMemo(
     () => ({
@@ -1055,32 +1053,34 @@ const AdmittedCases = () => {
         break;
       case "ADMIT":
         if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
-          const { HearingList = [] } = await Digit.HearingService.searchHearings({
-            hearing: { tenantId },
-            criteria: {
-              tenantID: tenantId,
-              filingNumber: filingNumber,
-            },
-          });
-          const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-            (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
-          );
-          const {
-            list: [orderData],
-          } = await Digit.ordersService.searchOrder({
-            tenantId,
-            criteria: { filingNumber, applicationNumber: "", cnrNumber, status: OrderWorkflowState.DRAFT_IN_PROGRESS, hearingNumber: hearingNumber },
-            pagination: { limit: 1, offset: 0 },
-          });
-          if (orderData?.orderType === "NOTICE") {
-            history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`, {
-              caseId: caseId,
-              tab: "Orders",
+          const { hearingDate, hearingNumber } = await getHearingData();
+          if (hearingNumber) {
+            const {
+              list: [orderData],
+            } = await Digit.ordersService.searchOrder({
+              tenantId,
+              criteria: {
+                filingNumber,
+                applicationNumber: "",
+                cnrNumber,
+                status: OrderWorkflowState.DRAFT_IN_PROGRESS,
+                hearingNumber: hearingNumber,
+              },
+              pagination: { limit: 1, offset: 0 },
             });
-            await updateCaseDetails("ADMIT");
-          } else {
-            await handleIssueNotice(hearingDate, hearingNumber);
-            await updateCaseDetails("ADMIT");
+            if (orderData?.orderType === "NOTICE") {
+              history.push(
+                `/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`,
+                {
+                  caseId: caseId,
+                  tab: "Orders",
+                }
+              );
+              await updateCaseDetails("ADMIT");
+            } else {
+              await handleIssueNotice(hearingDate, hearingNumber);
+              await updateCaseDetails("ADMIT");
+            }
           }
         } else {
           setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
