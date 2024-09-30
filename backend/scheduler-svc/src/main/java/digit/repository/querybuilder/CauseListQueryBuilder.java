@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.sql.Types;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class CauseListQueryBuilder {
     private static final String FROM_TABLES = " FROM cause_list cl ";
 
     private static final String CAUSE_LIST_FILE_STORE_QUERY = "SELECT file_store_id FROM cause_list_document ";
+
+    private static final String CAUSE_LIST_FILE_ORDER_BY = " ORDER BY created_time DESC ";
 
     private static final String CASE_TYPE_QUERY = "SELECT * FROM dristi_case_hearing_type_priority";
 
@@ -78,6 +81,8 @@ public class CauseListQueryBuilder {
             preparedStmtList.add(searchCriteria.getSearchDate().toString());
             preparedStmtArgsList.add(Types.VARCHAR);
         }
+
+        query.append(CAUSE_LIST_FILE_ORDER_BY);
         return query.toString();
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
@@ -109,4 +114,5 @@ public class CauseListQueryBuilder {
     public String getCaseTypeQuery(List<Object> preparedStmtList, List<Integer> preparedStmtArgsList) {
         return CASE_TYPE_QUERY;
     }
+
 }

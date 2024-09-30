@@ -25,4 +25,13 @@ public class CauseListPdf {
 
     @JsonProperty("judgeId")
     private String judgeId;
+
+    @JsonProperty("tenantId")
+    private String tenantId;
+
+    @JsonProperty("createdTime")
+    private Long createdTime;
+
+    @JsonProperty("createdBy")
+    private String createdBy;
 }

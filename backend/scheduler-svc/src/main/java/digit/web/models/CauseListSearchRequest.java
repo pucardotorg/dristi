@@ -26,7 +26,7 @@ public class CauseListSearchRequest {
     @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("SearchCriteria")
+    @JsonProperty("Criteria")
     @Valid
     private CauseListSearchCriteria causeListSearchCriteria = null;
 
