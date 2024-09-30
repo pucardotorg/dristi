@@ -74,15 +74,16 @@ public class CauseListApiController {
     public ResponseEntity<Object> generateCauseList(@Valid @RequestBody CauseListSearchRequest request) {
         log.info("api = /causelist/v1/_generate, result = IN_PROGRESS");
         try {
+            String hearingDate = request.getCauseListSearchCriteria().getSearchDate()!= null ? request.getCauseListSearchCriteria().getSearchDate().toString() : null;
             causeListService.generateCauseList(request.getCauseListSearchCriteria().getCourtId(),
                     new ArrayList<>(),
-                    request.getCauseListSearchCriteria().getSearchDate().toString(),
+                    hearingDate,
                     request.getRequestInfo().getUserInfo().getUuid());
             log.info("api = /causelist/v1/_generate, result = SUCCESS");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("api = /causelist/v1/_generate, result = FAILED, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
