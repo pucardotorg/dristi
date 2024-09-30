@@ -24,13 +24,22 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
     [config?.populators?.inputs]
   );
 
+  const parseCoordinates = useCallback(() => {
+    let coordinates = locationFormData?.[config.key]?.coordinates || {};
+    coordinates = {
+      latitude: parseFloat(coordinates?.latitude) || 0,
+      longitude: parseFloat(coordinates?.longitude) || 0,
+    };
+    return coordinates;
+  }, [locationFormData, config?.key]);
+
   const getFieldValue = useCallback(
-    (coordinates, field, defaultValue = "") => {
+    (isFirstRender, coordinates, field, defaultValue = "") => {
       const isDefaultCoordinates =
         parseFloat(coordinates?.latitude) === defaultCoordinates?.lat && parseFloat(coordinates?.longitude) === defaultCoordinates?.lng;
       if (isDefaultCoordinates) return "";
-      if (locationFormData?.[config?.key]) {
-        return locationFormData[config?.key][field];
+      if (isFirstRender && locationFormData?.[config?.key]) {
+        return locationFormData[config?.key]?.[field];
       }
       return defaultValue;
     },
@@ -129,6 +138,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
     <div>
       {inputs?.map((input) => {
         let currentValue = (locationFormData && locationFormData[config.key] && locationFormData[config.key][input.name]) || "";
+        let isFirstRender = true;
         return (
           <React.Fragment key={input.label}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -141,18 +151,19 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                 {input?.type === "LocationSearch" && mapIndex ? (
                   <LocationSearch
                     locationStyle={{}}
-                    position={locationFormData?.[config.key]?.coordinates || {}}
+                    position={parseCoordinates()}
                     setCoordinateData={setCoordinateData}
                     index={mapIndex}
                     isAutoFilledDisabled={isAutoFilledDisabled}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
-                          pincode: getFieldValue(coordinates, "pincode", pincode || ""),
-                          state: getFieldValue(coordinates, "state", getLocation(location, "administrative_area_level_1") || ""),
-                          district: getFieldValue(coordinates, "district", getLocation(location, "administrative_area_level_3") || ""),
-                          city: getFieldValue(coordinates, "city", getLocation(location, "locality") || ""),
+                          pincode: getFieldValue(isFirstRender, coordinates, "pincode", pincode || ""),
+                          state: getFieldValue(isFirstRender, coordinates, "state", getLocation(location, "administrative_area_level_1") || ""),
+                          district: getFieldValue(isFirstRender, coordinates, "district", getLocation(location, "administrative_area_level_3") || ""),
+                          city: getFieldValue(isFirstRender, coordinates, "city", getLocation(location, "locality") || ""),
                           locality: getFieldValue(
+                            isFirstRender,
                             coordinates,
                             "locality",
                             (() => {
@@ -174,6 +185,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                         },
                         input.name
                       );
+                      isFirstRender = false;
                     }}
                     disable={input.isDisabled || disable}
                   />
