@@ -70,7 +70,9 @@ public class ApplicationService {
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
             validator.validateOrderDetails(applicationRequest);
             workflowService.updateWorkflowStatus(applicationRequest);
-            if(PENDINGSUBMISSION.equalsIgnoreCase(applicationRequest.getApplication().getStatus())){
+
+            if(COMPLETED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())
+            || REJECTED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())){
                 application.setApplicationNumber(application.getCmpNumber());
             }
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);

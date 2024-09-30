@@ -121,6 +121,23 @@ class ApplicationServiceTest {
     }
 
     @Test
+    void updateApplication_statusRejected_setsApplicationNumber() {
+        Application application1 = new Application();
+        application1.setStatus("REJECTED");
+        application1.setCmpNumber("CMP123");
+
+        ApplicationRequest applicationRequest1 = new ApplicationRequest();
+        applicationRequest1.setApplication(application1);
+
+        when(validator.validateApplicationExistence(any(), any())).thenReturn(true);
+
+        Application updatedApplication = applicationService.updateApplication(applicationRequest1);
+
+        assertEquals("CMP123", updatedApplication.getApplicationNumber());
+        verify(producer, times(1)).push(any(), any());
+    }
+
+    @Test
     void testUpdateApplication_validationFailure() {
         // Arrange
         when(applicationRequest.getApplication()).thenReturn(application);
