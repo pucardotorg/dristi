@@ -1028,7 +1028,7 @@ const GenerateOrders = () => {
       try {
         orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
       } catch (error) {
-        console.log(error);
+        console.error("error :>> ", error);
       }
 
       return await ordersService.updateOrder(
@@ -1053,7 +1053,7 @@ const GenerateOrders = () => {
       try {
         orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
       } catch (error) {
-        console.log(error);
+        console.error("error :>> ", error);
       }
       // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
 
@@ -1469,6 +1469,7 @@ const GenerateOrders = () => {
           summonDetails: {
             issueDate: orderData?.auditDetails?.lastModifiedTime,
             caseFilingDate: caseDetails?.filingDate,
+            docSubType: orderFormData?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
           respondentDetails: {
             name: respondentName,
@@ -2028,7 +2029,44 @@ const GenerateOrders = () => {
             });
           });
         } else {
-          updateCaseDetails("ISSUE_ORDER");
+          try {
+            await updateCaseDetails("ISSUE_ORDER");
+            const caseDetails = await refetchCaseData();
+            const caseData = caseDetails?.data?.criteria?.[0]?.responseList?.[0];
+            const respondent = caseData?.litigants?.find((litigant) => litigant?.partyType?.includes("respondent"));
+            const advocate = caseData?.representatives?.find((representative) =>
+              representative?.representing?.some((represent) => respondent && represent?.individualId === respondent?.individualId)
+            );
+
+            const assignees = [];
+            if (respondent) assignees.push({ uuid: respondent?.additionalDetails?.uuid });
+            if (advocate) assignees.push({ uuid: advocate?.additionalDetails?.uuid });
+
+            if (respondent && assignees?.length > 0) {
+              try {
+                await DRISTIService.customApiService(Urls.orders.pendingTask, {
+                  pendingTask: {
+                    name: "Pending Response",
+                    entityType: "case-default",
+                    referenceId: `MANUAL_${caseData?.filingNumber}`,
+                    status: "PENDING_RESPONSE",
+                    assignedTo: assignees,
+                    assignedRole: ["CASE_RESPONDER"],
+                    cnrNumber: caseData?.cnrNumber,
+                    filingNumber: caseData?.filingNumber,
+                    isCompleted: false,
+                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
+                    additionalDetails: { individualId: respondent?.individualId, caseId: caseData?.id },
+                    tenantId,
+                  },
+                });
+              } catch (err) {
+                console.error("err :>> ", err);
+              }
+            }
+          } catch (error) {
+            console.error("error :>> ", error);
+          }
         }
       }
       createTask(orderType, caseDetails, orderResponse);

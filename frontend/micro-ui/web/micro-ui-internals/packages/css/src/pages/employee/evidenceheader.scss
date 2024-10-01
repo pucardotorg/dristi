@@ -190,28 +190,26 @@
     }
   }
   .notice-failed-notification {
-    .notice-failed-notification {
-      display: flex;
-      gap: 8px;
-      .notice-failed-icon {
+    display: flex;
+    gap: 8px;
+    .notice-failed-icon {
+      height: 20px;
+      width: 20px;
+      svg {
         height: 20px;
         width: 20px;
-        svg {
-          height: 20px;
-          width: 20px;
-        }
       }
-      .notice-failed-text {
-        font-family: Roboto;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 18.75px;
-        text-align: left;
-        color: #0a0a0a;
-        .click-here {
-          text-decoration: underline;
-          color: #007e7e;
-        }
+    }
+    .notice-failed-text {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+      .click-here {
+        text-decoration: underline;
+        color: #007e7e;
       }
     }
   }

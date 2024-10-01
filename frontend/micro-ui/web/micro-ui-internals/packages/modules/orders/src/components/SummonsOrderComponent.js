@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useSearchCaseService from "../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
@@ -60,6 +60,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const [selectedChannels, setSelectedChannels] = useState(formData[config.key]?.["selectedChannels"] || []);
   const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs]);
   const orderType = formData?.orderType?.code;
+  const [userList, setUserList] = useState([]);
+
   const { data: caseData, refetch } = useSearchCaseService(
     {
       criteria: [{ filingNumber: filingNumber }],
@@ -85,50 +87,82 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   //     uuid: allAdvocates[item?.additionalDetails?.uuid],
   //   };
   // }) || []
-  const userList = useMemo(() => {
-    let users = [];
-    if (caseDetails?.additionalDetails) {
-      const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata || [];
-      const witnessData = caseDetails?.additionalDetails?.witnessDetails?.formdata || [];
-      const updatedRespondentData = respondentData.map((item) => ({
-        ...item,
-        data: {
-          ...item?.data,
-          firstName: item?.data?.respondentFirstName || "",
-          lastName: item?.data?.respondentLastName || "",
-          address: item?.data?.addressDetails?.map((address) => ({
-            locality: address?.addressDetails?.locality || "",
-            city: address?.addressDetails?.city || "",
-            district: address?.addressDetails?.district || "",
-            pincode: address?.addressDetails?.pincode || "",
-          })),
-          partyType: "Respondent",
-          phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
-          email: item?.data?.emails?.emailId || [],
-        },
-      }));
-      const updatedWitnessData = witnessData.map((item) => ({
-        ...item,
-        data: {
-          ...item?.data,
-          firstName: item?.data?.firstName,
-          lastName: item?.data?.lastName,
-          address: item?.data?.addressDetails?.map((address) => ({
-            locality: address?.addressDetails?.locality,
-            city: address?.addressDetails?.city,
-            district: address?.addressDetails?.district,
-            pincode: address?.addressDetails?.pincode,
-            address: address?.addressDetails,
-          })),
-          partyType: "Witness",
-          phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
-          email: item?.data?.emails?.emailId || [],
-        },
-      }));
-      users = [...updatedRespondentData, ...updatedWitnessData];
-    }
-    return users;
-  }, [caseDetails]);
+
+  const mapAddressDetails = (addressDetails, isIndividualData = false) => {
+    return addressDetails?.map((address) => ({
+      locality: address?.addressDetails?.locality || address?.street || "",
+      city: address?.addressDetails?.city || address?.city || "",
+      district: address?.addressDetails?.district || address?.addressLine2 || "",
+      pincode: address?.addressDetails?.pincode || address?.pincode || "",
+      address: isIndividualData ? undefined : address?.addressDetails,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      let users = [];
+      if (caseDetails?.additionalDetails) {
+        const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata || [];
+        const witnessData = caseDetails?.additionalDetails?.witnessDetails?.formdata || [];
+        const updatedRespondentData = await Promise.all(
+          respondentData.map(async (item) => {
+            const individualId = item?.data?.respondentVerification?.individualDetails?.individualId;
+            let individualData = undefined;
+            if (individualId) {
+              try {
+                const response = await window?.Digit.DRISTIService.searchIndividualUser(
+                  {
+                    Individual: {
+                      individualId: individualId,
+                    },
+                  },
+                  { tenantId, limit: 1000, offset: 0 }
+                );
+                individualData = response?.Individual?.[0];
+              } catch (error) {
+                console.error("error :>> ", error);
+              }
+            }
+            return {
+              ...item,
+              data: {
+                ...item?.data,
+                firstName: individualData ? individualData?.name?.givenName : item?.data?.respondentFirstName || "",
+                lastName: individualData ? individualData?.name?.familyName : item?.data?.respondentLastName || "",
+                ...(individualData && {
+                  respondentFirstName: individualData?.name.givenName,
+                  respondentMiddleName: individualData?.name?.otherNames,
+                  respondentLastName: individualData?.name?.familyName,
+                }),
+                address: individualData ? mapAddressDetails(individualData?.address, true) : mapAddressDetails(item?.data?.addressDetails),
+                partyType: "Respondent",
+                phone_numbers: (individualData ? [individualData?.mobileNumber] : [])
+                  .concat(item?.data?.phonenumbers?.mobileNumber || [])
+                  .filter(Boolean),
+                email: (individualData ? [individualData?.email] : []).concat(item?.data?.emails?.emailId || []).filter(Boolean),
+              },
+            };
+          })
+        );
+        const updatedWitnessData = witnessData.map((item) => ({
+          ...item,
+          data: {
+            ...item?.data,
+            firstName: item?.data?.firstName,
+            lastName: item?.data?.lastName,
+            address: mapAddressDetails(item?.data?.addressDetails),
+            partyType: "Witness",
+            phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
+            email: item?.data?.emails?.emailId || [],
+          },
+        }));
+        users = [...updatedRespondentData, ...updatedWitnessData];
+      }
+      setUserList(users);
+    };
+
+    fetchUsers();
+  }, [caseDetails?.additionalDetails, tenantId]);
 
   const handleDropdownChange = (selectedOption) => {
     const isEqual = _.isEqual(selectedOption.value.data, formData?.[config.key]?.party?.data);
@@ -228,8 +262,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
             <div>
               <Dropdown
                 t={t}
-                option={userList.map((user) => ({
-                  label: [user.data.firstName, user.data.lastName, `(${user.data.partyType})`].filter(Boolean).join(" "),
+                option={userList?.map((user) => ({
+                  label: [user?.data?.firstName, user?.data?.lastName, `(${user?.data?.partyType})`].filter(Boolean).join(" "),
                   value: user,
                 }))}
                 optionKey="label"

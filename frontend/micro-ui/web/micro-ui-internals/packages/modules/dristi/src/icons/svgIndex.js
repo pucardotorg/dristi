@@ -411,8 +411,8 @@ const LitigentIcon = () => (
   </svg>
 );
 
-const InfoIconRed = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+const InfoIconRed = ({ style }) => (
+  <svg style={style} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M6.9987 0.333374C3.3187 0.333374 0.332031 3.32004 0.332031 7.00004C0.332031 10.68 3.3187 13.6667 6.9987 13.6667C10.6787 13.6667 13.6654 10.68 13.6654 7.00004C13.6654 3.32004 10.6787 0.333374 6.9987 0.333374ZM7.66536 10.3334H6.33203V6.33337H7.66536V10.3334ZM7.66536 5.00004H6.33203V3.66671H7.66536V5.00004Z"
       fill="#BB2C2F"
