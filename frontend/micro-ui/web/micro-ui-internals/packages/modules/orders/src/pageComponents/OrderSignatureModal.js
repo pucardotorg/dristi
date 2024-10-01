@@ -123,6 +123,7 @@ function OrderSignatureModal({
                 onButtonClick={() => {
                   // setOpenAadharModal(true);
                   // setIsSigned(true);
+                  localStorage.setItem("orderPDF", orderPdfFileStoreID);
                   handleEsign(name, pageModule, orderPdfFileStoreID);
                 }}
                 className={"aadhar-sign-in"}

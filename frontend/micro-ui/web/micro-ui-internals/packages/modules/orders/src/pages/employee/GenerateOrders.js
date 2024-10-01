@@ -397,9 +397,12 @@ const GenerateOrders = () => {
       setSelectedOrder(defaultIndex);
     }
     const isSignSuccess = localStorage.getItem("esignProcess");
+    const savedOrderPdf = localStorage.getItem("orderPDF");
     if (isSignSuccess) {
       setShowsignatureModal(true);
+      setOrderPdfFileStoreID(savedOrderPdf);
       localStorage.removeItem("esignProcess");
+      localStorage.removeItem("orderPDF");
     }
   }, [defaultIndex]);
 

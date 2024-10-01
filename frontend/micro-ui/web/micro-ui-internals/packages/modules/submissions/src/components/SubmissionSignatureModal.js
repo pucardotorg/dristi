@@ -100,6 +100,7 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
                 onClick={() => {
                   // setOpenAadharModal(true);
                   // setIsSigned(true);
+                  localStorage.setItem("applicationPDF", applicationPdfFileStoreId);
                   handleEsign(name, pageModule, applicationPdfFileStoreId);
                 }}
                 className={"aadhar-sign-in"}
