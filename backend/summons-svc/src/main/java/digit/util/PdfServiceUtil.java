@@ -108,7 +108,7 @@ public class PdfServiceUtil {
         if (input == null) {
             return "";
         }
-        String regex = "-(\\d+)$";
+        String regex = "-(\\d{4})$";
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
         java.util.regex.Matcher matcher = pattern.matcher(input);
 

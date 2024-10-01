@@ -72,20 +72,22 @@ exports.generateCasePdf = async (req, res, next) => {
     }
 };
 
+// Function to extract the year (2025)
 function extractCaseYear(input) {
-    const yearMatch = input.match(/-\d{4}-/);
+    const yearMatch = input.match(/-(\d{4})$/);
     if (yearMatch) {
-        return yearMatch[0].replace(/-/g, ''); 
+        return yearMatch[1]; // Return the captured year
     } else {
         return '';
     }
 }
 
+// Function to extract the case number (000053)
 function extractCaseNumber(input) {
-    const match = input.match(/-(\d+)$/);
+    const match = input.match(/-(\d{6})-/);
     if (match) {
-        return parseInt(match[1], 10);
+        return match[1]; // Return the captured 6-digit case number
     } else {
-        return ''; 
+        return '';
     }
 }
