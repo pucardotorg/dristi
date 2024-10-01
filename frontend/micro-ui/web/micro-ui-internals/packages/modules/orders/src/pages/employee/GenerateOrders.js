@@ -1329,6 +1329,7 @@ const GenerateOrders = () => {
         {
           application: {
             ...applicationDetails,
+            cmpNumber: caseDetails?.cmpNumber,
             workflow: {
               ...applicationDetails.workflow,
               action:

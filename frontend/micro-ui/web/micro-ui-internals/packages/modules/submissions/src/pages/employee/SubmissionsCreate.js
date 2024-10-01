@@ -563,6 +563,7 @@ const SubmissionsCreate = ({ path }) => {
           tenantId,
           filingNumber,
           cnrNumber: caseDetails?.cnrNumber,
+          cmpNumber: caseDetails?.cmpNumber,
           caseId: caseDetails?.id,
           referenceId: isExtension ? null : orderDetails?.id || null,
           createdDate: new Date().getTime(),

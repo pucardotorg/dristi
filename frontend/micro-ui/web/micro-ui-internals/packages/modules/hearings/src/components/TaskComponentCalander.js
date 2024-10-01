@@ -138,7 +138,7 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
       Urls.hearing.causeList,
       {
         tenantId,
-        SearchCriteria: {
+        Criteria: {
           courtId: window?.globalConfigs?.getConfig("COURT_ID"),
         },
       },
