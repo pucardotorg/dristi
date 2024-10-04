@@ -17,6 +17,10 @@ participant CaseSvc as CS #gold
 participant ApplicationSvc as AS #gold
 end box
 
+box DIGIT Services
+participant IDGenSvc as IS #lightgreen
+end box
+
 == Case e-Filing ==
 note right of P: Advocate or Litigant
 P->HU: login
@@ -63,7 +67,7 @@ end note
 return success
 VU->AS++: updateApplication (approved)
 note right of VU: calling the update API, because that is already handling the logic of cmpNumber
-AS->CS++: getCMPNumber (caseId)
+AS->IS++: getCMPNumber (caseId)
 return cmpNumber
 AS->AS: enrich applicationNumber = cmpNumber, status = COMPLETED
 return success
