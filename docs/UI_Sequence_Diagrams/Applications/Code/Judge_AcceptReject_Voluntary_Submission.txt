@@ -42,7 +42,7 @@ end
 J->ARU: Review application and comments if any
 alt approve application
 J->ARU: Click "Accept"
-ARU->AS++: updateAppication (approved)
+ARU->AS++: updateApplication (approved)
 AS->CS++: getCMPNumber (caseId)
 return cmpNumber
 AS->AS: enrich applicationNumber = cmpNumber
@@ -63,7 +63,7 @@ end
 
 else reject application
 J->ARU: Click "Reject"
-ARU->AS++: updateAppication (rejected)
+ARU->AS++: updateApplication (rejected)
 AS->CS++: getCMPNumber (caseId)
 return cmpNumber
 AS->AS: enrich applicationNumber = cmpNumber
