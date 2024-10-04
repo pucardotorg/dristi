@@ -55,7 +55,7 @@ jobs:
 
       - name: Build and Push Docker image for Egov-User
         run: |
-          docker build --build-arg WORK_DIR="common/egov-user" -t pucarsolutionsdev.azurecr.io/egov-user:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker build --build-arg WORK_DIR="common/egov-user" -t pucarsolutionsdev.azurecr.io/egov-user:v1.0.0-${{ env.commit_hash }} -f build/maven-java8/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/egov-user:v1.0.0-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Egov-User DB
