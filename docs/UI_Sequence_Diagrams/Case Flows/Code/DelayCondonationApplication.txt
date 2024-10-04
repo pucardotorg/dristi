@@ -1,0 +1,73 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Delay Condonation Application Flow - Case e-Filing"
+
+actor CaseSubmitter as P
+actor FileSrcutinyOfficer as FSO #aqua
+actor Judge as J #gold
+
+participant HomeScreenUI as HU
+participant CaseFilingUI as CU
+participant ViewCaseUI as VU
+
+box DRISIT Services
+participant CaseSvc as CS #gold
+participant ApplicationSvc as AS #gold
+end box
+
+== Case e-Filing ==
+note right of P: Advocate or Litigant
+P->HU: login
+P->HU: select case e-filing
+HU->CU: redirects to Case Filing screen
+CU->CU: enter case filing details
+
+CU->CS++: Create case
+note right of CU
+    submit case payload with delay condonation application 
+    delay condonation application is added as is being done today
+end note
+CU->CU: Submit Case
+note right of CU
+    follow the normal process of case submission, e-sign, payment
+    scrutiny by FSO
+end note
+
+== Case Scrutiny == 
+FSO->HU: login
+HU->VU: Review case details
+VU->VU: Approve and Forward to Judge
+
+== Case Registration by Judge == 
+J->HU: login
+HU->VU: Review case details
+J->VU: Click 'Register Case'
+VU->CS++: Update Case (filingNumber)
+note right of VU
+    regular update case flow that includes updating registration date
+    generating CNR and CMP numbers
+    updating workflow etc
+end note
+return success
+
+VU->AS++: Create Application
+note right of VU
+     create a new application using the 'delay condonation' document 
+     submitted as part of case earlier 
+     fill application details using values from the case like 
+     caseId, filingNumber, CNRNumber 
+     applicationNumber = null, workflow = null, status = null
+end note
+return success
+VU->AS++: updateApplication (approved)
+note right of VU: calling the update API, because that is already handling the logic of cmpNumber
+AS->CS++: getCMPNumber (caseId)
+return cmpNumber
+AS->AS: enrich applicationNumber = cmpNumber, status = COMPLETED
+return success
+
+
+
+@enduml
