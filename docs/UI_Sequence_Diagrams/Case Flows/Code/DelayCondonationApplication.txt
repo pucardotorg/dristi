@@ -22,7 +22,7 @@ participant IDGenSvc as IS #lightgreen
 end box
 
 == Case e-Filing ==
-note right of P: Advocate or Litigant
+note right of P: Advocate or Complianant
 P->HU: login
 P->HU: select case e-filing
 HU->CU: redirects to Case Filing screen
