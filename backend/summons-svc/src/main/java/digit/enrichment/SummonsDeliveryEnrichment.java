@@ -34,10 +34,29 @@ public class SummonsDeliveryEnrichment {
 
         SummonsDetails summonDetails = taskDetails.getSummonDetails();
         NoticeDetails noticeDetails = taskDetails.getNoticeDetails();
+        WarrantDetails warrantDetails = taskDetails.getWarrantDetails();
 
-        String docType = task.getTaskType().equals(NOTICE) ? noticeDetails.getDocType() : summonDetails.getDocType();
-        String docSubType = task.getTaskType().equals(NOTICE) ? noticeDetails.getDocSubType() : summonDetails.getDocSubType();
-        String partyType = task.getTaskType().equals(NOTICE) ? noticeDetails.getPartyType() : summonDetails.getPartyType();
+        String docType;
+        String docSubType;
+        String partyType;
+
+        switch (task.getTaskType()) {
+            case NOTICE:
+                docType = noticeDetails.getDocType();
+                docSubType = noticeDetails.getDocSubType();
+                partyType = noticeDetails.getPartyType();
+                break;
+            case WARRANT:
+                docType = warrantDetails.getDocType();
+                docSubType = warrantDetails.getDocSubType();
+                partyType = warrantDetails.getPartyType();
+                break;
+            default:
+                docType = summonDetails.getDocType();
+                docSubType = summonDetails.getDocSubType();
+                partyType = summonDetails.getPartyType();
+                break;
+        }
 
         return SummonsDelivery.builder()
                 .summonDeliveryId(id)

@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static digit.config.ServiceConstants.SUMMON;
-import static digit.config.ServiceConstants.WARRANT;
+import static digit.config.ServiceConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -68,6 +67,9 @@ class SummonsServiceTest {
     private Task createTask() {
         Task task = new Task();
         task.setTaskType("SUMMONS");
+        SummonsDetails summonsDetails = SummonsDetails.builder().docSubType(ACCUSED).build();
+        TaskDetails taskDetails = TaskDetails.builder().summonDetails(summonsDetails).build();
+        task.setTaskDetails(taskDetails);
         return task;
     }
 
@@ -255,6 +257,9 @@ class SummonsServiceTest {
     private TaskRequest createTaskRequest(String taskType) {
         Task task = new Task();
         task.setTaskType(taskType);
+        SummonsDetails summonsDetails = SummonsDetails.builder().docSubType(ACCUSED).build();
+        TaskDetails taskDetails = TaskDetails.builder().summonDetails(summonsDetails).build();
+        task.setTaskDetails(taskDetails);
         return TaskRequest.builder().task(task).build();
     }
 }

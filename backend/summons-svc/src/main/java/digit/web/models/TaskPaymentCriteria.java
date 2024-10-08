@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class SummonCalculationCriteria {
+public class TaskPaymentCriteria {
 
     @JsonProperty("channelId")
     private String channelId;

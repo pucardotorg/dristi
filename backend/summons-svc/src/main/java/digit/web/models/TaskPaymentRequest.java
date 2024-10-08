@@ -21,18 +21,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SummonCalculationRequest {
+public class TaskPaymentRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("SummonCalculationCriteria")
+    @JsonProperty("Criteria")
     @Valid
-    private List<SummonCalculationCriteria> calculationCriteria = null;
+    private List<TaskPaymentCriteria> calculationCriteria = null;
 
 
-    public SummonCalculationRequest addCalculationCriteriaItem(SummonCalculationCriteria calculationCriteriaItem) {
+    public TaskPaymentRequest addCalculationCriteriaItem(TaskPaymentCriteria calculationCriteriaItem) {
         if (this.calculationCriteria == null) {
             this.calculationCriteria = new ArrayList<>();
         }

@@ -2,7 +2,14 @@ const caseService = require('../service/caseService');
 const pdfService = require('../service/pdfService');
 const fileService = require('../service/fileService');
 const config = require('../config/config');
- 
+
+ /**
+  * Generates a PDF document for a case.
+  *
+  * @param {Object} req - The request object.
+  * @param {Object} res - The response object.
+  * @param {Function} next - The next middleware function.
+  */
 exports.generateCasePdf = async (req, res, next) => {
     try {
         const cases = req.body.cases;

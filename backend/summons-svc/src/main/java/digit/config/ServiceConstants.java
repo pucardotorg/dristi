@@ -15,9 +15,13 @@ public class ServiceConstants {
 
     public static final String ERROR_WHILE_FETCHING_FROM_MDMS = "Exception occurred while fetching category lists from mdms: ";
 
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
     public static final String FAILED = "failed";
+
+    public static final String PAYMENT_CALCULATOR_ERROR = "PAYMENT_CALCULATOR_ERROR";
 
     public static final String URL = "url";
     public static final String URL_SHORTENING_ERROR_CODE = "URL_SHORTENING_ERROR";
@@ -50,17 +54,23 @@ public class ServiceConstants {
     public static final String SUMMON = "SUMMONS";
     public static final String WARRANT = "WARRANT";
     public static final String NOTICE = "NOTICE";
-    public static final String ISSUESUMMON = "ISSUE_SUMMON";
+    public static final String ACCUSED = "ACCUSED";
+    public static final String WITNESS = "WITNESS";
+    public static final String BAILABLE = "BAILABLE";
+    public static final String NON_BAILABLE = "NON_BAILABLE";
 
     public static final String PAYMENTMASTERCODE = "PaymentMasterCode";
-
     public static final String PAYMENTTYPE = "paymentType";
-
     public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s')]";
 
-    public static final String PAYMENT_CALCULATOR_ERROR = "PAYMENT_CALCULATOR_ERROR";
-
     public static final String PENDING_PAYMENT = "PENDING_PAYMENT";
+    public static final String ISSUESUMMON = "ISSUE_SUMMON";
 
+    public static final String GENERATE_TASK_DOCUMENT = "GENERATE_TASK_DOCUMENT";
+    public static final String SEND_TASK_DOCUMENT = "SEND_TASK_DOCUMENT";
+    public static final String SIGNED_TASK_DOCUMENT = "SIGNED_TASK_DOCUMENT";
+
+
+    public static final String FILE_CATEGORY = "FILE_CATEGORY";
 
 }

@@ -8,6 +8,7 @@ import org.pucar.dristi.web.models.TaskCaseSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,16 +30,17 @@ public class TaskCaseQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_task_document doc";
     private static final String DOCUMENT_SELECT_QUERY_TASK = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id";
-    private static final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
+    private static final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) from (select  distinct id FROM ({baseQuery}) total_result) result";
     private static final String ORDERBY_CLAUSE = " ORDER BY task.{orderBy} {sortingOrder} ";
     private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY task.createdtime DESC ";
-
+    private static final String PAGINATION_QUERY = " SELECT * FROM ({baseQuery}) task_case_results WHERE id IN ( SELECT  DISTINCT id FROM ({baseQuery}) total_result LIMIT ? OFFSET ? ) ";
     private static final String DEFAULT_JOIN_CLAUSE =
             " JOIN dristi_orders o ON task.orderId = o.id " +
                     " JOIN dristi_cases c ON task.cnrNumber = c.cnrNumber ";
 
     private static final String DOCUMENT_LEFT_JOIN = " LEFT JOIN dristi_task_document dtd ON task.id = dtd.task_id ";
 
+    private static final String DOCUMENT_STATUS_QUERY = " SELECT * FROM ({baseQuery}) application_status_result WHERE documentstatus = ? ";
 
     public String getTaskTableSearchQuery(TaskCaseSearchCriteria criteria, List<Object> preparedStmtList) {
         try {
@@ -55,19 +57,34 @@ public class TaskCaseQueryBuilder {
         }
     }
 
+    public String addApplicationStatusQuery(TaskCaseSearchCriteria searchCriteria, String query, List<Object> preparedStmtList){
+        if(!ObjectUtils.isEmpty(searchCriteria.getApplicationStatus())) {
+            preparedStmtList.add(searchCriteria.getApplicationStatus());
+            return DOCUMENT_STATUS_QUERY.replace("{baseQuery}", query);
+        }
+        return query;
+    }
     public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+        if(!preparedStatementList.isEmpty()){
+            List<Object> duplicateValues = new ArrayList<>(preparedStatementList);
+            preparedStatementList.addAll(duplicateValues);
+        }
         preparedStatementList.add(pagination.getLimit());
         preparedStatementList.add(pagination.getOffSet());
-        return query + " LIMIT ? OFFSET ?";
+        return PAGINATION_QUERY.replace("{baseQuery}", query);
     }
 
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
+    }
+
+    private static boolean isPaginationInvalid(Pagination pagination) {
+        return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
@@ -111,9 +128,10 @@ public class TaskCaseQueryBuilder {
 
         if (!ObjectUtils.isEmpty(taskCaseSearchCriteria.getSearchText())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append("(task.tasknumber ILIKE '%").append(taskCaseSearchCriteria.getSearchText()).append("%' or task.cnrnumber ILIKE '%").append(taskCaseSearchCriteria.getSearchText()).append("%' )");
+            query.append("(task.tasknumber ILIKE ").append(" ? ").append(" or task.cnrnumber ILIKE ").append(" ? ").append(" )");
+            preparedStmtList.add(taskCaseSearchCriteria.getSearchText());
+            preparedStmtList.add(taskCaseSearchCriteria.getSearchText());
         }
-
 
     }
 

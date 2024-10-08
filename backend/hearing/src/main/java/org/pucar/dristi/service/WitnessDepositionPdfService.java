@@ -61,7 +61,7 @@ public class WitnessDepositionPdfService {
     public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, Hearing hearing) {
         CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
         caseSearchRequest.setRequestInfo(requestInfo);
-        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(hearing.getFilingNumber().get(0)).build();
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(hearing.getFilingNumber().get(0)).defaultFields(false).build();
         caseSearchRequest.addCriteriaItem(caseCriteria);
         return caseSearchRequest;
     }

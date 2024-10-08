@@ -30,7 +30,7 @@ public class Configuration {
 
     //Pdf Service Config
     @Value("${summons.accused.pdf.template.key}")
-    private String summonsPdfTemplateKey;
+    private String summonsAccusedPdfTemplateKey;
 
     @Value("${non.bailable.warrant.pdf.template.key}")
     private String nonBailableWarrantPdfTemplateKey;
@@ -42,7 +42,13 @@ public class Configuration {
     private String bailableWarrantPdfTemplateKey;
 
     @Value("${summons.accused.qr.pdf.template.key}")
-    private String summonsQrPdfTemplateKey;
+    private String summonsAccusedQrPdfTemplateKey;
+
+    @Value("${summons.issue.pdf.template.key}")
+    private String summonsIssuePdfTemplateKey;
+
+    @Value("${summons.issue.qr.pdf.template.key}")
+    private String summonsIssueQrPdfTemplateKey;
 
     @Value("${non.bailable.warrant.qr.pdf.template.key}")
     private String nonBailableWarrantQrPdfTemplateKey;
@@ -239,5 +245,12 @@ public class Configuration {
 
     @Value("${dristi.court.name}")
     private String courtName;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.search.path}")
+    private String caseSearchPath;
 
 }

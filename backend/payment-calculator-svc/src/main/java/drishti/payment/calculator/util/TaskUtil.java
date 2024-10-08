@@ -10,6 +10,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static drishti.payment.calculator.config.ServiceConstants.*;
@@ -55,7 +57,8 @@ public class TaskUtil {
 
     @Deprecated
     public Double calculateCourtFees(SpeedPostConfigParams ePostFeesDefaultData) {
-        return ePostFeesDefaultData.getCourtFee() + ePostFeesDefaultData.getApplicationFee();
+        double totalFee = ePostFeesDefaultData.getCourtFee() + ePostFeesDefaultData.getApplicationFee();
+        return getRoundOffValue(totalFee);
     }
 
     public Double calculateCourtFees(TaskPayment taskPayment) {
@@ -65,7 +68,9 @@ public class TaskUtil {
         if (issuanceFeeEnable) {
             issuanceFee = getIssuanceFee(taskPayment.getIssuedEntities());
         }
-        return courtFee + issuanceFee;
+
+        double totalFee = courtFee + issuanceFee;
+        return getRoundOffValue(totalFee);
     }
 
     private double getIssuanceFee(List<IssuedEntity> issuedEntities) {
@@ -93,5 +98,10 @@ public class TaskUtil {
         feeBreakdowns.add(new BreakDown(COURT_FEE, courtFee, new HashMap<>()));
         feeBreakdowns.add(new BreakDown(E_POST, postFee, new HashMap<>()));
         return feeBreakdowns;
+    }
+
+    private Double getRoundOffValue(double totalFee) {
+        BigDecimal roundedTotalFee = BigDecimal.valueOf(totalFee).setScale(2, RoundingMode.HALF_UP);
+        return roundedTotalFee.doubleValue();
     }
 }

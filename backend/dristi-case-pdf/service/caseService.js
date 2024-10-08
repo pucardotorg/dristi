@@ -1,6 +1,12 @@
 const config = require('../config/config'); 
 
 
+/**
+ * Extracts case section from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {String} A string object that refers to section Number.
+ */
 exports.getCaseSectionNumber = async (cases) => {
     const statutesAndSections = cases.statutesAndSections;
     if (statutesAndSections.length === 0) {
@@ -18,20 +24,50 @@ exports.getCaseSectionNumber = async (cases) => {
     }
 };
 
+/**
+ * Extracts document file store id from respective object.
+ *
+ * @param {Object} documents - The object containing file store id.
+ * @param {String} fileName - File Name to search for in the document.
+ * @returns {String} A string object that refers to File Store Id.
+ */
 const getDocumentFileStore = (documents, fileName) => {
     if (Array.isArray(documents)) {
-        // If documents is an array, find the document by fileName
         const document = documents.find(doc => doc.fileName === fileName);
         return document ? document.fileStore : null;
     } else if (documents && documents.fileName) {
-        // If documents is a single object and has a fileName property
         return documents.fileName === fileName ? documents.fileStore : null;
     }
-    // Return null if no match is found or if documents is null/undefined
     return null;
 };
 
+/**
+ * Extracts address information from a nested object.
+ *
+ * @param {Object} addressObject - The object containing address details.
+ * @returns {Object} An object containing extracted address details.
+ */
+const getAddressDetails = (addressObject) => {
+    return {
+      locality: addressObject?.locality || '',
+      city: addressObject?.city || '',
+      district: addressObject?.district || '',
+      state: addressObject?.state || '',
+      pincode: addressObject?.pincode || ''
+    };
+  };
+  
+
+/**
+ * Extracts complainant information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of complainant information objects.
+ */
 exports.getComplainantsDetails = async (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.complainantDetails || !cases.additionalDetails.complainantDetails.formdata) {
+        return [];
+    }
     return cases.additionalDetails.complainantDetails.formdata.map((formData) => {
         const data = formData.data;
         const complainantType = data.complainantType || '';
@@ -42,13 +78,7 @@ exports.getComplainantsDetails = async (cases) => {
 
         if (complainantType.code === 'REPRESENTATIVE') {
             const companyDetails = data.addressCompanyDetails || {};
-            const companyAddress = {
-                locality: companyDetails.locality || '',
-                city: companyDetails.city || '',
-                district: companyDetails.district || '',
-                state: companyDetails.state || '',
-                pincode: companyDetails.pincode || ''
-            };
+            const companyAddress = getAddressDetails(companyDetails);
 
             return {
                 complainantType: complainantType.name || '',
@@ -62,13 +92,7 @@ exports.getComplainantsDetails = async (cases) => {
             };
         } else {
             const addressDetails = data.complainantVerification && data.complainantVerification.individualDetails && data.complainantVerification.individualDetails.addressDetails || {};
-            const address = {
-                locality: addressDetails.locality || '',
-                city: addressDetails.city || '',
-                district: addressDetails.district || '',
-                state: addressDetails.state || '',
-                pincode: addressDetails.pincode || ''
-            };
+            const address = getAddressDetails(addressDetails);
 
             return {
                 complainantType: complainantType.name || '',
@@ -84,8 +108,16 @@ exports.getComplainantsDetails = async (cases) => {
     });
 };
 
-
+/**
+ * Extracts respondent information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of respondent information objects.
+ */
 exports.getRespondentsDetails = async (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.respondentDetails || !cases.additionalDetails.respondentDetails.formdata) {
+        return [];
+    }
     return cases.additionalDetails.respondentDetails.formdata.map((formData) => {
         const data = formData.data;
 
@@ -93,15 +125,8 @@ exports.getRespondentsDetails = async (cases) => {
         const middleName = data.respondentMiddleName || '';
         const lastName = data.respondentLastName || '';
         const addresses = data.addressDetails.map((addressDetail) => {
-            return {
-                locality: addressDetail.addressDetails.locality,
-                city: addressDetail.addressDetails.city,
-                district: addressDetail.addressDetails.district,
-                state: addressDetail.addressDetails.state,
-                pincode: addressDetail.addressDetails.pincode
-            };
+            return getAddressDetails(addressDetail.addressDetails);
         });
-        const affidavitDocument = data.inquiryAffidavitFileUpload && data.inquiryAffidavitFileUpload.document.find(doc => doc.fileName === 'Affidavit documents');
 
         return {
             name: `${firstName} ${middleName} ${lastName}`,
@@ -109,22 +134,25 @@ exports.getRespondentsDetails = async (cases) => {
             phoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber ? data.phonenumbers.mobileNumber.join(', ') : null,
             email: data.emails && data.emails.emailId ? data.emails.emailId.join(', ') : null,
             address: addresses,
-            inquiryAffidavitFileStore: affidavitDocument ? affidavitDocument.fileStore : null
+            inquiryAffidavitFileStore: getDocumentFileStore(data.inquiryAffidavitFileUpload, 'Affidavit documents')
         };
     });
 };
 
+/**
+ * Extracts witness information from the cases object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of witness information objects.
+ */
 exports.getWitnessDetails = async (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.witnessDetails || !cases.additionalDetails.witnessDetails.formdata) {
+        return [];
+    }
     return cases.additionalDetails.witnessDetails.formdata.map((formData) => {
         const data = formData.data;
         const addresses = data.addressDetails.map((addressDetail) => {
-            return {
-                locality: addressDetail.addressDetails.locality,
-                city: addressDetail.addressDetails.city,
-                district: addressDetail.addressDetails.district,
-                state: addressDetail.addressDetails.state,
-                pincode: addressDetail.addressDetails.pincode
-            };
+            return getAddressDetails(addressDetail.addressDetails);
         });
         const firstName = data.firstName || '';
         const middleName = data.middleName || '';
@@ -142,32 +170,44 @@ exports.getWitnessDetails = async (cases) => {
     });
 };
 
+/**
+ * Extracts advocate information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of advocate information objects.
+ */
 exports.getAdvocateDetails = async (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.advocateDetails || !cases.additionalDetails.advocateDetails.formdata) {
+        return [];
+    }
     return cases.additionalDetails.advocateDetails.formdata.map((formData) => {
         const data = formData.data;
-        
-        const vakalatnamaDocument = data.vakalatnamaFileUpload && data.vakalatnamaFileUpload.document.find(doc => doc.fileName === 'UPLOAD_VAKALATNAMA');
-        
+
         return {
             name: data.advocateName,
             barRegistrationNumber: data.barRegistrationNumber,
-            vakalatnamaFileStore: vakalatnamaDocument ? vakalatnamaDocument.fileStore : null,
+            vakalatnamaFileStore: getDocumentFileStore(data.vakalatnamaFileUpload, 'UPLOAD_VAKALATNAMA') || '',
             isRepresenting: data.isAdvocateRepresenting.name
         };
     });
 };
 
+/**
+ * Extracts cheque information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of cheque information objects.
+ */
 exports.getChequeDetails = (cases) => {
+    if (!cases.caseDetails || !cases.caseDetails.chequeDetails || !cases.caseDetails.chequeDetails.formdata) {
+        return [];
+    }
     const chequeDetailsList = cases.caseDetails.chequeDetails.formdata.map(dataItem => {
         const chequeDetailsData = dataItem.data || {};
 
-        const bouncedChequeDocument = chequeDetailsData.bouncedChequeFileUpload && chequeDetailsData.bouncedChequeFileUpload.document.find(doc => doc.fileName === 'CS_BOUNCED_CHEQUE');
-        const depositChequeDocument = chequeDetailsData.depositChequeFileUpload && chequeDetailsData.depositChequeFileUpload.document.find(doc => doc.fileName === 'CS_PROOF_DEPOSIT_CHEQUE');
-        const returnMemoDocument = chequeDetailsData.returnMemoFileUpload && chequeDetailsData.returnMemoFileUpload.document.find(doc => doc.fileName === 'CS_CHEQUE_RETURN_MEMO');
-
         return {
             signatoryName: chequeDetailsData.chequeSignatoryName || null,
-            bouncedChequeFileStore: bouncedChequeDocument ? bouncedChequeDocument.fileStore : null,
+            bouncedChequeFileStore: getDocumentFileStore(chequeDetailsData.bouncedChequeFileUpload, 'CS_BOUNCED_CHEQUE') || '',
             nameOnCheque: chequeDetailsData.name || null,
             chequeNumber: chequeDetailsData.chequeNumber || null,
             dateOfIssuance: chequeDetailsData.issuanceDate || null,
@@ -175,8 +215,8 @@ exports.getChequeDetails = (cases) => {
             ifscCode: chequeDetailsData.ifsc || null,
             chequeAmount: chequeDetailsData.chequeAmount || null,
             dateOfDeposit: chequeDetailsData.depositDate || null,
-            depositChequeFileStore: depositChequeDocument ? depositChequeDocument.fileStore : null,
-            returnMemoFileStore: returnMemoDocument ? returnMemoDocument.fileStore : null,
+            depositChequeFileStore: getDocumentFileStore(chequeDetailsData.depositChequeFileUpload, 'CS_PROOF_DEPOSIT_CHEQUE') || '',
+            returnMemoFileStore: getDocumentFileStore(chequeDetailsData.returnMemoFileUpload, 'CS_CHEQUE_RETURN_MEMO') || '',
             chequeAdditionalDetails: chequeDetailsData.chequeAdditionalDetails && chequeDetailsData.chequeAdditionalDetails.text || null
         };
     });
@@ -184,16 +224,23 @@ exports.getChequeDetails = (cases) => {
     return chequeDetailsList;
 };
 
+/**
+ * Extracts debt liability information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of debt liability information objects.
+ */
 exports.getDebtLiabilityDetails = (cases) => {
+    if (!cases.caseDetails || !cases.caseDetails.debtLiabilityDetails || !cases.caseDetails.debtLiabilityDetails.formdata) {
+        return [];
+    }
     const debtLiabilityDetailsList = cases.caseDetails.debtLiabilityDetails.formdata.map(dataItem => {
         const debtLiabilityData = dataItem.data || {};
-
-        const proofOfLiabilityDocument = debtLiabilityData.debtLiabilityFileUpload && debtLiabilityData.debtLiabilityFileUpload.document.find(doc => doc.fileName === 'CS_PROOF_DEBT');
 
         return {
             natureOfDebt: debtLiabilityData.liabilityNature && debtLiabilityData.liabilityNature.name || null,
             totalAmountCoveredByCheque: debtLiabilityData.liabilityType && debtLiabilityData.liabilityType.showAmountCovered ? debtLiabilityData.liabilityAmountCovered || null : null,
-            proofOfLiabilityFileStore: proofOfLiabilityDocument ? proofOfLiabilityDocument.fileStore : null,
+            proofOfLiabilityFileStore: getDocumentFileStore(debtLiabilityData.debtLiabilityFileUpload, 'CS_PROOF_DEBT') || '',
             additionalDetails: debtLiabilityData.additionalDebtLiabilityDetails && debtLiabilityData.additionalDebtLiabilityDetails.text || null
         };
     });
@@ -201,54 +248,72 @@ exports.getDebtLiabilityDetails = (cases) => {
     return debtLiabilityDetailsList;
 };
 
+/**
+ * Extracts demand notice information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of demand notice information objects.
+ */
 exports.getDemandNoticeDetails = (cases) => {
+    if (!cases.caseDetails || !cases.caseDetails.demandNoticeDetails || !cases.caseDetails.demandNoticeDetails.formdata) {
+        return [];
+    }
     const demandNoticeDetailsList = cases.caseDetails.demandNoticeDetails.formdata.map(dataItem => {
         const demandNoticeData = dataItem.data || {};
-
-        const legalDemandNoticeDocument = demandNoticeData.legalDemandNoticeFileUpload && demandNoticeData.legalDemandNoticeFileUpload.document.find(doc => doc.fileName === 'LEGAL_DEMAND_NOTICE');
-        const proofOfServiceDocument = demandNoticeData.proofOfDispatchFileUpload && demandNoticeData.proofOfDispatchFileUpload.document.find(doc => doc.fileName === 'PROOF_OF_DISPATCH_FILE_NAME');
-        const proofOfAcknowledgmentDocument = demandNoticeData.proofOfAcknowledgmentFileUpload && demandNoticeData.proofOfAcknowledgmentFileUpload.document.find(doc => doc.fileName === 'PROOF_LEGAL_DEMAND_NOTICE_FILE_NAME');
-        const proofOfReplyDocument = demandNoticeData.proofOfReplyFileUpload && demandNoticeData.proofOfReplyFileUpload.document.find(doc => doc.fileName === 'CS_PROOF_TO_REPLY_DEMAND_NOTICE_FILE_NAME');
 
         return {
             modeOfDispatch: demandNoticeData.modeOfDispatchType && demandNoticeData.modeOfDispatchType.modeOfDispatchType && demandNoticeData.modeOfDispatchType.modeOfDispatchType.name || null,
             dateOfIssuance: demandNoticeData.dateOfIssuance || null,
             dateOfDispatch: demandNoticeData.dateOfDispatch || null,
-            legalDemandNoticeFileStore: legalDemandNoticeDocument ? legalDemandNoticeDocument.fileStore : null,
-            proofOfDispatchFileStore: proofOfServiceDocument ? proofOfServiceDocument.fileStore : null,
+            legalDemandNoticeFileStore: getDocumentFileStore(demandNoticeData.legalDemandNoticeFileUpload, 'LEGAL_DEMAND_NOTICE') || '',
+            proofOfDispatchFileStore: getDocumentFileStore(demandNoticeData.proofOfDispatchFileUpload, 'PROOF_OF_DISPATCH_FILE_NAME') || '',
             proofOfService: demandNoticeData.proofOfService && demandNoticeData.proofOfService.code || null,
             dateOfDeemedService: demandNoticeData.dateOfDeemedService || null,
             dateOfAccrual: demandNoticeData.dateOfAccrual || null,
-            proofOfAcknowledgmentFileStore: proofOfAcknowledgmentDocument ? proofOfAcknowledgmentDocument.fileStore : null,
+            proofOfAcknowledgmentFileStore: getDocumentFileStore(demandNoticeData.proofOfAcknowledgmentFileUpload, 'PROOF_LEGAL_DEMAND_NOTICE_FILE_NAME') || '',
             replyReceived: demandNoticeData.proofOfReply && demandNoticeData.proofOfReply.code || null,
             dateOfReply: demandNoticeData.dateOfReply || null,
-            proofOfReplyFileStore: proofOfReplyDocument ? proofOfReplyDocument.fileStore : null,
+            proofOfReplyFileStore: getDocumentFileStore(demandNoticeData.proofOfReplyFileUpload, 'CS_PROOF_TO_REPLY_DEMAND_NOTICE_FILE_NAME') || ''
         };
     });
 
     return demandNoticeDetailsList;
 };
 
+/**
+ * Extracts delay condonation information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of delay condonation information objects.
+ */
 exports.getDelayCondonationDetails = (cases) => {
+    if (!cases.caseDetails || !cases.caseDetails.delayApplications || !cases.caseDetails.delayApplications.formdata) {
+        return [];
+    }
     const delayCondonationDetailsList = cases.caseDetails.delayApplications.formdata.map(dataItem => {
         const delayData = dataItem.data || {};
 
-        const delayCondonationDocument = delayData.legalDemandNoticeFileUpload && delayData.legalDemandNoticeFileUpload.document.find(doc => doc.fileName === 'CS_DELAY_CONDONATION_APPLICATION');
-
         return {
             reasonForDelay: delayData.delayApplicationReason && delayData.delayApplicationReason.reasonForDelay || null,
-            delayCondonationFileStore: delayCondonationDocument ? delayCondonationDocument.fileStore : null
+            proofOfReplyFileStore: getDocumentFileStore(delayData.legalDemandNoticeFileUpload, 'CS_DELAY_CONDONATION_APPLICATION') || ''
         };
     });
 
     return delayCondonationDetailsList;
 };
 
+/**
+ * Extracts prayer and sworn statement information from the case object.
+ *
+ * @param {Object} cases - The cases object containing court case details.
+ * @returns {Array} An array of prayer and sworn statement information objects.
+ */
 exports.getPrayerSwornStatementDetails = (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.prayerSwornStatement || !cases.additionalDetails.prayerSwornStatement.formdata) {
+        return [];
+    }
     const prayerSwornStatementDetailsList = cases.additionalDetails.prayerSwornStatement.formdata.map(dataItem => {
         const swornStatementData = dataItem.data || {};
-
-        const swornStatementDocument = swornStatementData.swornStatement && swornStatementData.swornStatement.document.find(doc => doc.fileName === 'CS_SWORN_STATEMENT_HEADER');
 
         return {
             prayerAndSwornStatementType: swornStatementData.prayerAndSwornStatementType && swornStatementData.prayerAndSwornStatementType.name || null,
@@ -258,7 +323,7 @@ exports.getPrayerSwornStatementDetails = (cases) => {
             memorandumOfComplaintFileStore: getDocumentFileStore(swornStatementData.memorandumOfComplaint.document, 'CS_MEMORANDUM_OF_COMPLAINT_HEADER'),
             prayerForReliefText: swornStatementData.prayerForRelief && swornStatementData.prayerForRelief.text || null,
             prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief.document, 'CS_PRAYER_FOR_RELIEF_HEADER'),
-            swornStatement: swornStatementDocument ? swornStatementDocument.fileStore : null,
+            swornStatement: getDocumentFileStore(swornStatementData.swornStatementDocument, 'CS_SWORN_STATEMENT_HEADER') || '',
             additionalDetails: swornStatementData.additionalDetails && swornStatementData.additionalDetails.text || null,
             additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null
         };

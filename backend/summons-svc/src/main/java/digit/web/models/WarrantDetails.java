@@ -14,7 +14,7 @@ public class WarrantDetails {
     private String warrantId = null;
 
     @JsonProperty("issueDate")
-    private String issueDate;
+    private Long issueDate;
 
     @JsonProperty("docType")
     private String docType;
@@ -24,4 +24,13 @@ public class WarrantDetails {
 
     @JsonProperty("partyType")
     private String partyType;
+
+    @JsonProperty("bailableAmount")
+    private String bailableAmount;
+
+    @JsonProperty("surety")
+    private Integer surety;
+
+    @JsonProperty("executorName")
+    private String executorName;
 }

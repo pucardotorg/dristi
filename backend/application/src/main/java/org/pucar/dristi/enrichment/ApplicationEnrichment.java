@@ -71,6 +71,19 @@ public class ApplicationEnrichment {
         }
     }
 
+    public void enrichApplicationNumberByCMPNumber(ApplicationRequest applicationRequest) {
+        try {
+            String tenantId = applicationRequest.getApplication().getCnrNumber().substring(0,5);
+            String idName = configuration.getCmpConfig();
+            String idFormat = configuration.getCmpFormat();
+            List<String> cmpNumberIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(),tenantId, idName, idFormat, 1,false);
+            applicationRequest.getApplication().setApplicationNumber(cmpNumberIdList.get(0));
+        } catch (Exception e) {
+            log.error("Error enriching application number: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching application number: " + e.getMessage());
+        }
+    }
+
     public void enrichApplicationUponUpdate(ApplicationRequest applicationRequest) {
             try {
                 // Enrich lastModifiedTime and lastModifiedBy in case of update

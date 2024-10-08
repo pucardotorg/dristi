@@ -61,7 +61,7 @@ public class DemandService {
     }
 
     public List<Calculation> generatePaymentDetails(RequestInfo requestInfo, Task task) {
-        SummonCalculationCriteria criteria = SummonCalculationCriteria.builder()
+        TaskPaymentCriteria criteria = TaskPaymentCriteria.builder()
                 .channelId(ChannelName.fromString(task.getTaskDetails().getDeliveryChannel().getChannelName()).toString())
                 .receiverPincode(task.getTaskDetails().getRespondentDetails().getAddress().getPinCode())
                 .tenantId(task.getTenantId())
@@ -73,7 +73,7 @@ public class DemandService {
 
         log.info("Requesting Payment Calculator : {}", criteria.toString());
 
-        SummonCalculationRequest calculationRequest = SummonCalculationRequest.builder()
+        TaskPaymentRequest calculationRequest = TaskPaymentRequest.builder()
                 .requestInfo(requestInfo).calculationCriteria(Collections.singletonList(criteria)).build();
 
         Object response = repository.fetchResult(url, calculationRequest);

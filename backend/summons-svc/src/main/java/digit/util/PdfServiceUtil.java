@@ -1,9 +1,11 @@
 package digit.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import digit.config.Configuration;
 import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,6 +20,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -31,10 +34,13 @@ public class PdfServiceUtil {
 
     private final Configuration config;
 
+    private final CaseUtil caseUtil;
+
     @Autowired
-    public PdfServiceUtil(RestTemplate restTemplate, Configuration config) {
+    public PdfServiceUtil(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil) {
         this.restTemplate = restTemplate;
         this.config = config;
+        this.caseUtil = caseUtil;
     }
 
     public ByteArrayResource generatePdfFromPdfService(TaskRequest taskRequest, String tenantId,
@@ -48,12 +54,55 @@ public class PdfServiceUtil {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             SummonsPdf summonsPdf = createSummonsPdfFromTask(taskRequest.getTask());
-            if (qrCode && taskRequest.getTask().getDocuments() != null && !taskRequest.getTask().getDocuments().isEmpty()) {
-                Document document = taskRequest.getTask().getDocuments().get(0);
-                if (document != null) {
-                    String embeddedUrl = config.getFileStoreHost() + config.getFileStoreSearchEndPoint() + "?tenantId=" + tenantId + "&fileStoreId=" + document.getFileStore();
-                    summonsPdf.setEmbeddedUrl(embeddedUrl);
 
+            if (SUMMON.equalsIgnoreCase(taskRequest.getTask().getTaskType())) {
+                var summonDetails = taskRequest.getTask().getTaskDetails().getSummonDetails();
+
+                if (WITNESS.equalsIgnoreCase(summonDetails.getDocSubType())) {
+                    var witnessDetails = taskRequest.getTask().getTaskDetails().getWitnessDetails();
+                    summonsPdf.setWitnessName(witnessDetails.getName());
+                    summonsPdf.setWitnessAddress(witnessDetails.getAddress().toString());
+                }
+            }
+
+            if (WARRANT.equalsIgnoreCase(taskRequest.getTask().getTaskType())) {
+                var warrantDetails = taskRequest.getTask().getTaskDetails().getWarrantDetails();
+                summonsPdf.setExecutorName(warrantDetails.getExecutorName());
+                String docSubType = warrantDetails.getDocSubType();
+
+                if (BAILABLE.equalsIgnoreCase(docSubType)) {
+                    Integer surety = warrantDetails.getSurety();
+                    double bailableAmount = Double.parseDouble(warrantDetails.getBailableAmount());
+                    summonsPdf.setBailableAmount(String.valueOf(bailableAmount));
+                    if (surety != null && surety == 2) {
+                        bailableAmount /= 2;
+                        summonsPdf.setTwoSuretyAmount(String.valueOf(bailableAmount));
+                    }
+                    if(surety !=null && surety == 1){
+                        summonsPdf.setOneSuretyAmount(String.valueOf(bailableAmount));
+                    }
+                }
+            }
+
+            if (taskRequest.getTask().getTaskType().equalsIgnoreCase(SUMMON) || taskRequest.getTask().getTaskType().equalsIgnoreCase(NOTICE)) {
+                CaseSearchRequest caseSearchRequest = createCaseSearchRequest(taskRequest.getRequestInfo(), taskRequest.getTask());
+                JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
+                String accessCode = caseDetails.has("accessCode") ? caseDetails.get("accessCode").asText() : "";
+                summonsPdf.setAccessCode(accessCode);
+            }
+            if (qrCode && taskRequest.getTask().getDocuments() != null && !taskRequest.getTask().getDocuments().isEmpty()) {
+                List<Document> documents = taskRequest.getTask().getDocuments();
+                Document signedDocuments = null;
+
+                for(Document document : documents) {
+                    if (document.getDocumentType() != null && document.getDocumentType().equalsIgnoreCase(SIGNED_TASK_DOCUMENT)) {
+                        signedDocuments = document;
+                        break;
+                    }
+                }
+                if (signedDocuments != null) {
+                    String embeddedUrl = config.getFileStoreHost() + config.getFileStoreSearchEndPoint() + "?tenantId=" + tenantId + "&fileStoreId=" + signedDocuments.getFileStore();
+                    summonsPdf.setEmbeddedUrl(embeddedUrl);
                 }
             }
             log.info("Summons Pdf: {}", summonsPdf);
@@ -78,6 +127,9 @@ public class PdfServiceUtil {
         } else if (SUMMON.equals(task.getTaskType())) {
             issueDate = task.getTaskDetails().getSummonDetails().getIssueDate();
         }
+        else if(WARRANT.equals(task.getTaskType())){
+            issueDate = task.getTaskDetails().getWarrantDetails().getIssueDate();
+        }
         String issueDateString = Optional.ofNullable(issueDate)
                 .map(this::formatDateFromMillis)
                 .orElse("");
@@ -86,6 +138,17 @@ public class PdfServiceUtil {
                 .orElse("");
         String filingNumber = task.getFilingNumber();
         String courtName = task.getTaskDetails().getCaseDetails().getCourtName();
+
+        String complainantName = Optional.of(task.getTaskDetails())
+                .map(TaskDetails::getComplainantDetails)
+                .map(ComplainantDetails::getName)
+                .orElse("");
+
+        String complainantAddress = Optional.of(task.getTaskDetails())
+                .map(TaskDetails::getComplainantDetails)
+                .map(ComplainantDetails::getAddress)
+                .map(Object::toString)
+                .orElse("");
         return SummonsPdf.builder()
                 .tenantId(task.getTenantId())
                 .cnrNumber(task.getCnrNumber())
@@ -99,9 +162,17 @@ public class PdfServiceUtil {
                 .hearingDate(hearingDateString)
                 .respondentName(task.getTaskDetails().getRespondentDetails().getName())
                 .respondentAddress(task.getTaskDetails().getRespondentDetails().getAddress().toString())
-                .complainantName(task.getTaskDetails().getComplainantDetails().getName())
-                .complainantAddress(task.getTaskDetails().getComplainantDetails().getAddress().toString())
+                .complainantName(complainantName)
+                .complainantAddress(complainantAddress)
                 .build();
+    }
+
+    public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, Task task) {
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        caseSearchRequest.setRequestInfo(requestInfo);
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(task.getFilingNumber()).defaultFields(false).build();
+        caseSearchRequest.addCriteriaItem(caseCriteria);
+        return caseSearchRequest;
     }
 
     private String extractCaseYear(String input) {

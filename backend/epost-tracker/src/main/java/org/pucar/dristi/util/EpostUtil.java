@@ -1,8 +1,10 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.EPostConfiguration;
@@ -15,8 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.pucar.dristi.config.ServiceConstants.EPOST_TRACKER_ERROR;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_EPOST_TRACKER_FIELD;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class EpostUtil {
@@ -58,10 +59,15 @@ public class EpostUtil {
     }
 
     private String getFileStore(TaskRequest request) {
-        if(request.getTask().getDocuments() == null || request.getTask().getDocuments().isEmpty() || request.getTask().getDocuments().get(0).getFileStore() == null){
+        if(request.getTask().getDocuments() == null || request.getTask().getDocuments().isEmpty()){
             return null;
         }
-        return request.getTask().getDocuments().get(0).getFileStore();
+        return request.getTask().getDocuments().stream()
+            .filter(document -> document.getDocumentType() != null)
+            .filter(document -> document.getDocumentType().equalsIgnoreCase(SEND_TASK_DOCUMENT))
+            .findFirst()
+            .map(Document::getFileStore)
+            .orElse(null);
     }
 
     public EPostTracker updateEPostTracker(EPostRequest ePostRequest) {

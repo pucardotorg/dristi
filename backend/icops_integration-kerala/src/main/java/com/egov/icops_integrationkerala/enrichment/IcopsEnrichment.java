@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -88,7 +89,7 @@ public class IcopsEnrichment {
                     .processUniqueId(processUniqueId)
                     .processCourtName(taskDetails.getCaseDetails().getCourtName())
                     .processJudge(taskDetails.getCaseDetails().getJudgeName())
-                    .processIssueDate(converter.convertLongToDate(taskDetails.getSummonDetails().getIssueDate()))
+                    .processIssueDate(converter.convertLongToDate(taskDetails.getWarrantDetails().getIssueDate()))
                     .processNextHearingDate(converter.convertLongToDate(taskDetails.getCaseDetails().getHearingDate()))
                     .processPartyType(taskDetails.getSummonDetails().getPartyType())
                     .processDocType(docTypeInfo != null ? docTypeInfo.get("name") : null)
@@ -154,7 +155,7 @@ public class IcopsEnrichment {
                 .tenantId(config.getEgovStateTenantId())
                 .taskNumber(request.getTask().getTaskNumber())
                 .taskType(request.getTask().getTaskType())
-                .fileStoreId(request.getTask().getDocuments().get(0).getFileStore())
+                .fileStoreId(getFileStore(request))
                 .taskDetails(request.getTask().getTaskDetails())
                 .deliveryStatus(status)
                 .remarks(channelMessage.getFailureMsg())
@@ -162,6 +163,20 @@ public class IcopsEnrichment {
                 .bookingDate(currentDate)
                 .acknowledgementId(channelMessage.getAcknowledgeUniqueNumber())
                 .build();
+    }
+
+    private String getFileStore(TaskRequest request) {
+        if(request.getTask().getDocuments() == null || request.getTask().getDocuments().isEmpty()){
+            return null;
+        }
+        String taskType = request.getTask().getTaskType();
+        String documentTypeToUse = WARRANT.equalsIgnoreCase(taskType) ? SIGNED_TASK_DOCUMENT : SEND_TASK_DOCUMENT;
+        return request.getTask().getDocuments().stream()
+                .filter(document -> document.getDocumentType() != null)
+                .filter(document -> document.getDocumentType().equalsIgnoreCase(documentTypeToUse))
+                .findFirst()
+                .map(Document::getFileStore)
+                .orElse(null);
     }
 
     public IcopsTracker enrichIcopsTrackerForUpdate(IcopsProcessReport icopsProcessReport) throws ProcessReportException {

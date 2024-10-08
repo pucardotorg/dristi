@@ -62,7 +62,8 @@ public class SummonsService {
 
     public TaskResponse generateSummonsDocument(TaskRequest taskRequest) {
         String taskType = taskRequest.getTask().getTaskType();
-        String pdfTemplateKey = getPdfTemplateKey(taskType, false);
+        String docSubType = getDocSubType(taskType, taskRequest.getTask().getTaskDetails());
+        String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, false);
 
         return generateDocumentAndUpdateTask(taskRequest, pdfTemplateKey, false);
     }
@@ -86,12 +87,16 @@ public class SummonsService {
         TaskListResponse taskListResponse = taskUtil.callSearchTask(searchRequest);
         Task task = taskListResponse.getList().get(0);
         String taskType = task.getTaskType();
-        String pdfTemplateKey = getPdfTemplateKey(taskType, true);
         TaskRequest taskRequest = TaskRequest.builder()
                 .task(task)
                 .requestInfo(request.getRequestInfo()).build();
 
-        generateDocumentAndUpdateTask(taskRequest, pdfTemplateKey, true);
+        if (!taskType.equalsIgnoreCase(WARRANT)) {
+            String docSubType = getDocSubType(taskType, task.getTaskDetails());
+            String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, true);
+
+            generateDocumentAndUpdateTask(taskRequest, pdfTemplateKey, true);
+        }
 
         SummonsDelivery summonsDelivery = summonsDeliveryEnrichment.generateAndEnrichSummonsDelivery(taskRequest.getTask(), taskRequest.getRequestInfo());
 
@@ -143,15 +148,21 @@ public class SummonsService {
         Workflow workflow = null;
         if (task.getTaskType().equalsIgnoreCase(SUMMON)) {
             if (request.getSummonsDelivery().getDeliveryStatus().equals(DeliveryStatus.DELIVERED)) {
-                workflow = Workflow.builder().action("SERVE").build();
+                workflow = Workflow.builder().action("SERVED").build();
             } else {
-                workflow = Workflow.builder().action("REISSUE").build();
+                workflow = Workflow.builder().action("NOT_SERVED").build();
             }
         } else if (task.getTaskType().equalsIgnoreCase(WARRANT)) {
             if (request.getSummonsDelivery().getDeliveryStatus().equals(DeliveryStatus.EXECUTED)) {
                 workflow = Workflow.builder().action("DELIVERED").build();
             } else {
-                workflow = Workflow.builder().action("NOT DELIVERED").build();
+                workflow = Workflow.builder().action("NOT_DELIVERED").build();
+            }
+        } else if (task.getTaskType().equalsIgnoreCase(NOTICE)) {
+            if (request.getSummonsDelivery().getDeliveryStatus().equals(DeliveryStatus.EXECUTED)) {
+                workflow = Workflow.builder().action("SERVED").build();
+            } else {
+                workflow = Workflow.builder().action("NOT_SERVED").build();
             }
         }
         task.setWorkflow(workflow);
@@ -160,11 +171,41 @@ public class SummonsService {
         taskUtil.callUpdateTask(taskRequest);
     }
 
-    private String getPdfTemplateKey(String taskType, boolean qrCode) {
+    private String getPdfTemplateKey(String taskType, String docSubType, boolean qrCode) {
+        switch (taskType) {
+            case SUMMON -> {
+                if (docSubType.equals(ACCUSED)) {
+                    return qrCode ? config.getSummonsAccusedQrPdfTemplateKey() : config.getSummonsAccusedPdfTemplateKey();
+                } else if (docSubType.equals(WITNESS)) {
+                    return qrCode ? config.getBailableWarrantPdfTemplateKey() : config.getSummonsIssuePdfTemplateKey();
+                } else {
+                    throw new CustomException("INVALID_DOC_SUB_TYPE", "Document Sub-Type must be valid. Provided: " + docSubType);
+                }
+            }
+            case WARRANT -> {
+                if (docSubType.equals(BAILABLE)) {
+                    return config.getBailableWarrantPdfTemplateKey();
+                } else if (docSubType.equals(NON_BAILABLE)) {
+                    return config.getNonBailableWarrantPdfTemplateKey();
+                } else {
+                    throw new CustomException("INVALID_DOC_SUB_TYPE", "Document Sub-Type must be valid. Provided: " + docSubType);
+                }            }
+            case NOTICE -> {
+                return qrCode ? config.getTaskNoticeQrPdfTemplateKey() : config.getTaskNoticePdfTemplateKey();
+            }
+            default -> throw new CustomException("INVALID_TASK_TYPE", "Task Type must be valid. Provided: " + taskType);
+        }
+    }
+
+    private String getDocSubType(String taskType, TaskDetails taskDetails) {
+        if (taskDetails == null) {
+            return null;
+        }
+
         return switch (taskType) {
-            case SUMMON -> qrCode ? config.getSummonsQrPdfTemplateKey() : config.getSummonsPdfTemplateKey();
-            case WARRANT -> qrCode ? config.getNonBailableWarrantQrPdfTemplateKey() : config.getNonBailableWarrantPdfTemplateKey();
-            case NOTICE -> qrCode ? config.getTaskNoticeQrPdfTemplateKey() : config.getTaskNoticePdfTemplateKey();
+            case SUMMON -> taskDetails.getSummonDetails() != null ? taskDetails.getSummonDetails().getDocSubType() : null;
+            case WARRANT -> taskDetails.getWarrantDetails() != null ? taskDetails.getWarrantDetails().getDocSubType() : null;
+            case NOTICE -> taskDetails.getNoticeDetails() != null ? taskDetails.getNoticeDetails().getDocSubType() : null;
             default -> throw new CustomException("INVALID_TASK_TYPE", "Task Type must be valid. Provided: " + taskType);
         };
     }
@@ -185,12 +226,12 @@ public class SummonsService {
     }
 
     private Document createDocument(String fileStoreId, boolean qrCode) {
-        String fileCategory = qrCode ? "SEND_SUMMONS_DOCUMENT" : "GENERATE_SUMMONS_DOCUMENT";
-        Field field = Field.builder().key("FILE_CATEGORY").value(fileCategory).build();
+        String fileCategory = qrCode ? SEND_TASK_DOCUMENT : GENERATE_TASK_DOCUMENT;
+        Field field = Field.builder().key(FILE_CATEGORY).value(fileCategory).build();
         AdditionalFields additionalFields = AdditionalFields.builder().fields(Collections.singletonList(field)).build();
         return Document.builder()
                 .fileStore(fileStoreId)
-                .documentType("application/pdf")
+                .documentType(fileCategory)
                 .additionalDetails(additionalFields)
                 .build();
     }

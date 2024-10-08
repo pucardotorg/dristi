@@ -132,4 +132,7 @@ public class Configuration {
 
     @Value("${egov.idgen.orderFormat}")
     private String orderFormat;
+
+    @Value("${egov.documenttype.path}")
+    private String documentTypePath;
 }

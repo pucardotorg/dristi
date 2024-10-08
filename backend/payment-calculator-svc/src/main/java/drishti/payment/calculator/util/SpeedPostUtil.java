@@ -7,6 +7,8 @@ import drishti.payment.calculator.web.models.WeightRange;
 import drishti.payment.calculator.web.models.enums.Classification;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -94,9 +96,14 @@ public class SpeedPostUtil {
         Double ePostFeeWithoutGST = totalPrintingFee + speedPostFee + businessFee;
         // gst on post Fee
         Double gstFee = ePostFeeWithoutGST * gstPercentage;
-        // Total Fee before GST
-        return ePostFeeWithoutGST + gstFee + envelopeFee;
+        // Total Fee including GST and envelope fee
+        double totalFee = ePostFeeWithoutGST + gstFee + envelopeFee;
+
+        return getRoundOffValue(totalFee);
     }
 
-
+    private Double getRoundOffValue(double totalFee) {
+        BigDecimal roundedTotalFee = BigDecimal.valueOf(totalFee).setScale(2, RoundingMode.HALF_UP);
+        return roundedTotalFee.doubleValue();
+    }
 }

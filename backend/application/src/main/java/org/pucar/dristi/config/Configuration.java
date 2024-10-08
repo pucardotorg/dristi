@@ -148,4 +148,10 @@ public class Configuration {
 
     @Value("${egov.idgen.applicationFormat}")
     private String applicationFormat;
+
+    @Value("${egov.idgen.cmpConfig}")
+    private String cmpConfig;
+
+    @Value("${egov.idgen.cmpFormat}")
+    private String cmpFormat;
 }

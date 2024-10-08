@@ -121,20 +121,41 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void updateApplication_statusRejected_setsApplicationNumber() {
-        Application application1 = new Application();
-        application1.setStatus("REJECTED");
-        application1.setCmpNumber("CMP123");
+    public void testUpdateApplication_WhenRejected_ShouldEnrichAndPushToProducer() {
+        // Arrange
+        ApplicationRequest mockRequest = mock(ApplicationRequest.class);
+        Application mockApplication = mock(Application.class);
+        RequestInfo mockRequestInfo = mock(RequestInfo.class);
 
-        ApplicationRequest applicationRequest1 = new ApplicationRequest();
-        applicationRequest1.setApplication(application1);
+        when(mockRequest.getApplication()).thenReturn(mockApplication);
+        when(mockRequest.getRequestInfo()).thenReturn(mockRequestInfo);
 
-        when(validator.validateApplicationExistence(any(), any())).thenReturn(true);
+        // Simulate application is rejected
+        when(mockApplication.getStatus()).thenReturn("REJECTED");
 
-        Application updatedApplication = applicationService.updateApplication(applicationRequest1);
+        // Mock validator behavior
+        when(validator.validateApplicationExistence(mockRequestInfo, mockApplication)).thenReturn(true);
 
-        assertEquals("CMP123", updatedApplication.getApplicationNumber());
-        verify(producer, times(1)).push(any(), any());
+        // Mock enrichment and workflow services
+        doNothing().when(enrichmentUtil).enrichApplicationUponUpdate(mockRequest);
+        doNothing().when(enrichmentUtil).enrichApplicationNumberByCMPNumber(mockRequest);
+        doNothing().when(workflowService).updateWorkflowStatus(mockRequest);
+
+        // Mock producer push behavior
+        doNothing().when(producer).push(anyString(), eq(mockRequest));
+
+        // Mock config topic
+        when(config.getApplicationUpdateTopic()).thenReturn("application-update-topic");
+
+        // Act
+        Application result = applicationService.updateApplication(mockRequest);
+
+        // Assert
+        verify(enrichmentUtil).enrichApplicationNumberByCMPNumber(mockRequest); // Should be called for REJECTED
+        verify(producer).push("application-update-topic", mockRequest); // Should push the update
+        assertEquals(mockApplication, result); // Returned application should be the same
+
+        // No exceptions should be thrown
     }
 
     @Test

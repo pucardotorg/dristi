@@ -73,7 +73,7 @@ public class ApplicationService {
 
             if(COMPLETED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())
             || REJECTED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())){
-                application.setApplicationNumber(application.getCmpNumber());
+                enrichmentUtil.enrichApplicationNumberByCMPNumber(applicationRequest);
             }
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 

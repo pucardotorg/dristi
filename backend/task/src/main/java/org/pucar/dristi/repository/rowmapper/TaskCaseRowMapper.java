@@ -66,7 +66,7 @@ public class TaskCaseRowMapper implements ResultSetExtractor<List<TaskCase>> {
                             .dateCloseBy(rs.getLong("datecloseby"))
                             .dateClosed(rs.getLong("dateclosed"))
                             .taskDescription(rs.getString("taskdescription"))
-                            .taskDetails(rs.getString("taskdetails"))
+                            .taskDetails(objectMapper.readValue(rs.getString("taskdetails"), Object.class))
                             .taskType(rs.getString("tasktype"))
                             .status(rs.getString("status"))
                             .documentStatus(rs.getString("documentStatus"))

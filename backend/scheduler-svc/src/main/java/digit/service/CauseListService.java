@@ -595,7 +595,7 @@ public class CauseListService {
         ApplicationCriteria criteria = ApplicationCriteria.builder()
                 .filingNumber(causeList.getFilingNumber())
                 .tenantId(config.getEgovStateTenantId())
-                .status(serviceConstants.PENDINGAPPROVAL)
+                .status(serviceConstants.APPLICATION_STATE)
                 .build();
         ApplicationRequest applicationRequest = ApplicationRequest.builder()
                 .requestInfo(getRequestInfo())

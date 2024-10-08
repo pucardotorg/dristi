@@ -49,4 +49,7 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+
+
+    public static final String SEND_TASK_DOCUMENT = "SEND_TASK_DOCUMENT";
 }

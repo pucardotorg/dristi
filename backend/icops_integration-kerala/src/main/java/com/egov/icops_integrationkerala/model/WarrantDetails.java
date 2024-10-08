@@ -14,7 +14,7 @@ public class WarrantDetails {
     private String warrantId = null;
 
     @JsonProperty("issueDate")
-    private String issueDate;
+    private Long issueDate;
 
     @JsonProperty("docType")
     private String docType;

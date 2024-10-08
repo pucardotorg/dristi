@@ -32,7 +32,7 @@ public class ApplicationUtil {
         StringBuilder url = new StringBuilder();
         url.append(config.getApplicationHost()).append(config.getApplicationSearchEndpoint());
 
-        Object response = requestRepository.fetchResult(url, applicationRequest);
+        Object response = requestRepository.postMethod(url, applicationRequest);
         JsonNode applicationList = null;
         try {
             JsonNode responseNode = mapper.readTree(response.toString());

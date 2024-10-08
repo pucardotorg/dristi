@@ -5,6 +5,12 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config/config');
 
+/**
+ * Fetches a document from the file store based on the provided file store ID.
+ *
+ * @param {string} fileStoreId - The ID of the file to fetch.
+ * @returns {Buffer} The fetched document as a buffer.
+ */
 async function fetchDocument(fileStoreId) {
     const url = `${config.fileStoreHost}/filestore/v1/files/id?tenantId=kl&fileStoreId=${fileStoreId}`;
 
@@ -51,6 +57,14 @@ async function fetchDocument(fileStoreId) {
     }
 }
 
+/**
+ * Appends PDF pages with a header to an existing PDF document.
+ *
+ * @param {PDFDocument} existingPdfDoc - The existing PDF document.
+ * @param {string} fileStoreId - The ID of the file to append.
+ * @param {string} header - The header to add to the page.
+ * @returns {Promise<Buffer>} The updated PDF document as a buffer.
+ */
 async function appendPdfPagesWithHeader(existingPdfDoc, fileStoreId, header) {
 
     const helveticaFont = await existingPdfDoc.embedStandardFont('Helvetica');
@@ -86,6 +100,13 @@ async function appendPdfPagesWithHeader(existingPdfDoc, fileStoreId, header) {
     }
 }
 
+/**
+ * Appends complainant files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} complainants - The complainants object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendComplainantFilesToPDF(pdf, complainants) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -99,7 +120,14 @@ async function appendComplainantFilesToPDF(pdf, complainants) {
     return await existingPdfDoc.save();
 }
 
-async function appendRespondentFilesToPDF(pdf, respondents) {
+/**
+ * Appends respondent files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} respondents - The respondents object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
+ async function appendRespondentFilesToPDF(pdf, respondents) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
     for (let i = 0; i < respondents.length; i++) {
@@ -112,6 +140,13 @@ async function appendRespondentFilesToPDF(pdf, respondents) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends cheque details files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} chequeDetails - The cheque details object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendChequeDetailsToPDF(pdf, chequeDetails) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -132,6 +167,13 @@ async function appendChequeDetailsToPDF(pdf, chequeDetails) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends debt liability details files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} debtLiabilityDetails - The debt liability details object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendDebtLiabilityFilesToPDF(pdf, debtLiabilityDetails) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -145,6 +187,13 @@ async function appendDebtLiabilityFilesToPDF(pdf, debtLiabilityDetails) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends demand notice details files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} demandNoticeDetails - The demand notice details object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendDemandNoticeFilesToPDF(pdf, demandNoticeDetails) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -168,6 +217,13 @@ async function appendDemandNoticeFilesToPDF(pdf, demandNoticeDetails) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends demand notice details files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} delayCondonationDetails - The delay condonation details object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendDelayCondonationFilesToPDF(pdf, delayCondonationDetails) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -181,6 +237,13 @@ async function appendDelayCondonationFilesToPDF(pdf, delayCondonationDetails) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends demand notice details files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} prayerSwornStatementDetails - The prayer and sworn statement details object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
@@ -201,6 +264,13 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
     return await existingPdfDoc.save();
 }
 
+/**
+ * Appends advocate files to a PDF document.
+ *
+ * @param {Buffer} pdf - The PDF document to append to.
+ * @param {Array} advocates - The advocates object to append files from.
+ * @returns {Promise<Buffer>} The updated PDF document.
+ */
 async function appendAdvocateFilesToPDF(pdf, advocates) {
     const existingPdfDoc = await PDFDocument.load(pdf);
 
