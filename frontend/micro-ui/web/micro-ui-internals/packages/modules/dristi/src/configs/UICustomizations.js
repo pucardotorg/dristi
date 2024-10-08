@@ -174,7 +174,7 @@ export const UICustomizations = {
   getAdvocateNameUsingBarRegistrationNumber: {
     getNames: () => {
       return {
-        url: "/advocate/advocate/v1/status/_search",
+        url: "/advocate/v1/status/_search",
         params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
         body: {
           tenantId: window?.Digit.ULBService.getStateId(),
@@ -208,7 +208,7 @@ export const UICustomizations = {
       const removeOptions = props?.removeOptions ? props?.removeOptions : [];
       const removeOptionsKey = props?.removeOptionsKey || "";
       return {
-        url: "/advocate/advocate/v1/status/_search",
+        url: "/advocate/v1/status/_search",
         params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
         body: {
           tenantId: window?.Digit.ULBService.getStateId(),
