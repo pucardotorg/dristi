@@ -98,7 +98,7 @@ function PendingTaskAccordion({
               <input type="checkbox" value={check} />
               <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>
                 <span className="task-title">
-                  {item?.actionName} : {item?.caseTitle}
+                  {t(item?.actionName)} : {item?.caseTitle}
                 </span>
                 <span className="task-info">
                   {item?.caseType} - {item?.filingNumber} -{" "}

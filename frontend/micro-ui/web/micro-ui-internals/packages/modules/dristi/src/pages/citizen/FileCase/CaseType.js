@@ -113,7 +113,7 @@ function CaseType({ t }) {
       {},
       individualId,
       userType,
-      "/advocate/advocate/v1/_search"
+      "/advocate/v1/_search"
     );
 
     if (userType === "ADVOCATE" && searchData) {

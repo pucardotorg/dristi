@@ -49,7 +49,7 @@ function Home() {
     {},
     individualId,
     userType,
-    "/advocate/advocate/v1/_search"
+    "/advocate/v1/_search"
   );
 
   const [callRefetch, SetCallRefetch] = useState(false);

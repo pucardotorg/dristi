@@ -204,7 +204,7 @@ export const newconfigClerk = {
 //   label: "ES_COMMON_INBOX",
 //   type: "inbox",
 //   apiDetails: {
-//     serviceName: "/advocate/advocate/v1/_search",
+//     serviceName: "/advocate/v1/_search",
 //     requestParam: {},
 //     requestBody: {
 //       applicationNumber: "",

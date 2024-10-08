@@ -14,6 +14,8 @@ import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { taskService } from "../../hooks/services";
+import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
+import { getSuffixByDeliveryChannel } from "../../utils";
 
 const submitModalInfo = {
   header: "CS_HEADER_FOR_SUMMON_POST",
@@ -28,10 +30,15 @@ const submitModalInfo = {
   showTable: true,
 };
 
+const orderTypeEnum = {
+  SUMMONS: "Summons",
+  NOTICE: "Notice",
+  WARRANT: "Warrant",
+};
+
 const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, channelId, formattedChannelId, orderType }) => {
   const { t } = useTranslation();
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
-  console.log(channelId, "channelId");
   const [selectedOption, setSelectedOption] = useState({});
 
   const getDateWithMonthName = (orderDate) => {
@@ -54,7 +61,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
   return (
     <div className="payment-for-summon">
       <p style={{ marginTop: "0px", marginBottom: "0px" }}>
-        Make a payment in order to send the following {orderType === "SUMMONS" ? "Summons" : "Notice"} via {formattedChannelId}.
+        {t("MAKE_PAYMENT_IN_ORDER_TO_SEND_FOLLOWING")} {orderTypeEnum?.[orderType]} via {formattedChannelId}.
       </p>
       <ApplicationInfoComponent infos={infos} links={links} />
       {channelId && feeOptions[channelId]?.length > 0 && (
@@ -88,7 +95,6 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
-  const [channelId, setChannelId] = useState(null);
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -104,13 +110,6 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     filingNumber,
     Boolean(filingNumber)
   );
-
-  useEffect(() => {
-    const pathname = location.pathname;
-    const channel = pathname.split("/")[5].split("-")[0];
-
-    setChannelId(channel);
-  }, [location]);
 
   useEffect(() => {
     if (caseData) {
@@ -149,7 +148,6 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     );
   };
 
-  console.log("caseData :>> ", caseData?.criteria?.[0]?.responseList?.[0]?.id);
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
 
@@ -174,6 +172,9 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     Boolean(filteredTasks?.[0]?.orderId)
   );
 
+  const summonsPincode = useMemo(() => filteredTasks?.[0]?.taskDetails?.respondentDetails?.address?.pincode, [filteredTasks]);
+  const channelId = useMemo(() => extractFeeMedium(filteredTasks?.[0]?.taskDetails?.deliveryChannels?.channelName || ""), [filteredTasks]);
+
   const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
 
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
@@ -190,29 +191,49 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     Boolean(orderData?.list?.[0]?.hearingNumber)
   );
 
-  const suffix = useMemo(() => {
-    return channelId === "sms" ? "SMS_COURT" : channelId === "email" ? "EMAIL_COURT" : "";
-  }, [filteredTasks]);
+  const getBusinessService = (orderType) => {
+    const businessServiceMap = {
+      SUMMONS: paymentType.TASK_SUMMON,
+      WARRANT: paymentType.TASK_WARRANT,
+      NOTICE: paymentType.TASK_NOTICE,
+    };
+    return businessServiceMap?.[orderType];
+  };
 
-  console.log("taskData", filteredTasks);
+  const businessService = useMemo(() => getBusinessService(orderType), [orderType]);
 
-  console.log("hearingsData :>> ", hearingsData);
+  const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "payment",
+    [{ name: "paymentType" }],
+    {
+      select: (data) => {
+        return data?.payment?.paymentType || [];
+      },
+    }
+  );
 
-  console.log("orderData :>> ", orderData);
+  const suffix = useMemo(() => getSuffixByDeliveryChannel(paymentTypeData, channelId, businessService), [
+    businessService,
+    channelId,
+    paymentTypeData,
+  ]);
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
     tenantId,
     consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
-    service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+    service: businessService,
     caseDetails,
     totalAmount: "4",
   });
 
   const status = useMemo(() => {
-    if (channelId === "sms") {
+    if (channelId === "SMS") {
       return paymentType.PAYMENT_PENDING_SMS;
-    } else if (channelId === "email") {
+    } else if (channelId === "EMAIL") {
       return paymentType.PAYMENT_PENDING_EMAIL;
+    } else if (channelId === "POLICE") {
+      return paymentType.PAYMENT_PENDING_POLICE;
     } else {
       return paymentType.PAYMENT_PENDING_POST;
     }
@@ -223,13 +244,28 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     {
       tenantId,
       consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
-      service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+      service: businessService,
     },
-    "dristi",
-    Boolean(filteredTasks?.[0]?.taskNumber)
+    `dristi_${suffix}`,
+    Boolean(filteredTasks?.[0]?.taskNumber && suffix)
   );
 
-  const referenceId = channelId === "sms" ? "SMS" : channelId === "email" ? "E-mail" : "";
+  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
+    {
+      Criteria: [
+        {
+          channelId: channelId,
+          receiverPincode: summonsPincode,
+          tenantId: tenantId,
+          Id: filteredTasks?.[0]?.taskNumber,
+          taskType: getTaskType(businessService),
+        },
+      ],
+    },
+    {},
+    "dristi",
+    Boolean(tasksData)
+  );
 
   const onPayOnline = async () => {
     // console.log("clikc");
@@ -264,7 +300,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
       // const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
       const updatedTask = {
         ...filteredTasks?.[0],
-        taskType: orderType === "SUMMONS" ? "SUMMONS" : "NOTICE",
+        taskType: orderType,
         workflow: {
           action: "MAKE_PAYMENT",
         },
@@ -281,7 +317,12 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         .then(() => {
           return ordersService.customApiService(Urls.orders.pendingTask, {
             pendingTask: {
-              name: orderType === "SUMMONS" ? `MAKE_PAYMENT_FOR_SUMMONS_POST` : `MAKE_PAYMENT_FOR_NOTICE_POST`,
+              name:
+                orderType === "SUMMONS"
+                  ? `MAKE_PAYMENT_FOR_SUMMONS_POST`
+                  : orderType === "NOTICE"
+                  ? `MAKE_PAYMENT_FOR_NOTICE_POST`
+                  : "PAYMENT_PENDING_FOR_WARRANT",
               entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
               referenceId: `MANUAL_${taskNumber}`,
               status: status,
@@ -368,21 +409,44 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     const taskAmount = filteredTasks?.[0]?.amount?.amount || 0;
 
     return {
-      email: [
+      EMAIL: [
         {
           label: "Fee Type",
           amount: "Amount",
           action: "Actions",
         },
-        { label: "Court Fees", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
+        {
+          label: "Court Fees",
+          amount: breakupResponse?.Calculation?.[0]?.breakDown?.find((data) => data?.type === "Court Fee")?.amount,
+          action: "Pay Online",
+          onClick: onPayOnline,
+        },
       ],
-      sms: [
+      SMS: [
         {
           label: "Fee Type",
           amount: "Amount",
           action: "Actions",
         },
-        { label: "Court Fees", amount: taskAmount, action: "Pay Online", onClick: onPayOnline },
+        {
+          label: "Court Fees",
+          amount: breakupResponse?.Calculation?.[0]?.breakDown.find((data) => data?.type === "Court Fee")?.amount,
+          action: "Pay Online",
+          onClick: onPayOnline,
+        },
+      ],
+      POLICE: [
+        {
+          label: "Fee Type",
+          amount: "Amount",
+          action: "Actions",
+        },
+        {
+          label: "Court Fees",
+          amount: breakupResponse?.Calculation?.[0]?.breakDown.find((data) => data?.type === "Court Fee")?.amount,
+          action: "Pay Online",
+          onClick: onPayOnline,
+        },
       ],
     };
   }, [filteredTasks, onPayOnline]);
@@ -394,12 +458,14 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   };
 
   const infos = useMemo(() => {
-    const name = [
-      orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
-      orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
-    ]
-      ?.filter(Boolean)
-      ?.join(" ");
+    const name =
+      [
+        orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
+        orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
+      ]
+        ?.filter(Boolean)
+        ?.join(" ") ||
+      (orderType === "WARRANT" && orderData?.list?.[0]?.additionalDetails?.formdata?.warrantFor);
 
     const task = filteredTasks?.[0];
     const taskDetails = task?.taskDetails;
@@ -409,6 +475,8 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     if (deliveryChannel === "Email") {
       contactDetail = taskDetails?.respondentDetails?.email || "Not provided";
     } else if (deliveryChannel === "SMS") {
+      contactDetail = taskDetails?.respondentDetails?.phone || "Not provided";
+    } else if (deliveryChannel === "Police") {
       contactDetail = taskDetails?.respondentDetails?.phone || "Not provided";
     }
 
@@ -432,11 +500,13 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
 
   const paymentForSummonModalConfig = useMemo(() => {
     const formattedChannelId =
-      channelId === "sms" ? "SMS" : channelId === "email" ? "Email" : channelId ? channelId.charAt(0).toUpperCase() + channelId.slice(1) : "";
+      channelId === "SMS" ? "SMS" : channelId ? channelId?.charAt(0)?.toUpperCase() + channelId?.slice(1)?.toLowerCase() : "";
 
     return {
       handleClose: handleClose,
-      heading: { label: `Payment for ${orderType === "SUMMONS" ? "Summon" : "Notice"} via ${formattedChannelId}` },
+      heading: {
+        label: `Payment for ${orderTypeEnum?.[orderType]} via ${formattedChannelId}`,
+      },
       isStepperModal: false,
       modalBody: (
         <PaymentForSummonComponent

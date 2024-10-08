@@ -596,6 +596,9 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               formdata,
               applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
             },
+            ...(documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName && {
+              orderDetails: { parties: [documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName] },
+            }),
             ...(["INITIATING_RESCHEDULING_OF_HEARING_DATE", "CHECKOUT_ACCEPTANCE"].includes(orderType) && {
               hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
             }),

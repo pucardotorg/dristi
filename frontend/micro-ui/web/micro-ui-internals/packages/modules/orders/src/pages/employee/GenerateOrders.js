@@ -47,7 +47,6 @@ import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
 import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
-import useGetStatuteSection from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useGetStatuteSection";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { constructFullName, removeInvalidNameParts } from "../../utils";
 
@@ -130,7 +129,8 @@ const stateSlaMap = {
 };
 
 const channelTypeEnum = {
-  Post: { code: "POST", type: "Post" },
+  "e-Post": { code: "POST", type: "Post" },
+  RPAD: { code: "RPAD", type: "RPAD" },
   SMS: { code: "SMS", type: "SMS" },
   "Via Police": { code: "POLICE", type: "Police" },
   "E-mail": { code: "EMAIL", type: "Email" },
@@ -296,6 +296,13 @@ const GenerateOrders = () => {
     );
   }, [caseDetails]);
 
+  const allParties = useMemo(() => [...complainants, ...respondents, ...unJoinedLitigant, ...witnesses], [
+    complainants,
+    respondents,
+    unJoinedLitigant,
+    witnesses,
+  ]);
+
   const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     {
       tenantId,
@@ -303,7 +310,7 @@ const GenerateOrders = () => {
       pagination: { limit: 1000, offset: 0 },
     },
     { tenantId },
-    filingNumber,
+    filingNumber + OrderWorkflowState.DRAFT_IN_PROGRESS,
     Boolean(filingNumber)
   );
   const { data: publishedOrdersData, isLoading: isPublishedOrdersLoading } = useSearchOrdersService(
@@ -1016,6 +1023,42 @@ const GenerateOrders = () => {
     }
   };
 
+  const getParties = (type, orderSchema) => {
+    let parties = [];
+    if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(type)) {
+      parties = orderSchema?.orderDetails.partyName;
+    } else if (type === "MANDATORY_SUBMISSIONS_RESPONSES") {
+      parties = [...orderSchema?.orderDetails?.partyDetails?.partiesToRespond, ...orderSchema?.orderDetails?.partyDetails?.partyToMakeSubmission];
+    } else if (["WARRANT", "SUMMONS", "NOTICE"].includes(type)) {
+      parties = orderSchema?.orderDetails?.respondentName ? [orderSchema?.orderDetails?.respondentName] : [];
+    } else if (type === "SECTION_202_CRPC") {
+      parties = [orderSchema?.orderDetails.soughtOfDetails];
+    } else if (
+      orderSchema?.orderDetails?.parties?.length > 0 &&
+      ["BAIL", "REJECT_VOLUNTARY_SUBMISSIONS", "APPROVE_VOLUNTARY_SUBMISSIONS", "REJECTION_RESCHEDULE_REQUEST", "CHECKOUT_REJECT"].includes(type)
+    ) {
+      parties = orderSchema?.orderDetails?.parties;
+    } else {
+      parties = allParties?.map((party) => ({ partyName: party.name, partyType: party?.partyType }));
+      return parties;
+    }
+    parties = parties?.map((party) => {
+      const matchingParty = allParties.find((p) => p.name === party);
+      if (matchingParty) {
+        return {
+          partyName: matchingParty.name,
+          partyType: matchingParty.partyType,
+        };
+      } else {
+        return {
+          partyName: party,
+          partyType: "witness",
+        };
+      }
+    });
+    return parties;
+  };
+
   const updateOrder = async (order, action) => {
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
@@ -1029,11 +1072,21 @@ const GenerateOrders = () => {
           : null;
       let orderSchema = {};
       try {
-        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+        let orderTypeDropDownConfig = order?.orderNumber
+          ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
+          : structuredClone(applicationTypeConfig);
+        let orderFormConfig = configKeys.hasOwnProperty(order?.orderType) ? configKeys[order?.orderType] : [];
+        const modifiedPlainFormConfig = [...orderTypeDropDownConfig, ...orderFormConfig];
+        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedPlainFormConfig);
       } catch (error) {
         console.error("error :>> ", error);
       }
 
+      const parties = getParties(order?.orderType, {
+        ...orderSchema,
+        orderDetails: { ...orderSchema?.orderDetails, ...(order?.orderDetails || {}) },
+      });
+      orderSchema = { ...orderSchema, orderDetails: { ...orderSchema?.orderDetails, parties: parties } };
       return await ordersService.updateOrder(
         {
           order: {
@@ -1054,11 +1107,20 @@ const GenerateOrders = () => {
     try {
       let orderSchema = {};
       try {
-        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedFormConfig);
+        let orderTypeDropDownConfig = order?.orderNumber
+          ? applicationTypeConfig?.map((item) => ({ body: item.body.map((input) => ({ ...input, disable: true })) }))
+          : structuredClone(applicationTypeConfig);
+        let orderFormConfig = configKeys.hasOwnProperty(order?.orderType) ? configKeys[order?.orderType] : [];
+        const modifiedPlainFormConfig = [...orderTypeDropDownConfig, ...orderFormConfig];
+        orderSchema = Digit.Customizations.dristiOrders.OrderFormSchemaUtils.formToSchema(order.additionalDetails.formdata, modifiedPlainFormConfig);
       } catch (error) {
         console.error("error :>> ", error);
       }
-      // const formOrder = await Digit.Customizations.dristiOrders.OrderFormSchemaUtils.schemaToForm(orderDetails, modifiedFormConfig);
+      const parties = getParties(order?.orderType, {
+        ...orderSchema,
+        orderDetails: { ...orderSchema?.orderDetails, ...(order?.orderDetails || {}) },
+      });
+      orderSchema = { ...orderSchema, orderDetails: { ...orderSchema?.orderDetails, parties: parties } };
 
       return await ordersService.createOrder(
         {
@@ -1217,12 +1279,29 @@ const GenerateOrders = () => {
         },
       });
     }
-    if (order?.orderType === "WARRANT") {
+    if ((order?.orderType === "WARRANT" || orderType === "WARRANT") && refId) {
+      const assignee = [...complainants?.map((data) => data?.uuid[0])];
+      const advocateUuid = Object.keys(allAdvocates)
+        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
+        ?.flat();
+      assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
-      create = false; //Temporarily not allow to create pending task for warrant payment
-      assignees = [...[...new Set([...Object.keys(allAdvocates)?.flat(), ...Object.values(allAdvocates)?.flat()])]?.map((uuid) => ({ uuid }))];
-      name = t("PAYMENT_PENDING_FOR_WARRANT");
-      status = `PAYMENT_PENDING_FOR_WARRANT`;
+      return ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name: t(`PAYMENT_PENDING_FOR_WARRANT`),
+          entityType,
+          referenceId: `MANUAL_${refId}`,
+          status: `PAYMENT_PENDING_POLICE`,
+          assignedTo: assignees,
+          assignedRole,
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
+          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+          tenantId,
+        },
+      });
     }
 
     if (isAssignedRole) {
@@ -1430,6 +1509,7 @@ const GenerateOrders = () => {
 
     const orderData = orderDetails?.order;
     const orderFormData = getFormData(orderType, orderData);
+    const orderFormValue = orderDetails?.order?.additionalDetails?.formdata;
     const respondentNameData = getOrderData(orderType, orderFormData);
     const selectedChannel = orderData?.additionalDetails?.formdata?.[orderType === "NOTICE" ? "noticeOrder" : "SummonsOrder"]?.selectedChannels;
     const noticeType = orderData?.additionalDetails?.formdata?.noticeType?.type;
@@ -1461,12 +1541,22 @@ const GenerateOrders = () => {
       city: city,
       state: addressLine1,
       coordinates: {
-        longitude: latitude,
-        latitude: longitude,
+        longitude: longitude,
+        latitude: latitude,
       },
       locality: address,
     };
     const courtDetails = courtRoomData?.Court_Rooms?.find((data) => data?.code === caseDetails?.courtId);
+
+    const respondentDetails = {
+      name: respondentName,
+      address: respondentAddress?.[0],
+      phone: respondentPhoneNo[0] || "",
+      email: respondentEmail[0] || "",
+      age: "",
+      gender: "",
+    };
+
     switch (orderType) {
       case "SUMMONS":
         payload = {
@@ -1475,14 +1565,8 @@ const GenerateOrders = () => {
             caseFilingDate: caseDetails?.filingDate,
             docSubType: orderFormData?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
-          respondentDetails: {
-            name: respondentName,
-            address: respondentAddress?.[0],
-            phone: respondentPhoneNo[0] || "",
-            email: respondentEmail[0] || "",
-            age: "",
-            gender: "",
-          },
+          respondentDetails: respondentDetails,
+          witnessDetails: respondentDetails,
           complainantDetails: {
             name: complainantName,
             address: complainantAddress,
@@ -1496,7 +1580,7 @@ const GenerateOrders = () => {
             courtPhone: courtDetails?.phone,
             courtId: caseDetails?.courtId,
             hearingNumber: orderData?.hearingNumber,
-            judgeName: "super",
+            judgeName: "John Koshy",
           },
           deliveryChannels: {
             channelName: "",
@@ -1514,14 +1598,8 @@ const GenerateOrders = () => {
             caseFilingDate: caseDetails?.filingDate,
             noticeType,
           },
-          respondentDetails: {
-            name: respondentName,
-            address: respondentAddress?.[0],
-            phone: respondentPhoneNo[0] || "",
-            email: respondentEmail[0] || "",
-            age: "",
-            gender: "",
-          },
+          respondentDetails: respondentDetails,
+          witnessDetails: respondentDetails,
           complainantDetails: {
             name: complainantName,
             address: complainantAddress,
@@ -1535,7 +1613,7 @@ const GenerateOrders = () => {
             courtPhone: courtDetails?.phone,
             courtId: caseDetails?.courtId,
             hearingNumber: orderData?.hearingNumber,
-            judgeName: "super",
+            judgeName: "John Koshy",
           },
           deliveryChannels: {
             channelName: "",
@@ -1551,6 +1629,10 @@ const GenerateOrders = () => {
           warrantDetails: {
             issueDate: orderData?.auditDetails?.lastModifiedTime,
             caseFilingDate: caseDetails?.filingDate,
+            docType: orderFormValue.warrantType?.code,
+            docSubType: orderFormValue.bailInfo?.isBailable?.code ? "BAILABLE" : "NON_BAILABLE",
+            surety: orderFormValue.bailInfo?.noOfSureties?.code,
+            bailableAmount: orderFormValue.bailInfo?.bailableAmount,
           },
           respondentDetails: {
             name: respondentName,
@@ -1564,7 +1646,7 @@ const GenerateOrders = () => {
             caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
             hearingDate: new Date(orderData?.additionalDetails?.formData?.dateOfHearing || "").getTime(),
-            judgeName: "",
+            judgeName: "John Koshy",
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
             courtPhone: courtDetails?.phone,
@@ -1622,13 +1704,15 @@ const GenerateOrders = () => {
             channelName: channelTypeEnum?.[item?.type]?.type,
           };
 
-          const address = ["Post", "Via Police"].includes(item?.type) ? respondentAddress[channelMap.get(item?.type) - 1] : respondentAddress[0];
+          const address = ["e-Post", "Via Police", "RPAD"].includes(item?.type)
+            ? respondentAddress[channelMap.get(item?.type) - 1]
+            : respondentAddress[0];
           const sms = ["SMS"].includes(item?.type) ? respondentPhoneNo[channelMap.get(item?.type) - 1] : respondentPhoneNo[0];
           const email = ["E-mail"].includes(item?.type) ? respondentEmail[channelMap.get(item?.type) - 1] : respondentEmail[0];
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["Post", "Via Police"].includes(item?.type)
+            address: ["e-Post", "Via Police", "RPAD"].includes(item?.type)
               ? {
                   ...address,
                   locality: item?.value?.locality || address?.locality,
@@ -1645,8 +1729,9 @@ const GenerateOrders = () => {
           const channelDetailsEnum = {
             SMS: "phone",
             "E-mail": "email",
-            Post: "address",
+            "e-Post": "address",
             "Via Police": "address",
+            RPAD: "address",
           };
           payload.deliveryChannel = {
             ...payload.deliveryChannel,
@@ -1661,7 +1746,7 @@ const GenerateOrders = () => {
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["Post", "Via Police"].includes(item?.type) ? item?.value : address || "",
+            address: ["e-Post", "Via Police", "RPAD"].includes(item?.type) ? item?.value : address || "",
             phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
             email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",
@@ -1702,44 +1787,50 @@ const GenerateOrders = () => {
             tenantId,
           })
           .then(async (data) => {
-            if (["SUMMONS", "NOTICE"].includes(orderType) && item?.type !== "Via Police") {
+            if (["SUMMONS", "NOTICE"].includes(orderType)) {
               await createPendingTask({ refId: data?.task?.taskNumber, channel: item, orderType: orderType });
             }
           });
       });
     } else if (Object.keys(payload || {}).length > 0) {
-      await ordersService.customApiService(Urls.orders.taskCreate, {
-        task: {
-          taskDetails: payload,
-          workflow: {
-            action: "CREATE",
-            comments: orderType,
-            documents: [
-              {
-                documentType: null,
-                fileStore: null,
-                documentUid: null,
-                additionalDetails: {},
-              },
-            ],
-            assignes: null,
-            rating: null,
+      await ordersService
+        .customApiService(Urls.orders.taskCreate, {
+          task: {
+            taskDetails: payload,
+            workflow: {
+              action: "CREATE",
+              comments: orderType,
+              documents: [
+                {
+                  documentType: null,
+                  fileStore: null,
+                  documentUid: null,
+                  additionalDetails: {},
+                },
+              ],
+              assignes: null,
+              rating: null,
+            },
+            createdDate: new Date().getTime(),
+            orderId: orderData?.id,
+            filingNumber,
+            cnrNumber,
+            taskType: orderType,
+            status: "INPROGRESS",
+            tenantId,
+            amount: {
+              type: "FINE",
+              status: "DONE",
+              amount: summonsCourtFee,
+            },
           },
-          createdDate: new Date().getTime(),
-          orderId: orderData?.id,
-          filingNumber,
-          cnrNumber,
-          taskType: orderType,
-          status: "INPROGRESS",
           tenantId,
-          amount: {
-            type: "FINE",
-            status: "DONE",
-            amount: summonsCourtFee,
-          },
-        },
-        tenantId,
-      });
+        })
+        .then(async (data) => {
+          if (["WARRANT"].includes(orderType)) {
+            await createPendingTask({ refId: data?.task?.taskNumber, orderType: orderType });
+          }
+        });
     }
   };
 
@@ -2217,7 +2308,8 @@ const GenerateOrders = () => {
     !ordersData?.list ||
     isHearingLoading ||
     pendingTasksLoading ||
-    isCourtIdsLoading
+    isCourtIdsLoading ||
+    isPublishedOrdersLoading
   ) {
     return <Loader />;
   }

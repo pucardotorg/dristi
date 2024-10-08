@@ -264,7 +264,7 @@ module.exports = {
     application_search: "/application/v1/search",
     hrms_search: "/egov-hrms/employees/_search",
     individual_search: "/individual/v1/_search",
-    advocate_search: "/advocate/advocate/v1/_search",
+    advocate_search: "/advocate/v1/_search",
     mdms_search: "/egov-mdms-service/v2/_search",
     sunbirdrc_credential_service_search:
       "/sunbirdrc-credential-service/qrcode/_get",

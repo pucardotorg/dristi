@@ -58,7 +58,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
     ],
     apiDetails: {
-      serviceName: "/advocate/advocate/v1/_create",
+      serviceName: "/advocate/v1/_create",
       requestKey: "advocate",
       AdditionalFields: ["barRegistrationNumber"],
     },
@@ -390,6 +390,17 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
+  PAYMENT_PENDING_RPAD: {
+    actorName: ["JUDGE"],
+    actionName: "Show Summon-Warrant Status",
+    redirectDetails: {
+      url: "/home/home-pending-task/rpad-payment-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "taskNumber", value: "referenceId" },
+      ],
+    },
+  },
   PAYMENT_PENDING_SMS: {
     actorName: ["JUDGE"],
     actionName: "Show Summon-Warrant Status",
@@ -423,11 +434,15 @@ export const pendingTaskOrderActions = {
       ],
     },
   },
-  PAYMENT_PENDING_FOR_WARRANT: {
+  PAYMENT_PENDING_POLICE: {
     actorName: ["JUDGE"],
     actionName: "Show Warrant Payment Status",
     redirectDetails: {
-      url: "/home/home-pending-task/e-filing-payment-breakdown",
+      url: "/home/home-pending-task/icops-payment-modal",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "taskNumber", value: "referenceId" },
+      ],
     },
   },
   "RE-ISSUE_SUMMON": {

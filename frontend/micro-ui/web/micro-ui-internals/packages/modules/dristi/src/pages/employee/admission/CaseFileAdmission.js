@@ -26,6 +26,7 @@ import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
+  NOTICE: 3 * 24 * 3600 * 1000,
 };
 
 const casePrimaryActions = [
@@ -87,7 +88,28 @@ function CaseFileAdmission({ t, path }) {
       cacheTime: 0,
     },
   });
-  console.log("workFlowDetails", workFlowDetails);
+
+  const filingNumber = useMemo(() => caseDetails?.filingNumber, [caseDetails?.filingNumber]);
+
+  const { data: hearingDetails } = Digit.Hooks.hearings.useGetHearings(
+    {
+      hearing: { tenantId },
+      criteria: {
+        tenantID: tenantId,
+        filingNumber: filingNumber,
+      },
+    },
+    {},
+    filingNumber,
+    Boolean(filingNumber)
+  );
+
+  const currentHearingId = useMemo(
+    () =>
+      hearingDetails?.HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED"))
+        ?.hearingId,
+    [hearingDetails?.HearingList]
+  );
   const nextActions = useMemo(() => workFlowDetails?.nextActions || [{}], [workFlowDetails]);
 
   const primaryAction = useMemo(
@@ -166,6 +188,22 @@ function CaseFileAdmission({ t, path }) {
       };
       DRISTIService.customApiService(Urls.dristi.ordersCreate, { order: orderBody }, { tenantId })
         .then((res) => {
+          DRISTIService.customApiService(Urls.dristi.pendingTask, {
+            pendingTask: {
+              name: t("DRAFT_IN_PROGRESS_ISSUE_NOTICE"),
+              entityType: "order-default",
+              referenceId: `MANUAL_${res?.order?.orderNumber}`,
+              status: "DRAFT_IN_PROGRESS",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber: updatedCaseDetails?.cnrNumber,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: false,
+              stateSla: todayDate + stateSla.NOTICE,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
           history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`, {
             caseId: caseDetails?.id,
             tab: "Orders",
@@ -324,7 +362,7 @@ function CaseFileAdmission({ t, path }) {
             },
           });
           const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-            (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
+            (list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")
           );
           const {
             list: [orderData],
@@ -455,16 +493,15 @@ function CaseFileAdmission({ t, path }) {
           filingNumber: caseDetails?.filingNumber,
         },
       });
-      if (caseDetails?.status === "PENDING_RESPONSE") {
-        const hearingData = HearingList?.find((list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED") || {};
-        if (hearingData.hearingId) {
-          hearingData.workflow = hearingData.workflow || {};
-          hearingData.workflow.action = "ABANDON";
-          await Digit.HearingService.updateHearings(
-            { tenantId, hearing: hearingData, hearingType: "", status: "" },
-            { applicationNumber: "", cnrNumber: "" }
-          );
-        }
+      const hearingData =
+        HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")) || {};
+      if (hearingData.hearingId) {
+        hearingData.workflow = hearingData.workflow || {};
+        hearingData.workflow.action = "ABANDON";
+        await Digit.HearingService.updateHearings(
+          { tenantId, hearing: hearingData, hearingType: "", status: "" },
+          { applicationNumber: "", cnrNumber: "" }
+        );
       }
       DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
@@ -924,6 +961,7 @@ function CaseFileAdmission({ t, path }) {
                   caseDetails={caseDetails}
                   caseAdmittedSubmit={caseAdmittedSubmit}
                   createAdmissionOrder={createAdmissionOrder}
+                  isAdmissionHearingAvailable={Boolean(currentHearingId)}
                 ></AdmissionActionModal>
               )}
             </div>

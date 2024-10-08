@@ -203,3 +203,7 @@ export const searchIndividualUserWithUuid = async (uuid, tenantId) => {
   );
   return individualData;
 };
+
+export const getFullName = (seperator, ...strings) => {
+  return strings.filter(Boolean).join(seperator);
+};

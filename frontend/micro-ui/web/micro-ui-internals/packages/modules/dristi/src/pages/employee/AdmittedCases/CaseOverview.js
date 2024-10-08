@@ -13,7 +13,16 @@ import { PreviousHearingIcon, RecentOrdersIcon } from "../../../icons/svgIndex";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import JudgementViewCard from "./JudgementViewCard";
-const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmitDocument, handleExtensionRequest }) => {
+const CaseOverview = ({
+  caseData,
+  openHearingModule,
+  handleDownload,
+  handleSubmitDocument,
+  handleExtensionRequest,
+  extensionApplications,
+  caseStatus,
+  productionOfDocumentApplications,
+}) => {
   const { t } = useTranslation();
   const filingNumber = caseData.filingNumber;
   const history = useHistory();
@@ -27,10 +36,6 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
   const userInfo = Digit.UserService.getUser()?.info;
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const userRoles = userInfo?.roles?.map((role) => role.code);
-  const showSubmissionButtons = useMemo(() => {
-    const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
-    return submissionParty?.includes(userInfo?.uuid) && userRoles.includes("APPLICATION_CREATOR");
-  }, [currentOrder, userInfo?.uuid, userRoles]);
   const advocateIds = caseData?.case?.representatives?.map((representative) => {
     return {
       id: representative?.advocateId,
@@ -271,7 +276,9 @@ const CaseOverview = ({ caseData, openHearingModule, handleDownload, handleSubmi
                 handleDownload={handleDownload}
                 handleRequestLabel={handleExtensionRequest}
                 handleSubmitDocument={handleSubmitDocument}
-                showSubmissionButtons={showSubmissionButtons}
+                extensionApplications={extensionApplications}
+                productionOfDocumentApplications={productionOfDocumentApplications}
+                caseStatus={caseStatus}
                 handleOrdersTab={() => {
                   setShowReviewModal(false);
                 }}

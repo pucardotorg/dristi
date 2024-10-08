@@ -3,6 +3,15 @@ import React from "react";
 import OverlayDropdown from "../components/HearingOverlayDropdown";
 import { hearingService } from "../hooks/services";
 
+function normalizeData(input) {
+  try {
+    return typeof input === "string" ? JSON.parse(input) : input;
+  } catch (error) {
+    console.error("Failed to parse input", error);
+    return null;
+  }
+}
+
 export const UICustomizations = {
   PreHearingsConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
@@ -257,7 +266,8 @@ export const UICustomizations = {
             const taskData = data?.list
               ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
               ?.map((data) => {
-                const taskDetail = data?.taskDetails;
+                let taskDetail = structuredClone(data?.taskDetails);
+                taskDetail = normalizeData(taskDetail);
                 const channelDetailsEnum = {
                   SMS: "phone",
                   Email: "email",

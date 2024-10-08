@@ -465,14 +465,14 @@ const TasksComponent = ({
                 const pendingTask = joinCaseShowSubmitResponseModal ? joinCaseResponsePendingTask : responsePendingTask;
                 history.push(getCaseDetailsUrl(pendingTask?.caseId, pendingTask?.filingNumber));
                 setShowSubmitResponseModal(false);
-                setJoinCaseShowSubmitResponseModal(false);
+                if (setJoinCaseShowSubmitResponseModal) setJoinCaseShowSubmitResponseModal(false);
               }}
               submitButtonText={"VIEW_CASE_FILE"}
               closeButtonText={"BACK_HOME"}
               closeButtonAction={() => {
                 if (joinCaseShowSubmitResponseModal) history.push(`/${window?.contextPath}/${userType}/home/home-pending-task`);
                 setShowSubmitResponseModal(false);
-                setJoinCaseShowSubmitResponseModal(false);
+                if (setJoinCaseShowSubmitResponseModal) setJoinCaseShowSubmitResponseModal(false);
               }}
               t={t}
             />

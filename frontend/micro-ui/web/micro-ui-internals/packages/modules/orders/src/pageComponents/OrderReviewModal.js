@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import Modal from "../../../dristi/src/components/Modal";
 import { Urls } from "../hooks/services/Urls";
+import { Toast } from "@egovernments/digit-ui-react-components";
 
 const OrderPreviewOrderTypeMap = {
   MANDATORY_SUBMISSIONS_RESPONSES: "mandatory-async-submissions-responses",
@@ -72,6 +73,20 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
+  const [showErrorToast, setShowErrorToast] = useState(null);
+
+  const closeToast = () => {
+    setShowErrorToast(null);
+  };
+
+  useEffect(() => {
+    if (showErrorToast) {
+      const timer = setTimeout(() => {
+        setShowErrorToast(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showErrorToast]);
 
   const applicationStatus = order?.additionalDetails?.applicationStatus === t("APPROVED") ? "APPROVED" : "REJECTED";
   const orderType = order?.orderType;
@@ -175,42 +190,54 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
   }, [orderPreviewPdf, fileName, isLoading, t]);
 
   return (
-    <Modal
-      headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
-      headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
-      actionSaveLabel={showActions && t("ADD_SIGNATURE")}
-      isDisabled={isLoading}
-      actionSaveOnSubmit={() => {
-        if (showActions) {
-          const pdfFile = new File([orderPreviewPdf], orderPreviewFileName, { type: "application/pdf" });
+    <React.Fragment>
+      <Modal
+        headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
+        headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
+        actionSaveLabel={showActions && t("ADD_SIGNATURE")}
+        isDisabled={isLoading}
+        actionSaveOnSubmit={() => {
+          if (showActions) {
+            const pdfFile = new File([orderPreviewPdf], orderPreviewFileName, { type: "application/pdf" });
 
-          onDocumentUpload(pdfFile, pdfFile.name)
-            .then((document) => {
-              const fileStoreId = document.file?.files?.[0]?.fileStoreId;
-              if (fileStoreId) {
-                setOrderPdfFileStoreID(fileStoreId);
-              }
-            })
-            .catch((e) => {
-              console.error("Failed to upload document:", e);
-            })
-            .finally(() => {
-              setShowsignatureModal(true);
-              setShowReviewModal(false);
-            });
-        }
-      }}
-      className={"review-order-modal"}
-    >
-      <div className="review-order-body-main">
-        <div className="review-order-modal-list-div">
-          <div className="review-order-type-side-stepper">
-            <h1> {t(order?.orderType)}</h1>
+            onDocumentUpload(pdfFile, pdfFile.name)
+              .then((document) => {
+                const fileStoreId = document.file?.files?.[0]?.fileStoreId;
+                if (fileStoreId) {
+                  setOrderPdfFileStoreID(fileStoreId);
+                }
+              })
+              .then(() => {
+                setShowsignatureModal(true);
+                setShowReviewModal(false);
+              })
+              .catch((e) => {
+                setShowErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
+                console.error("Failed to upload document:", e);
+              });
+          }
+        }}
+        className={"review-order-modal"}
+      >
+        <div className="review-order-body-main">
+          <div className="review-order-modal-list-div">
+            <div className="review-order-type-side-stepper">
+              <h1> {t(order?.orderType)}</h1>
+            </div>
           </div>
+          <div className="review-order-modal-document-div">{showDocument} </div>
         </div>
-        <div className="review-order-modal-document-div">{showDocument} </div>
-      </div>
-    </Modal>
+        {showErrorToast && (
+          <Toast
+            error={showErrorToast?.error}
+            label={showErrorToast?.label}
+            isDleteBtn={true}
+            onClose={closeToast}
+            style={{ left: "calc(100% - 540px)", top: "92%" }}
+          />
+        )}
+      </Modal>
+    </React.Fragment>
   );
 }
 

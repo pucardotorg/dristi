@@ -342,6 +342,7 @@ export const registerRespondentConfig = {
         {
           type: "text",
           label: "LAST_NAME",
+          labelChildren: "optional",
           isMandatory: true,
           populators: {
             name: "respondentLastName",

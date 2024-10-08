@@ -3,7 +3,7 @@ import { CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-rea
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors }) => {
+const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors, clearErrors }) => {
   const [removeFile, setRemoveFile] = useState();
   const [showDoc, setShowDoc] = useState(false);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -26,6 +26,9 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
   function setValue(value, name, input) {
+    if (errors?.[name]) {
+      clearErrors();
+    }
     if (input && input?.clearFields && value) {
       if (input?.clearFieldsType && formData[config.key]) {
         Object.keys(input?.clearFields).forEach((ele) => {
@@ -35,8 +38,8 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           }
         });
       }
-      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
-    } else onSelect(config.key, { ...formData[config.key], [name]: value });
+      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields }, { shouldValidate: true });
+    } else onSelect(config.key, { ...formData[config.key], [name]: value }, { shouldValidate: true });
   }
   function getFileStoreData(filesData, input) {
     const numberOfFiles = filesData.length;

@@ -12,6 +12,7 @@ import { extractFeeMedium, getFilteredPaymentData, getTaskType } from "../../../
 const paymentTaskType = {
   TASK_SUMMON: "task-summons",
   TASK_NOTICE: "task-notice",
+  TASK_WARRANT: "task-warrant",
   TASK_SUMMON_ADVANCE_CARRYFORWARD: "TASK_SUMMON_ADVANCE_CARRYFORWARD",
   TASK_NOTICE_ADVANCE_CARRYFORWARD: "TASK_NOTICE_ADVANCE_CARRYFORWARD",
   ORDER_MANAGELIFECYCLE: "order-default",
@@ -42,7 +43,7 @@ const paymentOptionConfig = {
 };
 
 const handleTaskSearch = async (businessService, consumerCodeWithoutSuffix, tenantId) => {
-  if (["task-summons", "task-notice"].includes(businessService)) {
+  if (["task-summons", "task-notice", "task-warrant"].includes(businessService)) {
     const {
       list: [tasksData],
     } = await Digit.HearingService.searchTaskList({
@@ -173,8 +174,8 @@ const ViewPaymentDetails = ({ location, match }) => {
       ],
     },
     {},
-    "dristi",
-    Boolean(!paymentType?.toLowerCase()?.includes("application") && !paymentType?.toLowerCase()?.includes("case") && tasksData)
+    "dristi" + channelId,
+    Boolean(!paymentType?.toLowerCase()?.includes("application") && !paymentType?.toLowerCase()?.includes("case") && tasksData && channelId)
   );
 
   const totalAmount = useMemo(() => {
@@ -207,7 +208,7 @@ const ViewPaymentDetails = ({ location, match }) => {
     let taskFilingNumber = "";
     let taskHearingNumber = "";
     let taskOrderType = "";
-    if (["task-notice", "task-summons"].includes(businessService)) {
+    if (["task-notice", "task-summons", "task-warrant"].includes(businessService)) {
       const {
         list: [{ orderNumber, hearingNumber, orderType }],
       } = await ordersService.searchOrder({
@@ -265,7 +266,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           tenantId,
         },
       });
-      if (["task-notice", "task-summons"].includes(businessService)) {
+      if (["task-notice", "task-summons", "task-warrant"].includes(businessService)) {
         await DRISTIService.customApiService(Urls.dristi.pendingTask, {
           pendingTask: {
             name: taskOrderType === "SUMMONS" ? "Show Summon-Warrant Status" : "Show Notice Status",

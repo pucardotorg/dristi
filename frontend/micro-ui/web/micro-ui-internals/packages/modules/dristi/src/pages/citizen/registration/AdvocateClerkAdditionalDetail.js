@@ -4,6 +4,27 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
 
+const headerStyle = {
+  fontFamily: "Roboto",
+  fontSize: "24px",
+  fontWeight: 700,
+  lineHeight: "30px",
+  textAlign: "center",
+  color: "#0b0c0c",
+  margin: 0,
+  width: "100%",
+};
+
+const subHeaderStyle = {
+  margin: 0,
+  fontFamily: "Roboto",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: "21px",
+  textAlign: "center",
+  color: "#505a5f",
+};
+
 function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOnRefresh }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
@@ -18,7 +39,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
   };
 
   const getUserForAdvocateUUID = async (barRegistrationNumber) => {
-    const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
+    const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/v1/_search", {
       criteria: [
         {
           barRegistrationNumber: barRegistrationNumber,
@@ -80,11 +101,12 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
           const updatedValue = value.replace(/[^A-Z0-9\/]/g, "");
           if (updatedValue !== oldValue) {
             clientValue.barRegistrationNumber = updatedValue;
-            setValue(key, clientValue);
+            setValue(key, clientValue, { shouldValidate: true });
           }
         }
       }
     }
+
     let isDisabled = false;
     advocateClerkConfig.forEach((curr) => {
       if (isDisabled) return;
@@ -123,13 +145,14 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
       setShowErrorToast(!validateFormData(formData));
       return;
     }
-    // if (formData?.clientDetails?.barRegistrationNumber) {
-    //   const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
-    //   if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
-    //     setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
-    //     return;
-    //   }
-    // }
+
+    if (formData?.clientDetails?.barRegistrationNumber) {
+      const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
+      if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
+        setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
+        return;
+      }
+    }
     setParams({
       ...params,
       formData: formData,
@@ -141,6 +164,17 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
   }
   return (
     <div className="advocate-additional-details">
+      <div className="id-verificatin-header">
+        <p className="vefifcation-header" style={headerStyle}>
+          {t("CORE_ADVOCATE_VERFICATION")}
+        </p>
+        <p className="vefifcation-sub-header" style={subHeaderStyle}>
+          {t("CORE_ADVOCATE_AUTHENTICITY_TEXT")}
+        </p>
+        <p className="vefifcation-sub-header" style={{ ...subHeaderStyle, paddingBottom: "40px" }}>
+          {t("CORE_ADVOCATE_DETAILS_TEXT")}
+        </p>
+      </div>
       <FormComposerV2
         config={advocateClerkConfig}
         t={t}

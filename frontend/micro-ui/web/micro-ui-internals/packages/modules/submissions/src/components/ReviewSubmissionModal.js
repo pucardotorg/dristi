@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import Axios from "axios";
 import { CloseSvg } from "@egovernments/digit-ui-components";
+import { Toast } from "@egovernments/digit-ui-react-components";
+
 import { Urls } from "../hooks/services/Urls";
 import { useQuery } from "react-query";
 import { convertToDateInputFormat } from "../utils/index";
@@ -51,6 +53,19 @@ function ReviewSubmissionModal({
 }) {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
+  const [showErrorToast, setShowErrorToast] = useState(null);
+
+  const closeToast = () => {
+    setShowErrorToast(null);
+  };
+  useEffect(() => {
+    if (showErrorToast) {
+      const timer = setTimeout(() => {
+        setShowErrorToast(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showErrorToast]);
 
   const { data: { file: applicationPreviewPdf, fileName: applicationPreviewFileName } = {}, isFetching: isLoading } = useQuery({
     queryKey: [
@@ -135,10 +150,12 @@ function ReviewSubmissionModal({
               setApplicationPdfFileStoreId(fileStoreId);
             }
           })
-          .catch((e) => {})
-          .finally(() => {
+          .then(() => {
             setShowsignatureModal(true);
             setShowReviewModal(false);
+          })
+          .catch((e) => {
+            setShowErrorToast({ label: t("INTERNAL_ERROR_OCCURRED"), error: true });
           });
       }}
       className={"review-submission-appl-modal"}
@@ -197,6 +214,7 @@ function ReviewSubmissionModal({
           </div>
         </div>
       </div>
+      {showErrorToast && <Toast error={showErrorToast?.error} label={showErrorToast?.label} isDleteBtn={true} onClose={closeToast} />}
     </Modal>
   );
 }

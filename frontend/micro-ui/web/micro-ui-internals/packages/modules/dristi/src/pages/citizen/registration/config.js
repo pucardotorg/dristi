@@ -48,7 +48,7 @@ export const userTypeOptions = [
       "HEARING_ACCEPTOR",
     ],
     apiDetails: {
-      serviceName: "/advocate/advocate/v1/_create",
+      serviceName: "/advocate/v1/_create",
       requestKey: "advocate",
       AdditionalFields: ["barRegistrationNumber"],
     },
@@ -553,9 +553,6 @@ export const termsAndConditionConfig = [
 
 export const advocateClerkConfig = [
   {
-    head: "CORE_ADVOCATE_VERFICATION",
-    subHead: "CORE_ADVOCATE_VERFICATION_TEXT",
-
     body: [
       {
         type: "component",

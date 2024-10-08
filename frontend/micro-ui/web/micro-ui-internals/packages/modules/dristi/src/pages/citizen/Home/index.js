@@ -50,7 +50,7 @@ function CitizenHome({ tenantId, setHideBack }) {
     { tenantId },
     moduleCode,
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? "/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
   useEffect(() => {
     refetch().then(() => {

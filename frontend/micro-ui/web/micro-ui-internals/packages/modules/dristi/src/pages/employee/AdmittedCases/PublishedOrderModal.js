@@ -2,13 +2,24 @@ import { CloseSvg } from "@egovernments/digit-ui-components";
 import React, { useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/Modal";
 import { Button, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 
-function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, handleSubmitDocument, showSubmissionButtons = false, handleOrdersTab }) {
+function PublishedOrderModal({
+  t,
+  order,
+  handleDownload,
+  handleRequestLabel,
+  handleSubmitDocument,
+  caseStatus,
+  handleOrdersTab,
+  extensionApplications = [],
+  productionOfDocumentApplications = [],
+}) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
-
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -22,6 +33,30 @@ function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, han
   };
 
   const signedOrder = useMemo(() => order?.documents?.filter((item) => item?.documentType === "SIGNED")[0], [order]);
+  const userInfo = Digit.UserService.getUser()?.info;
+  const showSubmissionButtons = useMemo(() => {
+    if (productionOfDocumentApplications?.some((item) => item?.referenceId === order?.id)) {
+      return false;
+    }
+    const submissionParty = order?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
+    return (
+      submissionParty?.includes(userInfo?.uuid) &&
+      userRoles.includes("APPLICATION_CREATOR") &&
+      [
+        CaseWorkflowState.PENDING_ADMISSION_HEARING,
+        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
+        CaseWorkflowState.PENDING_NOTICE,
+        CaseWorkflowState.PENDING_RESPONSE,
+        CaseWorkflowState.PENDING_ADMISSION,
+        CaseWorkflowState.CASE_ADMITTED,
+      ].includes(caseStatus)
+    );
+  }, [caseStatus, order, userInfo?.uuid, userRoles, productionOfDocumentApplications]);
+  const showSubmitDocumentButton = useMemo(() => showSubmissionButtons, [showSubmissionButtons]);
+  const showExtensionButton = useMemo(
+    () => showSubmissionButtons && !extensionApplications?.some((item) => item?.additionalDetails?.formdata?.refOrderId === order?.orderNumber),
+    [extensionApplications, order, showSubmissionButtons]
+  );
 
   useEffect(() => {
     const onDocumentUpload = async (fileData, filename) => {
@@ -101,8 +136,8 @@ function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, han
         >
           {t("DOWNLOAD_ORDER_LINK")}
         </div>
-        {showSubmissionButtons && (
-          <div style={{ display: "flex", width: "50%", gap: "20px", justifyContent: "end" }}>
+        <div style={{ display: "flex", width: "50%", gap: "20px", justifyContent: "end" }}>
+          {showExtensionButton && (
             <Button
               variation="secondary"
               onButtonClick={() => {
@@ -111,6 +146,8 @@ function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, han
               className="primary-label-btn"
               label={t("EXTENSION_REQUEST_LABEL")}
             />
+          )}
+          {showSubmitDocumentButton && (
             <SubmitBar
               variation="primary"
               onSubmit={() => {
@@ -119,8 +156,8 @@ function PublishedOrderModal({ t, order, handleDownload, handleRequestLabel, han
               className="primary-label-btn"
               label={t("SUBMIT_DOCUMENT_LABEL")}
             ></SubmitBar>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Modal>
   );

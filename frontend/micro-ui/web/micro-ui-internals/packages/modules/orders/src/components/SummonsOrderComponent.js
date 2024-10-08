@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSearchCaseService from "../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import AddParty from "../../../hearings/src/pages/employee/AddParty";
-import useRepondentPincodeDetails from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useRepondentPincodeDetails";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 
 const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckboxChange }) => {
   return (
     <div>
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 32 }}>
         <h1>Select Delivery Channels</h1>
         <p>
           {partyDetails?.length || 0} of {deliveryChannels.reduce((acc, channel) => acc + (channel.values?.length || 0), 0)} selected
@@ -36,7 +36,7 @@ const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckbox
                         onChange={() => handleCheckboxChange(channel.type, value)}
                       />
                       <label htmlFor={`${channel.type}-${index}`}>
-                        {channel.type === "Post" || channel.type === "Via Police"
+                        {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "RPAD"
                           ? typeof value.address === "string"
                             ? value.address
                             : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
@@ -59,8 +59,21 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedChannels, setSelectedChannels] = useState(formData[config.key]?.["selectedChannels"] || []);
   const inputs = useMemo(() => config?.populators?.inputs || [], [config?.populators?.inputs]);
-  const orderType = formData?.orderType?.code;
+  const orderType = useMemo(() => formData?.orderType?.code, [formData?.orderType?.code]);
   const [userList, setUserList] = useState([]);
+  const [deliveryChannels, setDeliveryChannels] = useState([
+    { type: "SMS", values: [] },
+    { type: "E-mail", values: [] },
+    {
+      type: "e-Post",
+      values: [],
+    },
+    {
+      type: "RPAD",
+      values: [],
+    },
+    { type: "Via Police", values: [] },
+  ]);
 
   const { data: caseData, refetch } = useSearchCaseService(
     {
@@ -212,9 +225,65 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   }, [config.key, formData]);
 
   const [isPartyModalOpen, setIsPartyModalOpen] = useState(false);
-  const party = formData[config.key]?.party;
+  const party = useMemo(() => formData[config.key]?.party, [config.key, formData]);
   const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
-  const { address, phone_numbers, email } = party?.data || {};
+  const { address, phone_numbers, email } = useMemo(() => party?.data || {}, [party?.data]);
+
+  const getRespondentPincodeDetails = useCallback(
+    async (pincode) => {
+      const pincodeData = await DRISTIService.getrepondentPincodeDetails(
+        {
+          Criteria: {
+            pincode: [pincode],
+          },
+
+          tenantId,
+        },
+        {}
+      );
+      if (pincodeData?.PostalHubs && Array.isArray(pincodeData.PostalHubs) && Boolean(pincodeData.PostalHubs.length)) {
+        return pincodeData.PostalHubs?.[0];
+      }
+      return null;
+    },
+    [tenantId]
+  );
+
+  const getEPostAddress = useCallback(
+    async (address = []) => {
+      const addressList = await Promise.all(
+        address.map(async (item) => {
+          if (item?.pincode) {
+            const verifiedPincode = await getRespondentPincodeDetails(item.pincode);
+            if (Boolean(verifiedPincode)) {
+              return item;
+            }
+            return null;
+          }
+          return null;
+        })
+      );
+      const ePostAddresses = addressList?.filter((item) => Boolean(item));
+      setDeliveryChannels(
+        [
+          { type: "SMS", values: phone_numbers || [] },
+          { type: "E-mail", values: email || [] },
+          {
+            type: "e-Post",
+            values: ePostAddresses,
+          },
+          {
+            type: "RPAD",
+            values: address || [],
+          },
+          orderType === "SUMMONS" && { type: "Via Police", values: address || [] },
+        ]
+          .filter((item) => Boolean(item))
+          .map((item) => item)
+      );
+    },
+    [email, getRespondentPincodeDetails, orderType, phone_numbers]
+  );
 
   // console.log("selectedParty", selectedParty);
 
@@ -233,20 +302,11 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   //   Boolean(filteredTasks)
   // );
 
-  const deliveryChannels = useMemo(() => {
-    return [
-      { type: "SMS", values: phone_numbers || [] },
-      { type: "E-mail", values: email || [] },
-      {
-        type: "Post",
-        values:
-          address?.map((item) => {
-            return item;
-          }) || [],
-      },
-      orderType === "SUMMONS" && { type: "Via Police", values: address || [] },
-    ];
-  }, [address, email, orderType, phone_numbers]);
+  useEffect(() => {
+    if (address && Array.isArray(address)) {
+      getEPostAddress(address);
+    }
+  }, [address, email, getEPostAddress, orderType, phone_numbers]);
 
   const handleAddParty = (e) => {
     e?.stopPropagation();
@@ -269,7 +329,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                 optionKey="label"
                 selected={selectedParty}
                 select={handleDropdownChange}
-                style={{ maxWidth: "100%" }}
+                style={{ maxWidth: "100%", marginBottom: 8 }}
               />
               {
                 <Button
@@ -277,13 +337,21 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
                   className="add-party-btn"
                   style={{
                     backgroundColor: "transparent",
-                    color: "blue",
                     border: "none",
-                    textDecoration: "underline",
                     cursor: "pointer",
                     padding: 0,
                     WebkitBoxShadow: "none",
                     boxShadow: "none",
+                    height: "auto",
+                  }}
+                  textStyles={{
+                    marginTop: 0,
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                    color: "#007E7E",
                   }}
                   label={t("+ Add new witness")}
                 />

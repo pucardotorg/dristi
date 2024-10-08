@@ -13,6 +13,7 @@ import CustomInfo from "./components/CustomInfo";
 import SummonsOrderComponent from "./components/SummonsOrderComponent";
 import ReIssueSummonsModal from "./components/ReIssueSummonsModal";
 import PaymentForSummonModal from "./pages/employee/PaymentForSummonModal";
+import PaymentForRPADModal from "./pages/employee/PaymentForRPADModal";
 import PaymentForSummonModalSMSAndEmail from "./pages/employee/PaymentForSummonModalSMSAndEmail";
 import SBIEpostPayment from "./pages/employee/SBIEpostPayment";
 import SBIPaymentStatus from "./components/SBIPaymentStatus";
@@ -48,6 +49,7 @@ const componentsToRegister = {
   PaymentForSummonModalSMSAndEmail,
   SBIEpostPayment,
   SBIPaymentStatus,
+  PaymentForRPADModal,
 };
 
 export const initOrdersComponents = () => {

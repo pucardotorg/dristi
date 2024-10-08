@@ -3,14 +3,31 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { registerRespondentConfig } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/Config/resgisterRespondentConfig";
 import isEqual from "lodash/isEqual";
 import { checkNameValidation } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
+import { useTranslation } from "react-i18next";
 
 const RegisterRespondentForm = ({ accusedRegisterFormData, setAccusedRegisterFormData, error }) => {
+  const { t } = useTranslation();
   const setFormErrors = useRef(null);
 
   const [selected, setSelected] = useState({});
   const formConfig = useMemo(() => {
-    return selected?.respondentType?.code === "REPRESENTATIVE" ? registerRespondentConfig?.companyConfig : registerRespondentConfig?.individualConfig;
-  }, [selected?.respondentType?.code]);
+    return (selected?.respondentType?.code === "REPRESENTATIVE"
+      ? registerRespondentConfig?.companyConfig
+      : registerRespondentConfig?.individualConfig
+    ).map((config) => {
+      return {
+        ...config,
+        body: config?.body.map((body) => {
+          if (body?.labelChildren === "optional") {
+            body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+          }
+          return {
+            ...body,
+          };
+        }),
+      };
+    });
+  }, [selected?.respondentType?.code, t]);
 
   useEffect(() => {
     for (const key in error) {

@@ -323,7 +323,7 @@ export const DRISTIService = {
     }),
   getrepondentPincodeDetails: (data, params) =>
     Request({
-      url: Urls.dristi.pincodeSearch,
+      url: Urls.dristi.repondentPincodeSearch,
       useCache: false,
       userService: false,
       data,

@@ -163,13 +163,20 @@ const ReviewSummonsNoticeAndWarrant = () => {
             ...(typeof task?.taskDetails === "string" && { taskDetails: JSON.parse(task?.taskDetails) }),
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
-              action: selectedDelievery?.key === "DELIVERED" ? "SERVED" : "NOT_SERVED",
+              action:
+                selectedDelievery?.key === "DELIVERED"
+                  ? orderType === "WARRANT"
+                    ? "DELIVERED"
+                    : "SERVED"
+                  : orderType === "WARRANT"
+                  ? "NOT_DELIVERED"
+                  : "NOT_SERVED",
               documents: [{}],
             },
           },
         };
         await taskService.updateTask(reqBody, { tenantId }).then(async (res) => {
-          if (res?.task && selectedDelievery?.key === "NOT_DELIVERED") {
+          if (res?.task && selectedDelievery?.key === "NOT_DELIVERED" && orderType !== "WARRANT") {
             await taskService.updateTask(
               {
                 task: {
@@ -280,7 +287,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const documents = useMemo(() => {
     if (rowData?.documents)
       return rowData?.documents?.map((document) => {
-        return { ...document, fileName: `${orderType === "NOTICE" ? "Notice" : "Summon"}s Document` };
+        return { ...document, fileName: `${t(rowData?.taskType)} ${t("DOCUMENT_TEXT")}` };
       });
   }, [rowData, orderType]);
 
@@ -326,7 +333,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const unsignedModalConfig = useMemo(() => {
     return {
       handleClose: handleClose,
-      heading: { label: `${t("REVIEW_DOCUMENT_TEXT")} ${orderType === "NOTICE" ? "Notices" : "Summons"} ${t("DOCUMENT_TEXT")}` },
+      heading: { label: `${t("REVIEW_DOCUMENT_TEXT")} ${t(rowData?.taskType)} ${t("DOCUMENT_TEXT")}` },
       actionSaveLabel: t("E_SIGN_TEXT"),
       isStepperModal: true,
       actionSaveOnSubmit: () => {},
@@ -358,7 +365,15 @@ const ReviewSummonsNoticeAndWarrant = () => {
           hideSubmit: true,
           modalBody: (
             <CustomStepperSuccess
-              successMessage={t(`${t(orderType === "NOTICE" ? "SENT_NOTICE_VIA" : "SENT_SUMMONS_VIA")} ${deliveryChannel}`)}
+              successMessage={`${
+                documents
+                  ? orderType === "NOTICE"
+                    ? t("SUCCESSFULLY_SIGNED_NOTICE")
+                    : t("SUCCESSFULLY_SIGNED_SUMMON")
+                  : orderType === "NOTICE"
+                  ? t("SENT_NOTICE_VIA")
+                  : t("SENT_SUMMONS_VIA")
+              }${!documents ? " " + deliveryChannel : ""}`}
               bannerSubText={t("PARTY_NOTIFIED_ABOUT_DOCUMENT")}
               submitButtonText={documents ? "MARK_AS_SENT" : "CS_CLOSE"}
               closeButtonText={documents ? "CS_CLOSE" : "DOWNLOAD_DOCUMENT"}

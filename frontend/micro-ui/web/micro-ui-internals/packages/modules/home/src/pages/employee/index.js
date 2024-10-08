@@ -43,6 +43,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
   const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
   const ReIssueSummonsModal = Digit.ComponentRegistryService.getComponent("ReIssueSummonsModal") || <React.Fragment></React.Fragment>;
   const PaymentForSummonModal = Digit.ComponentRegistryService.getComponent("PaymentForSummonModal") || <React.Fragment></React.Fragment>;
+  const PaymentForRPADModal = Digit.ComponentRegistryService.getComponent("PaymentForRPADModal") || <React.Fragment></React.Fragment>;
   const SBIPaymentStatus = Digit.ComponentRegistryService.getComponent("SBIPaymentStatus") || <React.Fragment></React.Fragment>;
   const PaymentForSummonModalSMSAndEmail = Digit.ComponentRegistryService.getComponent("PaymentForSummonModalSMSAndEmail") || (
     <React.Fragment></React.Fragment>
@@ -79,6 +80,11 @@ const App = ({ path, stateCode, userType, tenants }) => {
         />
         <PrivateRoute path={`${path}/home-pending-task/reissue-summons-modal`} component={() => <ReIssueSummonsModal></ReIssueSummonsModal>} />
         <PrivateRoute path={`${path}/home-pending-task/post-payment-modal`} component={() => <PaymentForSummonModal></PaymentForSummonModal>} />
+        <PrivateRoute path={`${path}/home-pending-task/rpad-payment-modal`} component={() => <PaymentForRPADModal></PaymentForRPADModal>} />
+        <PrivateRoute
+          path={`${path}/home-pending-task/icops-payment-modal`}
+          component={() => <PaymentForSummonModalSMSAndEmail></PaymentForSummonModalSMSAndEmail>}
+        />
         <PrivateRoute
           path={`${path}/home-pending-task/sms-payment-modal`}
           component={() => <PaymentForSummonModalSMSAndEmail></PaymentForSummonModalSMSAndEmail>}

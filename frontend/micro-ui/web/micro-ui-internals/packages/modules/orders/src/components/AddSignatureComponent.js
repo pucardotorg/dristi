@@ -82,7 +82,7 @@ const AddSignatureComponent = ({ t, isSigned, handleSigned, rowData, setSignatur
             label={t("PLEASE_NOTE")}
             additionalElements={[
               <p key="note">
-                {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")} <span style={{ fontWeight: "bold" }}>{t("Summons Document")}</span>
+                {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")} <span style={{ fontWeight: "bold" }}>{`${t(rowData?.taskType)} ${t("DOCUMENT_TEXT")}`}</span>
               </p>,
             ]}
             inline

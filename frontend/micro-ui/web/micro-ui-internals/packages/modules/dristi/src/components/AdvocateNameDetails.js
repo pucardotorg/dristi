@@ -62,7 +62,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     { tenantId },
     moduleCode,
     Boolean(isUserLoggedIn && individualId && userType === "ADVOCATE"),
-    "/advocate/advocate/v1/_search"
+    "/advocate/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {

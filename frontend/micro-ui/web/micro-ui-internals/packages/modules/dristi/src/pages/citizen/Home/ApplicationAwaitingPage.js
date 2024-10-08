@@ -39,7 +39,7 @@ function ApplicationAwaitingPage({ individualId }) {
     {},
     applicationNo + individualId,
     userType,
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? "/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {

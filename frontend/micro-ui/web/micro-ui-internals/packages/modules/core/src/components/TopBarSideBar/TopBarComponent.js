@@ -37,7 +37,7 @@ const TopBarComponent = ({
   //   }
   // };
   return (
-    <div className="navbar">
+    <div className="navbar" style={{ zIndex: "0" }}>
       <div className="center-container back-wrapper">
         <div className="hambuger-back-wrapper">
           {isMobile && <Hamburger handleClick={toggleSidebar} />}
@@ -59,16 +59,16 @@ const TopBarComponent = ({
               }
               alt="mSeva"
             />
-            {/* <img
+            <img
               className="city"
               id="topbar-logo"
               style={{ display: "flex", alignItems: "center", height: "40px" }}
               src={
-                "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/0de38f6dc850f12fe24f8ef1b9d734a6.png" ||
+                "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/Crafting_ON_24x7_final%20(1).png" ||
                 "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
               }
               alt="mSeva"
-            /> */}
+            />
           </div>
           <h3>{cityOfCitizenShownBesideLogo}</h3>
         </div>

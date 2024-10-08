@@ -10,17 +10,25 @@ const customColumnStyle = { whiteSpace: "nowrap" };
 
 const handleTaskDetails = (taskDetails) => {
   try {
-    // Try parsing the taskDetails string
-    const parsed = JSON.parse(taskDetails);
+    // Check if taskDetails is a string
+    if (typeof taskDetails === "string") {
+      // First, remove escape characters like backslashes if present
+      const cleanedDetails = taskDetails.replace(/\\n/g, "").replace(/\\/g, "");
 
-    // Check if the result is a string (indicating it's a double-escaped JSON)
-    if (typeof parsed === "string") {
-      // Attempt to parse it again as JSON
-      return JSON.parse(parsed);
+      // Try parsing the cleaned string as JSON
+      const parsed = JSON.parse(cleanedDetails);
+
+      // If the parsed result is a string, try parsing it again
+      if (typeof parsed === "string") {
+        return JSON.parse(parsed);
+      }
+
+      // Return the parsed object if it's already a valid JSON object
+      return parsed;
     }
 
-    // Return the parsed object if it's already a valid JSON object
-    return parsed;
+    // If taskDetails is not a string, return it as it is
+    return taskDetails;
   } catch (error) {
     console.error("Failed to parse taskDetails:", error);
     return null;

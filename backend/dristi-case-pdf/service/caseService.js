@@ -106,8 +106,8 @@ exports.getRespondentsDetails = async (cases) => {
         return {
             name: `${firstName} ${middleName} ${lastName}`,
             respondentType: data.respondentType.name,
-            phoneNumber: data.mobileNumber || null,
-            email: data.email || null,
+            phoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber ? data.phonenumbers.mobileNumber.join(', ') : null,
+            email: data.emails && data.emails.emailId ? data.emails.emailId.join(', ') : null,
             address: addresses,
             inquiryAffidavitFileStore: affidavitDocument ? affidavitDocument.fileStore : null
         };

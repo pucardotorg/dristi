@@ -7,7 +7,6 @@ import ApplicationInfoComponent from "../../components/ApplicationInfoComponent"
 import DocumentModal from "../../components/DocumentModal";
 import { formatDate } from "../../../../hearings/src/utils";
 import usePaymentProcess from "../../../../home/src/hooks/usePaymentProcess";
-import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { ordersService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
 import { useEffect } from "react";
@@ -15,11 +14,11 @@ import { paymentType } from "../../utils/paymentType";
 import { taskService } from "../../hooks/services";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 
-const modeOptions = [{ label: "E-Post (3-5 days)", value: "e-post" }];
+const modeOptions = [{ label: "Registered Post (10-15 days)", value: "registered-post" }];
 
 const submitModalInfo = {
-  header: "CS_HEADER_FOR_SUMMON_POST",
-  subHeader: "CS_SUBHEADER_TEXT_FOR_Summon_POST",
+  header: "CS_HEADER_FOR_SUMMON_RPAD",
+  subHeader: "CS_SUBHEADER_TEXT_FOR_Summon_RPAD",
   caseInfo: [
     {
       key: "Case Number",
@@ -65,7 +64,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
       <ApplicationInfoComponent infos={infos} links={links} />
       <LabelFieldPair className="case-label-field-pair">
         <div className="join-case-tooltip-wrapper">
-          <CardLabel className="case-input-label">{t("Select preferred mode of post to pay")}</CardLabel>
+          <CardLabel className="case-input-label">{t("Select preferred mode of RPAD to pay")}</CardLabel>
           <CustomErrorTooltip message={t("Select date")} showTooltip={true} icon />
         </div>
         <RadioButtons
@@ -102,7 +101,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
   );
 };
 
-const PaymentForSummonModal = ({ path }) => {
+const PaymentForRPADModal = ({ path }) => {
   const history = useHistory();
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -170,7 +169,7 @@ const PaymentForSummonModal = ({ path }) => {
     Boolean(filteredTasks?.[0]?.orderId)
   );
 
-  const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
+  const orderType = useMemo(() => orderData?.list?.[0]?.orderType || "", [orderData]);
 
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -187,7 +186,7 @@ const PaymentForSummonModal = ({ path }) => {
   );
 
   const consumerCode = useMemo(() => {
-    return filteredTasks?.[0]?.taskNumber ? `${filteredTasks?.[0]?.taskNumber}_POST_COURT` : undefined;
+    return filteredTasks?.[0]?.taskNumber ? `${filteredTasks?.[0]?.taskNumber}_EPOST_COURT` : undefined;
   }, [filteredTasks]);
 
   const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
@@ -202,17 +201,7 @@ const PaymentForSummonModal = ({ path }) => {
     {},
     {
       tenantId,
-      consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
-      service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
-    },
-    "dristi",
-    Boolean(filteredTasks?.[0]?.taskNumber)
-  );
-  const { data: ePostBillResponse, isLoading: isEPOSTBillLoading } = Digit.Hooks.dristi.useBillSearch(
-    {},
-    {
-      tenantId,
-      consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
+      consumerCode: `${filteredTasks?.[0]?.taskNumber}_EPOST_COURT`,
       service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
     },
     "dristi",
@@ -235,8 +224,8 @@ const PaymentForSummonModal = ({ path }) => {
       ],
     },
     {},
-    "dristi",
-    Boolean(tasksData)
+    "dristi" + channelId + orderType,
+    Boolean(filteredTasks && channelId && orderType)
   );
 
   const mockSubmitModalInfo = useMemo(
@@ -245,43 +234,14 @@ const PaymentForSummonModal = ({ path }) => {
         ? submitModalInfo
         : {
             ...submitModalInfo,
-            header: "CS_HEADER_FOR_NOTICE_POST",
-            subHeader: "CS_SUBHEADER_TEXT_FOR_NOTICE_POST",
+            header: "CS_HEADER_FOR_NOTICE_RPAD",
+            subHeader: "CS_SUBHEADER_TEXT_FOR_NOTICE_RPAD",
           },
     [isCaseAdmitted]
   );
 
   const onPayOnline = async () => {
     try {
-      // if (courtBillResponse?.Bill?.length === 0) {
-      //   await DRISTIService.createDemand({
-      //     Demands: [
-      //       {
-      //         tenantId,
-      //         consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_COURT`,
-      //         consumerType: paymentType.TASK_SUMMON,
-      //         businessService: paymentType.TASK_SUMMON,
-      //         taxPeriodFrom: Date.now().toString(),
-      //         taxPeriodTo: Date.now().toString(),
-      //         demandDetails: [
-      //           {
-      //             taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
-      //             taxAmount: 4,
-      //             collectionAmount: 0,
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //   });
-      // }
-      // const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_POST_COURT`, tenantId, paymentType.TASK_SUMMON);
-      // if (bill?.Bill?.length) {
-      //   const billPaymentStatus = await openPaymentPortal(bill);
-      //   console.log(billPaymentStatus);
-      //   if (billPaymentStatus === true) {
-      //     console.log("YAAAYYYYY");
-      // const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
-
       const updatedTask = {
         ...filteredTasks?.[0], // Keep all the existing properties
         taskType: orderType === "SUMMONS" ? "SUMMONS" : "NOTICE", // Change the taskType to SUMMON
@@ -321,10 +281,10 @@ const PaymentForSummonModal = ({ path }) => {
             }),
             ordersService.customApiService(Urls.orders.pendingTask, {
               pendingTask: {
-                name: orderType === "SUMMONS" ? `MAKE_PAYMENT_FOR_SUMMONS_POST` : `MAKE_PAYMENT_FOR_NOTICE_POST`,
+                name: orderType === "SUMMONS" ? `MAKE_PAYMENT_FOR_SUMMONS_RPAD` : `MAKE_PAYMENT_FOR_NOTICE_RPAD`,
                 entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
                 referenceId: `MANUAL_${taskNumber}`,
-                status: paymentType.PAYMENT_PENDING_POST,
+                status: paymentType.PAYMENT_PENDING_RPAD,
                 assignedTo: [],
                 assignedRole: [],
                 cnrNumber: filteredTasks?.[0]?.cnrNumber,
@@ -368,85 +328,6 @@ const PaymentForSummonModal = ({ path }) => {
           fileStoreId: "fileStoreId?.Document?.fileStore",
         },
       });
-      //   } else {
-      //     console.log("NAAAYYYYY");
-      //     history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-      //       state: {
-      //         success: false,
-      //         receiptData: {
-      //           ...mockSubmitModalInfo,
-      //           caseInfo: [
-      //             {
-      //               key: "Case Name & ID",
-      //               value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-      //               copyData: false,
-      //             },
-      //             {
-      //               key: "ORDER ID",
-      //               value: orderData?.list?.[0]?.orderNumber,
-      //               copyData: false,
-      //             },
-      //             {
-      //               key: "Transaction ID",
-      //               value: filteredTasks?.[0]?.taskNumber,
-      //               copyData: true,
-      //             },
-      //           ],
-      //           isArrow: false,
-      //           showTable: true,
-      //           showCopytext: true,
-      //         },
-      //         caseId: caseDetails?.filingNumber,
-      //       },
-      //     });
-      //   }
-      // }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const onPayOnlineSBI = async () => {
-    try {
-      if (ePostBillResponse?.Bill?.length === 0) {
-        await DRISTIService.createDemand({
-          Demands: [
-            {
-              tenantId,
-              consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
-              consumerType: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
-              businessService: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
-              taxPeriodFrom: Date.now().toString(),
-              taxPeriodTo: Date.now().toString(),
-              demandDetails: [
-                {
-                  taxHeadMasterCode:
-                    orderType === "SUMMONS" ? paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD : paymentType.TASK_NOTICE_ADVANCE_CARRYFORWARD,
-                  taxAmount: 4,
-                  collectionAmount: 0,
-                },
-              ],
-            },
-          ],
-        });
-      }
-      const bill = await fetchBill(
-        `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
-        tenantId,
-        orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE
-      );
-      history.push(`/${window?.contextPath}/citizen/home/sbi-epost-payment`, {
-        state: {
-          billData: bill,
-          serviceNumber: filteredTasks?.[0]?.taskNumber,
-          businessService: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
-          caseDetails: caseDetails,
-          consumerCode: `${filteredTasks?.[0]?.taskNumber}_POST_PROCESS`,
-          orderData: orderData,
-          filteredTasks: filteredTasks,
-          filingNumber: filingNumber,
-        },
-      });
     } catch (error) {
       console.error(error);
     }
@@ -456,25 +337,6 @@ const PaymentForSummonModal = ({ path }) => {
     const taskAmount = filteredTasks?.[0]?.amount?.amount || 0;
 
     return {
-      "e-post": [
-        {
-          label: "Fee Type",
-          amount: "Amount",
-          action: "Actions",
-        },
-        {
-          label: "Court Fees",
-          amount: breakupResponse?.Calculation?.[0]?.breakDown?.find((data) => data?.type === "Court Fee")?.amount,
-          action: "Pay Online",
-          onClick: onPayOnline,
-        },
-        {
-          label: "Delivery Partner Fee",
-          amount: breakupResponse?.Calculation?.[0]?.breakDown?.find((data) => data?.type === "E Post")?.amount,
-          action: "Pay Online",
-          onClick: onPayOnlineSBI,
-        },
-      ],
       "registered-post": [
         {
           label: "Fee Type",
@@ -520,7 +382,7 @@ const PaymentForSummonModal = ({ path }) => {
       { key: "Next Hearing Date", value: formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime)) },
       {
         key: "Delivery Channel",
-        value: `Post (${formattedAddress})`,
+        value: `RPAD (${formattedAddress})`,
       },
     ];
   }, [hearingsData?.HearingList, orderData?.list]);
@@ -536,7 +398,7 @@ const PaymentForSummonModal = ({ path }) => {
   const paymentForSummonModalConfig = useMemo(() => {
     return {
       handleClose: handleClose,
-      heading: { label: `Payment for ${orderType === "SUMMONS" ? "Summons" : "Notice"} via post` },
+      heading: { label: `Payment for ${orderType === "SUMMONS" ? "Summons" : "Notice"} via RPAD` },
       isStepperModal: false,
       modalBody: (
         <PaymentForSummonComponent
@@ -555,4 +417,4 @@ const PaymentForSummonModal = ({ path }) => {
   return <DocumentModal config={paymentForSummonModalConfig} />;
 };
 
-export default PaymentForSummonModal;
+export default PaymentForRPADModal;

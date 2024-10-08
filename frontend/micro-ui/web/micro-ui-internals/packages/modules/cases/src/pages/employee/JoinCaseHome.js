@@ -27,6 +27,7 @@ import { uploadIdConfig } from "@egovernments/digit-ui-module-dristi/src/pages/c
 import CustomStepperSuccess from "../../../../orders/src/components/CustomStepperSuccess";
 import {
   createRespondentIndividualUser,
+  getFullName,
   searchIndividualUserWithUuid,
   selectMobileNumber,
   selectOtp,
@@ -430,7 +431,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   };
 
   const searchCase = async (caseNumber) => {
-    setIsSearchingCase(true);
+    setIsSearchingCase(false);
     if (caseNumber && !caseDetails?.filingNumber) {
       const response = await DRISTIService.searchCaseService(
         {
@@ -481,7 +482,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           });
       }
     }
-    setIsSearchingCase(false);
   };
 
   function findNextHearings(objectsList) {
@@ -573,7 +573,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   };
 
   const getUserForAdvocateUUID = async (barRegistrationNumber) => {
-    const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/advocate/v1/_search", {
+    const advocateDetail = await window?.Digit.DRISTIService.searchAdvocateClerk("/advocate/v1/_search", {
       criteria: [
         {
           barRegistrationNumber: barRegistrationNumber,
@@ -695,8 +695,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
       city: city,
       state: addressLine1,
       coordinates: {
-        longitude: latitude,
-        latitude: longitude,
+        longitude: longitude,
+        latitude: latitude,
       },
       locality: address,
     });
@@ -769,6 +769,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                     if (str.length > 50) {
                       str = str.substring(0, 50);
                     }
+                    setIsSearchingCase(true);
                     setIsDisabled(true);
                     setCaseNumber(str);
                   } else {
@@ -779,7 +780,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               <div
                 className="icon-div"
                 onClick={() => {
-                  if (!isSearchingCase) searchCase(caseNumber);
+                  if (isSearchingCase) searchCase(caseNumber);
                 }}
               >
                 <SearchIcon />
@@ -1773,7 +1774,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             ]);
             setStep(step + 1);
           }
-        } else {
+        } else if (selectedParty?.fullName) {
           setShow(false);
           setShowEditRespondentDetailsModal(true);
         }
@@ -2208,7 +2209,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               caseId: caseDetails?.id,
               litigant: {
                 additionalDetails: {
-                  fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  fullName: getFullName(" ", name?.givenName, name?.otherNames, name?.familyName),
                   affidavitText,
                   uuid: userInfo?.uuid,
                 },
@@ -2415,7 +2416,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               caseId: caseDetails?.id,
               litigant: {
                 additionalDetails: {
-                  fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                  fullName: getFullName(" ", name?.givenName, name?.otherNames, name?.familyName),
                   uuid: userInfo?.uuid,
                 },
                 tenantId: tenantId,
@@ -2430,7 +2431,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   representing: [
                     {
                       additionalDetails: {
-                        fullName: `${name?.givenName}${name?.otherNames ? " " + name?.otherNames + " " : " "}${name?.familyName}`,
+                        fullName: getFullName(" ", name?.givenName, name?.otherNames, name?.familyName),
                         document: newDocument,
                         uuid: userInfo?.uuid,
                       },
@@ -2552,10 +2553,10 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     (event) => {
       if (event.key === "Enter") {
         if (!isDisabled) onProceed();
-        if (step === 0) searchCase(caseNumber);
+        if (step === 0 && isSearchingCase) searchCase(caseNumber);
       }
     },
-    [isDisabled, onProceed, step, caseDetails?.caseNumber, caseNumber]
+    [isDisabled, onProceed, step, isSearchingCase, caseNumber]
   );
 
   useEffect(() => {
@@ -2719,7 +2720,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     setShowEditRespondentDetailsModal(false);
     setAccusedRegisterFormData({});
     setOtp("");
-    setSelectedParty(parties?.find((party) => party?.key === selectedParty?.key));
+    let tempSelectedParty = parties?.find((party) => party?.key === selectedParty?.key);
+    tempSelectedParty = {
+      ...tempSelectedParty,
+      respondentType: {
+        code: tempSelectedParty?.respondentType?.code,
+        name: tempSelectedParty?.respondentType?.name,
+      },
+    };
+    setSelectedParty(tempSelectedParty);
   };
 
   const registerRespondentConfig = useMemo(() => {

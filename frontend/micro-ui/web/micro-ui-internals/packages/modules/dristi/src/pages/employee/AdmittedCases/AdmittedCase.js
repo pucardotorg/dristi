@@ -41,6 +41,7 @@ const defaultSearchValues = {};
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
+  NOTICE: 3 * 24 * 3600 * 1000,
 };
 
 const casePrimaryActions = [
@@ -153,6 +154,7 @@ const AdmittedCases = () => {
   const SummonsAndWarrantsModal = Digit.ComponentRegistryService.getComponent("SummonsAndWarrantsModal") || <React.Fragment></React.Fragment>;
   const userInfo = Digit.UserService.getUser()?.info;
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
+  const isJudge = userInfo?.roles?.some((role) => role.code === "JUDGE_ROLE");
   const todayDate = new Date().getTime();
   const { downloadPdf } = useDownloadCasePdf();
   const { data: caseData, isLoading, refetch: refetchCaseData, isFetching } = useSearchCaseService(
@@ -245,6 +247,49 @@ const AdmittedCases = () => {
   const listAllAdvocates = useMemo(() => Object.values(allAdvocates || {}).flat(), [allAdvocates]);
   const isAdvocatePresent = useMemo(() => listAllAdvocates?.includes(userInfo?.uuid), [listAllAdvocates, userInfo?.uuid]);
 
+  const onBehalfOfuuid = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+  ]);
+  const { data: applicationData, isloading: isApplicationLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    filingNumber + "allApplications",
+    filingNumber
+  );
+  const extensionApplications = useMemo(
+    () =>
+      applicationData?.applicationList?.filter(
+        (item) =>
+          item?.applicationType === "EXTENSION_SUBMISSION_DEADLINE" &&
+          item?.onBehalfOf?.includes(onBehalfOfuuid) &&
+          ![
+            SubmissionWorkflowState.COMPLETED,
+            SubmissionWorkflowState.DELETED,
+            SubmissionWorkflowState.REJECTED,
+            SubmissionWorkflowState.ABATED,
+          ].includes(item?.status)
+      ) || [],
+    [applicationData, onBehalfOfuuid]
+  );
+
+  const productionOfDocumentApplications = useMemo(
+    () =>
+      applicationData?.applicationList?.filter(
+        (item) =>
+          item?.applicationType === "PRODUCTION_DOCUMENTS" &&
+          item?.onBehalfOf?.includes(onBehalfOfuuid) &&
+          ![SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(item?.status)
+      ) || [],
+    [applicationData, onBehalfOfuuid]
+  );
+
   const caseRelatedData = useMemo(
     () => ({
       caseId,
@@ -259,6 +304,7 @@ const AdmittedCases = () => {
     [caseDetails, caseId, cnrNumber, filingNumber, statue]
   );
 
+  const caseStatus = useMemo(() => caseDetails?.status || "", [caseDetails]);
   const showMakeSubmission = useMemo(() => {
     return (
       isAdvocatePresent &&
@@ -270,25 +316,9 @@ const AdmittedCases = () => {
         CaseWorkflowState.PENDING_RESPONSE,
         CaseWorkflowState.PENDING_ADMISSION,
         CaseWorkflowState.CASE_ADMITTED,
-      ].includes(caseDetails?.status)
+      ].includes(caseStatus)
     );
-  }, [userRoles, caseDetails?.status, isAdvocatePresent]);
-
-  const showSubmissionButtons = useMemo(() => {
-    const submissionParty = currentOrder?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
-    return (
-      submissionParty?.includes(userInfo?.uuid) &&
-      userRoles.includes("APPLICATION_CREATOR") &&
-      [
-        CaseWorkflowState.PENDING_ADMISSION_HEARING,
-        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
-        CaseWorkflowState.PENDING_NOTICE,
-        CaseWorkflowState.PENDING_RESPONSE,
-        CaseWorkflowState.PENDING_ADMISSION,
-        CaseWorkflowState.CASE_ADMITTED,
-      ].includes(caseDetails?.status)
-    );
-  }, [caseDetails?.status, currentOrder?.additionalDetails?.formdata?.submissionParty, userInfo?.uuid, userRoles]);
+  }, [userRoles, caseStatus, isAdvocatePresent]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);
@@ -739,6 +769,22 @@ const AdmittedCases = () => {
       };
       return DRISTIService.customApiService(Urls.dristi.ordersCreate, { order: orderBody }, { tenantId })
         .then((res) => {
+          DRISTIService.customApiService(Urls.dristi.pendingTask, {
+            pendingTask: {
+              name: t("DRAFT_IN_PROGRESS_ISSUE_NOTICE"),
+              entityType: "order-default",
+              referenceId: `MANUAL_${res?.order?.orderNumber}`,
+              status: "DRAFT_IN_PROGRESS",
+              assignedTo: [],
+              assignedRole: ["JUDGE_ROLE"],
+              cnrNumber: updatedCaseDetails?.cnrNumber,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: false,
+              stateSla: todayDate + stateSla.NOTICE,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
           history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${res.order.orderNumber}`, {
             caseId: caseDetails?.id,
             tab: "Orders",
@@ -853,16 +899,15 @@ const AdmittedCases = () => {
           filingNumber: filingNumber,
         },
       });
-      if (caseDetails?.status === "PENDING_RESPONSE") {
-        const hearingData = HearingList?.find((list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED") || {};
-        if (hearingData.hearingId) {
-          hearingData.workflow = hearingData.workflow || {};
-          hearingData.workflow.action = "ABANDON";
-          await Digit.HearingService.updateHearings(
-            { tenantId, hearing: hearingData, hearingType: "", status: "" },
-            { applicationNumber: "", cnrNumber: "" }
-          );
-        }
+      const hearingData =
+        HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")) || {};
+      if (hearingData.hearingId) {
+        hearingData.workflow = hearingData.workflow || {};
+        hearingData.workflow.action = "ABANDON";
+        await Digit.HearingService.updateHearings(
+          { tenantId, hearing: hearingData, hearingType: "", status: "" },
+          { applicationNumber: "", cnrNumber: "" }
+        );
       }
       DRISTIService.customApiService(Urls.dristi.pendingTask, {
         pendingTask: {
@@ -1069,15 +1114,18 @@ const AdmittedCases = () => {
   );
 
   const currentHearingId = useMemo(
-    () => hearingDetails?.HearingList?.find((list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED")?.hearingId,
+    () =>
+      hearingDetails?.HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED"))
+        ?.hearingId,
     [hearingDetails?.HearingList]
   );
 
   const { data: ordersData } = useSearchOrdersService(
     { criteria: { tenantId: tenantId, filingNumber } },
     { tenantId },
-    filingNumber,
-    Boolean(filingNumber)
+    filingNumber + currentHearingId,
+    Boolean(filingNumber),
+    0
   );
 
   const orderListFiltered = useMemo(() => {
@@ -1106,7 +1154,7 @@ const AdmittedCases = () => {
         },
       });
       const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-        (list) => list?.hearingType === "ADMISSION" && list?.status === "SCHEDULED"
+        (list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")
       ) || { startTime: null, hearingId: null };
 
       if (!(hearingDate || hearingNumber)) {
@@ -1537,7 +1585,7 @@ const AdmittedCases = () => {
     }
   };
 
-  if (isLoading || isWorkFlowLoading) {
+  if (isLoading || isWorkFlowLoading || isApplicationLoading) {
     return <Loader />;
   }
 
@@ -1623,7 +1671,7 @@ const AdmittedCases = () => {
             </div>
           )}
         </div>
-        {noticeFailureCount > 0 && !isCaseAdmitted && (
+        {noticeFailureCount > 0 && !isCaseAdmitted && isJudge && (
           <div className="notice-failed-notification" style={styles.container}>
             <div className="notice-failed-icon" style={styles.icon}>
               <InfoIconRed style={styles.icon} />
@@ -1739,7 +1787,9 @@ const AdmittedCases = () => {
             showToast={showToast}
             t={t}
             order={currentOrder}
-            showSubmissionButtons={showSubmissionButtons}
+            caseStatus={caseStatus}
+            extensionApplications={extensionApplications}
+            productionOfDocumentApplications={productionOfDocumentApplications}
           />
         </div>
       )}
@@ -1769,7 +1819,9 @@ const AdmittedCases = () => {
           handleDownload={handleDownload}
           handleRequestLabel={handleExtensionRequest}
           handleSubmitDocument={handleSubmitDocument}
-          showSubmissionButtons={showSubmissionButtons}
+          extensionApplications={extensionApplications}
+          productionOfDocumentApplications={productionOfDocumentApplications}
+          caseStatus={caseStatus}
           handleOrdersTab={handleOrdersTab}
         />
       )}
@@ -1871,6 +1923,7 @@ const AdmittedCases = () => {
           handleScheduleNextHearing={handleScheduleNextHearing}
           caseAdmitLoader={caseAdmitLoader}
           caseDetails={caseDetails}
+          isAdmissionHearingAvailable={Boolean(currentHearingId)}
         ></AdmissionActionModal>
       )}
       {showDismissCaseConfirmation && (

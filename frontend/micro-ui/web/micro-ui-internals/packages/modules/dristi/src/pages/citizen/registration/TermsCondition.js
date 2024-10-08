@@ -17,6 +17,10 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
+  const getFullName = (seperator, ...strings) => {
+    return strings.filter(Boolean).join(seperator);
+  };
+
   const onSubmit = () => {
     setIsDisabled(true);
     const userType = params?.userType;
@@ -57,7 +61,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
                   },
                 ],
                 additionalDetails: {
-                  username: params?.name?.firstName + " " + params?.name?.lastName,
+                  username: getFullName(" ", params?.name?.firstName, params?.name?.middleName, params?.name?.lastName),
                   userType: userType,
                 },
                 ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -139,7 +143,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
               },
             ],
             additionalDetails: {
-              username: params?.name?.firstName + " " + params?.name?.lastName,
+              username: getFullName(" ", params?.name?.firstName, params?.name?.middleName, params?.name?.lastName),
               userType: userType,
             },
             ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -231,7 +235,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
                       },
                     ],
                     additionalDetails: {
-                      username: oldData?.name?.firstName + " " + oldData?.name?.lastName,
+                      username: getFullName(" ", oldData?.name?.firstName, oldData?.name?.middleName, oldData?.name?.lastName),
                       userType: params?.userType,
                     },
                     ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -317,7 +321,7 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
                   },
                 ],
                 additionalDetails: {
-                  username: oldData?.name?.firstName + " " + oldData?.name?.lastName,
+                  username: getFullName(" ", oldData?.name?.firstName, oldData?.name?.middleName, oldData?.name?.lastName),
                   userType: params?.userType,
                 },
                 ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {

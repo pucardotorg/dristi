@@ -8,7 +8,6 @@ import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 const selectCompMultiConfig = {
   type: "component",
-  component: "SelectComponents",
   key: "addressDetails",
   withoutLabel: true,
   populators: {
@@ -85,8 +84,9 @@ const selectCompMultiConfig = {
   },
 };
 
-const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
+const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError, clearErrors }) => {
   const [locationData, setLocationData] = useState([formData?.[config?.key] ? formData?.[config?.key] : { id: generateUUID() }]);
+  console.log("formData", formData, errors);
 
   useEffect(() => {
     if (
@@ -167,7 +167,9 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
               onLocationSelect={(key, value) => {
                 onChange(key, value, data.id);
               }}
-              errors={{}}
+              errors={errors}
+              setError={setError}
+              clearErrors={clearErrors}
               mapIndex={data.id}
               disable={config?.disable}
               isAutoFilledDisabled={true}

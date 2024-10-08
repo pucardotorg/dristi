@@ -67,7 +67,6 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
         newobj[key] && !isEqual(formData[key], newobj[key]) && setValue(key, newobj[key], Object.keys(newobj[key]));
       });
       localStorage.removeItem("signStatus");
-      localStorage.removeItem("esignProcess");
       localStorage.removeItem("isSignSuccess");
       localStorage.removeItem("formdata");
     }
@@ -97,7 +96,6 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
           data: data,
         };
         localStorage.setItem("eSignWindowObject", JSON.stringify(eSignData));
-        localStorage.setItem("esignProcess", true);
         const form = document.createElement("form");
         form.method = "POST";
         form.action = "https://es-staging.cdac.in/esignlevel1/2.1/form/signdoc";

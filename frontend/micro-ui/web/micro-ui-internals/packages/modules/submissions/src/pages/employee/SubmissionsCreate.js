@@ -306,6 +306,27 @@ const SubmissionsCreate = ({ path }) => {
   );
   const orderDetails = useMemo(() => orderData?.list?.[0], [orderData]);
 
+  const { data: allOrdersData, isloading: isAllOrdersLoading } = Digit.Hooks.orders.useSearchOrdersService(
+    { tenantId, criteria: { filingNumber, applicationNumber: "", cnrNumber: caseDetails?.cnrNumber } },
+    { tenantId },
+    filingNumber + caseDetails?.cnrNumber + "allOrdersData",
+    Boolean(filingNumber && caseDetails?.cnrNumber)
+  );
+  const allOrdersList = useMemo(() => allOrdersData?.list, [allOrdersData]);
+  const extensionOrders = useMemo(
+    () =>
+      allOrdersList
+        ?.filter(
+          (item) =>
+            item.orderType === "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE" &&
+            item?.additionalDetails?.applicationStatus === "APPROVED" &&
+            item?.linkedOrderNumber === orderDetails?.orderNumber
+        )
+        ?.sort((a, b) => b?.auditDetails?.lastModifiedTime - a?.auditDetails?.lastModifiedTime),
+    [allOrdersList, orderDetails]
+  );
+  const latestExtensionOrder = useMemo(() => extensionOrders?.[0], [extensionOrders]);
+
   const { entityType, taxHeadMasterCode } = useMemo(() => {
     const isResponseRequired = orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true;
     if ((orderNumber || orderRefNumber) && referenceId) {
@@ -354,6 +375,9 @@ const SubmissionsCreate = ({ path }) => {
     } else if (orderNumber) {
       if (orderDetails?.orderType === orderTypes.MANDATORY_SUBMISSIONS_RESPONSES) {
         if (isExtension) {
+          const initialSubmissionDate = latestExtensionOrder
+            ? formatDate(new Date(latestExtensionOrder?.orderDetails.newSubmissionDate))
+            : orderDetails?.additionalDetails?.formdata?.submissionDeadline;
           return {
             submissionType: {
               code: "APPLICATION",
@@ -367,7 +391,7 @@ const SubmissionsCreate = ({ path }) => {
             refOrderId: orderDetails?.orderNumber,
             applicationDate: formatDate(new Date()),
             documentType: orderDetails?.additionalDetails?.formdata?.documentType,
-            initialSubmissionDate: orderDetails?.additionalDetails?.formdata?.submissionDeadline,
+            initialSubmissionDate: initialSubmissionDate,
           };
         } else {
           return {
@@ -428,7 +452,21 @@ const SubmissionsCreate = ({ path }) => {
         applicationDate: formatDate(new Date()),
       };
     }
-  }, [applicationDetails, isCitizen, hearingId, hearingsData, orderNumber, applicationType, applicationTypeParam, orderDetails, isExtension]);
+  }, [
+    applicationDetails,
+    isCitizen,
+    hearingId,
+    hearingsData,
+    orderNumber,
+    applicationType,
+    applicationTypeParam,
+    orderDetails,
+    isExtension,
+    latestExtensionOrder,
+    applicationTypeUrl,
+  ]);
+
+  const formKey = useMemo(() => applicationType + (defaultFormValue?.initialSubmissionDate || ""), [applicationType, defaultFormValue]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (applicationType && !["OTHERS", "DOCUMENT"].includes(applicationType) && !formData?.applicationDate) {
@@ -814,7 +852,8 @@ const SubmissionsCreate = ({ path }) => {
     isApplicationLoading ||
     (applicationNumber ? !applicationDetails?.additionalDetails?.formdata : false) ||
     (orderNumber ? !orderDetails?.orderType : false) ||
-    (hearingId ? (hearingsData?.HearingList?.[0]?.startTime ? false : true) : false)
+    (hearingId ? (hearingsData?.HearingList?.[0]?.startTime ? false : true) : false) ||
+    isAllOrdersLoading
   ) {
     return <Loader />;
   }
@@ -829,7 +868,7 @@ const SubmissionsCreate = ({ path }) => {
           onFormValueChange={onFormValueChange}
           onSubmit={handleOpenReview}
           fieldStyle={fieldStyle}
-          key={applicationType}
+          key={formKey}
         />
       </div>
       {showReviewModal && (

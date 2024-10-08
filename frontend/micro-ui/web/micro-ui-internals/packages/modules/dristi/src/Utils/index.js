@@ -119,7 +119,7 @@ export const getTaskType = (businessService) => {
   const normalizedBusinessService = businessService?.trim().toLowerCase();
   switch (normalizedBusinessService) {
     case "task-summons":
-      return "SUMMON";
+      return "SUMMONS";
     case "task-notice":
       return "NOTICE";
     default:
@@ -133,6 +133,7 @@ export const extractFeeMedium = (feeName) => {
     email: "EMAIL",
     sms: "SMS",
     police: "POLICE",
+    rpad: "RPAD",
   };
   return feeMediums?.[feeName?.toLowerCase()] || "";
 };
