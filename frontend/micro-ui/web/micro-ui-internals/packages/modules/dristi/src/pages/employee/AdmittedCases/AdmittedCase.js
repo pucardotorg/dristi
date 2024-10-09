@@ -309,6 +309,7 @@ const AdmittedCases = () => {
     return (
       isAdvocatePresent &&
       userRoles?.includes("APPLICATION_CREATOR") &&
+      isCitizen &&
       [
         CaseWorkflowState.PENDING_ADMISSION_HEARING,
         CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
@@ -318,7 +319,7 @@ const AdmittedCases = () => {
         CaseWorkflowState.CASE_ADMITTED,
       ].includes(caseStatus)
     );
-  }, [userRoles, caseStatus, isAdvocatePresent]);
+  }, [isAdvocatePresent, userRoles, isCitizen, caseStatus]);
 
   const openDraftModal = (orderList) => {
     setDraftOrderList(orderList);

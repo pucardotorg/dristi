@@ -71,6 +71,9 @@ export const Urls = {
     taskDocuments: "/task/v1/document/search",
     summonsPayment: "/payment-calculator/v1/_calculate",
     repondentPincodeSearch: "/payment-calculator/hub/v1/_search",
+
+    // application
+    applicationCreate: "/application/v1/create",
   },
   case: {
     addWitness: "/case/v1/add/witness",

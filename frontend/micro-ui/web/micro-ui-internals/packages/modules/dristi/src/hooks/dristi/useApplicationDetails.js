@@ -29,15 +29,17 @@ const useApplicationDetails = ({ url, params, body, config = {}, plainAccessRequ
             true
           )
         : [];
-    console.log(owners, owenrList);
     return {
       ...res,
       applicationList: res.applicationList.map((application) => {
         return {
           ...application,
-          owner: `${owners.Individual.find((individual) => application.auditDetails.createdBy === individual.userUuid)?.name.givenName} ${
-            owners.Individual.find((individual) => application.auditDetails.createdBy === individual.userUuid)?.name.familyName
-          }`,
+          owner:
+            application?.applicationType === "DELAY_CONDONATION"
+              ? application?.additionalDetails?.owner
+              : `${owners.Individual.find((individual) => application.auditDetails.createdBy === individual.userUuid)?.name.givenName} ${
+                  owners.Individual.find((individual) => application.auditDetails.createdBy === individual.userUuid)?.name.familyName
+                }`,
         };
       }),
     };

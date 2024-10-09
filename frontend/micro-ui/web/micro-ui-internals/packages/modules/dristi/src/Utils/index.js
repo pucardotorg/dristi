@@ -137,3 +137,7 @@ export const extractFeeMedium = (feeName) => {
   };
   return feeMediums?.[feeName?.toLowerCase()] || "";
 };
+
+export const getFullName = (seperator, ...strings) => {
+  return strings.filter(Boolean).join(seperator);
+};

@@ -329,4 +329,12 @@ export const DRISTIService = {
       data,
       params,
     }),
+  createApplication: (data, params) =>
+    Request({
+      url: Urls.dristi.applicationCreate,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
 };
