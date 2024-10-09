@@ -50,7 +50,8 @@ public class ApplicationService {
             validator.validateApplication(body);
             enrichmentUtil.enrichApplication(body);
             validator.validateOrderDetails(body);
-            workflowService.updateWorkflowStatus(body);
+            if(body.getApplication().getWorkflow()!=null)
+                workflowService.updateWorkflowStatus(body);
             producer.push(config.getApplicationCreateTopic(), body);
             return body.getApplication();
         } catch (Exception e) {
@@ -69,7 +70,8 @@ public class ApplicationService {
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
             validator.validateOrderDetails(applicationRequest);
-            workflowService.updateWorkflowStatus(applicationRequest);
+            if (application.getWorkflow()!=null)
+                workflowService.updateWorkflowStatus(applicationRequest);
 
             if(COMPLETED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())
             || REJECTED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())){

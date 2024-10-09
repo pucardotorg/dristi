@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -69,7 +70,13 @@ class ApplicationServiceTest {
     @Test
     void testCreateApplication_success() {
         // Arrange
-        when(applicationRequest.getApplication()).thenReturn(application);
+        Application application = new Application();
+        ApplicationRequest applicationRequest = new ApplicationRequest();
+        applicationRequest.setApplication(application);
+
+        Workflow workflow = new Workflow();
+        workflow.setAction("CREATE");
+        application.setWorkflow(workflow);
         when(config.getApplicationCreateTopic()).thenReturn("save-application");
 
         // Act
