@@ -53,7 +53,7 @@ public class Address   {
         @JsonProperty("doorNo")
     
 
-    @Size(min=1,max=64)
+    @Size(min=0,max=64)
 
     private String doorNo = null;
 
@@ -125,7 +125,7 @@ public class Address   {
         @JsonProperty("buildingName")
     
 
-    @Size(min=2,max=256) 
+    @Size(min=0,max=256)
 
     private String buildingName = null;
 
