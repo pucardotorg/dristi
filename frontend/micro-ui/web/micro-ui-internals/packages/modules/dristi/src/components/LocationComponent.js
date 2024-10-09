@@ -75,7 +75,6 @@ const LocationComponent = ({
               (res.data.results && (res.data.results?.length === 0 || !res.data.results?.[0]?.hasOwnProperty("postcode_localities"))) ||
               (res.data.status === "OK" && getLocation(res.data.results[0], "country") !== "India")
             ) {
-              debugger;
               setError("pincode", { message: "ADDRESS_PINCODE_INVALID" });
             }
           })

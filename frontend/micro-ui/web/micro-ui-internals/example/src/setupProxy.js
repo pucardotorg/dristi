@@ -112,6 +112,7 @@ module.exports = function (app) {
     "/ocr-service",
     "/scheduler",
     "/sbi-backend",
+    "/dristi-case-pdf",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));

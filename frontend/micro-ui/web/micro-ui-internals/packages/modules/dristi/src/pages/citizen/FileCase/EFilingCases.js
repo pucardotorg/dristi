@@ -21,6 +21,7 @@ import { DRISTIService } from "../../../services";
 import { formatDate } from "./CaseType";
 import { sideMenuConfig } from "./Config";
 import EditFieldsModal from "./EditFieldsModal";
+import axios from "axios";
 import {
   advocateDetailsFileValidation,
   checkDuplicateMobileEmailValidation,
@@ -51,6 +52,7 @@ import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
 import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+import DocViewerWrapper from "../../employee/docViewerWrapper";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -176,6 +178,9 @@ function EFilingCases({ path }) {
   const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
+  const [pdfDetails, setPdfDetails] = useState(null);
   const { downloadPdf } = useDownloadCasePdf();
 
   const { data: casePdf, isPdfLoading, refetch: refetchCasePDfGeneration } = useCasePdfGeneration(
@@ -1907,7 +1912,7 @@ function EFilingCases({ path }) {
   );
 
   const [isOpen, setIsOpen] = useState(false);
-  if (isLoading || isGetAllCasesLoading || isCourtIdsLoading) {
+  if (isLoading || isGetAllCasesLoading || isCourtIdsLoading || isLoader) {
     return <Loader />;
   }
 
@@ -1952,6 +1957,44 @@ function EFilingCases({ path }) {
       history.push(`?caseId=${caseId}&selected=${nextSelected}`);
     }
   }
+
+  const handleDownload = async (blob) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${caseDetails?.filingNumber || "CasePdf"}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleViewCasePdf = async () => {
+    setIsLoader(true);
+    try {
+      const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
+      const response = await axios.post(
+        "/dristi-case-pdf/v1/generateCasePdf",
+        {
+          cases: caseObject,
+          RequestInfo: {
+            authToken: Digit.UserService.getUser().access_token,
+            userInfo: Digit.UserService.getUser()?.info,
+            msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+            apiId: "Rainmaker",
+          },
+        },
+        { responseType: "blob" } // Important: Set responseType to handle binary data
+      );
+      setPdfDetails(response?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error generating case PDF:", error);
+      toast.error(t("CASE_PDF_GENERATION_ERROR"));
+    } finally {
+      setIsLoader(false);
+    }
+  };
 
   return (
     <div className="file-case">
@@ -2057,10 +2100,13 @@ function EFilingCases({ path }) {
       <div className="file-case-form-section">
         <div className="employee-card-wrapper">
           <div className="header-content">
-            <div className="header-details">
-              <Header>
+            <div className="header-details" style={{ display: selected === "reviewCaseFile" ? "block" : "flex" }}>
+              <Header styles={{ display: "flex", gap: "10px", justifyContent: "space-between" }}>
                 {`${t(pageConfig.header)}`}
                 {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
+                {selected === "reviewCaseFile" && (
+                  <Button className="border-none dristi-font-bold" onButtonClick={handleViewCasePdf} label={t("View PDF")} variation={"secondary"} />
+                )}
               </Header>
               <div
                 className="header-icon"
@@ -2379,6 +2425,34 @@ function EFilingCases({ path }) {
         >
           <Loader />
         </div>
+      )}
+      {isModalOpen && (
+        <Modal
+          headerBarEnd={<CloseBtn onClick={() => setIsModalOpen(false)} />}
+          actionSaveLabel={t("DOWNLOAD_PDF")}
+          actionSaveOnSubmit={() => handleDownload(pdfDetails)}
+          actionCancelLabel={t("DOWNLOAD_CS_BACK")}
+          actionCancelOnSubmit={() => setIsModalOpen(false)}
+          formId="modal-action"
+          headerBarMain={<Heading label={t("REVIEW_YOUR_COMPLAINT")} />}
+          className={"review-order-modal"}
+          style={{
+            border: "1px solid #007E7E",
+            backgroundColor: "white",
+            fontFamily: "Roboto",
+            fontSize: "16px",
+            fontWeight: 700,
+            lineHeight: "18.75px",
+            textAlign: "center",
+            width: "190px",
+          }}
+          textStyle={{ margin: "0px", color: "#007E7E" }}
+          popupStyles={{ maxWidth: "60%" }}
+          popUpStyleMain={{ zIndex: "1000" }}
+          isDisabled={isDisabled}
+        >
+          {<DocViewerWrapper docWidth={"calc(93vw* 62/ 100)"} docHeight={"60vh"} selectedDocs={[pdfDetails]} showDownloadOption={false} />}
+        </Modal>
       )}
     </div>
   );

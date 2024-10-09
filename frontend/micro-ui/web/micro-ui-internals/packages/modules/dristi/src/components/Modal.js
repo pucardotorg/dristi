@@ -19,6 +19,7 @@ const Modal = ({
   isDisabled,
   hideSubmit,
   style = {},
+  textStyle = { margin: "0px" },
   popupModuleMianStyles,
   headerBarMainStyle,
   isOBPSFlow = false,
@@ -70,7 +71,7 @@ const Modal = ({
               ? (console.log(style),
                 (
                   <ButtonSelector
-                    textStyles={{ margin: "0px" }}
+                    textStyles={textStyle}
                     label={actionSaveLabel}
                     onSubmit={actionSaveOnSubmit}
                     formId={formId}

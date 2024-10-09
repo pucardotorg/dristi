@@ -46,7 +46,7 @@ module.exports = function (app) {
     "/ocr-service",
     "/scheduler",
     "/egov-pdf",
-    "/sbi-backend"
-
+    "/sbi-backend",
+    "/dristi-case-pdf",
   ].forEach((location) => app.use(location, createProxy));
 };
