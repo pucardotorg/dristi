@@ -28,6 +28,13 @@
                             "roles": [
                                 "CASE_CREATOR"
                             ]
+                        },
+                        {
+                            "action": "SUBMIT_CASE_ADVOCATE",
+                            "nextState": "PENDING_SIGN",
+                            "roles": [
+                                "ADVOCATE_ROLE"
+                            ]
                         }
                     ]
                 },
@@ -45,6 +52,13 @@
                             "nextState": "PENDING_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
+                            ]
+                        },
+                        {
+                            "action": "SUBMIT_CASE_ADVOCATE",
+                            "nextState": "PENDING_SIGN",
+                            "roles": [
+                                "ADVOCATE_ROLE"
                             ]
                         },
                         {
@@ -67,9 +81,58 @@
                     "actions": [
                         {
                             "action": "E-SIGN",
+                            "nextState": "PENDING_E-SIGN-2",
+                            "roles": [
+                                "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        },
+                        {
+                            "action": "E-SIGN_PARTY_IN_PERSON",
                             "nextState": "PENDING_PAYMENT",
                             "roles": [
                                 "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_E-SIGN-2",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
+                            "nextState": "PENDING_PAYMENT",
+                            "roles": [
+                                "ADVOCATE_ROLE",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "UPLOAD",
+                            "nextState": "PENDING_PAYMENT",
+                            "roles": [
+                                "ADVOCATE_ROLE",
                                 "SYSTEM",
                                 "SYSTEM_ADMIN"
                             ]
