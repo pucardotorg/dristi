@@ -226,11 +226,9 @@ export const newConfig = [
               name: "buildingName",
               validation: {
                 errMsg: "ADDRESS_BUILDING_NAME_INVALID",
-                isRequired: true,
                 minlength: 2,
                 title: "",
               },
-              isMandatory: true,
             },
             {
               label: "DOOR_NUMBER",
@@ -239,12 +237,10 @@ export const newConfig = [
               validation: {
                 errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
-                isRequired: true,
                 minlength: 1,
                 maxlength: 16,
                 title: "",
               },
-              isMandatory: true,
             },
           ],
           validation: {},
