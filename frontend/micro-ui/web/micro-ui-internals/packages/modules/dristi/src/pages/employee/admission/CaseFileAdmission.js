@@ -20,7 +20,7 @@ import {
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
-import { generateUUID, getFullName } from "../../../Utils";
+import { generateUUID } from "../../../Utils";
 import { documentTypeMapping } from "../../citizen/FileCase/Config";
 import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
 
@@ -522,67 +522,6 @@ function CaseFileAdmission({ t, path }) {
     });
   };
 
-  const handleDelayCondonation = async (caseDetails) => {
-    const ownerIndividual = await window?.Digit.DRISTIService.searchIndividualUser(
-      {
-        Individual: {
-          userUuid: [caseDetails?.auditDetails?.createdBy],
-        },
-      },
-      { tenantId, limit: 1000, offset: 0 },
-      "",
-      caseDetails?.auditDetails?.createdBy
-    );
-    const documents = caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data?.condonationFileUpload?.document
-      ? caseDetails.caseDetails.delayApplications.formdata[0].data.condonationFileUpload.document.map((document) => {
-          return {
-            documentType: document?.documentType,
-            fileStore: document?.fileStore,
-            additionalDetails: {
-              name: document?.fileName,
-            },
-          };
-        })
-      : [];
-    const applicationReqBody = {
-      tenantId,
-      application: {
-        tenantId,
-        filingNumber,
-        cnrNumber: caseDetails?.cnrNumber,
-        cmpNumber: caseDetails?.cmpNumber,
-        caseId: caseDetails?.id,
-        // referenceId: isExtension ? null : orderDetails?.id || null,
-        createdDate: new Date().getTime(),
-        applicationType: "DELAY_CONDONATION",
-        isActive: true,
-        statuteSection: { tenantId },
-        documents,
-        additionalDetails: {
-          owner: getFullName(
-            " ",
-            ownerIndividual?.Individual?.[0]?.name?.givenName,
-            ownerIndividual?.Individual?.[0]?.name?.otherNames,
-            ownerIndividual?.Individual?.[0]?.name?.familyName
-          ),
-        },
-        onBehalfOf: caseDetails?.litigants?.length > 0 ? [caseDetails.litigants[0].additionalDetails.uuid] : [],
-        workflow: null,
-        status: "",
-      },
-    };
-    try {
-      const res = await Digit.DRISTIService.createApplication(applicationReqBody, { tenantId });
-      if (res)
-        await Digit.DRISTIService.createApplication(
-          { application: { ...res?.application, workflow: null, status: "COMPLETED" }, tenantId },
-          { tenantId }
-        );
-    } catch (error) {
-      console.error("Error in handleDelayCondonation:", error);
-    }
-  };
-
   const handleRegisterCase = async () => {
     setCaseADmitLoader(true);
     const individualId = await fetchBasicUserInfo();
@@ -644,9 +583,6 @@ function CaseFileAdmission({ t, path }) {
     ].flat();
 
     updateCaseDetails("REGISTER", formdata).then(async (res) => {
-      const caseDetails = await refetch();
-      const caseData = caseDetails?.data?.criteria?.[0]?.responseList?.[0];
-      if (caseData?.caseDetails?.delayApplications?.formdata?.[0]?.data?.delayCondonationType?.code === "NO") await handleDelayCondonation(caseData);
       await Promise.all(
         documentList
           ?.filter((data) => data)
