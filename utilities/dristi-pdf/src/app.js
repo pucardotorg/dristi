@@ -7,7 +7,7 @@ var config = require("./config");
 
 const order = require("./routes/order");
 const application = require("./routes/application");
-
+const pdfRoutes = require("./routes/pdfRoutes");
 // var {listenConsumer} = require("./consumer")
 
 var app = express();
@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(config.app.contextPath + "/order", order);
 app.use(config.app.contextPath + "/application", application);
-
+app.use(config.app.contextPath + "/dristi-pdf", pdfRoutes);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
