@@ -1,15 +1,20 @@
-import { Button, Card } from "@egovernments/digit-ui-react-components";
+import { Button, Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { JudgementIcon } from "../../../icons/svgIndex";
 import PublishedOrderModal from "./PublishedOrderModal";
 import useGetOrders from "../../../hooks/dristi/useGetOrders";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+
 const JudgementViewCard = ({ caseData, width }) => {
   const { t } = useTranslation();
-  const [showJudgementOrder, setShowJudgementOrder] = useState(false);
+  const [showFinalOutcomeOrder, setShowFinalOutcomeOrder] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { downloadPdf } = useDownloadCasePdf();
+
+  const { data: outcomeOrderMapping, isLoading: isOutcomeTypeLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "case", [
+    { name: "OutcomeType" },
+  ]);
 
   const { data: ordersRes, refetch: refetchOrdersData, isLoading: isOrdersLoading } = useGetOrders(
     {
@@ -23,12 +28,28 @@ const JudgementViewCard = ({ caseData, width }) => {
     caseData?.filingNumber
   );
 
-  const judgementOrder = useMemo(() => {
-    return ordersRes?.list?.filter((order) => order?.orderType === "JUDGEMENT")?.[0];
-  }, [ordersRes]);
+  const finalOutcomeOrderType = useMemo(() => {
+    let orderType = "";
+    orderType = outcomeOrderMapping?.case?.OutcomeType?.find((obj) => {
+      if (obj?.judgementList.length === 0) {
+        if (obj?.outcome === caseData?.case?.outcome) {
+          return true;
+        }
+      } else {
+        if (obj?.judgementList?.find((o) => o === caseData?.case?.outcome)) {
+          return true;
+        }
+      }
+    })?.orderType;
+    return orderType;
+  }, [outcomeOrderMapping, caseData]);
+
+  const finalOutcomeOrder = useMemo(() => {
+    return ordersRes?.list?.filter((order) => order?.orderType === finalOutcomeOrderType)?.[0];
+  }, [ordersRes, finalOutcomeOrderType]);
 
   const handleButtonClick = () => {
-    setShowJudgementOrder(true);
+    setShowFinalOutcomeOrder(true);
   };
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     { criteria: { tenantId }, tenantId },
@@ -48,7 +69,7 @@ const JudgementViewCard = ({ caseData, width }) => {
   };
 
   const handleCloseJudgementOrder = () => {
-    setShowJudgementOrder(false);
+    setShowFinalOutcomeOrder(false);
   };
 
   const handleDownload = (filestoreId) => {
@@ -56,6 +77,10 @@ const JudgementViewCard = ({ caseData, width }) => {
       downloadPdf(tenantId, filestoreId);
     }
   };
+
+  if (isOutcomeTypeLoading || isOrdersLoading) {
+    return <Loader></Loader>;
+  }
 
   return (
     <React.Fragment>
@@ -105,11 +130,11 @@ const JudgementViewCard = ({ caseData, width }) => {
               {formatDate(new Date(hearingsList?.[hearingsList?.length - 1]?.startTime), "DD-MM-YYYY")}
             </div>
           </div>
-          <Button variation={"outlined"} onButtonClick={handleButtonClick} label={t("VIEW_JUDGEMENT_ORDER")} />
+          <Button variation={"outlined"} onButtonClick={handleButtonClick} label={`View ${t(finalOutcomeOrderType)} Order`} />
         </div>
       </Card>
-      {showJudgementOrder && (
-        <PublishedOrderModal t={t} order={judgementOrder} handleDownload={handleDownload} handleOrdersTab={handleCloseJudgementOrder} />
+      {showFinalOutcomeOrder && (
+        <PublishedOrderModal t={t} order={finalOutcomeOrder} handleDownload={handleDownload} handleOrdersTab={handleCloseJudgementOrder} />
       )}
     </React.Fragment>
   );

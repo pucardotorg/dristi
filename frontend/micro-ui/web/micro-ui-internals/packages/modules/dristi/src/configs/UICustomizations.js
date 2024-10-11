@@ -676,11 +676,11 @@ export const UICustomizations = {
         case "Parties":
           return (
             <div>
-              {value.length > 2 && <ReactTooltip id={`hearing-list`}>{value.map((party) => party.partyName).join(", ")}</ReactTooltip>}
+              {value?.length > 2 && <ReactTooltip id={`hearing-list`}>{value?.map((party) => party.partyName)?.join(", ")}</ReactTooltip>}
               <span data-tip data-for={`hearing-list`}>{`${value
-                .slice(0, 2)
-                .map((party) => party.partyName)
-                .join(", ")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+                ?.slice(0, 2)
+                ?.map((party) => party.partyName)
+                ?.join(", ")}${value?.length > 2 ? `+${value?.length - 2}` : ""}`}</span>
             </div>
           );
         case "Order Type":
