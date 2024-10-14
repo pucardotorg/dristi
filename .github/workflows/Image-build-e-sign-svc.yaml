@@ -63,6 +63,11 @@ jobs:
         run: |
           commit_hash=$(git log -1 --pretty=format:%H -- backend/e-sign-svc)
           echo "commit_hash=$commit_hash" >> $GITHUB_ENV
+      - name: Key for encryption and decryption
+        shell: bash
+        run: |
+          echo "${{ secrets.PUBLIC_KEY }}" > backend/e-sign-svc/src/main/resources/publicKey.cer
+          echo "${{ secrets.PRIVATE_KEY }}" > backend/e-sign-svc/src/main/resources/privateKey.pem
 
       - name: Build and Push Docker image for e-sign-svc
         if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-backend' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
