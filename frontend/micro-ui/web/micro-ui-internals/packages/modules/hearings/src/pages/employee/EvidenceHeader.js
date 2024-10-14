@@ -66,7 +66,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           <Header>{t(hearing.hearingType)} Hearing</Header>
           <div className="sub-details-text">{caseData?.caseTitle || " "}</div>
           <div className="vertical-line"></div>
-          <div className="sub-details-text">{caseData?.caseType || "NIA 138"}</div>
+          <div className="sub-details-text">{caseData?.caseType || "Section 138 of Negotiable Instruments Act"}</div>
           <div className="vertical-line"></div>
           <div className="sub-details-text">{caseData?.substage || "Trial"}</div>
         </div>

@@ -561,14 +561,6 @@ function CaseFileAdmission({ t, path }) {
         key: "proofOfReplyFileUpload",
       })),
       ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
-        document: form?.data?.memorandumOfComplaint?.document,
-        key: "memorandumOfComplaint",
-      })),
-      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
-        document: form?.data?.prayerForRelief?.document,
-        key: "prayerForRelief",
-      })),
-      ...caseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.map((form) => ({
         document: form?.data?.swornStatement?.document,
         key: "swornStatement",
       })),

@@ -53,7 +53,15 @@ const CustomReviewCardRow = ({
   isCaseReAssigned,
   disableScrutiny,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null, textDependentOn = null, textDependentValue = null } = config;
+  const {
+    type = null,
+    label = null,
+    value = null,
+    badgeType = null,
+    textDependentOn = null,
+    textDependentValue = null,
+    notAvailable = null,
+  } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const extractValue = (data, key) => {
@@ -112,7 +120,7 @@ const CustomReviewCardRow = ({
         return (
           <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("CS_NOT_AVAILABLE")}`}</div>
+              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("")}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
               {showFlagIcon && (
@@ -170,11 +178,11 @@ const CustomReviewCardRow = ({
               <div className="value">
                 {Array.isArray(textValue)
                   ? textValue.length > 0
-                    ? textValue.map((text, index) => <div key={index}>{t(text) || t("CS_NOT_AVAILABLE")}</div>)
-                    : t("CS_NOT_AVAILABLE")
+                    ? textValue.map((text, index) => <div key={index}>{t(text) || t("")}</div>)
+                    : t("")
                   : textValue && typeof textValue === "object"
                   ? t(textValue?.text) || ""
-                  : t(textValue) || (dependentOnValue && t(textDependentValue)) || t("CS_NOT_AVAILABLE")}
+                  : t(textValue) || (dependentOnValue && t(textDependentValue)) || t(notAvailable) || t("")}
               </div>
               {showFlagIcon && (
                 <div
@@ -245,7 +253,7 @@ const CustomReviewCardRow = ({
 
       case "amount":
         let amountValue = extractValue(data, value);
-        amountValue = amountValue ? `₹${amountValue}` : t("CS_NOT_AVAILABLE");
+        amountValue = amountValue ? `₹${amountValue}` : t("");
         return (
           <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
@@ -297,10 +305,10 @@ const CustomReviewCardRow = ({
                 {Array.isArray(numbers)
                   ? numbers.length > 0
                     ? numbers.map((number, index) => <div key={index}>{`+91-${number}`}</div>)
-                    : t("CS_NOT_AVAILABLE")
+                    : t("")
                   : numbers
                   ? `+91-${numbers}`
-                  : t("CS_NOT_AVAILABLE")}
+                  : t("")}
               </div>
               {showFlagIcon && (
                 <div
@@ -641,8 +649,8 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
-                {(!Array.isArray(defaulValue) && defaulValue) || t("CS_NOT_AVAILABLE")}
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || t("")} </div>)}
+                {(!Array.isArray(defaulValue) && defaulValue) || t("")}
               </div>
               {showFlagIcon && (
                 <div
@@ -697,6 +705,7 @@ const CustomReviewCardRow = ({
     textDependentOn,
     label,
     textDependentValue,
+    notAvailable,
     isJudge,
     handleOpenPopup,
     configKey,

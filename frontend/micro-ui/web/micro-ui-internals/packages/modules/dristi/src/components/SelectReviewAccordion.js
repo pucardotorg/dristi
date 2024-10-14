@@ -344,26 +344,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             },
           }),
         });
-      if (groupedByDocumentType?.COMPLAINT_MEMO)
-        onSelect("additionalDetails", {
-          ...formData["additionalDetails"],
-          prayerSwornStatement: {
-            form: [
-              ...groupedByDocumentType?.COMPLAINT_MEMO?.map((data) => {
-                return {
-                  image: {
-                    systemError: data?.message,
-                    fileName: "ATTACHED_DOCUMENT",
-                  },
-                  "memorandumOfComplaint.document": {
-                    systemError: data?.message,
-                    fileName: "ATTACHED_DOCUMENT",
-                  },
-                };
-              }),
-            ],
-          },
-        });
       if (groupedByDocumentType?.AFFIDAVIT)
         onSelect("litigentDetails", {
           ...formData["litigentDetails"],
@@ -421,10 +401,14 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   {!isScrutiny && !isJudge && (isCaseReAssigned || isDraftInProgress) && (
                     <div
                       className="header-right"
+                      style={{ display: "contents" }}
                       onClick={(e) => {
                         history.push(`?caseId=${caseId}&selected=${input?.key}`);
                       }}
                     >
+                      {input?.data?.length === 0 && (
+                        <span style={{ fontFamily: "Roboto", fontSize: "14px", fontWeight: 400 }}>{t(input?.noDataText)}</span>
+                      )}
                       <EditPencilIcon />
                     </div>
                   )}

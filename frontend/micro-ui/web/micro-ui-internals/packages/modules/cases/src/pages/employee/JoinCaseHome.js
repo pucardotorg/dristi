@@ -2767,8 +2767,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             accusedRegisterFormData?.addressDetails?.[0]?.addressDetails?.locality &&
             accusedRegisterFormData?.addressDetails?.[0]?.addressDetails?.pincode &&
             accusedRegisterFormData?.addressDetails?.[0]?.addressDetails?.state &&
-            ((accusedRegisterFormData?.respondentType?.code === "REPRESENTATIVE" && accusedRegisterFormData?.companyName) ||
-              (accusedRegisterFormData?.respondentType?.code !== "REPRESENTATIVE" && !accusedRegisterFormData?.companyName))
+            ((accusedRegisterFormData?.respondentType?.code === "REPRESENTATIVE" && accusedRegisterFormData?.respondentCompanyName) ||
+              (accusedRegisterFormData?.respondentType?.code !== "REPRESENTATIVE" && !accusedRegisterFormData?.respondentCompanyName))
               ? false
               : true,
         },

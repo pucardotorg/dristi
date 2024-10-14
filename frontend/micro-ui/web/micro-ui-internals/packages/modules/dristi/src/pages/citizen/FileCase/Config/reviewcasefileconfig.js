@@ -29,6 +29,11 @@ export const reviewCaseFileFormConfig = [
                   value: "complainantVerification.mobileNumber",
                 },
                 {
+                  type: "text",
+                  label: "AGE",
+                  value: "complainantVerification.complainantAge",
+                },
+                {
                   type: "image",
                   label: "CS_ID_PROOF",
                   value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
@@ -42,10 +47,17 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "text",
+                  label: "TYPE_OF_ENTITY",
+                  dependentOn: "complainantType.code",
+                  dependentValue: "REPRESENTATIVE",
+                  value: "complainantTypeOfEntity.name",
+                },
+                {
+                  type: "text",
                   label: "company_Name",
                   dependentOn: "complainantType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "companyName",
+                  value: "complainantCompanyName",
                 },
                 {
                   type: "address",
@@ -75,6 +87,11 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "text",
+                  label: "AGE",
+                  value: "respondentAge",
+                },
+                {
+                  type: "text",
                   label: "CS_EMAIL_ID",
                   value: "emails.emailId",
                 },
@@ -87,10 +104,17 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "text",
+                  label: "TYPE_OF_ENTITY",
+                  dependentOn: "respondentType.code",
+                  dependentValue: "REPRESENTATIVE",
+                  value: "respondentTypeOfEntity.name",
+                },
+                {
+                  type: "text",
                   label: "company_Name",
                   dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "companyName",
+                  value: "respondentCompanyName",
                 },
                 {
                   type: "address",
@@ -131,24 +155,39 @@ export const reviewCaseFileFormConfig = [
                   value: ["chequeNumber"],
                 },
                 {
-                  type: "amount",
-                  label: "CS_CHEQUE_AMOUNT",
-                  value: "chequeAmount",
+                  type: "text",
+                  label: "CS_DISHONOURED_CHEQUE_SIGNATORY_NAME",
+                  value: "chequeSignatoryName",
                 },
                 {
                   type: "text",
-                  label: "CS_CHEQUE_ISSUED_TO",
+                  label: "CS_NAME_ON_CHEQUE",
                   value: "name",
                 },
                 {
                   type: "text",
-                  label: "CS_PAYEE_BANK",
-                  value: "bankName",
+                  label: "CS_PAYEE_BANK_NAME",
+                  value: "payeeBankName",
                 },
                 {
                   type: "text",
-                  label: "CS_NAME_SIGNATORY",
-                  value: "chequeSignatoryName",
+                  label: "CS_PAYEE_BRANCH_NAME",
+                  value: "payeeBranchName",
+                },
+                {
+                  type: "text",
+                  label: "CS_DATE_OF_ISSUANCE",
+                  value: "issuanceDate",
+                },
+                {
+                  type: "text",
+                  label: "CS_PAYER_BANK_NAME",
+                  value: "payerBankName",
+                },
+                {
+                  type: "text",
+                  label: "CS_PAYER_BRANCH_NAME",
+                  value: "payerBranchName",
                 },
                 {
                   type: "text",
@@ -156,14 +195,19 @@ export const reviewCaseFileFormConfig = [
                   value: "ifsc",
                 },
                 {
+                  type: "amount",
+                  label: "CS_CHEQUE_AMOUNT",
+                  value: "chequeAmount",
+                },
+                {
                   type: "text",
-                  label: "CS_DATE_DEPOSITE",
+                  label: "CS_DATE_OF_CHEQUE_DEPOSIT",
                   value: "depositDate",
                 },
                 {
                   type: "text",
-                  label: "CS_DATE_ISSUANCE",
-                  value: "issuanceDate",
+                  label: "REASON_FOR_RETURN_CHEQUE",
+                  value: "delayReason.reasonForReturnCheque",
                 },
                 {
                   type: "text",
@@ -190,12 +234,12 @@ export const reviewCaseFileFormConfig = [
               config: [
                 {
                   type: "text",
-                  label: "CS_NATURE_OF_DEBT",
-                  value: "liabilityNature.name",
+                  label: "CS_NATURE_DEBT_LIABILITY",
+                  value: "liabilityNature",
                 },
                 {
                   type: "text",
-                  label: "CS_CHEQUE_RECIEVED_FOR",
+                  label: "CHEQUE_FOR_FULL_OR_PARTIAL_LIABILITY",
                   value: "liabilityType.name",
                 },
                 {
@@ -222,29 +266,30 @@ export const reviewCaseFileFormConfig = [
               label: "CS_DEMAND_NOTICE_DETAILS",
               icon: "DemandDetailsNoticeIcon",
               config: [
+                // {
+                //   type: "text",
+                //   label: "CS_MODE_OF_DISPATCH",
+                //   value: "modeOfDispatchType.modeOfDispatchType.name",
+                // },
                 {
                   type: "text",
-                  label: "CS_MODE_OF_DISPATCH",
-                  value: "modeOfDispatchType.modeOfDispatchType.name",
-                },
-                {
-                  type: "text",
-                  label: "CS_DISPATCHED_ON",
+                  label: "CS_DATE_OF_DISPATCH_LDN",
                   value: "dateOfDispatch",
                 },
                 {
                   type: "text",
-                  label: "CS_SERVICES_ON",
+                  label: "CS_DATE_OF_SERVICE_LDN",
                   value: "dateOfService",
                 },
                 {
                   type: "text",
-                  label: "CS_RECIEVED_REPLY_ON",
+                  label: "CS_DATE_OF_REPLY_LDN",
                   value: "dateOfReply",
+                  notAvailable: "NO_REPLY_RECIEVED",
                 },
                 {
                   type: "text",
-                  label: "CS_CAUSE_ACTION_ON",
+                  label: "CS_DATE_OF_ACCRUAL_LDN",
                   value: "dateOfAccrual",
                 },
                 {
@@ -271,11 +316,11 @@ export const reviewCaseFileFormConfig = [
                   label: "CS_QUESTION_DELAY_APPLICATION",
                   value: "delayCondonationType.name",
                 },
-                {
-                  type: "text",
-                  label: "CS_TEXTAREA_HEADER_DELAY_REASON",
-                  value: "delayApplicationReason.reasonForDelay",
-                },
+                // {
+                //   type: "text",
+                //   label: "CS_TEXTAREA_HEADER_DELAY_REASON",
+                //   value: "delayApplicationReason.reasonForDelay",
+                // },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
@@ -301,6 +346,7 @@ export const reviewCaseFileFormConfig = [
               name: "witnessDetails",
               label: "CS_WITNESS_DETAIL_HEADING",
               icon: "WitnessDetailsIcon",
+              noDataText: "NO_WITNESSES_ADDED",
               config: [
                 {
                   type: "title",
@@ -347,17 +393,17 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
-                  textDependentOn: "memorandumOfComplaint.document",
-                  textDependentValue: "DOCUMENT_UPLOADED",
+                  // textDependentOn: "memorandumOfComplaint.document",
+                  // textDependentValue: "DOCUMENT_UPLOADED",
                   value: "memorandumOfComplaint.text",
                 },
-                {
-                  type: "text",
-                  label: "CS_PRAYER_FOR_RELIEF_HEADER",
-                  textDependentOn: "prayerForRelief.document",
-                  textDependentValue: "DOCUMENT_UPLOADED",
-                  value: "prayerForRelief.text",
-                },
+                // {
+                //   type: "text",
+                //   label: "CS_PRAYER_FOR_RELIEF_HEADER",
+                //   textDependentOn: "prayerForRelief.document",
+                //   textDependentValue: "DOCUMENT_UPLOADED",
+                //   value: "prayerForRelief.text",
+                // },
                 {
                   type: "text",
                   label: "CS_SWORN_STATEMENT_HEADER",
@@ -370,15 +416,15 @@ export const reviewCaseFileFormConfig = [
                   label: "CS_ADDITIONAL_DETAILS",
                   value: "additionalDetails.text",
                 },
-                {
-                  type: "text",
-                  label: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
-                  value: "additionalActsSections.text",
-                },
+                // {
+                //   type: "text",
+                //   label: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
+                //   value: "additionalActsSections.text",
+                // },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
-                  value: ["swornStatement.document", "memorandumOfComplaint.document", "prayerForRelief.document", "SelectUploadDocWithName"],
+                  value: ["swornStatement.document", "SelectUploadDocWithName"],
                 },
               ],
               data: {},

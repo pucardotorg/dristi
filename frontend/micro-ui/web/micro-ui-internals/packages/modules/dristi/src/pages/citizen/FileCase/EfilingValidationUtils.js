@@ -4,17 +4,7 @@ import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { efilingDocumentKeyAndTypeMapping } from "./Config/efilingDocumentKeyAndTypeMapping";
 
-export const showDemandNoticeModal = ({
-  selected,
-  setValue,
-  formData,
-  setError,
-  clearErrors,
-  index,
-  setServiceOfDemandNoticeModal,
-  caseDetails,
-  setReceiptDemandNoticeModal,
-}) => {
+export const showDemandNoticeModal = ({ selected, setValue, formData, setError, clearErrors, index, setServiceOfDemandNoticeModal, caseDetails }) => {
   if (selected === "demandNoticeDetails") {
     const totalCheques = caseDetails?.caseDetails?.["chequeDetails"]?.formdata && caseDetails?.caseDetails?.["chequeDetails"]?.formdata.length;
     for (const key in formData) {
@@ -46,27 +36,9 @@ export const showDemandNoticeModal = ({
             }
           }
           break;
-
-        case "dateOfIssuance":
-          if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
-            setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
-          } else if (
-            new Date(formData?.dateOfIssuance).getTime() <
-            new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[totalCheques - 1]?.data?.depositDate).getTime()
-          ) {
-            setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" });
-          } else clearErrors("dateOfIssuance");
-          break;
-
         case "dateOfDispatch":
           if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
             setError("dateOfDispatch", { message: "CS_DATE_ERROR_MSG" });
-          } else if (
-            formData?.dateOfDispatch &&
-            formData?.dateOfIssuance &&
-            new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
-          ) {
-            setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
           } else {
             clearErrors("dateOfDispatch");
           }
@@ -80,14 +52,6 @@ export const showDemandNoticeModal = ({
             setError("dateOfReply", { message: "CS_REPLY_DATE_ERROR_MSG" });
           } else {
             clearErrors("dateOfReply");
-          }
-          break;
-        case "delayApplicationType":
-          if (formData?.delayApplicationType?.code === "NO") {
-            setReceiptDemandNoticeModal(true);
-            // setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
-          } else {
-            clearErrors("delayApplicationType");
           }
           break;
         default:
@@ -245,7 +209,7 @@ export const checkIfscValidation = ({ formData, setValue, selected }) => {
 
 export const checkNameValidation = ({ formData, setValue, selected, reset, index, formdata }) => {
   if (selected === "respondentDetails") {
-    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName) {
+    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName || formData?.respondentAge) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
         if (["respondentFirstName", "respondentMiddleName", "respondentLastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
@@ -271,6 +235,25 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
             }
           }
         }
+        if (key === "respondentAge" && Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+          if (typeof value === "string") {
+            let updatedValue = value?.replace(/\D/g, "");
+            if (updatedValue?.length > 4) {
+              updatedValue = updatedValue?.substring(0, 4);
+            }
+            if (updatedValue !== oldValue) {
+              const element = document?.querySelector(`[name="${key}"]`);
+              const start = element?.selectionStart;
+              const end = element?.selectionEnd;
+              setValue(key, updatedValue);
+              setTimeout(() => {
+                element?.setSelectionRange(start, end);
+              }, 0);
+            }
+          }
+        }
       }
     }
   }
@@ -278,7 +261,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
     if (formData?.firstName || formData?.middleName || formData?.lastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
-        if (Object.hasOwnProperty.call(formDataCopy, key)) {
+        if (["firstName", "middleName", "lastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
           const oldValue = formDataCopy[key];
           let value = oldValue;
           if (typeof value === "string") {
@@ -299,6 +282,24 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
                 element?.setSelectionRange(start, end);
               }, 0);
             }
+          }
+        }
+        if (key === "complainantAge" && Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+
+          let updatedValue = value?.replace(/\D/g, "");
+          if (updatedValue?.length > 4) {
+            updatedValue = updatedValue?.substring(0, 4);
+          }
+          if (updatedValue !== oldValue) {
+            const element = document?.querySelector(`[name="${key}"]`);
+            const start = element?.selectionStart;
+            const end = element?.selectionEnd;
+            setValue(key, updatedValue);
+            setTimeout(() => {
+              element?.setSelectionRange(start, end);
+            }, 0);
           }
         }
       }
@@ -413,9 +414,7 @@ export const checkDuplicateMobileEmailValidation = ({
   }
   if (selected === "witnessDetails") {
     const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
-    if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
-      setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
-    } else if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+    if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
     } else if (
       formdata &&
@@ -452,8 +451,6 @@ export const checkDuplicateMobileEmailValidation = ({
 
     if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM", isDuplicateNumber: true });
-    } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
-      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM", isDuplicateNumber: true });
     } else if (
       formdata &&
       formdata?.length > 1 &&
@@ -473,7 +470,14 @@ export const checkDuplicateMobileEmailValidation = ({
 
 export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
   if (selected === "chequeDetails") {
-    if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
+    if (
+      formData?.chequeSignatoryName ||
+      formData?.payeeBankName ||
+      formData?.payeeBranchName ||
+      formData?.payerBankName ||
+      formData?.payerBranchName ||
+      formData?.name
+    ) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
         if (Object.hasOwnProperty.call(formDataCopy, key)) {
@@ -499,7 +503,7 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
                 }, 0);
               }
             }
-          } else if (key === "bankName") {
+          } else if (key === "payeeBankName" || key === "payeeBranchName" || key === "payerBankName" || key === "payerBranchName") {
             if (typeof value === "string") {
               if (value.length > 200) {
                 value = value.slice(0, 200);
@@ -601,7 +605,7 @@ export const respondentValidation = ({
   }
 };
 
-export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors, setReceiptDemandNoticeModal }) => {
+export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "demandNoticeDetails") {
     for (const key of ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"]) {
       if (!(key in formData) || formData[key]?.document?.length === 0) {
@@ -611,10 +615,6 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
       }
     }
 
-    if (formData?.delayApplicationType?.code === "NO") {
-      setReceiptDemandNoticeModal(true);
-      return true;
-    }
     if (formData?.proofOfService?.code === "YES" && formData?.["proofOfAcknowledgmentFileUpload"]?.document.length === 0) {
       setFormErrors("proofOfAcknowledgmentFileUpload", { type: "required" });
       setShowErrorToast(true);
@@ -632,7 +632,7 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
 
 export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "chequeDetails") {
-    for (const key of ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"]) {
+    for (const key of ["bouncedChequeFileUpload", "returnMemoFileUpload"]) {
       if (!(key in formData) || formData[key]?.document?.length === 0 || !formData[key] || Object.keys(formData[key] || {}).length === 0) {
         setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
@@ -766,8 +766,11 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "delayApplications") {
-    if (formData?.delayCondonationType?.code === "NO" && !formData?.delayApplicationReason?.reasonForDelay?.length > 0) {
-      setFormErrors("delayApplicationReason", { type: "required" });
+    if (
+      formData?.delayCondonationType?.code === "NO" &&
+      (!formData?.condonationFileUpload?.document || formData?.condonationFileUpload?.document.length === 0)
+    ) {
+      setFormErrors("condonationFileUpload", { type: "required" });
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
@@ -791,28 +794,6 @@ export const debtLiabilityValidation = ({ t, formData, selected, setShowErrorToa
 export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors, clearFormDataErrors }) => {
   if (selected === "prayerSwornStatement") {
     let hasError = false;
-    if (
-      !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
-      (!("document" in formData?.memorandumOfComplaint) &&
-        "text" in formData?.memorandumOfComplaint &&
-        !formData?.memorandumOfComplaint?.text.length > 0) ||
-      (!("text" in formData?.memorandumOfComplaint) &&
-        "document" in formData?.memorandumOfComplaint &&
-        !formData?.memorandumOfComplaint?.document.length > 0)
-    ) {
-      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      setFormErrors("memorandumOfComplaint", { type: "required" });
-      hasError = true;
-    }
-    if (
-      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
-      (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
-      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
-    ) {
-      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      setFormErrors("prayerForRelief", { type: "required" });
-      hasError = true;
-    }
 
     if ("SelectUploadDocWithName" in formData && Array.isArray(formData?.SelectUploadDocWithName)) {
       let index = 0;
@@ -1069,6 +1050,23 @@ const fetchBasicUserInfo = async (caseDetails, tenantId) => {
   );
 
   return individualData?.Individual?.[0]?.individualId;
+};
+
+export const getComplainantName = (complainantDetails) => {
+  if (complainantDetails?.complainantType?.code === "INDIVIDUAL") {
+    return complainantDetails?.firstName && `${complainantDetails?.firstName || ""} ${complainantDetails?.lastName || ""}`.trim();
+  }
+  return complainantDetails?.complainantCompanyName || "";
+};
+
+export const getRespondentName = (respondentDetails) => {
+  if (respondentDetails?.respondentType?.code === "INDIVIDUAL") {
+    return (
+      respondentDetails?.respondentFirstName &&
+      `${respondentDetails?.respondentFirstName || ""} ${respondentDetails?.respondentLastName || ""}`.trim()
+    );
+  }
+  return respondentDetails?.respondentCompanyName || "";
 };
 
 export const updateCaseDetails = async ({
@@ -1534,7 +1532,8 @@ export const updateCaseDetails = async ({
           if (
             data?.data?.depositDate &&
             data?.data?.issuanceDate &&
-            new Date(data?.data?.issuanceDate).getTime() + 6 * 30 * 24 * 60 * 60 * 1000 > new Date(data?.data?.depositDate).getTime()
+            new Date(data?.data?.issuanceDate).setMonth(new Date(data?.data?.issuanceDate).getMonth() + 3) >
+              new Date(data?.data?.depositDate).getTime()
           ) {
             infoBoxData.data.splice(0, 0, "CS_SIX_MONTH_BEFORE_DEPOSIT_TEXT");
           }
@@ -1554,6 +1553,20 @@ export const updateCaseDetails = async ({
       chequeDetails: {
         formdata: newFormData,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+      },
+      debtLiabilityDetails: {
+        ...caseDetails?.caseDetails?.debtLiabilityDetails,
+        formdata: caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((data) => {
+          if (data?.data?.liabilityType?.code === "FULL_LIABILITY" && newFormData?.[0]) {
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                totalAmount: newFormData[0].data.chequeAmount,
+              },
+            };
+          } else return data;
+        }),
       },
     };
   }
@@ -1589,6 +1602,9 @@ export const updateCaseDetails = async ({
             data: {
               ...data.data,
               ...debtDocumentData,
+              ...(data?.data?.liabilityType?.code === "FULL_LIABILITY" && {
+                totalAmount: caseDetails?.caseDetails?.chequeDetails?.formdata?.[0]?.data?.chequeAmount,
+              }),
             },
           };
         })
@@ -1720,7 +1736,7 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const documentData = { SelectUploadDocWithName: null, prayerForRelief: null, memorandumOfComplaint: null, swornStatement: null };
+          const documentData = { SelectUploadDocWithName: null, swornStatement: null };
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
@@ -1795,77 +1811,6 @@ export const updateCaseDetails = async ({
               })
             );
             setFormDataValue("swornStatement", documentData?.swornStatement);
-          }
-          if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
-            const prevMemorandumOfComplaint =
-              prevCaseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.[0]?.data?.memorandumOfComplaint?.document;
-            const newMemorandumOfComplaint = data?.data?.memorandumOfComplaint?.document;
-            const temp = prevCaseDetails?.documents
-              ?.filter((doc) =>
-                prevMemorandumOfComplaint
-                  ?.filter((leftItem) => !newMemorandumOfComplaint?.find((rightItem) => leftItem?.fileStore === rightItem?.fileStore))
-                  ?.find((doc2) => doc2?.fileStore === doc?.fileStore)
-              )
-              ?.map((doc) => {
-                return { ...doc, isActive: false };
-              });
-            tempDocList = [...tempDocList, ...(temp ? temp : [])];
-            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
-            documentData.memorandumOfComplaint.document = await Promise.all(
-              data?.data?.memorandumOfComplaint?.document?.map(async (document, index) => {
-                const { tempDocList: tempData, tempFile } = await documentUploadHandler(
-                  document,
-                  index,
-                  prevCaseDetails,
-                  data,
-                  pageConfig,
-                  "memorandumOfComplaint",
-                  selected,
-                  tenantId
-                );
-                tempDocList = [...tempDocList, ...tempData];
-                return tempFile;
-              })
-            );
-            setFormDataValue("memorandumOfComplaint", documentData?.memorandumOfComplaint);
-          } else if (data?.data?.memorandumOfComplaint?.text) {
-            documentData.memorandumOfComplaint = documentData.memorandumOfComplaint || {};
-            documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
-          }
-          if (data?.data?.prayerForRelief?.document && data?.data?.prayerForRelief?.document.length > 0) {
-            const prevPrayerForRelief = prevCaseDetails?.additionalDetails?.prayerSwornStatement?.formdata?.[0]?.data?.prayerForRelief?.document;
-            const newPrayerForRelief = data?.data?.prayerForRelief?.document;
-            const temp = prevCaseDetails?.documents
-              ?.filter((doc) =>
-                prevPrayerForRelief
-                  ?.filter((leftItem) => !newPrayerForRelief?.find((rightItem) => leftItem?.fileStore === rightItem?.fileStore))
-                  ?.find((doc2) => doc2?.fileStore === doc?.fileStore)
-              )
-              ?.map((doc) => {
-                return { ...doc, isActive: false };
-              });
-            tempDocList = [...tempDocList, ...(temp ? temp : [])];
-            documentData.prayerForRelief = documentData.prayerForRelief || {};
-            documentData.prayerForRelief.document = await Promise.all(
-              data?.data?.prayerForRelief?.document?.map(async (document, index) => {
-                const { tempDocList: tempData, tempFile } = await documentUploadHandler(
-                  document,
-                  index,
-                  prevCaseDetails,
-                  data,
-                  pageConfig,
-                  "prayerForRelief",
-                  selected,
-                  tenantId
-                );
-                tempDocList = [...tempDocList, ...tempData];
-                return tempFile;
-              })
-            );
-            setFormDataValue("prayerForRelief", documentData?.prayerForRelief);
-          } else if (data?.data?.prayerForRelief?.text) {
-            documentData.prayerForRelief = documentData.prayerForRelief || {};
-            documentData.prayerForRelief.text = data.data.prayerForRelief.text;
           }
 
           if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
@@ -2014,12 +1959,9 @@ export const updateCaseDetails = async ({
   const caseTitle =
     caseDetails?.status !== "DRAFT_IN_PROGRESS"
       ? caseDetails?.caseTitle
-      : caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-        `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
-          caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-        } vs ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || ""} ${
-          caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
-        }`;
+      : `${getComplainantName(data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || {})} vs ${getRespondentName(
+          data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || {}
+        )}`;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,

@@ -93,7 +93,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
           placeholder={t(input?.placeholder)}
           disabled={config.disable}
         ></textarea>
-        {errors[config.key] && <CardLabelError>{t(errors[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
+        {errors[config.key] && <CardLabelError style={input?.errorStyle}>{t(errors[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
       </div>
     );
   });

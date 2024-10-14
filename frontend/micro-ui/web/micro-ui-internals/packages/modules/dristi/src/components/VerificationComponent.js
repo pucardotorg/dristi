@@ -149,7 +149,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                 {!isUserVerified && (
                   <React.Fragment>
                     <div className="button-field">
-                      <Button
+                      {/* <Button
                         variation={"secondary"}
                         className={"secondary-button-selector"}
                         label={t("VERIFY_AADHAR")}
@@ -170,11 +170,12 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                             { shouldValidate: true }
                           );
                         }}
-                      />
+                      /> */}
                       <Button
-                        className={"tertiary-button-selector"}
+                        className={"secondary-button-selector"}
+                        variation={"secondary"}
                         label={t("VERIFY_ID_PROOF")}
-                        labelClassName={"tertiary-label-selector"}
+                        labelClassName={"secondary-label-selector"}
                         onButtonClick={() => {
                           setState((prev) => ({
                             ...prev,

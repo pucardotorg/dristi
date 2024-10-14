@@ -3,7 +3,6 @@ export const efilingDocumentKeyAndTypeMapping = {
   legalDemandNoticeFileUpload: "LEGAL_NOTICE",
   vakalatnamaFileUpload: "VAKALATNAMA",
   inquiryAffidavitFileUpload: "AFFIDAVIT",
-  memorandumOfComplaint: "COMPLAINT_MEMO",
 };
 
 export const efilingDocumentTypeAndKeyMapping = {
@@ -11,7 +10,6 @@ export const efilingDocumentTypeAndKeyMapping = {
   LEGAL_NOTICE: "legalDemandNoticeFileUpload",
   VAKALATNAMA: "vakalatnamaFileUpload",
   AFFIDAVIT: "inquiryAffidavitFileUpload",
-  COMPLAINT_MEMO: "memorandumOfComplaint",
 };
 
 export const ocrErrorLocations = {

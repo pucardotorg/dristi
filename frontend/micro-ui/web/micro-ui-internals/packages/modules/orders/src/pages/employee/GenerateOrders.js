@@ -784,7 +784,7 @@ const GenerateOrders = () => {
       updatedFormdata.dateofCommencementTrial = formatDate(new Date(publishedBailOrder?.auditDetails?.lastModifiedTime)) || "";
       updatedFormdata.dateofCloseTrial = formatDate(new Date(hearingsList?.[hearingsList?.length - 2]?.startTime));
       updatedFormdata.dateofSentence = formatDate(new Date(hearingsList?.[hearingsList?.length - 1]?.startTime));
-      updatedFormdata.offense = "NIA 138";
+      updatedFormdata.offense = "Section 138 of Negotiable Instruments Act";
     }
     if (orderType === "BAIL") {
       updatedFormdata.bailType = { type: applicationDetails?.applicationType };
