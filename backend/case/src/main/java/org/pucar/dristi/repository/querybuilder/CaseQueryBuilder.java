@@ -192,7 +192,7 @@ public class CaseQueryBuilder {
     private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ? AND advocate.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
+            query.append("((cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ? AND advocate.isactive = true)) OR cases.status='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getAdvocateId());
             preparedStmtArgList.add(Types.VARCHAR);
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
@@ -205,7 +205,7 @@ public class CaseQueryBuilder {
     private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList,List<Integer> preparedStmtArgList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ? AND litigant.isactive = true) AND cases.status not in ('DRAFT_IN_PROGRESS')) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
+            query.append("((cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ? AND litigant.isactive = true)) OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getLitigantId());
             preparedStmtArgList.add(Types.VARCHAR);
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
