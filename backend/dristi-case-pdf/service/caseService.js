@@ -27,16 +27,17 @@ exports.getCaseSectionNumber = async (cases) => {
 /**
  * Extracts document file store id from respective object.
  *
- * @param {Object} documents - The object containing file store id.
+ * @param {Object} fileUploadDocuments - The object containing file store id.
  * @param {String} fileName - File Name to search for in the document.
  * @returns {String} A string object that refers to File Store Id.
  */
-const getDocumentFileStore = (documents, fileName) => {
+const getDocumentFileStore = (fileUploadDocuments, fileName) => {
+    const documents = fileUploadDocuments?.document;
     if (Array.isArray(documents)) {
-        const document = documents.find(doc => doc.fileName === fileName);
-        return document ? document.fileStore : null;
-    } else if (documents && documents.fileName) {
-        return documents.fileName === fileName ? documents.fileStore : null;
+      const document = documents.find(doc => doc?.fileName === fileName);
+      return document?.fileStore ?? null;
+    } else if (documents && documents?.fileName) {
+      return documents.fileName === fileName ? documents?.fileStore ?? null : null;
     }
     return null;
 };
@@ -56,7 +57,7 @@ const getAddressDetails = (addressObject) => {
       pincode: addressObject?.pincode || ''
     };
   };
-  
+
 
 /**
  * Extracts complainant information from the case object.
@@ -186,7 +187,7 @@ exports.getAdvocateDetails = async (cases) => {
         return {
             name: data.advocateName,
             barRegistrationNumber: data.barRegistrationNumber,
-            vakalatnamaFileStore: getDocumentFileStore(data.vakalatnamaFileUpload, 'UPLOAD_VAKALATNAMA') || '',
+            vakalatnamaFileStore: getDocumentFileStore(data.vakalatnamaFileUpload, 'UPLOAD_VAKALATNAMA'),
             isRepresenting: data.isAdvocateRepresenting.name
         };
     });
@@ -207,7 +208,7 @@ exports.getChequeDetails = (cases) => {
 
         return {
             signatoryName: chequeDetailsData.chequeSignatoryName || null,
-            bouncedChequeFileStore: getDocumentFileStore(chequeDetailsData.bouncedChequeFileUpload, 'CS_BOUNCED_CHEQUE') || '',
+            bouncedChequeFileStore: getDocumentFileStore(chequeDetailsData.bouncedChequeFileUpload, 'CS_BOUNCED_CHEQUE'),
             nameOnCheque: chequeDetailsData.name || null,
             chequeNumber: chequeDetailsData.chequeNumber || null,
             dateOfIssuance: chequeDetailsData.issuanceDate || null,
@@ -215,8 +216,8 @@ exports.getChequeDetails = (cases) => {
             ifscCode: chequeDetailsData.ifsc || null,
             chequeAmount: chequeDetailsData.chequeAmount || null,
             dateOfDeposit: chequeDetailsData.depositDate || null,
-            depositChequeFileStore: getDocumentFileStore(chequeDetailsData.depositChequeFileUpload, 'CS_PROOF_DEPOSIT_CHEQUE') || '',
-            returnMemoFileStore: getDocumentFileStore(chequeDetailsData.returnMemoFileUpload, 'CS_CHEQUE_RETURN_MEMO') || '',
+            depositChequeFileStore: getDocumentFileStore(chequeDetailsData.depositChequeFileUpload, 'CS_PROOF_DEPOSIT_CHEQUE'),
+            returnMemoFileStore: getDocumentFileStore(chequeDetailsData.returnMemoFileUpload, 'CS_CHEQUE_RETURN_MEMO'),
             chequeAdditionalDetails: chequeDetailsData.chequeAdditionalDetails && chequeDetailsData.chequeAdditionalDetails.text || null
         };
     });
@@ -240,7 +241,7 @@ exports.getDebtLiabilityDetails = (cases) => {
         return {
             natureOfDebt: debtLiabilityData.liabilityNature && debtLiabilityData.liabilityNature.name || null,
             totalAmountCoveredByCheque: debtLiabilityData.liabilityType && debtLiabilityData.liabilityType.showAmountCovered ? debtLiabilityData.liabilityAmountCovered || null : null,
-            proofOfLiabilityFileStore: getDocumentFileStore(debtLiabilityData.debtLiabilityFileUpload, 'CS_PROOF_DEBT') || '',
+            proofOfLiabilityFileStore: getDocumentFileStore(debtLiabilityData.debtLiabilityFileUpload, 'CS_PROOF_DEBT'),
             additionalDetails: debtLiabilityData.additionalDebtLiabilityDetails && debtLiabilityData.additionalDebtLiabilityDetails.text || null
         };
     });
@@ -265,15 +266,15 @@ exports.getDemandNoticeDetails = (cases) => {
             modeOfDispatch: demandNoticeData.modeOfDispatchType && demandNoticeData.modeOfDispatchType.modeOfDispatchType && demandNoticeData.modeOfDispatchType.modeOfDispatchType.name || null,
             dateOfIssuance: demandNoticeData.dateOfIssuance || null,
             dateOfDispatch: demandNoticeData.dateOfDispatch || null,
-            legalDemandNoticeFileStore: getDocumentFileStore(demandNoticeData.legalDemandNoticeFileUpload, 'LEGAL_DEMAND_NOTICE') || '',
-            proofOfDispatchFileStore: getDocumentFileStore(demandNoticeData.proofOfDispatchFileUpload, 'PROOF_OF_DISPATCH_FILE_NAME') || '',
+            legalDemandNoticeFileStore: getDocumentFileStore(demandNoticeData.legalDemandNoticeFileUpload, 'LEGAL_DEMAND_NOTICE'),
+            proofOfDispatchFileStore: getDocumentFileStore(demandNoticeData.proofOfDispatchFileUpload, 'PROOF_OF_DISPATCH_FILE_NAME'),
             proofOfService: demandNoticeData.proofOfService && demandNoticeData.proofOfService.code || null,
             dateOfDeemedService: demandNoticeData.dateOfDeemedService || null,
             dateOfAccrual: demandNoticeData.dateOfAccrual || null,
-            proofOfAcknowledgmentFileStore: getDocumentFileStore(demandNoticeData.proofOfAcknowledgmentFileUpload, 'PROOF_LEGAL_DEMAND_NOTICE_FILE_NAME') || '',
+            proofOfAcknowledgmentFileStore: getDocumentFileStore(demandNoticeData.proofOfAcknowledgmentFileUpload, 'PROOF_LEGAL_DEMAND_NOTICE_FILE_NAME'),
             replyReceived: demandNoticeData.proofOfReply && demandNoticeData.proofOfReply.code || null,
             dateOfReply: demandNoticeData.dateOfReply || null,
-            proofOfReplyFileStore: getDocumentFileStore(demandNoticeData.proofOfReplyFileUpload, 'CS_PROOF_TO_REPLY_DEMAND_NOTICE_FILE_NAME') || ''
+            proofOfReplyFileStore: getDocumentFileStore(demandNoticeData.proofOfReplyFileUpload, 'CS_PROOF_TO_REPLY_DEMAND_NOTICE_FILE_NAME')
         };
     });
 
@@ -295,7 +296,7 @@ exports.getDelayCondonationDetails = (cases) => {
 
         return {
             reasonForDelay: delayData.delayApplicationReason && delayData.delayApplicationReason.reasonForDelay || null,
-            proofOfReplyFileStore: getDocumentFileStore(delayData.legalDemandNoticeFileUpload, 'CS_DELAY_CONDONATION_APPLICATION') || ''
+            proofOfReplyFileStore: getDocumentFileStore(delayData.legalDemandNoticeFileUpload, 'CS_DELAY_CONDONATION_APPLICATION')
         };
     });
 
@@ -320,10 +321,10 @@ exports.getPrayerSwornStatementDetails = (cases) => {
             whetherComplainantWillingToSettle: swornStatementData.infoBoxData && swornStatementData.infoBoxData.data || null,
             circumstancesUnderWhichComplainantWillingToSettle: swornStatementData.caseSettlementCondition && swornStatementData.caseSettlementCondition.text || null,
             memorandumOfComplaintText: swornStatementData.memorandumOfComplaint && swornStatementData.memorandumOfComplaint.text || null,
-            memorandumOfComplaintFileStore: getDocumentFileStore(swornStatementData.memorandumOfComplaint.document, 'CS_MEMORANDUM_OF_COMPLAINT_HEADER'),
+            memorandumOfComplaintFileStore: getDocumentFileStore(swornStatementData.memorandumOfComplaint, 'CS_MEMORANDUM_OF_COMPLAINT_HEADER'),
             prayerForReliefText: swornStatementData.prayerForRelief && swornStatementData.prayerForRelief.text || null,
-            prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief.document, 'CS_PRAYER_FOR_RELIEF_HEADER'),
-            swornStatement: getDocumentFileStore(swornStatementData.swornStatementDocument, 'CS_SWORN_STATEMENT_HEADER') || '',
+            prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief, 'CS_PRAYER_FOR_RELIEF_HEADER'),
+            swornStatement: getDocumentFileStore(swornStatementData.swornStatement, 'CS_SWORN_STATEMENT_HEADER') || '',
             additionalDetails: swornStatementData.additionalDetails && swornStatementData.additionalDetails.text || null,
             additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null
         };
