@@ -363,23 +363,6 @@ export const sideMenuConfig = [
           },
         ],
       },
-      {
-        key: "addSignature",
-        label: "CS_ADD_SIGNATURE",
-        checked: false,
-        isCompleted: false,
-        isDisabled: false,
-        pageConfig: [
-          {
-            moduleName: "commonUiConfig",
-            masterDetails: [
-              {
-                name: "signatureConfig",
-              },
-            ],
-          },
-        ],
-      },
     ],
   },
 ];

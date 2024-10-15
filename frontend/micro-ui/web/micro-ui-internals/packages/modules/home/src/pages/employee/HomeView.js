@@ -263,7 +263,7 @@ const HomeView = () => {
       case "PENDING_REGISTRATION":
         return userType === "employee" ? `/${contextPath}/${userType}/dristi/admission?${params}` : `${baseUrl}?${params}&tab=Complaint`;
       case "PENDING_E-SIGN":
-        return `/${contextPath}/${userType}/dristi/home/file-case/case?caseId=${caseId}&selected=addSignature`;
+        return `/${contextPath}/${userType}/dristi/home/file-case/sign-complaint?caseId=${caseId}`;
       case "PENDING_RE_E-SIGN":
         return `/${contextPath}/${userType}/dristi/home/file-case/case?caseId=${caseId}&selected=addSignature`;
       default:

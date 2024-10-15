@@ -1,4 +1,4 @@
-import { ActionBar, Button, CloseSvg, FormComposerV2, Header, Loader, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import { ActionBar, Button, CheckBox, CloseSvg, FormComposerV2, Header, Loader, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -55,6 +55,7 @@ import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
 import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import DocViewerWrapper from "../../employee/docViewerWrapper";
+import CaseLockModal from "./CaseLockModal";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -152,6 +153,8 @@ function EFilingCases({ path }) {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const todayDate = new Date().getTime();
   const userInfo = Digit?.UserService?.getUser()?.info;
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
 
   const setFormErrors = useRef(null);
   const resetFormData = useRef(null);
@@ -175,6 +178,8 @@ function EFilingCases({ path }) {
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
   const [showReviewConfirmationModal, setShowReviewConfirmationModal] = useState(false);
+  const [showCaseLockingModal, setShowCaseLockingModal] = useState(false);
+
   const [caseResubmitSuccess, setCaseResubmitSuccess] = useState(false);
   const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -1391,7 +1396,7 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-  const onSubmit = async (action) => {
+  const onSubmit = async (action, isCaseLocked = false) => {
     if (isDisableAllFieldsMode) {
       history.push(homepagePath);
     }
@@ -1538,20 +1543,23 @@ function EFilingCases({ path }) {
       return setOpenConfirmCorrectionModal(true);
     }
 
-    if (selected === "reviewCaseFile" && !showReviewConfirmationModal && isDraftInProgress) {
-      return setShowReviewConfirmationModal(true);
+    if (selected === "reviewCaseFile" && !showCaseLockingModal && isDraftInProgress) {
+      return setShowCaseLockingModal(true);
     }
 
-    if (selected === "addSignature" && (isPendingESign || isPendingReESign)) {
-      if (courtRooms?.length === 1) {
-        onSubmitCase({ court: courtRooms[0], action: CaseWorkflowAction.E_SIGN });
-        return;
-      } else {
-        setOpenConfirmCourtModal(true);
-      }
-    } else {
+    //check- include below commented code for signing process changes.
+
+    // if (selected === "addSignature" && (isPendingESign || isPendingReESign)) {
+    //   if (courtRooms?.length === 1) {
+    //     onSubmitCase({ court: courtRooms[0], action: CaseWorkflowAction.E_SIGN });
+    //     return;
+    //   } else {
+    //     setOpenConfirmCourtModal(true);
+    //   }
+    // }
+    else {
       let res;
-      if (selected === "reviewCaseFile") {
+      if (isCaseLocked) {
         setIsDisabled(true);
         res = await refetchCasePDfGeneration();
         if (res?.status === "error") {
@@ -1593,7 +1601,7 @@ function EFilingCases({ path }) {
             //   return;
             // }
             setPrevSelected(selected);
-            history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+            if (selected !== "reviewCaseFile") history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           });
         })
         .catch((error) => {
@@ -1888,7 +1896,7 @@ function EFilingCases({ path }) {
           : isCaseReAssigned
           ? t("CS_COMMONS_NEXT")
           : isDraftInProgress
-          ? t("CS_E_SIGN_CASE")
+          ? t("CS_CONFIRM_DETAILS")
           : isPendingReESign
           ? t("CS_COMMON_CONTINUE")
           : t("CS_GO_TO_HOME")
@@ -2153,9 +2161,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={actionName}
                   config={config}
-                  onSubmit={() =>
-                    onSubmit(selected === "reviewCaseFile" ? "SUBMIT_CASE" : selected === "addSignature" ? "E-SIGN" : "SAVE_DRAFT", index)
-                  }
+                  onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
@@ -2276,30 +2282,6 @@ function EFilingCases({ path }) {
               }}
             ></Modal>
           )}
-          {showReviewConfirmationModal && (
-            <Modal
-              headerBarMain={<Heading label={t("SUBMIT_CASE_CONFIRMATION")} />}
-              headerBarEnd={
-                <CloseBtn
-                  onClick={() => {
-                    setPrevSelected(selected);
-                    setShowReviewConfirmationModal(false);
-                  }}
-                />
-              }
-              actionCancelLabel={t("CS_BACK")}
-              actionSaveLabel={t("CS_PROCEED")}
-              children={<div style={{ margin: "16px 0px" }}>{t("SUBMIT_CASE_CONFIRMATION_TEXT")}</div>}
-              actionSaveOnSubmit={async () => {
-                setShowReviewConfirmationModal(false);
-                await onSubmit("SUBMIT_CASE");
-                await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" });
-              }}
-              actionCancelOnSubmit={async () => {
-                setShowReviewConfirmationModal(false);
-              }}
-            ></Modal>
-          )}
           {pageConfig?.addFormText && (
             <Button
               variation="secondary"
@@ -2405,6 +2387,20 @@ function EFilingCases({ path }) {
         >
           {<DocViewerWrapper docWidth={"calc(93vw* 62/ 100)"} docHeight={"60vh"} selectedDocs={[pdfDetails]} showDownloadOption={false} />}
         </Modal>
+      )}
+
+      {showCaseLockingModal && (
+        <CaseLockModal
+          t={t}
+          path={path}
+          setShowCaseLockingModal={setShowCaseLockingModal}
+          isAdvocateFilingCase={isAdvocateFilingCase}
+          onSubmit={onSubmit}
+          createPendingTask={createPendingTask}
+          setPrevSelected={setPrevSelected}
+          selected={selected}
+          caseId={caseId}
+        ></CaseLockModal>
       )}
     </div>
   );
