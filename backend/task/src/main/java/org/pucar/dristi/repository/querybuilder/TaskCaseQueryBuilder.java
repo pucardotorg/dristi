@@ -30,22 +30,24 @@ public class TaskCaseQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_task_document doc";
     private static final String DOCUMENT_SELECT_QUERY_TASK = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id";
-    private static final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) from (select  distinct id FROM ({baseQuery}) total_result) result";
-    private static final String ORDERBY_CLAUSE = " ORDER BY task.{orderBy} {sortingOrder} ";
-    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY task.createdtime DESC ";
-    private static final String PAGINATION_QUERY = " SELECT * FROM ({baseQuery}) task_case_results WHERE id IN ( SELECT  DISTINCT id FROM ({baseQuery}) total_result LIMIT ? OFFSET ? ) ";
+    private static final String TOTAL_COUNT_QUERY = " SELECT COUNT(*) from ({baseQuery}) AS total_count ";
+    private static final String ORDERBY_CLAUSE = " ORDER BY {orderBy} {sortingOrder} ";
+    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY createdtime DESC ";
+    private static final String PAGINATION_QUERY = " LIMIT ? OFFSET ? ";
     private static final String DEFAULT_JOIN_CLAUSE =
             " JOIN dristi_orders o ON task.orderId = o.id " +
                     " JOIN dristi_cases c ON task.cnrNumber = c.cnrNumber ";
-
+    private static final String ROW_NUM_CLAUSE = " ,ROW_NUMBER() OVER (PARTITION BY task.id ORDER BY task.createdtime DESC) AS row_num ";
+    private static final String WITH_CLAUSE_QUERY = " WITH task_case_results AS ( {baseQuery} ) ";
     private static final String DOCUMENT_LEFT_JOIN = " LEFT JOIN dristi_task_document dtd ON task.id = dtd.task_id ";
-
-    private static final String DOCUMENT_STATUS_QUERY = " SELECT * FROM ({baseQuery}) application_status_result WHERE documentstatus = ? ";
+    private static final String TASK_CASE_SELECT_QUERY = " SELECT * FROM task_case_results ";
+    private static final String ROW_NUM_WHERE_CLAUSE = " WHERE row_num = 1 ";
 
     public String getTaskTableSearchQuery(TaskCaseSearchCriteria criteria, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_TASK_QUERY);
             query.append(DOCUMENT_SWITCH_CASE);
+            query.append(ROW_NUM_CLAUSE);
             query.append(FROM_TASK_TABLE);
             query.append(DEFAULT_JOIN_CLAUSE);
             query.append(DOCUMENT_LEFT_JOIN);
@@ -56,22 +58,25 @@ public class TaskCaseQueryBuilder {
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Error occurred while building the task-table search query: " + e.getMessage());
         }
     }
+    public String addWithClauseQuery(String query){
+        return WITH_CLAUSE_QUERY.replace("{baseQuery}", query);
+    }
 
+    public String getFinalTaskCaseSearchQuery() {
+        return TASK_CASE_SELECT_QUERY + ROW_NUM_WHERE_CLAUSE;
+    }
     public String addApplicationStatusQuery(TaskCaseSearchCriteria searchCriteria, String query, List<Object> preparedStmtList){
         if(!ObjectUtils.isEmpty(searchCriteria.getApplicationStatus())) {
             preparedStmtList.add(searchCriteria.getApplicationStatus());
-            return DOCUMENT_STATUS_QUERY.replace("{baseQuery}", query);
+            return query + " AND documentstatus IN ( ? )";
         }
         return query;
     }
+
     public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
-        if(!preparedStatementList.isEmpty()){
-            List<Object> duplicateValues = new ArrayList<>(preparedStatementList);
-            preparedStatementList.addAll(duplicateValues);
-        }
         preparedStatementList.add(pagination.getLimit());
         preparedStatementList.add(pagination.getOffSet());
-        return PAGINATION_QUERY.replace("{baseQuery}", query);
+        return query + PAGINATION_QUERY;
     }
 
     public String addOrderByQuery(String query, Pagination pagination) {

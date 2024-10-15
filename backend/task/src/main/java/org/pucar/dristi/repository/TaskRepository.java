@@ -152,8 +152,8 @@ public class TaskRepository {
         return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
 
-    public Integer getTotalCountTaskCase(String baseQuery, List<Object> preparedStmtList) {
-        String countQuery = taskCaseQueryBuilder.getTotalCountQuery(baseQuery);
+    public Integer getTotalCountTaskCase(String taskQuery, String baseQuery, TaskCaseSearchCriteria criteria, List<Object> preparedStmtList) {
+        String countQuery = taskQuery + taskCaseQueryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
         return jdbcTemplate.queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
     }
@@ -165,17 +165,22 @@ public class TaskRepository {
         List<Integer> preparedStmtArgDc = new ArrayList<>();
 
         String taskQuery = taskCaseQueryBuilder.getTaskTableSearchQuery(request.getCriteria(), preparedStmtList);
-        taskQuery = taskCaseQueryBuilder.addOrderByQuery(taskQuery, request.getPagination());
-        taskQuery = taskCaseQueryBuilder.addApplicationStatusQuery(request.getCriteria(), taskQuery, preparedStmtList);
-        log.debug("Final query: " + taskQuery);
-
+        log.debug("Base query: " + taskQuery);
+        taskQuery = taskCaseQueryBuilder.addWithClauseQuery(taskQuery);
+        String taskCaseQuery = "";
+        taskCaseQuery = taskCaseQueryBuilder.getFinalTaskCaseSearchQuery();
+        taskCaseQuery = taskCaseQueryBuilder.addApplicationStatusQuery(request.getCriteria(), taskCaseQuery, preparedStmtList);
+        taskCaseQuery = taskCaseQueryBuilder.addOrderByQuery(taskCaseQuery, request.getPagination());
         if (request.getPagination() != null) {
-            Integer totalRecords = getTotalCountTaskCase(taskQuery, preparedStmtList);
+            Integer totalRecords = getTotalCountTaskCase(taskQuery, taskCaseQuery, request.getCriteria(), preparedStmtList);
             log.info("Total count without pagination :: {}", totalRecords);
             request.getPagination().setTotalCount(Double.valueOf(totalRecords));
-            taskQuery = taskCaseQueryBuilder.addPaginationQuery(taskQuery, request.getPagination(), preparedStmtList);
+            taskCaseQuery = taskCaseQueryBuilder.addPaginationQuery(taskCaseQuery, request.getPagination(), preparedStmtList);
         }
-        List<TaskCase> list = jdbcTemplate.query(taskQuery, preparedStmtList.toArray(), taskCaseRowMapper);
+
+        String finalQuery = taskQuery+taskCaseQuery;
+        log.info("Final TaskCase query :: {}", finalQuery);
+        List<TaskCase> list = jdbcTemplate.query(finalQuery, preparedStmtList.toArray(), taskCaseRowMapper);
         List<Object> preparedStmtDc = new ArrayList<>();
 
         List<String> ids = new ArrayList<>();
@@ -199,5 +204,4 @@ public class TaskRepository {
         return list;
 
     }
-
 }
