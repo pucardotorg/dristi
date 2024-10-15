@@ -4,6 +4,7 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const { PDFDocument } = require("pdf-lib");
 const fs = require("fs");
+const asyncMiddleware = require("../utils/asyncMiddleware");
 
 const A4_WIDTH = 595.28; // A4 width in points
 const A4_HEIGHT = 841.89; // A4 height in points
@@ -11,7 +12,7 @@ const A4_HEIGHT = 841.89; // A4 height in points
 router.post(
   "/combine-documents",
   upload.array("documents"),
-  async (req, res) => {
+  asyncMiddleware(async function (req, res, next) {
     try {
       const mergedPdf = await PDFDocument.create();
 
@@ -66,7 +67,7 @@ router.post(
         error: error.message,
       });
     }
-  }
+  })
 );
 
 module.exports = router;

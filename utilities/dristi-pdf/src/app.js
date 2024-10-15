@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var config = require("./config");
+const cors = require("cors");
 
 const order = require("./routes/order");
 const application = require("./routes/application");
@@ -13,6 +14,8 @@ const pdfRoutes = require("./routes/pdfRoutes");
 var app = express();
 app.disable("x-powered-by");
 
+app.use(cors());
+app.options("*", cors()); // Preflight requests
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
