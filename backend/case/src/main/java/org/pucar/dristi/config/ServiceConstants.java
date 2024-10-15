@@ -156,4 +156,6 @@ public class ServiceConstants {
 
     public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
 
+    public static final String CASE_SUMMARY_SEARCH_QUERY_EXCEPTION = "CASE_SUMMARY_SEARCH_QUERY_EXCEPTION";
+
 }

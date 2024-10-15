@@ -692,8 +692,8 @@ class CaseQueryBuilderTest {
     void addPagination_Query_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
         String query = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
         Pagination pagination = new Pagination();
-        pagination.setLimit(2d);
-        pagination.setOffSet(0d);
+        pagination.setLimit(2);
+        pagination.setOffSet(0);
         List<Object> prepareList = new ArrayList<>();
 
         String paginatedQuery = queryBuilder.addPaginationQuery(query,prepareList, pagination, new ArrayList<>());
@@ -702,8 +702,8 @@ class CaseQueryBuilderTest {
 
         assertEquals(expectedQuery, paginatedQuery);
         assertEquals(2, prepareList.size());
-        assertEquals(2d, prepareList.get(0));
-        assertEquals(0d, prepareList.get(1));
+        assertEquals(2, prepareList.get(0));
+        assertEquals(0, prepareList.get(1));
     }
 
     @Test

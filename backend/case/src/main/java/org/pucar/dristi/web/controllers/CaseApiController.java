@@ -1,8 +1,9 @@
 package org.pucar.dristi.web.controllers;
 
-import java.util.Collections;
-import java.util.List;
-
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.CasePdfService;
 import org.pucar.dristi.service.CaseService;
@@ -12,28 +13,26 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
+import java.util.Collections;
+import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
-@Controller
+@RestController
 @RequestMapping("")
 public class CaseApiController {
 
-    private CaseService caseService;
+    private final CaseService caseService;
 
-    private WitnessService witnessService;
+    private final WitnessService witnessService;
 
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    private CasePdfService casePdfService;
+    private final CasePdfService casePdfService;
 
 
     @Autowired
@@ -51,11 +50,11 @@ public class CaseApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
-        }
+    }
 
     @PostMapping(value = "/v1/_exists")
-    public ResponseEntity<CaseExistsResponse> caseV1ExistsPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseExistsRequest body){
+    public ResponseEntity<CaseExistsResponse> caseV1ExistsPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseExistsRequest body) {
 
         List<CaseExists> caseExists = caseService.existCases(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -64,8 +63,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/v1/_search")
-    public ResponseEntity<CaseListResponse> caseV1SearchPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
+    public ResponseEntity<CaseListResponse> caseV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body) {
 
         caseService.searchCases(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -74,8 +73,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/v1/_verify")
-    public ResponseEntity<JoinCaseResponse> verifyV1JoinCase (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody JoinCaseRequest body){
+    public ResponseEntity<JoinCaseResponse> verifyV1JoinCase(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody JoinCaseRequest body) {
 
         JoinCaseResponse joinCaseResponse = caseService.verifyJoinCaseRequest(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -84,8 +83,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/v1/_update")
-    public ResponseEntity<CaseResponse> caseV1UpdatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body){
+    public ResponseEntity<CaseResponse> caseV1UpdatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
 
         CourtCase cases = caseService.updateCase(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -94,8 +93,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/v1/add/witness")
-    public ResponseEntity<AddWitnessResponse> caseV1AddWitnessPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for adding witness details in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AddWitnessRequest body){
+    public ResponseEntity<AddWitnessResponse> caseV1AddWitnessPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for adding witness details in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AddWitnessRequest body) {
         AddWitnessResponse addWitnessResponse = caseService.addWitness(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         addWitnessResponse.setResponseInfo(responseInfo);
@@ -103,8 +102,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/witness/v1/_create")
-    public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
+    public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
 
         Witness witness = witnessService.registerWitnessRequest(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -113,8 +112,8 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/witness/v1/_search")
-    public ResponseEntity<WitnessResponse> caseWitnessV1SearchPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body){
+    public ResponseEntity<WitnessResponse> caseWitnessV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body) {
 
         List<Witness> witnessList = witnessService.searchWitnesses(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -123,23 +122,32 @@ public class CaseApiController {
     }
 
     @PostMapping(value = "/witness/v1/_update")
-    public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
+    public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
 
-        Witness witness= witnessService.updateWitness(body);
+        Witness witness = witnessService.updateWitness(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(Collections.singletonList(witness)).requestInfo(responseInfo).build();
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
     @PostMapping(value = "/v1/_generatePdf")
-    public ResponseEntity<?> caseV1GeneratePdf (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
+    public ResponseEntity<?> caseV1GeneratePdf(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body) {
 
         CourtCase courtCase = casePdfService.generatePdf(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(courtCase)).responseInfo(responseInfo).build();
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/v1/search/_summary")
+    public ResponseEntity<CaseSummaryResponse> caseV1SummaryPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSummaryRequest body) {
+        List<CaseSummary> caseSummaries = caseService.getCaseSummary(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseSummaryResponse caseSummaryResponse = CaseSummaryResponse.builder().cases(caseSummaries).pagination(body.getPagination()).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(caseSummaryResponse, HttpStatus.OK);
     }
 
 }

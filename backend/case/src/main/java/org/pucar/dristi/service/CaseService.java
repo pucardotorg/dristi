@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
@@ -660,5 +661,12 @@ public class CaseService {
         }
         updateCourtCaseInRedis(outcome.getTenantId(), courtCaseRedis);
 
+    }
+
+    public List<CaseSummary> getCaseSummary(@Valid CaseSummaryRequest request) {
+
+        List<CaseSummary> caseSummary = caseRepository.getCaseSummary(request);
+
+        return caseSummary;
     }
 }

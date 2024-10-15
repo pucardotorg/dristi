@@ -113,7 +113,7 @@ public class CronJobScheduler {
      * Fetches cases based on the given criteria.
      */
     private List<CourtCase> fetchCases(String status, int offset, int limit, RequestInfo requestInfo) {
-        Pagination pagination = Pagination.builder().limit((double) limit).offSet((double) offset).build();
+        Pagination pagination = Pagination.builder().limit( limit).offSet( offset).build();
         CaseCriteria criteria = CaseCriteria.builder()
                 .status(Collections.singletonList(status))
                 .filingToDate(LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())

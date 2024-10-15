@@ -869,4 +869,26 @@ public class CaseServiceTest {
 
         verifyNoInteractions(cacheService);
     }
+
+    @Test
+    void testCaseSummary_withEmptyRequest() {
+        CaseSummaryRequest caseSummaryRequest = new CaseSummaryRequest();
+
+        List<CaseSummary> response = caseService.getCaseSummary(caseSummaryRequest);
+
+        assertNotNull(response);
+    }
+
+    @Test
+    void testCaseSummary_withValidRequest() {
+        CaseSummaryRequest caseSummaryRequest = new CaseSummaryRequest();
+
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setCaseId("case-id");
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+
+        List<CaseSummary> response = caseService.getCaseSummary(caseSummaryRequest);
+
+        assertNotNull(response);
+    }
 }

@@ -437,10 +437,10 @@ public class CaseQueryBuilder {
     }
     public String addPaginationQuery(String query, List<Object> preparedStatementList, Pagination pagination, List<Integer> preparedStmtArgList) {
         preparedStatementList.add(pagination.getLimit());
-        preparedStmtArgList.add(Types.DOUBLE);
+        preparedStmtArgList.add(Types.INTEGER);
 
         preparedStatementList.add(pagination.getOffSet());
-        preparedStmtArgList.add(Types.DOUBLE);
+        preparedStmtArgList.add(Types.INTEGER);
         return query + " LIMIT ? OFFSET ?";
 
     }
