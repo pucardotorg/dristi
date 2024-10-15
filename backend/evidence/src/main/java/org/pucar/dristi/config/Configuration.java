@@ -167,4 +167,11 @@ public class Configuration {
 
 	@Value("${egov.idgen.courtWitnessFormat}")
 	private String courtWitnessFormat;
+
+	@Value("${egov.idgen.artifactFormat}")
+	private String artifactFormat;
+
+	@Value("${egov.idgen.artifactConfig}")
+	private String artifactConfig;
+
 }

@@ -32,32 +32,21 @@ public class EvidenceEnrichment {
 
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
-            String sourceType = evidenceRequest.getArtifact().getSourceType();
-            String idName = "";
-            String idFormat = "";
-            if(COMPLAINANT.equalsIgnoreCase(sourceType)){
-                idName=configuration.getProsecutionConfig();
-                idFormat=configuration.getProsecutionFormat();
-            } else if (ACCUSED.equalsIgnoreCase(sourceType)) {
-                idName=configuration.getDefenceConfig();
-                idFormat=configuration.getDefenceFormat();
-            } else if (COURT.equalsIgnoreCase(sourceType)) {
-                idName=configuration.getCourtConfig();
-                idFormat=configuration.getCourtFormat();
-            }
+            String idName = configuration.getArtifactConfig();
+            String idFormat = configuration.getArtifactFormat();
 
-            String processedFilingNumber = evidenceRequest.getArtifact().getFilingNumber().replace("-","");
+            String tenantId = getTenantId(evidenceRequest.getArtifact().getFilingNumber());
 
-            List<String> evidenceNumberList = idgenUtil.getIdList(
+            List<String> artifactNumberList = idgenUtil.getIdList(
                     evidenceRequest.getRequestInfo(),
-                    processedFilingNumber,
+                    tenantId,
                     idName,
                     idFormat,
                     1,
                     false
             );
 
-            evidenceRequest.getArtifact().setArtifactNumber(processedFilingNumber+"-"+evidenceNumberList.get(0));
+            evidenceRequest.getArtifact().setArtifactNumber(tenantId+"-"+artifactNumberList.get(0));
 
             AuditDetails auditDetails = AuditDetails.builder()
                     .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
@@ -92,7 +81,53 @@ public class EvidenceEnrichment {
 
     public void enrichEvidenceNumber(EvidenceRequest evidenceRequest) {
         try {
-            evidenceRequest.getArtifact().setEvidenceNumber(evidenceRequest.getArtifact().getArtifactNumber());
+            String sourceType = evidenceRequest.getArtifact().getSourceType();
+
+            String idName = "";
+            String idFormat = "";
+            Boolean isDeposition = DEPOSITION.equalsIgnoreCase(evidenceRequest.getArtifact().getArtifactType());
+
+            if(COMPLAINANT.equalsIgnoreCase(sourceType)){
+                if(isDeposition){
+                    idName=configuration.getProsecutionWitnessConfig();
+                    idFormat=configuration.getProsecutionWitnessFormat();
+                }else{
+                    idName=configuration.getProsecutionConfig();
+                    idFormat=configuration.getProsecutionFormat();
+                }
+
+            } else if (ACCUSED.equalsIgnoreCase(sourceType)) {
+                if(isDeposition){
+                    idName=configuration.getDefenceWitnessConfig();
+                    idFormat=configuration.getDefenceWitnessFormat();
+                }else{
+                    idName=configuration.getDefenceConfig();
+                    idFormat=configuration.getDefenceFormat();
+                }
+
+            } else if (COURT.equalsIgnoreCase(sourceType)) {
+                if(isDeposition){
+                    idName=configuration.getCourtWitnessConfig();
+                    idFormat=configuration.getCourtWitnessFormat();
+                }
+                else {
+                    idName=configuration.getCourtConfig();
+                    idFormat=configuration.getCourtFormat();
+                }
+            }
+
+            String tenantId = getTenantId(evidenceRequest.getArtifact().getFilingNumber());
+
+            List<String> evidenceNumberList = idgenUtil.getIdList(
+                    evidenceRequest.getRequestInfo(),
+                    tenantId,
+                    idName,
+                    idFormat,
+                    1,
+                    false
+            );
+
+            evidenceRequest.getArtifact().setEvidenceNumber(tenantId+"-"+evidenceNumberList.get(0));
             evidenceRequest.getArtifact().setIsEvidence(true);
         } catch (Exception e) {
             log.error("Error enriching evidence number upon update: {}", e.toString());
@@ -109,6 +144,9 @@ public class EvidenceEnrichment {
         }
     }
 
+    private String getTenantId(String filingNumber){
+        return filingNumber.replace("-","");
+    }
 
     public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
         try {

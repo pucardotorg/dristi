@@ -1,8 +1,6 @@
 package org.pucar.dristi.enrichment;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
@@ -78,8 +75,8 @@ public class EvidenceEnrichmentTest {
         List<String> idList = new ArrayList<>();
         idList.add("artifactNumber");
         when(idgenUtil.getIdList(any(), any(), any(), any(), any(),any())).thenReturn(idList);
-        when(configuration.getCourtConfig()).thenReturn("config");
-        when(configuration.getCourtFormat()).thenReturn("testformat");
+        when(configuration.getArtifactConfig()).thenReturn("config");
+        when(configuration.getArtifactFormat()).thenReturn("testformat");
 
         // Call the method to be tested
         evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest);
@@ -100,35 +97,6 @@ public class EvidenceEnrichmentTest {
             assertEquals(artifact.getFile().getId(), artifact.getFile().getDocumentUid());
         }
     }
-
-//    @Test
-//    public void testGetIdgenByArtifactTypeAndSourceTpye() {
-//        // Test for "complainant" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
-//        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "COMPLAINANT"));
-//        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "COMPLAINANT"));
-//
-//        // Test for "accused" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
-//        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "ACCUSED"));
-//        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "ACCUSED"));
-//
-//        // Test for "court" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
-//        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "COURT"));
-//        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "COURT"));
-//
-//        // Test for "complainant" sourceType with "DEPOSITION" artifactType
-//        assertEquals("document.witness_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "COMPLAINANT"));
-//
-//        // Test for "accused" sourceType with "DEPOSITION" artifactType
-//        assertEquals("document.witness_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "ACCUSED"));
-//
-//        // Test for "court" sourceType with "DEPOSITION" artifactType
-//        assertEquals("document.witness_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "COURT"));
-//
-//        // Test for invalid combinations
-//        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("INVALID_TYPE", "COMPLAINANT"));
-//        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "invalidSource"));
-//        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("INVALID_TYPE", "invalidSource"));
-//    }
 
 
     @Test
