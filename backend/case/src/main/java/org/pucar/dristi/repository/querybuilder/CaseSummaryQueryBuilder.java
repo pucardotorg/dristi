@@ -150,6 +150,7 @@ public class CaseSummaryQueryBuilder {
     }
 
     public String getCaseBaseQuery(@Valid CaseSearchCriteria criteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        Boolean firstOrCondition = true;
 
         StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
         query.append(FROM_CASES_TABLE);
@@ -159,24 +160,25 @@ public class CaseSummaryQueryBuilder {
             query.append(" cases.tenantid = ? ");
             preparedStmtList.add(criteria.getTenantId());
             preparedStmtArgList.add(Types.VARCHAR);
+            query.append(AND);
         }
 
         if (!CollectionUtils.isEmpty(criteria.getCaseId())) {
-            addClauseIfRequired(query, preparedStmtList);
             query.append(" cases.id IN ( ").append(createQuery(criteria.getCaseId())).append(" ) ");
             addToPreparedStatement(preparedStmtList, criteria.getCaseId());
             addToPreparedStatementArgs(preparedStmtArgList, Types.VARCHAR, criteria.getCaseId());
+            firstOrCondition =false;
         }
 
         if (!CollectionUtils.isEmpty(criteria.getFilingNumber())) {
-            addClauseIfRequired(query, preparedStmtList);
+            if(!firstOrCondition) addClauseIfRequired(query, preparedStmtList);
             query.append(" cases.filingnumber IN ( ").append(createQuery(criteria.getFilingNumber())).append(" ) ");
             addToPreparedStatement(preparedStmtList, criteria.getFilingNumber());
             addToPreparedStatementArgs(preparedStmtArgList, Types.VARCHAR, criteria.getFilingNumber());
         }
 
         if (!CollectionUtils.isEmpty(criteria.getCnrNumber())) {
-            addClauseIfRequired(query, preparedStmtList);
+            if(!firstOrCondition) addClauseIfRequired(query, preparedStmtList);
             query.append(" cases.cnrNumber IN ( ").append(createQuery(criteria.getCnrNumber())).append(" ) ");
             addToPreparedStatement(preparedStmtList, criteria.getCnrNumber());
             addToPreparedStatementArgs(preparedStmtArgList, Types.VARCHAR, criteria.getCnrNumber());

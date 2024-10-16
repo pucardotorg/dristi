@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-@OneOf
+@OneOf(message = "One of caseId, filingNumber, or cnrNumber must be provided")
 public class CaseSearchCriteria {
 
     @NotNull
