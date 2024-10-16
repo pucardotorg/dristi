@@ -189,21 +189,23 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                   </React.Fragment>
                 )}
 
-                <InfoCard
-                  variant={isUserVerified ? "success" : "default"}
-                  label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
-                  additionalElements={{}}
-                  inline
-                  text={
-                    isUserVerified
-                      ? isAdvocateFilingCase
-                        ? t("CS_ADVOCATE_VERIFY_COMPLAINANT_ID")
-                        : t("CS_ID_VERIFIED_NOTE")
-                      : t("CS_AADHAR_VERIFICATION_NOTE")
-                  }
-                  textStyle={{}}
-                  className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
-                />
+                {isUserVerified && (
+                  <InfoCard
+                    variant={isUserVerified ? "success" : "default"}
+                    label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
+                    additionalElements={{}}
+                    inline
+                    text={
+                      isUserVerified
+                        ? isAdvocateFilingCase
+                          ? t("CS_ADVOCATE_VERIFY_COMPLAINANT_ID")
+                          : t("CS_ID_VERIFIED_NOTE")
+                        : t("CS_AADHAR_VERIFICATION_NOTE")
+                    }
+                    textStyle={{}}
+                    className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
+                  />
+                )}
               </React.Fragment>
             ) : (
               [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (

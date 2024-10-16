@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, LabelFieldPair, TextInput, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Axios from "axios";
 import React, { useMemo, useState } from "react";
 import LocationSearch from "./LocationSearch";
@@ -16,19 +16,38 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
   const configKey = `${config.key}-select`;
   // const configKey = config.key;
   const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
-  const { inputs, uuid } = useMemo(
-    () => ({
-      inputs: config?.populators?.inputs || [
-        {
-          label: "CS_LOCATION",
-          type: "LocationSearch",
-          name: [],
-        },
-      ],
-      uuid: generateUUID(),
-    }),
-    [config?.populators?.inputs]
+
+  const { isLoading: isTypeOfAddressData, data: typeOfAddressData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "TypeOfAddress" }],
+    {
+      cacheTime: 0,
+      select: (data) => {
+        return data?.case?.TypeOfAddress || [];
+      },
+    }
   );
+
+  const { inputs, uuid } = useMemo(() => {
+    const defaultInputs = [
+      {
+        label: "CS_LOCATION",
+        type: "LocationSearch",
+        name: [],
+      },
+    ];
+    const finalInputs = config?.populators?.inputs ? [...config.populators.inputs] : defaultInputs;
+    const typeOfAddressField = finalInputs.find((input) => input.name === "typeOfAddress");
+    if (typeOfAddressField) {
+      typeOfAddressField.options = typeOfAddressData;
+    }
+
+    return {
+      inputs: finalInputs,
+      uuid: generateUUID(),
+    };
+  }, [config?.populators?.inputs, typeOfAddressData]);
 
   const getLatLngByPincode = async (pincode) => {
     const key = window?.globalConfigs?.getConfig("GMAPS_API_KEY");
@@ -220,6 +239,17 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                       isFirstRender = false;
                     }}
                   />
+                ) : input?.type === "Radio" ? (
+                  <RadioButtons
+                    style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...input.styles }}
+                    selectedOption={formData?.[config?.key]?.[input?.name]}
+                    options={input?.options}
+                    optionsKey={"code"}
+                    innerStyles={{ justifyContent: "start" }}
+                    onSelect={(value) => {
+                      setValue(value, input?.name);
+                    }}
+                  />
                 ) : (
                   <React.Fragment>
                     <TextInput
@@ -239,6 +269,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                 {currentValue && currentValue.length > 0 && input.validation && checkIfValidated(currentValue, input) && (
                   <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
                     <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                  </CardLabelError>
+                )}
+                {errors[input?.name] && (
+                  <CardLabelError>
+                    <span style={{ color: "#ff0000" }}>{t(errors[input?.name]?.message)}</span>
                   </CardLabelError>
                 )}
               </div>

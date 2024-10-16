@@ -12,6 +12,12 @@ const selectCompMultiConfig = {
   withoutLabel: true,
   populators: {
     inputs: [
+      {
+        label: "CS_TYPE_OF_ADDRESS",
+        type: "Radio",
+        name: "typeOfAddress",
+        options: [],
+      },
       { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
       {
         label: "PINCODE",
@@ -101,6 +107,27 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError
     }
   }, [formData]);
 
+  const { isLoading: isTypeOfAddressData, data: typeOfAddressData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "TypeOfAddress" }],
+    {
+      cacheTime: 0,
+      select: (data) => {
+        return data?.case?.TypeOfAddress || [];
+      },
+    }
+  );
+
+  const modifiedSelectCompMultiConfig = useMemo(() => {
+    const config = { ...selectCompMultiConfig };
+    const typeOfAddressField = config.populators.inputs.find((input) => input.name === "typeOfAddress");
+    if (typeOfAddressField) {
+      typeOfAddressField.options = typeOfAddressData;
+    }
+    return config;
+  }, [typeOfAddressData]);
+
   const addressLabel = useMemo(() => {
     return formData?.respondentType?.code;
   }, [formData?.respondentType]);
@@ -162,7 +189,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError
             </div>
             <LocationComponent
               t={t}
-              config={selectCompMultiConfig}
+              config={modifiedSelectCompMultiConfig}
               locationFormData={data}
               onLocationSelect={(key, value) => {
                 onChange(key, value, data.id);

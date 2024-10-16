@@ -99,7 +99,12 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
   }
 };
 
-export const showToastForComplainant = ({ formData, setValue, selected, setSuccessToast }) => {
+export const showToastForComplainant = ({ formData, setValue, selected, setSuccessToast, formState, clearErrors }) => {
+  if (selected === "respondentDetails") {
+    if (formData?.addressDetails?.[0]?.addressDetails?.typeOfAddress && Object?.keys(formState?.errors)?.includes("typeOfAddress")) {
+      clearErrors("typeOfAddress");
+    }
+  }
   if (selected === "complainantDetails") {
     if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType && formData?.complainantId?.isFirstRender) {
       setValue("complainantId", { ...formData?.complainantId, isFirstRender: false });
@@ -109,11 +114,17 @@ export const showToastForComplainant = ({ formData, setValue, selected, setSucce
         successMsg: "CS_AADHAR_VERIFIED_SUCCESS_MSG",
       }));
     }
+    if (
+      (formData?.addressDetails?.typeOfAddress || formData?.addressCompanyDetails?.typeOfAddress) &&
+      Object?.keys(formState?.errors)?.includes("typeOfAddress")
+    ) {
+      clearErrors("typeOfAddress");
+    }
     const formDataCopy = structuredClone(formData);
     const addressDet = formDataCopy?.complainantVerification?.individualDetails?.addressDetails;
     const addressDetSelect = formDataCopy?.complainantVerification?.individualDetails?.["addressDetails-select"];
     if (!!addressDet && !!addressDetSelect) {
-      setValue("addressDetails", addressDet);
+      setValue("addressDetails", { ...addressDet, typeOfAddress: formDataCopy?.addressDetails?.typeOfAddress });
       setValue("addressDetails-select", addressDetSelect);
     }
   }
@@ -209,7 +220,7 @@ export const checkIfscValidation = ({ formData, setValue, selected }) => {
 
 export const checkNameValidation = ({ formData, setValue, selected, reset, index, formdata }) => {
   if (selected === "respondentDetails") {
-    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName || formData?.respondentAge) {
+    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
         if (["respondentFirstName", "respondentMiddleName", "respondentLastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
@@ -226,25 +237,6 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
               .replace(/ +/g, " ");
             if (updatedValue !== oldValue) {
               const element = document.querySelector(`[name="${key}"]`);
-              const start = element?.selectionStart;
-              const end = element?.selectionEnd;
-              setValue(key, updatedValue);
-              setTimeout(() => {
-                element?.setSelectionRange(start, end);
-              }, 0);
-            }
-          }
-        }
-        if (key === "respondentAge" && Object.hasOwnProperty.call(formDataCopy, key)) {
-          const oldValue = formDataCopy[key];
-          let value = oldValue;
-          if (typeof value === "string") {
-            let updatedValue = value?.replace(/\D/g, "");
-            if (updatedValue?.length > 4) {
-              updatedValue = updatedValue?.substring(0, 4);
-            }
-            if (updatedValue !== oldValue) {
-              const element = document?.querySelector(`[name="${key}"]`);
               const start = element?.selectionStart;
               const end = element?.selectionEnd;
               setValue(key, updatedValue);
@@ -282,24 +274,6 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
                 element?.setSelectionRange(start, end);
               }, 0);
             }
-          }
-        }
-        if (key === "complainantAge" && Object.hasOwnProperty.call(formDataCopy, key)) {
-          const oldValue = formDataCopy[key];
-          let value = oldValue;
-
-          let updatedValue = value?.replace(/\D/g, "");
-          if (updatedValue?.length > 4) {
-            updatedValue = updatedValue?.substring(0, 4);
-          }
-          if (updatedValue !== oldValue) {
-            const element = document?.querySelector(`[name="${key}"]`);
-            const start = element?.selectionStart;
-            const end = element?.selectionEnd;
-            setValue(key, updatedValue);
-            setTimeout(() => {
-              element?.setSelectionRange(start, end);
-            }, 0);
           }
         }
       }
@@ -568,6 +542,11 @@ export const respondentValidation = ({
 }) => {
   if (selected === "respondentDetails") {
     const formDataCopy = structuredClone(formData);
+    if (!formDataCopy?.addressDetails?.[0]?.addressDetails?.typeOfAddress) {
+      setFormErrors("typeOfAddress", { message: "CORE_REQUIRED_FIELD_ERROR" });
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
     if ("inquiryAffidavitFileUpload" in formDataCopy) {
       if (
         formData?.addressDetails?.some(
@@ -672,7 +651,16 @@ export const complainantValidation = ({ formData, t, caseDetails, selected, setS
       setShowErrorToast(true);
       return true;
     }
-
+    if (formData.complainantType.code === "INDIVIDUAL" && !formData.addressDetails.typeOfAddress) {
+      setFormErrors("typeOfAddress", { message: "CORE_REQUIRED_FIELD_ERROR" });
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+    if (formData.complainantType.code !== "INDIVIDUAL" && !formData?.addressCompanyDetails?.typeOfAddress) {
+      setFormErrors("typeOfAddress", { message: "CORE_REQUIRED_FIELD_ERROR" });
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
     if (!formData?.complainantVerification?.mobileNumber || !formData?.complainantVerification?.otpNumber) {
       setShowErrorToast(true);
       setFormErrors("complainantVerification", { mobileNumber: "PLEASE_VERIFY_YOUR_PHONE_NUMBER" });
@@ -837,6 +825,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
         familyName: data?.lastName,
         otherNames: data?.middleName,
       },
+      // dateOfBirth: new Date(data?.dateOfBirth).getTime(),
       userDetails: {
         username: data?.complainantVerification?.userDetails?.userName,
         roles: [
@@ -877,6 +866,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
         {
           tenantId: tenantId,
           type: "PERMANENT",
+          // type: data?.addressDetails?.typeOfAddress,
           latitude: data?.addressDetails?.coordinates?.latitude,
           longitude: data?.addressDetails?.coordinates?.longitude,
           city: data?.addressDetails?.city,
@@ -1731,7 +1721,6 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "prayerSwornStatement") {
-    const infoBoxData = { header: "", data: "" };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
@@ -1812,19 +1801,11 @@ export const updateCaseDetails = async ({
             );
             setFormDataValue("swornStatement", documentData?.swornStatement);
           }
-
-          if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
-            infoBoxData.header = "CS_RESOLVE_WITH_ADR";
-            if (data?.data?.caseSettlementCondition?.text) {
-              infoBoxData.data = data?.data?.caseSettlementCondition?.text;
-            }
-          }
           return {
             ...data,
             data: {
               ...data.data,
               ...documentData,
-              infoBoxData,
             },
           };
         })

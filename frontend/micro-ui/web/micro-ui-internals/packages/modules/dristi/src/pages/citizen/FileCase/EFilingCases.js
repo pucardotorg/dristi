@@ -1261,7 +1261,7 @@ function EFilingCases({ path }) {
         currentDisplayIndex,
       });
       validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
-      showToastForComplainant({ formData, setValue, selected, setSuccessToast });
+      showToastForComplainant({ formData, setValue, selected, setSuccessToast, formState, clearErrors });
       setFormdata(
         formdata.map((item, i) => {
           return i === index

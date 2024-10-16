@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, RadioButtons } from "@egovernments/digit-ui-react-components";
 import LocationSearch, { defaultCoordinates } from "./LocationSearch";
 import Axios from "axios";
 
@@ -206,6 +206,17 @@ const LocationComponent = ({
                     }}
                     disable={input.isDisabled || disable}
                   />
+                ) : input?.type === "Radio" ? (
+                  <RadioButtons
+                    style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...input.styles }}
+                    selectedOption={currentValue}
+                    options={input?.options}
+                    optionsKey={"code"}
+                    innerStyles={{ justifyContent: "start" }}
+                    onSelect={(value) => {
+                      setValue(value, input?.name);
+                    }}
+                  />
                 ) : (
                   <TextInput
                     className="field desktop-w-full"
@@ -230,6 +241,11 @@ const LocationComponent = ({
                 {errors?.pincode && input?.name === "pincode" && (
                   <CardLabelError>
                     <span style={{ color: "#ff0000" }}>{t(errors?.pincode?.message)}</span>
+                  </CardLabelError>
+                )}
+                {errors[input?.name] && (
+                  <CardLabelError>
+                    <span style={{ color: "#ff0000" }}>{t(errors[input?.name]?.message)}</span>
                   </CardLabelError>
                 )}
               </div>

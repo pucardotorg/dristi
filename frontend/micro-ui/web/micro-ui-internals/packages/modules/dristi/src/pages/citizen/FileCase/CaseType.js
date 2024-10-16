@@ -356,11 +356,17 @@ function CaseType({ t }) {
         serialNumber: "06",
       },
       {
-        header: "Any other document you deem necessary.",
+        header: "Affidavit under section 223 of BNSS",
+        subtext: "Affidavit under section 223 of BNSS must be there in the infobox at the start of filing.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "07",
+      },
+      {
+        header: "Any other document you deem necessary",
         subtext:
           "Please include any additional documents you believe will strengthen your case and that will be crucial in substantiating your claims when filing the complaint.",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
-        serialNumber: "07",
+        serialNumber: "08",
       },
     ];
     return page === 0 ? caseTypeDetails : listDocumentDetails;

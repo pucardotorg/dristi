@@ -34,6 +34,11 @@ export const reviewCaseFileFormConfig = [
                   value: "complainantVerification.complainantAge",
                 },
                 {
+                  type: "text",
+                  label: "DESIGNATION",
+                  value: "complainantVerification.complainantDesignation",
+                },
+                {
                   type: "image",
                   label: "CS_ID_PROOF",
                   value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
@@ -89,6 +94,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "AGE",
                   value: "respondentAge",
+                },
+                {
+                  type: "text",
+                  label: "DESIGNATION",
+                  value: "respondentDesignation",
                 },
                 {
                   type: "text",
@@ -198,6 +208,11 @@ export const reviewCaseFileFormConfig = [
                   type: "amount",
                   label: "CS_CHEQUE_AMOUNT",
                   value: "chequeAmount",
+                },
+                {
+                  type: "text",
+                  label: "POLICE_STATION",
+                  value: "policeStation",
                 },
                 {
                   type: "text",
@@ -363,6 +378,11 @@ export const reviewCaseFileFormConfig = [
                   value: "emails.emailId",
                 },
                 {
+                  type: "text",
+                  label: "DATE_OF_BIRTH",
+                  value: "witnessDateOfBirth",
+                },
+                {
                   type: "address",
                   label: "ADDRESS",
                   value: "addressDetails",
@@ -381,15 +401,15 @@ export const reviewCaseFileFormConfig = [
               label: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
               icon: "PrayerSwornIcon",
               config: [
-                {
-                  type: "infoBox",
-                  value: "infoBoxData",
-                },
-                {
-                  type: "text",
-                  label: "CS_CASE_SETTLEMENT_CONDITION_SUBHEADER",
-                  value: "caseSettlementCondition.text",
-                },
+                // {
+                //   type: "infoBox",
+                //   value: "infoBoxData",
+                // },
+                // {
+                //   type: "text",
+                //   label: "CS_CASE_SETTLEMENT_CONDITION_SUBHEADER",
+                //   value: "caseSettlementCondition.text",
+                // },
                 {
                   type: "text",
                   label: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
