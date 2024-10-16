@@ -14,7 +14,7 @@ import { getAllAssignees } from "./EfilingValidationUtils";
 import { Urls } from "../../../hooks";
 
 const getStyles = () => ({
-  container: { display: "flex", flexDirection: "row", height: "100vh" },
+  container: { display: "flex", flexDirection: "row", height: "100vh", marginBottom: "50px" },
   leftPanel: {
     flex: 1,
     padding: "24px 16px 16px 16px",
@@ -67,6 +67,7 @@ const getStyles = () => ({
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
+    whiteSpace: "nowrap",
   },
   details: { color: "#231F20", fontWeight: 700, fontSize: "18px" },
   description: { color: "#77787B", fontSize: "16px", fontWeight: 400 },
@@ -148,6 +149,7 @@ const dayInMillisecond = 24 * 3600 * 1000;
 const ComplainantSignature = ({ path }) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const Digit = window.Digit || {};
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const todayDate = new Date().getTime();
@@ -157,10 +159,11 @@ const ComplainantSignature = ({ path }) => {
   const [isDocumentUpload, setDocumentUpload] = useState(false);
   const [formData, setFormData] = useState({});
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const fileStoreId = "2234aee6-be86-4e22-8850-5196245a8e82";
   const styles = getStyles();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const [signatureDocumentId, setSignatureDocumentId] = useState(null);
   const { downloadPdf } = useDownloadCasePdf();
   const { handleEsign } = Digit.Hooks.orders.useESign();
@@ -281,11 +284,11 @@ const ComplainantSignature = ({ path }) => {
   };
 
   const handleCasePdf = () => {
-    downloadPdf(tenantId, signatureDocumentId || DocumentFileStoreId || fileStoreId);
+    downloadPdf(tenantId, signatureDocumentId || DocumentFileStoreId);
   };
 
   const handleEsignAction = () => {
-    handleEsign(name, "ci", DocumentFileStoreId || fileStoreId);
+    handleEsign(name, "ci", DocumentFileStoreId);
   };
 
   const handleUploadFile = () => {
@@ -395,6 +398,7 @@ const ComplainantSignature = ({ path }) => {
     localStorage.removeItem("isSignSuccess");
     localStorage.removeItem("signStatus");
     localStorage.removeItem("fileStoreId");
+    localStorage.removeItem("esignProcess");
 
     setLoader(true);
     let calculationResponse = {};
@@ -407,7 +411,7 @@ const ComplainantSignature = ({ path }) => {
             ...caseDetails,
             additionalDetails: {
               ...caseDetails?.additionalDetails,
-              signedCaseDocument: signatureDocumentId ? signatureDocumentId : fileStoreId,
+              signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
             },
             workflow: {
               ...caseDetails?.workflow,
@@ -451,6 +455,8 @@ const ComplainantSignature = ({ path }) => {
         }
       });
       calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
+      setLoader(false);
+      history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
     } else {
       await DRISTIService.caseUpdateService(
         {
@@ -458,7 +464,7 @@ const ComplainantSignature = ({ path }) => {
             ...caseDetails,
             additionalDetails: {
               ...caseDetails?.additionalDetails,
-              signedCaseDocument: signatureDocumentId ? signatureDocumentId : fileStoreId,
+              signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
             },
             workflow: {
               ...caseDetails?.workflow,
@@ -493,10 +499,9 @@ const ComplainantSignature = ({ path }) => {
           });
         }
       });
-      calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
+      setLoader(false);
+      history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
     }
-    setLoader(false);
-    history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
   };
 
   const isSubmitEnabled = () => {
@@ -556,9 +561,9 @@ const ComplainantSignature = ({ path }) => {
               <div>{t("COMPLAINT_SIGN")}:</div>
               <div style={{ marginTop: "5px" }}>{litigants?.additionalDetails?.fullName}</div>
             </div>
-            {((!isAdvocateFilingCase && isEsignSuccess) ||
-              (isAdvocateFilingCase && isLitigantEsignCompleted) ||
-              (isAdvocateFilingCase && uploadDoc)) && <span style={styles.signedLabel}>{t("SIGNED")}</span>}
+            {!isAdvocateFilingCase
+              ? (isEsignSuccess || isLitigantEsignCompleted) && <span style={styles.signedLabel}>{t("SIGNED")}</span>
+              : (isLitigantEsignCompleted || uploadDoc) && <span style={styles.signedLabel}>{t("SIGNED")}</span>}
           </div>
           {advocateDetails && (
             <div style={styles.advocateDetails}>
@@ -586,14 +591,18 @@ const ComplainantSignature = ({ path }) => {
           <div style={styles.description}>{t("CS_REVIEW_CASE_FILE_SUBTEXT")}</div>
         </div>
         <div style={styles.docViewer}>
-          <DocViewerWrapper
-            docWidth={"100vh"}
-            docHeight={"70vh"}
-            fileStoreId={signatureDocumentId || DocumentFileStoreId || fileStoreId}
-            tenantId={tenantId}
-            docViewerCardClassName={"doc-card"}
-            showDownloadOption={false}
-          />
+          {signatureDocumentId || DocumentFileStoreId ? (
+            <DocViewerWrapper
+              docWidth={"100vh"}
+              docHeight={"70vh"}
+              fileStoreId={signatureDocumentId || DocumentFileStoreId}
+              tenantId={tenantId}
+              docViewerCardClassName={"doc-card"}
+              showDownloadOption={false}
+            />
+          ) : (
+            <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
+          )}
         </div>
       </div>
 
