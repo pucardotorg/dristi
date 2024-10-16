@@ -47,13 +47,13 @@ public class HearingRegistrationEnrichment {
                     document.setDocumentUid(document.getId());
                 });
             }
-            String tenantId = hearing.getCnrNumbers().get(0);
+            String tenantId = hearing.getFilingNumber().get(0).replace("-","");
 
             String idName = configuration.getHearingConfig();
             String idFormat = configuration.getHearingFormat();
 
             List<String> hearingIdList = idgenUtil.getIdList(hearingRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
-            hearing.setHearingId(hearing.getCnrNumbers().get(0) +"-"+hearingIdList.get(0));
+            hearing.setHearingId(hearing.getFilingNumber().get(0) +"-"+hearingIdList.get(0));
 
             if(null != hearing.getCourtCaseNumber())
                 hearing.setCaseReferenceNumber(hearing.getCourtCaseNumber());

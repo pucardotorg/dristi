@@ -72,7 +72,7 @@ public class Application {
     private String applicationType = null;
 
     @JsonProperty("applicationNumber")
-    @Size(min = 20, max = 48)
+    @Size(min = 2, max = 48)
     private String applicationNumber = null;
 
     @JsonProperty("issuedBy")

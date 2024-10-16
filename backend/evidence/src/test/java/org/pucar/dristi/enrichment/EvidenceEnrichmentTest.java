@@ -70,10 +70,12 @@ public class EvidenceEnrichmentTest {
         // Ensure that comments are initialized to an empty list
         artifact.setComments(new ArrayList<>());
         evidenceRequest.setArtifact(artifact);
+        String mockTenantId = "filingnumber";
+        String mockEvidenceNumber = "filing-number-AR1";
 
         // Mock idList and ensure it contains "artifactNumber"
         List<String> idList = new ArrayList<>();
-        idList.add("artifactNumber");
+        idList.add("AR1");
         when(idgenUtil.getIdList(any(), any(), any(), any(), any(),any())).thenReturn(idList);
         when(configuration.getArtifactConfig()).thenReturn("config");
         when(configuration.getArtifactFormat()).thenReturn("testformat");
@@ -82,7 +84,8 @@ public class EvidenceEnrichmentTest {
         evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest);
 
         // Verify that getIdList method is called with appropriate parameters
-        verify(idgenUtil, times(1)).getIdList(any(), any(), any(), any(), any(),any());
+        verify(idgenUtil, times(1)).getIdList(any(), eq(mockTenantId), any(), any(), any(),any());
+        assertEquals(mockEvidenceNumber, evidenceRequest.getArtifact().getArtifactNumber());
 
         // Assert that the Artifact object and its attributes are modified as expected
         assertNotNull(artifact.getAuditdetails());

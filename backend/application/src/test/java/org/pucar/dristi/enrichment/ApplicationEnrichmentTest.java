@@ -43,6 +43,7 @@ class ApplicationEnrichmentTest {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(userInfo).build();
         Application application = Application.builder()
                 .statuteSection(new StatuteSection())
+                .filingNumber("KL-123")
                 .documents(Collections.singletonList(new Document()))
                 .build();
         applicationRequest = ApplicationRequest.builder()
@@ -53,14 +54,18 @@ class ApplicationEnrichmentTest {
 
     @Test
     void enrichApplication() {
+        String mockedTenantId = "KL123";
+        String mockedAppNumber = "KL-123-AP1";
         when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt(),any()))
-                .thenReturn(Collections.singletonList("application-number"));
+                .thenReturn(Collections.singletonList("AP1"));
 
         when(configuration.getApplicationConfig()).thenReturn("config");
         when(configuration.getApplicationFormat()).thenReturn("format");
         applicationEnrichment.enrichApplication(applicationRequest);
 
         Application application = applicationRequest.getApplication();
+        assertEquals(mockedAppNumber, application.getApplicationNumber());
+
         assertNotNull(application.getId());
         assertNotNull(application.getAuditDetails());
         assertNotNull(application.getStatuteSection().getId());
@@ -70,7 +75,7 @@ class ApplicationEnrichmentTest {
             assertNotNull(document.getId());
         });
 
-        verify(idgenUtil).getIdList(any(), any(), any(), any(), anyInt(),any());
+        verify(idgenUtil).getIdList(any(), eq(mockedTenantId), any(), any(), anyInt(),any());
     }
 
     @Test

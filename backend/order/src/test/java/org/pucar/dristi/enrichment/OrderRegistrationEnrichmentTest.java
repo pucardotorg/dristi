@@ -1,6 +1,5 @@
 package org.pucar.dristi.enrichment;
 
-import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -19,6 +18,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class OrderRegistrationEnrichmentTest {
@@ -37,71 +38,101 @@ class OrderRegistrationEnrichmentTest {
         MockitoAnnotations.openMocks(this);
     }
 
-//    @Test
-//    void testEnrichOrderRegistration() {
-//        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-//        RequestInfo requestInfo = RequestInfo.builder().userInfo(user).build();
-//        Order order = Order.builder().tenantId("tenant-123").statuteSection(new StatuteSection()).build();
-//        OrderRequest orderRequest = OrderRequest.builder().requestInfo(requestInfo).order(order).build();
-//
-//        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt(),any()))
-//                .thenReturn(Collections.singletonList("ORD-2024-0001"));
-//
-//        orderRegistrationEnrichment.enrichOrderRegistration(orderRequest);
-//
-//        assertNotNull(orderRequest.getOrder().getId());
-//        assertNotNull(orderRequest.getOrder().getStatuteSection().getId());
-//        assertNotNull(orderRequest.getOrder().getAuditDetails());
-//        assertEquals("ORD-2024-0001", orderRequest.getOrder().getOrderNumber());
-//        assertNotNull(orderRequest.getOrder().getAuditDetails().getCreatedBy());
-//        assertNotNull(orderRequest.getOrder().getAuditDetails().getCreatedTime());
-//        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedBy());
-//        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedTime());
-//    }
+    private OrderRequest createMockOrderRequest() {
+        OrderRequest orderRequest = new OrderRequest();
+        Order order = new Order();
+        order.setStatuteSection(new StatuteSection());
+        order.setFilingNumber("tenant-123");
+        orderRequest.setOrder(order);
+        orderRequest.setRequestInfo(new RequestInfo());
+        orderRequest.getRequestInfo().setUserInfo(new User());
+        orderRequest.getRequestInfo().getUserInfo().setUuid(UUID.randomUUID().toString());
 
-    @Test
-    void testEnrichOrderRegistrationUponUpdate() {
-        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(user).build();
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(user.getUuid()).createdTime(System.currentTimeMillis()).build();
-        Order order = Order.builder().tenantId("tenant-123").auditDetails(auditDetails).build();
-        OrderRequest orderRequest = OrderRequest.builder().requestInfo(requestInfo).order(order).build();
-
-        orderRegistrationEnrichment.enrichOrderRegistrationUponUpdate(orderRequest);
-
-        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedBy());
-        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedTime());
-        assertEquals(user.getUuid(), orderRequest.getOrder().getAuditDetails().getLastModifiedBy());
+        return orderRequest;
     }
 
-//    @Test
-//    void testEnrichOrderRegistrationCustomException() {
-//        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-//        RequestInfo requestInfo = RequestInfo.builder().userInfo(user).build();
-//        Order order = Order.builder().tenantId("tenant-123").statuteSection(new StatuteSection()).build();
-//        OrderRequest orderRequest = OrderRequest.builder().requestInfo(requestInfo).order(order).build();
-//
-//        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt(),any()))
-//                .thenThrow(new CustomException("IDGEN_ERROR", "Error generating ID"));
-//
-//        Exception exception = assertThrows(CustomException.class, () -> {
-//            orderRegistrationEnrichment.enrichOrderRegistration(orderRequest);
-//        });
-//
-//        assertEquals("Error generating ID", exception.getMessage());
-//    }
+    @Test
+    void testEnrichOrderRegistration_Success() {
+        // Given
+        OrderRequest orderRequest = createMockOrderRequest();  // Ensure mock request is fully initialized
+        String mockTenantId = "tenant123";
+        String mockOrderId = "ORDER123";  // Mock ID to return
+        String mockOrderNumber = "tenant-123" + "-" + mockOrderId;
+
+        // Mock configuration and ID generation utility behavior
+        when(configuration.getOrderConfig()).thenReturn("orderConfigValue");  // Mock return for getOrderConfig
+        when(configuration.getOrderFormat()).thenReturn("orderFormatValue");  // Mock return for getOrderFormat
+        when(idgenUtil.getIdList(any(),any(), any(),any(), eq(1), eq(false)))
+                .thenReturn(Collections.singletonList(mockOrderId));  // Return list with one element
+
+        // When
+        orderRegistrationEnrichment.enrichOrderRegistration(orderRequest);
+
+        // Then
+        // Check that enrichment added correct fields
+        assertNotNull(orderRequest.getOrder().getAuditDetails());
+        assertNotNull(orderRequest.getOrder().getId());
+        assertEquals(mockOrderNumber, orderRequest.getOrder().getOrderNumber());
+        assertNotNull(orderRequest.getOrder().getStatuteSection().getId());
+
+        // Verify that the ID generation utility was called
+        verify(idgenUtil).getIdList(any(), eq(mockTenantId), any(), any(), eq(1), eq(false));
+    }
+
 
     @Test
-    void testEnrichOrderRegistrationUponUpdateException() {
-        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(user).build();
-        Order order = Order.builder().tenantId("tenant-123").build(); // Missing auditDetails
-        OrderRequest orderRequest = OrderRequest.builder().requestInfo(requestInfo).order(order).build();
+    void testEnrichOrderRegistration_WithoutUserInfo_ShouldDoNothing() {
+        // Given
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setRequestInfo(new RequestInfo());
+        // When
+        orderRegistrationEnrichment.enrichOrderRegistration(orderRequest);
 
+        // Then
+        verify(idgenUtil, never()).getIdList(any(), any(), any(), any(), anyInt(), anyBoolean());
+    }
+
+    @Test
+    void testEnrichOrderRegistration_ThrowsCustomException() {
+        // Given
+        OrderRequest orderRequest = createMockOrderRequest();
+
+        when(configuration.getOrderConfig()).thenReturn("orderConfig");
+        when(configuration.getOrderFormat()).thenReturn("orderFormat");
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), anyString(), eq(1), eq(false)))
+                .thenThrow(new CustomException("IDGEN_ERROR", "Error generating ID"));
+
+        // When & Then
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            orderRegistrationEnrichment.enrichOrderRegistration(orderRequest);
+        });
+        assertEquals("IDGEN_ERROR", exception.getCode());
+        assertEquals("Error generating ID", exception.getMessage());
+    }
+
+    @Test
+    void testEnrichOrderRegistrationUponUpdate_Success() {
+        // Given
+        OrderRequest orderRequest = createMockOrderRequest();
+        orderRequest.getOrder().setAuditDetails(new org.egov.common.contract.models.AuditDetails());
+
+        // When
+        orderRegistrationEnrichment.enrichOrderRegistrationUponUpdate(orderRequest);
+
+        // Then
+        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedTime());
+        assertNotNull(orderRequest.getOrder().getAuditDetails().getLastModifiedBy());
+    }
+
+    @Test
+    void testEnrichOrderRegistrationUponUpdate_ThrowsCustomException() {
+        // Given
+        OrderRequest orderRequest = new OrderRequest();  // Missing required data
+
+        // When & Then
         CustomException exception = assertThrows(CustomException.class, () -> {
             orderRegistrationEnrichment.enrichOrderRegistrationUponUpdate(orderRequest);
         });
-
-        assertEquals("Error in order enrichment service during order update process: Cannot invoke \"org.egov.common.contract.models.AuditDetails.setLastModifiedTime(java.lang.Long)\" because the return value of \"org.pucar.dristi.web.models.Order.getAuditDetails()\" is null", exception.getMessage());
+        assertEquals("ENRICHMENT_EXCEPTION", exception.getCode());
     }
 }

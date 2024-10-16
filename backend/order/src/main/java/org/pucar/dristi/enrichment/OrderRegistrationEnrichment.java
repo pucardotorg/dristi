@@ -30,7 +30,7 @@ public class OrderRegistrationEnrichment {
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {
             if (orderRequest.getRequestInfo().getUserInfo() != null) {
-                String tenantId = orderRequest.getOrder().getCnrNumber();
+                String tenantId = orderRequest.getOrder().getFilingNumber().replace("-","");
                 String idName = configuration.getOrderConfig();
                 String idFormat = configuration.getOrderFormat();
 
@@ -50,7 +50,7 @@ public class OrderRegistrationEnrichment {
                     });
                 }
 
-                String orderNumber = orderRequest.getOrder().getCnrNumber()+"-"+orderRegistrationIdList.get(0);
+                String orderNumber = orderRequest.getOrder().getFilingNumber()+"-"+orderRegistrationIdList.get(0);
                 orderRequest.getOrder().setOrderNumber(orderNumber);
                 orderRequest.getOrder().setCreatedDate(System.currentTimeMillis());
             }

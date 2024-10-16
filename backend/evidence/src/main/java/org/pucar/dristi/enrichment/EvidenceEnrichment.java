@@ -46,7 +46,7 @@ public class EvidenceEnrichment {
                     false
             );
 
-            evidenceRequest.getArtifact().setArtifactNumber(tenantId+"-"+artifactNumberList.get(0));
+            evidenceRequest.getArtifact().setArtifactNumber(evidenceRequest.getArtifact().getFilingNumber()+"-"+artifactNumberList.get(0));
 
             AuditDetails auditDetails = AuditDetails.builder()
                     .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
@@ -127,7 +127,7 @@ public class EvidenceEnrichment {
                     false
             );
 
-            evidenceRequest.getArtifact().setEvidenceNumber(tenantId+"-"+evidenceNumberList.get(0));
+            evidenceRequest.getArtifact().setEvidenceNumber(evidenceRequest.getArtifact().getFilingNumber()+"-"+evidenceNumberList.get(0));
             evidenceRequest.getArtifact().setIsEvidence(true);
         } catch (Exception e) {
             log.error("Error enriching evidence number upon update: {}", e.toString());

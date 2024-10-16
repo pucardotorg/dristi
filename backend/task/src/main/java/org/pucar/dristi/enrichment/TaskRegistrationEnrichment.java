@@ -33,7 +33,7 @@ public class TaskRegistrationEnrichment {
     public void enrichTaskRegistration(TaskRequest taskRequest) {
         try {
             Task task = taskRequest.getTask();
-            String tenantId = task.getCnrNumber();
+            String tenantId = task.getFilingNumber().replace("-","");
 
             String idName = config.getTaskConfig();
             String idFormat = config.getTaskFormat();
@@ -75,7 +75,7 @@ public class TaskRegistrationEnrichment {
             }
             task.getAmount().setId(UUID.randomUUID());
             task.setCreatedDate(System.currentTimeMillis());
-            task.setTaskNumber(task.getCnrNumber() +"-"+taskRegistrationIdList.get(0));
+            task.setTaskNumber(taskRequest.getTask().getFilingNumber() +"-"+taskRegistrationIdList.get(0));
 
         } catch (Exception e) {
             log.error("Error enriching task application :: {}", e.toString());
