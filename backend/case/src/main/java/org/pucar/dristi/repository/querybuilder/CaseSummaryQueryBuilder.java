@@ -175,6 +175,7 @@ public class CaseSummaryQueryBuilder {
             query.append(" cases.filingnumber IN ( ").append(createQuery(criteria.getFilingNumber())).append(" ) ");
             addToPreparedStatement(preparedStmtList, criteria.getFilingNumber());
             addToPreparedStatementArgs(preparedStmtArgList, Types.VARCHAR, criteria.getFilingNumber());
+            firstOrCondition =false;
         }
 
         if (!CollectionUtils.isEmpty(criteria.getCnrNumber())) {
@@ -182,6 +183,7 @@ public class CaseSummaryQueryBuilder {
             query.append(" cases.cnrNumber IN ( ").append(createQuery(criteria.getCnrNumber())).append(" ) ");
             addToPreparedStatement(preparedStmtList, criteria.getCnrNumber());
             addToPreparedStatementArgs(preparedStmtArgList, Types.VARCHAR, criteria.getCnrNumber());
+            firstOrCondition =false;
         }
 
         return query.toString();
