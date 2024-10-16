@@ -138,6 +138,9 @@ const complainantWorkflowState = {
   PENDING_ESIGN_LITIGANT: "PENDING_E-SIGN",
   PENDING_ESIGN_ADVOCATE: "PENDING_E-SIGN-2",
   UPLOAD_SIGN_DOC: "PENDING_SIGN",
+  PENDING_ESIGN_LITIGANT_SCRUTINITY: "PENDING_RE_E-SIGN",
+  UPLOAD_SIGN_DOC_SCRUTINITY: "PENDING_RE_SIGN",
+  PENDING_ESIGN_ADVOCATE_SCRUTINITY: "PENDING_RE_E-SIGN-2",
 };
 
 const stateSla = {
@@ -255,16 +258,31 @@ const ComplainantSignature = ({ path }) => {
     return caseDetails?.litigants?.filter((litigant) => litigant.partyType === "complainant.primary")?.[0];
   }, [caseDetails]);
 
+  const isScrutiny = useMemo(() => {
+    return !!caseDetails?.additionalDetails?.scrutiny?.data;
+  }, [caseDetails]);
+
   const state = useMemo(() => caseDetails?.status, [caseDetails]);
   const isSelectedEsign = useMemo(() => {
-    const esignStates = [complainantWorkflowState.PENDING_ESIGN_LITIGANT, complainantWorkflowState.PENDING_ESIGN_ADVOCATE];
+    const esignStates = [
+      complainantWorkflowState.PENDING_ESIGN_LITIGANT,
+      complainantWorkflowState.PENDING_ESIGN_ADVOCATE,
+      complainantWorkflowState.PENDING_ESIGN_ADVOCATE_SCRUTINITY,
+      complainantWorkflowState.PENDING_ESIGN_LITIGANT_SCRUTINITY,
+    ];
 
     return esignStates.includes(state);
   }, [state]);
 
-  const isSelectedUploadDoc = useMemo(() => state === complainantWorkflowState.UPLOAD_SIGN_DOC, [state]);
+  const isSelectedUploadDoc = useMemo(
+    () => [complainantWorkflowState.UPLOAD_SIGN_DOC, complainantWorkflowState.UPLOAD_SIGN_DOC_SCRUTINITY].includes(state),
+    [state]
+  );
 
-  const isLitigantEsignCompleted = useMemo(() => state === complainantWorkflowState.PENDING_ESIGN_ADVOCATE, [state]);
+  const isLitigantEsignCompleted = useMemo(
+    () => [complainantWorkflowState.PENDING_ESIGN_ADVOCATE, complainantWorkflowState.PENDING_ESIGN_ADVOCATE_SCRUTINITY].includes(state),
+    [state]
+  );
 
   const closePendingTask = async ({ status }) => {
     const entityType = "case-default";
@@ -456,6 +474,11 @@ const ComplainantSignature = ({ path }) => {
       });
       calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
       setLoader(false);
+
+      if (isScrutiny) {
+        history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
+      }
+
       history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse: calculationResponse } });
     } else {
       await DRISTIService.caseUpdateService(
