@@ -2,9 +2,17 @@ import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { FileDownloadIcon } from "../../../dristi/src/icons/svgIndex";
 import CustomCopyTextDiv from "../../../dristi/src/components/CustomCopyTextDiv";
-import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
+import { Banner, CardLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
 
-function OrderSucessModal({ order, t, handleDownloadOrders, handleClose, actionSaveLabel }) {
+const CloseBtn = (props) => {
+  return (
+    <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+      <CloseSvg />
+    </div>
+  );
+};
+
+function OrderSucessModal({ order, t, handleDownloadOrders, handleClose, actionSaveLabel, handleCloseSuccessModal }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -31,6 +39,8 @@ function OrderSucessModal({ order, t, handleDownloadOrders, handleClose, actionS
 
   return (
     <Modal
+      headerBarMain={actionSaveLabel !== "Close" && true}
+      headerBarEnd={actionSaveLabel !== "Close" && <CloseBtn onClick={handleCloseSuccessModal} />}
       actionCancelLabel={t("DOWNLOAD_ORDER")}
       actionCancelOnSubmit={handleDownloadOrders}
       actionSaveLabel={actionSaveLabel}

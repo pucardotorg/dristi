@@ -11,7 +11,7 @@ serviceMaps:
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       queryMaps:
-        - query: INSERT INTO dristi_ocr(id, tenantid, filingnumber, filestoreid, documenttype, message, extracteddata) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_ocr(id, tenantid, filingnumber, filestoreid, documenttype, message, code, extracteddata) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
           basePath: ocr
           jsonMaps:
             - jsonPath: $.ocr.id
@@ -20,6 +20,7 @@ serviceMaps:
             - jsonPath: $.ocr.fileStoreId
             - jsonPath: $.ocr.documentType
             - jsonPath: $.ocr.message
+            - jsonPath: $.ocr.code
             - jsonPath: $.ocr.extractedData
               type: JSON
               dbType: JSONB

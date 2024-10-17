@@ -401,6 +401,7 @@ export const TabSearchconfig = {
               {
                 label: "Owner",
                 jsonPath: "owner",
+                additionalCustomization: true,
               },
               {
                 label: "Date Added",

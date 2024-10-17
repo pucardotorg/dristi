@@ -1,7 +1,7 @@
 import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCopyTextDiv";
 import { Banner, Button, DownloadIcon } from "@egovernments/digit-ui-react-components";
 import { FileIcon, PrintIcon } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { Urls } from "../hooks/services/Urls";
 
 const submitButtonStyle = {
@@ -28,6 +28,19 @@ const CustomStepperSuccess = ({
 }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const fileStore = localStorage.getItem("SignedFileStoreID");
+
+  const documentType = useMemo(() => {
+    let txt = "";
+    if (orderType === "SUMMONS") {
+      txt = "Summons";
+    } else if (orderType === "WARRANT") {
+      txt = "Warrant";
+    } else {
+      txt = "Notice";
+    }
+    return `${txt} Document`;
+  }, [orderType]);
+
   return (
     <div className="custom-stepper-modal-success" style={{ padding: "0px 20px" }}>
       <Banner
@@ -52,7 +65,7 @@ const CustomStepperSuccess = ({
         <div className="print-documents-box-div">
           <div className="print-documents-box-text">
             <FileIcon />
-            <div style={{ marginLeft: "0.5rem" }}>{orderType === "SUMMONS" ? "Summons" : "Notice"} Document</div>
+            <div style={{ marginLeft: "0.5rem" }}>{documentType}</div>
           </div>
           <button className="print-button" disabled={!fileStore}>
             <PrintIcon />

@@ -269,5 +269,6 @@ public class ApplicationProperties {
     @Value("${is.environment.central.instance}")
     private Boolean isEnvironmentCentralInstance;
 
-
+    @Value("${is.fractional.payment.allowed}")
+    private Boolean isFractionalPaymentAllowed;
 }

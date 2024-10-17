@@ -3,6 +3,7 @@ package org.egov.eTreasury.service;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.eTreasury.config.PaymentConfiguration;
+import org.egov.eTreasury.enrichment.TreasuryEnrichment;
 import org.egov.eTreasury.kafka.Producer;
 import org.egov.eTreasury.repository.TreasuryPaymentRepository;
 import org.egov.eTreasury.util.*;
@@ -52,17 +53,17 @@ public class PaymentService {
 
     private final FileStorageUtil fileStorageUtil;
 
-    private final IdgenUtil idgenUtil;
-
     private final TreasuryPaymentRepository treasuryPaymentRepository;
 
     private final PdfServiceUtil pdfServiceUtil;
 
+    private final TreasuryEnrichment treasuryEnrichment;
 
     @Autowired
     public PaymentService(PaymentConfiguration config, ETreasuryUtil treasuryUtil,
                           ObjectMapper objectMapper, EncryptionUtil encryptionUtil,
-                          Producer producer, AuthSekRepository repository, CollectionsUtil collectionsUtil, FileStorageUtil fileStorageUtil, IdgenUtil idgenUtil, TreasuryPaymentRepository treasuryPaymentRepository, PdfServiceUtil pdfServiceUtil) {
+                          Producer producer, AuthSekRepository repository, CollectionsUtil collectionsUtil,
+                          FileStorageUtil fileStorageUtil, TreasuryPaymentRepository treasuryPaymentRepository, PdfServiceUtil pdfServiceUtil, TreasuryEnrichment treasuryEnrichment) {
         this.config = config;
         this.treasuryUtil = treasuryUtil;
         this.objectMapper = objectMapper;
@@ -71,9 +72,9 @@ public class PaymentService {
         this.repository = repository;
         this.collectionsUtil = collectionsUtil;
         this.fileStorageUtil = fileStorageUtil;
-        this.idgenUtil = idgenUtil;
         this.treasuryPaymentRepository = treasuryPaymentRepository;
         this.pdfServiceUtil = pdfServiceUtil;
+        this.treasuryEnrichment = treasuryEnrichment;
     }
 
     public ConnectionStatus verifyConnection() {
@@ -126,15 +127,13 @@ public class PaymentService {
             // Decrypt the SEK using the appKey
             String decryptedSek = encryptionUtil.decryptAES(secretMap.get("sek"), secretMap.get("appKey"));
 
-            String departmentId = idgenUtil.getIdList(requestInfo,config.getEgovStateTenantId(),config.getIdName(),null,1).get(0);
-            AuthSek authSek = buildAuthSek(challanData, secretMap, decryptedSek, departmentId);
+            // Prepare the request body
+            ChallanDetails challanDetails  = treasuryEnrichment.generateChallanDetails(challanData, requestInfo);
+
+            AuthSek authSek = buildAuthSek(challanData, secretMap, decryptedSek, challanDetails.getDepartmentId());
             saveAuthTokenAndSek(requestInfo, authSek);
 
-            // Prepare the request body
-            challanData.getChallanDetails().setServiceDeptCode(config.getServiceDeptCode());
-            challanData.getChallanDetails().setDepartmentId(departmentId);
-            challanData.getChallanDetails().setOfficeCode(config.getOfficeCode());
-            String postBody = generatePostBody(decryptedSek, objectMapper.writeValueAsString(challanData.getChallanDetails()));
+            String postBody = generatePostBody(decryptedSek, objectMapper.writeValueAsString(challanDetails));
 
             // Prepare headers
             Headers headers = new Headers();
@@ -307,14 +306,17 @@ public class PaymentService {
     public void callCollectionServiceAndUpdatePayment(TreasuryPaymentRequest request) {
 
         String paymentStatus = String.valueOf(request.getTreasuryPaymentData().getStatus());
-        if(!config.isTest() && paymentStatus.equals("N")){
-            return;
+        BigDecimal totalAmountPaid = new BigDecimal(String.valueOf(request.getTreasuryPaymentData().getAmount()));
+        if (paymentStatus.equals("N")) {
+            if (config.isTest()) {
+                totalAmountPaid = BigDecimal.valueOf(request.getTreasuryPaymentData().getTotalDue());
+            }
         }
 
         PaymentDetail paymentDetail = PaymentDetail.builder()
                 .billId(request.getTreasuryPaymentData().getBillId())
                 .totalDue(BigDecimal.valueOf(request.getTreasuryPaymentData().getTotalDue()))
-                .totalAmountPaid(new BigDecimal(String.valueOf(request.getTreasuryPaymentData().getAmount())))
+                .totalAmountPaid(totalAmountPaid)
                 .businessService(request.getTreasuryPaymentData().getBusinessService()).build();
         Payment payment = Payment.builder()
                 .tenantId(config.getEgovStateTenantId())

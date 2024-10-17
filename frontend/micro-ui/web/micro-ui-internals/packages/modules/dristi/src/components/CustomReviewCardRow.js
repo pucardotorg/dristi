@@ -171,6 +171,9 @@ const CustomReviewCardRow = ({
       case "text":
         const textValue = extractValue(data, value);
         const dependentOnValue = extractValue(data, textDependentOn);
+        if (showFlagIcon && dependentOnValue && t(textDependentValue)) {
+          showFlagIcon = false;
+        }
         return (
           <div className={`text-main ${bgclassname}`}>
             <div className="text">

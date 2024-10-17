@@ -250,7 +250,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     Boolean(filteredTasks?.[0]?.taskNumber && suffix)
   );
 
-  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
+  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading, refetch: refetchBreakupResponse } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
     {
       Criteria: [
         {
@@ -266,6 +266,10 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     "dristi",
     Boolean(tasksData)
   );
+
+  useEffect(() => {
+    refetchBreakupResponse();
+  }, [businessService, channelId, filteredTasks]);
 
   const onPayOnline = async () => {
     // console.log("clikc");
@@ -449,7 +453,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         },
       ],
     };
-  }, [filteredTasks, onPayOnline]);
+  }, [filteredTasks, onPayOnline, breakupResponse]);
 
   const handleClose = () => {
     if (paymentLoader === false) {

@@ -16,6 +16,7 @@ import DocViewerWrapper from "../docViewerWrapper";
 import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+import { removeInvalidNameParts } from "../../../Utils";
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
 };
@@ -597,7 +598,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               applicationStatus: type === "accept" ? t("APPROVED") : t("REJECTED"),
             },
             ...(documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName && {
-              orderDetails: { parties: [documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName] },
+              orderDetails: { parties: [{ partyName: documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName }] },
             }),
             ...(["INITIATING_RESCHEDULING_OF_HEARING_DATE", "CHECKOUT_ACCEPTANCE"].includes(orderType) && {
               hearingNumber: documentSubmission?.[0]?.applicationList?.additionalDetails?.hearingId,
@@ -806,7 +807,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                       <h3>{t("SENDER")}</h3>
                     </div>
                     <div className="info-value">
-                      <h3>{documentSubmission[0]?.details.sender}</h3>
+                      <h3>{removeInvalidNameParts(documentSubmission[0]?.details.sender)}</h3>
                     </div>
                   </div>
                   <div className="info-row">

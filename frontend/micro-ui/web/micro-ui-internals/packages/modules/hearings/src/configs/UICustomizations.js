@@ -273,6 +273,7 @@ export const UICustomizations = {
                   Email: "email",
                   Post: "address",
                   Police: "address",
+                  RPAD: "address",
                 };
                 const channelDetails = taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]];
                 return {
@@ -282,7 +283,6 @@ export const UICustomizations = {
                   remarks: taskDetail?.deliveryChannels?.status,
                 };
               });
-            console.log("taskData", taskData);
             return { list: taskData };
           },
         },
@@ -302,6 +302,8 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
+        case "Status":
+          return t(value);
         default:
           return t("ES_COMMON_NA");
       }

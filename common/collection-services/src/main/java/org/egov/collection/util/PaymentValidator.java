@@ -369,6 +369,7 @@ public class PaymentValidator {
 
         // If IsAdvanceAllowed is null it is interpretated as not allowed
         Boolean isAdvanceAllowed = !(bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed());
+        Boolean isFractionalAllowed = applicationProperties.getIsFractionalPaymentAllowed();
 
         // Total amount to be paid should be same in bill and paymentDetail
         if (paymentDetail.getTotalDue().compareTo(bill.getTotalAmount()) != 0)
@@ -376,8 +377,13 @@ public class PaymentValidator {
                     "The amount to be paid is mismatching with bill for paymentDetial with bill id: " + bill.getId());
 
 
+        // If advance is not allowed bill total amount should be positive value
+        if(!isAdvanceAllowed && !Utils.isPositiveValue(paymentDetail.getBill().getTotalAmount()))
+            errorMap.put("INVALID_BILL_AMOUNT","The bill amount of bill: "+paymentDetail.getBill().getId()+" is less than zero");
+
         // If advance is not allowed bill total amount should be positive integer
-        if(!isAdvanceAllowed && !Utils.isPositiveInteger(paymentDetail.getBill().getTotalAmount()))
+        if(!isFractionalAllowed && !isAdvanceAllowed
+                && !Utils.isPositiveInteger(paymentDetail.getBill().getTotalAmount()))
             errorMap.put("INVALID_BILL_AMOUNT","The bill amount of bill: "+paymentDetail.getBill().getId()+" is fractional or less than zero");
 
         // Amount to be paid should be greater than minimum collection amount
@@ -403,9 +409,17 @@ public class PaymentValidator {
                     "The paymentMode: " + paymentMode + " is not allowed for the bill: " + bill.getId());
 
         // Checks if the amount paid is positive integer
-        if (!Utils.isPositiveInteger(paymentDetail.getTotalAmountPaid()))
-            errorMap.put("INVALID_PAYMENTDETAIL",
-                    "The amount paid for the paymentDetail with bill number: " + paymentDetail.getBillId());
+
+        if(isFractionalAllowed){
+            if (!Utils.isPositiveValue(paymentDetail.getTotalAmountPaid()))
+                errorMap.put("INVALID_PAYMENTDETAIL",
+                        "The amount paid for the paymentDetail with bill number is less than zero: " + paymentDetail.getBillId());
+        }
+        else {
+            if (!Utils.isPositiveInteger(paymentDetail.getTotalAmountPaid()))
+                errorMap.put("INVALID_PAYMENTDETAIL",
+                        "The amount paid for the paymentDetail with bill number: " + paymentDetail.getBillId());
+        }
 
         // Zero amount payment is allowed only if bill amount is not positive
         if (paymentDetail.getTotalAmountPaid().compareTo(BigDecimal.ZERO) == 0
@@ -414,11 +428,11 @@ public class PaymentValidator {
                     "The amount paid for the paymentDetail with bill number: " + paymentDetail.getBillId());
 
         // Checks if the amount to be paid is fractional
-        if ((bill.getTotalAmount().remainder(BigDecimal.ONE)).doubleValue() != 0)
+        if (!isFractionalAllowed && (bill.getTotalAmount().remainder(BigDecimal.ONE)).doubleValue() != 0)
             errorMap.put("INVALID_BILL", "The due amount cannot be fractional");
 
         // Checks if the amount paid is fractional
-        if ((paymentDetail.getTotalAmountPaid().remainder(BigDecimal.ONE)).doubleValue() != 0)
+        if (!isFractionalAllowed && (paymentDetail.getTotalAmountPaid().remainder(BigDecimal.ONE)).doubleValue() != 0)
             errorMap.put("INVALID_PAYMENTDETAIL", "The amount paid cannot be fractional");
 
         // Checks if the bill is expired

@@ -51,6 +51,7 @@ export const summonsConfig = ({ filingNumber, limit, offset, orderNumber, orderI
             {
               label: "Status",
               jsonPath: "status",
+              additionalCustomization: true,
             },
             {
               label: "Remarks",

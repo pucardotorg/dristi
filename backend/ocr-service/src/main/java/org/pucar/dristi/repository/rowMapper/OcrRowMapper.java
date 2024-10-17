@@ -19,6 +19,7 @@ public class OcrRowMapper implements RowMapper<Ocr> {
         ocr.setFileStoreId(rs.getString("filestoreid"));
         ocr.setDocumentType(rs.getString("documenttype"));
         ocr.setMessage(rs.getString("message"));
+        ocr.setCode(rs.getString("code"));
         ocr.setExtractedData(rs.getObject("extracteddata"));
         return ocr;
     }

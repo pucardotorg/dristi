@@ -48,7 +48,7 @@ const casePrimaryActions = [
   { action: "REGISTER", label: "CS_REGISTER" },
   { action: "ADMIT", label: "CS_ADMIT_CASE" },
   { action: "SCHEDULE_ADMISSION_HEARING", label: "CS_SCHEDULE_ADMISSION_HEARING" },
-  { action: "ISSUE_ORDER", label: "CS_CASE_ISSUE_ORDER" },
+  { action: "ISSUE_ORDER", label: "ISSUE_NOTICE" },
 ];
 const caseSecondaryActions = [
   { action: "SEND_BACK", label: "SEND_BACK_FOR_CORRECTION" },
@@ -239,7 +239,7 @@ const AdmittedCases = () => {
     return {
       ...rep,
       name: removeInvalidNameParts(rep.additionalDetails?.advocateName),
-      partyType: `Advocate (for ${rep.representing.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName)).join(", ")})`,
+      partyType: `Advocate (for ${rep.representing?.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))?.join(", ")})`,
     };
   });
 
@@ -1605,13 +1605,13 @@ const AdmittedCases = () => {
               </React.Fragment>
             )}
             <hr className="vertical-line" />
-            <div className="sub-details-text">{caseDetails?.stage}</div>
+            <div className="sub-details-text">{t(caseDetails?.stage)}</div>
             <hr className="vertical-line" />
-            <div className="sub-details-text">{caseDetails?.substage}</div>
+            <div className="sub-details-text">{t(caseDetails?.substage)}</div>
             <hr className="vertical-line" />
             {caseDetails?.outcome && (
               <React.Fragment>
-                <div className="sub-details-text">{caseDetails?.outcome}</div>
+                <div className="sub-details-text">{t(caseDetails?.outcome)}</div>
                 <hr className="vertical-line" />
               </React.Fragment>
             )}
@@ -1880,7 +1880,7 @@ const AdmittedCases = () => {
               <SubmitBar
                 label={t(
                   [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status) && primaryAction?.action === "ADMIT"
-                    ? "CS_CASE_ISSUE_ORDER"
+                    ? "ISSUE_NOTICE"
                     : primaryAction?.label
                 )}
                 submit="submit"

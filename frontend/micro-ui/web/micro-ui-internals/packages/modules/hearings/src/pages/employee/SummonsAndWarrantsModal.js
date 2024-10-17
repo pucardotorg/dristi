@@ -212,29 +212,14 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
 
   const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType }), [filingNumber, orderId, orderNumber, orderType]);
 
-  const getFormData = (orderType, orderList) => {
-    const orderItem = orderList?.find((item) => orderType === item?.orderType);
-    const formDataKeyMap = {
-      SUMMONS: "SummonsOrder",
-      WARRANT: "warrantFor",
-      NOTICE: "noticeOrder",
-    };
-    const formDataKey = formDataKeyMap[orderType];
-    return orderItem?.additionalDetails?.formdata?.[formDataKey];
-  };
-
-  const getOrderData = (orderType, orderFormData) => {
-    return ["SUMMONS", "NOTICE"].includes(orderType) ? orderFormData?.party?.data : orderFormData;
+  const getOrderPartyData = (orderType, orderList) => {
+    return orderList?.find((item) => orderType === item?.orderType)?.orderDetails?.parties;
   };
 
   const { respondentName, partyType } = useMemo(() => {
-    const orderFormData = getFormData(orderType, orderList);
-    const orderData = getOrderData(orderType, orderFormData);
-    if (!orderData) {
-      return { respondentName: "Unknown Respondent", partyType: "Respondent" };
-    }
-    const respondentName = `${orderData?.firstName || ""} ${orderData?.middleName || ""} ${orderData?.lastName || ""}`.trim() || orderData || "";
-    const partyType = orderData?.partyType || "Respondent";
+    const partyData = getOrderPartyData(orderType, orderList);
+    const respondentName = partyData?.[0]?.partyName || "Unknown";
+    const partyType = partyData?.[0]?.partyType || "Respondent";
     return { respondentName, partyType };
   }, [orderList, orderType]);
 

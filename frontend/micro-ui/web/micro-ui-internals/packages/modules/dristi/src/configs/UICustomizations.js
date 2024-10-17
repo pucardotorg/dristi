@@ -674,12 +674,17 @@ export const UICustomizations = {
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
         case "Parties":
+          if (value === null || value === undefined || value === "undefined" || value === "null") {
+            return null;
+          }
           return (
             <div>
-              {value?.length > 2 && <ReactTooltip id={`hearing-list`}>{value?.map((party) => party.partyName)?.join(", ")}</ReactTooltip>}
+              {value?.length > 2 && (
+                <ReactTooltip id={`hearing-list`}>{value?.map((party) => party?.partyName || party?.name).join(", ")}</ReactTooltip>
+              )}
               <span data-tip data-for={`hearing-list`}>{`${value
                 ?.slice(0, 2)
-                ?.map((party) => party.partyName)
+                ?.map((party) => party?.partyName || party?.name)
                 ?.join(", ")}${value?.length > 2 ? `+${value?.length - 2}` : ""}`}</span>
             </div>
           );
@@ -694,6 +699,8 @@ export const UICustomizations = {
         case "Status":
           //Need to change the shade as per the value
           return <CustomChip text={t(value)} shade={value === "PUBLISHED" ? "green" : "orange"} />;
+        case "Owner":
+          return removeInvalidNameParts(value);
         case "Actions":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
@@ -966,8 +973,8 @@ export const UICustomizations = {
                 ...rep,
                 name: rep.additionalDetails?.advocateName,
                 partyType: `Advocate (for ${rep.representing
-                  .map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))
-                  .join(", ")})`,
+                  ?.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))
+                  ?.join(", ")})`,
               };
             });
             return {
@@ -987,14 +994,14 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Party Name":
-          return removeInvalidNameParts(value);
+          return removeInvalidNameParts(value) || "N.A.";
         case "Date Added":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
-          return <span>{formattedDate}</span>;
+          return <span>{formattedDate || "N.A."}</span>;
         case "Party Type":
           return partyTypes[value] ? partyTypes[value] : value;
         default:

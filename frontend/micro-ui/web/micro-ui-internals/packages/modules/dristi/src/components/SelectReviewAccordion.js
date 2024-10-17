@@ -87,6 +87,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const { ocrDataList, groupedByDocumentType } = useMemo(() => {
     const groupedByDocumentType = ocrData?.reduce((acc, current) => {
       const docType = current.documentType;
+      if (current.code === "NOT_A_VALID_DOCUMENT") {
+        current.message = `${t("NOT_A_VALID_DOCUMENT")} ${t(docType)}`;
+      }
       if (!acc[docType]) {
         acc[docType] = [];
       }

@@ -10,4 +10,8 @@ public class ServiceConstants {
     public static final String OCR_REQUEST_PARAMETER_DISTANCE_CUTOFF = "distance_cutoff";
     public static final String OCR_REQUEST_PARAMETER_DOCUMENT_TYPE = "doc_type";
     public static final String OCR_REQUEST_PARAMETER_EXTRACT_DATA = "extract_data";
+    public static final String NOT_A_VALID_DOCUMENT = "NOT_A_VALID_DOCUMENT";
+    public static final String RETRY_WITH_A_BETTER_QUALITY_IMAGE_CODE = "RETRY_WITH_A_BETTER_QUALITY_IMAGE";
+    public static final String RETRY_WITH_A_BETTER_QUALITY_IMAGE_MESSAGE = "Retry with a better quality image";
+    public static final String OCR_ERROR = "ERROR_FROM_OCR_SERVICE";
 }

@@ -45,4 +45,8 @@ public class Utils {
 		return bd.compareTo(BigDecimal.ZERO) >= 0
 				&& (bd.signum() == 0 || bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0);
 	}
+
+    public static boolean isPositiveValue(BigDecimal bd) {
+        return bd != null && bd.compareTo(BigDecimal.ZERO) > 0;
+    }
 }

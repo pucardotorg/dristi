@@ -1,10 +1,7 @@
-import { Link, useHistory } from "react-router-dom";
 import React from "react";
-import _ from "lodash";
-import { Button } from "@egovernments/digit-ui-react-components";
-import OverlayDropdown from "../components/custom_dropdown";
-import { formatDateDifference } from "../../../orders/src/utils";
+import { Link } from "react-router-dom";
 import { formatDate } from "../../../cases/src/utils";
+import { formatDateDifference } from "../../../orders/src/utils";
 
 const customColumnStyle = { whiteSpace: "nowrap" };
 
@@ -20,7 +17,11 @@ const handleTaskDetails = (taskDetails) => {
 
       // If the parsed result is a string, try parsing it again
       if (typeof parsed === "string") {
-        return JSON.parse(parsed);
+        try {
+          return JSON.parse(parsed);
+        } catch (e) {
+          return parsed;
+        }
       }
 
       // Return the parsed object if it's already a valid JSON object
@@ -429,6 +430,7 @@ export const UICustomizations = {
         completeStatusData = sentData;
       }
       const isCompleteStatus = Boolean(Object.keys(filterList?.completeStatus || {}).length);
+      const isIssueDate = Boolean(Object.keys(filterList?.sortCaseListByDate || {}).length);
       return {
         ...requestCriteria,
         body: {
@@ -444,6 +446,7 @@ export const UICustomizations = {
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,
+            ...(isIssueDate && filterList?.sortCaseListByDate),
           },
         },
         config: {

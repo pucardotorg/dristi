@@ -212,22 +212,7 @@ const InsideHearingMainPage = () => {
 
   const saveWitnessDeposition = () => {
     if (!hearing) return;
-    const updatedHearing = structuredClone(hearing || {});
     setWitnessModalOpen(true);
-    updatedHearing.additionalDetails = updatedHearing.additionalDetails || {};
-    updatedHearing.additionalDetails.witnessDepositions = updatedHearing.additionalDetails.witnessDepositions || [];
-    if (isDepositionSaved) {
-      return;
-    }
-    updatedHearing.additionalDetails.witnessDepositions.push({
-      ...selectedWitness,
-      deposition: witnessDepositionText,
-    });
-    _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then((res) => {
-      if (res?.hearing) {
-        setHearing(res.hearing);
-      }
-    });
   };
 
   const handleDropdownChange = (selectedWitnessOption) => {
@@ -253,6 +238,20 @@ const InsideHearingMainPage = () => {
 
   const handleProceed = async () => {
     try {
+      const updatedHearing = structuredClone(hearing || {});
+      updatedHearing.additionalDetails = updatedHearing.additionalDetails || {};
+      updatedHearing.additionalDetails.witnessDepositions = updatedHearing.additionalDetails.witnessDepositions || [];
+      if (!isDepositionSaved) {
+        updatedHearing.additionalDetails.witnessDepositions.push({
+          ...selectedWitness,
+          deposition: witnessDepositionText,
+        });
+        await _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then((res) => {
+          if (res?.hearing) {
+            setHearing(res.hearing);
+          }
+        });
+      }
       const documents = Array.isArray(hearing?.documents) ? hearing.documents : [];
       const documentsFile =
         signedDocumentUploadID !== ""

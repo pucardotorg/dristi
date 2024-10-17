@@ -9,9 +9,6 @@ import lombok.*;
 @Getter
 public class ChallanData {
 
-    @JsonProperty("ChallanDetails")
-    private ChallanDetails challanDetails;
-
     @JsonProperty("billId")
     private String billId;
 

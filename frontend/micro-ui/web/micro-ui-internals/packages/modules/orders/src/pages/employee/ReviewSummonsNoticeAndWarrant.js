@@ -22,11 +22,14 @@ const defaultSearchValues = {
 
 const handleTaskDetails = (taskDetails) => {
   try {
-    const parsed = JSON.parse(taskDetails);
-    if (typeof parsed === "string") {
-      return JSON.parse(parsed);
+    // Check if taskDetails is a string
+    if (typeof taskDetails === "string") {
+      // First, remove escape characters like backslashes if present
+      const cleanedDetails = taskDetails.replace(/\\n/g, "").replace(/\\/g, "");
+      return JSON.parse(cleanedDetails);
     }
-    return parsed;
+    // If taskDetails is not a string, return it as it is
+    return taskDetails;
   } catch (error) {
     console.error("Failed to parse taskDetails:", error);
     return null;
@@ -82,7 +85,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
       },
     },
     {},
-    true,
+    rowData?.taskNumber,
     Boolean(showActionModal || step)
   );
 
@@ -115,7 +118,6 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const orderType = useMemo(() => orderData?.list[0]?.orderType, [orderData]);
 
   const handleSubmitButtonDisable = (disable) => {
-    console.log("disable :>> ", disable);
     setIsDisabled(disable);
   };
 
@@ -298,6 +300,28 @@ const ReviewSummonsNoticeAndWarrant = () => {
     ];
   }, []);
 
+  const successMessage = useMemo(() => {
+    let msg = "";
+    if (documents) {
+      if (orderType === "NOTICE") {
+        msg = t("SUCCESSFULLY_SIGNED_NOTICE");
+      } else if (orderType === "WARRANT") {
+        msg = t("SUCCESSFULLY_SIGNED_WARRANT");
+      } else {
+        msg = t("SUCCESSFULLY_SIGNED_SUMMON");
+      }
+    } else {
+      if (orderType === "NOTICE") {
+        msg = t("SENT_NOTICE_VIA");
+      } else if (orderType === "WARRANT") {
+        msg = t("SENT_WARRANT_VIA");
+      } else {
+        msg = t("SENT_SUMMONS_VIA");
+      }
+    }
+    return `${msg}${!documents ? " " + deliveryChannel : ""}`;
+  }, [documents, orderType, deliveryChannel]);
+
   const handleSubmitEsign = useCallback(async () => {
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
@@ -323,7 +347,6 @@ const ReviewSummonsNoticeAndWarrant = () => {
 
       // Attempt to upload the document and handle the response
       const update = await taskService.UploadTaskDocument(reqBody, { tenantId });
-      console.log("Document upload successful:", update);
     } catch (error) {
       // Handle errors that occur during the upload process
       console.error("Error uploading document:", error);
@@ -365,15 +388,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
           hideSubmit: true,
           modalBody: (
             <CustomStepperSuccess
-              successMessage={`${
-                documents
-                  ? orderType === "NOTICE"
-                    ? t("SUCCESSFULLY_SIGNED_NOTICE")
-                    : t("SUCCESSFULLY_SIGNED_SUMMON")
-                  : orderType === "NOTICE"
-                  ? t("SENT_NOTICE_VIA")
-                  : t("SENT_SUMMONS_VIA")
-              }${!documents ? " " + deliveryChannel : ""}`}
+              successMessage={successMessage}
               bannerSubText={t("PARTY_NOTIFIED_ABOUT_DOCUMENT")}
               submitButtonText={documents ? "MARK_AS_SENT" : "CS_CLOSE"}
               closeButtonText={documents ? "CS_CLOSE" : "DOWNLOAD_DOCUMENT"}
@@ -383,6 +398,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
               submissionData={submissionData}
               documents={documents}
               deliveryChannel={deliveryChannel}
+              orderType={orderType}
             />
           ),
         },

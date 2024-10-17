@@ -15,7 +15,7 @@ const Heading = ({ heading }) => {
     </div>
   );
 };
-const DocumentModal = ({ config, setShow, currentStep }) => {
+const DocumentModal = ({ config, setShow, currentStep, documentStyle = {} }) => {
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
   const [step, setStep] = useState(currentStep || 0);
   // const [isDisabled, setIsDisabled] = useState(false);
@@ -94,7 +94,7 @@ const DocumentModal = ({ config, setShow, currentStep }) => {
           ? "custom-modal-stepper"
           : "custom-modal-stepper-non-doc"
       }
-      popUpStyleMain={{ zIndex: "1000" }}
+      popUpStyleMain={documentStyle}
       isDisabled={isDisabled}
     >
       {config?.isStepperModal ? config?.steps[step]?.modalBody || config?.modalBody : config?.modalBody}

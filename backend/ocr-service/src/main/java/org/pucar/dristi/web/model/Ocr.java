@@ -34,6 +34,9 @@ public class Ocr {
     @JsonProperty("message")
     private String message = null;
 
+    @JsonProperty("code")
+    private String code = null;
+
     @JsonProperty("extractedData")
     private Object extractedData = null;
 }

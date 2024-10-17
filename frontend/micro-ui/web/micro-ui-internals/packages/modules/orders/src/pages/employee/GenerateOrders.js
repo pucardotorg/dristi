@@ -1037,7 +1037,7 @@ const GenerateOrders = () => {
       orderSchema?.orderDetails?.parties?.length > 0 &&
       ["BAIL", "REJECT_VOLUNTARY_SUBMISSIONS", "APPROVE_VOLUNTARY_SUBMISSIONS", "REJECTION_RESCHEDULE_REQUEST", "CHECKOUT_REJECT"].includes(type)
     ) {
-      parties = orderSchema?.orderDetails?.parties;
+      parties = orderSchema?.orderDetails?.parties?.map((party) => party?.partyName);
     } else {
       parties = allParties?.map((party) => ({ partyName: party.name, partyType: party?.partyType }));
       return parties;
@@ -1563,8 +1563,10 @@ const GenerateOrders = () => {
           summonDetails: {
             issueDate: orderData?.auditDetails?.lastModifiedTime,
             caseFilingDate: caseDetails?.filingDate,
-            docSubType: orderFormData?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
+            docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
+          respondentDetails: respondentDetails,
+          witnessDetails: respondentDetails,
           respondentDetails: respondentDetails,
           witnessDetails: respondentDetails,
           complainantDetails: {
@@ -1597,6 +1599,7 @@ const GenerateOrders = () => {
             issueDate: orderData?.auditDetails?.lastModifiedTime,
             caseFilingDate: caseDetails?.filingDate,
             noticeType,
+            docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
           respondentDetails: respondentDetails,
           witnessDetails: respondentDetails,
@@ -1645,7 +1648,7 @@ const GenerateOrders = () => {
           caseDetails: {
             caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
-            hearingDate: new Date(orderData?.additionalDetails?.formData?.dateOfHearing || "").getTime(),
+            hearingDate: new Date(orderData?.additionalDetails?.formdata?.dateOfHearing || "").getTime(),
             judgeName: "John Koshy",
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
@@ -1678,7 +1681,7 @@ const GenerateOrders = () => {
           caseDetails: {
             title: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
-            hearingDate: new Date(orderData?.additionalDetails?.formData?.date || "").getTime(),
+            hearingDate: new Date(orderData?.additionalDetails?.formdata?.date || "").getTime(),
             judgeName: "",
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
@@ -2295,6 +2298,14 @@ const GenerateOrders = () => {
     }
   };
 
+  const handleCloseSuccessModal = () => {
+    history.push(`/${window.contextPath}/employee/dristi/home/view-case?tab=${"Orders"}&caseId=${caseDetails?.id}&filingNumber=${filingNumber}`, {
+      from: "orderSuccessModal",
+    });
+    localStorage.removeItem("fileStoreId");
+    setShowSuccessModal(false);
+  };
+
   if (!filingNumber) {
     history.push("/employee/home/home-pending-task");
   }
@@ -2402,6 +2413,7 @@ const GenerateOrders = () => {
           order={prevOrder}
           handleDownloadOrders={handleDownloadOrders}
           handleClose={handleClose}
+          handleCloseSuccessModal={handleCloseSuccessModal}
           actionSaveLabel={successModalActionSaveLabel}
         />
       )}

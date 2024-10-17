@@ -3032,7 +3032,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           )}
         </Modal>
       )}
-      {showEditRespondentDetailsModal && <DocumentModal config={registerRespondentConfig} />}
+      {showEditRespondentDetailsModal && <DocumentModal config={registerRespondentConfig} documentStyle={{ zIndex: "1000" }} />}
       {showConfirmSummonModal && <DocumentModal config={confirmSummonConfig} />}
       {showErrorToast && (
         <Toast
