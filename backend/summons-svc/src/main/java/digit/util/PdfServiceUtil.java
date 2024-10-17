@@ -122,13 +122,17 @@ public class PdfServiceUtil {
 
     private SummonsPdf createSummonsPdfFromTask(Task task) {
         Long issueDate = null;
+        String docSubType = null;
         if (NOTICE.equals(task.getTaskType())) {
             issueDate = task.getTaskDetails().getNoticeDetails().getIssueDate();
+            docSubType = task.getTaskDetails().getNoticeDetails().getDocSubType();
         } else if (SUMMON.equals(task.getTaskType())) {
             issueDate = task.getTaskDetails().getSummonDetails().getIssueDate();
+            docSubType = task.getTaskDetails().getSummonDetails().getDocSubType();
         }
         else if(WARRANT.equals(task.getTaskType())){
             issueDate = task.getTaskDetails().getWarrantDetails().getIssueDate();
+            docSubType = task.getTaskDetails().getWarrantDetails().getDocSubType();
         }
         String issueDateString = Optional.ofNullable(issueDate)
                 .map(this::formatDateFromMillis)
@@ -149,6 +153,8 @@ public class PdfServiceUtil {
                 .map(ComplainantDetails::getAddress)
                 .map(Object::toString)
                 .orElse("");
+        String respondentName = docSubType.equals(WITNESS) ? task.getTaskDetails().getWitnessDetails().getName() : task.getTaskDetails().getRespondentDetails().getName();
+        String respondentAddress = docSubType.equals(WITNESS) ? task.getTaskDetails().getWitnessDetails().getAddress().toString() : task.getTaskDetails().getRespondentDetails().getAddress().toString();
         return SummonsPdf.builder()
                 .tenantId(task.getTenantId())
                 .cnrNumber(task.getCnrNumber())
@@ -160,8 +166,8 @@ public class PdfServiceUtil {
                 .judgeName(task.getTaskDetails().getCaseDetails().getJudgeName())
                 .courtName(courtName == null ? config.getCourtName(): courtName)
                 .hearingDate(hearingDateString)
-                .respondentName(task.getTaskDetails().getRespondentDetails().getName())
-                .respondentAddress(task.getTaskDetails().getRespondentDetails().getAddress().toString())
+                .respondentName(respondentName)
+                .respondentAddress(respondentAddress)
                 .complainantName(complainantName)
                 .complainantAddress(complainantAddress)
                 .build();

@@ -100,13 +100,13 @@ public class DemandService {
         String deliveryChannel = ChannelName.fromString(task.getTaskDetails().getDeliveryChannel().getChannelName()).name();
         Map<String, String> masterCodes = getTaxHeadMasterCodes(mdmsData, businessService, deliveryChannel);
 
-        if (config.isTest()) {
-            demandDetailList.addAll(createTestDemandDetails(calculation.getTenantId(), task, businessService));
-        } else {
+        //if (config.isTest()) {
+        //    demandDetailList.addAll(createTestDemandDetails(calculation.getTenantId(), task, businessService));
+        //} else {
             for (BreakDown breakDown : calculation.getBreakDown()) {
                 demandDetailList.add(createDemandDetail(calculation.getTenantId(), breakDown, masterCodes));
             }
-        }
+        //}
         return demandDetailList;
     }
 

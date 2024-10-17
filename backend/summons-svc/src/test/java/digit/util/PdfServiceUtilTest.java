@@ -48,6 +48,8 @@ class PdfServiceUtilTest {
         TaskRequest taskRequest = mock(TaskRequest.class);
         TaskDetails taskDetails = mock(TaskDetails.class);
         SummonsDetails summonsDetails = mock(SummonsDetails.class);
+        NoticeDetails noticeDetails = mock(NoticeDetails.class);
+        WarrantDetails warrantDetails = mock(WarrantDetails.class);
         CaseDetails caseDetails = mock(CaseDetails.class);
         RespondentDetails respondentDetails = mock(RespondentDetails.class);
         ComplainantDetails complainantDetails = mock(ComplainantDetails.class);
@@ -70,8 +72,13 @@ class PdfServiceUtilTest {
         when(respondentDetails.getAddress()).thenReturn(address);
         when(taskDetails.getComplainantDetails().getName()).thenReturn("jhdf");
         when(complainantDetails.getAddress()).thenReturn(address);
+        when(taskDetails.getNoticeDetails()).thenReturn(noticeDetails);
+        when(taskDetails.getWarrantDetails()).thenReturn(warrantDetails);
         when(task.getTaskType()).thenReturn("SUMMONS");
         when(caseUtil.searchCaseDetails(any())).thenReturn(dummyJsonNode);
+        when(task.getTaskDetails().getNoticeDetails().getDocSubType()).thenReturn("ACCUSED");
+        when(task.getTaskDetails().getSummonDetails().getDocSubType()).thenReturn("ACCUSED");
+        when(task.getTaskDetails().getWarrantDetails().getDocSubType()).thenReturn("ACCUSED");
         ByteArrayResource result = pdfServiceUtil.generatePdfFromPdfService(taskRequest, tenantId, pdfTemplateKey, false);
 
         assertNotNull(result);
