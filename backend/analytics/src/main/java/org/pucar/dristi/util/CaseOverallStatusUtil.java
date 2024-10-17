@@ -47,7 +47,9 @@ public class CaseOverallStatusUtil {
 			request.put("RequestInfo", requestInfo);
 			caseOverallStatusTypeList = mdmsDataConfig.getCaseOverallStatusTypeMap().get(entityType);
 			if(config.getCaseBusinessServiceList().contains(entityType)){
-				return processCaseOverallStatus(request, referenceId, action, tenantId);
+				//Due to two actions with same name case stage is not updating correctly. So added check for status along with actions
+				//Currently only implemented this logic for case, might have to for other modules in case of similar issue
+				return processCaseOverallStatus(request, referenceId, status, action, tenantId);
 			} else if (config.getHearingBusinessServiceList().contains(entityType)) {
 				return processHearingCaseOverallStatus(request, referenceId, action, tenantId);
 			} else if (config.getOrderBusinessServiceList().contains(entityType)) {
@@ -72,8 +74,8 @@ public class CaseOverallStatusUtil {
 		return orderObject;
 	}
 
-	private Object processCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) {
-		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action), request);
+	private Object processCaseOverallStatus(JSONObject request, String referenceId, String status, String action, String tenantId) {
+		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,status,action), request);
 		return null;
 	}
 
@@ -94,9 +96,9 @@ public class CaseOverallStatusUtil {
 		return hearingObject;
 	}
 
-	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
+	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String status, String action) {
 		for (CaseOverallStatusType statusType : caseOverallStatusTypeList) {
-			if (statusType.getAction().equalsIgnoreCase(action))
+			if (statusType.getAction().equalsIgnoreCase(action) && statusType.getState().equalsIgnoreCase(status))
                 return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
 		}
 		return null;

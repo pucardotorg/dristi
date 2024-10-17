@@ -73,7 +73,7 @@ class CaseOverallStatusUtilTest {
         JSONObject requestInfoJson = new JSONObject();
 
         Map<String, List<CaseOverallStatusType>> caseOverallStatusTypeMap = new HashMap<>();
-        caseOverallStatusTypeMap.put("case",List.of(CaseOverallStatusType.builder().action(action).build()));
+        caseOverallStatusTypeMap.put("case",List.of(CaseOverallStatusType.builder().action(action).state(status).build()));
 
         // Mock configuration
         when(config.getCaseBusinessServiceList()).thenReturn(List.of("case"));
