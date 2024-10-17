@@ -58,7 +58,6 @@ const getAddressDetails = (addressObject) => {
     };
   };
 
-
 /**
  * Extracts complainant information from the case object.
  *
