@@ -210,7 +210,7 @@ const complainantDetailsFormConfig = [
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               uploadGuidelines: "UPLOAD_DOC_50",
-              fileTypes: ["JPG", "PDF"],
+              fileTypes: ["JPG", "PNG", "PDF"],
               isMultipleUpload: true,
             },
           ],

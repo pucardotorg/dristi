@@ -1,5 +1,6 @@
 import { Request } from "@egovernments/digit-ui-libraries";
 import isEmpty from "lodash/isEmpty";
+import axios from "axios";
 
 export const ServiceRequest = async ({
   serviceName,
@@ -136,4 +137,51 @@ export const extractFeeMedium = (feeName) => {
     rpad: "RPAD",
   };
   return feeMediums?.[feeName?.toLowerCase()] || "";
+};
+
+export const getFileByFileStoreId = async (uri) => {
+  try {
+    const response = await axios.get(uri, {
+      responseType: "blob", // To treat the response as a binary Blob
+    });
+    // Create a file object from the response Blob
+    const file = new File([response.data], "downloaded-file.pdf", {
+      type: response.data.type,
+    });
+    return file;
+  } catch (error) {
+    console.error("Error fetching file:", error);
+    throw error;
+  }
+};
+
+export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combined-document.pdf") => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const formData = new FormData();
+
+  for (const file of pdfFilesArray) {
+    const { fileStore } = file;
+    if (fileStore) {
+      // ${Urls.FileFetchById} // check-Should use this but it is causing circular dependency, need to relocate Urls
+      const uri = `${window.location.origin}/filestore/v1/files/id?tenantId=${tenantId}&fileStoreId=${fileStore}`;
+      const draftFile = await getFileByFileStoreId(uri);
+      formData.append("documents", draftFile);
+    } else formData.append("documents", file);
+  }
+
+  try {
+    // ${Urls.CombineDocuments} // check- Should use this but it is causing circular dependency, need to relocate Urls
+    const combineDocumentsUrl = `${window.location.origin}/egov-pdf/dristi-pdf/combine-documents`;
+    const response = await axios.post(combineDocumentsUrl, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      responseType: "blob", // To handle the response as a Blob
+    });
+    const file = new File([response.data], finalFileName, { type: response.data.type });
+    return [file];
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
 };

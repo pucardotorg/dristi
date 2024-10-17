@@ -1,5 +1,5 @@
 import { Button, ErrorIcon } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { FileUploader } from "react-drag-drop-files";
 import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
@@ -28,6 +28,34 @@ function RenderFileCard({
       setFile(draftFile);
     }
   }, [fileData]);
+
+  const viewImageModal = useMemo(() => {
+    return (
+      <div>
+        <ImageModal
+          imageInfo={{
+            data: {
+              fileStore: fileData?.fileStore,
+              fileName: fileData?.fileName,
+              documentName: fileData?.documentName,
+              docViewerStyle: { minWidth: "100%", height: "calc(100vh - 154px)" },
+            },
+          }}
+          selectedDocs={[fileData]}
+          t={t}
+          anchorRef={popupAnchor}
+          showFlag={!showImageModal}
+          handleCloseModal={() => {
+            if (showImageModal) {
+              setShowImageModal(false);
+            }
+          }}
+          isPrevScrutiny={false}
+          disableScrutiny={false}
+        />
+      </div>
+    );
+  }, [fileData, showImageModal]);
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className={`uploaded-file-div-sub ${!!uploadErrorInfo ? "error" : ""}`}>
@@ -115,29 +143,7 @@ function RenderFileCard({
           </div>
         </div>
       )}
-      {showImageModal && (
-        <ImageModal
-          imageInfo={{
-            data: {
-              fileStore: fileData?.fileStore,
-              fileName: fileData?.fileName,
-              documentName: fileData?.documentName,
-              docViewerStyle: { minWidth: "100%", height: "calc(100vh - 154px)" },
-            },
-          }}
-          selectedDocs={[fileData]}
-          t={t}
-          anchorRef={popupAnchor}
-          showFlag={!showImageModal}
-          handleCloseModal={() => {
-            if (showImageModal) {
-              setShowImageModal(false);
-            }
-          }}
-          isPrevScrutiny={false}
-          disableScrutiny={false}
-        />
-      )}
+      {showImageModal && viewImageModal}
     </div>
   );
 }
