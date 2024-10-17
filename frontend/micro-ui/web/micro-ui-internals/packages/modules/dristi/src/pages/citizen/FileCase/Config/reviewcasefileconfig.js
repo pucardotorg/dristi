@@ -212,7 +212,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "POLICE_STATION",
-                  value: "policeStation",
+                  value: "policeStation.code",
                 },
                 {
                   type: "text",

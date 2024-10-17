@@ -189,7 +189,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                <span>{input?.showOptional && ` (${t("CS_OPTIONAL")})`}</span>
+                <span style={{ color: "rgb(119, 120, 123)" }}>{input?.showOptional && ` ${t("CS_IS_OPTIONAL")}`}</span>
               </CardLabel>
               <div className={`field ${input.inputFieldClassName}`}>
                 {input?.type === "LocationSearch" ? (

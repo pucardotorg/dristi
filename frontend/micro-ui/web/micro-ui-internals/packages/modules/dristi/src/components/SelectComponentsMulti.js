@@ -14,6 +14,7 @@ const selectCompMultiConfig = {
     inputs: [
       {
         label: "CS_TYPE_OF_ADDRESS",
+        showOptional: true,
         type: "Radio",
         name: "typeOfAddress",
         options: [],
