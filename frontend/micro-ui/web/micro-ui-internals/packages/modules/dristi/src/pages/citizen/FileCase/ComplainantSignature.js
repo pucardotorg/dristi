@@ -392,7 +392,7 @@ const ComplainantSignature = ({ path }) => {
           demandDetails: [
             {
               taxHeadMasterCode: "CASE_ADVANCE_CARRYFORWARD",
-              taxAmount: 4, // amount to be replaced with calculationResponse
+              taxAmount: calculationResponse?.Calculation?.[0]?.totalAmount,
               collectionAmount: 0,
               delayCondonation: delayCondonation,
             },

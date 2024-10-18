@@ -143,7 +143,7 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
     service: "case-default",
     path,
     caseDetails,
-    totalAmount: chequeDetails?.totalAmount,
+    totalAmount: totalAmount,
     mockSubmitModalInfo,
     scenario,
   });

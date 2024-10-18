@@ -145,7 +145,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
     service: "case-default",
     path,
     caseDetails,
-    totalAmount: chequeDetails?.totalAmount,
+    totalAmount: totalAmount,
     scenario,
   });
   const onSubmitCase = async () => {
