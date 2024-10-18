@@ -184,15 +184,16 @@ const PaymentForSummonModal = ({ path }) => {
   const consumerCode = useMemo(() => {
     return taskNumber ? `${taskNumber}_POST_COURT` : undefined;
   }, [taskNumber]);
-
+  const service = useMemo(() => (orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE), [orderType]);
+  const taskType = useMemo(() => getTaskType(service), [service]);
   const { data: courtBillResponse, isLoading: isCourtBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
     {
       tenantId,
       consumerCode: `${taskNumber}_POST_COURT`,
-      service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+      service: service,
     },
-    `${taskNumber}_POST_COURT`,
+    `${taskNumber}_POST_COURT_${service}`,
     Boolean(taskNumber && orderType)
   );
   const { data: ePostBillResponse, isLoading: isEPOSTBillLoading } = Digit.Hooks.dristi.useBillSearch(
@@ -200,9 +201,9 @@ const PaymentForSummonModal = ({ path }) => {
     {
       tenantId,
       consumerCode: `${taskNumber}_POST_PROCESS`,
-      service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+      service: service,
     },
-    `${taskNumber}_POST_PROCESS`,
+    `${taskNumber}_POST_PROCESS_${service}`,
     Boolean(taskNumber && orderType)
   );
 
@@ -217,12 +218,12 @@ const PaymentForSummonModal = ({ path }) => {
           receiverPincode: summonsPincode,
           tenantId: tenantId,
           Id: taskNumber,
-          taskType: getTaskType(orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE),
+          taskType: taskType,
         },
       ],
     },
     {},
-    `breakup-response-${summonsPincode}${channelId}${taskNumber}`,
+    `breakup-response-${summonsPincode}${channelId}${taskNumber}${taskType}`,
     Boolean(filteredTasks && channelId && orderType && taskNumber)
   );
 
@@ -233,7 +234,7 @@ const PaymentForSummonModal = ({ path }) => {
   const { openPaymentPortal, paymentLoader } = usePaymentProcess({
     tenantId,
     consumerCode: consumerCode,
-    service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+    service: service,
     caseDetails,
     totalAmount: courtFeeAmount,
   });
@@ -351,7 +352,7 @@ const PaymentForSummonModal = ({ path }) => {
           state: {
             billData: ePostBillResponse,
             serviceNumber: taskNumber,
-            businessService: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+            businessService: service,
             caseDetails: caseDetails,
             consumerCode: `${taskNumber}_POST_PROCESS`,
             orderData: orderData,
@@ -422,6 +423,7 @@ const PaymentForSummonModal = ({ path }) => {
     filingNumber,
     dayInMillisecond,
     todayDate,
+    service,
   ]);
 
   const infos = useMemo(() => {

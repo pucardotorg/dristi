@@ -190,14 +190,16 @@ const PaymentForRPADModal = ({ path }) => {
     return taskNumber ? `${taskNumber}_EPOST_COURT` : undefined;
   }, [taskNumber]);
 
+  const service = useMemo(() => (orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE), [orderType]);
+  const taskType = useMemo(() => getTaskType(service), [service]);
   const { data: courtBillResponse, isLoading: isCourtBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
     {
       tenantId,
       consumerCode: `${taskNumber}_EPOST_COURT`,
-      service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+      service: service,
     },
-    "dristi",
+    `courtBillResponse-${service}${taskNumber}`,
     Boolean(taskNumber)
   );
 
@@ -212,13 +214,13 @@ const PaymentForRPADModal = ({ path }) => {
           receiverPincode: summonsPincode,
           tenantId: tenantId,
           Id: taskNumber,
-          taskType: getTaskType(orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE),
+          taskType: taskType,
         },
       ],
     },
     {},
-    `breakup-response-${summonsPincode}${channelId}${taskNumber}`,
-    Boolean(filteredTasks && channelId && orderType && taskNumber)
+    `breakup-response-${summonsPincode}${channelId}${taskNumber}${taskType}`,
+    Boolean(filteredTasks && channelId && taskType && taskNumber)
   );
 
   const courtFeeAmount = useMemo(() => breakupResponse?.Calculation?.[0]?.breakDown?.find((data) => data?.type === "Court Fee")?.amount, [
@@ -228,7 +230,7 @@ const PaymentForRPADModal = ({ path }) => {
   const { openPaymentPortal, paymentLoader } = usePaymentProcess({
     tenantId,
     consumerCode: consumerCode,
-    service: orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE,
+    service: service,
     caseDetails,
     totalAmount: courtFeeAmount,
   });

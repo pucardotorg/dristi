@@ -189,7 +189,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   };
 
   const businessService = useMemo(() => getBusinessService(orderType), [orderType]);
-
+  const taskType = useMemo(() => getTaskType(businessService), [businessService]);
   const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     "payment",
@@ -215,7 +215,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
           receiverPincode: summonsPincode,
           tenantId: tenantId,
           Id: taskNumber,
-          taskType: getTaskType(businessService),
+          taskType: taskType,
         },
       ],
     },
