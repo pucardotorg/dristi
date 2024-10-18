@@ -106,6 +106,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
       const barRegNum = searchResult[0]?.barRegistrationNumber;
       const userName = searchResult[0]?.additionalDetails?.username;
       const advocateId = searchResult[0]?.id;
+      const advocateUuid = searchResult[0]?.auditDetails?.createdBy;
       onSelect("advocateBarRegNumberWithName", [
         {
           barRegistrationNumber: `${barRegNum} (${userName})`,
@@ -113,6 +114,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
           isDisable: true,
           barRegistrationNumberOriginal: barRegNum,
           advocateId,
+          advocateUuid,
         },
       ]);
       onSelect("AdvocateNameDetails", {

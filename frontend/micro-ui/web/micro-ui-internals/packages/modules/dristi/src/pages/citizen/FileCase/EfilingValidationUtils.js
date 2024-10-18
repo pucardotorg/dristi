@@ -1058,7 +1058,17 @@ export const updateCaseDetails = async ({
   setIsDisabled(true);
   let tempDocList = [];
   const individualId = await fetchBasicUserInfo(prevCaseDetails, tenantId);
-  let updatedFormData = structuredClone(formdata);
+
+  function cloneFormDataRemoveIcon(originalFormDataArray) {
+    return originalFormDataArray.map((originalFormData) => {
+      if (originalFormData?.data?.advocateBarRegNumberWithName) {
+        delete originalFormData.data.advocateBarRegNumberWithName[0].icon;
+        const clonedFormData = structuredClone(originalFormData);
+        return clonedFormData;
+      } else return originalFormData;
+    });
+  }
+  const updatedFormData = cloneFormDataRemoveIcon(formdata);
   async function processFormData() {
     try {
       const promises = updatedFormData.map(async (formItem, index) => {
