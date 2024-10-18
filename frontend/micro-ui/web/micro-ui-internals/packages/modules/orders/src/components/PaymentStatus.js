@@ -1,36 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Banner } from "@egovernments/digit-ui-react-components";
 import { Button, InfoCard } from "@egovernments/digit-ui-components";
-import { CopyIcon } from "../../../dristi/src/icons/svgIndex";
-import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
-import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCopyTextDiv";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCopyTextDiv";
 
 const PaymentStatus = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
-  const queryStrings = Digit.Hooks.useQueryParams();
+
   const isResponseSuccess = location.state.state.success;
   const { state } = useLocation();
-  const [copied, setCopied] = useState({ isCopied: false, text: "Copied" });
-  const [copied1, setCopied1] = useState({ isCopied: false, text: "Copied" });
   const fileStoreId = location.state.state.fileStoreId;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const caseId = location.state.state.caseId;
   const receiptData = location.state.state.receiptData;
   const history = useHistory();
-
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
-
-  const copyToClipboard = (text) => {
-    if (!navigator.clipboard) {
-      fallbackCopyTextToClipboard(text);
-      return;
-    }
-    navigator.clipboard.writeText(text);
-  };
+  const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
 
   const commonProps = {
     whichSvg: "tick",
@@ -48,13 +35,6 @@ const PaymentStatus = ({ path }) => {
         successful: false,
         message: t("CS_PAYMENT_FAILED"),
       };
-
-  const dataCopy = (isCopied, message, setCopied, duration = 3000) => {
-    setCopied({ isCopied: isCopied, text: message });
-    setTimeout(() => {
-      setCopied({ isCopied: false, text: "Copied" });
-    }, duration);
-  };
 
   return (
     <div className=" user-registration">
@@ -112,9 +92,8 @@ const PaymentStatus = ({ path }) => {
               className={"secondary-button-selector"}
               label={t("CS_PRINT_RECEIPT")}
               labelClassName={"secondary-label-selector"}
-              isDisabled={true}
-              onButtonClick={() => {
-                // To Do:  implement generate pdf functionality when backend support is ready.
+              onClick={() => {
+                downloadPdf(tenantId, fileStoreId);
               }}
             />
           )}

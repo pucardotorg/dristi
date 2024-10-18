@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { Modal, Button, CardText, RadioButtons, CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { Button, Loader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { InfoCard } from "@egovernments/digit-ui-components";
 import ApplicationInfoComponent from "../../components/ApplicationInfoComponent";
 import DocumentModal from "../../components/DocumentModal";
 import { formatDate } from "../../../../hearings/src/utils";
@@ -12,8 +11,6 @@ import { ordersService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
 import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { taskService } from "../../hooks/services";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 import { getSuffixByDeliveryChannel } from "../../utils";
 
@@ -71,15 +68,17 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
               <div className="payment-label">{t(action?.label)}</div>
               <div className="payment-amount">{action?.action !== "offline-process" && action?.amount ? `Rs. ${action?.amount}/-` : "-"}</div>
               <div className="payment-action">
-                {index === 0 ? (
-                  t(action?.action)
-                ) : action?.action !== "offline-process" ? (
-                  <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
-                ) : (
-                  <p className="offline-process-text">
-                    This is an offline process. <span className="learn-more-text">Learn More</span>
-                  </p>
-                )}
+                {!action?.isCompleted &&
+                  (index === 0 ? (
+                    t(action?.action)
+                  ) : action?.action !== "offline-process" ? (
+                    <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
+                  ) : (
+                    <p className="offline-process-text">
+                      This is an offline process. <span className="learn-more-text">Learn More</span>
+                    </p>
+                  ))}
+                {action?.isCompleted && <p>{t("PAYMEND_ALREADY_COMPLETED")}</p>}
               </div>
             </div>
           ))}
@@ -91,11 +90,10 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
 
 const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const history = useHistory();
-  const location = useLocation();
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
-
+  const { t } = useTranslation();
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
@@ -106,7 +104,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
     Boolean(filingNumber)
   );
@@ -141,16 +139,6 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     [isCaseAdmitted]
   );
 
-  const onViewOrderClick = () => {
-    console.log(caseId, "caseID");
-    history.push(
-      `/${window.contextPath}/citizen/dristi/home/view-case?caseId=${caseData?.criteria?.[0]?.responseList?.[0]?.id}&filingNumber=${filingNumber}&tab=Orders`
-    );
-  };
-
-  const todayDate = new Date().getTime();
-  const dayInMillisecond = 24 * 3600 * 1000;
-
   const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
     {
       criteria: {
@@ -171,11 +159,11 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     filteredTasks?.[0]?.orderId,
     Boolean(filteredTasks?.[0]?.orderId)
   );
-
+  const orderDetails = useMemo(() => orderData?.list?.[0] || {}, [orderData]);
   const summonsPincode = useMemo(() => filteredTasks?.[0]?.taskDetails?.respondentDetails?.address?.pincode, [filteredTasks]);
   const channelId = useMemo(() => extractFeeMedium(filteredTasks?.[0]?.taskDetails?.deliveryChannels?.channelName || ""), [filteredTasks]);
 
-  const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
+  const orderType = useMemo(() => orderDetails?.orderType, [orderDetails?.orderType]);
 
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -183,12 +171,12 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
       criteria: {
         tenantID: tenantId,
         filingNumber: filingNumber,
-        hearingId: orderData?.list?.[0]?.hearingNumber,
+        hearingId: orderDetails?.hearingNumber,
       },
     },
     { applicationNumber: "", cnrNumber: "" },
-    orderData?.list?.[0]?.hearingNumber,
-    Boolean(orderData?.list?.[0]?.hearingNumber)
+    orderDetails?.hearingNumber,
+    Boolean(orderDetails?.hearingNumber)
   );
 
   const getBusinessService = (orderType) => {
@@ -219,12 +207,33 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     paymentTypeData,
   ]);
 
-  const { fetchBill, openPaymentPortal, paymentLoader, showPaymentModal, setShowPaymentModal, billPaymentStatus } = usePaymentProcess({
+  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
+    {
+      Criteria: [
+        {
+          channelId: channelId,
+          receiverPincode: summonsPincode,
+          tenantId: tenantId,
+          Id: taskNumber,
+          taskType: getTaskType(businessService),
+        },
+      ],
+    },
+    {},
+    `breakup-response-${summonsPincode}${channelId}${taskNumber}${businessService}`,
+    Boolean(filteredTasks && channelId && orderType && taskNumber && businessService)
+  );
+
+  const courtFeeAmount = useMemo(() => breakupResponse?.Calculation?.[0]?.breakDown.find((data) => data?.type === "Court Fee")?.amount, [
+    breakupResponse,
+  ]);
+
+  const { openPaymentPortal, paymentLoader } = usePaymentProcess({
     tenantId,
-    consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
+    consumerCode: `${taskNumber}_${suffix}`,
     service: businessService,
     caseDetails,
-    totalAmount: "4",
+    totalAmount: courtFeeAmount,
   });
 
   const status = useMemo(() => {
@@ -237,96 +246,66 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     } else {
       return paymentType.PAYMENT_PENDING_POST;
     }
-  });
+  }, [channelId]);
 
   const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
     {},
     {
       tenantId,
-      consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
+      consumerCode: `${taskNumber}_${suffix}`,
       service: businessService,
     },
-    `dristi_${suffix}`,
-    Boolean(filteredTasks?.[0]?.taskNumber && suffix)
+    `billResponse-${businessService}${taskNumber}`,
+    Boolean(taskNumber && businessService)
   );
 
-  const { data: breakupResponse, isLoading: isSummonsBreakUpLoading, refetch: refetchBreakupResponse } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
-    {
-      Criteria: [
-        {
-          channelId: channelId,
-          receiverPincode: summonsPincode,
-          tenantId: tenantId,
-          Id: filteredTasks?.[0]?.taskNumber,
-          taskType: getTaskType(businessService),
-        },
-      ],
-    },
-    {},
-    "dristi",
-    Boolean(tasksData)
-  );
-
-  useEffect(() => {
-    refetchBreakupResponse();
-  }, [businessService, channelId, filteredTasks]);
-
-  const onPayOnline = async () => {
-    // console.log("clikc");
-    try {
-      // if (billResponse?.Bill?.length === 0) {
-      //   await DRISTIService.createDemand({
-      //     Demands: [
-      //       {
-      //         tenantId,
-      //         consumerCode: `${filteredTasks?.[0]?.taskNumber}_${suffix}`,
-      //         consumerType: paymentType.TASK_SUMMON,
-      //         businessService: paymentType.TASK_SUMMON,
-      //         taxPeriodFrom: Date.now().toString(),
-      //         taxPeriodTo: Date.now().toString(),
-      //         demandDetails: [
-      //           {
-      //             taxHeadMasterCode: paymentType.TASK_SUMMON_ADVANCE_CARRYFORWARD,
-      //             taxAmount: 4,
-      //             collectionAmount: 0,
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //   });
-      // }
-      // const bill = await fetchBill(`${filteredTasks?.[0]?.taskNumber}_${suffix}`, tenantId, paymentType.TASK_SUMMON);
-      // if (bill?.Bill?.length) {
-      //   const billPaymentStatus = await openPaymentPortal(bill);
-      //   console.log(billPaymentStatus);
-      //   if (billPaymentStatus === true) {
-      // console.log("YAAAYYYYY");
-      // const fileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: bill?.Bill?.[0]?.id, tenantId });
-      const updatedTask = {
-        ...filteredTasks?.[0],
-        taskType: orderType,
-        workflow: {
-          action: "MAKE_PAYMENT",
-        },
-      };
-
-      await taskService
-        .updateTask(
-          {
-            task: updatedTask,
-            tenantId: tenantId,
+  const feeOptions = useMemo(() => {
+    const onPayOnline = async () => {
+      try {
+        if (!billResponse?.Bill?.length) {
+          console.log("Bill not found");
+          return null;
+        }
+        const billPaymentStatus = await openPaymentPortal(billResponse);
+        if (!billPaymentStatus) {
+          console.log("Payment canceled or failed", taskNumber);
+          return;
+        }
+        const resfileStoreId = await DRISTIService.fetchBillFileStoreId({}, { billId: billResponse?.Bill?.[0]?.id, tenantId });
+        const fileStoreId = resfileStoreId?.Document?.fileStore;
+        const postPaymenScreenObj = {
+          state: {
+            success: Boolean(fileStoreId),
+            receiptData: {
+              ...mockSubmitModalInfo,
+              caseInfo: [
+                {
+                  key: "Case Name & ID",
+                  value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
+                  copyData: false,
+                },
+                {
+                  key: "ORDER ID",
+                  value: orderDetails?.orderNumber,
+                  copyData: false,
+                },
+                {
+                  key: "Transaction ID",
+                  value: taskNumber,
+                  copyData: true,
+                },
+              ],
+              isArrow: false,
+              showTable: true,
+              showCopytext: true,
+            },
+            fileStoreId: fileStoreId || "",
           },
-          {}
-        )
-        .then(() => {
-          return ordersService.customApiService(Urls.orders.pendingTask, {
+        };
+        if (fileStoreId) {
+          await ordersService.customApiService(Urls.orders.pendingTask, {
             pendingTask: {
-              name:
-                orderType === "SUMMONS"
-                  ? `MAKE_PAYMENT_FOR_SUMMONS_POST`
-                  : orderType === "NOTICE"
-                  ? `MAKE_PAYMENT_FOR_NOTICE_POST`
-                  : "PAYMENT_PENDING_FOR_WARRANT",
+              name: orderType === "WARRANT" ? "PAYMENT_PENDING_FOR_WARRANT" : `MAKE_PAYMENT_FOR_${orderType}_POST`,
               entityType: paymentType.ASYNC_ORDER_SUBMISSION_MANAGELIFECYCLE,
               referenceId: `MANUAL_${taskNumber}`,
               status: status,
@@ -340,77 +319,12 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
               tenantId,
             },
           });
-        });
-      // fileStoreId &&
-      history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-        state: {
-          success: true,
-          receiptData: {
-            ...mockSubmitModalInfo,
-            caseInfo: [
-              {
-                key: "Case Name & ID",
-                value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-                copyData: false,
-              },
-              {
-                key: "ORDER ID",
-                value: orderData?.list?.[0]?.orderNumber,
-                copyData: false,
-              },
-              {
-                key: "Transaction ID",
-                value: filteredTasks?.[0]?.taskNumber,
-                copyData: true,
-              },
-            ],
-            isArrow: false,
-            showTable: true,
-            showCopytext: true,
-          },
-          fileStoreId: "fileStoreId?.Document?.fileStore",
-        },
-      });
-      //   } else {
-      //     console.log("NAAAYYYYY");
-      //     history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, {
-      //       state: {
-      //         success: false,
-      //         receiptData: {
-      //           ...mockSubmitModalInfo,
-      //           caseInfo: [
-      //             {
-      //               key: "Case Name & ID",
-      //               value: caseDetails?.caseTitle + "," + caseDetails?.filingNumber,
-      //               copyData: false,
-      //             },
-      //             {
-      //               key: "ORDER ID",
-      //               value: orderData?.list?.[0]?.orderNumber,
-      //               copyData: false,
-      //             },
-      //             {
-      //               key: "Transaction ID",
-      //               value: filteredTasks?.[0]?.taskNumber,
-      //               copyData: true,
-      //             },
-      //           ],
-      //           isArrow: false,
-      //           showTable: true,
-      //           showCopytext: true,
-      //         },
-      //         caseId: caseDetails?.filingNumber,
-      //       },
-      //     });
-      //   }
-      // }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const feeOptions = useMemo(() => {
-    const taskAmount = filteredTasks?.[0]?.amount?.amount || 0;
+        }
+        history.push(`/${window?.contextPath}/citizen/home/post-payment-screen`, postPaymenScreenObj);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     return {
       EMAIL: [
@@ -421,7 +335,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         },
         {
           label: "Court Fees",
-          amount: breakupResponse?.Calculation?.[0]?.breakDown?.find((data) => data?.type === "Court Fee")?.amount,
+          amount: courtFeeAmount,
           action: "Pay Online",
           onClick: onPayOnline,
         },
@@ -434,7 +348,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         },
         {
           label: "Court Fees",
-          amount: breakupResponse?.Calculation?.[0]?.breakDown.find((data) => data?.type === "Court Fee")?.amount,
+          amount: courtFeeAmount,
           action: "Pay Online",
           onClick: onPayOnline,
         },
@@ -447,29 +361,38 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         },
         {
           label: "Court Fees",
-          amount: breakupResponse?.Calculation?.[0]?.breakDown.find((data) => data?.type === "Court Fee")?.amount,
+          amount: courtFeeAmount,
           action: "Pay Online",
           onClick: onPayOnline,
         },
       ],
     };
-  }, [filteredTasks, onPayOnline, breakupResponse]);
-
-  const handleClose = () => {
-    if (paymentLoader === false) {
-      history.goBack();
-    }
-  };
+  }, [
+    courtFeeAmount,
+    billResponse,
+    openPaymentPortal,
+    tenantId,
+    mockSubmitModalInfo,
+    caseDetails?.caseTitle,
+    caseDetails?.filingNumber,
+    orderDetails?.orderNumber,
+    taskNumber,
+    history,
+    orderType,
+    status,
+    filteredTasks,
+    filingNumber,
+  ]);
 
   const infos = useMemo(() => {
     const name =
       [
-        orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
-        orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
+        orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
+        orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
       ]
         ?.filter(Boolean)
         ?.join(" ") ||
-      (orderType === "WARRANT" && orderData?.list?.[0]?.additionalDetails?.formdata?.warrantFor);
+      (orderType === "WARRANT" && orderDetails?.additionalDetails?.formdata?.warrantFor);
 
     const task = filteredTasks?.[0];
     const taskDetails = task?.taskDetails;
@@ -492,17 +415,28 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         value: deliveryChannel ? `${deliveryChannel} (${contactDetail})` : "Not available",
       },
     ];
-  }, [hearingsData?.HearingList, filteredTasks, orderData?.list]);
+  }, [orderDetails?.additionalDetails?.formdata, orderType, filteredTasks, hearingsData?.HearingList]);
 
   const orderDate = useMemo(() => {
     return hearingsData?.HearingList?.[0]?.startTime;
   }, [hearingsData?.HearingList]);
 
   const links = useMemo(() => {
+    const onViewOrderClick = () => {
+      console.log(caseId, "caseID");
+      history.push(
+        `/${window.contextPath}/citizen/dristi/home/view-case?caseId=${caseData?.criteria?.[0]?.responseList?.[0]?.id}&filingNumber=${filingNumber}&tab=Orders`
+      );
+    };
     return [{ text: "View order", link: "", onClick: onViewOrderClick }];
-  }, [caseData]);
+  }, [caseData?.criteria, caseId, filingNumber, history]);
 
   const paymentForSummonModalConfig = useMemo(() => {
+    const handleClose = () => {
+      if (paymentLoader === false) {
+        history.goBack();
+      }
+    };
     const formattedChannelId =
       channelId === "SMS" ? "SMS" : channelId ? channelId?.charAt(0)?.toUpperCase() + channelId?.slice(1)?.toLowerCase() : "";
 
@@ -526,8 +460,10 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         />
       ),
     };
-  }, [feeOptions, infos, links]);
-
+  }, [channelId, feeOptions, history, infos, isCaseAdmitted, links, orderDate, orderType, paymentLoader]);
+  if (isOrdersLoading || isPaymentTypeLoading || isSummonsBreakUpLoading || isBillLoading) {
+    return <Loader />;
+  }
   return <DocumentModal config={paymentForSummonModalConfig} />;
 };
 

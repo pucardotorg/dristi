@@ -119,6 +119,33 @@ const ViewPaymentDetails = ({ location, match }) => {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
     }
   );
+  const { data: BillResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
+    {},
+    {
+      tenantId,
+      consumerCode,
+      service: businessService,
+    },
+    `summons-warrant-notice-bill-${consumerCodeWithoutSuffix}`,
+    Boolean(businessService && consumerCodeWithoutSuffix)
+  );
+  const currentBillDetails = useMemo(() => BillResponse?.Bill?.[0], [BillResponse]);
+
+  const { data: ePostBillResponse, isLoading: isEPOSTBillLoading } = Digit.Hooks.dristi.useBillSearch(
+    {},
+    {
+      tenantId,
+      consumerCode: `${consumerCodeWithoutSuffix}_POST_PROCESS`,
+      service: businessService,
+    },
+    `${consumerCodeWithoutSuffix}_POST_PROCESS`,
+    Boolean(consumerCodeWithoutSuffix && businessService)
+  );
+
+  const isDeliveryPartnerPaid = useMemo(() => (ePostBillResponse?.Bill?.[0]?.status ? ePostBillResponse?.Bill?.[0]?.status === "PAID" : true), [
+    ePostBillResponse,
+  ]);
+
   const delayCondonation = useMemo(() => {
     const today = new Date();
     if (!caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata) {
@@ -177,14 +204,16 @@ const ViewPaymentDetails = ({ location, match }) => {
     "dristi" + channelId,
     Boolean(!paymentType?.toLowerCase()?.includes("application") && !paymentType?.toLowerCase()?.includes("case") && tasksData && channelId)
   );
-
+  const courtFeeBreakup = useMemo(() => breakupResponse?.Calculation?.[0]?.breakDown?.filter((data) => data?.type === "Court Fee"), [
+    breakupResponse?.Calculation,
+  ]);
   const totalAmount = useMemo(() => {
-    const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || breakupResponse?.Calculation?.[0]?.totalAmount || 0;
+    const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || currentBillDetails?.totalAmount || 0;
     return parseFloat(totalAmount).toFixed(2);
-  }, [calculationResponse?.Calculation, breakupResponse?.Calculation]);
+  }, [calculationResponse?.Calculation, currentBillDetails]);
 
   const paymentCalculation = useMemo(() => {
-    const breakdown = calculationResponse?.Calculation?.[0]?.breakDown || breakupResponse?.Calculation?.[0]?.breakDown || [];
+    const breakdown = calculationResponse?.Calculation?.[0]?.breakDown || courtFeeBreakup || [];
     const updatedCalculation = breakdown.map((item) => ({
       key: item?.type,
       value: item?.amount,
@@ -199,7 +228,7 @@ const ViewPaymentDetails = ({ location, match }) => {
     });
 
     return updatedCalculation;
-  }, [calculationResponse?.Calculation, breakupResponse?.Calculation, totalAmount]);
+  }, [calculationResponse?.Calculation, courtFeeBreakup, totalAmount]);
   const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : null;
 
@@ -252,21 +281,24 @@ const ViewPaymentDetails = ({ location, match }) => {
           instrumentDate: new Date().getTime(),
         },
       });
-      await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-        pendingTask: {
-          name: "Pending Payment",
-          entityType: businessService,
-          referenceId: `MANUAL_${referenceId}`,
-          status: "PENDING_PAYMENT",
-          cnrNumber: null,
-          filingNumber: caseDetails?.filingNumber || taskFilingNumber,
-          isCompleted: true,
-          stateSla: null,
-          additionalDetails: {},
-          tenantId,
-        },
-      });
-      if (["task-notice", "task-summons", "task-warrant"].includes(businessService)) {
+      if (isDeliveryPartnerPaid) {
+        await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+          pendingTask: {
+            name: "Pending Payment",
+            entityType: businessService,
+            referenceId: `MANUAL_${referenceId}`,
+            status: "PENDING_PAYMENT",
+            cnrNumber: null,
+            filingNumber: caseDetails?.filingNumber || taskFilingNumber,
+            isCompleted: true,
+            stateSla: null,
+            additionalDetails: {},
+            tenantId,
+          },
+        });
+      }
+
+      if (["task-notice", "task-summons", "task-warrant"].includes(businessService) && isDeliveryPartnerPaid) {
         await DRISTIService.customApiService(Urls.dristi.pendingTask, {
           pendingTask: {
             name: taskOrderType === "SUMMONS" ? "Show Summon-Warrant Status" : "Show Notice Status",
@@ -339,10 +371,10 @@ const ViewPaymentDetails = ({ location, match }) => {
         },
       ],
     }),
-    [caseDetails, t]
+    [caseDetails?.filingNumber, paymentType, t]
   );
 
-  if (isCaseSearchLoading || isFetchBillLoading || isPaymentLoading) {
+  if (isCaseSearchLoading || isFetchBillLoading || isPaymentLoading || isBillLoading || isEPOSTBillLoading || isSummonsBreakUpLoading) {
     return <Loader />;
   }
   return (

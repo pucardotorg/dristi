@@ -32,6 +32,9 @@ const SBIEpostPayment = () => {
   const consumerCode = location?.state?.state?.consumerCode;
   const filteredTasks = location?.state?.state?.filteredTasks;
   const filingNumber = location?.state?.state?.filingNumber;
+  const isCourtBillPaid = location?.state?.state?.isCourtBillPaid;
+  const hearingId = location?.state?.state?.hearingId;
+  const orderType = location?.state?.state?.orderType;
   let history = useHistory();
 
   const onSBIPayment = async () => {
@@ -88,6 +91,9 @@ const SBIEpostPayment = () => {
           filingNumber: filingNumber,
           filteredTasks: filteredTasks,
           orderNumber: orderData?.list?.[0]?.orderNumber,
+          isCourtBillPaid: isCourtBillPaid,
+          hearingId: hearingId,
+          orderType: orderType,
         };
 
         localStorage.setItem("paymentReceiptData", JSON.stringify({ receiptData }));

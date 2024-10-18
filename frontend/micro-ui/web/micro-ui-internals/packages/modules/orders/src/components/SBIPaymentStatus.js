@@ -39,7 +39,8 @@ const SBIPaymentStatus = ({ path }) => {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const todayDate = new Date().getTime();
+  const dayInMillisecond = 24 * 3600 * 1000;
   useEffect(() => {
     const fetchData = async () => {
       const billAfterPayment = await DRISTIService.callSearchBill(
@@ -47,11 +48,29 @@ const SBIPaymentStatus = ({ path }) => {
         { tenantId: tenantId, consumerCode: receiptData?.consumerCode, service: businessService }
       );
       setAmount(billAfterPayment?.Bill?.[0]?.totalAmount);
-      if (status === "SUCCESS" && billAfterPayment?.Bill?.[0]?.status === "PAID") {
+      if (status === "SUCCESS" && billAfterPayment?.Bill?.[0]?.status === "PAID" && receiptData?.isCourtBillPaid) {
         setLoading(true);
         setError(null);
         try {
           await Promise.all([
+            ordersService.customApiService(Urls.orders.pendingTask, {
+              pendingTask: {
+                name: receiptData?.orderType === "SUMMONS" ? "Show Summon-Warrant Status" : "Show Notice Status",
+                entityType: paymentType.ORDER_MANAGELIFECYCLE,
+                referenceId: receiptData?.hearingId,
+                status: receiptData?.orderType === "SUMMONS" ? paymentType.SUMMON_WARRANT_STATUS : paymentType.NOTICE_STATUS,
+                assignedTo: [],
+                assignedRole: ["JUDGE_ROLE"],
+                cnrNumber: receiptData?.filteredTasks?.[0]?.cnrNumber,
+                filingNumber: receiptData?.filingNumber,
+                isCompleted: false,
+                stateSla: 3 * dayInMillisecond + todayDate,
+                additionalDetails: {
+                  hearingId: receiptData?.hearingId,
+                },
+                tenantId,
+              },
+            }),
             ordersService.customApiService(Urls.orders.pendingTask, {
               pendingTask: {
                 name: `MAKE_PAYMENT_FOR_SUMMONS_POST`,
