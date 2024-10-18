@@ -254,7 +254,7 @@
           "sla": null,
           "state": "PENDING_RE_SIGN",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
