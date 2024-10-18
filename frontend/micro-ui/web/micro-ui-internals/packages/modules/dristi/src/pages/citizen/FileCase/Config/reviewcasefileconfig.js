@@ -36,6 +36,8 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "DESIGNATION",
+                  dependentOn: "complainantType.code",
+                  dependentValue: "REPRESENTATIVE",
                   value: "complainantVerification.complainantDesignation",
                 },
                 {
@@ -98,6 +100,8 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "DESIGNATION",
+                  dependentOn: "respondentType.code",
+                  dependentValue: "REPRESENTATIVE",
                   value: "respondentDesignation",
                 },
                 {

@@ -213,8 +213,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
     ];
   }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
 
-  console.log("formConfig :>> ", formConfig);
-
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
       return "CS_REGISTER_CASE";
@@ -234,6 +232,15 @@ function ViewCaseFile({ t, inViewCase = false }) {
       additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj },
       caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
     };
+    const complainantUuid = caseDetails?.litigants?.[0]?.additionalDetails?.uuid;
+    const advocateUuid = caseDetails?.representatives?.[0]?.additionalDetails?.uuid;
+    let assignees = [];
+    if (complainantUuid) {
+      assignees.push(complainantUuid);
+    }
+    if (advocateUuid) {
+      assignees.push(advocateUuid);
+    }
 
     return DRISTIService.caseUpdateService(
       {
@@ -243,7 +250,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
-            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: [caseDetails.auditDetails.createdBy] }),
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: assignees }),
           },
         },
         tenantId,

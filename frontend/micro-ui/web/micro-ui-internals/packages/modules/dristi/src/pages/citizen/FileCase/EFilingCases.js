@@ -1612,6 +1612,7 @@ function EFilingCases({ path }) {
       try {
         // Await the result of updateCaseDetails
         await updateCaseDetails({
+          t,
           isCompleted: true,
           caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
           prevCaseDetails: prevCaseDetails,
@@ -2213,7 +2214,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={actionName}
                   config={config}
-                  onSubmit={() => onSubmit("SAVE_DRAFT", index)}
+                  onSubmit={() => onSubmit("SAVE_DRAFT")}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
