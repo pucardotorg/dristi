@@ -236,11 +236,48 @@ export const pendingTaskCaseActions = {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "E-Sign Pending",
     redirectDetails: {
-      url: "/dristi/home/file-case/case",
-      params: [
-        { key: "caseId", value: "id" },
-        { key: "selected", defaultValue: "addSignature" },
-      ],
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  "PENDING_E-SIGN-2": {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  PENDING_SIGN: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  "PENDING_RE_E-SIGN": {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  "PENDING_RE_E-SIGN-2": {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
+    },
+  },
+  PENDING_RE_SIGN: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "E-Sign Pending",
+    redirectDetails: {
+      url: "/dristi/home/file-case/sign-complaint",
+      params: [{ key: "filingNumber", value: "filingNumber" }],
     },
   },
   PENDING_ADMISSION: {

@@ -2,6 +2,8 @@ import { CloseSvg, Modal, CheckBox } from "@egovernments/digit-ui-react-componen
 
 import React, { useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { useToast } from "../../../components/Toast/useToast";
 
 const caseLockingMainDiv = {
   padding: "24px",
@@ -45,30 +47,73 @@ const CloseBtn = (props) => {
   );
 };
 
-function CaseLockModal({ t, path, caseId, setShowCaseLockingModal, isAdvocateFilingCase, onSubmit, createPendingTask, setPrevSelected, selected }) {
+function CaseLockModal({
+  t,
+  path,
+  setShowCaseLockingModal,
+  setShowConfirmCaseDetailsModal,
+  isAdvocateFilingCase,
+  onSubmit,
+  createPendingTask,
+  setPrevSelected,
+  selected,
+  caseDetails,
+  state,
+}) {
   const [submitConfirmed, setSubmitConfirmed] = useState(false);
   const history = useHistory();
+  const toast = useToast();
+
+  const filingNumber = useMemo(() => {
+    return caseDetails?.filingNumber;
+  }, [caseDetails]);
 
   const handleSaveOnSubmit = async () => {
     setShowCaseLockingModal(false);
-    try {
-      await onSubmit("SUBMIT_CASE", true);
-      await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" }); // check status
-      history.push(`${path}/sign-complaint?caseId=${caseId}`);
-    } catch (error) {
-      console.error("An error occurred", error);
+    if (!isAdvocateFilingCase) {
+      if (state === CaseWorkflowState.CASE_REASSIGNED) {
+        try {
+          await onSubmit("EDIT_CASE", true);
+          await createPendingTask({ name: t("PENDING_RE_E_SIGN_FOR_CASE"), status: "PENDING_RE_E-SIGN" }); // check status
+          history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
+        } catch (error) {
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
+      } else {
+        try {
+          await onSubmit("SUBMIT_CASE", true);
+          await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" }); // check status
+          history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
+        } catch (error) {
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
+      }
+    } else {
+      setShowConfirmCaseDetailsModal(true);
     }
   };
 
   const handleCancelOnSubmit = async () => {
     setShowCaseLockingModal(false);
-    if (isAdvocateFilingCase) {
-      try {
-        await onSubmit("SUBMIT_CASE_ADVOCATE", true);
-        await createPendingTask({ name: t("PENDING_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_SIGN" }); // check status
-        history.push(`${path}/sign-complaint?caseId=${caseId}`);
-      } catch (error) {
-        console.error("An error occurred", error);
+    if (state === CaseWorkflowState.CASE_REASSIGNED) {
+      if (isAdvocateFilingCase) {
+        try {
+          await onSubmit("EDIT_CASE_ADVOCATE", true);
+          await createPendingTask({ name: t("PENDING_RE_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_RE_SIGN" }); // check status
+          history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
+        } catch (error) {
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
+      }
+    } else {
+      if (isAdvocateFilingCase) {
+        try {
+          await onSubmit("SUBMIT_CASE_ADVOCATE", true);
+          await createPendingTask({ name: t("PENDING_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_SIGN" }); // check status
+          history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
+        } catch (error) {
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
       }
     }
   };

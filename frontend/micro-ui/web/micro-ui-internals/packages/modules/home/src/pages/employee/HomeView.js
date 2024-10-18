@@ -263,11 +263,12 @@ const HomeView = () => {
       case "PENDING_REGISTRATION":
         return userType === "employee" ? `/${contextPath}/${userType}/dristi/admission?${params}` : `${baseUrl}?${params}&tab=Complaint`;
       case "PENDING_E-SIGN":
-        return `/${contextPath}/${userType}/dristi/home/file-case/sign-complaint?caseId=${caseId}`;
       case "PENDING_E-SIGN-2":
-        return `/${contextPath}/${userType}/dristi/home/file-case/sign-complaint?caseId=${caseId}`;
+      case "PENDING_SIGN":
       case "PENDING_RE_E-SIGN":
-        return `/${contextPath}/${userType}/dristi/home/file-case/case?caseId=${caseId}&selected=addSignature`;
+      case "PENDING_RE_E-SIGN-2":
+      case "PENDING_RE_SIGN":
+        return `/${contextPath}/${userType}/dristi/home/file-case/sign-complaint?filingNumber=${filingNumber}`;
       default:
         return `${baseUrl}?${params}&tab=Overview`;
     }
@@ -300,6 +301,9 @@ const HomeView = () => {
         "PENDING_E-SIGN",
         "PENDING_E-SIGN-2",
         "PENDING_RE_E-SIGN",
+        "PENDING_SIGN",
+        "PENDING_RE_E-SIGN-2",
+        "PENDING_RE_SIGN",
         "PENDING_ADMISSION_HEARING",
         "PENDING_NOTICE",
         "PENDING_RESPONSE",
