@@ -1519,8 +1519,8 @@ const GenerateOrders = () => {
     const respondentName =
       constructFullName(respondentNameData?.firstName, respondentNameData?.middleName, respondentNameData?.lastName) || respondentNameData;
 
-    const respondentPhoneNo = orderFormData?.phonenumbers?.mobileNumber || [];
-    const respondentEmail = orderFormData?.emails?.email || [];
+    const respondentPhoneNo = orderFormData?.party?.data?.phone_numbers || [];
+    const respondentEmail = orderFormData?.party?.data?.email || [];
     const complainantDetails = individualDetail?.Individual?.[0];
     const addressLine1 = complainantDetails?.address[0]?.addressLine1 || "";
     const addressLine2 = complainantDetails?.address[0]?.addressLine2 || "";
@@ -1556,6 +1556,14 @@ const GenerateOrders = () => {
       age: "",
       gender: "",
     };
+    const caseRespondent = {
+      name: caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName || "",
+      address: caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.addressDetails?.[0]?.addressDetails,
+      phone: caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.phonenumbers?.mobileNumber?.[0] || "",
+      email: caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.emails?.emailId?.[0] || "",
+      age: caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentAge,
+      gender: "",
+    };
 
     switch (orderType) {
       case "SUMMONS":
@@ -1565,10 +1573,8 @@ const GenerateOrders = () => {
             caseFilingDate: caseDetails?.filingDate,
             docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
-          respondentDetails: respondentDetails,
-          witnessDetails: respondentDetails,
-          respondentDetails: respondentDetails,
-          witnessDetails: respondentDetails,
+          respondentDetails: orderFormData?.party?.data?.partyType === "Witness" ? caseRespondent : respondentDetails,
+          ...(orderFormData?.party?.data?.partyType === "Witness" && { witnessDetails: respondentDetails }),
           complainantDetails: {
             name: complainantName,
             address: complainantAddress,
@@ -1601,8 +1607,8 @@ const GenerateOrders = () => {
             noticeType,
             docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
           },
-          respondentDetails: respondentDetails,
-          witnessDetails: respondentDetails,
+          respondentDetails: orderFormData?.party?.data?.partyType === "Witness" ? caseRespondent : respondentDetails,
+          ...(orderFormData?.party?.data?.partyType === "Witness" && { witnessDetails: respondentDetails }),
           complainantDetails: {
             name: complainantName,
             address: complainantAddress,
