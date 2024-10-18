@@ -368,7 +368,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
         },
         {
           heading: { label: t("ADD_SIGNATURE") },
-          actionSaveLabel: deliveryChannel === "Post" ? t("PROCEED_TO_SENT") : t("SEND_EMAIL_TEXT"),
+          actionSaveLabel: deliveryChannel === "Email" ? t("SEND_EMAIL_TEXT") : t("PROCEED_TO_SENT"),
           actionCancelLabel: t("BACK"),
           modalBody: (
             <AddSignatureComponent
