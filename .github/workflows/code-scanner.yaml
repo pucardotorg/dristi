@@ -6,6 +6,11 @@ on:
       - develop
       - main
 
+  pull_request:
+    branches:
+      - develop
+      - main
+
 permissions:
   security-events: write
   contents: read
