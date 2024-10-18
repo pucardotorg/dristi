@@ -1487,16 +1487,8 @@ export const updateCaseDetails = async ({
           }
           if (data?.data?.depositChequeFileUpload?.document) {
             documentData.depositChequeFileUpload = {};
-            let documentsArray = structuredClone(data?.data?.depositChequeFileUpload?.document || []);
-            if (documentsArray?.length > 1) {
-              try {
-                documentsArray = await combineMultipleFiles(documentsArray, `${t("CHEQUE_DEPOSIT")}.pdf`);
-              } catch (error) {
-                console.error("Error combining files: ", error);
-              }
-            }
             documentData.depositChequeFileUpload.document = await Promise.all(
-              documentsArray?.map(async (document, index) => {
+              data?.data?.depositChequeFileUpload?.document?.map(async (document, index) => {
                 const { tempDocList: tempData, tempFile } = await documentUploadHandler(
                   document,
                   index,
@@ -1514,16 +1506,8 @@ export const updateCaseDetails = async ({
           }
           if (data?.data?.returnMemoFileUpload?.document) {
             documentData.returnMemoFileUpload = {};
-            let documentsArray = structuredClone(data?.data?.returnMemoFileUpload?.document || []);
-            if (documentsArray?.length > 1) {
-              try {
-                documentsArray = await combineMultipleFiles(documentsArray, `${t("RETURN_MEMO")}.pdf`);
-              } catch (error) {
-                console.error("Error combining files: ", error);
-              }
-            }
             documentData.returnMemoFileUpload.document = await Promise.all(
-              documentsArray?.map(async (document, index) => {
+              data?.data?.returnMemoFileUpload?.document?.map(async (document, index) => {
                 const { tempDocList: tempData, tempFile } = await documentUploadHandler(
                   document,
                   index,

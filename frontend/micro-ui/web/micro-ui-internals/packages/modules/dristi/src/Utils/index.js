@@ -146,7 +146,7 @@ export const getFileByFileStoreId = async (uri) => {
     });
     // Create a file object from the response Blob
     const file = new File([response.data], "downloaded-file.pdf", {
-      type: response.data.type,
+      type: response.data.type || "application/pdf",
     });
     return file;
   } catch (error) {
@@ -159,22 +159,29 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const formData = new FormData();
 
-  for (const file of pdfFilesArray) {
+  const filePromises = pdfFilesArray.map(async (file) => {
     const { fileStore } = file;
     if (fileStore) {
-      // ${Urls.FileFetchById} // check-Should use this but it is causing circular dependency, need to relocate Urls
+      // ${Urls.FileFetchById} // check-Should use this but it is causing circular dependency, need to relocate Urls later
       const uri = `${window.location.origin}/filestore/v1/files/id?tenantId=${tenantId}&fileStoreId=${fileStore}`;
       const draftFile = await getFileByFileStoreId(uri);
-      formData.append("documents", draftFile);
-    } else formData.append("documents", file);
-  }
+      return draftFile;
+    } else {
+      return file;
+    }
+  });
+
+  const allFiles = await Promise.all(filePromises);
+  allFiles.forEach((file) => {
+    formData.append("documents", file);
+  });
 
   try {
     // ${Urls.CombineDocuments} // check- Should use this but it is causing circular dependency, need to relocate Urls
     const combineDocumentsUrl = `${window.location.origin}/egov-pdf/dristi-pdf/combine-documents`;
     const response = await axios.post(combineDocumentsUrl, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        // "Content-Type": "multipart/form-data",
       },
       responseType: "blob", // To handle the response as a Blob
     });

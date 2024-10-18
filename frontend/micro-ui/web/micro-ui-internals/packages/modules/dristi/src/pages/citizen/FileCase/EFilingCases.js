@@ -588,7 +588,7 @@ function EFilingCases({ path }) {
           .filter((item) => ["SelectCustomDragDrop"].includes(item.component))
           .map((item) => {
             const { key } = item;
-            const fieldType = item.populators.inputs[0]?.name;
+            const fieldType = item?.populators?.inputs?.[0]?.name;
             return { key, fieldType };
           })
       ),

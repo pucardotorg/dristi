@@ -90,7 +90,7 @@ const prayerAndSwornFormConfig = [
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: true,
               uploadGuidelines: "UPLOAD_DOC_50",
             },
