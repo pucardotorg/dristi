@@ -264,7 +264,10 @@ const ComplainantSignature = ({ path }) => {
   }, [caseDetails]);
 
   const isScrutiny = useMemo(() => {
-    return !!caseDetails?.additionalDetails?.scrutiny?.data;
+    const scrutinyDataExists = !!caseDetails?.additionalDetails?.scrutiny?.data;
+    const judgeDataExists = caseDetails?.additionalDetails?.judge && Object.keys(caseDetails.additionalDetails.judge).length > 0;
+
+    return scrutinyDataExists || judgeDataExists;
   }, [caseDetails]);
 
   const isLitigantPartyInPerson = useMemo(() => {
