@@ -288,4 +288,9 @@ module.exports = {
       designation: "Judicial First Class Magistrate III",
     },
   },
+  workFlowState: {
+    hearing: {
+      OPTOUT: "OPT_OUT",
+    },
+  },
 };

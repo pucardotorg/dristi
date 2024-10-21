@@ -2,6 +2,7 @@ import { Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import OverlayDropdown from "../components/HearingOverlayDropdown";
 import { hearingService } from "../hooks/services";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
 function normalizeData(input) {
   try {
@@ -39,7 +40,7 @@ export const UICustomizations = {
       const searchParams = new URLSearchParams();
       const showAction =
         (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START")) ||
-        row.hearing.status === "INPROGRESS";
+        row.hearing.status === HearingWorkflowState?.INPROGRESS;
       searchParams.set("hearingId", row.hearingId);
       switch (key) {
         case "Actions":
@@ -67,7 +68,7 @@ export const UICustomizations = {
               {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
                 <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
               )}
-              {row.hearing.status === "INPROGRESS" && (
+              {row.hearing.status === HearingWorkflowState?.INPROGRESS && (
                 <Button
                   variation={"secondary"}
                   label={t("JOIN_HEARING")}
