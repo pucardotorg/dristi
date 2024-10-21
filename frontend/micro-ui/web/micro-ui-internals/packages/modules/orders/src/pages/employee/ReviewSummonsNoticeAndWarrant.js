@@ -329,7 +329,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
       const documentsFile =
         signatureId !== "" || localStorageID
           ? {
-              documentType: "SIGNED",
+              documentType: "SIGNED_TASK_DOCUMENT",
               fileStore: signatureId || localStorageID,
             }
           : null;
@@ -374,6 +374,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
             <AddSignatureComponent
               t={t}
               isSigned={isSigned}
+              setIsSigned={setIsSigned}
               handleSigned={() => setIsSigned(true)}
               rowData={rowData}
               setSignatureId={setSignatureId}

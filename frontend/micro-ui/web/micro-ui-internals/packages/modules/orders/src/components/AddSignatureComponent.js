@@ -6,7 +6,7 @@ import useESign from "../hooks/orders/useESign";
 import { Urls } from "../hooks/services/Urls";
 import useDocumentUpload from "../hooks/orders/useDocumentUpload";
 
-const AddSignatureComponent = ({ t, isSigned, handleSigned, rowData, setSignatureId, deliveryChannel }) => {
+const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData, setSignatureId, deliveryChannel }) => {
   const { handleEsign, checkSignStatus } = useESign();
   const { uploadDocuments } = useDocumentUpload();
   const [formData, setFormData] = useState({}); // storing the file upload data
@@ -39,8 +39,9 @@ const AddSignatureComponent = ({ t, isSigned, handleSigned, rowData, setSignatur
   }, [name]);
 
   const onSelect = (key, value) => {
-    if (value === null) {
+    if (value?.[name] === null) {
       setFormData({});
+      setIsSigned(false);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -82,7 +83,8 @@ const AddSignatureComponent = ({ t, isSigned, handleSigned, rowData, setSignatur
             label={t("PLEASE_NOTE")}
             additionalElements={[
               <p key="note">
-                {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")} <span style={{ fontWeight: "bold" }}>{`${t(rowData?.taskType)} ${t("DOCUMENT_TEXT")}`}</span>
+                {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")}
+                <span style={{ fontWeight: "bold" }}>{`${t(rowData?.taskType)} ${t("DOCUMENT_TEXT")}`}</span>
               </p>,
             ]}
             inline

@@ -175,12 +175,11 @@ const AdmittedCases = () => {
   const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0] || {}, [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber || "", [caseDetails]);
 
-  const showTakeAction = useMemo(
-    () =>
-      (userRoles.includes("JUDGE_ROLE") || userRoles.includes("BENCHCLERK_ROLE")) &&
-      relevantStatuses.includes(caseData?.criteria?.[0]?.responseList?.[0]?.status),
-    [caseData, userRoles]
-  );
+  const showTakeAction = useMemo(() => userRoles.includes("ORDER_CREATOR") && !isCitizen && relevantStatuses.includes(caseDetails?.status), [
+    caseDetails?.status,
+    userRoles,
+    isCitizen,
+  ]);
 
   const {
     isLoading: isWorkFlowLoading,
@@ -1547,24 +1546,13 @@ const AdmittedCases = () => {
       });
   };
   const takeActionOptions = useMemo(
-    () =>
-      userRoles.includes("ORDER_CREATOR")
-        ? [
-            ...((userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR")) && !isCitizen
-              ? [t("MAKE_SUBMISSION")]
-              : []),
-            t("GENERATE_ORDER_HOME"),
-            t("SCHEDULE_HEARING"),
-            t("REFER_TO_ADR"),
-          ]
-        : [
-            ...((userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR")) && !isCitizen
-              ? [t("MAKE_SUBMISSION")]
-              : []),
-            t("SCHEDULE_HEARING"),
-            t("REFER_TO_ADR"),
-          ],
-    [t, userRoles, isCitizen]
+    () => [
+      ...(userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
+      t("GENERATE_ORDER_HOME"),
+      t("SCHEDULE_HEARING"),
+      t("REFER_TO_ADR"),
+    ],
+    [t, userRoles]
   );
 
   const showActionBar = useMemo(
@@ -1615,7 +1603,7 @@ const AdmittedCases = () => {
                 <hr className="vertical-line" />
               </React.Fragment>
             )}
-            <div className="sub-details-text">Code: {caseData?.criteria?.[0]?.responseList?.[0]?.accessCode}</div>
+            <div className="sub-details-text">Code: {caseDetails?.accessCode}</div>
           </div>
           <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && (
