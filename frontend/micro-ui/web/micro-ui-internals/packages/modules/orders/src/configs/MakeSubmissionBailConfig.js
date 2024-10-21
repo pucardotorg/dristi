@@ -119,7 +119,7 @@ export const configsBailBond = [
                 },
                 {
                   title: "Salary Receipts",
-                  description: "A copy of the bounced chequeon the  basis which this case is being filed",
+                  description: "A copy of the dishonored cheque on the  basis which this case is being filed",
                   hint: "Upload .pdf or .jpg. Maximum upload size of 5MB",
                 },
               ],

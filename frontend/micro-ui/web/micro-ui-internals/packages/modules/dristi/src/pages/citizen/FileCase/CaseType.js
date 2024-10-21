@@ -323,8 +323,8 @@ function CaseType({ t }) {
         serialNumber: "01.",
       },
       {
-        header: "Bounced Cheque",
-        subtext: "A copy of the bounced cheque on the basis which this case is being filed",
+        header: "Dishonored Cheque",
+        subtext: "A copy of the dishonored cheque on the basis which this case is being filed",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "02.",
       },
