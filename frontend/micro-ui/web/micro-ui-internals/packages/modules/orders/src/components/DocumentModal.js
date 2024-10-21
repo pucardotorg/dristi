@@ -1,5 +1,14 @@
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
+
+const submitButtonTextStyle = {
+  fontFamily: "Roboto",
+  fontSize: "16px",
+  fontWeight: 700,
+  lineHeight: "18.75px",
+  textAlign: "center",
+};
+
 const CloseBtn = (props) => {
   return (
     <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -96,6 +105,7 @@ const DocumentModal = ({ config, setShow, currentStep, documentStyle = {} }) => 
       }
       popUpStyleMain={documentStyle}
       isDisabled={isDisabled}
+      textStyle={submitButtonTextStyle}
     >
       {config?.isStepperModal ? config?.steps[step]?.modalBody || config?.modalBody : config?.modalBody}
     </Modal>
