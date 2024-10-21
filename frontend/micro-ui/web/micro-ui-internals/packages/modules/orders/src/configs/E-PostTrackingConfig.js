@@ -130,7 +130,7 @@ export const EpostTrackingConfig = ({ inboxFilters, outboxFilters }) => {
               {
                 label: "Delivery Status",
                 jsonPath: "deliveryStatus",
-                // additionalCustomization: true,
+                additionalCustomization: true,
               },
               {
                 label: "Remarks",
@@ -262,7 +262,7 @@ export const EpostTrackingConfig = ({ inboxFilters, outboxFilters }) => {
               {
                 label: "Delivery Status",
                 jsonPath: "deliveryStatus",
-                // additionalCustomization: true,
+                additionalCustomization: true,
               },
               {
                 label: "Remarks",
@@ -394,7 +394,7 @@ export const EpostTrackingConfig = ({ inboxFilters, outboxFilters }) => {
               {
                 label: "Delivery Status",
                 jsonPath: "deliveryStatus",
-                // additionalCustomization: true,
+                additionalCustomization: true,
               },
               {
                 label: "Remarks",

@@ -78,6 +78,14 @@ export const UICustomizations = {
         },
       };
     },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch(key){
+        case "Delivery Status":
+          return t(value)
+        default:
+            return t("ES_COMMON_NA");
+      }
+    }
   },
   SearchHearingsConfig: {
     customValidationCheck: (data) => {

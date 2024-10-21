@@ -219,7 +219,7 @@ const ApplicationDetails = ({ location, match }) => {
   const aadharData = useMemo(() => {
     return [
       { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
-      { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
+      { title: "ID Type", content: t(individualData?.Individual?.[0]?.identifiers[0]?.identifierType) },
       {
         title: identifierIdDetails?.fileStoreId ? "ID Proof" : "Aadhar Number",
         content: identifierIdDetails?.fileStoreId ? (
