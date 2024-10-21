@@ -114,7 +114,7 @@ export const showToastForComplainant = ({ formData, setValue, selected, setSucce
     const formDataCopy = structuredClone(formData);
     const addressDet = formDataCopy?.complainantVerification?.individualDetails?.addressDetails;
     const addressDetSelect = formDataCopy?.complainantVerification?.individualDetails?.["addressDetails-select"];
-    if (!!addressDet && !!addressDetSelect && formDataCopy?.addressDetails) {
+    if (!!addressDet && !!addressDetSelect) {
       setValue("addressDetails", { ...addressDet, typeOfAddress: formDataCopy?.addressDetails?.typeOfAddress });
       setValue("addressDetails-select", addressDetSelect);
     }
@@ -211,7 +211,7 @@ export const checkIfscValidation = ({ formData, setValue, selected }) => {
 
 export const checkNameValidation = ({ formData, setValue, selected, reset, index, formdata }) => {
   if (selected === "respondentDetails") {
-    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName) {
+    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName || formData?.respondentAge) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
         if (["respondentFirstName", "respondentMiddleName", "respondentLastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
@@ -237,11 +237,30 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
             }
           }
         }
+        if (key === "respondentAge" && Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+
+          let updatedValue = value?.replace(/\D/g, "");
+          // Convert to number and restrict value to 150
+          if (updatedValue && parseInt(updatedValue, 10) > 150) {
+            updatedValue = updatedValue.substring(0, updatedValue.length - 1); // Disallow the extra digit
+          }
+          if (updatedValue !== oldValue) {
+            const element = document?.querySelector(`[name="${key}"]`);
+            const start = element?.selectionStart;
+            const end = element?.selectionEnd;
+            setValue(key, updatedValue);
+            setTimeout(() => {
+              element?.setSelectionRange(start, end);
+            }, 0);
+          }
+        }
       }
     }
   }
   if (selected === "complainantDetails" || selected === "witnessDetails") {
-    if (formData?.firstName || formData?.middleName || formData?.lastName) {
+    if (formData?.firstName || formData?.middleName || formData?.lastName || formData?.witnessAge || formData?.complainantAge) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
         if (["firstName", "middleName", "lastName"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
@@ -265,6 +284,25 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
                 element?.setSelectionRange(start, end);
               }, 0);
             }
+          }
+        }
+        if (["complainantAge", "witnessAge"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+
+          let updatedValue = value?.replace(/\D/g, "");
+          // Convert to number and restrict value to 150
+          if (updatedValue && parseInt(updatedValue, 10) > 150) {
+            updatedValue = updatedValue.substring(0, updatedValue.length - 1); // Disallow the extra digit
+          }
+          if (updatedValue !== oldValue) {
+            const element = document?.querySelector(`[name="${key}"]`);
+            const start = element?.selectionStart;
+            const end = element?.selectionEnd;
+            setValue(key, updatedValue);
+            setTimeout(() => {
+              element?.setSelectionRange(start, end);
+            }, 0);
           }
         }
       }
@@ -631,10 +669,25 @@ export const advocateDetailsFileValidation = ({ formData, selected, setShowError
   }
 };
 
-export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast, setFormErrors, clearFormDataErrors }) => {
+export const complainantValidation = ({
+  formData,
+  t,
+  caseDetails,
+  selected,
+  setShowErrorToast,
+  toast,
+  setFormErrors,
+  formState,
+  clearFormDataErrors,
+}) => {
   if (selected === "complainantDetails") {
     if (!formData?.complainantId?.complainantId) {
       setShowErrorToast(true);
+      return true;
+    }
+    if (!formData?.complainantTypeOfEntity?.code && !Object.keys(formState?.errors).includes("complainantTypeOfEntity")) {
+      setShowErrorToast(true);
+      setFormErrors("complainantTypeOfEntity", { message: "CORE_REQUIRED_FIELD_ERROR" });
       return true;
     }
     if (!formData?.complainantVerification?.mobileNumber || !formData?.complainantVerification?.otpNumber) {

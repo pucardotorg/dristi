@@ -158,6 +158,7 @@ function EFilingCases({ path }) {
   const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
 
   const setFormErrors = useRef(null);
+  const setFormState = useRef(null);
   const resetFormData = useRef(null);
   const setFormDataValue = useRef(null);
   const clearFormDataErrors = useRef(null);
@@ -1314,6 +1315,7 @@ function EFilingCases({ path }) {
     }
 
     setFormErrors.current = setError;
+    setFormState.current = formState;
     resetFormData.current = reset;
     setFormDataValue.current = setValue;
     clearFormDataErrors.current = clearErrors;
@@ -1501,6 +1503,7 @@ function EFilingCases({ path }) {
             setShowErrorToast,
             toast,
             setFormErrors: setFormErrors.current,
+            formState: setFormState.current,
             clearFormDataErrors: clearFormDataErrors.current,
           })
         )

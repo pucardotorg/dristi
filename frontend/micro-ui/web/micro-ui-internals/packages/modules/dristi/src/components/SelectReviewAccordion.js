@@ -401,6 +401,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
+                  {input?.data?.length === 0 && (
+                    <span style={{ fontFamily: "Roboto", fontSize: "14px", fontWeight: 400 }}>{t(input?.noDataText)}</span>
+                  )}
                   {!isScrutiny && !isJudge && (isCaseReAssigned || isDraftInProgress) && (
                     <div
                       className="header-right"
@@ -409,9 +412,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         history.push(`?caseId=${caseId}&selected=${input?.key}`);
                       }}
                     >
-                      {input?.data?.length === 0 && (
-                        <span style={{ fontFamily: "Roboto", fontSize: "14px", fontWeight: 400 }}>{t(input?.noDataText)}</span>
-                      )}
                       <EditPencilIcon />
                     </div>
                   )}
