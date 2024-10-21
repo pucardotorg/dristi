@@ -685,7 +685,11 @@ export const complainantValidation = ({
       setShowErrorToast(true);
       return true;
     }
-    if (!formData?.complainantTypeOfEntity?.code && !Object.keys(formState?.errors).includes("complainantTypeOfEntity")) {
+    if (
+      formData?.complainantType?.code !== "INDIVIDUAL" &&
+      !formData?.complainantTypeOfEntity?.code &&
+      !Object.keys(formState?.errors).includes("complainantTypeOfEntity")
+    ) {
       setShowErrorToast(true);
       setFormErrors("complainantTypeOfEntity", { message: "CORE_REQUIRED_FIELD_ERROR" });
       return true;
