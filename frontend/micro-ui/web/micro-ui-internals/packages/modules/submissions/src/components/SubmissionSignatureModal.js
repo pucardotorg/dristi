@@ -39,8 +39,9 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
   }, [name]);
 
   const onSelect = (key, value) => {
-    if (value === null) {
+    if (value?.[name] === null) {
       setFormData({});
+      setIsSigned(false);
     } else {
       setFormData((prevData) => ({
         ...prevData,

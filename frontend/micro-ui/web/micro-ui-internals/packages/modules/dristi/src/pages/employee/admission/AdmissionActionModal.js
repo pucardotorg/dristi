@@ -227,6 +227,10 @@ function AdmissionActionModal({
     } catch (error) {}
   };
 
+  const handleCancelClick = () => {
+    history.push(`/${window?.contextPath}/employee/dristi/home/view-case?caseId=${caseDetails?.id}&filingNumber=${caseDetails?.filingNumber}`);
+  };
+
   return (
     <React.Fragment>
       {modalInfo?.page === 0 && modalInfo?.type === "sendCaseBack" && (
@@ -348,6 +352,8 @@ function AdmissionActionModal({
       )}
       {showSuccessModal(modalInfo) && (
         <Modal
+          headerBarMain={modalInfo?.type === "admitCase" && true}
+          headerBarEnd={modalInfo?.type === "admitCase" && <CloseBtn onClick={() => handleCancelClick()} />}
           actionSaveLabel={
             <div>
               {t(submitModalInfo?.nextButtonText)}
@@ -398,6 +404,8 @@ function AdmissionActionModal({
       )}
       {modalInfo?.page === 4 && (
         <Modal
+          headerBarMain={true}
+          headerBarEnd={<CloseBtn onClick={() => handleCancelClick()} />}
           actionSaveLabel={
             <div>
               {t(submitModalInfo?.nextButtonText)}
