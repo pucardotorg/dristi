@@ -1694,7 +1694,7 @@ const AdmittedCases = () => {
                 onClick={() => {
                   onTabChange(num);
                 }}
-                disabled={isTabDisabled}
+                disabled={["Complaint", "Overview"].includes(i?.label) ? false : isTabDisabled}
               >
                 {t(i?.label)}
               </button>

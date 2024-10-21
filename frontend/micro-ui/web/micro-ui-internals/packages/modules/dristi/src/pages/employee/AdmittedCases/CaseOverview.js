@@ -52,9 +52,16 @@ const CaseOverview = ({
     return (
       isAdvocatePresent &&
       userRoles?.includes("APPLICATION_CREATOR") &&
-      [CaseWorkflowState.CASE_ADMITTED, CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseData?.case?.status)
+      [
+        CaseWorkflowState.PENDING_ADMISSION_HEARING,
+        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
+        CaseWorkflowState.PENDING_NOTICE,
+        CaseWorkflowState.PENDING_RESPONSE,
+        CaseWorkflowState.PENDING_ADMISSION,
+        CaseWorkflowState.CASE_ADMITTED,
+      ].includes(caseStatus)
     );
-  }, [userRoles, caseData?.case?.status, isAdvocatePresent]);
+  }, [userRoles, caseStatus, isAdvocatePresent]);
 
   const { data: advocateDetails, isLoading: isAdvocatesLoading } = useGetIndividualAdvocate(
     {
@@ -129,41 +136,35 @@ const CaseOverview = ({
               padding: "20px",
             }}
           >
-            <EmptyStates
-              heading={"An overview of this case will appear here!"}
-              message={
-                "A summary of this case’s proceedings, hearings, orders and other activities will be visible here. Take your first action on the case."
-              }
-            />
-            <div>
-              {!userRoles.includes("CITIZEN") ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    width: "100%",
-                    marginTop: "16px",
-                    gap: "16px",
-                  }}
-                >
-                  <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
-                  {userRoles.includes("ORDER_CREATOR") && (
-                    <Button variation={"outlined"} label={t("GENERATE_ORDERS_LINK")} onButtonClick={() => navigateOrdersGenerate()} />
-                  )}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    width: "100%",
-                    marginTop: "16px",
-                  }}
-                >
-                  <Button variation={"outlined"} label={"Raise Application"} onButtonClick={handleMakeSubmission} />
-                </div>
-              )}
-            </div>
+            <EmptyStates heading={t("CASE_OVERVIEW_TEXT")} message={t("CASE_OVERVIEW_SUB_TEXT")} />
+            {!userRoles.includes("CITIZEN") && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                  width: "100%",
+                  marginTop: "16px",
+                  gap: "16px",
+                }}
+              >
+                <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
+                {userRoles.includes("ORDER_CREATOR") && (
+                  <Button variation={"outlined"} label={t("GENERATE_ORDERS_LINK")} onButtonClick={() => navigateOrdersGenerate()} />
+                )}
+              </div>
+            )}
+            {showMakeSubmission && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                  width: "100%",
+                  marginTop: "16px",
+                }}
+              >
+                <Button variation={"outlined"} label={t("RAISE_APPLICATION")} onButtonClick={handleMakeSubmission} />
+              </div>
+            )}
           </div>
         ) : (
           <div>
