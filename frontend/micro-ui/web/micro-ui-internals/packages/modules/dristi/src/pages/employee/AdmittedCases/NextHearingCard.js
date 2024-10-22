@@ -131,7 +131,7 @@ const NextHearingCard = ({ caseData, width }) => {
                 marginTop: "5px",
               }}
             >
-              {`${scheduledHearing?.hearingType.charAt(0).toUpperCase()}${scheduledHearing?.hearingType.slice(1).toLowerCase()} Hearing`}
+              {`${t(scheduledHearing?.hearingType)} Hearing`}
             </div>
           </div>
         </div>
