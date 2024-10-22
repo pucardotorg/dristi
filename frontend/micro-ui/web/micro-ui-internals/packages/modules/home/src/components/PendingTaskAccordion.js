@@ -90,8 +90,16 @@ function PendingTaskAccordion({
               style={{ cursor: "pointer" }}
               onClick={() => {
                 if (item?.status === "PENDING_RESPONSE") {
-                  setResponsePendingTask(item);
-                  setShowSubmitResponseModal(true);
+                  if (item?.actionName === "Admit-Case") {
+                    const caseId = item?.params?.caseId;
+                    const filingNumber = item?.params?.filingNumber;
+                    history.push(`/${window.contextPath}/employee/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`, {
+                      triggerAdmitCase: true,
+                    });
+                  } else {
+                    setResponsePendingTask(item);
+                    setShowSubmitResponseModal(true);
+                  }
                 } else redirectPendingTaskUrl(item?.redirectUrl, item?.isCustomFunction, item?.params);
               }}
             >

@@ -63,6 +63,7 @@ function AdmissionActionModal({
   caseDetails,
   scheduleHearing = false,
   isAdmissionHearingAvailable = false,
+  setOpenAdmitCaseModal,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -266,10 +267,20 @@ function AdmissionActionModal({
         <Modal
           headerBarMain={<Heading label={t(stepItems[1].headModal)} />}
           actionSaveLabel={t(isAdmissionHearingAvailable ? "CS_ADMIT_CASE" : stepItems[1]?.submitText)}
-          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setOpenAdmitCaseModal(false);
+                setShowModal(false);
+              }}
+            />
+          }
           isDisabled={caseAdmitLoader}
           actionSaveOnSubmit={(props) => handleAdmitCase(props)}
-          actionCancelOnSubmit={() => setShowModal(false)}
+          actionCancelOnSubmit={() => {
+            setOpenAdmitCaseModal(false);
+            setShowModal(false);
+          }}
           actionCancelLabel={t(isAdmissionHearingAvailable ? "CS_COMMON_CANCEL" : "")}
         >
           <CardText>{t(isAdmissionHearingAvailable ? "CS_CONFIRM_CLOSE_HEARING_AFTER_ADMIT_CASE_TEXT" : stepItems[1]?.text)}</CardText>

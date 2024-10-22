@@ -126,6 +126,7 @@ const AdmittedCases = () => {
   const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
+  const [openAdmitCaseModal, setOpenAdmitCaseModal] = useState(true);
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -682,6 +683,15 @@ const AdmittedCases = () => {
   }, [caseDetails?.status]);
 
   useEffect(() => {
+    if (history?.location?.state?.triggerAdmitCase && openAdmitCaseModal) {
+      setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
+      setModalInfo({ type: "admitCase", page: 0 });
+      setShowModal(true);
+      setOpenAdmitCaseModal(false);
+    }
+  }, [history?.location]);
+
+  useEffect(() => {
     if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
       showToast(true);
       setToastDetails({
@@ -888,6 +898,7 @@ const AdmittedCases = () => {
 
   const handleAdmitCase = async () => {
     setCaseAdmitLoader(true);
+    setOpenAdmitCaseModal(false);
     updateCaseDetails("ADMIT", caseDetails).then(async (res) => {
       setModalInfo({ ...modalInfo, page: 1 });
       setCaseAdmitLoader(false);
@@ -1912,6 +1923,7 @@ const AdmittedCases = () => {
           caseAdmitLoader={caseAdmitLoader}
           caseDetails={caseDetails}
           isAdmissionHearingAvailable={Boolean(currentHearingId)}
+          setOpenAdmitCaseModal={setOpenAdmitCaseModal}
         ></AdmissionActionModal>
       )}
       {showDismissCaseConfirmation && (
