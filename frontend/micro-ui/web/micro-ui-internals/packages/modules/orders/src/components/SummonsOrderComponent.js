@@ -33,7 +33,7 @@ const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckbox
                           Array.isArray(partyDetails) &&
                           partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
                         }
-                        onChange={() => handleCheckboxChange(channel.type, value)}
+                        onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
                       />
                       <label htmlFor={`${channel.type}-${index}`}>
                         {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "RPAD"
@@ -62,17 +62,19 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   const orderType = useMemo(() => formData?.orderType?.code, [formData?.orderType?.code]);
   const [userList, setUserList] = useState([]);
   const [deliveryChannels, setDeliveryChannels] = useState([
-    { type: "SMS", values: [] },
-    { type: "E-mail", values: [] },
+    { type: "SMS", code: "SMS", values: [] },
+    { type: "E-mail", code: "EMAIL", values: [] },
     {
       type: "e-Post",
+      code: "EPOST",
       values: [],
     },
     {
       type: "RPAD",
+      code: "RPAD",
       values: [],
     },
-    { type: "Via Police", values: [] },
+    { type: "Via Police", code: "POLICE", values: [] },
   ]);
 
   const { data: caseData, refetch } = useSearchCaseService(
@@ -185,7 +187,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
     }
   };
 
-  const handleCheckboxChange = (channelType, value) => {
+  const handleCheckboxChange = (channelType, code, value) => {
     const partyDetails = selectedChannels.length === 0 ? formData[config.key]?.selectedChannels : selectedChannels;
     const isPresent =
       Array.isArray(partyDetails) && partyDetails.some((data) => data.type === channelType && JSON.stringify(value) === JSON.stringify(data.value));
@@ -197,8 +199,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
       );
     } else {
       updatedSelectedChannels = Array.isArray(partyDetails)
-        ? [...partyDetails, { type: channelType, value: value }]
-        : [{ type: channelType, value: value }];
+        ? [...partyDetails, { type: channelType, code: code, value: value }]
+        : [{ type: channelType, code: code, value: value }];
     }
     setSelectedChannels(updatedSelectedChannels);
     onSelect(config.key, { ...formData[config.key], selectedChannels: updatedSelectedChannels });
@@ -266,17 +268,19 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
       const ePostAddresses = addressList?.filter((item) => Boolean(item));
       setDeliveryChannels(
         [
-          { type: "SMS", values: phone_numbers || [] },
-          { type: "E-mail", values: email || [] },
+          { type: "SMS", code: "SMS", values: phone_numbers || [] },
+          { type: "E-mail", code: "EMAIL", values: email || [] },
           {
             type: "e-Post",
+            code: "EPOST",
             values: ePostAddresses,
           },
           {
             type: "RPAD",
+            code: "RPAD",
             values: address || [],
           },
-          orderType === "SUMMONS" && { type: "Via Police", values: address || [] },
+          orderType === "SUMMONS" && { type: "Via Police", code: "POLICE", values: address || [] },
         ]
           .filter((item) => Boolean(item))
           .map((item) => item)

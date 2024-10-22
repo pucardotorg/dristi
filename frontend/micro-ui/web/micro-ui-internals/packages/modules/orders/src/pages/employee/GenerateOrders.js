@@ -1494,6 +1494,28 @@ const GenerateOrders = () => {
     return ["SUMMONS", "NOTICE"].includes(orderType) ? orderFormData?.party?.data : orderFormData;
   };
 
+  const getCourtFee = async (channelId, receiverPincode, taskType) => {
+    try {
+      const breakupResponse = await DRISTIService.getSummonsPaymentBreakup(
+        {
+          Criteria: [
+            {
+              channelId: channelId,
+              receiverPincode: receiverPincode,
+              tenantId: tenantId,
+              taskType: taskType,
+            },
+          ],
+        },
+        {}
+      );
+      return breakupResponse?.Calculation?.[0]?.breakDown?.filter((data) => data?.type === "Court Fee").reduce((sum, fee) => (sum += fee.amount), 0);
+    } catch (error) {
+      console.error("error", error);
+      return 0;
+    }
+  };
+
   const createTask = async (orderType, caseDetails, orderDetails) => {
     let payload = {};
     const { litigants } = caseDetails;
@@ -1669,7 +1691,7 @@ const GenerateOrders = () => {
             email: "",
             status: "",
             statusChangeDate: "",
-            fees: "",
+            fees: await getCourtFee("POLICE", respondentAddress?.[0]?.pincode, orderType),
             feesStatus: "",
           },
         };
@@ -1702,6 +1724,8 @@ const GenerateOrders = () => {
     if (Object.keys(payload || {}).length > 0 && Array.isArray(selectedChannel)) {
       const channelMap = new Map();
       selectedChannel.forEach(async (item) => {
+        let courtFees = await getCourtFee(item?.code, payload?.respondentDetails?.address?.pincode, orderType);
+
         if (channelMap.get(item?.type)) {
           channelMap.set(item?.type, channelMap.get(item?.type) + 1);
         } else {
@@ -1711,6 +1735,7 @@ const GenerateOrders = () => {
           payload.deliveryChannels = {
             ...payload.deliveryChannels,
             channelName: channelTypeEnum?.[item?.type]?.type,
+            fees: courtFees,
           };
 
           const address = ["e-Post", "Via Police", "RPAD"].includes(item?.type)

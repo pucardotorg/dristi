@@ -7,6 +7,7 @@ const submitButtonTextStyle = {
   fontWeight: 700,
   lineHeight: "18.75px",
   textAlign: "center",
+  margin: "0px",
 };
 
 const CloseBtn = (props) => {
