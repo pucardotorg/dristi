@@ -1,0 +1,44 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+title "Judge Reject Document Submission"
+
+actor Judge as J
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant FilingsUI as AU
+participant ConfirmationUI as CRU
+
+box DRISTI Services
+participant CaseSvc as CS #gold
+participant ArtifactsSvc as AS #gold
+end box
+
+box DIGIT Services
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+end box
+
+J->HU: login
+J->HU: select a case to view 
+HU->VU: redirect to View Case screen
+VU->CS++: search case (filing or CNR number)
+return case
+J->VU: Click on "Filings" tab
+VU->FU: redirect to Filings (Documents) screen
+AU->AS++: search documents (filing number)
+return list of documents 
+note right of J: If required, Judge can click on a document and review it
+J->AU: click on contect menu for document
+J->AU: clicks "Not Consider Filing"
+AU->CRU: confirmation popup
+note right of CRU: happy path - marked as 'not considered'. If select No on the popup, no further action required
+
+CRU->AS++: updateArtifact (status = 'not considered')
+AS->K: artifact updated
+return 200 updated successfully
+P->K: listen to artifact update
+P->DB: update artifact 
+
+@enduml
