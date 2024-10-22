@@ -86,6 +86,15 @@ const relevantStatuses = [
   "PENDING_RESPONSE",
   "PENDING_ADMISSION",
 ];
+const judgeReviewStages = [
+  "CASE_ADMITTED",
+  "ADMISSION_HEARING_SCHEDULED",
+  "PENDING_ADMISSION_HEARING",
+  "PENDING_NOTICE",
+  "PENDING_RESPONSE",
+  "PENDING_ADMISSION",
+  "CASE_DISMISSED",
+];
 
 const styles = {
   container: {
@@ -1586,6 +1595,12 @@ const AdmittedCases = () => {
 
   if (isLoading || isWorkFlowLoading || isApplicationLoading) {
     return <Loader />;
+  }
+  if (
+    (userRoles?.includes("JUDGE_ROLE") || userRoles?.includes("BENCHCLERK_ROLE") || userRoles?.includes("COURT_ROOM_MANAGER")) &&
+    !judgeReviewStages.includes(caseData?.criteria?.[0]?.responseList?.[0]?.status)
+  ) {
+    history.push(`/${window.contextPath}/employee/home/home-pending-task`);
   }
 
   return (
