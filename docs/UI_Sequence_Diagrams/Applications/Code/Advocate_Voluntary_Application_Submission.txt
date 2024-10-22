@@ -27,6 +27,7 @@ participant ESignSvc as ES #orange
 box DIGIT Services #lightgray
 participant FilestoreSvc as FS #lightgreen
 participant PDFSvc as PS #lightgreen
+participant IDGenSvc as IDS #lightgreen
 participant Workflow as W #lightgreen
 queue Kafka as K #lightgreen
 participant PersisterSvc as P #lightgreen
@@ -38,7 +39,7 @@ end box
 A->HU: login
 A->HU: select a case to view
 HU->VU: redirects to View Case screen
-A->VU: Click "Make a Submission"
+A->VU: Click "Submit Application"
 VU->AU: redirects to Application submission screen
 A->AU: Fill in the Application details
 A->AU: upload relevant documents
@@ -47,13 +48,17 @@ AU->PS++: generate application PDF
 return PDF
 AU->FS++: store application PDF
 return filestoreID
-AU->AS++: createApplication (application payload, CNR, filestoreID)
+AU->AS++: createApplication (application payload, filestoreID)
 AS->CS: validate exists (application.CaseID)
-alt invalid caseID
+opt invalid caseID
 CS->AS: return false
 AS->AU: return Error (cannot create application)
 else valid caseID
-AS->AUS ++: generate Application Number (CNR)
+AS->AUS ++: generate Application Number
+AUS->CS++: get case summary (filing number)
+return case summary
+AUS->IDS++: generate application number (courtID) in CMP format
+return applicationNumber
 return applicationNumber
 AS->AS: enrich applicationID, applicationNumber
 AS->W++: action "CREATE"
@@ -67,6 +72,7 @@ P-> DB: Create record in DB
 AAS->K: listen to state transition event
 opt
 AAS->DBES: post to indexer
+end
 end
 
 A->AU: Click "Submit"

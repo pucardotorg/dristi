@@ -21,8 +21,8 @@ end box
 participant ESignSvc as ES #orange
 
 box DIGIT Services #lightgray
-participant FilestoreSvc as FS #lightgreen
 participant PDFSvc as PS #lightgreen
+participant FilestoreSvc as FS #lightgreen
 participant Workflow as W #lightgreen
 queue Kafka as K #lightgreen
 end box
@@ -40,15 +40,6 @@ VU->DU: redirects to Document submission screen
 A->DU: Fill in the Document details and upload relevant documents
 A->DU: Click "Review Submission"
 DU->DRU: redirect to review screen
-opt multiple documents uploaded
-DU->PS++: merge all documents and generate document PDF
-return PDF
-else single non PDF document uploaded
-DU->PS++: converted and generate document PDF
-return PDF
-end
-DRU->FS++: store PDF 
-return filestoreID
 DRU->ARS++: createArtifact(artifact payload, filestoreID, filingNumber)
 ARS->ARUS++: generate ArtifactNumber (filingNumber)
 return artifactNumber
@@ -56,7 +47,17 @@ ARS->W++: action "CREATE"
 W->K: post state transition event
 return "PENDING_E-SIGN"
 return 201 (new artifact)
-
+opt multiple documents uploaded
+DRU->PS++: merge all documents and generate document PDF
+return PDF
+else single non PDF document uploaded
+DRU->PS++: converted and generate document PDF
+return PDF
+else single PDF uploaded
+note right of DRU: PDF already available. can use for preview directly
+end
+DRU->DRU: Preview PDF
+A->DRU: E-sign documemnt
 DRU->ES++: e-sign document
 return signed documemnt
 DRU->FS++: save document

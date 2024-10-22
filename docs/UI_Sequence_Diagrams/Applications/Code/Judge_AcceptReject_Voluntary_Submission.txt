@@ -17,7 +17,6 @@ participant AnalyticsSvc as AAS #gold
 end box
 
 box DIGIT Services
-participant IDGenSvc as IS #lightgreen
 participant Workflow as W #lightgreen
 queue Kafka as K #lightgreen
 participant PersisterSvc as P #lightgreen
@@ -34,7 +33,7 @@ VU->ARU: redirects to Application review screen (applicationNumber)
 else
 J->VU: Click on "Applications" tab
 VU->AU: redirect to Applications screen
-AU->AS++: search applications (CNR)
+AU->AS++: search applications (filing number)
 return list of applications
 J->AU: click on a application (pending approval)
 AU->ARU: redirects to Application review screen (applicationNumber)
@@ -44,13 +43,12 @@ J->ARU: Review application and comments if any
 alt approve application
 J->ARU: Click "Accept"
 ARU->AS++: updateAppication (approved)
-AS->IS++: getCMPNumber (caseId)
-return cmpNumber
-AS->AS: enrich applicationNumber = cmpNumber
 AS->W++: action "APPROVE"
 W->K: post state transition event
 return "COMPLETED"
 return 200 approved successfully
+P->K: listen to workflow update
+P->DB: update application
 opt
 ARU->OU: redirect to order UI (acceptance order)
 note right of ARU: Follow Judge Create Order flow
@@ -65,13 +63,12 @@ end
 else reject application
 J->ARU: Click "Reject"
 ARU->AS++: updateAppication (rejected)
-AS->IS++: getCMPNumber (caseId)
-return cmpNumber
-AS->AS: enrich applicationNumber = cmpNumber
 AS->W++: action "REJECT"
 W->K: post state transition event
 return "REJECTED"
 return 200 rejected successfully
+P->K: listen to workflow update
+P->DB: update application
 ARU->OU: redirect to order UI (rejection order)
 note right of ARU: Follow Judge Create Order flow
 end
