@@ -33,7 +33,7 @@ const NextHearingCard = ({ caseData, width }) => {
   );
 
   const scheduledHearing = hearingRes?.HearingList?.filter(
-    (hearing) => ![HearingWorkflowState.COMPLETED, HearingWorkflowState?.OPTOUT].includes(hearing?.status)
+    (hearing) => ![HearingWorkflowState.COMPLETED, HearingWorkflowState?.OPTOUT, HearingWorkflowState?.ABATED].includes(hearing?.status)
   ).sort((hearing1, hearing2) => hearing1.startTime - hearing2.startTime)[0];
 
   const formattedTime = () => {

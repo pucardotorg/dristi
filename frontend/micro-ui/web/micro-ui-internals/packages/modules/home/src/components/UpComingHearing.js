@@ -3,6 +3,7 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalenderIcon } from "../../homeIcon";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
 function timeInMillisToDateTime(timeInMillis) {
   if (!timeInMillis || typeof timeInMillis !== "number") {
@@ -287,9 +288,11 @@ const UpcomingHearings = ({ t, userInfoType, ...props }) => {
   const hearingCountsByType = useMemo(() => {
     const hearingCountsByType = {};
 
-    earliestHearingSlot?.hearings.forEach((hearing) => {
-      hearingCountsByType[hearing.hearingType] = (hearingCountsByType[hearing.hearingType] || 0) + 1;
-    });
+    earliestHearingSlot?.hearings
+      .filter((hearing) => ![HearingWorkflowState.COMPLETED, HearingWorkflowState?.OPTOUT, HearingWorkflowState?.ABATED].includes(hearing?.status))
+      .forEach((hearing) => {
+        hearingCountsByType[hearing.hearingType] = (hearingCountsByType[hearing.hearingType] || 0) + 1;
+      });
 
     return Object.keys(hearingCountsByType)
       .map((hearingType) => {
