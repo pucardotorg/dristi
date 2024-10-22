@@ -100,12 +100,26 @@ const EpostTrackingPage = () => {
     setShow(true);
   };
 
+  const { data: taskData } = Digit.Hooks.hearings.useGetTaskList(
+    {
+      criteria: {
+        tenantId: tenantId,
+        taskNumber: rowData?.original?.taskNumber,
+      },
+    },
+    {},
+    rowData?.original?.taskNumber,
+    Boolean(rowData)
+  );
+
+  const ePostFee = taskData?.list?.[0]?.taskDetails?.deliveryChannels?.fees;
+
   const printInfos = useMemo(() => {
     return [
-      { key: "E-post fees", value: "Rs.100" },
+      { key: "E-post fees", value: `Rs. ${ePostFee || "N.A."}` },
       { key: "Received on", value: recievedOn ? recievedOn?.date : "04/07/2024, 12:56" },
     ];
-  }, [recievedOn]);
+  }, [recievedOn, ePostFee]);
 
   const printLinks = useMemo(() => {
     return [{ text: "View Details", link: "" }];
@@ -132,18 +146,6 @@ const EpostTrackingPage = () => {
 
     setUpdatedData(data);
   };
-
-  const { data: taskData } = Digit.Hooks.hearings.useGetTaskList(
-    {
-      criteria: {
-        tenantId: tenantId,
-        taskNumber: rowData?.original?.taskNumber,
-      },
-    },
-    {},
-    rowData?.original?.taskNumber,
-    Boolean(rowData)
-  );
 
   const { data: orderData } = Digit.Hooks.orders.useSearchOrdersService(
     { tenantId, criteria: { id: taskData?.list[0]?.orderId } },
@@ -200,7 +202,7 @@ const EpostTrackingPage = () => {
 
   const infos = useMemo(() => {
     return [
-      { key: "E-post fees", value: "Rs.100" },
+      { key: "E-post fees", value: `Rs. ${ePostFee || "N.A."}` },
       { key: "Received on", value: recievedOn ? recievedOn?.date : "04/07/2024, 12:56" },
       { key: "Bar Code", value: "1234567890" },
       { key: "Date of Booking", value: "04/07/2024" },
