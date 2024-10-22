@@ -166,7 +166,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
             {showDependentFields && (
               <LabelFieldPair>
                 {!config?.disableScrutinyHeader && (
-                  <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
+                  <CardLabel className="card-label-smaller" style={{ display: "flex", width: "100%" }}>
                     {t(input.label) +
                       `${
                         input?.hasMobileNo

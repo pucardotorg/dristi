@@ -2655,7 +2655,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           ...caseDetails,
           additionalDetails: additionalDetails,
         });
-        const fullName =getUserFullName(response?.Individual)
+        const fullName = getUserFullName(response?.Individual);
         setSelectedParty({
           ...selectedParty,
           fullName: fullName,

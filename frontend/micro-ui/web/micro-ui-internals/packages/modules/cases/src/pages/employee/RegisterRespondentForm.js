@@ -79,6 +79,7 @@ const RegisterRespondentForm = ({ accusedRegisterFormData, setAccusedRegisterFor
         defaultValues={accusedRegisterFormData}
         actionClassName="e-filing-action-bar"
         noBreakLine
+        cardStyle={{ width: "100%", maxWidth: "100%", margin: "0px" }}
       />
     </div>
   );
