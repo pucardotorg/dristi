@@ -241,11 +241,6 @@ const LocationComponent = ({
                       <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                     </CardLabelError>
                   )}
-                {errors?.pincode && input?.name === "pincode" && (
-                  <CardLabelError>
-                    <span style={{ color: "#ff0000" }}>{t(errors?.pincode?.message)}</span>
-                  </CardLabelError>
-                )}
                 {errors[input?.name] && (
                   <CardLabelError>
                     <span style={{ color: "#ff0000" }}>{t(errors[input?.name]?.message)}</span>
