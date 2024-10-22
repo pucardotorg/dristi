@@ -9,7 +9,7 @@ module.exports = {
     main: "./src/index.js",
 //    telemetry: "./public/scripts/telemetry/index.js",
   },
-  devtool: "none",
+  devtool: "cheap-module-source-map",
   module: {
     rules: [
       {
