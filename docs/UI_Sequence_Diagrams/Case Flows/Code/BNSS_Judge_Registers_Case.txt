@@ -1,17 +1,25 @@
 @startuml
-title "Judge registers a case"
+title "Judge registers a Case with/without Delay Condonation"
 autonumber
 actor Judge as J
-participant HomeScreenUI as H order 1
-participant PendingTasksUI as I order 2
-participant ViewCaseUI as CI order 3
-participant OrderUI as OI order 4
-participant CaseSvc order 6
-participant HearingSvc order 7
-participant OrderSvc order 8
-participant TaskSvc order 9
-participant Workflow order 10
-participant ESign order 15
+
+participant HomeScreenUI as H
+participant PendingTasksUI as I 
+participant ViewCaseUI as CI
+participant OrderUI as OI
+
+box DRISTI Services
+participant CaseSvc #gold
+participant HearingSvc #gold
+participant OrderSvc #gold
+participant TaskSvc #gold
+end box
+
+participant ESign #orange
+
+box DIGIT Services
+participant Workflow #lightgreen
+end box
 
 J->I: View Inbox with cases pending registration
 J->CI: Click on case
@@ -25,20 +33,37 @@ CaseSvc->CaseSvc: Generate CNR,CMP
 CaseSvc->Workflow++: Update workflow to "registered" status
 return workflow
 CaseSvc->CI: Return updated case payload
+
+alt Case with Delay Condonation
+CI-> OI: Show the order for hearing
+note right of OI: Judge will select the type of Order and fill the order details
+J->OI: Click on "Issue order"
+OI->OrderSvc++:Create order of type selected by Judge
+return Order
+else Case without Delay Condonation
 CI-> OI: Show the order for admission hearing
+note right of OI: Judge fills in the order details
 J->OI: Click on "Issue order"
 OI->OrderSvc++:Create order of type "Schedule Admission Hearing"
 return Order
+end
+
 OI->ESign++:Sign the order
 return Signed order doc
 OI->OrderSvc++: Update order with signed doc \nand update workflow state to "PUBLISHED"
 return order
 OI->HearingSvc++: Hearing create with workflow action \n("SCHEDULED") and attach orderID
 return "Hearing date"
-J->OI: Show the order for notice UI
-...Judge fills in details...
+
+alt Case with Delay Condonation
+J->OI: Show the order of type 'Notice for BNSS & Delay Condonation'
+else Case without Delay Condonation
+J->OI: Show the order of type 'Notice for BNSS'
+end
+
+note right of OI: Judge fills in the order details
 J ->OI: Click on "Issue order"
-OI->OrderSvc++:Create order of type notice (follow summons flow)
+OI->OrderSvc++:Create order (follow summons flow)
 return order
 OI->ESign++:Sign the order
 return Signed order doc
