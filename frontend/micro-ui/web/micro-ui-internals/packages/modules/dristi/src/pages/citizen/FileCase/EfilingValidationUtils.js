@@ -2012,14 +2012,14 @@ export const updateCaseDetails = async ({
       ...(fileStoreId && { signedCaseDocument: fileStoreId }),
     };
   }
-  const caseTitle =
-    caseDetails?.status !== "DRAFT_IN_PROGRESS"
-      ? caseDetails?.caseTitle
-      : `${getComplainantName(
-          data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data
-        )} vs ${getRespondentName(
-          data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data
-        )}`;
+  const caseTitle = ["DRAFT_IN_PROGRESS", "CASE_REASSIGNED"].includes(caseDetails?.status)
+    ? `${getComplainantName(
+        data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data
+      )} vs ${getRespondentName(
+        data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data
+      )}`
+    : caseDetails?.caseTitle;
+
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
