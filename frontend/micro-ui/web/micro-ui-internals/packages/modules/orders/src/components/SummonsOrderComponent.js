@@ -53,7 +53,7 @@ const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckbox
   );
 };
 
-const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
+const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -180,6 +180,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect }) => {
   }, [caseDetails?.additionalDetails, tenantId]);
 
   const handleDropdownChange = (selectedOption) => {
+    clearErrors(config?.key);
     const isEqual = _.isEqual(selectedOption.value.data, formData?.[config.key]?.party?.data);
     if (!isEqual) {
       setSelectedChannels([]);
