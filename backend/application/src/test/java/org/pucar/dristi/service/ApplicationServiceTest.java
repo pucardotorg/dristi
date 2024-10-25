@@ -137,9 +137,6 @@ class ApplicationServiceTest {
         when(mockRequest.getApplication()).thenReturn(mockApplication);
         when(mockRequest.getRequestInfo()).thenReturn(mockRequestInfo);
 
-        // Simulate application is rejected
-        when(mockApplication.getStatus()).thenReturn("REJECTED");
-
         // Mock validator behavior
         when(validator.validateApplicationExistence(mockRequestInfo, mockApplication)).thenReturn(true);
 
@@ -158,7 +155,6 @@ class ApplicationServiceTest {
         Application result = applicationService.updateApplication(mockRequest);
 
         // Assert
-        verify(enrichmentUtil).enrichApplicationNumberByCMPNumber(mockRequest); // Should be called for REJECTED
         verify(producer).push("application-update-topic", mockRequest); // Should push the update
         assertEquals(mockApplication, result); // Returned application should be the same
 

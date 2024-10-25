@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -34,11 +34,9 @@ public class ApplicationEnrichment {
     public void enrichApplication(ApplicationRequest applicationRequest) {
         try {
             if (applicationRequest.getRequestInfo().getUserInfo() != null) {
-                String tenantId = applicationRequest.getApplication().getFilingNumber().replace("-","");;
-                String idName = configuration.getApplicationConfig();
-                String idFormat = configuration.getApplicationFormat();
 
-                List<String> applicationIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
+                enrichApplicationNumberByCMPNumber(applicationRequest);
+
                 Application application = applicationRequest.getApplication();
                 AuditDetails auditDetails = AuditDetails
                         .builder()
@@ -51,7 +49,6 @@ public class ApplicationEnrichment {
                 application.setId(UUID.randomUUID());
                 application.setCreatedDate(System.currentTimeMillis());
                 application.setIsActive(true);
-                application.setApplicationNumber(applicationRequest.getApplication().getFilingNumber() + "-" + applicationIdList.get(0));
 
                 if (application.getStatuteSection() != null) {
                     application.getStatuteSection().setId(UUID.randomUUID());

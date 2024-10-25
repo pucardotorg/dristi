@@ -72,11 +72,6 @@ public class ApplicationService {
             validator.validateOrderDetails(applicationRequest);
             if (application.getWorkflow()!=null)
                 workflowService.updateWorkflowStatus(applicationRequest);
-
-            if(COMPLETED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())
-            || REJECTED.equalsIgnoreCase(applicationRequest.getApplication().getStatus())){
-                enrichmentUtil.enrichApplicationNumberByCMPNumber(applicationRequest);
-            }
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 
             return applicationRequest.getApplication();
