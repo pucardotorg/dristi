@@ -105,7 +105,7 @@ public class ReScheduleHearingServiceTest {
     @Test
     public void testCreate() {
         doNothing().when(enrichment).enrichRescheduleRequest(any());
-        doNothing().when(producer).push(null, reScheduleHearingRequest.getReScheduleHearing());
+        doNothing().when(producer).push(null, reScheduleHearingRequest);
         RequestInfo requestInfo = new RequestInfo();
         List<ReScheduleHearing> result = reScheduleHearingService.create(reScheduleHearingRequest);
 

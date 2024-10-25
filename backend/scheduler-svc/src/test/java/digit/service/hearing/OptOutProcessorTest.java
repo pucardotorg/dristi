@@ -6,6 +6,7 @@ import digit.kafka.producer.Producer;
 import digit.repository.ReScheduleRequestRepository;
 import digit.service.HearingService;
 import digit.service.RescheduleRequestOptOutService;
+import digit.service.UserService;
 import digit.util.PendingTaskUtil;
 import digit.web.models.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -50,12 +51,16 @@ public class OptOutProcessorTest {
     @InjectMocks
     private OptOutProcessor optOutProcessor;
 
+    @Mock
+    private UserService userService;
+
     @Test
     public void testCheckAndScheduleHearingForOptOut_Success_LastOptOut() {
         // Arrange
         HashMap<String, Object> record = new HashMap<>();
         OptOut optOut = createOptOut();
-        when(mapper.convertValue(record, OptOut.class)).thenReturn(optOut);
+        OptOutRequest optOutRequest = OptOutRequest.builder().optOut(optOut).build();
+        when(mapper.convertValue(record, OptOutRequest.class)).thenReturn(optOutRequest);
 
         OptOutSearchRequest searchRequest = createOptOutSearchRequest(optOut);
         when(optOutService.search(any(OptOutSearchRequest.class), any(), any())).thenReturn(Collections.singletonList(optOut));
@@ -72,7 +77,7 @@ public class OptOutProcessorTest {
 
         // Assert
         assertEquals(ACTIVE, reScheduleHearing.getStatus());
-        verify(producer).push(eq(updateTopic), anyList());
+        verify(producer).push(eq(updateTopic), any(ReScheduleHearingRequest.class));
     }
 
     @Test
@@ -80,7 +85,8 @@ public class OptOutProcessorTest {
         // Arrange
         HashMap<String, Object> record = new HashMap<>();
         OptOut optOut = createOptOut();
-        when(mapper.convertValue(record, OptOut.class)).thenReturn(optOut);
+        OptOutRequest optOutRequest = OptOutRequest.builder().optOut(optOut).build();
+        when(mapper.convertValue(record, OptOutRequest.class)).thenReturn(optOutRequest);
 
         OptOutSearchRequest searchRequest = createOptOutSearchRequest(optOut);
         when(optOutService.search(any(OptOutSearchRequest.class), any(), any())).thenReturn(Collections.emptyList());
@@ -97,7 +103,7 @@ public class OptOutProcessorTest {
 
         // Assert
         assertEquals(ACTIVE, reScheduleHearing.getStatus());
-        verify(producer).push(eq(updateTopic), anyList());
+        verify(producer).push(eq(updateTopic), any(ReScheduleHearingRequest.class));
     }
 
     @Test
@@ -128,7 +134,7 @@ public class OptOutProcessorTest {
 
         // Assert
         assertEquals(INACTIVE, scheduleHearings.get(0).getStatus());
-        verify(producer).push(eq(scheduleUpdateTopic), anyList());
+        verify(producer).push(eq(scheduleUpdateTopic), any(ScheduleHearingRequest.class));
     }
 
     @Test

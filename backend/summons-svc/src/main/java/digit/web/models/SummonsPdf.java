@@ -77,4 +77,7 @@ public class SummonsPdf  {
 
     @JsonProperty("bailableAmount")
     private String bailableAmount;
+
+    @JsonProperty("courtCaseNumber")
+    private String courtCaseNumber;
 }

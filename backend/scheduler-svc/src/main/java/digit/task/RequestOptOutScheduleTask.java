@@ -6,6 +6,7 @@ import digit.config.ServiceConstants;
 import digit.kafka.producer.Producer;
 import digit.repository.ReScheduleRequestRepository;
 import digit.repository.RescheduleRequestOptOutRepository;
+import digit.service.UserService;
 import digit.service.hearing.OptOutProcessor;
 import digit.util.DateUtil;
 import digit.util.MasterDataUtil;
@@ -13,6 +14,7 @@ import digit.util.PendingTaskUtil;
 import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static digit.config.ServiceConstants.INACTIVE;
@@ -41,9 +42,10 @@ public class RequestOptOutScheduleTask {
     private final OptOutProcessor optOutProcessor;
     private final DateUtil dateUtil;
     private final PendingTaskUtil pendingTaskUtil;
+    private final UserService userService;
 
     @Autowired
-    public RequestOptOutScheduleTask(ReScheduleRequestRepository reScheduleRepository, RescheduleRequestOptOutRepository requestOptOutRepository, Producer producer, Configuration config, MasterDataUtil mdmsUtil, ServiceConstants constants, DateUtil dateUtil, PendingTaskUtil pendingTaskUtil, OptOutProcessor optOutProcessor) {
+    public RequestOptOutScheduleTask(ReScheduleRequestRepository reScheduleRepository, RescheduleRequestOptOutRepository requestOptOutRepository, Producer producer, Configuration config, MasterDataUtil mdmsUtil, ServiceConstants constants, DateUtil dateUtil, PendingTaskUtil pendingTaskUtil, OptOutProcessor optOutProcessor, UserService userService) {
         this.reScheduleRepository = reScheduleRepository;
         this.requestOptOutRepository = requestOptOutRepository;
         this.producer = producer;
@@ -53,6 +55,7 @@ public class RequestOptOutScheduleTask {
         this.dateUtil = dateUtil;
         this.optOutProcessor = optOutProcessor;
         this.pendingTaskUtil = pendingTaskUtil;
+        this.userService = userService;
     }
 
     @Scheduled(cron = "${drishti.cron.opt-out.due.date}", zone = "Asia/Kolkata")
@@ -103,10 +106,19 @@ public class RequestOptOutScheduleTask {
 
                 optOutProcessor.unblockJudgeCalendarForSuggestedDays(reScheduleHearing);
             }
-            producer.push(config.getUpdateRescheduleRequestTopic(), reScheduleHearings);
+            RequestInfo requestInfo = createInternalRequestInfo();
+            ReScheduleHearingRequest reScheduleHearingRequest = ReScheduleHearingRequest.builder().requestInfo(requestInfo)
+                    .reScheduleHearing(reScheduleHearings).build();
+            producer.push(config.getUpdateRescheduleRequestTopic(), reScheduleHearingRequest);
             log.info("operation= updateAvailableDatesFromOptOuts, result=SUCCESS");
         } catch (Exception e) {
             throw new CustomException("DK_SH_APP_ERR", "Error in setting available dates.");
         }
+    }
+
+    private RequestInfo createInternalRequestInfo() {
+        User userInfo = new User();
+        userInfo.setUuid(userService.internalMicroserviceRoleUuid);
+        return RequestInfo.builder().userInfo(userInfo).build();
     }
 }

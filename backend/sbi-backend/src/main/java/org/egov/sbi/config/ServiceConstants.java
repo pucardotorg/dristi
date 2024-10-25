@@ -54,4 +54,10 @@ public class ServiceConstants {
     public static final String AUTH_TOKEN = "authToken";
 
     public static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
+
+    public static final String SBIVERIFICATIONERROR = "Invalid merchant packet found!";
+
+    public static final String SBIINVALIDDATAERROR = "Merchant record not found!";
+
+    public static final String DOUBLE_VERIFICATION_FAILED = "DOUBLE_VERIFICATION_FAILED";
 }

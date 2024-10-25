@@ -138,6 +138,21 @@ public class CaseUtil {
         return response;
     }
 
+    public Set<String> getAdvocateIds(JsonNode nodeArray) {
+        log.info("operation = getAdvocateIds, result = IN_PROGRESS");
+        Set<String> response = new HashSet<>();
+        if (nodeArray != null && nodeArray.isArray()) {
+            for (JsonNode node : nodeArray) {
+                JsonNode id = node.get("advocateId");
+                if (id != null) {
+                    response.add(String.valueOf(id.asText()));
+                }
+            }
+        }
+        log.info("operation = getAdvocateIds, result = SUCCESS");
+        return response;
+    }
+
     public Set<String> getIndividualIds(JsonNode nodeArray) {
         log.info("operation = getIndividualIds, result = IN_PROGRESS");
         Set<String> response = new HashSet<>();

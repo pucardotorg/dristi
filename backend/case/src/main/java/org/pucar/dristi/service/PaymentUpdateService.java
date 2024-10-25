@@ -10,12 +10,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.web.models.Bill;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.PaymentDetail;
-import org.pucar.dristi.web.models.PaymentRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -113,7 +108,12 @@ public class PaymentUpdateService {
             auditDetails.setLastModifiedBy(paymentDetail.getAuditDetails().getLastModifiedBy());
             auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
             courtCase.setAuditdetails(auditDetails);
-            producer.push(configuration.getCaseUpdateStatusTopic(),courtCase);
+
+            CaseRequest caseRequest = new CaseRequest();
+            caseRequest.setRequestInfo(requestInfo);
+            caseRequest.setCases(courtCase);
+
+            producer.push(configuration.getCaseUpdateStatusTopic(),caseRequest);
             cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
 
         });

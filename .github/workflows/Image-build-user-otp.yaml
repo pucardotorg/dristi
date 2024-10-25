@@ -3,14 +3,14 @@ on:
   push:
     branches:
       - develop
-      - uat-v0.3
+      - release/0.4
       - dpg-qa-deployment
     paths:
       - 'backend/user-otp/**'
   pull_request:
     branches:
       - develop
-      - uat-v0.3
+      - release/0.4
       - dpg-qa-deployment
     paths:
       - 'backend/user-otp/**'
@@ -21,7 +21,7 @@ permissions:
   contents: read
 jobs:
   docker_image-build:
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-v0.3' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release/0.4' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -59,7 +59,7 @@ jobs:
 
 
   Workflow_Trigger:
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/uat-v0.3' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release/0.4' || github.ref == 'refs/heads/dpg-qa-deployment')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: docker_image-build
     steps:
@@ -68,7 +68,7 @@ jobs:
         run: |
           if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
             echo "WORKFLOW_FILE=solutions-dev.yaml" >> $GITHUB_ENV
-          elif [ "${{ github.ref }}" == "refs/heads/uat-v0.3" ]; then
+          elif [ "${{ github.ref }}" == "refs/heads/release/0.4" ]; then
             echo "WORKFLOW_FILE=solutions-qa.yaml" >> $GITHUB_ENV
           elif [ "${{ github.ref }}" == "refs/heads/dpg-qa-deployment" ]; then
             echo "WORKFLOW_FILE=solutions-dpg-qa.yaml" >> $GITHUB_ENV

@@ -82,7 +82,7 @@ public class HearingProcessor {
                 .build();
         hearingUtil.callHearing(updateHearingRequest);
 
-        producer.push(config.getScheduleHearingTopic(), scheduledHearings);
+        producer.push(config.getScheduleHearingTopic(), ScheduleHearingRequest.builder().requestInfo(requestInfo).hearing(scheduledHearings).build());
 
     }
 

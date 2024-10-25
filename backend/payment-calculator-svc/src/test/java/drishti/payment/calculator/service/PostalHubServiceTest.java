@@ -51,7 +51,7 @@ public class PostalHubServiceTest {
 
 //        verify(validator, times(1)).validatePostalHubRequest(request);
         verify(enrichment, times(1)).enrichPostalHubRequest(request);
-        verify(producer, times(1)).push(config.getPostalHubCreateTopic(), request.getPostalHubs());
+        verify(producer, times(1)).push(config.getPostalHubCreateTopic(), request);
         assertEquals(postalHubs, result);
     }
 
@@ -77,7 +77,7 @@ public class PostalHubServiceTest {
 
         verify(validator, times(1)).validateExistingPostalHubRequest(request);
         verify(enrichment, times(1)).enrichExistingPostalHubRequest(request);
-        verify(producer, times(1)).push(config.getPostalHubUpdateTopic(), request.getPostalHubs());
+        verify(producer, times(1)).push(config.getPostalHubUpdateTopic(), request);
         assertEquals(postalHubs, result);
     }
 }

@@ -279,7 +279,7 @@ public class CaseService {
         enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
         log.info("Pushing join case litigant details :: {}", joinCaseRequest.getLitigant());
-        producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+        producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest);
 
         String tenantId = joinCaseRequest.getRequestInfo().getUserInfo().getTenantId();
 
@@ -321,7 +321,7 @@ public class CaseService {
         enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
 
         log.info("Pushing join case representative details :: {}", joinCaseRequest.getRepresentative());
-        producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+        producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest);
 
         String tenantId = joinCaseRequest.getRequestInfo().getUserInfo().getTenantId();
 
@@ -422,7 +422,7 @@ public class CaseService {
 
         if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null && !advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
             String joinCasePartyIndividualID = joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId();
-            disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
+            disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, joinCasePartyIndividualID, auditDetails);
         }
 
         caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
@@ -454,13 +454,13 @@ public class CaseService {
                 throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
             } else {
                 log.info("Advocate is not representing the individual");
-                disableExistingRepresenting(courtCase, joinCasePartyIndividualID, auditDetails);
+                disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, joinCasePartyIndividualID, auditDetails);
                 joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
             }
         }
     }
 
-    private void disableExistingRepresenting(CourtCase courtCase, String joinCasePartyIndividualID, AuditDetails auditDetails) {
+    private void disableExistingRepresenting(RequestInfo requestInfo, CourtCase courtCase, String joinCasePartyIndividualID, AuditDetails auditDetails) {
         courtCase.getRepresentatives().forEach(representative ->
                 representative.getRepresenting().forEach(party -> {
 
@@ -477,7 +477,10 @@ public class CaseService {
                             representative.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
                             representative.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
                         }
-                        producer.push(config.getUpdateRepresentativeJoinCaseTopic(), representative);
+
+                        JoinCaseRequest caseRequest = JoinCaseRequest.builder().requestInfo(requestInfo)
+                                .representative(representative).build();
+                        producer.push(config.getUpdateRepresentativeJoinCaseTopic(), caseRequest);
                     }
                 })
         );

@@ -72,7 +72,7 @@ public class RescheduleRequestOptOutServiceTest {
         // Assert
         verify(optOutValidator).validateRequest(optOutRequest);
         verify(optOutEnrichment).enrichCreateRequest(optOutRequest);
-        verify(producer).push("optOutTopic", optOut);
+        verify(producer).push("optOutTopic", optOutRequest);
         assertEquals(optOut, result);
     }
 

@@ -115,4 +115,34 @@ public class BrowserDetails {
 
         return browserDetails;
     }
+
+    public static BrowserDetails doubleVerifyBrowserdetailsFromString(String browserDetailsString){
+        String[] parts = browserDetailsString.split("\\|", -1);
+        BrowserDetails browserDetails = new BrowserDetails();
+
+        browserDetails.setMerchantId(parts[0]);
+        browserDetails.setSbiEpayRefId(parts[1]);
+        browserDetails.setTransactionStatus(parts[2]);
+        browserDetails.setCountry(parts[3]);
+        browserDetails.setCurrency(parts[4]);
+        browserDetails.setOtherDetails(parts[5]);
+        browserDetails.setMerchantOrderNumber(parts[6]);
+        browserDetails.setAmount(Double.parseDouble(parts[7]));
+        browserDetails.setBankCode(parts[9]);
+        browserDetails.setBankReferenceNumber(parts[10]);
+        browserDetails.setTransactionDate(parts[11]);
+        browserDetails.setPayMode(parts[12]);
+        browserDetails.setCin(parts[13]);
+        browserDetails.setRef1(parts[15]);
+        browserDetails.setRef2(parts[16]);
+        browserDetails.setRef3(parts[17]);
+        browserDetails.setRef4(parts[18]);
+        browserDetails.setRef5(parts[19]);
+        browserDetails.setRef6(parts[20]);
+        browserDetails.setRef7(parts[21]);
+        browserDetails.setRef8(parts[22]);
+        browserDetails.setRef9(parts[23]);
+
+        return browserDetails;
+    }
 }

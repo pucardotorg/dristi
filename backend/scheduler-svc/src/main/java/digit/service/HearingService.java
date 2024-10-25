@@ -91,7 +91,7 @@ public class HearingService {
 
         hearingEnrichment.enrichUpdateScheduleHearing(scheduleHearingRequest.getRequestInfo(), scheduleHearingRequest.getHearing());
 
-        producer.push(config.getScheduleHearingUpdateTopic(), scheduleHearingRequest.getHearing());
+        producer.push(config.getScheduleHearingUpdateTopic(), scheduleHearingRequest);
 
         log.info("operation = update, result = SUCCESS, ScheduleHearing={}", scheduleHearingRequest.getHearing());
 
@@ -136,7 +136,7 @@ public class HearingService {
 
         hearingEnrichment.enrichBulkReschedule(request, defaultSlot, hearingTypeMap);
 
-        producer.push(config.getScheduleHearingUpdateTopic(), request.getHearing());
+        producer.push(config.getScheduleHearingUpdateTopic(), request);
 
         return request.getHearing();
     }
@@ -160,7 +160,7 @@ public class HearingService {
         scheduleHearing.setStatus(SCHEDULE);
         List<ScheduleHearing> schedule = schedule(ScheduleHearingRequest.builder().requestInfo(request.getRequestInfo())
                 .hearing(Collections.singletonList(scheduleHearing)).build());
-        producer.push(config.getScheduleHearingUpdateTopic(), schedule);
+        producer.push(config.getScheduleHearingUpdateTopic(), ScheduleHearingRequest.builder().requestInfo(request.getRequestInfo()).hearing(schedule).build());
 
         List<ScheduleHearing> blockedHearings = search(HearingSearchRequest.builder().requestInfo(new RequestInfo())
                 .criteria(ScheduleHearingSearchCriteria.builder()
@@ -168,7 +168,7 @@ public class HearingService {
 
 
         blockedHearings.forEach((element) -> element.setStatus("INACTIVE"));
-        producer.push(config.getScheduleHearingUpdateTopic(), blockedHearings);
+        producer.push(config.getScheduleHearingUpdateTopic(), ScheduleHearingRequest.builder().requestInfo(request.getRequestInfo()).hearing(blockedHearings).build());
 
 
         HearingListSearchRequest searchRequest = HearingListSearchRequest.builder()

@@ -50,7 +50,7 @@ public class RescheduleRequestOptOutService {
 
         optOutEnrichment.enrichCreateRequest(request);
 
-        producer.push(config.getOptOutTopic(), request.getOptOut());
+        producer.push(config.getOptOutTopic(), request);
 
         log.info("operation = create, result = SUCCESS, OptOut = {}", request.getOptOut());
 
@@ -68,7 +68,7 @@ public class RescheduleRequestOptOutService {
 //
 //        optOutEnrichment.enrichUpdateRequest(request);
 //
-//        producer.push(config.getOptOutUpdateTopic(), request.getOptOuts());
+//        producer.push(config.getOptOutUpdateTopic(), request);
 //
 //        log.info("operation = update, result = SUCCESS, OptOut = {}", request.getOptOuts());
 //

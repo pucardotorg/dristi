@@ -50,4 +50,16 @@ public class ServiceConstants {
 
     public static final String STATUS_RESCHEDULE="RESCHEDULE";
 
+    public static final String INTERNALMICROSERVICEROLE_NAME = "Internal Microservice Role";
+
+    public static final String INTERNALMICROSERVICEROLE_CODE = "INTERNAL_MICROSERVICE_ROLE";
+
+    public static final String INTERNALMICROSERVICEUSER_NAME = "Internal Microservice User";
+
+    public static final String INTERNALMICROSERVICEUSER_USERNAME = "INTERNAL_USER";
+
+    public static final String INTERNALMICROSERVICEUSER_MOBILENO = "9999999999";
+
+    public static final String INTERNALMICROSERVICEUSER_TYPE = "SYSTEM";
+
 }

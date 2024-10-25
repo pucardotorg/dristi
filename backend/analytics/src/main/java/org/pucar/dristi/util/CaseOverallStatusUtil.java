@@ -98,8 +98,11 @@ public class CaseOverallStatusUtil {
 
 	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String status, String action) {
 		for (CaseOverallStatusType statusType : caseOverallStatusTypeList) {
-			if (statusType.getAction().equalsIgnoreCase(action) && statusType.getState().equalsIgnoreCase(status))
-                return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
+			log.info("CaseOverallStatusType MDMS action ::{} and status :: {}",statusType.getAction(),statusType.getState());
+			if (statusType.getAction().equalsIgnoreCase(action) && statusType.getState().equalsIgnoreCase(status)){
+				log.info("Creating CaseOverallStatus for action ::{} and status :: {}",statusType.getAction(),statusType.getState());
+				return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
+			}
 		}
 		return null;
 	}

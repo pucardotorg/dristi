@@ -269,7 +269,7 @@ public class CalendarService {
         //enrich
         enrichment.enrichUpdateJudgeCalendar(judgeCalendarUpdateRequest.getRequestInfo(), judgeCalendarRule);
         //push to kafka
-        producer.push(config.getUpdateJudgeCalendarTopic(), judgeCalendarRule);
+        producer.push(config.getUpdateJudgeCalendarTopic(), judgeCalendarUpdateRequest);
         log.info("operation = upsert, result = SUCCESS, size={}", judgeCalendarRule.size());
 
         return judgeCalendarRule;

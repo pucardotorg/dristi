@@ -30,11 +30,17 @@ public class PaymentConfiguration {
     @Value("${sbi-transaction-url}")
     private String sbiTransactionUrl;
 
+    @Value("${sbi-double-verification-url}")
+    private String sbiDoubleVerificationUrl;
+
     @Value("${sbi-transaction-success-url}")
     private String sbiTransactionSuccessUrl;
 
     @Value("${sbi-transaction-fail-url}")
     private String sbiTransactionFailUrl;
+
+    @Value(("${sbi-aggregator-id}"))
+    private String sbiAggregatorId;
 
     // Collection Service
     @Value("${egov.collectionservice.host}")

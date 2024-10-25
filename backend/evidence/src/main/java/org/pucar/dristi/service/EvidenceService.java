@@ -152,7 +152,12 @@ public class EvidenceService {
             AuditDetails applicationAuditDetails = artifactToUpdate.getAuditdetails();
             applicationAuditDetails.setLastModifiedBy(auditDetails.getLastModifiedBy());
             applicationAuditDetails.setLastModifiedTime(auditDetails.getLastModifiedTime());
-            producer.push(config.getEvidenceUpdateCommentsTopic(), artifactToUpdate);
+
+            EvidenceRequest evidenceRequest = new EvidenceRequest();
+            evidenceRequest.setArtifact(artifactToUpdate);
+            evidenceRequest.setRequestInfo(evidenceAddCommentRequest.getRequestInfo());
+
+            producer.push(config.getEvidenceUpdateCommentsTopic(), evidenceRequest);
         } catch (CustomException e) {
             log.error("Custom exception while adding comments {}", e.toString());
             throw e;

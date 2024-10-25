@@ -16,13 +16,11 @@ import digit.web.models.hearing.Hearing;
 import digit.web.models.hearing.HearingListSearchRequest;
 import digit.web.models.hearing.HearingSearchCriteria;
 import digit.web.models.hearing.HearingUpdateBulkRequest;
-import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -70,11 +68,14 @@ public class CauseListService {
 
     private FileStoreUtil fileStoreUtil;
 
+    private UserService userService;
+
     @Autowired
     public CauseListService(HearingRepository hearingRepository, CauseListRepository causeListRepository,
                             Producer producer, Configuration config, PdfServiceUtil pdfServiceUtil,
                             MdmsUtil mdmsUtil, ServiceConstants serviceConstants, HearingUtil hearingUtil,
-                            CaseUtil caseUtil, DateUtil dateUtil, ObjectMapper objectMapper, ApplicationUtil applicationUtil, FileStoreUtil fileStoreUtil) {
+                            CaseUtil caseUtil, DateUtil dateUtil, ObjectMapper objectMapper, ApplicationUtil applicationUtil,
+                            FileStoreUtil fileStoreUtil, UserService userService) {
         this.hearingRepository = hearingRepository;
         this.causeListRepository = causeListRepository;
         this.producer = producer;
@@ -88,6 +89,7 @@ public class CauseListService {
         this.objectMapper = objectMapper;
         this.applicationUtil = applicationUtil;
         this.fileStoreUtil = fileStoreUtil;
+        this.userService = userService;
     }
 
     public void updateCauseListForTomorrow() {
@@ -107,9 +109,11 @@ public class CauseListService {
         waitForTasksCompletion(executorService);
 
         if (!CollectionUtils.isEmpty(causeLists)) {
-            CauseListResponse causeListResponse = CauseListResponse.builder()
-                    .responseInfo(ResponseInfo.builder().build()).causeList(causeLists).build();
-            producer.push(config.getCauseListInsertTopic(), causeListResponse);
+            RequestInfo requestInfo = createInternalRequestInfo();
+            CauseListRequest causeListRequest = CauseListRequest.builder().requestInfo(requestInfo)
+                    .causeList(causeLists).build();
+
+            producer.push(config.getCauseListInsertTopic(), causeListRequest);
             updateBulkHearing(causeLists);
         } else {
             log.info("No cause lists to be created");
@@ -183,7 +187,10 @@ public class CauseListService {
                     .createdBy(uuid == null ? serviceConstants.SYSTEM_ADMIN : uuid)
                     .build();
 
-            producer.push(config.getCauseListPdfTopic(), causeListPdf);
+            RequestInfo requestInfo = createInternalRequestInfo();
+            CauseListPdfRequest causeListPdfRequest = CauseListPdfRequest.builder().requestInfo(requestInfo).causeListPdf(causeListPdf).build();
+
+            producer.push(config.getCauseListPdfTopic(), causeListPdfRequest);
             causeLists.addAll(causeList);
             log.info("operation = generateCauseListForJudge, result = SUCCESS, judgeId = {}", courtId);
         } catch (Exception e) {
@@ -381,7 +388,7 @@ public class CauseListService {
                    .toList();
 
            SlotRequest slotRequest = SlotRequest.builder()
-                   .requestInfo(getRequestInfo())
+                   .requestInfo(createInternalRequestInfo())
                    .hearingListPriority(hearingListPriorities).build();
 
            byteArrayResource =  pdfServiceUtil.generatePdfFromPdfService(slotRequest, config.getEgovStateTenantId(), config.getCauseListPdfTemplateKey());
@@ -506,7 +513,7 @@ public class CauseListService {
         try {
             CaseCriteria criteria = CaseCriteria.builder().filingNumber(causeList.getFilingNumber()).build();
             SearchCaseRequest searchCaseRequest = SearchCaseRequest.builder()
-                    .RequestInfo(getRequestInfo())
+                    .RequestInfo(createInternalRequestInfo())
                     .tenantId(config.getEgovStateTenantId())
                     .criteria(Collections.singletonList(criteria))
                     .build();
@@ -598,7 +605,7 @@ public class CauseListService {
                 .status(serviceConstants.APPLICATION_STATE)
                 .build();
         ApplicationRequest applicationRequest = ApplicationRequest.builder()
-                .requestInfo(getRequestInfo())
+                .requestInfo(createInternalRequestInfo())
                 .criteria(criteria)
                 .build();
 
@@ -615,13 +622,6 @@ public class CauseListService {
         } catch (Exception e) {
             log.error("Error occurred while fetching applications for filing number: {}", causeList.getFilingNumber());
         }
-    }
-
-    private RequestInfo getRequestInfo() {
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setUserInfo(User.builder().tenantId(config.getEgovStateTenantId()).type(CITIZEN.toString()).build());
-        requestInfo.setMsgId("1725264118000|en_IN");
-        return requestInfo;
     }
 
     public void updateBulkHearing(List<CauseList> causeLists) {
@@ -642,9 +642,15 @@ public class CauseListService {
         }
 
         HearingUpdateBulkRequest updateBulkRequest = HearingUpdateBulkRequest.builder()
-                .requestInfo(getRequestInfo())
+                .requestInfo(createInternalRequestInfo())
                 .hearings(hearingList)
                 .build();
         hearingUtil.callHearing(updateBulkRequest);
+    }
+
+    private RequestInfo createInternalRequestInfo() {
+        User userInfo = new User();
+        userInfo.setUuid(userService.internalMicroserviceRoleUuid);
+        return RequestInfo.builder().userInfo(userInfo).build();
     }
 }

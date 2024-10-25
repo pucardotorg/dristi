@@ -97,6 +97,7 @@ public class ServiceConstants {
 
     public static final String SAVE_DRAFT_CASE_WORKFLOW_ACTION = "SAVE_DRAFT";
     public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
+    public static final String SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION = "SUBMIT_CASE_ADVOCATE";
     public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
     public static final Long TAX_PERIOD_FROM = 1680287400000l;
     public static final Long TAX_PERIOD_TO = 1711909799000l;

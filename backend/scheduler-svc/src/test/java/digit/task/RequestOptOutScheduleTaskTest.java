@@ -5,6 +5,7 @@ import digit.config.ServiceConstants;
 import digit.kafka.producer.Producer;
 import digit.repository.ReScheduleRequestRepository;
 import digit.repository.RescheduleRequestOptOutRepository;
+import digit.service.UserService;
 import digit.service.hearing.OptOutProcessor;
 import digit.util.DateUtil;
 import digit.util.MasterDataUtil;
@@ -58,6 +59,9 @@ public class RequestOptOutScheduleTaskTest {
 
     @Mock
     private ServiceConstants constants;
+
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private RequestOptOutScheduleTask requestOptOutScheduleTask;

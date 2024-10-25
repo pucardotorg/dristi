@@ -7,10 +7,7 @@ import digit.config.ServiceConstants;
 import digit.enrichment.ReScheduleRequestEnrichment;
 import digit.kafka.producer.Producer;
 import digit.repository.ReScheduleRequestRepository;
-import digit.util.CaseUtil;
-import digit.util.DateUtil;
-import digit.util.HearingUtil;
-import digit.util.MasterDataUtil;
+import digit.util.*;
 import digit.validator.ReScheduleRequestValidator;
 import digit.web.models.*;
 import digit.web.models.cases.CaseCriteria;
@@ -51,11 +48,10 @@ public class ReScheduleHearingService {
     private final ServiceConstants constants;
     private final DateUtil dateUtil;
     private final ReScheduleRequestValidator validator;
-
+    private final AdvocateUtil advocateUtil;
 
     @Autowired
-    public ReScheduleHearingService(Configuration config, ReScheduleRequestRepository repository, ReScheduleRequestValidator validator, ReScheduleRequestEnrichment enrichment, Producer producer, HearingService hearingService, CalendarService calendarService, ServiceConstants serviceConstants, MasterDataUtil helper, CaseUtil caseUtil, HearingUtil hearingUtil, ServiceConstants constants, DateUtil dateUtil) {
-
+    public ReScheduleHearingService(Configuration config, ReScheduleRequestRepository repository, ReScheduleRequestValidator validator, ReScheduleRequestEnrichment enrichment, Producer producer, HearingService hearingService, CalendarService calendarService, ServiceConstants serviceConstants, MasterDataUtil helper, CaseUtil caseUtil, HearingUtil hearingUtil, ServiceConstants constants, DateUtil dateUtil, AdvocateUtil advocateUtil) {
 
         this.config = config;
         this.repository = repository;
@@ -70,6 +66,7 @@ public class ReScheduleHearingService {
         this.hearingUtil = hearingUtil;
         this.dateUtil = dateUtil;
         this.validator = validator;
+        this.advocateUtil = advocateUtil;
     }
 
     /**
@@ -96,8 +93,18 @@ public class ReScheduleHearingService {
                 JsonNode litigants = caseUtil.getLitigants(cases);
                 Set<String> litigantIds = caseUtil.getIndividualIds(litigants);
                 JsonNode representatives = caseUtil.getRepresentatives(cases);
-                Set<String> representativeIds = caseUtil.getIdsFromJsonNodeArray(representatives);
-                int noOfAttendees = representativeIds.size();
+                Set<String> representativeIds = caseUtil.getAdvocateIds(representatives);
+
+                if(!representativeIds.isEmpty()){
+                    representativeIds = advocateUtil.getAdvocate(requestInfo,representativeIds.stream().toList());
+                }
+                litigantIds = caseUtil.getLitigantsFromRepresentatives(litigantIds, representatives);
+
+                hearingDetail.setRepresentatives(representativeIds);
+                hearingDetail.setLitigants(litigantIds);
+
+
+                int noOfAttendees = representativeIds.size()+litigantIds.size();
 
 
                 List<SchedulerConfig> dataFromMDMS = helper.getDataFromMDMS(SchedulerConfig.class, constants.SCHEDULER_CONFIG_MASTER_NAME, constants.SCHEDULER_CONFIG_MODULE_NAME);
@@ -153,7 +160,7 @@ public class ReScheduleHearingService {
 
                 }
                 List<ScheduleHearing> schedule = hearingService.schedule(ScheduleHearingRequest.builder().requestInfo(requestInfo).hearing(udpateHearingList).build());
-                producer.push(config.getScheduleHearingTopic(), schedule);
+                producer.push(config.getScheduleHearingTopic(), ScheduleHearingRequest.builder().requestInfo(requestInfo).hearing(schedule).build());
             }
 
         } catch (Exception e) {
@@ -162,7 +169,7 @@ public class ReScheduleHearingService {
         }
 
 
-        producer.push(config.getRescheduleRequestCreateTopic(), reScheduleHearing);
+        producer.push(config.getRescheduleRequestCreateTopic(), reScheduleHearingsRequest);
 
         log.info("operation = create, result=SUCCESS, ReScheduleHearing={}", reScheduleHearing);
 

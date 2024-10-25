@@ -101,7 +101,11 @@ public class PaymentUpdateService {
                 auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
                 application.setAuditDetails(auditDetails);
 
-                producer.push(configuration.getApplicationUpdateStatusTopic(), application);
+                ApplicationRequest applicationRequest = new ApplicationRequest();
+                applicationRequest.setApplication(application);
+                applicationRequest.setRequestInfo(requestInfo);
+
+                producer.push(configuration.getApplicationUpdateStatusTopic(), applicationRequest);
             }
         } catch (Exception e) {
             log.error("Error updating workflow for application payment: {}", e.getMessage(), e);

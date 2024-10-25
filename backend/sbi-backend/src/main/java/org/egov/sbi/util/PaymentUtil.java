@@ -2,12 +2,14 @@ package org.egov.sbi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.sbi.config.PaymentConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
@@ -19,10 +21,13 @@ public class PaymentUtil {
 
     private final ObjectMapper objectMapper;
 
+    private final PaymentConfiguration configuration;
+
     @Autowired
-    public PaymentUtil(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public PaymentUtil(RestTemplate restTemplate, ObjectMapper objectMapper, PaymentConfiguration configuration) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.configuration = configuration;
     }
 
     public void callSbiGateway(Map<String, String> transactionMap) {
@@ -50,5 +55,23 @@ public class PaymentUtil {
         } catch (Exception e) {
             log.error("Error while calling SBI Gateway: ", e);
         }
+    }
+
+    public ResponseEntity<String> doubleVerificationRequest(Map<String, String> params) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        StringBuilder requestBody = new StringBuilder();
+        params.forEach((key, value) -> {
+            if (!requestBody.isEmpty()) {
+                requestBody.append("&");
+            }
+            requestBody.append(UriComponentsBuilder.fromUriString("").queryParam(key, value).build().getQuery());
+        });
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
+        log.info("request body: {}", requestEntity.getBody());
+        return restTemplate.postForEntity(configuration.getSbiDoubleVerificationUrl(), requestEntity, String.class);
     }
 }

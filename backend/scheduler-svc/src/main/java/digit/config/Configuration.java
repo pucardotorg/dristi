@@ -212,4 +212,11 @@ public class Configuration {
 
     @Value("${judge.designation}")
     private String judgeDesignation;
+
+
+    @Value("${egov.advocate.host}")
+    private String advocateHost;
+
+    @Value("${egov.advocate.path}")
+    private String advocatePath;
 }

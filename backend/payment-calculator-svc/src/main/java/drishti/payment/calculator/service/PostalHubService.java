@@ -41,7 +41,7 @@ public class PostalHubService {
 
         enrichment.enrichPostalHubRequest(request);
 
-        producer.push(config.getPostalHubCreateTopic(), request.getPostalHubs());
+        producer.push(config.getPostalHubCreateTopic(), request);
 
         log.info("operation = create, result= SUCCESS, hubs={}", request.getPostalHubs());
         return request.getPostalHubs();
@@ -58,7 +58,7 @@ public class PostalHubService {
 
         enrichment.enrichExistingPostalHubRequest(request);
 
-        producer.push(config.getPostalHubUpdateTopic(), request.getPostalHubs());
+        producer.push(config.getPostalHubUpdateTopic(), request);
 
         log.info("operation = update, result= SUCCESS, hubs={}", request.getPostalHubs());
         return request.getPostalHubs();
