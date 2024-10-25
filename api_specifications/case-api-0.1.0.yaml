@@ -147,7 +147,7 @@ paths:
       summary: Search for cases
       description:  |
         This API deals with getting detailed information about a case, it will be access controlled. The basic premise will be that all validations are mandatory based on the logged in person’s individualID/authentication token, and this should not be sent as input parameter (as then a person can login and then request details by passing anyone else’s ID). In addition, search will always include tenancy as a parameter. Case details will be visible using the following logic.
-  
+        
         Authorised roles to view case details are as follows. These roles will be allowed to invoke the above API. The individualId should have any one of these roles, along with additional validations as mentioned below.
 
               CASE_APPROVER-- Mostly assigned to the Judge who will look at the case detail and approve and later will preside over the case, and hence will be assigned to the case (via courtId and judgeId fields). Hence while this role is authorised, additional things to check will be that the person with this role is an Employee and also is assigned to the case as the Judge.
@@ -155,7 +155,7 @@ paths:
               CASE_EDITOR-- Mostly assigned to bench clerk and also complainant and the representing advocate. The validation will need to check that the person having this role is either a bench clerk i.e. an employee or if citizen, then is party to the case as either a complainant or representing advocate or respondent or their representing advocate or advocate clerk.
 
               Note-- CASE_CREATOR-- Litigants and Advocates can create a case. Once created, they will become party to the case and hence for search, they will need to be party to the case to be able to search. CASE_CREATOR will not be a role authorised to invoke this API.
-  
+        
         The response will be a union (logical OR) of all the parameters sent in for the search. The API will also de-duplicate the responses before sharing the result back.
 
       requestBody:
@@ -907,6 +907,19 @@ components:
           example: Filing, Cognizance, Appearance, Evidence, Judgement etc.
         outcome:
           type: string
+        courtId:
+          type: string
+          description: court id
+          example: KLKM52
+        registrationDate:
+          type: integer
+          format: int64
+          description: regsitration date
+          example: 1727526615632
+        registrationNumber:
+          type: string
+          description: cmp number
+          example: CMP/1/2024
         litigants:
           type: array
           items:
@@ -1005,7 +1018,7 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-            $ref: '#/components/schemas/CaseSearchCriteria'
+          $ref: '#/components/schemas/CaseSearchCriteria'
 
     CaseSearchResponse:
       type: object

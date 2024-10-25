@@ -46,4 +46,13 @@ public class CaseSummary {
 
     @JsonProperty("judge")
     private Judge judge;
+
+    @JsonProperty("courtId")
+    private String courtId;
+
+    @JsonProperty("registrationDate")
+    private Long registrationDate ;
+
+    @JsonProperty("registrationNumber")
+    private String registrationNumber;
 }

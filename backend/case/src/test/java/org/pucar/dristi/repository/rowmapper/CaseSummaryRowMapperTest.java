@@ -1,26 +1,27 @@
 package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.pucar.dristi.web.models.*;
-
+import org.pucar.dristi.web.models.CaseSummary;
+import org.pucar.dristi.web.models.PartySummary;
 import org.springframework.dao.DataAccessException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseSummaryRowMapperTest {
@@ -46,6 +47,9 @@ public class CaseSummaryRowMapperTest {
         when(resultSet.getString("stage")).thenReturn("stage1");
         when(resultSet.getString("substage")).thenReturn("substage1");
         when(resultSet.getString("outcome")).thenReturn("outcome1");
+        when(resultSet.getString("courtid")).thenReturn("courtId");
+        when(resultSet.getLong("registrationdate")).thenReturn(123L);
+        when(resultSet.getString("cmpnumber")).thenReturn("cmp-123");
 
         // Setting up litigant
         when(resultSet.getString("litigant_id")).thenReturn("litigant1");
@@ -84,6 +88,10 @@ public class CaseSummaryRowMapperTest {
         assertEquals("outcome1", caseSummary.getOutcome());
         assertEquals(1, caseSummary.getLitigants().size());
         assertEquals(1, caseSummary.getRepresentatives().size());
+
+        assertEquals("courtId", caseSummary.getCourtId());
+        assertEquals("cmp-123", caseSummary.getRegistrationNumber());
+        assertEquals(123, caseSummary.getRegistrationDate());
 
         // Assert litigants
         PartySummary partySummary = caseSummary.getLitigants().get(0);
