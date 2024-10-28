@@ -130,7 +130,7 @@ const stateSlaMap = {
 
 const channelTypeEnum = {
   "e-Post": { code: "POST", type: "Post" },
-  RPAD: { code: "RPAD", type: "RPAD" },
+  "Registered Post": { code: "RPAD", type: "RPAD" },
   SMS: { code: "SMS", type: "SMS" },
   "Via Police": { code: "POLICE", type: "Police" },
   "E-mail": { code: "EMAIL", type: "Email" },
@@ -1736,7 +1736,7 @@ const GenerateOrders = () => {
             fees: courtFees,
           };
 
-          const address = ["e-Post", "Via Police", "RPAD"].includes(item?.type)
+          const address = ["e-Post", "Via Police", "Registered Post"].includes(item?.type)
             ? respondentAddress[channelMap.get(item?.type) - 1]
             : respondentAddress[0];
           const sms = ["SMS"].includes(item?.type) ? respondentPhoneNo[channelMap.get(item?.type) - 1] : respondentPhoneNo[0];
@@ -1744,7 +1744,7 @@ const GenerateOrders = () => {
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["e-Post", "Via Police", "RPAD"].includes(item?.type)
+            address: ["e-Post", "Via Police", "Registered Post"].includes(item?.type)
               ? {
                   ...address,
                   locality: item?.value?.locality || address?.locality,
@@ -1763,7 +1763,7 @@ const GenerateOrders = () => {
             "E-mail": "email",
             "e-Post": "address",
             "Via Police": "address",
-            RPAD: "address",
+            "Registered Post": "address",
           };
           payload.deliveryChannel = {
             ...payload.deliveryChannel,
@@ -1778,7 +1778,7 @@ const GenerateOrders = () => {
 
           payload.respondentDetails = {
             ...payload.respondentDetails,
-            address: ["e-Post", "Via Police", "RPAD"].includes(item?.type) ? item?.value : address || "",
+            address: ["e-Post", "Via Police", "Registered Post"].includes(item?.type) ? item?.value : address || "",
             phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
             email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",

@@ -36,7 +36,7 @@ const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckbox
                         onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
                       />
                       <label htmlFor={`${channel.type}-${index}`}>
-                        {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "RPAD"
+                        {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "Registered Post"
                           ? typeof value.address === "string"
                             ? value.address
                             : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
@@ -70,7 +70,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
       values: [],
     },
     {
-      type: "RPAD",
+      type: "Registered Post",
       code: "RPAD",
       values: [],
     },
@@ -277,7 +277,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
             values: ePostAddresses,
           },
           {
-            type: "RPAD",
+            type: "Registered Post",
             code: "RPAD",
             values: address || [],
           },
