@@ -43,7 +43,7 @@ import { OrderWorkflowAction, OrderWorkflowState } from "../../utils/orderWorkfl
 import { Urls } from "../../hooks/services/Urls";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../utils/submissionWorkflow";
 import { getAdvocates, getuuidNameMap } from "../../utils/caseUtils";
-import { HearingWorkflowAction } from "../../utils/hearingWorkflow";
+import { HearingWorkflowAction, HearingWorkflowState } from "../../utils/hearingWorkflow";
 import _ from "lodash";
 import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
@@ -496,9 +496,7 @@ const GenerateOrders = () => {
   const hearingsList = useMemo(() => hearingsData?.HearingList?.sort((a, b) => b.startTime - a.startTime), [hearingsData]);
 
   const isHearingAlreadyScheduled = useMemo(() => {
-    const isPresent = hearingsData?.HearingList.some((hearing) => {
-      return !(hearing?.status === "COMPLETED" || hearing?.status === "ABATED");
-    });
+    const isPresent = (hearingsData?.HearingList || []).some((hearing) => hearing?.status === HearingWorkflowState?.SCHEDULED);
     return isPresent;
   }, [hearingsData]);
 
@@ -2263,6 +2261,13 @@ const GenerateOrders = () => {
     if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType) && isHearingAlreadyScheduled) {
       setShowErrorToast({
         label: t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE"),
+        error: true,
+      });
+      return;
+    }
+    if (["INITIATING_RESCHEDULING_OF_HEARING_DATE", "ASSIGNING_DATE_RESCHEDULED_HEARING"].includes(orderType) && !isHearingAlreadyScheduled) {
+      setShowErrorToast({
+        label: t("CURRENTLY_A_HEARING_IS_IN_OPTOUT_STATE"),
         error: true,
       });
       return;

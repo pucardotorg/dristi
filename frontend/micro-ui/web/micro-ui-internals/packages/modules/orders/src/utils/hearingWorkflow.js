@@ -10,4 +10,5 @@ export const HearingWorkflowState = {
   INPROGRESS: "IN_PROGRESS",
   COMPLETED: "COMPLETED",
   ABATED: "ABATED",
+  SCHEDULED: "SCHEDULED",
 };
