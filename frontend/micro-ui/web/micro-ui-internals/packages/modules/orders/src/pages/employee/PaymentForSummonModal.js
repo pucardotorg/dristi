@@ -61,6 +61,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
         textStyle={{}}
         className={`custom-info-card warning`}
       />
+      <CardLabel className="case-input-label">{t("OFFLINE_PAYMENT_INFO")}</CardLabel>
       <ApplicationInfoComponent infos={infos} links={links} />
       <LabelFieldPair className="case-label-field-pair">
         <div className="join-case-tooltip-wrapper">
