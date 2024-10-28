@@ -102,7 +102,8 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setErro
           uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-          fileTypes: ["JPG", "PDF"],
+          fileTypes: ["JPG", "PDF", "PNG"],
+
           isMultipleUpload: true,
         },
       ],
