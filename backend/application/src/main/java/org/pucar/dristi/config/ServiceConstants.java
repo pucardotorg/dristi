@@ -79,5 +79,6 @@ public class ServiceConstants {
     public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+    public static final String DELAY_CONDONATION = "DELAY_CONDONATION";
 
 }

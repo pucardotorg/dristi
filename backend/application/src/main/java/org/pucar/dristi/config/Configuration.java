@@ -158,4 +158,8 @@ public class Configuration {
     // Path for searching cases
     @Value("${egov.case.search.path}")
     private String caseSearchPath;
+
+    @Value("${egov.workflow.delay.condonation.business.service.name}")
+    private String delayCondonationBusinessServiceName;
+
 }

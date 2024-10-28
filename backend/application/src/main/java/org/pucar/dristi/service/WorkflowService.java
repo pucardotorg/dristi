@@ -100,15 +100,20 @@ public class WorkflowService {
         }
     }
     String getBusinessServiceFromAppplication(Application application) {
-        if(application.getReferenceId() == null){
-            return config.getAsyncVoluntarySubBusinessServiceName();
+        if(DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType())){
+            return config.getDelayCondonationBusinessServiceName();
+        }else{
+            if(application.getReferenceId() == null){
+                return config.getAsyncVoluntarySubBusinessServiceName();
+            }
+            else if(application.isResponseRequired()){
+                return config.getAsyncOrderSubWithResponseBusinessServiceName();
+            }
+            else {
+                return config.getAsyncOrderSubBusinessServiceName();
+            }
         }
-        else if(application.isResponseRequired()){
-            return config.getAsyncOrderSubWithResponseBusinessServiceName();
-        }
-        else {
-            return config.getAsyncOrderSubBusinessServiceName();
-        }
+
     }
 
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
