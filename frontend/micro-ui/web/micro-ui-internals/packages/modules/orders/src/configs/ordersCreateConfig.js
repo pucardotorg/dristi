@@ -1811,6 +1811,22 @@ export const configsInitiateRescheduleHearingDate = [
         },
       },
       {
+        label: "REASON_FOR_RESCHEDULING",
+        isMandatory: true,
+        key: "reasonForRescheduling",
+        type: "text",
+        populators: {
+          name: "reasonForRescheduling",
+          error: "CS_ALPHANUMERIC_ALLOWED",
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiOrders",
+              masterName: "alphaNumericInputTextValidation",
+            },
+          },
+        },
+      },
+      {
         label: "JUDGE_NAME",
         isMandatory: true,
         key: "judgeName",
