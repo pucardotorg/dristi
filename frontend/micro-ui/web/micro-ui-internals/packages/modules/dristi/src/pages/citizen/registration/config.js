@@ -565,10 +565,10 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: "[A-Z]/\\d{6}/\\d{4}",
+                // pattern: "[A-Z]/\\d{6}/\\d{4}",
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID_PATTERN",
-                maxlength: 13,
-                minlength: 13,
+                maxlength: 20,
+                minlength: 1,
               },
               isMandatory: true,
               isDependentOn: "selectUserType",
