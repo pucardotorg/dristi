@@ -156,6 +156,7 @@ const AdmittedCases = () => {
   const [createAdmissionOrder, setCreateAdmissionOrder] = useState(false);
   const [updatedCaseDetails, setUpdatedCaseDetails] = useState({});
   const [showDismissCaseConfirmation, setShowDismissCaseConfirmation] = useState(false);
+  const [toastStatus, setToastStatus] = useState({ alreadyShown: false });
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -701,7 +702,7 @@ const AdmittedCases = () => {
   }, [history?.location]);
 
   useEffect(() => {
-    if (history?.location?.state?.from && history?.location?.state?.from === "orderSuccessModal") {
+    if (history?.location?.state?.from === "orderSuccessModal" && !toastStatus?.alreadyShown) {
       showToast(true);
       setToastDetails({
         isError: false,
@@ -1452,7 +1453,7 @@ const AdmittedCases = () => {
     setToastDetails(details);
     setTimeout(() => {
       setToast(false);
-      history.replace(history.location.pathname + history.location.search, { from: "" });
+      setToastStatus({ alreadyShown: true });
     }, duration);
   };
 
