@@ -56,6 +56,13 @@ const caseSecondaryActions = [
 ];
 const caseTertiaryActions = [];
 
+const HearingWorkflowState = {
+  OPTOUT: "OPT_OUT",
+  INPROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  ABATED: "ABATED",
+};
+
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
@@ -1140,6 +1147,15 @@ const AdmittedCases = () => {
     [hearingDetails?.HearingList]
   );
 
+  const currentHearingStatus = useMemo(
+    () =>
+      hearingDetails?.HearingList?.find(
+        (list) =>
+          list?.hearingType === "ADMISSION" && !(list?.status === HearingWorkflowState.COMPLETED || list?.status === HearingWorkflowState.ABATED)
+      )?.status,
+    [hearingDetails?.HearingList]
+  );
+
   const { data: ordersData } = useSearchOrdersService(
     { criteria: { tenantId: tenantId, filingNumber } },
     { tenantId },
@@ -1874,23 +1890,24 @@ const AdmittedCases = () => {
       {showActionBar && !isWorkFlowFetching && (
         <ActionBar className={"e-filing-action-bar"} style={{ justifyContent: "space-between" }}>
           <div style={{ width: "fit-content", display: "flex", gap: 20 }}>
-            {(tertiaryAction.action ||
-              [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-                caseDetails?.status
-              )) && (
-              <Button
-                className="previous-button"
-                variation="secondary"
-                label={
-                  [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-                    caseDetails?.status
-                  ) && !isCitizen
-                    ? t("RESCHEDULE_ADMISSION_HEARING")
-                    : t(tertiaryAction.label)
-                }
-                onButtonClick={onSaveDraft}
-              />
-            )}
+            {currentHearingStatus !== HearingWorkflowState.OPTOUT &&
+              (tertiaryAction.action ||
+                [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
+                  caseDetails?.status
+                )) && (
+                <Button
+                  className="previous-button"
+                  variation="secondary"
+                  label={
+                    [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
+                      caseDetails?.status
+                    ) && !isCitizen
+                      ? t("RESCHEDULE_ADMISSION_HEARING")
+                      : t(tertiaryAction.label)
+                  }
+                  onButtonClick={onSaveDraft}
+                />
+              )}
             {primaryAction.action && (
               <SubmitBar
                 label={t(
