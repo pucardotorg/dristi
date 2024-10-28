@@ -226,7 +226,7 @@ export const newConfig = [
               name: "buildingName",
               validation: {
                 errMsg: "ADDRESS_BUILDING_NAME_INVALID",
-                minlength: 2,
+                minlength: 1,
                 title: "",
               },
             },
