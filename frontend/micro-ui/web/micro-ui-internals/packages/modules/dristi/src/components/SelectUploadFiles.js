@@ -93,10 +93,10 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setErro
         },
         {
           name: "document",
-          documentHeader: "Aadhar",
+          documentHeader: "AADHAR",
           documentSubText: "subtext",
           isOptional: "CS_IS_OPTIONAL",
-          infoTooltipMessage: "Tooltip",
+          infoTooltipMessage: "AADHAR",
           label: "Title",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),

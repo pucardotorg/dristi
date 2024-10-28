@@ -38,10 +38,10 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
     () =>
       config?.populators?.inputs || [
         {
-          documentHeader: "Aadhar",
+          documentHeader: "AADHAR",
           documentSubText: "subtext",
           isOptional: "CS_IS_OPTIONAL",
-          infoTooltipMessage: "Tooltip",
+          infoTooltipMessage: "AADHAR",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
@@ -133,7 +133,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
                     {t(input?.documentHeader)}
                   </h1>
                   {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
-                  <CustomErrorTooltip message={t(input?.documentHeader)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
+                  <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
                 </div>
               )}
               {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}

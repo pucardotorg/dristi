@@ -28,7 +28,7 @@ function SendCaseBackModal({ totalErrors, onCancel, onSubmit, t, heading, type, 
         {
           infoHeader: "CS_COMMON_NOTE",
           infoText: "SCRUTINY_SEND_CASE_NOTE",
-          infoTooltipMessage: "Tooltip",
+          infoTooltipMessage: "SCRUTINY_SEND_CASE_NOTE",
           type: "InfoComponent",
           linkText: "VIEW_CHECKLIST",
         },

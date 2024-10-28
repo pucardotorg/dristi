@@ -79,7 +79,7 @@ const debtLiabilityFromconfig = [
             {
               infoHeader: "CS_COMMON_NOTE",
               infoText: "CS_NOTE_DEBT_LIABILITY",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_NOTE_DEBT_LIABILITY",
               type: "InfoComponent",
             },
           ],
@@ -99,7 +99,7 @@ const debtLiabilityFromconfig = [
               name: "document",
               documentHeader: "CS_PROOF_DEBT",
               isOptional: "CS_IS_OPTIONAL",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_PROOF_DEBT",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

@@ -122,7 +122,7 @@ const advocateDetailsFormConfig = [
             {
               name: "document",
               documentHeader: "UPLOAD_VAKALATNAMA",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "UPLOAD_VAKALATNAMA",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

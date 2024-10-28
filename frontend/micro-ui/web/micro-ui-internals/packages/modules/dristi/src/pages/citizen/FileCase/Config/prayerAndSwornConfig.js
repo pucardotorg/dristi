@@ -10,7 +10,7 @@ const prayerAndSwornFormConfig = [
             {
               infoHeader: "CS_COMMON_NOTE",
               infoText: "CS_NOTETEXT_PRAYER_AND_SWORN",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_NOTETEXT_PRAYER_AND_SWORN",
               type: "InfoComponent",
             },
           ],

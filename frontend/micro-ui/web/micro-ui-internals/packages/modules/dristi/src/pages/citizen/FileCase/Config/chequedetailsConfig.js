@@ -182,7 +182,7 @@ export const chequeDetailsFormConfig = [
             {
               name: "document",
               documentHeader: "CS_PROOF_DEPOSIT_CHEQUE",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_PROOF_DEPOSIT_CHEQUE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -207,7 +207,7 @@ export const chequeDetailsFormConfig = [
             {
               name: "document",
               documentHeader: "CS_CHEQUE_RETURN_MEMO",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_CHEQUE_RETURN_MEMO",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

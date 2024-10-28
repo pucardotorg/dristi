@@ -126,7 +126,7 @@ const advocateVakalatnamaAndNocConfig = [
             {
               name: "document",
               documentHeader: "NO_OBJECTION_UPLOAD_TEXT",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "NO_OBJECTION_UPLOAD_TEXT",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -152,7 +152,7 @@ const advocateVakalatnamaAndNocConfig = [
             {
               name: "document",
               documentHeader: "COURT_ORDER_UPLOAD_TEXT",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "COURT_ORDER_UPLOAD_TEXT",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -181,7 +181,7 @@ const advocateVakalatnamaConfig = [
             {
               name: "document",
               documentHeader: "UPLOAD_VAKALATNAMA",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "UPLOAD_VAKALATNAMA",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -406,7 +406,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 {
                   name: "document",
                   documentHeader: "UPLOAD_VAKALATNAMA",
-                  infoTooltipMessage: "Tooltip",
+                  infoTooltipMessage: "UPLOAD_VAKALATNAMA",
                   type: "DragDropComponent",
                   uploadGuidelines: "UPLOAD_DOC_50",
                   maxFileSize: 50,

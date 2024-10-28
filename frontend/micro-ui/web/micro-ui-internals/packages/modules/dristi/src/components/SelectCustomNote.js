@@ -10,7 +10,7 @@ function SelectCustomNote({ t, config, onClick = () => {} }) {
         {
           infoHeader: "Note",
           infoText: "Basic Note",
-          infoTooltipMessage: "Tooltip",
+          infoTooltipMessage: "Basic Note",
           type: "InfoComponent",
         },
       ],
@@ -21,7 +21,7 @@ function SelectCustomNote({ t, config, onClick = () => {} }) {
     return (
       <div className="custom-note-main-div">
         <div className="custom-note-heading-div">
-          <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage) || input?.showTooltip} />
+          <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage) || input?.showTooltip} />
           <h2>{t(input?.infoHeader)}</h2>
         </div>
         <div className="custom-note-info-div">

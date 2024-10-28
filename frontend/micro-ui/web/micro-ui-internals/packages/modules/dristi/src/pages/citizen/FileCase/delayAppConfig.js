@@ -88,9 +88,9 @@ export const delayAppConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
+              documentHeader: "AADHAR",
               isOptional: "CS_IS_OPTIONAL",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "AADHAR",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

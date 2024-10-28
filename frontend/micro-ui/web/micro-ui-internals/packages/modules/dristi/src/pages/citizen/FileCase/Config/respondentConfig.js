@@ -406,9 +406,9 @@ const respondentFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
+              documentHeader: "AFFIDAVIT_UNDER_SECTION_225_BNSS",
               isOptional: "CS_IS_OPTIONAL",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "AFFIDAVIT_UNDER_SECTION_225_BNSS_TOOLTIP_MSG",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,

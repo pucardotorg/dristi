@@ -200,7 +200,7 @@ const AddParty = ({ onCancel, onAddSuccess, caseData, tenantId, hearing, refetch
                 {
                   infoHeader: "CS_PLEASE_COMMON_NOTE",
                   infoText: "NEW_PARTY_NOTE",
-                  infoTooltipMessage: "Tooltip",
+                  infoTooltipMessage: "NEW_PARTY_NOTE",
                   type: "InfoComponent",
                 },
               ],
