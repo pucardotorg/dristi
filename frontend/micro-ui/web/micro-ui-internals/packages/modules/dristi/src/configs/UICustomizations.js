@@ -9,6 +9,7 @@ import OverlayDropdown from "../components/OverlayDropdown";
 import CustomChip from "../components/CustomChip";
 import ReactTooltip from "react-tooltip";
 import { removeInvalidNameParts } from "../Utils";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -850,14 +851,46 @@ export const UICustomizations = {
         ];
       }
 
+      if (![HearingWorkflowState?.SCHEDULED, HearingWorkflowState?.ABATED, HearingWorkflowState?.OPTOUT].includes(row.status)) {
+        return [
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: false,
+            disabled: false,
+            action: (history, column, row) => {
+              column.clickFunc(row);
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: false,
+            disabled: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            disabled: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
       return [
         {
           label: "View transcript",
           id: "view_transcript",
           hide: false,
-          disabled: false,
-          action: (history, column, row) => {
-            column.clickFunc(row);
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
           },
         },
         {
