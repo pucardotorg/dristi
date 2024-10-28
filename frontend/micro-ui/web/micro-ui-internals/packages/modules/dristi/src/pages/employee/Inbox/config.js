@@ -37,7 +37,7 @@ export const newconfigAdvocate = {
         },
         fields: [
           {
-            label: "Application No",
+            label: "APPLICATION_NO",
             type: "text",
             isMandatory: false,
             disable: false,
@@ -61,31 +61,31 @@ export const newconfigAdvocate = {
       uiConfig: {
         columns: [
           {
-            label: "Application No",
+            label: "APPLICATION_NO",
             jsonPath: "businessObject.advocateDetails.applicationNumber",
             additionalCustomization: true,
           },
           {
-            label: "User Name",
+            label: "USER_NAME",
             jsonPath: "businessObject.individual.name",
             additionalCustomization: true,
           },
           {
-            label: "User Type",
+            label: "USER_TYPE",
             jsonPath: "ProcessInstance.businessService",
             additionalCustomization: true,
           },
           {
-            label: "Date Created",
+            label: "DATE_CREATED",
             jsonPath: "businessObject.auditDetails.createdTime",
             additionalCustomization: true,
           },
           {
-            label: "Due Since (no of days)",
+            label: "DUE_SINCE_IN_DAYS",
             jsonPath: "dueSince",
             additionalCustomization: true,
           },
-          { label: "Action", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
+          { label: "ACTION", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
@@ -388,16 +388,11 @@ export const dropdownConfig = {
   optionsKey: "name",
   validation: {},
   isMandatory: true,
-  options: [
-    {
-      code: "advocate",
-      name: "Advocate",
-    },
-    {
-      code: "clerk",
-      name: "Clerk",
-    },
-  ],
+  mdmsConfig: {
+    masterName: "RequestFilter",
+    moduleName: "User Registration",
+    select: "(data) => {return data['User Registration'].RequestFilter?.map((item) => {return item;});}",
+  },
   styles: {
     width: "200px",
   },

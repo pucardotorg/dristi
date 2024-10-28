@@ -279,7 +279,7 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "Application No") link = ``;
+        if (key === "APPLICATION_NO") link = ``;
       });
       return link;
     },
@@ -293,7 +293,7 @@ export const UICustomizations = {
       const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
       switch (key) {
-        case "Application No":
+        case "APPLICATION_NO":
           return (
             <span className="link">
               <Link
@@ -303,30 +303,30 @@ export const UICustomizations = {
               </Link>
             </span>
           );
-        case "Action":
+        case "ACTION":
           return (
             <Link
               to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
             >
-              <span className="action-link"> {t("Verify")}</span>
+              <span className="action-link"> {t("CS_VERIFY")}</span>
             </Link>
           );
-        case "User Type":
+        case "USER_TYPE":
           return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
-        case "Date Created":
+        case "DATE_CREATED":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
-        case "Due Since (no of days)":
+        case "DUE_SINCE_IN_DAYS":
           const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
-        case "User Name":
+        case "USER_NAME":
           const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
           return displayName;
         default:

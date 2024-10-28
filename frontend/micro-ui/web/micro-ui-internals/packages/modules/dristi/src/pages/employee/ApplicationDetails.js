@@ -29,7 +29,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
+const LocationContent = ({ t, latitude = 17.2, longitude = 17.2 }) => {
   return (
     <div style={{ fontSize: "16px", display: "flex", marginTop: "-2px" }}>
       <div>
@@ -39,7 +39,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
           rel="noreferrer"
           style={{ color: "#F47738" }}
         >
-          View on map
+          {t("VIEW_ON_MAP")}
         </a>
       </div>
       <div style={{ marginLeft: "10px" }}>
@@ -195,17 +195,17 @@ const ApplicationDetails = ({ location, match }) => {
 
   const personalData = useMemo(
     () => [
-      { title: "Name", content: fullName },
-      { title: "Location", content: <LocationContent latitude={latitude} longitude={longitude}></LocationContent> },
-      { title: "Address", content: address },
+      { title: t("CS_NAME"), content: fullName },
+      { title: t("CS_LOCATION"), content: <LocationContent t={t} latitude={latitude} longitude={longitude}></LocationContent> },
+      { title: t("ADDRESS"), content: address },
     ],
     [address, fullName, latitude, longitude]
   );
   const barDetails = useMemo(() => {
     return [
-      { title: "BAR Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      { title: t("CS_BAR_REGISTRATION_NUMBER"), content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
       {
-        title: "BAR Council ID",
+        title: t("CS_BAR_COUNCIL_ID"),
         image: true,
         content: fileName,
       },
@@ -218,10 +218,10 @@ const ApplicationDetails = ({ location, match }) => {
 
   const aadharData = useMemo(() => {
     return [
-      { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
-      { title: "ID Type", content: t(individualData?.Individual?.[0]?.identifiers[0]?.identifierType) },
+      { title: t("PHONE_NUMBER"), content: individualData?.Individual?.[0]?.mobileNumber },
+      { title: t("ID_TYPE"), content: t(individualData?.Individual?.[0]?.identifiers[0]?.identifierType) },
       {
-        title: identifierIdDetails?.fileStoreId ? "ID Proof" : "Aadhar Number",
+        title: identifierIdDetails?.fileStoreId ? t("CS_ID_PROOF") : t("AADHAR_NUMBER"),
         content: identifierIdDetails?.fileStoreId ? (
           <DocViewerWrapper fileStoreId={identifierIdDetails?.fileStoreId} tenantId={tenantId} displayFilename={identifierIdDetails?.filename} />
         ) : (
@@ -264,8 +264,8 @@ const ApplicationDetails = ({ location, match }) => {
               {actions?.map((option, index) => (
                 <SubmitBar
                   key={index}
-                  label={option == "REJECT" ? "Reject Request" : "Accept Request"}
-                  style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
+                  label={option === "REJECT" ? t("REJECT_REQUEST") : t("ACCEPT_REQUEST")}
+                  style={{ margin: "20px", backgroundColor: option === "REJECT" ? "#BB2C2F" : "#007E7E" }}
                   onSubmit={(data) => {
                     onActionSelect(option);
                   }}

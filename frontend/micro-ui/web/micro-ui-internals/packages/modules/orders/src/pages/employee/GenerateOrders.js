@@ -1560,7 +1560,7 @@ const GenerateOrders = () => {
       district: addressLine2,
       city: city,
       state: addressLine1,
-      coordinates: {
+      coordinate: {
         longitude: longitude,
         latitude: latitude,
       },
@@ -1665,7 +1665,7 @@ const GenerateOrders = () => {
           },
           respondentDetails: {
             name: respondentName,
-            address: respondentAddress?.[0],
+            address: { ...respondentAddress?.[0], coordinate: respondentAddress?.[0]?.coordinates },
             phone: respondentPhoneNo?.[0] || "",
             email: respondentEmail?.[0] || "",
             age: "",
@@ -1748,9 +1748,9 @@ const GenerateOrders = () => {
               ? {
                   ...address,
                   locality: item?.value?.locality || address?.locality,
-                  coordinates: item?.value?.coordinates || address?.coordinates,
+                  coordinate: item?.value?.coordinates || address?.coordinates,
                 }
-              : address || "",
+              : { ...address, coordinate: address?.coordinates } || "",
             phone: ["SMS"].includes(item?.type) ? item?.value : sms || "",
             email: ["E-mail"].includes(item?.type) ? item?.value : email || "",
             age: "",

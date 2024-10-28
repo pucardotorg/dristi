@@ -41,7 +41,7 @@ const DRISTICard = () => {
           default:
             return (
               <Card className="main-card-home">
-                <Header className="main-card-header">{"What do you wish to do?"}</Header>
+                <Header className="main-card-header">{t("WHAT_DO_YOU_WISH_TO_DO")}</Header>
                 <div className="main-inner-div">
                   <CustomCard
                     label={t("CS_VIEW_REGISTRATION")}
