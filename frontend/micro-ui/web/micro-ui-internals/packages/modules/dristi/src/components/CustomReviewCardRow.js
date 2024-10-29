@@ -33,6 +33,19 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
   );
 };
 
+const badgeStyle = {
+  width: "fit-content",
+  height: "fit-content",
+  padding: "6px",
+  borderRadius: "999px",
+  backgroundColor: "#EDEEEF",
+  fontFamily: "Roboto",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: "16.41px",
+  textAlign: "center",
+};
+
 const CustomReviewCardRow = ({
   isScrutiny,
   isJudge,
@@ -103,6 +116,60 @@ const CustomReviewCardRow = ({
     }
     bgclassname = dataError && isCaseReAssigned ? "preverrorside" : bgclassname;
     switch (type) {
+      case "date":
+        const dateValue = extractValue(data, value);
+        const formattedDate = dateValue
+          ? (() => {
+              const [year, month, day] = dateValue.split("-");
+              return `${day}-${month}-${year}`;
+            })()
+          : "Invalid date";
+
+        const dateDependentOnValue = extractValue(data, textDependentOn);
+        if (showFlagIcon && dateDependentOnValue && t(textDependentValue)) {
+          showFlagIcon = false;
+        }
+        return (
+          <div className={`text-main ${bgclassname}`}>
+            <div className="text">
+              <div className="label">{t(label)}</div>
+              <div className="value">{formattedDate}</div>
+              {showFlagIcon && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? (
+                    <React.Fragment>
+                      <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                        {" "}
+                        <EditPencilIcon />
+                      </span>
+                      <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </React.Fragment>
+                  ) : (
+                    <FlagIcon />
+                  )}
+                </div>
+              )}
+            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                {bgclassname === "preverror" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
+                {dataError}
+              </div>
+            )}
+          </div>
+        );
       case "title":
         const titleError = dataError?.title?.FSOError;
         const prevTitleError = prevDataError?.title?.FSOError;
@@ -120,7 +187,10 @@ const CustomReviewCardRow = ({
         return (
           <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("")}`}</div>
+              <div style={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
+                {`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("")}`}
+                {data?.partyInPerson && <div style={badgeStyle}>{t("PARTY_IN_PERSON_TEXT")}</div>}
+              </div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
               {showFlagIcon && (

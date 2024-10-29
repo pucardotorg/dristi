@@ -1,18 +1,52 @@
 import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { CaseWorkflowAction } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
 import SuccessModal from "../../../components/SuccessModal";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
+import { CustomArrowDownIcon, FileDownloadIcon, FlagIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+
+import Button from "../../../components/Button";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+
+const downloadButtonStyle = {
+  backgroundColor: "white",
+  border: "none",
+  boxShadow: "none",
+  display: "flex",
+  justifyContent: "center",
+  padding: "10px 20px",
+  cursor: "pointer",
+};
+
+const downloadButtonTextStyle = {
+  color: "#007e7e",
+  fontFamily: "Roboto, sans-serif",
+  fontSize: "16px",
+  fontWeight: 700,
+  lineHeight: "18.75px",
+  textAlign: "center",
+  width: "fit-content",
+  margin: "0px",
+};
+
+const downloadSvgStyle = {
+  margin: "0px 12px 0px 0px",
+  height: "16px",
+  width: "16px",
+};
+
+const downloadPathStyle = {
+  fill: "#007e7e",
+};
+
 function ViewCaseFile({ t, inViewCase = false }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -28,6 +62,8 @@ function ViewCaseFile({ t, inViewCase = false }) {
   const [newCaseName, setNewCaseName] = useState("");
   const [modalCaseName, setModalCaseName] = useState("");
   const [highlightChecklist, setHighlightChecklist] = useState(false);
+
+  const { downloadPdf } = useDownloadCasePdf();
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -119,6 +155,10 @@ function ViewCaseFile({ t, inViewCase = false }) {
     return result;
   }
 
+  const fileStoreId = useMemo(() => {
+    return caseDetails?.documents?.[0]?.fileStore;
+  }, [caseDetails]);
+
   const newScrutinyData = useMemo(() => {
     return mergeErrors(formdata, defaultScrutinyErrors);
   }, [formdata, defaultScrutinyErrors]);
@@ -198,12 +238,35 @@ function ViewCaseFile({ t, inViewCase = false }) {
                           },
                         ],
                       };
-                    }
-                    return {
-                      ...input,
-                      data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
-                      prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
-                    };
+                    } else if (["complainantDetails", "respondentDetails"].includes(input?.key)) {
+                      const isPartyInPerson = (individualId) => {
+                        const representative = caseDetails?.representatives?.find((data) =>
+                          data?.representing?.find((rep) => rep?.individualId === individualId && rep?.isActive === true)
+                        );
+                        return representative ? false : true;
+                      };
+                      const returnData = {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata?.map((fData) => ({
+                          ...fData,
+                          data: {
+                            ...fData?.data,
+                            ...(fData?.data?.[input?.key === "complainantDetails" ? "complainantVerification" : "respondentVerification"] &&
+                              isPartyInPerson(
+                                fData?.data?.[input?.key === "complainantDetails" ? "complainantVerification" : "respondentVerification"]
+                                  ?.individualDetails?.individualId
+                              ) && { partyInPerson: true }),
+                          },
+                        })),
+                        prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                      };
+                      return returnData;
+                    } else
+                      return {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                        prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                      };
                   }),
                 },
               };
@@ -372,15 +435,15 @@ function ViewCaseFile({ t, inViewCase = false }) {
     submissionFromAccused: "CS_SUBMISSSIONS_FROM_ACCUSED",
   };
   const checkList = [
-    "CS_SPELLING_MISTAKES",
-    "CS_WRONG_INPUTS",
-    "CS_MISSING_DETAILS",
-    "CS_FIELDS_NO_MATCHUP",
-    "CS_WRONG_DOCUMENT",
-    "CS_POOR_UPLOAD",
+    "CS_SPELLING_CHECK",
+    "CS_VERIFY_REQUIRED_DOCUMENTS",
+    "CS_ENSURE_DOCUMENT_CLARITY",
+    "CS_CONFIRM_JURISDICTION",
+    "CS_VERIFY_SIGNATURES",
+    "CS_VALID_CHEQUE_RETURN_REASON",
     "CS_WRONG_JURISDICTION",
-    "CS_PHOTO_MISMATCH",
-    "CS_DATE_MATCH_DOCUMENT",
+    "CS_CORRECT_DOCUMENT_MAPPING",
+    "CS_CROSSCHECK_FIELD_DETAILS",
   ];
   const caseInfo = [
     {
@@ -438,14 +501,24 @@ function ViewCaseFile({ t, inViewCase = false }) {
             <div className="employee-card-wrapper">
               {!inViewCase && (
                 <div>
-                  <div className="back-button-home">
-                    <BackButton />
+                  <div className="back-button-home" style={{ alignItems: "center" }}>
+                    <div style={{ height: "fit-content" }}>
+                      <BackButton />
+                    </div>
+                    <Button
+                      style={downloadButtonStyle}
+                      textStyles={downloadButtonTextStyle}
+                      icon={<FileDownloadIcon svgStyle={downloadSvgStyle} pathStyle={downloadPathStyle} />}
+                      className="download-button"
+                      label={t("CS_COMMON_DOWNLOAD")}
+                      onButtonClick={() => downloadPdf(tenantId, fileStoreId)}
+                    />
                   </div>
                   <div className="header-content">
                     <div className="header-details">
                       <div className="header-title-icon">
                         <Header>
-                          {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                          {t("CS_REVIEW_CASE")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
                         </Header>
                         <div
                           className="case-edit-icon"
@@ -486,7 +559,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
                 showSecondaryLabel={totalErrors?.total > 0}
                 actionClassName="e-filing-action-bar"
               />
-
               {!inViewCase && (
                 <div className="error-flag-class">
                   <FlagIcon isError={totalErrors?.total > 0} />
@@ -497,7 +569,6 @@ function ViewCaseFile({ t, inViewCase = false }) {
                   </h3>
                 </div>
               )}
-
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
               )}
@@ -517,6 +588,20 @@ function ViewCaseFile({ t, inViewCase = false }) {
                     </div>
                   );
                 })}
+                <div className="checklist-item" key={checkList.length}>
+                  <div className="item-logo">
+                    <CheckSvg />
+                  </div>
+                  <h3 className="item-text">
+                    {t("CS_REFERENCE_RELATED_FIELDS")}{" "}
+                    <span
+                      onClick={() => downloadPdf(tenantId, fileStoreId)}
+                      style={{ color: "#007e7e", textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      {t("CS_HERE")}
+                    </span>
+                  </h3>
+                </div>
               </div>
             </div>
           )}

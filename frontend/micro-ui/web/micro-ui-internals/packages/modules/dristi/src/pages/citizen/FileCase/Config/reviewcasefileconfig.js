@@ -189,7 +189,7 @@ export const reviewCaseFileFormConfig = [
                   value: "payeeBranchName",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_ISSUANCE",
                   value: "issuanceDate",
                 },
@@ -219,7 +219,7 @@ export const reviewCaseFileFormConfig = [
                   value: "policeStation.code",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_CHEQUE_DEPOSIT",
                   value: "depositDate",
                 },
@@ -291,23 +291,23 @@ export const reviewCaseFileFormConfig = [
                 //   value: "modeOfDispatchType.modeOfDispatchType.name",
                 // },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_DISPATCH_LDN",
                   value: "dateOfDispatch",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_SERVICE_LDN",
                   value: "dateOfService",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_REPLY_LDN",
                   value: "dateOfReply",
                   notAvailable: "NO_REPLY_RECIEVED",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "CS_DATE_OF_ACCRUAL_LDN",
                   value: "dateOfAccrual",
                 },
@@ -316,8 +316,8 @@ export const reviewCaseFileFormConfig = [
                   label: "CS_DOCUMENT",
                   value: [
                     "legalDemandNoticeFileUpload.document",
-                    "proofOfAcknowledgmentFileUpload.document",
                     "proofOfDispatchFileUpload.document",
+                    "proofOfAcknowledgmentFileUpload.document",
                     "proofOfReplyFileUpload.document",
                   ],
                 },
@@ -382,7 +382,7 @@ export const reviewCaseFileFormConfig = [
                   value: "emails.emailId",
                 },
                 {
-                  type: "text",
+                  type: "date",
                   label: "DATE_OF_BIRTH",
                   value: "witnessDateOfBirth",
                 },

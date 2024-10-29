@@ -705,10 +705,14 @@ const LeftArrow = () => (
   </svg>
 );
 
-const FileDownloadIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+const FileDownloadIcon = ({ svgStyle, pathStyle }) => (
+  <svg style={svgStyle} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_2134_14200)">
-      <path d="M12.6693 6H10.0026V2H6.0026V6H3.33594L8.0026 10.6667L12.6693 6ZM3.33594 12V13.3333H12.6693V12H3.33594Z" fill="#9E400A" />
+      <path
+        style={pathStyle}
+        d="M12.6693 6H10.0026V2H6.0026V6H3.33594L8.0026 10.6667L12.6693 6ZM3.33594 12V13.3333H12.6693V12H3.33594Z"
+        fill="#9E400A"
+      />
     </g>
     <defs>
       <clipPath id="clip0_2134_14200">
