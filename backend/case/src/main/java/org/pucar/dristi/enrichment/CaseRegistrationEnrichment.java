@@ -34,7 +34,8 @@ public class CaseRegistrationEnrichment {
     private Configuration config;
 
     @Autowired
-    public CaseRegistrationEnrichment(AdvocateUtil advocateUtil, IdgenUtil idgenUtil, CaseUtil caseUtil, Configuration config) {
+    public CaseRegistrationEnrichment(IndividualService individualService, AdvocateUtil advocateUtil, IdgenUtil idgenUtil, CaseUtil caseUtil, Configuration config) {
+        this.individualService = individualService;
         this.advocateUtil = advocateUtil;
         this.idgenUtil = idgenUtil;
         this.caseUtil = caseUtil;
@@ -313,13 +314,8 @@ public class CaseRegistrationEnrichment {
 
     private void enrichEmployeeUserId(List<Role> roles, CaseSearchRequest searchRequest) {
 
-        boolean isJudge = false;
-        for (Role role : roles) {
-            if (role.getCode().equals(JUDGE_ROLE)) {
-                isJudge = true;
-                break;
-            }
-        }
+        boolean isJudge = roles.stream()
+                .anyMatch(role -> JUDGE_ROLE.equals(role.getCode()));
         if (isJudge) {
             for (CaseCriteria element : searchRequest.getCriteria()) {
                 element.setJudgeId(JUDGE_ID);
@@ -335,14 +331,8 @@ public class CaseRegistrationEnrichment {
 
         String individualId = individualService.getIndividualId(requestInfo);
 
-        boolean isAdvocate = false;
-
-        for (Role role : roles) {
-            if (role.getCode().equals(ADVOCATE_ROLE)) {
-                isAdvocate = true;
-                break;
-            }
-        }
+        boolean isAdvocate = roles.stream()
+                .anyMatch(role -> ADVOCATE_ROLE.equals(role.getCode()));
 
         if (isAdvocate) {
 
