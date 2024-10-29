@@ -216,7 +216,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [step, setStep] = useState(0);
   const [caseNumber, setCaseNumber] = useState("");
   const [caseDetails, setCaseDetails] = useState({});
-  const [searchCaseResult, setSearchCaseResult] = useState({});
   const [userType, setUserType] = useState({ label: "", value: "" });
   const [barRegNumber, setBarRegNumber] = useState("");
   const [barDetails, setBarDetails] = useState([]);
@@ -229,6 +228,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [replaceAdvocateDocuments, setReplaceAdvocateDocuments] = useState({});
   const [primaryAdvocateDetail, setPrimaryAdvocateDetail] = useState([]);
   const [isSearchingCase, setIsSearchingCase] = useState(false);
+  const [caseList, setCaseList] = useState([]);
 
   const [party, setParty] = useState("");
   const [validationCode, setValidationCode] = useState("");
@@ -431,58 +431,26 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   };
 
   const searchCase = async (caseNumber) => {
-    setIsSearchingCase(false);
     if (caseNumber && !caseDetails?.filingNumber) {
-      const response = await DRISTIService.searchCaseService(
-        {
-          criteria: [
-            {
-              filingNumber: caseNumber,
-            },
-          ],
-          flow: "flow_jac",
-          tenantId,
-        },
-        {}
-      );
-      if (response?.criteria[0]?.responseList?.length === 1) {
-        if (
-          [
-            "PENDING_RESPONSE",
-            "PENDING_ADMISSION_HEARING",
-            "ADMISSION_HEARING_SCHEDULED",
-            "PENDING_NOTICE",
-            "CASE_ADMITTED",
-            "PENDING_ADMISSION",
-          ].includes(response?.criteria[0]?.responseList[0]?.status)
-        ) {
-          setIsDisabled(false);
-          setSearchCaseResult(response?.criteria[0]?.responseList[0]);
-          setErrors({
-            ...errors,
-            caseNumber: undefined,
-          });
-        } else {
-          setIsDisabled(true);
-          setErrors({
-            ...errors,
-            caseNumber: {
-              type: "not-admitted",
-              message: JoinHomeLocalisation.CASE_NOT_ADMITTED_TEXT,
-            },
-          });
-        }
-      } else {
-        setIsDisabled(true);
-        if (caseNumber)
-          setErrors({
-            ...errors,
-            caseNumber: {
-              message: JoinHomeLocalisation.INVALID_CASE_INFO_TEXT,
-            },
-          });
+      try {
+        const response = await DRISTIService.searchCaseService(
+          {
+            criteria: [
+              {
+                filingNumber: caseNumber,
+              },
+            ],
+            flow: "flow_jac",
+            tenantId,
+          },
+          {}
+        );
+        setCaseList(response?.criteria[0]?.responseList?.slice(0, 5));
+      } catch (error) {
+        console.error("error :>> ", error);
       }
     }
+    setIsSearchingCase(false);
   };
 
   function findNextHearings(objectsList) {
@@ -750,6 +718,38 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     return respondentNameEFiling;
   }, [respondentList, respondentNameEFiling]);
 
+  const onSelect = (option) => {
+    if (
+      [
+        "PENDING_RESPONSE",
+        "PENDING_ADMISSION_HEARING",
+        "ADMISSION_HEARING_SCHEDULED",
+        "PENDING_NOTICE",
+        "CASE_ADMITTED",
+        "PENDING_ADMISSION",
+      ].includes(option?.status)
+    ) {
+      setIsDisabled(false);
+      setCaseDetails(option);
+      setCaseNumber(option?.filingNumber);
+      setCaseList([]);
+
+      setErrors({
+        ...errors,
+        caseNumber: undefined,
+      });
+    } else {
+      setIsDisabled(true);
+      setErrors({
+        ...errors,
+        caseNumber: {
+          type: "not-admitted",
+          message: JoinHomeLocalisation.CASE_NOT_ADMITTED_TEXT,
+        },
+      });
+    }
+  };
+
   const modalItem = [
     // 0
     {
@@ -764,6 +764,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 value={caseNumber}
                 onChange={(e) => {
                   setCaseDetails({});
+                  setCaseList([]);
                   let str = e.target.value;
                   if (str) {
                     str = str.replace(/[^a-zA-Z0-9.-]/g, "");
@@ -787,6 +788,25 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 <SearchIcon />
               </div>
             </div>
+            {caseList &&
+              caseList?.map((option, index) => {
+                return (
+                  <div
+                    className={`cp profile-dropdown--item display: flex `}
+                    key={index}
+                    onClick={() => {
+                      onSelect(option);
+                    }}
+                  >
+                    <span> {option?.filingNumber}</span>
+                  </div>
+                );
+              })}
+            {caseList && caseNumber && !caseDetails?.cnrNumber && !isSearchingCase && caseList.length === 0 && (
+              <div className={`cp profile-dropdown--item display: flex `} key={"-1"} onClick={() => {}}>
+                {<span> {t("CMN_NOOPTION")}</span>}
+              </div>
+            )}
             <p style={{ fontSize: "12px" }}>
               {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"KL-<6 digit sequence number>-<YYYY>"}
             </p>
@@ -1674,6 +1694,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     setAdovacteVakalatnama({});
     setComplainantList([]);
     setRespondentList([]);
+    setCaseList([]);
   };
 
   const removeAttendee = async (individualId) => {
@@ -1691,10 +1712,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
 
   const onProceed = useCallback(async () => {
     if (step === 0) {
-      if (!caseDetails?.cnrNumber) {
-        setCaseDetails(searchCaseResult);
-        setCaseNumber(searchCaseResult?.filingNumber);
-      } else {
+      if (caseDetails?.cnrNumber) {
         if (userType?.value === "Litigant") {
           const isFound = caseDetails?.litigants?.find((item) => item.individualId === individualId);
           if (isFound !== undefined) {
@@ -2527,16 +2545,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     individualDoc,
     individualId,
     isUserLoggedIn,
-    name?.familyName,
-    name?.givenName,
-    name?.otherNames,
+    name,
     replaceAdvocateDocuments?.advocateCourtOrder?.document,
     replaceAdvocateDocuments?.nocFileUpload?.document,
     representingYourself,
     respondentList,
     roleOfNewAdvocate?.value,
     searchAdvocateInRepresentives,
-    searchCaseResult,
     searchLitigantInRepresentives,
     selectedParty,
     sourceType,
