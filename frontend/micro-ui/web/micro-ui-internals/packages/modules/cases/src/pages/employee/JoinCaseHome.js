@@ -440,6 +440,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               filingNumber: caseNumber,
             },
           ],
+          flow: "flow_jac",
           tenantId,
         },
         {}
