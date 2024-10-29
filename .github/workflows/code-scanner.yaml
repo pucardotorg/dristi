@@ -5,11 +5,11 @@ on:
     branches:
       - develop
       - main
-      
   pull_request:
     branches:
       - develop
       - main
+
 permissions:
   security-events: write
   contents: read
@@ -20,8 +20,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: TruffleHog
         uses: trufflesecurity/trufflehog@v3.76.1
+
+      - name: Cache Trivy DB
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/trivy
+          key: ${{ runner.os }}-trivy-db
+
       - name: Set up Trivy
         continue-on-error: true
         uses: aquasecurity/trivy-action@0.28.0
@@ -32,6 +40,7 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL'
           github-pat: ${{ secrets.GHUB_TOKEN }}
+
       - name: Upload SARIF results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
